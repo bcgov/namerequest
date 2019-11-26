@@ -1,6 +1,14 @@
+const path = require("path")
+
 module.exports = {
-  "transpileDependencies": [
-    "vuetify",
-    "vuex-module-decorators"
+  pluginOptions: {
+    'style-resources-loader': {
+      preProcessor: 'scss',
+      patterns: [path.resolve(__dirname, './assets/styles/theme.scss')]
+    }
+  },
+  transpileDependencies: [
+    'vuetify',
+    'vuex-module-decorators'
   ]
 }

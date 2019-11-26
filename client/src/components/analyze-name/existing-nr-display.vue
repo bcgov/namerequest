@@ -17,7 +17,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import analyzeName from '@/store/analyze-name-module'
 
 @Component({})
-export default class AnalyzeNameInput extends Vue {
+export default class ExisitingNRDisplay extends Vue {
   private get nameSearch (): string {
     return analyzeName.analyzedName
   }

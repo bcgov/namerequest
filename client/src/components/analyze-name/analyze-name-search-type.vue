@@ -1,37 +1,30 @@
 <template>
-  <v-row no-gutters>
-    <v-radio-group :value="searchType" class="mb-n5" id="search-type-radio" dark row>
-      <v-radio label="Any Type of Name"
-               @click="setRadio('name')"
-               value="name" />
-      <v-radio label="An Existing Request"
-               @click="setRadio('nr')"
-               value="nr" />
-      <v-radio label="Advanced"
-               @click="setRadio('advanced')"
-               value="qqq" />
-    </v-radio-group>
+  <v-row no-gutters justify="space-between" class="mb-n4">
+      <v-checkbox label="Sole Proprietorship"
+                  value="sole"
+                  v-model="searchType" />
+      <v-checkbox label="All Other Types"
+                  value="other"
+                  v-model="searchType" />
+      <v-checkbox label="Not Sure"
+                  value="unsure"
+                  v-model="searchType" />
   </v-row>
 </template>
 
 <script lang="ts">
-  import { Component, Vue } from 'vue-property-decorator'
-  import { SearchType } from '@/models'
-  import analyzeName from '@/store/analyze-name-module'
+import { Component, Vue } from 'vue-property-decorator'
+import { SearchType } from '@/models'
+import analyzeName from '@/store/analyze-name-module'
 
-  @Component
-  export default class AnalyzeNameSearchType extends Vue {
-    private get searchType(): SearchType {
-      return analyzeName.searchType
-    }
-
-    private setRadio(value: SearchType) {
-      analyzeName.setSearchType(value)
-    }
+@Component({})
+export default class AnalyzeNameSearchType extends Vue {
+  private get searchType (): SearchType {
+    return analyzeName.searchType
   }
-</script>
 
-<style lang="stylus" scoped>
-  .white-s
-    color white !important
-</style>
+  private set searchType (value: SearchType) {
+    analyzeName.setSearchType(value)
+  }
+}
+</script>

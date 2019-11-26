@@ -65,3 +65,8 @@ typings/
 
 #JetBrains IDEa config
 .idea/
+
+package-lock.json*
+client/package-lock.json
+/build
+.vscode

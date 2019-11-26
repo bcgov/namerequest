@@ -1,1 +1,1 @@
-export type SearchType = 'name' | 'nr' | 'advanced'
+export type SearchType = 'sole' | 'others' | 'unsure'

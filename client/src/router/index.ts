@@ -10,6 +10,10 @@ const routes = [
     name: 'Landing',
     component: Landing
   },
+  {
+    path: '*',
+    redirect: '/'
+  }
 ]
 
 const router = new VueRouter({

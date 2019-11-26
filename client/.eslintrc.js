@@ -6,14 +6,18 @@ module.exports = {
   'extends': [
     'plugin:vue/essential',
     'eslint:recommended',
-    '@vue/typescript'
+    '@vue/typescript',
+    '@vue/standard'
   ],
   rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+    'no-console': process.env.NODE_ENV === 'production' ? 'warning' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'max-len': ['warn', { code: 120 }],
+    'no-unused-vars': 'off'
   },
   parserOptions: {
-    parser: '@typescript-eslint/parser'
+    parser: '@typescript-eslint/parser',
+    plugins: ['@typescript-eslint']
   },
   overrides: [
     {

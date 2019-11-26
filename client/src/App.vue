@@ -15,18 +15,24 @@ import Header from '@/components/header.vue'
   components: { Header }
 })
 export default class App extends Vue {}
+
 </script>
-<style lang="stylus">
-  @import './assets/styles/variables.styl'
-  @import './assets/styles/base.styl'
 
-  #app
-    background-color #1f1f1f
+<style lang="scss" scoped>
+@import './assets/styles/theme.scss'
+</style>
 
-  #main-column
-    padding 0
-    margin 0 auto 0 auto
-    width 1380px
-    max-width 1380px
+<style lang="scss">
+@import '@/assets/styles/theme.scss';
 
+#app {
+  background-color: $body-bg;
+}
+
+#main-column {
+  padding: 0;
+  margin: 0 auto 0 auto;
+  width: 1380px;
+  max-width: 1380px;
+}
 </style>
