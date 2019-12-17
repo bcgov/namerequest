@@ -10,5 +10,6 @@ module.exports = {
   transpileDependencies: [
     'vuetify',
     'vuex-module-decorators'
-  ]
+  ],
+  publicPath: process.env.VUE_APP_PATH
 }
