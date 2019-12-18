@@ -1,0 +1,71 @@
+{
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "namerequest-ui-inter",
+        "creationTimestamp": null
+    },
+    "objects": [
+        {
+            "kind": "BuildConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "namerequest-ui-inter",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "namerequest-ui-inter"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftWebConsole"
+                }
+            },
+            "spec": {
+                "triggers": [
+                    {
+                        "type": "ImageChange",
+                        "imageChange": {}
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ],
+                "runPolicy": "Serial",
+                "source": {
+                    "type": "Git",
+                    "git": {
+                        "uri": "https://github.com/bcgov/namerequest.git",
+                        "ref": "master"
+                    },
+                    "contextDir": "client"
+                },
+                "strategy": {
+                    "type": "Source",
+                    "sourceStrategy": {
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "namespace": "openshift",
+                            "name": "nodejs:10"
+                        }
+                    }
+                },
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "namerequest-ui-inter:latest"
+                    }
+                },
+                "resources": {
+                    "limits": {
+                        "cpu": "4",
+                        "memory": "4Gi"
+                    }
+                },
+                "postCommit": {},
+                "nodeSelector": null
+            },
+            "status": {
+                "lastVersion": 0
+            }
+        }
+    ]
+}

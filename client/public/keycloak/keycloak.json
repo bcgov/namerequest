@@ -1,0 +1,10 @@
+{
+  "realm": "sbc",
+  "auth-server-url": "https://sso-dev.pathfinder.gov.bc.ca/auth"  ,
+  "ssl-required": "external",
+  "resource": "NameRequest-Dev",
+  "credentials": {
+    "secret": "b05bae52-e0d3-4c42-9954-594b22d1d24b"
+  },
+  "confidential-port": 0
+}
