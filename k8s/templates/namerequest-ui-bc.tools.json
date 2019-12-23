@@ -34,7 +34,7 @@
                         {
                             "from": {
                                 "kind": "ImageStreamTag",
-                                "name": "namerequest-ui-inter:latest"
+                                "name": "namerequest-ui-inter:dev"
                             },
                             "paths": [
                                 {
@@ -58,7 +58,7 @@
                 "output": {
                     "to": {
                         "kind": "ImageStreamTag",
-                        "name": "namerequest-ui:latest"
+                        "name": "namerequest-ui:dev"
                     }
                 },
                 "resources": {},
