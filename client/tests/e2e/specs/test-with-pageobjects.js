@@ -6,7 +6,7 @@
 //   https://nightwatchjs.org/guide/working-with-page-objects/
 ////////////////////////////////////////////////////////////////
 
-module.exports = {
+newReqModule.exports = {
   beforeEach: (browser) => browser.init(),
 
   'e2e tests using page objects': (browser) => {

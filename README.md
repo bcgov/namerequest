@@ -11,8 +11,23 @@ TBD.
 
 ### Local Development
 
-1. make sure you have the `.env` file, required contents can be found in `.env.production`
-2. run docker
+1.  Clone or fork the repo
+2.  Open a terminal window and cd to the top level of the repo, then cd to the /client directory
+3.  Install node modules, enter command 'npm install'
+4.  To run with mock namex backend, enter command 'npm run serve-mock'
+5.  In a separate terminal window, run the mock server, enter command 'node server.js'
+6.  The mock backend uses keywords in the name search at either the first or second word position
+    non-approving keywords are:
+    add beginning
+    add end
+    consent
+    bad
+    wrong
+
+    approving keywords are:
+    approve corp
+    approve sole
+    approve gp
 
 ## Deployment (OpenShift)
 
@@ -35,7 +50,7 @@ Issues are [markdown supported](https://guides.github.com/features/mastering-mar
 
 ## License
 
-    Copyright 2019 Province of British Columbia
+    Copyright 2020 Province of British Columbia
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

@@ -2,13 +2,17 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import Axios from '@/plugins/axios'
+
 import vuetify from './plugins/vuetify'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
-import './assets/styles/base.scss'
-import './assets/styles/fonts.scss'
 
-Vue.config.productionTip = false
-Vue.config.devtools = false
+import '@/sass/main.sass'
+import '@/sass/overrides.sass'
+
+Vue.config.productionTip = true
+Vue.config.devtools = true
+Vue.prototype.$axios = Axios
 
 new Vue({
   router,
