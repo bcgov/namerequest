@@ -18,21 +18,14 @@ export default class App extends Vue {}
 
 </script>
 
-<style lang="scss" scoped>
-@import './assets/styles/theme.scss'
-</style>
+<style lang="sass">
+#app
+  background-color: $body-bg
 
-<style lang="scss">
-@import '@/assets/styles/theme.scss';
+#main-column
+  padding: 0
+  margin: 0 auto 0 auto
+  width: 1380px
+  max-width: 1380px
 
-#app {
-  background-color: $body-bg;
-}
-
-#main-column {
-  padding: 0;
-  margin: 0 auto 0 auto;
-  width: 1380px;
-  max-width: 1380px;
-}
 </style>

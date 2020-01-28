@@ -9,7 +9,7 @@
  *
  */
 
-module.exports = {
+newReqModule.exports = {
   url: '/',
   commands: [],
 

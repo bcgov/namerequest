@@ -1,15 +1,24 @@
 const path = require("path")
 
 module.exports = {
+  configureWebpack: {
+    devtool: 'eval-source-map'
+  },
+  css: {
+    loaderOptions: {
+      sass: {
+        prependData: `@import "~@/sass/theme.sass"`,
+      },
+    },
+  },
   pluginOptions: {
     'style-resources-loader': {
-      preProcessor: 'scss',
-      patterns: [path.resolve(__dirname, './assets/styles/theme.scss')]
+      preProcessor: 'sass',
+      patterns: '~@/sass/theme.sass'
     }
   },
   transpileDependencies: [
     'vuetify',
     'vuex-module-decorators'
-  ],
-  publicPath: process.env.VUE_APP_PATH
+  ]
 }

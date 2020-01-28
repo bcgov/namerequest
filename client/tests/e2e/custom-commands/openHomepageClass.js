@@ -12,7 +12,7 @@
 
 const assert = require('assert')
 
-module.exports = class {
+newReqModule.exports = class {
   async command () {
     // Other Nightwatch commands are available via "this.api"
     this.api.init()

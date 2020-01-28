@@ -1,7 +1,7 @@
 // For authoring Nightwatch tests, see
 // https://nightwatchjs.org/guide
 
-module.exports = {
+newReqModule.exports = {
   'default e2e tests': browser => {
     browser
       .init()

@@ -10,7 +10,7 @@
  *   https://nightwatchjs.org/guide/extending-nightwatch/#writing-custom-commands
  *
  */
-module.exports = {
+newReqModule.exports = {
   command: async function () {
     // Other Nightwatch commands are available via "this"
     // .init() simply calls .url() command with the value of the "launch_url" setting
