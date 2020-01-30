@@ -30,12 +30,6 @@ describe('new-request.vue', () => {
     expect(newReqModule.nrRequiredModalVisible).toBe(false)
     expect(newReqModule.helpMeChooseModalVisible).toBe(false)
   })
-  it('Sets the modal visibility state to true when the help-me-choose-activator span is clicked', async () => {
-    let activator = wrapper.find('#help-me-choose-activator')
-    activator.trigger('click')
-    await wrapper.vm.$nextTick()
-    expect(newReqModule.helpMeChooseModalVisible).toBe(true)
-  })
   it('Sets the modal visibility state to true when the nr-required-activator span is clicked', async () => {
     let activator = wrapper.find('#nr-required-activator')
     activator.trigger('click')

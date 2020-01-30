@@ -34,12 +34,12 @@
 </template>
 
 <script lang="ts">
-import AnalyzePending from '@/components/new-request/analyze-pending.vue'
-import AnalyzeResults from '@/components/new-request/analyze-results.vue'
-import ExistingRequestDisplay from './existing-request/existing-request-display.vue'
-import ExistingRequestSearch from './existing-request/existing-request-search.vue'
+import AnalyzePending from '@/components/new-request/analyze-pending'
+import AnalyzeResults from '@/components/new-request/analyze-results'
+import ExistingRequestDisplay from './existing-request/existing-request-display'
+import ExistingRequestSearch from './existing-request/existing-request-search'
 import newReqModule from '../store/new-request-module'
-import NewRequest from './new-request/new-request.vue'
+import NewRequest from './new-request/new-request'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({

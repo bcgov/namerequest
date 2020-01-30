@@ -13,5 +13,4 @@ const Axios: any = axios.create({
   baseURL: baseURL() + '/api/v1'
 })
 
-export const cancelToken: any = axios.CancelToken.source().token
 export default Axios
