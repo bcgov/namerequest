@@ -4,9 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "serve-dev": "cross-env VUE_APP_API_URL=https://namex-dev.pathfinder.gov.bc.ca npm run serve",
-    "serve-test": "cross-env VUE_APP_API_URL=https://namex-test.pathfinder.gov.bc.ca npm run serve",
-    "serve-mock": "cross-env VUE_APP_API_URL=http://localhost:3000 npm run serve",
+    "serve-mock": "cross-env VUE_APP_MOCK_API=yes npm run serve",
     "build": "vue-cli-service build",
     "test": "vue-cli-service test:unit  --verbose"
   },
