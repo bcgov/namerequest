@@ -5,13 +5,12 @@ let baseURL = function () {
     if (process.env.VUE_APP_MOCK_API === 'yes') {
       return process.env.VUE_APP_API_URL_MOCK
     }
-    return process.env.VUE_APP_API_URL
   }
   return process.env.VUE_APP_API_URL
 }
 
 const Axios: any = axios.create({
-  baseURL: baseURL + '/api/v1'
+  baseURL: baseURL() + '/api/v1'
 })
 
 export const cancelToken: any = axios.CancelToken.source().token
