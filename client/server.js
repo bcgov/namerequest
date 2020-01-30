@@ -5,14 +5,16 @@ const middleware = jsonServer.defaults()
 server.use(middleware)
 
 server.get('/api/v1/stats', (req, res) => {
+  let o = Math.random()
+  let p = o.toString()
   let resp = {
-    auto: 44,
+    auto: p[3] + p[2],
     priority: {
-      value: 54,
+      value:  p[5] + p[9],
       unit: 'mins'
     },
     standard: {
-      value: 4,
+      value: p[4],
       unit: 'days'
     }
   }
@@ -26,6 +28,67 @@ server.get('/api/v1/name-analysis', (req, res) => {
   let l = split.length
   let resp
 
+  if (query.name === 'Demo Name Actions Renderer') {
+    resp = {
+      "status": "Further Action Required",
+      "issues": [
+        {
+          "consenting_body": null,
+          "issue_type": "add_distinctive",
+          "name_actions": [
+            {
+              "type": "add_word_brackets",
+              "position": "start",
+              "message": "1-start",
+              "word_index": 0
+            },
+            {
+              "type": "add_word_brackets",
+              "position": "end",
+              "message": "1-end",
+              "word_index": 0
+            },
+            {
+              "type": "add_word_brackets",
+              "position": "start",
+              "message": "3-start",
+              "word_index": 2
+            },
+            {
+              "type": "add_word_brackets",
+              "position": "end",
+              "message": "3-end",
+              "word_index": 2
+            },
+            {
+              "type": "add_word_brackets",
+              "position": "end",
+              "message": "End",
+              "word_index": 3
+            },
+            {
+              "type": "spelling",
+              "word_index": 1
+            },
+            {
+              "type": "strike",
+              "word_index": 2
+            },
+            {
+              "type": "highlight",
+              "word_index": 3
+            }
+          ],
+          "designations": null,
+          "descriptive_words": null,
+          "show_examination_button": false,
+          "conflicts": null,
+          "word": null,
+        }
+      ]
+    }
+  }
+
   //Requires Distinctive word
   if (split.includes('Distributors')) {
     resp = {
@@ -38,7 +101,18 @@ server.get('/api/v1/name-analysis', (req, res) => {
             {
               "type": "add_word_brackets",
               "position": "start",
-              "message": "Add a Word Here"
+              "message": "Add a Word Here",
+              "word_index": 1
+            },
+            {
+              "type": "add_word_brackets",
+              "position": "end",
+              "message": "Blah blah",
+              "word_index": 0
+            },
+            {
+              "type": "spelling",
+              "word_index": 1
             }
           ],
           "designations": null,
@@ -46,7 +120,6 @@ server.get('/api/v1/name-analysis', (req, res) => {
           "show_examination_button": false,
           "conflicts": null,
           "word": null,
-          "word_index": null
         }
       ]
     }
@@ -63,7 +136,8 @@ server.get('/api/v1/name-analysis', (req, res) => {
             {
               "type": "add_word_brackets",
               "position": "end",
-              "message": "Add a Business Category Word Here"
+              "message": "Add a Business Category Word Here",
+              "word_index": split.length - 1
             }
           ],
           "designations": null,
@@ -85,13 +159,13 @@ server.get('/api/v1/name-analysis', (req, res) => {
           "show_examination_button": false,
           "conflicts": null,
           "word": null,
-          "word_index": null,
         }
       ]
     }
   }
   //Contains an Unclassified Word
   if (split.includes('Flerkin')) {
+    let index = split.indexOf('Flerkin')
     let w = split.indexOf('Flerkin')
     resp = {
       "status": "Further Action Required",
@@ -101,18 +175,18 @@ server.get('/api/v1/name-analysis', (req, res) => {
           "issue_type": "unclassified_word",
           "name_actions": [
             {
-              "type": "highlight"
+              "type": "highlight",
+              "word_index": index
             },
             {
-              "type": "strike"
+              "type": "strike",
+              "word_index": index
             }
           ],
           "descriptive_words": null,
           "designations": null,
           "show_examination_button": true,
           "conflicts": null,
-          "word": split[w],
-          "word_index": w
         }
       ]
     }
@@ -124,8 +198,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
       "issues": null
     }
   }
-
-  //Name has a Corporate Conflict
+ //Name has a Corporate Conflict
   if (split[0] === 'Conflict') {
     resp = {
       "status": "Further Action Required",
@@ -133,8 +206,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
         {
           "consenting_body": null,
           "issue_type": "corp_conflict",
-          "word": split[1],
-          "word_index": 1,
+          "word": [split[1]],
           "show_examination_button": false,
           "conflicts": [
             {
@@ -151,11 +223,47 @@ server.get('/api/v1/name-analysis', (req, res) => {
           "name_actions": [
             {
               "type": "strike",
+              "word_index": 0
+            },
+            {
+              "type": "strike",
+              "word_index": 1
+            },
+            {
+              "type": "spelling",
+              "word_index": 0
+            },
+            {
+              "type": "spelling",
+              "word_index": 1
+            },
+            {
+              "type": "highlight",
+              "word_index": 2
             },
             {
               "type": "add_word_brackets",
               "position": "start",
-              "message": "Add a Word Here"
+              "message": "Add a Word Here",
+              "word_index": 0
+            },
+            {
+              "type": "add_word_brackets",
+              "position": "end",
+              "message": "Add a Word Here",
+              "word_index": 0
+            },
+            {
+              "type": "add_word_brackets",
+              "position": "start",
+              "message": "Add a Word Here",
+              "word_index": 1
+            },
+            {
+              "type": "add_word_brackets",
+              "position": "end",
+              "message": "Add a Word Here",
+              "word_index": 1
             }
           ]
         }
@@ -173,15 +281,44 @@ server.get('/api/v1/name-analysis', (req, res) => {
           "issue_type": "word_to_avoid",
           "name_actions": [
             {
-              "type": "strike"
+              "type": "strike",
+              "word_index": w
             }
           ],
           "descriptive_words": null,
           "designations": null,
           "show_examination_button": false,
           "conflicts": [],
-          "word": split[w],
-          "word_index": w
+          "word": [split[w]],
+        }
+      ]
+    }
+  }
+  if (split.includes('Walmart') && split.includes('7-11')) {
+    let w = split.indexOf('Walmart')
+    let x = split.indexOf('7-11')
+    resp = {
+      "status": "Further Action Required",
+
+      "issues": [
+        {
+          "consenting_body": null,
+          "issue_type": "word_to_avoid",
+          "name_actions": [
+            {
+              "type": "strike",
+              "word_index": w
+            },
+            {
+              "type": "strike",
+              "word_index": x
+            }
+          ],
+          "descriptive_words": null,
+          "designations": null,
+          "show_examination_button": false,
+          "conflicts": [],
+          "word": [split[w], split[x]],
         }
       ]
     }
@@ -198,14 +335,14 @@ server.get('/api/v1/name-analysis', (req, res) => {
             "email": "email@engineer.ca"
           },
           "issue_type": "consent_required",
-          "word": "Engineering",
-          "word_index": i,
+          "word": ["Engineering"],
           "show_examination_button": false,
           "descriptive_words": null,
           "designations": null,
           "name_actions": [
             {
-              "type": "highlight"
+              "type": "highlight",
+              "word_index": i,
             }
           ]
         }
@@ -220,14 +357,14 @@ server.get('/api/v1/name-analysis', (req, res) => {
         {
           "consenting_body": null,
           "issue_type": "wrong_designation",
-          "word": split[l - 1],
-          "word_index": l - 1,
-          "show_examination_button": false,
+          "word": [split[l - 1]],
+                    "show_examination_button": false,
           "descriptive_words": null,
           "designations": ["Incorporated", "Inc", "Limited", "LTD", "Corporation", "Corp", "Limitee", "Incorporee"],
           "name_actions": [
             {
               "type": "highlight",
+              "word_index": l - 1,
             }
           ]
         }

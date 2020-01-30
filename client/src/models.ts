@@ -52,8 +52,7 @@ export interface NameActionI {
   type: string
   position?: string
   message?: string
-  word?: string
-  word_index?: number
+  word_index: number
 }
 export interface NewRequestNameSearchI {
   name: string

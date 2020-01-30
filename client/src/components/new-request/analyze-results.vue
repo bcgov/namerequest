@@ -14,7 +14,7 @@
       </v-col>
       <v-col cols="12">
         <v-form @submit="handleSubmit">
-          <v-text-field v-model="nameSearch"
+          <v-text-field v-model="name"
                         filled
                         autocomplete="off"
                         v-if="showActualInput || !nameActions || issue.issue_type === 'none'"
@@ -33,16 +33,9 @@
               <v-icon class="name-search-icon" @click="handleSubmit">search</v-icon>
             </template>
             <template v-slot:prepend-inner>
-              <div style="padding-top: 14px" v-if="nameActions">
-               <span v-if="brackets && brackets.position === 'start'"
-                     class="action">[{{ brackets.message }}]</span>
-                <span v-for="(word, n) in indexedName"
-                      :key="n"
-                      :class="n === wordIndex ? nameClasses : '' ">{{ word + (n !== indexedName.length ? ' ' : '') }}
-                </span>
-                <span v-if="brackets && brackets.position === 'end'"
-                      class="action">[{{ brackets.message }}]</span>
-              </div>
+              <template v-for="(word, i) in indexedName">
+                <NameWordRenderer :key="word+i" :word="word" :index="i" :actions="nameActions" />
+              </template>
             </template>
           </v-text-field>
         </v-form>
@@ -59,9 +52,9 @@
 
     <template v-if="issue.issue_type">
       <template v-if="issue.issue_type === 'consent_required'">
-        <v-row no-gutters justify="center">
+        <v-row no-gutters justify="center" v-for="(word, i) in issue.words" :key="i+word+'row'">
           <v-col cols="auto" class="normal-copy pt-2 pb-4 px-0 mx-0">
-            <b>"{{ issue.word }}"</b> requires consent from {{ issue.consenting_body.name }}.
+            <b>"{{ word }}"</b> requires consent from {{ issue.consenting_body.name }}.
             {{ issue.consenting_body.email ?  issue.consenting_body.email : '' }}
           </v-col>
         </v-row>
@@ -347,10 +340,11 @@
 import newReqModule from '@/store/new-request-module'
 import NewRequestNameInput from '@/components/new-request/name-input.vue'
 import { Component, Vue } from 'vue-property-decorator'
-import { IssueI, LocationT, NameActionI } from '@/models'
+import { IssueI } from '@/models'
+import NameWordRenderer from '@/components/new-request/analyzed-name-word-renderer'
 
 @Component({
-  components: { NewRequestNameInput }
+  components: { NewRequestNameInput, NameWordRenderer }
 })
 export default class AnalyzeResults extends Vue {
   issueIndex: number = 0
@@ -427,10 +421,10 @@ export default class AnalyzeResults extends Vue {
     }
     return null
   }
-  get nameSearch () {
+  get name () {
     return newReqModule.name
   }
-  set nameSearch (name: string) {
+  set name (name: string) {
     newReqModule.mutateName(name)
   }
   get requestType () {
@@ -449,6 +443,9 @@ export default class AnalyzeResults extends Vue {
     }
     return null
   }
+  get word () {
+    return ''
+  }
   get wordList () {
     if (this.descriptiveWords && this.openedCategory) {
       let index = this.descriptiveWords.findIndex((word: any) => word.category === this.openedCategory)
@@ -459,8 +456,23 @@ export default class AnalyzeResults extends Vue {
     return null
   }
 
-  focusInput (event: Event) {
+  async focusInput (event: Event) {
     this.showActualInput = true
+    await this.$nextTick()
+    let elem = document.getElementById('analyze-name-text-field')
+    let length = this.name.length
+    if (elem.createTextRange) {
+      let range = elem.createTextRange()
+      range.move('character', length)
+      range.select()
+    } else {
+      if (elem.selectionStart) {
+        elem.focus()
+        elem.setSelectionRange(length, length)
+      } else {
+        elem.focus()
+      }
+    }
   }
   handleSubmit () {}
   startAgain () {
