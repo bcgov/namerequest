@@ -2,7 +2,9 @@ import axios from 'axios'
 
 let baseURL = function () {
   if (process.env.NODE_ENV === 'development') {
-    return process.env.VUE_APP_API_URL_MOCK
+    if (process.env.VUE_APP_MOCK_API === 'yes') {
+      return process.env.VUE_APP_API_URL_MOCK
+    }
   }
   return process.env.VUE_APP_API_URL
 }
