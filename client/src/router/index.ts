@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Landing from '../views/landing.vue'
 
 Vue.use(VueRouter)
 
@@ -8,7 +7,7 @@ const routes = [
   {
     path: '/',
     name: 'Landing',
-    component: Landing
+    component: () => import('@/views/landing.vue')
   },
   {
     path: '*',
@@ -18,7 +17,7 @@ const routes = [
 
 const router = new VueRouter({
   mode: 'history',
-  base: '/namerequest',
+  base: process.env.BASE_URL,
   routes
 })
 
