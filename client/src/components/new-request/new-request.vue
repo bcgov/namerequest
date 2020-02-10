@@ -50,13 +50,13 @@
 </template>
 
 <script lang="ts">
-import HelpMeChoose from '@/components/modals/help-me-choose.vue'
-import Stats from '@/components/new-request/stats.vue'
+import HelpMeChoose from '@/components/modals/help-me-choose'
+import Stats from '@/components/new-request/stats'
 import newReqModule from '../../store/new-request-module'
-import NewRequestNameInput from './name-input.vue'
-import NrNotRequired from '@/components/modals/nr-not-required.vue'
-import PickEntity from '@/components/modals/pick-entity.vue'
-import PickRequestType from '@/components/modals/pick-request-type.vue'
+import NewRequestNameInput from './name-input'
+import NrNotRequired from '@/components/modals/nr-not-required'
+import PickEntity from '@/components/modals/pick-entity'
+import PickRequestType from '@/components/modals/pick-request-type'
 import { Component, Vue } from 'vue-property-decorator'
 import { LocationT } from '@/models'
 
@@ -71,6 +71,7 @@ import { LocationT } from '@/models'
   }
 })
 export default class NewRequest extends Vue {
+  html: string = 'Ooopse <b>dat der</b> lala <u>himn</u> dem'
   get entityType () {
     return newReqModule.entityType
   }

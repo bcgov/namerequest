@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import Header from '@/components/header.vue'
+import Header from '@/components/header'
 
 @Component({
   components: { Header }

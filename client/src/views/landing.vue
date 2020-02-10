@@ -29,12 +29,12 @@
 </template>
 
 <script lang="ts">
-import AnalyzePending from '@/components/new-request/analyze-pending.vue'
-import AnalyzeResults from '@/components/new-request/analyze-results.vue'
-import LowerContainer from '@/components/lower-info-area/lower-container.vue'
-import Stats from '@/components/new-request/stats.vue'
+import AnalyzePending from '@/components/new-request/analyze-pending'
+import AnalyzeResults from '@/components/new-request/analyze-results'
+import LowerContainer from '@/components/lower-info-area/lower-container'
+import Stats from '@/components/new-request/stats'
 import newReqModule from '@/store/new-request-module'
-import Tabs from '@/components/tabs.vue'
+import Tabs from '@/components/tabs'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({

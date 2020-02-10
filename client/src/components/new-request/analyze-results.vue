@@ -33,8 +33,8 @@
               <v-icon class="name-search-icon" @click="handleSubmit">search</v-icon>
             </template>
             <template v-slot:prepend-inner>
-              <template v-for="(word, i) in indexedName">
-                <NameWordRenderer :key="word+i" :word="word" :index="i" :actions="nameActions" />
+              <template v-for="(word, i) in chunkedName">
+                <name-word-renderer :key="word+i" :word="word" :index="i" :actions="nameActions" />
               </template>
             </template>
           </v-text-field>
@@ -43,169 +43,31 @@
     </v-row>
     <v-row no-gutters justify="center" class="mt-n2">
       <v-col cols="auto"
-             v-if="json.status === 'Available'"
-             class="approved h4"><v-icon class="approved">check_circle</v-icon>{{ json.status }}</v-col>
-      <v-col cols="auto"
-             v-else
-             class="action h4"><v-icon class="action">stars</v-icon>{{ json.status }}</v-col>
+             :class="json.status === 'ap' ? 'approved' : 'action'"
+             class="h4">
+        <v-icon :class="json.status === 'ap' ? 'approved' : 'action'">
+          {{ json.status === 'ap' ? 'check_circle' : 'stars' }}
+        </v-icon>
+        {{ json.header }}
+      </v-col>
     </v-row>
 
     <template v-if="issue.issue_type">
-      <template v-if="issue.issue_type === 'consent_required'">
-        <v-row no-gutters justify="center" v-for="(word, i) in issue.words" :key="i+word+'row'">
-          <v-col cols="auto" class="normal-copy pt-2 pb-4 px-0 mx-0">
-            <b>"{{ word }}"</b> requires consent from {{ issue.consenting_body.name }}.
-            {{ issue.consenting_body.email ?  issue.consenting_body.email : '' }}
-          </v-col>
-        </v-row>
-        <v-row no-gutters justify="center" class="pale-blue-text">
-          <v-col cols="auto">
-            <v-container class="square-card">
-              <v-row>
-                <v-col class="bold-text" cols="12"><v-icon class="pr-2 pale-blue-text">info</v-icon>Option 1</v-col>
-                <v-col cols="12" class="small-copy pale-blue-text pt-0">
-                  You can remove or replace the word <b>"{{ issue.word }}"</b> and try your search again.
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-col>
-          <v-col cols="auto" class="mx-3">
-            <v-container class="square-card">
-              <v-row align-items="end" align-content="space-between" align="end">
-                <v-col class="bold-text" cols="12"><v-icon class="pr-2 pale-blue-text">info</v-icon>Option 2</v-col>
-                <v-col cols="12" class="py-0 small-copy pale-blue-text">
-                  You can choose to submit this name for examination. Examination wait times are listed above.
-                </v-col>
-                <v-col cols="auto" class="pt-4" align-self="end">
-                  <v-btn>Submit for Examination</v-btn>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-col>
-          <v-col cols="auto">
-            <v-container class="square-card">
-              <v-row>
-                <v-col class="bold-text" cols="12"><v-icon class="pr-2 pale-blue-text">info</v-icon>Option 3</v-col>
-                <v-col cols="12" class="py-0 small-copy pale-blue-text">
-                  This name can be auto-approved but you will be required to send confirmation of consent to the BC
-                  Business Registry.
-                </v-col>
-                <v-col cols="12" class="pt-4" align-self="end">
-                  <v-btn>Reserve Name and Continue</v-btn>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-col>
-        </v-row>
-      </template>
-
-      <template v-if="issue.issue_type === 'add_distinctive'">
-        <v-row no-gutters justify="center">
-          <v-col cols="auto" class="normal-copy pt-2 pb-4">
-            Requires a word at the beginning of your name that sets it apart.
-          </v-col>
-        </v-row>
-        <v-row no-gutters justify="center" class="pale-blue-text">
-          <v-col cols="auto">
-            <v-container class="helpful-hint">
-              <v-row>
-                <v-col class="bold-text" cols="12"><v-icon class="pr-2 pale-blue-text">info</v-icon>Helpful Hint</v-col>
-                <v-col cols="12" class="small-copy pale-blue-text pt-0">
-                  Some words that can set your name apart include an individual's name or initials; a geographic
-                  location;  a colour; a coined, made-up word; or an acronym.
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-col>
-        </v-row>
-      </template>
-
-      <template v-if="issue.issue_type === 'add_descriptive'">
-        <v-row no-gutters justify="center">
-          <v-col cols="auto" class="normal-copy pt-2 pb-4">
-            <b>Requires a business category word</b>
-          </v-col>
-        </v-row>
-        <v-row no-gutters justify="center" class="pale-blue-text">
-          <v-col cols="auto">
-            <v-container class="helpful-hint">
-              <v-row>
-                <v-col class="bold-text" cols="12"><v-icon class="pr-2 pale-blue-text">info</v-icon>Helpful Hint</v-col>
-                <v-col cols="12" class="small-copy pale-blue-text pt-0">
-                  Add a word to the end of your name that describes the business category. Use your own word or click on
-                  one of the categories below to see word suggestions:
-                </v-col>
-              </v-row>
-              <v-row justify="center" v-if="!openedCategory">
-                <v-col v-for="(cat, w) in descriptiveWords"
-                       :key="w+'cat'"
-                       style="cursor: pointer"
-                       @click="openedCategory = cat.category"
-                       cols="auto">{{ cat.category }}</v-col>
-              </v-row>
-              <v-row justify="center" v-else>
-                <v-col v-for="word in wordList"
-                       :key="word"
-                       cols="auto">{{ word }}</v-col>
-              </v-row>
-            </v-container>
-          </v-col>
-        </v-row>
-      </template>
-
-      <template v-if="issue.issue_type === 'unclassified_word'">
-        <v-row no-gutters justify="center">
-          <v-col cols="auto" class="normal-copy pt-2 pb-4">
-            <b>Contains Unclassified Word</b>
-          </v-col>
-        </v-row>
-        <v-row no-gutters justify="center" class="pale-blue-text">
-          <v-col cols="auto">
-            <v-container class="helpful-hint">
-              <v-row>
-                <v-col class="bold-text" cols="12"><v-icon class="pr-2 pale-blue-text">info</v-icon>Helpful Hint</v-col>
-                <v-col cols="12" class="small-copy pale-blue-text pt-0">
-                  You can remove or replace any unknown words and try your search again, or you can choose to submit the
-                  name above for examination.
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-col>
-        </v-row>
-      </template>
-
-      <template v-if="issue.issue_type === 'word_to_avoid'">
-        <v-row no-gutters justify="center">
-          <v-col cols="auto" class="normal-copy pt-2">
-            <b>Contains Words To Avoid:</b>
-          </v-col>
-        </v-row>
-        <v-row no-gutters justify="center">
-          <v-col cols="auto" class="normal-copy pt-2 pb-4">
-            {{ issue.word }}
-          </v-col>
-        </v-row>
-        <v-row no-gutters justify="center" class="pale-blue-text">
-          <v-col cols="auto">
-            <v-container class="helpful-hint">
-              <v-row>
-                <v-col class="bold-text" cols="12"><v-icon class="pr-2 pale-blue-text">info</v-icon>Helpful Hint</v-col>
-                <v-col cols="12" class="small-copy pale-blue-text pt-0">
-                  Replace or remove the word <b>“{{ issue.word }}”</b> from your name and search again.
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-col>
-        </v-row>
-      </template>
-
-      <template v-if="issue.issue_type === 'corp_conflict'">
-        <v-row no-gutters justify="center">
-          <v-col cols="auto" class="normal-copy pt-2">
-            <b>Too Similar to an Existing Name:</b>
-          </v-col>
-        </v-row>
-        <v-row no-gutters justify="center">
+      <v-row no-gutters justify="center">
+          <v-col cols="12"
+                 v-if="issue.line1"
+                 v-html="issue.line1"
+                 class="normal-copy pt-2 pb-4 text-center" />
+        <v-col cols="12"
+               v-if="issue.line2"
+               v-html="issue.line2"
+               class="normal-copy pt-2 pb-4 text-center" />
+      </v-row>
+      <v-row no-gutters justify="center" v-if="issue.consenting_body.name">
+        <v-col class="text-center mb-3">The word {{ word }} requires consent from {{ issue.consenting_body.name
+                                       }}</v-col>
+      </v-row>
+      <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n5">
           <v-col cols="auto" class="py-4">
             <div style="width: 600px;" v-for="(corp, n) in conflicts" :key="n">
               <div style="display: inline-block; border-bottom: 1px dashed grey; width: 80%">{{ corp.name }}</div>
@@ -216,105 +78,42 @@
           </v-col>
         </v-row>
         <v-row no-gutters justify="center" class="pale-blue-text">
-          <v-col cols="auto">
-            <v-container class="square-card">
+          <v-col cols="auto" v-for="(option, i) in issue.setup" :key="'option '+i">
+            <v-container :class="optionClasses(i)">
               <v-row>
-                <v-col class="bold-text" cols="12"><v-icon class="pr-2 pale-blue-text">info</v-icon>Option 1</v-col>
-                <v-col cols="12" class="small-copy pale-blue-text pt-0">
-                  Add a word to the beginning of your name that sets it apart such as a person’s name or initials;
-                  geographic location; colour; a made up word; or an acronym.
-                  <br>
-                  Or remove <b>"{{ issue.word }}"</b> and replace it with a different word
+                <v-col class="bold-text" cols="12"><v-icon class="pr-2 pale-blue-text">info</v-icon>
+                  {{ option.header }}
                 </v-col>
-              </v-row>
-            </v-container>
-          </v-col>
-          <v-col cols="auto" class="mx-3">
-            <v-container class="square-card">
-              <v-row align-items="end" align-content="space-between" align="end">
-                <v-col class="bold-text" cols="12"><v-icon class="pr-2 pale-blue-text">info</v-icon>Option 2</v-col>
-                <v-col cols="12" class="py-0 small-copy pale-blue-text">
-                  You can choose to submit this name for examination. Examination wait times are listed above.
-                </v-col>
-                <v-col cols="auto" class="pt-4" align-self="end">
-                  <v-btn>Submit for Examination</v-btn>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-col>
-          <v-col cols="auto">
-            <v-container class="square-card">
-              <v-row>
-                <v-col class="bold-text" cols="12"><v-icon class="pr-2 pale-blue-text">info</v-icon>Option 3</v-col>
-                <v-col cols="12" class="py-0 small-copy pale-blue-text">
-                  If you are the registered owner of the existing name, it can be auto-approved but you are required to
-                  send confirmation of consent to the BC Business Registry.
-                </v-col>
-                <v-col cols="12" class="pt-3" align-self="end">
-                  <v-btn>Reserve Name and Continue</v-btn>
+                <v-col cols="12" class="small-copy pale-blue-text pt-0" v-html="option.line1" />
+                <v-col cols="12"
+                       class="small-copy pale-blue-text pt-0"
+                       v-if="option.line2 && i === 0"
+                       v-html="option.line2" />
+                <template v-if="issue.issue_type === 'wrong_designation' && i === 0">
+                  <transition name="fade" mode="out-in">
+                    <v-col cols="12"
+                          key="list-col"
+                          class="small-copy pale-blue-text pt-0"
+                          v-if="!showDesignationReserveBtn">
+                      <p>Please choose one of the following:</p>
+                      <span v-for="(des, d) in issue.designations" :key="'des '+d"
+                            @click="changeDesignation(des)"
+                            class="small-link mr-2">{{ des }}</span>
+                    </v-col>
+                    <v-col cols="12"
+                           key="button-col"
+                           v-if="showDesignationReserveBtn">
+                      <ReserveSubmit />
+                    </v-col>
+                  </transition>
+                </template>
+                <v-col cols="12" v-if="issue.issue_type === 'wrong_designation' && i === 1">
+                  <v-btn @click="restartNewType()">Change Type and Restart</v-btn>
                 </v-col>
               </v-row>
             </v-container>
           </v-col>
         </v-row>
-      </template>
-
-      <template v-if="issue.issue_type === 'wrong_designation'">
-        <v-row no-gutters justify="center">
-          <v-col cols="auto" class="normal-copy pt-2 pb-4">
-            <b>{{ issue.word }}</b> designation cannot be used with the selected business type <b>Corporation</b>
-          </v-col>
-        </v-row>
-        <v-row no-gutters justify="center" class="pale-blue-text">
-          <v-col cols="auto">
-            <v-container class="lg-square-card">
-              <v-row>
-                <v-col class="bold-text" cols="12"><v-icon class="pr-2 pale-blue-text">info</v-icon>Option 1</v-col>
-                <v-col cols="12" class="small-copy pale-blue-text pt-0">
-                  Change the designation from <b>“Cooperative”</b> to one of the following:
-                </v-col>
-                <v-col>{{ designations }}</v-col>
-              </v-row>
-            </v-container>
-          </v-col>
-          <v-col cols="auto" class="mx-3">
-            <v-container class="lg-square-card">
-              <v-row align-items="end" align-content="space-between" align="end">
-                <v-col class="bold-text" cols="12"><v-icon class="pr-2 pale-blue-text">info</v-icon>Option 2</v-col>
-                <v-col cols="12" class="py-0 small-copy pale-blue-text">
-                  If you would like to start a Cooperative business instead of a Corporation, start your search over and
-                  change your business type to “Cooperative”.
-                </v-col>
-                <v-col cols="auto" class="pt-4" align-self="end">
-                  <v-btn>Change Business Type to Cooperative</v-btn>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-col>
-        </v-row>
-      </template>
-
-      <template v-if="issue.issue_type === 'excess_words'">
-        <v-row no-gutters justify="center">
-          <v-col cols="auto" class="normal-copy pt-2 pb-4">
-            Names with <b>more than 4 words</b> cannot be auto-approved
-          </v-col>
-        </v-row>
-        <v-row no-gutters justify="center" class="pale-blue-text">
-          <v-col cols="auto">
-            <v-container class="helpful-hint">
-              <v-row>
-                <v-col class="bold-text" cols="12"><v-icon class="pr-2 pale-blue-text">info</v-icon>Helpful Hint</v-col>
-                <v-col cols="12" class="small-copy pale-blue-text pt-0">
-                  You can remove one or more words and try your search again, or you can choose to submit the name above
-                  for examination.
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-col>
-        </v-row>
-      </template>
-
       <v-row v-if="issue.show_examination_button" justify="center" class="mt-3">
         <v-col cols="auto"><v-btn id="send-to-examination-btn" large>Send to Examination</v-btn></v-col>
       </v-row>
@@ -329,7 +128,7 @@
       </v-row>
       <v-row justify="center">
         <v-col cols="auto">
-          <v-btn large>Reserve Name and Continue</v-btn>
+          <ReserveSubmit />
         </v-col>
       </v-row>
     </template>
@@ -337,50 +136,27 @@
 </template>
 
 <script lang="ts">
+import ReserveSubmit from '@/components/new-request/buttons/reserve-submit'
 import newReqModule from '@/store/new-request-module'
-import NewRequestNameInput from '@/components/new-request/name-input.vue'
+import NewRequestNameInput from '@/components/new-request/name-input'
 import { Component, Vue } from 'vue-property-decorator'
 import { IssueI } from '@/models'
+import { normalizeWordCase } from '@/plugins/utilities'
 import NameWordRenderer from '@/components/new-request/analyzed-name-word-renderer'
 
 @Component({
-  components: { NewRequestNameInput, NameWordRenderer }
+  components: { ReserveSubmit, NewRequestNameInput, NameWordRenderer }
 })
 export default class AnalyzeResults extends Vue {
   issueIndex: number = 0
   openedCategory: string = ''
   showActualInput: boolean = false
 
-  get brackets () {
-    let index: number = (this.nameActions as any).findIndex((action: any) => action.type === 'add_word_brackets')
-    if (index !== null && this.nameActions[index] !== null && index >= 0) {
-      let position: string | undefined = (this.nameActions[index] as any).position
-      let message: string | undefined = (this.nameActions[index] as any).message
-      return {
-        index,
-        position,
-        message
-      }
-    }
-    return null
-  }
   get conflicts () {
-    if ((this.issue as IssueI) && (this.issue as IssueI).conflicts) {
+    if (Array.isArray((this.issue as IssueI).conflicts)) {
       return (this.issue as IssueI).conflicts
     }
-    return null
-  }
-  get descriptiveWords () {
-    if ((this.issue as IssueI) && (this.issue as IssueI).descriptive_words) {
-      return (this.issue as IssueI).descriptive_words
-    }
-    return null
-  }
-  get designations () {
-    if ((this.issue as IssueI) && (this.issue as IssueI).designations) {
-      return (this.issue as IssueI).designations.join(', ')
-    }
-    return null
+    return []
   }
   get entityText () {
     return newReqModule.entityTextFromValue
@@ -388,8 +164,8 @@ export default class AnalyzeResults extends Vue {
   get entityType () {
     return newReqModule.entityType
   }
-  get indexedName () {
-    return newReqModule.name.split(' ')
+  get chunkedName () {
+    return this.name.split(' ')
   }
   get issue () {
     if (this.json.issues) {
@@ -407,8 +183,7 @@ export default class AnalyzeResults extends Vue {
   }
   get nameActions () {
     if ((this.issue as IssueI) && (this.issue as IssueI).name_actions) {
-      let actions = (this.issue as IssueI).name_actions
-      return actions
+      return (this.issue as IssueI).name_actions
     }
     return null
   }
@@ -427,6 +202,17 @@ export default class AnalyzeResults extends Vue {
   set name (name: string) {
     newReqModule.mutateName(name)
   }
+  get showDesignationReserveBtn () {
+    if (this.issue.issue_type === 'wrong_designation') {
+      let { designations } = this.issue
+      for (let des of designations) {
+        if (this.name.includes(des)) {
+          return true
+        }
+      }
+    }
+    return false
+  }
   get requestType () {
     switch (newReqModule.requestType) {
       case 'new':
@@ -444,6 +230,9 @@ export default class AnalyzeResults extends Vue {
     return null
   }
   get word () {
+    if (Array.isArray(this.issue.name_actions) && this.issue.name_actions[0]) {
+      return this.issue.name_actions[0].word
+    }
     return ''
   }
   get wordList () {
@@ -455,7 +244,14 @@ export default class AnalyzeResults extends Vue {
     }
     return null
   }
-
+  changeDesignation (des) {
+    if (Array.isArray(this.issue.name_actions)) {
+      let prevDesignation = this.issue.name_actions[0].word
+      this.name = this.name.replace(prevDesignation, des)
+      return
+    }
+    this.name = this.name + ' ' + des
+  }
   async focusInput (event: Event) {
     this.showActualInput = true
     await this.$nextTick()
@@ -474,7 +270,31 @@ export default class AnalyzeResults extends Vue {
       }
     }
   }
-  handleSubmit () {}
+  handleSubmit (event: Event) {
+    event.preventDefault()
+    newReqModule.startAnalyzeName()
+  }
+  optionClasses (i) {
+    if (this.issue && Array.isArray(this.issue.setup)) {
+      switch (this.issue.setup.length) {
+        case 1:
+          return 'helpful-hint'
+        case 2:
+          if (i === 1) {
+            return 'square-card-x2 ml-3'
+          }
+          return 'square-card-x2'
+        case 3:
+          if (i === 1) {
+            return 'square-card-x3 mx-3'
+          }
+          return 'square-card-x3'
+        default:
+          return ''
+      }
+    }
+    return ''
+  }
   startAgain () {
     newReqModule.startAgain()
   }
@@ -485,10 +305,12 @@ export default class AnalyzeResults extends Vue {
 <style scoped lang="sass">
 .action
   color: $error
-
 .approved
   color: $approved
-
+.fade-enter-active, .fade-leave-active
+  transition: opacity .2s
+.fade-enter, .fade-leave-to
+  opacity: 0
 .helpful-hint
   padding: 15px 25px 15px 25px
   border-radius: 4px
@@ -496,15 +318,13 @@ export default class AnalyzeResults extends Vue {
   background-color: $grey-1
   min-width: 80%
   max-width: 80%
-
-.lg-square-card
+.square-card-x2
   height: 215px
   width: 420px
   padding: 15px 25px 15px 25px
   border-radius: 4px
   border: 1px dashed $pale-blue
   background-color: $grey-1
-
 .modal-activator
   color: $link !important
   letter-spacing: unset !important
@@ -512,19 +332,15 @@ export default class AnalyzeResults extends Vue {
   cursor: pointer !important
   background-color: unset !important
   text-transform: none !important
-
 .pale-blue-text
   color: $p-blue-text !important
-
-.square-card
+.square-card-x3
   height: 215px
   width: 280px
   padding: 15px 25px 15px 25px
   border-radius: 4px
   border: 1px dashed $pale-blue
   background-color: $grey-1
-
 .strike
   text-decoration-line: line-through
-
 </style>

@@ -3,6 +3,8 @@ export type LocationT = 'BC' | 'CA' | 'IN'
 export type NrDataResponseT = RequestDataI | null
 export type NrDataT = string | null
 export type SearchComponentT = 'search' | 'analyzing' | 'results'
+export type KeyOf = keyof naneAnalysisI
+
 
 export interface AnalysisJSONI {
   issues: Array<IssueI>
@@ -27,32 +29,43 @@ export interface StatsI {
     unit: string
   }
 }
-export interface IssueI {
-  consenting_body: Object
-  issue_type: string
-  name_actions: NameActionI[]
-  designations: string[]
-  descriptive_words?: [
+export interface naneAnalysisI {
+  header: string
+  issues: [
     {
-      category: string
-      word_list: string[]
+      consenting_body ?: {
+        name: string
+        contact: string
+      }
+      conflicts ?: {
+        name: string
+        date: string
+      }
+      designations ?: string[]
+      issue_type:  string
+      line1 ?: string
+      line2 ?: string
+      name_actions ?: [
+        {
+          type: 'brackets' | 'highlight' | 'spelling' | 'strike'
+          index: number
+          word: string
+          position ?: 'start' | 'end'
+          message ?: string
+        }
+      ]
+      setup: {
+        button ?: 'examine' | 'reserve' | 'consent' | 'restart' | 'next'
+        checkbox ?: 'examine' | 'consent'
+        header: string
+        text1: string
+        text2 ?: string
+      }
+      show_examination_button: boolean
+      show_resere_button: boolean
     }
   ]
-  show_examination_button: boolean
-  conflicts?: [
-    {
-      name: string
-      date: string
-    }
-  ]
-  word: string,
-  word_index: number
-}
-export interface NameActionI {
-  type: string
-  position?: string
-  message?: string
-  word_index: number
+  status: 'fa' | 'rc' | 'ar'
 }
 export interface NewRequestNameSearchI {
   name: string

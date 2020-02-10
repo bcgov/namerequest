@@ -46,7 +46,7 @@
 
 <script lang="ts">
 import newReqModule from '@/store/new-request-module'
-import NewRequestNameInput from '@/components/new-request/name-input.vue'
+import NewRequestNameInput from '@/components/new-request/name-input'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({

@@ -4,6 +4,7 @@ const middleware = jsonServer.defaults()
 
 server.use(middleware)
 
+//mock end point for wait-time stats
 server.get('/api/v1/stats', (req, res) => {
   let o = Math.random()
   let p = o.toString()
@@ -23,191 +24,147 @@ server.get('/api/v1/stats', (req, res) => {
 })
 
 server.get('/api/v1/name-analysis', (req, res) => {
-  let query = req.query
+  let { query } = req
   let split = query.name.split(' ')
   let l = split.length
   let resp
 
-  if (query.name === 'Demo Name Actions Renderer') {
-    resp = {
-      "status": "Further Action Required",
-      "issues": [
-        {
-          "consenting_body": null,
-          "issue_type": "add_distinctive",
-          "name_actions": [
-            {
-              "type": "add_word_brackets",
-              "position": "start",
-              "message": "1-start",
-              "word_index": 0
-            },
-            {
-              "type": "add_word_brackets",
-              "position": "end",
-              "message": "1-end",
-              "word_index": 0
-            },
-            {
-              "type": "add_word_brackets",
-              "position": "start",
-              "message": "3-start",
-              "word_index": 2
-            },
-            {
-              "type": "add_word_brackets",
-              "position": "end",
-              "message": "3-end",
-              "word_index": 2
-            },
-            {
-              "type": "add_word_brackets",
-              "position": "end",
-              "message": "End",
-              "word_index": 3
-            },
-            {
-              "type": "spelling",
-              "word_index": 1
-            },
-            {
-              "type": "strike",
-              "word_index": 2
-            },
-            {
-              "type": "highlight",
-              "word_index": 3
-            }
-          ],
-          "designations": null,
-          "descriptive_words": null,
-          "show_examination_button": false,
-          "conflicts": null,
-          "word": null,
-        }
-      ]
-    }
-  }
-
-  //Requires Distinctive word
-  if (split.includes('Distributors')) {
-    resp = {
-      "status": "Further Action Required",
-      "issues": [
-        {
-          "consenting_body": null,
-          "issue_type": "add_distinctive",
-          "name_actions": [
-            {
-              "type": "add_word_brackets",
-              "position": "start",
-              "message": "Add a Word Here",
-              "word_index": 1
-            },
-            {
-              "type": "add_word_brackets",
-              "position": "end",
-              "message": "Blah blah",
-              "word_index": 0
-            },
-            {
-              "type": "spelling",
-              "word_index": 1
-            }
-          ],
-          "designations": null,
-          "descriptive_words": null,
-          "show_examination_button": false,
-          "conflicts": null,
-          "word": null,
-        }
-      ]
-    }
-  }
-  //Requires a descriptive word
+  //add_descriptive
   if (split.includes('Smart')) {
+    let index = split.indexOf('Smart')
     resp = {
-      "status": "Further Action Required",
+      "header": "Further Action Required",
       "issues": [
         {
+          "conflicts": null,
           "consenting_body": null,
+          "designations": null,
           "issue_type": "add_descriptive",
+          "line1": "Requires a Business Category Word",
+          "line2": "",
           "name_actions": [
             {
-              "type": "add_word_brackets",
+              "index": l - 1,
+              "message": "Add a Descriptive Word Here",
               "position": "end",
-              "message": "Add a Business Category Word Here",
-              "word_index": split.length - 1
+              "type": "brackets",
+              "word": "Smart"
             }
           ],
-          "designations": null,
-          "descriptive_words": [
+          "setup": [
             {
-              "category": "Construction",
-              "word_list":
-                ["Building", "Contracting", "Exteriors", "Development", "Projects", "Project Management", "Renovations"]
-            },
-            { "category": "Landscaping", "word_list": ["Clearing", "Horticulture", "Gardeninbg", "Tree Care"] },
-            { "category": "Construction", "word_list": ["Renovations", "Projects", "Contractors", "Development"] },
-            { "category": "Pet Supplies", "word_list": ["Example1", "Example2"] },
-            { "category": "Geothermal", "word_list": ["Example1", "Example2"] },
-            { "category": "Space", "word_list": ["Example1", "Example2"] },
-            { "category": "Engineering", "word_list": ["Example1", "Example2"] },
-            { "category": "Consulting", "word_list": ["Example1", "Example2"] },
-            { "category": "Demolition", "word_list": ["Example1", "Example2"] }
+              "button": "",
+              "checkbox": "",
+              "header": "Helpful Hint",
+              "line1": "Add a word to the end of your name that describes the business category.",
+              "line2": "",
+            }
           ],
           "show_examination_button": false,
-          "conflicts": null,
-          "word": null,
+          "show_reserve_button": false
         }
-      ]
+      ],
+      "status": "fa"
     }
   }
-  //Contains an Unclassified Word
-  if (split.includes('Flerkin')) {
-    let index = split.indexOf('Flerkin')
-    let w = split.indexOf('Flerkin')
+  //add_distinctive
+  if (split.includes('Distributors')) {
+    let index = split.indexOf('Distributors')
     resp = {
-      "status": "Further Action Required",
+      "header": "Further Action Required",
       "issues": [
         {
+          "conflicts": null,
           "consenting_body": null,
-          "issue_type": "unclassified_word",
+          "designations": null,
+          "issue_type": "add_distinctive",
+          "line1": "Requires a word at the beggining of your name that sets it apart.",
+          "line2": "",
           "name_actions": [
             {
-              "type": "highlight",
-              "word_index": index
-            },
-            {
-              "type": "strike",
-              "word_index": index
+              "index": 0,
+              "message": "Add a Word Here",
+              "position": "start",
+              "type": "brackets",
+              "word": split[0]
             }
           ],
-          "descriptive_words": null,
-          "designations": null,
-          "show_examination_button": true,
-          "conflicts": null,
+          "setup": [
+            {
+              "button": "",
+              "checkbox": "",
+              "header": "Helpful Hint",
+              "line1": "Some words that can set your name apart include an individual's name or intials; a" +
+                " geographic location; a colour; a coined, made-up word; or an acronym.",
+              "line2": "",
+            }
+          ],
+          "show_examination_button": false,
+          "show_reserve_button": false
         }
-      ]
+      ],
+      "status": "fa"
     }
   }
-  //Approved name for BC Corporation
-  if (split[0] === 'Available') {
+  //consent_required
+  if (split.includes('Engineering')) {
+    let index = split.indexOf('Engineering')
     resp = {
-      "status": "Available",
-      "issues": null
+      "header": "May be Approved With Consent",
+      "issues": [
+        {
+          "conflicts": null,
+          "consenting_body": {
+            "name": "Association of Professional Engineers of BC",
+            "email": "email@engineer.ca"
+          },
+          "designations": null,
+          "issue_type": "consent_required",
+          "line1": "",
+          "line2": "",
+          "name_actions": [
+            {
+              "index": index,
+              "type": "highlight",
+              "word": "Engineering"
+            }
+          ],
+          "setup": [
+            {
+              "button": "",
+              "checkbox": "",
+              "header": "Option 1",
+              "line1": "You can remove or replace the word “Engineering” and try your search again.",
+              "line2": ""
+            },
+            {
+              "button": "examine",
+              "checkbox": "",
+              "header": "Option 2",
+              "line1": "You can choose to submit this name for examination. Examination wait times are listed above.",
+              "line2": ""
+            },
+            {
+              "button": "consent",
+              "checkbox": "",
+              "header": "Option 3",
+              "line1": "This name can be auto-approved but you will be required to send confirmation of consent to the BC Business Registry.",
+              "line2": ""
+            }
+          ],
+          "show_examination_button": false,
+          "show_reserve_button": false
+        }
+      ],
+      "status": "rc"
     }
   }
- //Name has a Corporate Conflict
+  //corp_conflict
   if (split[0] === 'Conflict') {
     resp = {
-      "status": "Further Action Required",
+      "header": "Further Action Required",
       "issues": [
         {
-          "consenting_body": null,
-          "issue_type": "corp_conflict",
-          "word": [split[1]],
-          "show_examination_button": false,
           "conflicts": [
             {
               "name": `${split[1]} Enterprises Ltd`,
@@ -218,178 +175,294 @@ server.get('/api/v1/name-analysis', (req, res) => {
               "date": "2/14/2004"
             }
           ],
-          "descriptive_words": null,
-          "designations": ['inc', 'incorporated'],
-          "name_actions": [
-            {
-              "type": "strike",
-              "word_index": 0
-            },
-            {
-              "type": "strike",
-              "word_index": 1
-            },
-            {
-              "type": "spelling",
-              "word_index": 0
-            },
-            {
-              "type": "spelling",
-              "word_index": 1
-            },
-            {
-              "type": "highlight",
-              "word_index": 2
-            },
-            {
-              "type": "add_word_brackets",
-              "position": "start",
-              "message": "Add a Word Here",
-              "word_index": 0
-            },
-            {
-              "type": "add_word_brackets",
-              "position": "end",
-              "message": "Add a Word Here",
-              "word_index": 0
-            },
-            {
-              "type": "add_word_brackets",
-              "position": "start",
-              "message": "Add a Word Here",
-              "word_index": 1
-            },
-            {
-              "type": "add_word_brackets",
-              "position": "end",
-              "message": "Add a Word Here",
-              "word_index": 1
-            }
-          ]
-        }
-      ]
-    }
-  }
-  //Name has a word to avoid
-  if (split.includes('Walmart')) {
-    let w = split.indexOf('Walmart')
-    resp = {
-      "status": "Further Action Required",
-      "issues": [
-        {
           "consenting_body": null,
-          "issue_type": "word_to_avoid",
+          "designations": null,
+          "issue_type": "corp_conflict",
+          "line1": "Too similar to an existing name.",
+          "line2": "",
           "name_actions": [
             {
+              "index": 0,
+              "message": "Add a Word Here",
+              "position": "start",
+              "type": "brackets",
+              "word": split[0]
+            },
+            {
+              "index": 1,
               "type": "strike",
-              "word_index": w
+              "word": split[1]
             }
           ],
-          "descriptive_words": null,
-          "designations": null,
-          "show_examination_button": false,
-          "conflicts": [],
-          "word": [split[w]],
-        }
-      ]
-    }
-  }
-  if (split.includes('Walmart') && split.includes('7-11')) {
-    let w = split.indexOf('Walmart')
-    let x = split.indexOf('7-11')
-    resp = {
-      "status": "Further Action Required",
-
-      "issues": [
-        {
-          "consenting_body": null,
-          "issue_type": "word_to_avoid",
-          "name_actions": [
+          "setup": [
             {
-              "type": "strike",
-              "word_index": w
+              "button": "",
+              "checkbox": "",
+              "header": "Option 1",
+              "line1": "Add a word to the beginning of the name that sets it apart like a person’s name or initials.",
+              "line2": `Or remove ${split[1]} and replace it with a different word`
             },
             {
-              "type": "strike",
-              "word_index": x
+              "button": "examine",
+              "checkbox": "",
+              "header": "Option 2",
+              "line1": "You can choose to submit this name for examination. Examination wait times are listed above.",
+              "line2": ""
+            },
+            {
+              "button": "consent",
+              "checkbox": "",
+              "header": "Option 3",
+              "line1": "If you are the registered owner of the existing name, it can be auto-approved but you are" +
+                " required to send confirmation of consent to the BC Business Registry.",
+              "line2": ""
             }
           ],
-          "descriptive_words": null,
-          "designations": null,
           "show_examination_button": false,
-          "conflicts": [],
-          "word": [split[w], split[x]],
+          "show_reserve_button": false
         }
-      ]
+      ],
+      "status": "fa"
     }
   }
-  //Name requires consent
-  if (split.includes('Engineering')) {
-    let i = split.indexOf('Engineering')
-    resp = {
-      "status": "May be Approved With Consent",
-      "issues": [
-        {
-          "consenting_body": {
-            "name": "Association of Professional Engineers of BC",
-            "email": "email@engineer.ca"
-          },
-          "issue_type": "consent_required",
-          "word": ["Engineering"],
-          "show_examination_button": false,
-          "descriptive_words": null,
-          "designations": null,
-          "name_actions": [
-            {
-              "type": "highlight",
-              "word_index": i,
-            }
-          ]
-        }
-      ]
-    }
-  }
-  //Designation Mismatch
-  if (split[l - 1] === 'Cooperative') {
-    resp = {
-      "status": "Further Action Required",
-      "issues": [
-        {
-          "consenting_body": null,
-          "issue_type": "wrong_designation",
-          "word": [split[l - 1]],
-                    "show_examination_button": false,
-          "descriptive_words": null,
-          "designations": ["Incorporated", "Inc", "Limited", "LTD", "Corporation", "Corp", "Limitee", "Incorporee"],
-          "name_actions": [
-            {
-              "type": "highlight",
-              "word_index": l - 1,
-            }
-          ]
-        }
-      ]
-    }
-  }
-  //Too many words
+  //excess_words
   if (split.length > 4) {
     resp = {
-      "status": "Further Action Required",
+      "header": "Further Action Required",
       "issues": [
         {
-          "consenting_body": null,
-          "issue_type": "excess_words",
-          "name_actions": null,
-          "descriptive_words": null,
-          "designations": null,
-          "show_examination_button": true,
           "conflicts": null,
-          "word": null,
-          "word_index": null
+          "consenting_body": null,
+          "designations": null,
+          "issue_type": "excess_words",
+          "line1": "This name is too long to be auto-approved.",
+          "line2": "",
+          "name_actions": null,
+          "setup": [
+            {
+              "button": "",
+              "checkbox": "",
+              "header": "Helpful Hint",
+              "line1": "You can remove one or more words and try your search again, or you can choose to submit the name above for examination.",
+              "line2": ""
+            }
+          ],
+          "show_examination_button": true,
+          "show_reserve_button": false
         }
-      ]
+      ],
+      "status": "fa"
     }
   }
+  //unclassified_word
+  if (split.includes('Flerkin')) {
+    let index = split.indexOf('Flerkin')
+    resp = {
+      "header": "Further Action Required",
+      "issues": [
+        {
+          "conflicts": null,
+          "consenting_body": null,
+          "designations": null,
+          "issue_type": "unclassified_word",
+          "line1": "<b>Flerkin</b> is an unknown word.  The system cannot auto-approve a name with unknown words.",
+          "line2": "It might still be approvable by manual examination.",
+          "name_actions": [
+            {
+              "index": index,
+              "type": "highlight",
+              "word": "flerkin",
+            }
+          ],
+          "setup": [
+            {
+              "button": "",
+              "checkbox": "",
+              "header": "Helpful Hint",
+              "line1": "You can remove or replace the word <b>Flerkin</b> and try your search again.  Alternately, you can submit your name for examination-wait times are quoted above.",
+              "line2": ""
+            }
+          ],
+          "show_examination_button": true,
+          "show_reserve_button": false
+        }
+      ],
+      "status": "fa"
+    }
+  }
+  //word_to_avoid
+  if (split.includes('Walmart')) {
+    let index = split.indexOf('Walmart')
+    resp = {
+      "header": "Further Action Required",
+      "issues": [
+        {
+          "conflicts": null,
+          "consenting_body": null,
+          "designations": null,
+          "issue_type": "word_to_avoid",
+          "line1": "Your name contains words that cannot be approved:",
+          "line2": "Walmart",
+          "name_actions": [
+            {
+              "type": "strike",
+              "word": "Walmart",
+              "index": index
+            }
+          ],
+          "setup": [
+            {
+              "button": "",
+              "checkbox": "",
+              "header": "Helpful Hint",
+              "line1": "Remove the word <b>Walmart</b> from your search and try again.",
+              "line2": ""
+            }
+          ],
+          "show_examination_button": false,
+          "show_reserve_button": false
+        }
+      ],
+      "status": "fa"
+    }
+  }
+  //wrong_designation
+  if (split[l - 1] === 'Cooperative') {
+    resp = {
+      "header": "Further Action Required",
+      "issues": [
+        {
+          "conflicts": null,
+          "consenting_body": null,
+          "designations": [
+            "Inc",
+            "Incorporated",
+            "Incorpore",
+            "Limite",
+            "Limited",
+            "Ltd",
+          ],
+          "issue_type": "wrong_designation",
+          "line1": "Designation <b>Cooperative</b> cannot be used with selected business type of <b>Corporation</b>",
+          "line2": "",
+          "name_actions": [
+            {
+              "index": l - 1,
+              "type": "highlight",
+              "word": "Cooperative",
+            }
+          ],
+          "setup": [
+            {
+              "button": "",
+              "checkbox": "",
+              "header": "Option 1",
+              "line1": "If your intention was to reserve a name for a BC Corporation, you can replace Cooperative" +
+                " with a comptatible designation.  The folling are allowed:",
+              "line2": ""
+            },
+            {
+              "button": "restart",
+              "checkbox": "",
+              "header": "Option 2",
+              "line1": "If you would like to start a Cooperative business instead of a Corporation, start your" +
+                " search over and change your business type to “Cooperative”.",
+              "line2": ""
+            }
+          ],
+          "show_examination_button": false,
+          "show_reserve_button": false
+        }
+      ],
+      "status": "fa"
+    }
+  }
+  //consent_required + corp_conflict
+  if (split.includes('Walmart') && split[l - 1] === 'Cooperative') {
+    resp = {
+      "header": "Further Action Required",
+      "issues": [
+        {
+          "conflicts": null,
+          "consenting_body": null,
+          "designations": null,
+          "issue_type": "word_to_avoid",
+          "line1": "Your name contains words that cannot be approved:",
+          "line2": "Walmart",
+          "name_actions": [
+            {
+              "type": "strike",
+              "word": "Walmart",
+              "index": index
+            }
+          ],
+          "setup": [
+            {
+              "button": "",
+              "checkbox": "",
+              "header": "Helpful Hint",
+              "line1": "Remove the word <b>Walmart</b> from your search and try again.",
+              "line2": ""
+            }
+          ],
+          "show_examination_button": false,
+          "show_reserve_button": false
+        },
+        {
+          "conflicts": null,
+          "consenting_body": null,
+          "designations": [
+            "Limited",
+            "Limite",
+            "Ltd",
+            "Incorporated",
+            "Incorpore",
+            "Inc"
+          ],
+          "issue_type": "wrong_designation",
+          "line1": "Designation <b>Cooperative</b> cannot be used with selected business type of <b>Corporation</b>",
+          "line2": "",
+          "name_actions": [
+            {
+              "type": "highlight",
+              "word": "Cooperative",
+              "index": l - 1
+            }
+          ],
+          "setup": [
+            {
+              "button": "",
+              "checkbox": "",
+              "header": "Option 1",
+              "line1": "If your intention was to reserve a name for a BC Corporation, you can replace Cooperative" +
+                " with a comptatible designation.  The folling are allowed:",
+              "line2": ""
+            },
+            {
+              "button": "restart",
+              "checkbox": "",
+              "header": "Option 2",
+              "line1": "If you would like to start a Cooperative business instead of a Corporation, start your" +
+                " search over and change your business type to “Cooperative”.",
+              "line2": ""
+            }
+          ],
+          "show_examination_button": false,
+          "show_reserve_button": false
+        }
+      ],
+      "status": "fa"
+    }
+  }
+
+  //Approved name for BC Corporation
+  if (split[0] === 'Available') {
+    resp = {
+      "status": "Available",
+      "issues": null
+    }
+  }
+
   setTimeout(() => { res.jsonp(resp) }, 3000)
 })
 

@@ -1,6 +1,6 @@
 import { Vue } from 'vue-property-decorator'
 
-const NameWordRenderer = Vue.component('word-markup', {
+const NameWordRenderer = Vue.component('name-word-renderer', {
   props: ['word', 'actions', 'index'],
   data () {
     return {
@@ -13,40 +13,41 @@ const NameWordRenderer = Vue.component('word-markup', {
     output: function () {
       let div = [['div', { style: this.style }, this.word + '\xa0']]
       if (Array.isArray(this.actions)) {
-        let filteredActions = this.actions.filter(action => action.word_index === this.index)
+        let filteredActions = this.actions.filter(action => action.index === this.index)
         if (filteredActions.length === 0) {
           return div
         }
-        let nonAddWordBracketActions = filteredActions.filter(action => action.type !== 'add_word_brackets')
-        let addWordBracketActions = filteredActions.filter(action => action.type === 'add_word_brackets')
-        if (nonAddWordBracketActions.length > 0) {
+        let nonBracketsActions = filteredActions.filter(action => action.type !== 'brackets')
+        let BracketsActions = filteredActions.filter(action => action.type === 'brackets')
+        if (nonBracketsActions.length > 0) {
           let style = { ...this.style }
-          for (let action of nonAddWordBracketActions) {
+          for (let action of nonBracketsActions) {
             switch (action.type) {
               case 'strike':
-                style.color = 'red'
+                style.color = '#d3272c'
                 style.textDecoration = style.textDecoration ? style.textDecoration + ' line-through' : 'line-through'
                 break
               case 'highlight':
-                style.color = 'red'
+                style.color = '#d3272c'
                 break
               case 'spelling':
                 style.textDecoration = style.textDecoration
-                  ? style.textDecoration + ' underline wavy red' : 'underline wavy red'
+                  ? style.textDecoration + ' underline wavy #d3272c' : 'underline wavy #d3272c'
                 break
             }
           }
           div = [['div', { style }, this.word + '\xa0']]
         }
-        if (addWordBracketActions.length > 0) {
+        if (BracketsActions.length > 0) {
           let style = { ...this.style }
-          style.color = 'red'
-          for (let action of addWordBracketActions) {
+          style.color = '#d3272c'
+          for (let action of BracketsActions) {
             let message = '[' + action.message + ']\xa0'
             let el = ['div', { style }, message]
             if (action.position === 'start') {
               div.unshift(el)
-            } else {
+            }
+            if (action.position === 'end') {
               div.push(el)
             }
           }
