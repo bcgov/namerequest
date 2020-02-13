@@ -32,13 +32,13 @@
 import AnalyzePending from '@/components/new-request/analyze-pending'
 import AnalyzeResults from '@/components/new-request/analyze-results'
 import LowerContainer from '@/components/lower-info-area/lower-container'
-import Stats from '@/components/new-request/stats'
 import newReqModule from '@/store/new-request-module'
+import Stats from '@/components/new-request/stats'
 import Tabs from '@/components/tabs'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
-  components: { Stats, AnalyzePending, AnalyzeResults, LowerContainer, Tabs }
+  components: { AnalyzePending, AnalyzeResults, LowerContainer, Stats, Tabs }
 })
 export default class Landing extends Vue {
   get searchShowStage () {
@@ -55,25 +55,25 @@ export default class Landing extends Vue {
 
 #name-container, .box-style
   background-color: white
-  padding: 0
-  margin-top: 25px
   border-radius: 5px
-  font-size: 16px
   color: $text
+  font-size: 16px
   margin-bottom: auto
+  margin-top: 25px
+  padding: 0
 
 #upper-row
-  background: url('../assets/images/analyze-name-bg.jpg')
   background-size: 1380px 700px
-  height: 700px
+  background: url('../assets/images/analyze-name-bg.jpg')
   color: white
+  height: 700px
   padding: 0 200px 0 200px
 
 .flip-class
-  transform-style: preserve-3d
-  perspective: 1000px
-  perspective-origin: center
   backface-visibility: visible
+  perspective-origin: center
+  perspective: 1000px
+  transform-style: preserve-3d
 
 .flip-enter
   transform: rotateX(90deg)

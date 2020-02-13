@@ -99,18 +99,22 @@
   font-size: 16px
   line-height: 24px
 
+.bold-copy
+  @extend .normal-copy
+  font-weigt: 700
+
 .override-padding
   padding: 0 !important
 
 .large-copy
   @extend .normal-copy
-  font-size: 18px
-  line-height: 26px
+  font-size: 18px !important
+  line-height: 26px !important
 
 .small-copy
   @extend .normal-copy
-  font-size: 14px
-  line-height: 18px
+  font-size: 14px !important
+  line-height: 18px !important
 
 .normal-link
   font-size: 16px
@@ -156,5 +160,24 @@
   font-size: 16px !important
   line-height: 24px !important
 
+.blue-text
+  color: $p-blue-text
+
 .sz-20-text
   font-size: 20px
+
+#next-issue-btn, #previous-issue-btn
+  background-color: white !important
+  border-radius: 6px !important
+  box-shadow: none !important
+  border-width: 1px !important
+  border-style: solid !important
+  border-block-end-width: 1px !important
+  margin-right: 20px
+
+#previous-issue-btn
+  margin-left: 20px !important
+
+#next-issue-btn.active-issue-btn, #previous-issue-btn
+  color: $link !important
+  border-color: $link !important

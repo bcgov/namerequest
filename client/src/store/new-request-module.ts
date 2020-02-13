@@ -289,7 +289,7 @@ export class NewRequestModule extends VuexModule {
       blurb: 'blah blah'
     }
   ]
-  searchShowStage: SearchComponentT = 'search'
+  searchShowStage: Sear1chComponentT = 'search'
   stats: StatsI | null = null
   tabNumber: number = 0
 
@@ -550,6 +550,11 @@ export class NewRequestModule extends VuexModule {
 
   getEntities (catagory) {
     return this.entityTypesBC.filter(type => type.cat === catagory)
+  }
+  entityValueFromText (text) {
+    let list = [...this.entityTypesBC, ...this.entityTypesXPRO]
+    let type = list.find(t => t.text === text)
+    return type.value
   }
 }
 
