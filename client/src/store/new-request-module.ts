@@ -237,6 +237,7 @@ export class NewRequestModule extends VuexModule {
   extendedRequestType: SelectOptionsI | null = null
   helpMeChooseModalVisible: boolean = false
   location: LocationT = 'BC'
+  locationInfoModalVisible: boolean = false
   name: string = ''
   nrRequiredModalVisible: boolean = false
   pickEntityModalVisible: boolean = false
@@ -270,7 +271,6 @@ export class NewRequestModule extends VuexModule {
       value: 'AML',
       blurb: 'You are merging with another company and you want a new name.'
     },
-
     {
       text: 'Convert to Another Structure',
       value: 'CNV',
@@ -279,13 +279,18 @@ export class NewRequestModule extends VuexModule {
               Registries).`
     },
     {
-      text: 'Restore a Historical Business',
+      text: 'Restore Using a Historical Name',
       value: 'REH',
       blurb: 'blah blah'
     },
     {
-      text: 'Restore by starting a New Business',
+      text: 'Restore with a New Name',
       value: 'REN',
+      blurb: 'blah blah'
+    },
+    {
+      text: 'Change Registration to Sole Prop, GP or DBA.',
+      value: 'CRG',
       blurb: 'blah blah'
     }
   ]
@@ -323,7 +328,8 @@ export class NewRequestModule extends VuexModule {
     let options = [
       { text: 'BC', value: 'BC' },
       { text: 'Canada', value: 'CA' },
-      { text: 'Foreign', value: 'IN' }
+      { text: 'Foreign', value: 'IN' },
+      { text: 'Help', value: 'HELP' }
     ]
     if (this.requestType === 'MVE') {
       let optionsLessBC = [...options]
@@ -409,6 +415,9 @@ export class NewRequestModule extends VuexModule {
     }
     if (this.requestType === 'all') {
       this.setErrors('request')
+    }
+    if (this.location === 'HELP') {
+      this.setErrors('location')
     }
     if (this.name !== '' && this.name.length < 3) {
       this.setErrors('length')
@@ -501,6 +510,10 @@ export class NewRequestModule extends VuexModule {
     if (location === this.location) {
       return
     }
+    if (location === 'HELP') {
+      this.location = location
+      return
+    }
     if (this.location === 'CA' || this.location === 'IN') {
       if (location === 'CA' || location === 'IN') {
         this.location = location
@@ -514,6 +527,10 @@ export class NewRequestModule extends VuexModule {
       this.entityType = 'XCR'
     }
     this.location = location
+  }
+  @Mutation
+  mutateLocationInfoModalVisible (value: boolean) {
+    this.locationInfoModalVisible = value
   }
   @Mutation
   mutateName (name: string) {

@@ -5,6 +5,7 @@
       <router-view />
     </div>
     <!--All v-dialogue (modal) components App-wide-->
+    <LocationInfoModal />
     <HelpMeChoose />
     <NrNotRequired />
     <PickEntity />
@@ -14,6 +15,7 @@
 
 <script lang="ts">
 import HelpMeChoose from '@/components/modals/help-me-choose.vue'
+import LocationInfoModal from '@/components/modals/location-info.vue'
 import NrNotRequired from '@/components/modals/nr-not-required.vue'
 import PickEntity from '@/components/modals/pick-entity.vue'
 import PickRequestType from '@/components/modals/pick-request-type.vue'
@@ -21,7 +23,7 @@ import { Component, Vue, Ref } from 'vue-property-decorator'
 import Header from '@/components/header'
 
 @Component({
-  components: { NrNotRequired, HelpMeChoose, PickEntity, PickRequestType, Header }
+  components: { LocationInfoModal, NrNotRequired, HelpMeChoose, PickEntity, PickRequestType, Header }
 })
 export default class App extends Vue {}
 

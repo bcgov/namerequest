@@ -1,5 +1,5 @@
 export type DisplayedComponentT = 'ExistingRequestSearch' | 'ExistingRequestDisplay' | 'NewRequest'
-export type LocationT = 'BC' | 'CA' | 'IN'
+export type LocationT = 'BC' | 'CA' | 'IN' | 'HELP'
 export type NrDataResponseT = RequestDataI | null
 export type NrDataT = string | null
 export type SearchComponentT = 'search' | 'analyzing' | 'results'

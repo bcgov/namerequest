@@ -18,9 +18,10 @@
                     v-model="requestType" />
         </v-col>
         <v-col cols="2">
-          <v-select :items="locationOptions"
+          <v-select :error-messages="errors.includes('location') ? 'Please select a location' : ''"
+                    :hide-details="!errors.includes('location')"
+                    :items="locationOptions"
                     filled
-                    hide-details
                     id="location-options-select"
                     v-model="location" />
         </v-col>
@@ -46,27 +47,28 @@
 </template>
 
 <script lang="ts">
-import HelpMeChoose from '@/components/modals/help-me-choose'
 import Stats from '@/components/new-request/stats'
 import newReqModule from '../../store/new-request-module'
 import NameInput from './name-input'
-import NrNotRequired from '@/components/modals/nr-not-required'
-import PickEntity from '@/components/modals/pick-entity'
-import PickRequestType from '@/components/modals/pick-request-type'
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { LocationT } from '@/models'
 
 @Component({
-  components: {
-    Stats,
-    HelpMeChoose,
-    NameInput,
-    NrNotRequired,
-    PickEntity,
-    PickRequestType
-  }
+  components: { Stats, NameInput }
 })
 export default class NewRequest extends Vue {
+  @Watch('location')
+  handler (newVal, oldVal) {
+    if (newVal === 'HELP') {
+      let type = this.entityType
+      newReqModule.mutateLocationInfoModalVisible(true)
+      this.$nextTick(function () {
+        this.location = oldVal
+        this.entityType = type
+      })
+    }
+  }
+
   get entityType () {
     return newReqModule.entityType
   }
@@ -83,7 +85,8 @@ export default class NewRequest extends Vue {
     return newReqModule.errors
   }
   get inputCompClass () {
-    if (this.errors.includes('entity') || this.errors.includes('request')) {
+    let errorTypes = ['entity', 'request', 'location']
+    if (errorTypes.some(type => this.errors.includes(type))) {
       return 'mt-n5'
     }
     return 'mt-n2'

@@ -35,18 +35,11 @@ import { Component, Vue } from 'vue-property-decorator'
 
 @Component({})
 export default class NrNotRequired extends Vue {
-  get copy () {
-    return 'text'
-  }
   get showModal () {
     return newReqModule.nrRequiredModalVisible
   }
   set showModal (value: boolean) {
     newReqModule.mutateNrRequiredModalVisible(value)
-  }
-
-  activateModal () {
-    newReqModule.mutateNrRequiredModalVisible(true)
   }
 }
 

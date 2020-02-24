@@ -77,7 +77,8 @@
               </v-row>
               <v-row justify="end">
                 <v-col class="text-center small-copy"> Stay away from protected names and trade marks.
-                  <br><a href="#">Search Canadian trade marked names</a>
+                  <br><a href="https://www.ic.gc.ca/app/opic-cipo/trdmrks/srch/home?lang=eng">
+                    Search Canadian trade marked names</a>
                   <v-icon class="launch-icon">launch</v-icon>
                 </v-col>
               </v-row>

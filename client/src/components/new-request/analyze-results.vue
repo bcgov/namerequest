@@ -236,7 +236,7 @@
         <v-col cols="12" class="normal-copy pt-2 pb-4">
           <v-row justify="center">
             <v-col cols="auto">
-              Name Approved for a {{ requestType }}
+              Name is available for {{ requestType }}
               {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }} {{ entityText }}
             </v-col>
           </v-row>
