@@ -59,6 +59,7 @@ export default class PickRequestType extends Vue {
   }
 
   chooseType (request: SelectOptionsI) {
+    newReqModule.clearErrors()
     if (request.value !== 'NEW') {
       newReqModule.mutateExtendedRequestType(request)
     }

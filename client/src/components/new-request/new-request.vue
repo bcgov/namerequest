@@ -1,62 +1,58 @@
 <template>
-  <v-container fluid id="new-request-container">
-    <v-row class="pa-6" justify="end">
-      <v-col cols="6" class="mb-n3">I need a name to:</v-col>
-      <v-col cols="6" style="display: flex; justify-content: flex-end" class="mb-n3">
-        <span class="normal-link"
-              id="help-me-choose-activator"
-              @click="activateHMCModal()">Help Me Choose</span>
-      </v-col>
-      <v-col cols="5">
-        <v-select :error-messages="errors.includes('request') ? 'Please select a type' : ''"
-                  :hide-details="!errors.includes('request')"
-                  :items="requestTypeOptions"
-                  @change="clearErrors()"
-                  filled
-                  id="search-type-options-select"
-                  v-model="requestType" />
-      </v-col>
-      <v-col cols="2">
-        <v-select :items="locationOptions"
-                  filled
-                  hide-details
-                  id="location-options-select"
-                  v-model="location" />
-      </v-col>
-      <v-col cols="5">
-        <v-select :error-messages="errors.includes('entity') ? 'Please select a type' : ''"
-                  :hide-details="!errors.includes('entity')"
-                  :items="entityTypeOptions"
-                  @change="clearErrors()"
-                  filled
-                  id="entity-type-options-select"
-                  v-model="entityType" />
-      </v-col>
-      <v-col cols="12">
-        <NewRequestNameInput :class="inputCompClass" id="name-input-component" />
-      </v-col>
-      <v-col cols="auto"
-             class="my-n9">
-        <span id="nr-required-activator"
-              class="normal-link"
-              @click="activateNRRModal()">Check to see if you need to file a a name request</span>
-      </v-col>
-    </v-row>
-    <NrNotRequired />
-    <HelpMeChoose />
-    <PickEntity />
-    <PickRequestType />
-  </v-container>
+  <v-form @submit="handleSubmit()">
+    <v-container fluid id="new-request-container">
+      <v-row class="pa-6" justify="end">
+        <v-col cols="6" class="mb-n3">I need a name to:</v-col>
+        <v-col cols="6" style="display: flex; justify-content: flex-end" class="mb-n3">
+          <span class="normal-link"
+                id="help-me-choose-activator"
+                @change="activateHMCModal()">Help Me Choose</span>
+        </v-col>
+        <v-col cols="5">
+          <v-select :error-messages="errors.includes('request') ? 'Please select a type' : ''"
+                    :hide-details="!errors.includes('request')"
+                    :items="requestTypeOptions"
+                    @change="clearErrors()"
+                    filled
+                    id="search-type-options-select"
+                    v-model="requestType" />
+        </v-col>
+        <v-col cols="2">
+          <v-select :items="locationOptions"
+                    filled
+                    hide-details
+                    id="location-options-select"
+                    v-model="location" />
+        </v-col>
+        <v-col cols="5">
+          <v-select :error-messages="errors.includes('entity') ? 'Please select a type' : ''"
+                    :hide-details="!errors.includes('entity')"
+                    :items="entityTypeOptions"
+                    @change="clearErrors()"
+                    filled
+                    id="entity-type-options-select"
+                    v-model="entityType" />
+        </v-col>
+        <NameInput :class="inputCompClass" id="name-input-component" :handleSubmit="handleSubmit" />
+        <v-col cols="auto"
+               class="my-n9">
+          <span id="nr-required-activator"
+                class="normal-link"
+                @click="activateNRRModal()">Check to see if you need to file a a name request</span>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-form>
 </template>
 
 <script lang="ts">
-import HelpMeChoose from '@/components/modals/help-me-choose.vue'
-import Stats from '@/components/new-request/stats.vue'
+import HelpMeChoose from '@/components/modals/help-me-choose'
+import Stats from '@/components/new-request/stats'
 import newReqModule from '../../store/new-request-module'
-import NewRequestNameInput from './name-input.vue'
-import NrNotRequired from '@/components/modals/nr-not-required.vue'
-import PickEntity from '@/components/modals/pick-entity.vue'
-import PickRequestType from '@/components/modals/pick-request-type.vue'
+import NameInput from './name-input'
+import NrNotRequired from '@/components/modals/nr-not-required'
+import PickEntity from '@/components/modals/pick-entity'
+import PickRequestType from '@/components/modals/pick-request-type'
 import { Component, Vue } from 'vue-property-decorator'
 import { LocationT } from '@/models'
 
@@ -64,7 +60,7 @@ import { LocationT } from '@/models'
   components: {
     Stats,
     HelpMeChoose,
-    NewRequestNameInput,
+    NameInput,
     NrNotRequired,
     PickEntity,
     PickRequestType
@@ -122,6 +118,12 @@ export default class NewRequest extends Vue {
   }
   clearErrors () {
     newReqModule.clearErrors()
+  }
+  handleSubmit (event: Event) {
+    // eslint-disable-next-line
+    console.log('lalal')
+    event.preventDefault()
+    newReqModule.startAnalyzeName()
   }
 }
 

@@ -2,8 +2,6 @@ import Vuetify from 'vuetify'
 import Landing from '@/views/landing.vue'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import store from '@/store'
-import Vue from 'vue'
-import Vuex from 'vuex'
 import sinon from 'sinon'
 import newReqModule from '@/store/new-request-module'
 

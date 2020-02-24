@@ -1,4 +1,5 @@
-import Axios, { cancelToken } from '@/plugins/axios'
+import Axios from '@/plugins/axios'
+import axios from 'axios'
 import store from '@/store'
 import {
   AnalysisJSONI,
@@ -13,12 +14,11 @@ import {
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import { normalizeWordCase } from '@/plugins/utilities'
 
+let source
+
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
 export class NewRequestModule extends VuexModule {
-  analysisJSON: AnalysisJSONI = {
-    issues: [],
-    status: ''
-  }
+  analysisJSON: AnalysisJSONI | null = null
   displayedComponent: DisplayedComponentT = 'NewRequest'
   entityType: string = 'CR'
   entityTypesBC: EntityI[] = [
@@ -232,7 +232,7 @@ export class NewRequestModule extends VuexModule {
       value: 'XSO'
     }
   ]
-  errors: Array<string> = []
+  errors: string[] = []
   extendedEntitySelection: SelectOptionsI | null = null
   extendedRequestType: SelectOptionsI | null = null
   helpMeChooseModalVisible: boolean = false
@@ -391,13 +391,18 @@ export class NewRequestModule extends VuexModule {
     })
   }
 
-  @Action
+  @Action({ rawError: true })
   async getStats () {
-    let resp = await Axios.get('/stats')
+    let resp
+    try {
+      resp = await Axios.get('/stats')
+    } catch {
+      return Promise.resolve()
+    }
     this.mutateStats(resp.data)
-    return resp.data
+    return Promise.resolve(resp.data)
   }
-  @Action
+  @Action({ rawError: true })
   async startAnalyzeName () {
     if (this.entityType === 'all') {
       this.setErrors('entity')
@@ -412,7 +417,7 @@ export class NewRequestModule extends VuexModule {
       this.setErrors('name')
     }
     if (this.errors.length > 0) {
-      return
+      return Promise.resolve()
     }
     let name = normalizeWordCase(this.name)
     this.mutateName(name)
@@ -423,30 +428,35 @@ export class NewRequestModule extends VuexModule {
       entity_type: this.entityType,
       request_type: this.requestType
     }
-    let resp = await Axios.get('/name-analysis', {
-      params,
-      cancelToken
-    })
+    let resp
+    let CancelToken = axios.CancelToken
+    source = CancelToken.source()
+
+    try {
+      resp = await Axios.get('/name-analysis', {
+        params,
+        cancelToken: source.token
+      })
+    } catch (error) {
+      this.mutateSearchShowStage('search')
+      return Promise.resolve(error)
+    }
     this.mutateAnalysisJSON(resp.data)
     this.mutateSearchShowStage('results')
-    return resp.data
+    return Promise.resolve(resp.data)
   }
-  @Action
+  @Action({ rawError: true })
   stopAnalyzeName () {
-    cancelToken.cancel()
+    source.cancel()
     this.mutateSearchShowStage('search')
-    this.mutateAnalysisJSON({
-      issues: [],
-      status: ''
-    })
+    this.mutateAnalysisJSON(null)
+    return Promise.resolve()
   }
-  @Action
+  @Action({ rawError: true })
   startAgain () {
-    this.mutateAnalysisJSON({
-      issues: [],
-      status: ''
-    })
+    this.mutateAnalysisJSON(null)
     this.mutateSearchShowStage('search')
+    return Promise.resolve()
   }
 
   @Mutation
@@ -526,7 +536,7 @@ export class NewRequestModule extends VuexModule {
     this.searchShowStage = value
   }
   @Mutation
-  mutateStats (stats: StatsI) {
+  mutateStats (stats) {
     this.stats = stats
   }
   @Mutation

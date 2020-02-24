@@ -15,7 +15,7 @@
                @click="startOver()"><span class="normal-link">Start Search Over</span></v-btn>
       </v-col>
       <v-col cols="12" class="mt-n5">
-        <NewRequestNameInput />
+        <NameInput />
       </v-col>
     </v-row>
     <v-row justify="center" class="mt-n7 mb-n3 py-0">
@@ -46,11 +46,11 @@
 
 <script lang="ts">
 import newReqModule from '@/store/new-request-module'
-import NewRequestNameInput from '@/components/new-request/name-input.vue'
+import NameInput from '@/components/new-request/name-input'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
-  components: { NewRequestNameInput }
+  components: { NameInput }
 })
 export default class AnalyzePending extends Vue {
   get entityObject () {

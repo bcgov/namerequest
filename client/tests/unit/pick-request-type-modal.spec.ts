@@ -7,9 +7,10 @@ const localVue = createLocalVue()
 
 describe('pick-request-type.vue', (): void => {
   let wrapper: any, vuetify: any
+  vuetify = new Vuetify()
+  localVue.use(Vuetify)
 
   beforeEach(() => {
-    vuetify = new Vuetify()
     wrapper = mount(Modal, {
       localVue,
       vuetify

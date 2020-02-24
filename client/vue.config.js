@@ -2,7 +2,10 @@ const path = require("path")
 
 module.exports = {
   configureWebpack: {
-    devtool: 'eval-source-map'
+    devtool: 'eval-source-map',
+    resolve: {
+      extensions: ['.ts', '.tsx', '.js', '.json', '.vue', '.jsx']
+    }
   },
   pluginOptions: {
     'style-resources-loader': {

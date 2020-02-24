@@ -2,13 +2,12 @@ import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
 import NameInput from '@/components/new-request/name-input.vue'
 import newReqModule from '@/store/new-request-module'
 import Vuetify from 'vuetify'
-import Vuex from 'vuex'
-
-const localVue = createLocalVue()
-localVue.use(Vuex)
 
 describe('name-input.vue', () => {
-  let wrapper: any, vuetify: any
+  let localVue = createLocalVue()
+  let wrapper: any
+  let vuetify = new Vuetify
+  localVue.use(Vuetify)
 
   beforeEach( () => {
     vuetify = new Vuetify()
