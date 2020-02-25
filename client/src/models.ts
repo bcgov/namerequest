@@ -17,11 +17,6 @@ export interface EntityI {
   shortlist?: boolean
   rank?: number
 }
-export interface ResponseI {
-  0: boolean
-  1: boolean
-  2: boolean
-}
 export interface StatsI {
   auto: number,
   priority: {

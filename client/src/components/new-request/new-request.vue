@@ -123,8 +123,6 @@ export default class NewRequest extends Vue {
     newReqModule.clearErrors()
   }
   handleSubmit (event: Event) {
-    // eslint-disable-next-line
-    console.log('lalal')
     event.preventDefault()
     newReqModule.startAnalyzeName()
   }

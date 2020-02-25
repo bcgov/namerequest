@@ -267,17 +267,17 @@ export default class AnalyzeResults extends Vue {
   showActualInput: boolean = false
   originalName: string | null = null
   highlightCheckboxes: boolean = false
-  examine: ResponseI = {
+  examine = {
     0: false,
     1: false,
     2: false
   }
-  consentBody: ResponseI = {
+  consentBody = {
     0: false,
     1: false,
     2: false
   }
-  consentCorp: ResponseI = {
+  consentCorp = {
     0: false,
     1: false,
     2: false
