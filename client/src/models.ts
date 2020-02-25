@@ -1,4 +1,4 @@
-export type DisplayedComponentT = 'ExistingRequestSearch' | 'ExistingRequestDisplay' | 'NewRequest'
+export type DisplayedComponentT = 'Search' | 'AnalyzeResults' | 'AnalyzePending' | 'ApplicantInfo' | 'Tabs'
 export type LocationT = 'BC' | 'CA' | 'IN' | 'HELP'
 export type NrDataResponseT = RequestDataI | null
 export type NrDataT = string | null
@@ -16,11 +16,6 @@ export interface EntityI {
   blurb?: string[] | string
   shortlist?: boolean
   rank?: number
-}
-export interface ResponseI {
-  0: boolean
-  1: boolean
-  2: boolean
 }
 export interface StatsI {
   auto: number,

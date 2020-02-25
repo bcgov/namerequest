@@ -53,8 +53,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
           ],
           setup: [
             {
-              button: '',
-              checkbox: '',
+              type: 'add_descriptive',
               header: 'Helpful Hint',
               line1: 'Add a word to the end of your name that describes the business category.',
               line2: '',
@@ -91,8 +90,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
           ],
           setup: [
             {
-              button: '',
-              checkbox: '',
+              type: 'add_distinctive',
               header: 'Helpful Hint',
               line1: "Some words that can set your name apart include an individual's name or intials; a" +
                  "geographic location; a colour; a coined, made-up word; or an acronym.",
@@ -131,21 +129,19 @@ server.get('/api/v1/name-analysis', (req, res) => {
           ],
           setup: [
             {
-              button: '',
-              checkbox: '',
+              type: 'replace_word',
               header: 'Option 1',
               line1: 'You can remove or replace the word <b>“Engineering”</b> and try your search again.',
               line2: ''
             },
             {
-              button: 'examine',
-              checkbox: '',
+              type: 'send_to_examiner',
               header: 'Option 2',
               line1: 'You can choose to submit this name for examination. Examination wait times are listed above.',
               line2: ''
             },
             {
-              button: 'consent_body',
+              type: 'consent_body',
               checkbox: '',
               header: 'Option 3',
               line1: 'This name can be auto-approved but you will be required to send written consent to ' +
@@ -197,22 +193,19 @@ server.get('/api/v1/name-analysis', (req, res) => {
           ],
           setup: [
             {
-              button: '',
-              checkbox: '',
+              type: '',
               header: 'Option 1',
               line1: 'Add a word to the beginning of the name that sets it apart like a person’s name or initials.',
               line2: `Or remove <b>${split[1]}</b> and replace it with a different word`
             },
             {
-              button: 'examine',
-              checkbox: '',
+              type: 'send_to_examiner',
               header: 'Option 2',
               line1: 'You can choose to submit this name for examination. Examination wait times are listed above.',
               line2: ''
             },
             {
-              button: 'consent_corp',
-              checkbox: '',
+              type: 'self_consent',
               header: 'Option 3',
               line1: 'If you are the registered owner of the conflicting name, it can be auto-approved but you are ' +
                  'required to send written consent to the BC Business Registry.',
@@ -278,8 +271,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
           ],
           setup: [
             {
-              button: '',
-              checkbox: '',
+              type: '',
               header: 'Helpful Hint',
               line1: 'You can remove or replace the word <b>Flerkin</b> and try your search again.  Alternately, ' +
                  'you can submit your name for examination-wait times are quoted above.',
@@ -315,8 +307,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
           ],
           setup: [
             {
-              button: '',
-              checkbox: '',
+              type: '',
               header: 'Helpful Hint',
               line1: 'Remove the word <b>Walmart</b> from your search and try again.',
               line2: ''
@@ -357,16 +348,13 @@ server.get('/api/v1/name-analysis', (req, res) => {
           ],
           setup: [
             {
-              button: 'designation',
-              checkbox: '',
+              type: 'designation',
               header: 'Option 1',
               line1: 'If your intention was to reserve a name for a BC Corporation, you can replace Cooperative ' +
                  'with a comptatible designation.  The folling are allowed:',
               line2: ''
             },
             {
-              button: 'restart',
-              checkbox: '',
               header: 'Option 2',
               line1: 'If you would like to start a Cooperative business instead of a Corporation, start your ' +
                  'search over and change your business type to “Cooperative”.',
@@ -405,22 +393,18 @@ server.get('/api/v1/name-analysis', (req, res) => {
           ],
           setup: [
             {
-              button: '',
-              checkbox: '',
               header: 'Option 1',
               line1: 'You can remove or replace the word <b>“Engineering”</b> and try your search again.',
               line2: ''
             },
             {
-              button: '',
-              checkbox: 'examine',
+              type: 'send_to_examiner',
               header: 'Option 2',
               line1: 'You can choose to submit this name for examination. Examination wait times are listed above.',
               line2: ''
             },
             {
-              button: '',
-              checkbox: 'consent_body',
+              type: 'consent_body',
               header: 'Option 3',
               line1: 'This name can be auto-approved but you will be required to send written consent to ' +
                  'the BC Business Registry.',
@@ -454,16 +438,14 @@ server.get('/api/v1/name-analysis', (req, res) => {
           ],
           setup: [
             {
-              button: 'designation',
-              checkbox: '',
+              type: 'designation',
               header: 'Option 1',
               line1: 'If your intention was to reserve a name for a BC Corporation, you can replace Cooperative ' +
                  'with a comptatible designation.  The folling are allowed:',
               line2: ''
             },
             {
-              button: 'restart',
-              checkbox: '',
+              type: 'restart',
               header: 'Option 2',
               line1: 'If you would like to start a Cooperative business instead of a Corporation, start your ' +
                  'search over and change your business type to “Cooperative”.',
@@ -523,15 +505,13 @@ server.get('/api/v1/name-analysis', (req, res) => {
               line2: `Or remove <b>${split[1]}</b> and replace it with a different word`
             },
             {
-              button: '',
-              checkbox: 'examine',
+              type: 'send_to_examiner',
               header: 'Option 2',
               line1: 'You can choose to submit this name for examination. Examination wait times are listed above.',
               line2: ''
             },
             {
-              button: '',
-              checkbox: 'consent_corp',
+              type: 'self_consent',
               header: 'Option 3',
               line1: 'If you are the registered owner of the conflicting name, it can be auto-approved but you are ' +
                 'required to send written consent to the BC Business Registry.',
@@ -564,16 +544,14 @@ server.get('/api/v1/name-analysis', (req, res) => {
           ],
           setup: [
             {
-              button: 'designation',
-              checkbox: '',
+              type: 'designation',
               header: 'Option 1',
               line1: 'If your intention was to reserve a name for a BC Corporation, you can replace Cooperative ' +
                 'with a comptatible designation.  The folling are allowed:',
               line2: ''
             },
             {
-              button: 'restart',
-              checkbox: '',
+              type: 'restart',
               header: 'Option 2',
               line1: 'If you would like to start a Cooperative business instead of a Corporation, start your ' +
                 'search over and change your business type to “Cooperative”.',
@@ -620,15 +598,13 @@ server.get('/api/v1/name-analysis', (req, res) => {
               line2: ''
             },
             {
-              button: '',
-              checkbox: 'examine',
+              type: 'send_to_examiner',
               header: 'Option 2',
               line1: 'You can choose to submit this name for examination. Examination wait times are listed above.',
               line2: ''
             },
             {
-              button: '',
-              checkbox: 'consent_body',
+              type: 'consent_body',
               header: 'Option 3',
               line1: 'This name can be auto-approved but you will be required to send written consent to ' +
                  'the BC Business Registry.',
@@ -678,14 +654,14 @@ server.get('/api/v1/name-analysis', (req, res) => {
               line2: `Or remove <b>${split[1]}</b> and replace it with a different word`
             },
             {
-              button: 'examine',
+              type: 'send_to_examiner',
               checkbox: '',
               header: 'Option 2',
               line1: 'You can choose to submit this name for examination. Examination wait times are listed above.',
               line2: ''
             },
             {
-              button: 'consent_corp',
+              type: 'self_consent',
               checkbox: '',
               header: 'Option 3',
               line1: 'If you are the registered owner of the conflicting name, it can be auto-approved but you are ' +
@@ -732,15 +708,13 @@ server.get('/api/v1/name-analysis', (req, res) => {
               line2: ''
             },
             {
-              button: '',
-              checkbox: 'examine',
+              type: 'send_to_examiner',
               header: 'Option 2',
               line1: 'You can choose to submit this name for examination. Examination wait times are listed above.',
               line2: ''
             },
             {
-              button: '',
-              checkbox: 'consent_body',
+              type: 'consent_body',
               header: 'Option 3',
               line1: 'This name can be auto-approved but you will be required to send written consent to ' +
                  'the BC Business Registry.',
@@ -791,14 +765,14 @@ server.get('/api/v1/name-analysis', (req, res) => {
             },
             {
               button: '',
-              checkbox: 'examine',
+              type: 'send_to_examiner',
               header: 'Option 2',
               line1: 'You can choose to submit this name for examination. Examination wait times are listed above.',
               line2: ''
             },
             {
               button: '',
-              checkbox: 'consent_body',
+              type: 'consent_body',
               header: 'Option 3',
               line1: 'If you are the registered owner of the conflicting name, it can be auto-approved but you are  ' +
                  'required to send written consent to the BC Business Registry.',
@@ -831,16 +805,14 @@ server.get('/api/v1/name-analysis', (req, res) => {
           ],
           setup: [
             {
-              button: 'designation',
-              checkbox: '',
+              type: 'designation',
               header: 'Option 1',
               line1: 'If your intention was to reserve a name for a BC Corporation, you can replace Cooperative ' +
                  'with a comptatible designation.',
               line2: ''
             },
             {
-              button: 'restart',
-              checkbox: '',
+              type: 'restart',
               header: 'Option 2',
               line1: 'If you would like to start a Cooperative business instead of a Corporation, start your ' +
                  'search over and change your business type to “Cooperative”.',
@@ -888,15 +860,13 @@ server.get('/api/v1/name-analysis', (req, res) => {
               line2: ''
             },
             {
-              button: '',
-              checkbox: 'examine',
+              type: 'send_to_examiner',
               header: 'Option 2',
               line1: 'You can choose to submit this name for examination. Examination wait times are listed above.',
               line2: ''
             },
             {
-              button: '',
-              checkbox: 'consent_body',
+              type: 'consent_body',
               header: 'Option 3',
               line1: 'This name can be auto-approved but you will be required to send written consent to ' +
                 'the BC Business Registry.',
@@ -947,14 +917,14 @@ server.get('/api/v1/name-analysis', (req, res) => {
             },
             {
               button: '',
-              checkbox: 'examine',
+              type: 'send_to_examiner',
               header: 'Option 2',
               line1: 'You can choose to submit this name for examination. Examination wait times are listed above.',
               line2: ''
             },
             {
               button: '',
-              checkbox: 'consent_body',
+              type: 'consent_body',
               header: 'Option 3',
               line1: 'If you are the registered owner of the conflicting name, it can be auto-approved but you are  ' +
                 'required to send written consent to the BC Business Registry.',
@@ -987,7 +957,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
           ],
           setup: [
             {
-              button: 'designation',
+              type: 'designation',
               checkbox: '',
               header: 'Option 1',
               line1: 'If your intention was to reserve a name for a BC Corporation, you can replace Cooperative ' +
@@ -995,7 +965,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
               line2: ''
             },
             {
-              button: 'restart',
+              type: 'restart',
               checkbox: '',
               header: 'Option 2',
               line1: 'If you would like to start a Cooperative business instead of a Corporation, start your ' +

@@ -19,7 +19,7 @@ let source
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
 export class NewRequestModule extends VuexModule {
   analysisJSON: AnalysisJSONI | null = null
-  displayedComponent: DisplayedComponentT = 'NewRequest'
+  displayedComponent: DisplayedComponentT = 'Tabs'
   entityType: string = 'CR'
   entityTypesBC: EntityI[] = [
     {
@@ -45,7 +45,7 @@ export class NewRequestModule extends VuexModule {
       ]
     },
     {
-      text: 'BC Corporation',
+      text: 'Corporation',
       cat: 'Corporations',
       blurb: [
         `A company that may have one or more people who own shares with some personal responsibility for debt and
@@ -233,6 +233,11 @@ export class NewRequestModule extends VuexModule {
     }
   ]
   errors: string[] = []
+  examinationRequestedIndex = {
+    0: false,
+    1: false,
+    2: false
+  }
   extendedEntitySelection: SelectOptionsI | null = null
   extendedRequestType: SelectOptionsI | null = null
   helpMeChooseModalVisible: boolean = false
@@ -245,7 +250,7 @@ export class NewRequestModule extends VuexModule {
   requestAction: string = 'NEW'
   requestTypes: EntityI[] = [
     {
-      text: 'Start a New Business',
+      text: 'Start a New',
       value: 'NEW',
       blurb: `Start a new business in BC. This applies to starting fresh from here or having a business in another 
               province or country that you want to operate in BC as well.`
@@ -294,7 +299,6 @@ export class NewRequestModule extends VuexModule {
       blurb: 'blah blah'
     }
   ]
-  searchShowStage: SearchComponentT = 'search'
   stats: StatsI | null = null
   tabNumber: number = 0
 
@@ -336,6 +340,12 @@ export class NewRequestModule extends VuexModule {
       return optionsLessBC.splice(1, 2)
     }
     return options
+  }
+  get newOrExistingRequest () {
+    if (this.tabNumber) {
+      return 'existing'
+    }
+    return 'new'
   }
   get pickEntityTableBC () {
     let catagories = []
@@ -430,7 +440,7 @@ export class NewRequestModule extends VuexModule {
     }
     let name = normalizeWordCase(this.name)
     this.mutateName(name)
-    this.mutateSearchShowStage('analyzing')
+    this.mutateDisplayedComponent('AnalyzePending')
     let params: NewRequestNameSearchI = {
       name,
       location: this.location,
@@ -447,24 +457,24 @@ export class NewRequestModule extends VuexModule {
         cancelToken: source.token
       })
     } catch (error) {
-      this.mutateSearchShowStage('search')
+      this.mutateDisplayedComponent('Tabs')
       return Promise.resolve(error)
     }
     this.mutateAnalysisJSON(resp.data)
-    this.mutateSearchShowStage('results')
+    this.mutateDisplayedComponent('AnalyzeResults')
     return Promise.resolve(resp.data)
   }
   @Action({ rawError: true })
   stopAnalyzeName () {
     source.cancel()
-    this.mutateSearchShowStage('search')
+    this.mutateDisplayedComponent('Tabs')
     this.mutateAnalysisJSON(null)
     return Promise.resolve()
   }
   @Action({ rawError: true })
   startAgain () {
     this.mutateAnalysisJSON(null)
-    this.mutateSearchShowStage('search')
+    this.mutateDisplayedComponent('Tabs')
     return Promise.resolve()
   }
 
@@ -483,15 +493,14 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateDisplayedComponent (comp: DisplayedComponentT) {
     this.displayedComponent = comp
-    if (comp === 'NewRequest') {
-      this.tabNumber = 0
-    } else {
-      this.tabNumber = 1
-    }
   }
   @Mutation
   mutateEntityType (type: string) {
     this.entityType = type
+  }
+  @Mutation
+  mutateExaminationRequestedIndex (value: boolean) {
+    this.examinationRequestedIndex[this.issueIndex] = value
   }
   @Mutation
   mutateExtendedEntitySelectOption (option: SelectOptionsI) {
@@ -549,30 +558,20 @@ export class NewRequestModule extends VuexModule {
     this.pickRequestTypeModalVisible = value
   }
   @Mutation
-  mutateSearchShowStage (value: SearchComponentT) {
-    this.searchShowStage = value
-  }
-  @Mutation
   mutateStats (stats) {
     this.stats = stats
   }
   @Mutation
-  mutateRequestType (type: string) {
-    this.requestAction = type
-    if (type === 'MVE' && this.location === 'BC') {
+  mutateRequestAction (action: string) {
+    this.requestAction = action
+    if (action === 'MVE' && this.location === 'BC') {
       this.location = 'CA'
       this.entityType = 'XCR'
     }
   }
   @Mutation
-  mutateTabNumber (number: number) {
-    this.tabNumber = number
-    if (number === 0) {
-      this.displayedComponent = 'NewRequest'
-    }
-    if (number === 1) {
-      this.displayedComponent = 'ExistingRequestSearch'
-    }
+  mutateTabNumber (tab: number) {
+    this.tabNumber = tab
   }
 
   getEntities (catagory) {

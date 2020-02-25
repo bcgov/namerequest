@@ -1,14 +1,14 @@
 <template>
-  <v-dialog v-model="showModal" max-width="20%">
-    <v-card class="pa-9">
-      <v-card-text class="h3">Choose Locatiom</v-card-text>
-      <v-card-text class="normal-copy">
+  <v-dialog v-model="showModal" width="550" hide-overlay>
+    <v-card class="pa-0">
+      <v-card-text class="h4 px-3 pt-2">Choose Location</v-card-text>
+      <v-card-text class="small-copy">
         <ul>
           <li>
             <b>BC</b><br>
             Choose this option if you are in the Province of British Columbia
           </li>
-          <li class="my-3">
+          <li class="my-4">
             <b>Canada</b><br>
             Choose this option if you are in any Provice or Territory other than BC
           </li>
@@ -18,9 +18,10 @@
           </li>
         </ul>
       </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn text id="location-info-close-btn" @click="showModal = false">Close</v-btn>
+      <v-card-actions class="bg-grey-1 text-center">
+        <div style="display: block; width: 100%;">
+          <button @click="showModal = false"><v-icon>close</v-icon> Close</button>
+        </div>
       </v-card-actions>
     </v-card>
   </v-dialog>

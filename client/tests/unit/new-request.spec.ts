@@ -1,16 +1,16 @@
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import newReqModule from '@/store/new-request-module'
-import NewRequest from '@/components/new-request/new-request.vue'
+import Search from '@/components/new-request/search'
 import Vuetify from 'vuetify'
 
 const localVue = createLocalVue()
 
-describe('new-request.vue', () => {
+describe('search.vue', () => {
   let wrapper: any
 
   beforeEach( () => {
     let vuetify = new Vuetify()
-    wrapper = shallowMount(NewRequest, {
+    wrapper = shallowMount(Search, {
       vuetify,
       localVue
     })

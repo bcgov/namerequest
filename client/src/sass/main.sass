@@ -134,6 +134,10 @@
   font-size: 14px
   line-height: 20px
 
+.small-link-sans-ul
+  @extend .small-link
+  text-decoration: none
+
 .large-link
   @extend .normal-link
   font-size: 18px
@@ -166,6 +170,14 @@
 .sz-20-text
   font-size: 20px
 
+#back-to-search-btn
+  color: $link !important
+  letter-spacing: unset !important
+  text-decoration: underline
+  cursor: pointer !important
+  background-color: white !important
+  text-transform: none !important
+
 #next-issue-btn, #previous-issue-btn
   background-color: white !important
   border-radius: 6px !important
@@ -183,3 +195,9 @@
 #next-issue-btn.active-issue-btn, #previous-issue-btn
   color: $link !important
   border-color: $link !important
+
+#analyze-pending-container, #analyze-results-container, #applicant-info-container
+  background-color: white !important
+  border-radius: 6
+
+

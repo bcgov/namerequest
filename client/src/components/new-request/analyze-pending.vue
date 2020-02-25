@@ -1,6 +1,6 @@
 <template>
-  <v-container class="px-9 py-5">
-    <v-row justify="space-between">
+  <v-container class="px-9 py-5 normal-copy" id="analyze-pending-container">
+    <v-row no-gutters justify="space-between" align-content="space-around">
       <v-col cols="auto">
         <b>You are searching for a name for {{ requestAction }}
           {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }}
@@ -8,15 +8,11 @@
         </b>
       </v-col>
       <v-col cols="auto">
-        <v-btn text
-               id="back-to-search-btn"
-               class="modal-activator"
-               style="position: relative; top: -6px;"
-               @click="startOver()"><span class="normal-link">Start Search Over</span></v-btn>
+        <button id="back-to-search-btn"
+                class="modal-activator pa-0"
+                @click="startOver()"><span class="normal-link">Start Search Over</span></button>
       </v-col>
-      <v-col cols="12" class="mt-n5">
-        <NameInput />
-      </v-col>
+      <NameInput class="mt-3" />
     </v-row>
     <v-row justify="center" class="mt-n7 mb-n3 py-0">
       <v-col cols="auto">
@@ -28,7 +24,7 @@
         <v-progress-circular color="orange"
                              id="analyze-pending-spinner"
                              size="50"
-                             indeterminate/>
+                             indeterminate />
       </v-col>
     </v-row>
     <v-row justify="center" class="mt-n3">
@@ -84,14 +80,3 @@ export default class AnalyzePending extends Vue {
 }
 
 </script>
-
-<style scoped lang="sass">
-.modal-activator
-  color: $link !important
-  letter-spacing: unset !important
-  text-decoration: underline
-  cursor: pointer !important
-  background-color: unset !important
-  text-transform: none !important
-
-</style>

@@ -2,23 +2,12 @@
   <v-container id="landing-container" fluid>
     <v-row id="upper-row" no-gutters align-content="start">
       <Stats />
-      <v-col align-self="end" cols="12" class="h2 mb-n4 white-text">
+      <v-col align-self="end" cols="12" class="h2 mb-1 white-text">
         Name Request
       </v-col>
       <v-col>
         <transition name="flip" mode="out-in">
-          <Tabs id="new-req-existing-req-container"
-                class="flip-class box-style"
-                v-if="searchShowStage === 'search' "
-                key="landing-1" />
-          <AnalyzePending v-if="searchShowStage === 'analyzing' "
-                          id="analyze-pending-container"
-                          key="landing-2"
-                          class="box-style flip-class" />
-          <AnalyzeResults v-if="searchShowStage === 'results' "
-                          id="analyze-results-container"
-                          key="landing-3"
-                          class="box-style flip-class" />
+          <component :is="displayedComponent" :key="displayedComponent" />
         </transition>
       </v-col>
     </v-row>
@@ -32,17 +21,18 @@
 import AnalyzePending from '@/components/new-request/analyze-pending'
 import AnalyzeResults from '@/components/new-request/analyze-results'
 import LowerContainer from '@/components/lower-info-area/lower-container'
+import ApplicantInfo from '@/components/new-request/applicant-info.vue'
 import newReqModule from '@/store/new-request-module'
 import Stats from '@/components/new-request/stats'
 import Tabs from '@/components/tabs'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
-  components: { AnalyzePending, AnalyzeResults, LowerContainer, Stats, Tabs }
+  components: { ApplicantInfo, AnalyzePending, AnalyzeResults, LowerContainer, Stats, Tabs }
 })
 export default class Landing extends Vue {
-  get searchShowStage () {
-    return newReqModule.searchShowStage
+  get displayedComponent () {
+    return newReqModule.displayedComponent
   }
 }
 

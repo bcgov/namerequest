@@ -30,7 +30,7 @@ describe('name-input.vue', () => {
   })
   it('Resists submitting when the entity type is set to "all" and detects the correct error type', async () => {
     newReqModule.mutateEntityType('all')
-    newReqModule.mutateRequestType('CNV')
+    newReqModule.mutateRequestAction('CNV')
     wrapper.vm.nameSearch = 'test'
     await wrapper.vm.$nextTick()
 

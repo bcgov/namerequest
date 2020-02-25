@@ -1,6 +1,5 @@
 <template>
-  <v-container class="px-9 pt-6 pb-9">
-    <!--TITLE, START OVER, SEARCH FIELD-->
+  <v-container class="pa-9 pt-6 normal-copy" id="analyze-results-container">
     <v-row no-gutters justify="space-between" align-content="space-around">
       <v-col cols="auto" class="bold-text">
         You are searching for a name for {{ requestAction }}
@@ -8,12 +7,11 @@
         {{ entityText }}
       </v-col>
       <v-col cols="auto">
-        <v-btn text
-               id="back-to-search-btn"
-               class="modal-activator"
-               @click="startAgain()"><span class="normal-link">Start Search Over</span></v-btn>
+        <button id="back-to-search-btn"
+               class="modal-activator pa-0"
+               @click="startAgain()"><span class="normal-link">  Start Search Over</span></button>
       </v-col>
-      <v-col cols="12">
+      <v-col cols="12" class="mt-3">
         <v-form @submit="handleSubmit">
           <v-text-field v-model="name"
                         filled
@@ -41,213 +39,236 @@
         </v-form>
       </v-col>
     </v-row>
+    <transition name="fade" mode="out-in" >
+      <v-row no-gutters  :key="issueIndex+'vcol'">
+        <v-col>
+          <!--"FURTHER ACTION REQUIRED" OR "APPROVABLE" TEXT + ICON-->
+          <v-row no-gutters justify="center" class="mt-n4">
+            <v-col cols="auto" :class="json.status === 'Available' ? 'approved' : 'action' " class="h4">
+              <v-icon :class="json.status === 'Available' ? 'approved' : 'action' ">
+                {{ json.status === 'Available' ? 'check_circle' : 'stars' }}
+              </v-icon>
+              {{ json.header }}
+            </v-col>
+          </v-row>
 
-    <!--FURTHER ACTION OR APPROVABLE TEXT + ICON-->
-    <v-row no-gutters justify="center" class="mt-n4">
-      <v-col cols="auto" :class="json.status === 'ap' ? 'approved' : 'action'" class="h4">
-        <v-icon :class="json.status === 'ap' ? 'approved' : 'action'">
-          {{ json.status === 'ap' ? 'check_circle' : 'stars' }}
-        </v-icon>
-        {{ json.header }}
-      </v-col>
-    </v-row>
+          <!--ISSUE_TYPE: FURTHER ACTION REQUIRED-->
+          <template v-if="issue && issue.issue_type">
+            <!--MAIN HEADINGS / INFO: LINE 1 & LINE 2-->
+            <v-row no-gutters justify="center">
+              <v-col class="pt-2 pb-4 mt-n1 text-center"
+                     cols="12"
+                     v-html="issue.line1"
+                     v-if="issue.line1" />
+              <v-col class="mt-n3 pb-4 text-center"
+                     cols="12"
+                     v-html="issue.line2"
+                     v-if="issue.line2" />
+            </v-row>
 
-    <!--RESPONSES WITH ISSUES: FURTHER ACTION REQUIRED-->
-    <template v-if="issue && issue.issue_type">
-      <!--LINE 1 / LINE 2-->
-      <v-row no-gutters justify="center">
-        <v-col class="pt-2 pb-4 mt-n1 text-center"
-               cols="12"
-               v-html="issue.line1"
-               v-if="issue.line1" />
-        <v-col class="mt-n3 pb-4 text-center"
-               cols="12"
-               v-html="issue.line2"
-               v-if="issue.line2" />
-      </v-row>
-
-      <!--CONSENTING BODY INFO ROW-->
-      <v-row justify="center" v-if="issue.consenting_body && issue.consenting_body.name">
-        <v-col class="text-center my-n2">
-          The word <b>"{{ word }}"</b> requires consent from:
-          <p>{{ issue.consenting_body.name }}</p>
-          <p class="mt-n4"><a :href="'mailto:'+issue.consenting_body.email">
-            {{ issue.consenting_body.email }}</a></p>
-        </v-col>
-      </v-row>
-
-      <!--CORP CONFLICT TABLE-->
-      <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n7">
-        <v-col cols="auto" class="py-4">
-          <div style="width: 600px;" v-for="(corp, n) in conflicts" :key="n">
-            <div style="display: inline-block; border-bottom: 1px dashed grey; width: 80%">{{ corp.name }}</div>
-            <div style="display: inline-block; border-bottom: 1px dashed grey; width: 20%"
-                 class="text-right">{{ corp.date }}
-            </div>
-          </div>
-        </v-col>
-      </v-row>
-
-      <!--GREY BOXES: TRANSITION GROUP DIV HAS V-ROW CLASSES APPLIED; IS A V-ROW-->
-      <div class="row pale-blue-text no-gutters justify-center"
-                        name="fade"
-                        tag="div">
-        <v-col :key="issue.issue_type+' '+option.header+' '+i" cols="auto" v-for="(option, i) in issue.setup">
-          <v-container :class="optionClasses(i)"
-                       :key="issue.issue_type+' '+i+' container'">
-            <v-row class="small-copy pale-blue-text">
-              <!-- Line 1 and Line 2-->
-              <v-col class="bold-text mt-n3" cols="12">
-                <h5><v-icon class="pr-2 pale-blue-text">info</v-icon>
-                {{ option.header }}</h5>
-              </v-col>
-              <template v-if="issue.issue_type !== 'wrong_designation'">
-                <v-col class="small-copy pale-blue-text pt-0 flex-fill"
-                       cols="12"
-                       v-html="option.line1" />
-                <v-col class="small-copy pale-blue-text pt-0 flex-fill"
-                       cols="12"
-                       v-html="option.line2" />
-              </template>
-              <template v-if="issue.issue_type === 'wrong_designation' && i === 0">
-                <v-col class="small-copy pale-blue-text pt-0 flex-fill"
-                       cols="12"
-                       v-if="!changesInBaseName && !designationIsFixed"
-                       v-html="option.line1" />
-                <v-col class="small-copy pale-blue-text pt-0 flex-fill"
-                       cols="12"
-                       v-if="!changesInBaseName && !designationIsFixed"
-                       v-html="option.line2" />
-                <v-col class="small-copy pale-blue-text pt-0 flex-fill"
-                       cols="12"
-                       v-if="!changesInBaseName && designationIsFixed && i === 0">
-                  You have changed the designation to a compatible one.  You may proceed.
-                </v-col>
-              </template>
-              <!--button / checkbox driven ui-->
-              <v-col v-if="option.button === 'designation'">
-                <!--Designation based issues-->
-                <transition name="fade" mode="out-in">
-                  <p v-if="changesInBaseName" key="designation-div-1">
-                    You have made changes to the base name. You must either change the name back or run a new search.
-                  </p>
-                  <div v-if="!designationIsFixed && !changesInBaseName" key="designation-div-2">
-                    <p class="mt-n3 mb-1 small-copy">Please choose one of the following:</p>
-                    <button tag="div"
-                            :key="'designation-'+d"
-                            :id="'designation-'+d"
-                            @click="changeDesignation(des)"
-                            class="small-link mr-2"
-                            v-for="(des, d) in issue.designations">
-                      {{ des }}{{ (d !== issue.designations.length - 1) ? ',' : '' }}
-                    </button>
+            <!--CORP CONFLICT TABLE-->
+            <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n7">
+              <v-col cols="auto" class="py-4">
+                <div style="width: 600px;" v-for="(corp, n) in conflicts" :key="n">
+                  <div style="display: inline-block; border-bottom: 1px dashed grey; width: 80%">
+                    {{ corp.name }}</div>
+                  <div style="display: inline-block; border-bottom: 1px dashed grey; width: 20%"
+                       class="text-right">{{ corp.date }}
                   </div>
-                  <div v-if="designationIsFixed && !changesInBaseName" key="designation-div-3">
-                    <ReserveSubmit id="reserve-submit-designation" :setup="reserveAction" />
-                  </div>
-                </transition>
-              </v-col>
-              <v-col v-if="option.checkbox === 'examine'" class="pa-0" id="examine-checkbox-col">
-                <v-checkbox :error="highlightCheckboxes"
-                            :label="examineLabel"
-                            class="ma-0 pa-0"
-                            id="examine-checkbox"
-                            v-model="examine[issueIndex]" />
-              </v-col>
-              <v-col v-if="option.checkbox === 'consent_body'" id="consent-body-checkbox-col" class="pa-0">
-                <v-checkbox :error="highlightCheckboxes"
-                            class="ma-0 pa-0"
-                            id="consent-body-checkbox"
-                            label="I am able to obtain and send written consent"
-                            v-model="consentBody[issueIndex]" />
-              </v-col>
-              <v-col v-if="option.checkbox === 'consent_corp'" id="consent-body-checkbox-col" class="pa-0">
-                <v-checkbox :error="highlightCheckboxes"
-                            class="ma-0 pa-0"
-                            id="consent-body-checkbox"
-                            label="I have authority over the conflicting name.  I will send written consent."
-                            v-model="consentCorp[issueIndex]" />
-              </v-col>
-              <v-col v-if="option.button === 'consent_corp'" id="consent-corp-checkbox-col" class="pa-0">
-                <transition name="fade" mode="out-in">
-                  <div v-if="!consentCorp[issueIndex]">
-                    <v-checkbox :error="highlightCheckboxes"
-                                class="mt-n4"
-                                id="consent-corp-checkbox"
-                                label="I have authority over the conflicting name.  I will send written consent."
-                                v-model="consentCorp[issueIndex]" />
-                  </div>
-                  <div v-else>
-                    <ReserveSubmit id="reserve-submit-condition" setup="condition" />
-                  </div>
-                </transition>
-              </v-col>
-              <v-col v-if="option.button === 'examine'" id="examine-checkbox-col" class="pa-0">
-                <ReserveSubmit id="reserve-submit-examine" setup="examine" />
-              </v-col>
-              <v-col v-if="option.button === 'restart'" id="examine-checkbox-col">
-                <p>{{ option.line1 }}</p>
-                <v-btn @click="restartNewType()" id="change-designation-restart-btn">Change Type and Restart</v-btn>
+                </div>
               </v-col>
             </v-row>
-          </v-container>
-        </v-col>
-      </div>
 
-      <!--SUBMISSION BUTTON-->
-      <v-row v-if="issue.show_examination_button" justify="center" class="mt-3">
-        <v-col cols="auto">
-          <ReserveSubmit id="reserve-submit-large" :setup="reserveAction" />
-        </v-col>
-      </v-row>
+            <!--GREY BOXES-->
+            <div class="row pale-blue-text no-gutters justify-center"
+                 name="fade"
+                 tag="div">
+              <v-col :key="issue.issue_type + '-' + option.header + '-' + i"
+                     cols="auto"
+                     v-for="(option, i) in issue.setup">
+                <v-container :class="optionClasses(i)"
+                             :key="issue.issue_type + '-' + i  + '-container'">
+                  <transition :name="i === 0 ? 'fade' : '' " mode="out-in">
+                    <v-row class="small-copy pale-blue-text"
+                           align-content="space-between"
+                           :key="changesInBaseName+designationIsFixed+'key'+i">
+                      <!-- Line 1 and Line 2-->
+                      <v-col class="bold-text mt-n3" cols="12">
+                        <h5><v-icon class="pr-2 pale-blue-text">info</v-icon>
+                          {{ option.header }}</h5>
+                      </v-col>
+                      <!--LINE 1 + LINE 2 WHEN THERE ARE NO CHANGES IN BASE NAME AND REPLACE_DESIGNATION-->
+                      <template v-if="issue.issue_type === 'designation_mismatch' && i === 0 && !changesInBaseName">
+                        <v-col class="small-copy pale-blue-text pt-0"
+                               cols="12"
+                               v-if="!designationIsFixed"
+                               v-html="option.line1" />
+                        <v-col class="small-copy pale-blue-text pt-0"
+                               cols="12"
+                               v-if="!designationIsFixed"
+                               v-html="option.line2" />
+                        <v-col class="small-copy pale-blue-text pt-0"
+                               cols="12"
+                               v-else>
+                          You have changed the designation to a compatible one.  You may proceed.
+                        </v-col>
+                      </template>
+                      <!--LINE 1 + LINE 2 WHEN REPLACE_DESIGNATION AND CHANGES IN BASE NAME + ANY OTHER SCENARIO-->
+                      <template v-else>
+                        <v-col class="small-copy pale-blue-text pt-0"
+                               cols="12"
+                               v-html="option.line1" />
+                        <v-col class="small-copy pale-blue-text pt-0 flex-fill"
+                               cols="12"
+                               v-html="option.line2" />
+                      </template>
+                                            <!--button / checkbox driven ui-->
+                      <transition name="fade" mode="out-in">
+                        <v-col v-if="option.type === 'replace_designation'"
+                               :key="changesInBaseName+designationIsFixed+'key'">
+                          <!--Designation based issues-->
+                          <p v-if="changesInBaseName">
+                            You have made changes to the base name.
+                            You must either change the name back or run a new search.
+                          </p>
+                          <div v-if="!designationIsFixed && !changesInBaseName">
+                            <p class="mt-n3 mb-1 small-copy">Please choose one of the following:</p>
+                            <button tag="div"
+                                    :key="'designation-'+d"
+                                    :id="'designation-'+d"
+                                    @click="changeDesignation(des)"
+                                    class="small-link mr-2"
+                                    v-for="(des, d) in issue.designations">
+                              {{ des }}{{ (d !== issue.designations.length - 1) ? ',' : '' }}
+                            </button>
+                          </div>
+                          <div v-if="designationIsFixed && !changesInBaseName">
+                            <ReserveSubmit id="reserve-submit-designation" style="display: inline"
+                                           :setup="reserveAction" />
+                          </div>
+                        </v-col>
+                      </transition>
+                      <v-col v-if="option.type === 'send_to_examiner' && displayCheckbox"
+                             class="pa-0"
+                             id="examine-checkbox-col">
+                        <v-checkbox :error="highlightCheckboxes"
+                                    :label="examineLabel"
+                                    class="ma-0 pa-0"
+                                    id="examine-checkbox"
+                                    v-model="examine[issueIndex]" />
+                      </v-col>
+                      <v-col v-if="option.type === 'send_to_examiner' && !displayCheckbox"
+                             id="examine-checkbox-col"
+                             class="pa-0">
+                        <ReserveSubmit id="reserve-submit-designation" style="display: inline"
+                                       :setup="json.issues.length > 1 ? reserveAction : 'examine'"/>
+                      </v-col>
+                      <v-col v-if="option.type === 'obtain_consent' && displayCheckbox"
+                             id="consent-body-checkbox-col"
+                             class="pa-0">
+                        <v-checkbox :error="highlightCheckboxes"
+                                    class="ma-0 pa-0"
+                                    id="consent-body-checkbox"
+                                    label="I am able to obtain and send written consent"
+                                    v-model="consentBody[issueIndex]" />
+                      </v-col>
+                      <v-col v-if="option.type === 'obtain_consent' && !displayCheckbox"
+                             id="consent-body-checkbox-col"
+                             class="pa-0">
+                        <ReserveSubmit id="reserve-submit-designation" style="display: inline"
+                                       :setup="json.issues.length > 1 ? reserveAction : 'consent'" />
+                      </v-col>
+                      <v-col v-if="option.type === 'self_consent' && displayCheckbox"
+                             id="consent-body-checkbox-col"
+                             class="pa-0">
+                        <v-checkbox :error="highlightCheckboxes"
+                                    class="ma-0 pa-0"
+                                    id="consent-body-checkbox"
+                                    label="I have authority over the conflicting name.  I will send written consent."
+                                    v-model="consentCorp[issueIndex]" />
+                      </v-col>
+                      <v-col v-if="option.type === 'self_consent' && !displayCheckbox"
+                             id="consent-corp-checkbox-col"
+                             class="pa-0">
+                        <ReserveSubmit id="reserve-submit-designation" style="display: inline"
+                                       :setup="json.issues.length > 1 ? reserveAction : 'consent'" />
+                      </v-col>
+                      <v-col v-if="issue.type === 'replace_designation'" id="examine-checkbox-col">
+                        <p>{{ option.line1 }}</p>
+                        <v-btn @click="restartNewType()" id="change-designation-restart-btn">
+                          Change Type and Restart</v-btn>
+                      </v-col>
+                    </v-row>
+                  </transition>
+                </v-container>
+              </v-col>
+            </div>
 
-      <!--ERROR MESSAGE / NEXT - PREVIOUS BUTTONS-->
-      <v-row v-if="json.issues.length > 1" justify="end" no-gutters>
-        <v-col v-if="highlightCheckboxes"
-               class="small-copy text-center">
-          <div class="error-message">
-            You must either tick whichever box applies or take the action prescribed in Option 1.
-          </div>
-        </v-col>
-        <v-col cols="auto" class="text-right">
-          <v-btn @click="issueIndex--"
-                 class="mt-3 mb-n4 rnd-wht-btn"
-                 color="#1669bb"
-                 id="previous-issue-btn"
-                 large
-                 outlined
-                 v-if="issueIndex > 0">Previous Issue
-          </v-btn>
-          <v-btn :class="nextButtonDisabled ? 'disabled-issue-btn' : 'active-issue-btn'"
-                 @click="clickNext"
-                 class="mt-3 mb-n4"
-                 id="next-issue-btn"
-                 large
-                 outlined
-                 v-if="(json.issues.length - 1) > issueIndex">Next Issue
-          </v-btn>
+            <!--SUBMISSION BUTTON-->
+            <v-row v-if="issue.show_examination_button" justify="center" class="mt-3">
+              <v-col cols="auto">
+                <ReserveSubmit id="reserve-submit-large"
+                               :setup="issue.issue_type === 'unclassified_word' ? 'examine' : requestAction" />
+              </v-col>
+            </v-row>
+
+            <!--ERROR MESSAGE / NEXT - PREVIOUS BUTTONS-->
+            <v-row v-if="json.issues.length > 1" justify="end" no-gutters>
+              <v-col v-if="highlightCheckboxes"
+                     class="small-copy text-center">
+                <div class="error-message">
+                  You must either tick whichever box applies or take the action prescribed in Option 1.
+                </div>
+              </v-col>
+              <v-col cols="auto" class="text-right">
+                <v-btn @click="issueIndex--"
+                       class="mt-3 mb-n4 rnd-wht-btn"
+                       color="#1669bb"
+                       id="previous-issue-btn"
+                       large
+                       outlined
+                       v-if="issueIndex > 0">Previous Issue
+                </v-btn>
+                <v-btn :class="nextButtonDisabled ? 'disabled-issue-btn' : 'active-issue-btn'"
+                       @click="clickNext"
+                       class="mt-3 mb-n4"
+                       id="next-issue-btn"
+                       large
+                       outlined
+                       v-if="(json.issues.length - 1) > issueIndex">Next Issue
+                </v-btn>
+              </v-col>
+            </v-row>
+          </template>
+          <!--APPROVABLE NAME, NO ISSUES-->
+          <template v-else>
+            <!--APPROVED TEXT-->
+            <v-row no-gutters justify="center">
+              <v-col cols="12" class="normal-copy pt-2 pb-4">
+                <v-row justify="center">
+                  <v-col cols="auto">
+                  Name is available for {{ requestAction }}
+                  {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }} {{ entityText }}
+                  </v-col>
+                </v-row>
+                <v-row justify="center">
+                  <v-col cols="auto">
+                    <v-btn x-large @click="clickReserveNow" v-if="!json.issues || json.issues.length === 0">
+                      Reserve Now</v-btn>
+                    <v-btn x-large @click="clickReserveNow" v-if="json.issues.some(
+                      issue => issue.issue_type === 'unclassified_word')">Send to Examination
+                      Reserve Now</v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+          </template>
         </v-col>
       </v-row>
-    </template>
-    <!--APPROVABLE NAME, NO ISSUES-->
-    <template v-else>
-      <!--APPROVED TEXT-->
-      <v-row no-gutters justify="center">
-        <v-col cols="12" class="normal-copy pt-2 pb-4">
-          <v-row justify="center">
-            <v-col cols="auto">
-              Name is available for {{ requestAction }}
-              {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }} {{ entityText }}
-            </v-col>
-          </v-row>
-          <v-row justify="center">
-            <v-col cols="auto">
-              <v-btn x-large>Reserve Now</v-btn>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-    </template>
+    </transition>
+
+    <!--TITLE, START OVER, SEARCH FIELD-->
+
   </v-container>
 </template>
 
@@ -256,7 +277,7 @@ import ReserveSubmit from '@/components/new-request/reserve-submit'
 import NameWordRenderer from '@/components/new-request/analyzed-name-word-renderer'
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { IssueI, SetupI, ResponseI } from '@/models'
+import { IssueI, SetupI, DisplayedComponentT } from '@/models'
 
 @Component({
   components: { ReserveSubmit, NameWordRenderer }
@@ -267,17 +288,17 @@ export default class AnalyzeResults extends Vue {
   showActualInput: boolean = false
   originalName: string | null = null
   highlightCheckboxes: boolean = false
-  examine: ResponseI = {
+  consentBody = {
     0: false,
     1: false,
     2: false
   }
-  consentBody: ResponseI = {
+  consentCorp = {
     0: false,
     1: false,
     2: false
   }
-  consentCorp: ResponseI = {
+  examine = {
     0: false,
     1: false,
     2: false
@@ -307,8 +328,27 @@ export default class AnalyzeResults extends Vue {
     }
   }
 
+  get buttonSetup () {
+    let output: string = ''
+    for (let step in this.consentBody) {
+      if (this.consentBody[step]) {
+        output = 'consent'
+      }
+    }
+    for (let step in this.consentCorp) {
+      if (this.consentCorp[step]) {
+        output = 'consent'
+      }
+    }
+    for (let step in this.examine) {
+      if (this.examine[step]) {
+        output = 'examine'
+      }
+    }
+    return output
+  }
   get changesInBaseName () {
-    if (this.issue.issue_type === 'wrong_designation') {
+    if (this.issue.issue_type === 'designation_mismatch') {
       let nameEnd = this.originalName.indexOf(this.word)
       if (this.originalName.slice(0, nameEnd) !== this.name.slice(0, nameEnd)) {
         return true
@@ -326,7 +366,7 @@ export default class AnalyzeResults extends Vue {
     return []
   }
   get designationIsFixed () {
-    if (this.issue.issue_type === 'wrong_designation') {
+    if (this.issue.issue_type === 'designation_mismatch') {
       let { designations } = this.issue
       for (let des of designations) {
         des = des.toLowerCase()
@@ -337,6 +377,14 @@ export default class AnalyzeResults extends Vue {
             return true
           }
         }
+      }
+    }
+    return false
+  }
+  get displayCheckbox () {
+    if (Array.isArray(this.json.issues) && this.json.issues.length > 1) {
+      if (this.issueIndex < this.json.issues.length - 1) {
+        return true
       }
     }
     return false
@@ -438,6 +486,9 @@ export default class AnalyzeResults extends Vue {
       setTimeout(() => { reset() }, 4000)
     }
   }
+  clickReserveNow () {
+    newReqModule.mutateDisplayedComponent('ApplicantInfo')
+  }
   handleSubmit (event: Event) {
     event.preventDefault()
     newReqModule.startAnalyzeName()
@@ -464,10 +515,7 @@ export default class AnalyzeResults extends Vue {
     return ''
   }
   restartNewType () {
-    let currentDes = this.issue.name_actions[0].word
-    let value = newReqModule.entityValueFromText(currentDes)
-    newReqModule.mutateEntityType(value)
-    newReqModule.mutateShowSearchStage('search')
+    newReqModule.mutate('search')
   }
   startAgain () {
     newReqModule.startAgain()
@@ -477,25 +525,17 @@ export default class AnalyzeResults extends Vue {
 </script>
 
 <style scoped lang="sass">
-.test-bg
-  background-color: pink
 #examine-checkbox
   font-size: 13px !important
   line-height: 16px !important
 .action
-  color: $error
+  color: $error !important
 .approved
-  color: $approved
+  color: $approved !important
 .error-message
   color: red
   margin-left: 20px
   margin-top: 15px
-.fade-enter-active, .fade-leave-active
-  transition: opacity .2s
-.fade-enter, .fade-leave-to
-  opacity: 0
-.flip-list-move
-  transition: ease-in-out 1s
 .helpful-hint
   padding: 15px 25px 15px 25px
   border-radius: 4px
@@ -526,10 +566,17 @@ export default class AnalyzeResults extends Vue {
   border-radius: 4px
   border: 1px dashed $pale-blue
   background-color: $grey-1
-.list-enter-active, .list-leave-active
-  transition: all 1s
-.list-enter, .list-leave-to
-  opacity: 0
 .strike
   text-decoration-line: line-through
+.fade-enter
+  opacity: 0
+.fade-enter-active, .fade-leave-active
+  transition: all .15s ease-in
+.fade-enter-to
+  opacity: 1
+.fade-leave
+  opacity: 1
+.fade-leave-to
+  opacity: 0
+
 </style>

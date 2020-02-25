@@ -12,17 +12,19 @@
               grow>
         <v-tab :ripple="false"
                style="min-height: 64px"
+               id="new-tab"
                class="upper-left-border"
                tabindex="0"><span
                :class="tabNumber !== 1 ? 'h5' : 'h5-lt'">New Name Search</span></v-tab>
         <v-tab :ripple="false"
                style="min-height: 64px"
+               id="existing-tab"
                class="upper-right-border"
                tabindex="1"><span
                :class="tabNumber === 1 ? 'h5' : 'h5-lt'">Existing Name Request</span></v-tab>
         <v-tabs-items v-model="tabNumber">
           <v-tab-item>
-            <NewRequest/>
+            <Search />
           </v-tab-item>
           <v-tab-item>
             <ExistingRequestSearch/>
@@ -36,19 +38,19 @@
 <script lang="ts">
 import AnalyzePending from '@/components/new-request/analyze-pending'
 import AnalyzeResults from '@/components/new-request/analyze-results'
+import Search from '@/components/new-request/search.vue'
 import ExistingRequestDisplay from './existing-request/existing-request-display'
 import ExistingRequestSearch from './existing-request/existing-request-search'
 import newReqModule from '../store/new-request-module'
-import NewRequest from './new-request/new-request'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
   components: {
+    Search,
     AnalyzePending,
     AnalyzeResults,
     ExistingRequestDisplay,
-    ExistingRequestSearch,
-    NewRequest
+    ExistingRequestSearch
   }
 })
 export default class Tabs extends Vue {
