@@ -20,7 +20,7 @@ describe('name-input.vue', () => {
 
   afterEach( () => {
     newReqModule.store.state.newRequestModule.entityType = 'CR'
-    newReqModule.store.state.newRequestModule.requestType = 'NEW'
+    newReqModule.store.state.newRequestModule.requestAction = 'NEW'
     newReqModule.store.state.newRequestModule.name = ''
   })
 
@@ -42,7 +42,7 @@ describe('name-input.vue', () => {
   })
   it('Resists submission when the request type is set to "all" and detects the correct error type', async () => {
     newReqModule.store.state.newRequestModule.entityType = 'CR'
-    newReqModule.store.state.newRequestModule.requestType = 'all'
+    newReqModule.store.state.newRequestModule.requestAction = 'all'
     wrapper.vm.nameSearch = 'test'
     await wrapper.vm.$nextTick()
 
@@ -54,7 +54,7 @@ describe('name-input.vue', () => {
   })
   it('Resists submission when there is no name entered and detects the correct error type', async () => {
     newReqModule.store.state.newRequestModule.entityType = 'CR'
-    newReqModule.store.state.newRequestModule.requestType = 'CNV'
+    newReqModule.store.state.newRequestModule.requestAction = 'CNV'
     await wrapper.vm.$nextTick()
 
     let button = wrapper.find('#name-input-icon')

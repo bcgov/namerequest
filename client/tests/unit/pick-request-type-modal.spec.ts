@@ -44,7 +44,7 @@ describe('pick-request-type.vue', (): void => {
     convertType.trigger('click')
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.showModal).toBe(false)
-    expect(newReqModule.requestType).toBe('CNV')
+    expect(newReqModule.requestAction).toBe('CNV')
     return
   })
 })

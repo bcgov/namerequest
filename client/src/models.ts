@@ -3,8 +3,6 @@ export type LocationT = 'BC' | 'CA' | 'IN' | 'HELP'
 export type NrDataResponseT = RequestDataI | null
 export type NrDataT = string | null
 export type SearchComponentT = 'search' | 'analyzing' | 'results'
-export type KeyOf = keyof IssueI
-
 
 export interface AnalysisJSONI {
   header?: string

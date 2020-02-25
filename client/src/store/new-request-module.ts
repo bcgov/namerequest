@@ -242,7 +242,7 @@ export class NewRequestModule extends VuexModule {
   nrRequiredModalVisible: boolean = false
   pickEntityModalVisible: boolean = false
   pickRequestTypeModalVisible: boolean = false
-  requestType: string = 'NEW'
+  requestAction: string = 'NEW'
   requestTypes: EntityI[] = [
     {
       text: 'Start a New Business',
@@ -331,7 +331,7 @@ export class NewRequestModule extends VuexModule {
       { text: 'Foreign', value: 'IN' },
       { text: 'Help', value: 'HELP' }
     ]
-    if (this.requestType === 'MVE') {
+    if (this.requestAction === 'MVE') {
       let optionsLessBC = [...options]
       return optionsLessBC.splice(1, 2)
     }
@@ -413,7 +413,7 @@ export class NewRequestModule extends VuexModule {
     if (this.entityType === 'all') {
       this.setErrors('entity')
     }
-    if (this.requestType === 'all') {
+    if (this.requestAction === 'all') {
       this.setErrors('request')
     }
     if (this.location === 'HELP') {
@@ -435,7 +435,7 @@ export class NewRequestModule extends VuexModule {
       name,
       location: this.location,
       entity_type: this.entityType,
-      request_type: this.requestType
+      request_action: this.requestAction
     }
     let resp
     let CancelToken = axios.CancelToken
@@ -558,7 +558,7 @@ export class NewRequestModule extends VuexModule {
   }
   @Mutation
   mutateRequestType (type: string) {
-    this.requestType = type
+    this.requestAction = type
     if (type === 'MVE' && this.location === 'BC') {
       this.location = 'CA'
       this.entityType = 'XCR'

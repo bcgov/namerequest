@@ -2,7 +2,7 @@
   <v-container class="px-9 py-5">
     <v-row justify="space-between">
       <v-col cols="auto">
-        <b>You are searching for a name for {{ requestType }}
+        <b>You are searching for a name for {{ requestAction }}
           {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }}
           {{ entityText }}
         </b>
@@ -67,8 +67,8 @@ export default class AnalyzePending extends Vue {
     let options = newReqModule.locationOptions
     return options.find((opt: any) => opt.value === value)
   }
-  get requestType () {
-    switch (newReqModule.requestType) {
+  get requestAction () {
+    switch (newReqModule.requestAction) {
       case 'new':
         return 'a new'
       case 'existing':

@@ -15,7 +15,7 @@
                     @change="clearErrors()"
                     filled
                     id="search-type-options-select"
-                    v-model="requestType" />
+                    v-model="requestAction" />
         </v-col>
         <v-col cols="2">
           <v-select :error-messages="errors.includes('location') ? 'Please select a location' : ''"
@@ -100,10 +100,10 @@ export default class NewRequest extends Vue {
   get locationOptions () {
     return newReqModule.locationOptions
   }
-  get requestType () {
-    return newReqModule.requestType
+  get requestAction () {
+    return newReqModule.requestAction
   }
-  set requestType (value: string) {
+  set requestAction (value: string) {
     newReqModule.mutateRequestType(value)
     if (value === 'all') {
       newReqModule.mutatePickRequestTypeModalVisible(true)

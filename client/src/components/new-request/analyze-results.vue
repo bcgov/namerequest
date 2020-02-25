@@ -3,7 +3,7 @@
     <!--TITLE, START OVER, SEARCH FIELD-->
     <v-row no-gutters justify="space-between" align-content="space-around">
       <v-col cols="auto" class="bold-text">
-        You are searching for a name for {{ requestType }}
+        You are searching for a name for {{ requestAction }}
         {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }}
         {{ entityText }}
       </v-col>
@@ -236,7 +236,7 @@
         <v-col cols="12" class="normal-copy pt-2 pb-4">
           <v-row justify="center">
             <v-col cols="auto">
-              Name is available for {{ requestType }}
+              Name is available for {{ requestAction }}
               {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }} {{ entityText }}
             </v-col>
           </v-row>
@@ -385,8 +385,8 @@ export default class AnalyzeResults extends Vue {
     }
     return true
   }
-  get requestType () {
-    switch (newReqModule.requestType) {
+  get requestAction () {
+    switch (newReqModule.requestAction) {
       case 'NEW':
         return 'a new'
       case 'existing':
