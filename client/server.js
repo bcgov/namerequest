@@ -983,6 +983,66 @@ server.get('/api/v1/name-analysis', (req, res) => {
   }
   //Approved name for BC Corporation
 
+
+if (query.name === 'Happy Runners Cooperative') {
+  resp =
+  {
+    "header"
+  :
+    "Further Action Required",
+      "issues"
+  :
+    [
+      {
+        "designations": [
+          "Inc",
+          "Incorporated",
+          "Incorpore",
+          "Limite",
+          "Limited",
+          "Ltd"
+        ],
+        "issue_type": "designation_mismatch",
+        "line1": "Designation \u003cb\u003eCooperative\u003c/b\u003e cannot be used with selected business type of" +
+          " \u003cb\u003eCorporation\u003c/b\u003e",
+        "name_actions": [
+          {
+            "type": "highlight",
+            "index": 2,
+            "word": "Cooperative"
+          }
+        ],
+        "setup": [
+          {
+            "button": "",
+            "checkbox": "",
+            "header": "Option 1",
+            "label": "",
+            "line1": "Replace Designation",
+            "line2": "",
+            "type": "replace_designation"
+          },
+          {
+            "button": "",
+            "checkbox": "",
+            "header": "Option 2",
+            "label": "",
+            "line1": "Change Entity Type",
+            "line2": "",
+            "type": "change_entity_type"
+          }
+        ],
+        "show_examination_button": false,
+        "show_next_button": false,
+        "show_reserve_button": false
+      }
+    ],
+      "status"
+  :
+    "fa"
+  }
+}
+
   if (!resp) {
     resp = {
       status: 'ap',

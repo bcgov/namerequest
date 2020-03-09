@@ -370,6 +370,7 @@ describe('analyze-results.vue', () => {
       expect(wrapper.text()).toContain('Or you can remove the word Action.')
     })
     it('renders a button to send for examination', () => {
+      console.log(wrapper.html())
       expect(wrapper.contains('#reserve-submit-examine')).toBe(true)
     })
     it('renders the consent_corp checkbox/button elememnt', () => {

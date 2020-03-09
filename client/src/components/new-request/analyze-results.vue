@@ -98,7 +98,7 @@
                           {{ option.header }}</h5>
                       </v-col>
                       <!--LINE 1 + LINE 2 WHEN THERE ARE NO CHANGES IN BASE NAME AND REPLACE_DESIGNATION-->
-                      <template v-if="issue.issue_type === 'designation_mismatch' && i === 0 && !changesInBaseName">
+                      <template v-if="option.type === 'replace_designation' && !changesInBaseName">
                         <v-col class="small-copy pale-blue-text pt-0"
                                cols="12"
                                v-if="!designationIsFixed"
@@ -111,6 +111,15 @@
                                cols="12"
                                v-else>
                           You have changed the designation to a compatible one.  You may proceed.
+                        </v-col>
+                      </template>
+                      <template v-else-if="option.type === 'change_entity_type'">
+                        <v-col class="small-copy pale-blue-text pt-0"
+                               key="change-entity-type-col"
+                               cols="12"
+                               v-html="option.line1" />
+                        <v-col class="text-center mt-4">
+                          <v-btn @click="startAgain()">Restart and Change Type</v-btn>
                         </v-col>
                       </template>
                       <!--LINE 1 + LINE 2 WHEN REPLACE_DESIGNATION AND CHANGES IN BASE NAME + ANY OTHER SCENARIO-->
@@ -142,7 +151,7 @@
                               {{ des }}{{ (d !== issue.designations.length - 1) ? ',' : '' }}
                             </button>
                           </div>
-                          <div v-if="designationIsFixed && !changesInBaseName">
+                          <div v-if="designationIsFixed && !changesInBaseName" class="text-center">
                             <ReserveSubmit id="reserve-submit-designation" style="display: inline"
                                            :setup="reserveAction" />
                           </div>
@@ -205,10 +214,12 @@
             </div>
 
             <!--SUBMISSION BUTTON-->
-            <v-row v-if="issue.show_examination_button" justify="center" class="mt-3">
+            <v-row v-if="issue.show_examination_button || issue.show_reserve_button"
+                   justify="center"
+                   class="mt-3">
               <v-col cols="auto">
                 <ReserveSubmit id="reserve-submit-large"
-                               :setup="issue.issue_type === 'unclassified_word' ? 'examine' : requestAction" />
+                               :setup="issue.show_examination_button ? 'examine' : ''" />
               </v-col>
             </v-row>
 
@@ -249,15 +260,6 @@
                   <v-col cols="auto">
                   Name is available for {{ requestAction }}
                   {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }} {{ entityText }}
-                  </v-col>
-                </v-row>
-                <v-row justify="center">
-                  <v-col cols="auto">
-                    <v-btn x-large @click="clickReserveNow" v-if="!json.issues || json.issues.length === 0">
-                      Reserve Now</v-btn>
-                    <v-btn x-large @click="clickReserveNow" v-if="json.issues.some(
-                      issue => issue.issue_type === 'unclassified_word')">Send to Examination
-                      Reserve Now</v-btn>
                   </v-col>
                 </v-row>
               </v-col>
