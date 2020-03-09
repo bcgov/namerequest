@@ -37,7 +37,7 @@ describe('name-input.vue', () => {
     let button = wrapper.find('#name-input-icon')
     button.trigger('click')
     await wrapper.vm.$nextTick
-    expect(newReqModule.searchShowStage).toBe('search')
+    expect(newReqModule.displayedComponent).toBe('Tabs')
     expect(wrapper.vm.errors).toStrictEqual(['entity'])
   })
   it('Resists submission when the request type is set to "all" and detects the correct error type', async () => {
@@ -49,7 +49,7 @@ describe('name-input.vue', () => {
     let button = wrapper.find('#name-input-icon')
     button.trigger('click')
     await wrapper.vm.$nextTick()
-    expect(newReqModule.searchShowStage).toBe('search')
+    expect(newReqModule.displayedComponent).toBe('Tabs')
     expect(wrapper.vm.errors).toStrictEqual(['request'])
   })
   it('Resists submission when there is no name entered and detects the correct error type', async () => {
@@ -60,7 +60,7 @@ describe('name-input.vue', () => {
     let button = wrapper.find('#name-input-icon')
     button.trigger('click')
     await wrapper.vm.$nextTick()
-    expect(newReqModule.searchShowStage).toBe('search')
+    expect(newReqModule.displayedComponent).toBe('Tabs')
     expect(newReqModule.errors).toStrictEqual(['name'])
   })
   it('Resists submission when the name entered is too short and detects the correct error type', async () => {
@@ -68,7 +68,7 @@ describe('name-input.vue', () => {
     let button = wrapper.find('#name-input-icon')
     button.trigger('click')
     await wrapper.vm.$nextTick()
-    expect(newReqModule.searchShowStage).toBe('search')
+    expect(newReqModule.displayedComponent).toBe('Tabs')
     expect(wrapper.vm.errors).toStrictEqual(['length'])
   })
 })

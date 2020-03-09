@@ -63,7 +63,7 @@ export interface SetupI {
 }
 export interface NewRequestNameSearchI {
   name: string
-  request_type: string
+  request_action: string
   entity_type: string
   location: LocationT
 }

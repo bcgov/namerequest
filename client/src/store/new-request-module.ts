@@ -241,6 +241,7 @@ export class NewRequestModule extends VuexModule {
   extendedEntitySelection: SelectOptionsI | null = null
   extendedRequestType: SelectOptionsI | null = null
   helpMeChooseModalVisible: boolean = false
+  issueIndex: number = 0
   location: LocationT = 'BC'
   locationInfoModalVisible: boolean = false
   name: string = ''

@@ -1,5 +1,5 @@
 <template>
-  <v-container height="400">
+  <v-container height="400" id="tabs-landing-comp">
     <v-row no-gutters>
       <v-tabs v-model="tabNumber"
               background-color="#003366"
