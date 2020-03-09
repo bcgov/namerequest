@@ -178,7 +178,7 @@
                         <ReserveSubmit id="reserve-submit-designation" style="display: inline"
                                        :setup="json.issues.length > 1 ? reserveAction : 'consent'" />
                       </v-col>
-                      <v-col v-if="option.type === 'self_consent' && displayCheckbox"
+                      <v-col v-if="option.type === 'conflict_self_consent' && displayCheckbox"
                              id="consent-body-checkbox-col"
                              class="pa-0">
                         <v-checkbox :error="highlightCheckboxes"
@@ -187,7 +187,7 @@
                                     label="I have authority over the conflicting name.  I will send written consent."
                                     v-model="consentCorp[issueIndex]" />
                       </v-col>
-                      <v-col v-if="option.type === 'self_consent' && !displayCheckbox"
+                      <v-col v-if="option.type === 'conflict_self_consent' && !displayCheckbox"
                              id="consent-corp-checkbox-col"
                              class="pa-0">
                         <ReserveSubmit id="reserve-submit-designation" style="display: inline"
