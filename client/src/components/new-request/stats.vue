@@ -1,7 +1,7 @@
 <template>
-  <v-container class="mt-1 mb-n3" fluid>
+  <v-container class="mt-1 mb-n3 py-0" fluid>
     <v-row class="float-right stats-v-row">
-        <div class="stats-content-outer">
+        <div class="stats-content-outer py-0">
           <div class="stats-content-inner-1 text-center">
             <div class="stats-value h3-lt">{{ auto }}</div>
             <div class="stats-unit">NAMES</div>
@@ -11,7 +11,7 @@
             No Wait Time
           </div>
         </div>
-        <div class="stats-content-outer">
+        <div class="stats-content-outer py-0">
           <div class="stats-content-inner-1 text-center">
             <div class="stats-value h3-lt">{{ priority.value }}</div>
             <div class="stats-unit">{{ priority.unit}}</div>
@@ -21,7 +21,7 @@
             Wait Time
           </div>
         </div>
-        <div id="stats-content-outer-3" class="stats-content-outer">
+        <div id="stats-content-outer-3" class="stats-content-outer py-0">
           <div class="stats-content-inner-1 text-center">
             <div class="stats-value h3-lt">{{ standard.value }}</div>
             <div class="stats-unit">{{ standard.unit }}</div>

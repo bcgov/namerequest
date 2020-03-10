@@ -1,4 +1,4 @@
-import ReserveSubmit from '@/components/new-request/reserve-submit'
+import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import newReqModule from '@/store/new-request-module'
 import Vuetify from 'vuetify'
@@ -22,8 +22,8 @@ describe('reserve-submit.vue', () => {
 
   it('renders a conditional reserve button', () => {
     let wrapper = shallowMount(ReserveSubmit, {
-      vuetify,
       localVue,
+      vuetify,
       propsData: {
         setup: 'consent'
       }
@@ -34,8 +34,8 @@ describe('reserve-submit.vue', () => {
 
   it('renders a conditional reserve button', () => {
     let wrapper = shallowMount(ReserveSubmit, {
-      vuetify,
       localVue,
+      vuetify,
       propsData: {
         setup: 'consent'
       }

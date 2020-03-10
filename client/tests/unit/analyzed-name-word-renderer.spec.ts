@@ -1,11 +1,17 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import Component from '@/components/new-request/analyzed-name-word-renderer'
+import Vuetify from 'vuetify'
 
 const localVue = createLocalVue()
+const vuetify = new Vuetify()
+
+localVue.use(Vuetify)
 
 describe('analyzed-name-word-renderer', () => {
   it('Can render the various name_actions', async () => {
     let wrapper = shallowMount(Component, {
+      localVue,
+      vuetify,
       propsData: {
         word: 'testword',
         actions: [
@@ -24,6 +30,8 @@ describe('analyzed-name-word-renderer', () => {
     )
 
     wrapper = shallowMount(Component, {
+      localVue,
+      vuetify,
       propsData: {
         word: 'testword',
         actions: [
@@ -42,6 +50,8 @@ describe('analyzed-name-word-renderer', () => {
     )
 
   wrapper = shallowMount(Component, {
+    localVue,
+    vuetify,
     propsData: {
       word: 'testword',
       actions: [

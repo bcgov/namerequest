@@ -36,10 +36,7 @@
 </template>
 
 <script lang="ts">
-import AnalyzePending from '@/components/new-request/analyze-pending'
-import AnalyzeResults from '@/components/new-request/analyze-results'
 import Search from '@/components/new-request/search.vue'
-import ExistingRequestDisplay from './existing-request/existing-request-display'
 import ExistingRequestSearch from './existing-request/existing-request-search'
 import newReqModule from '../store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
@@ -47,9 +44,6 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component({
   components: {
     Search,
-    AnalyzePending,
-    AnalyzeResults,
-    ExistingRequestDisplay,
     ExistingRequestSearch
   }
 })

@@ -1,20 +1,16 @@
 <template>
-  <v-container class="px-9 py-5 normal-copy" id="analyze-pending-container">
-    <v-row no-gutters justify="space-between" align-content="space-around">
-      <v-col cols="auto">
-        <b>You are searching for a name for {{ requestAction }}
-          {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }}
-          {{ entityText }}
-        </b>
+  <MainContainer id="analyze-pending-container">
+    <template v-slot:container-header>
+      <v-col cols="auto h4">
+        You are searching for a name for {{ requestAction }}
+        {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }} {{ entityText }}
       </v-col>
-      <v-col cols="auto">
-        <button id="back-to-search-btn"
-                class="modal-activator pa-0"
-                @click="startOver()"><span class="normal-link">Start Search Over</span></button>
-      </v-col>
-      <NameInput class="mt-3" />
-    </v-row>
-    <v-row justify="center" class="mt-n7 mb-n3 py-0">
+    </template>
+    <template v-slot:content>
+      <v-row no-gutters justify="space-between" align-content="space-around">
+        <NameInput class="mt-3" />
+      </v-row>
+      <v-row justify="center" class="mt-n7 mb-n3 py-0">
       <v-col cols="auto">
         <b>This could take several minutes</b>
       </v-col>
@@ -37,16 +33,18 @@
         <v-btn id="analyze-pending-stop-button" @click="startOver">Stop Search</v-btn>
       </v-col>
     </v-row>
-  </v-container>
+    </template>
+  </MainContainer>
 </template>
 
 <script lang="ts">
+import MainContainer from '@/components/new-request/main-container.vue'
 import newReqModule from '@/store/new-request-module'
 import NameInput from '@/components/new-request/name-input'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
-  components: { NameInput }
+  components: { MainContainer, NameInput }
 })
 export default class AnalyzePending extends Vue {
   get entityObject () {

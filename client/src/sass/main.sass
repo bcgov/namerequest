@@ -138,6 +138,10 @@
   @extend .small-link
   text-decoration: none
 
+.normal-link-sans-ul
+  @extend .normal-link
+  text-decoration: none !important
+
 .large-link
   @extend .normal-link
   font-size: 18px
@@ -196,8 +200,28 @@
   color: $link !important
   border-color: $link !important
 
-#analyze-pending-container, #analyze-results-container, #applicant-info-container
+.main-container-style
   background-color: white !important
-  border-radius: 6
 
+.mini-back-arrow
+  font-size: 14.5px !important
+  font-weight: 700
+  top: -1px !important
+  position: relative !important
+  color: $link !important
 
+#applicant-info-1 .v-text-field__details
+  margin: 0 !important
+#submit-continue-btn
+  text-transform: none !important
+#submit-continue-btn-disabled
+  text-transform: none !important
+  background-color: $grey-2 !important
+  color: #A8ACB0 !important
+  box-shadow: none !important
+#submit-back-btn
+  background-color: white !important
+  color: $link !important
+  border: 1px solid $link !important
+  box-shadow: none !important
+  text-transform: none !important

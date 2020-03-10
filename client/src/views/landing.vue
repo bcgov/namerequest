@@ -1,7 +1,7 @@
 <template>
   <v-container id="landing-container" fluid>
     <v-row id="upper-row" no-gutters align-content="start">
-      <Stats />
+      <Stats class="py-0 mt-3 mb-n8 mr-3" />
       <v-col align-self="end" cols="12" class="h2 mb-1 white-text">
         Name Request
       </v-col>
@@ -21,14 +21,14 @@
 import AnalyzePending from '@/components/new-request/analyze-pending'
 import AnalyzeResults from '@/components/new-request/analyze-results'
 import LowerContainer from '@/components/lower-info-area/lower-container'
-import ApplicantInfo from '@/components/new-request/applicant-info.vue'
+import SubmissionTabs from '@/components/new-request/submit-request/submission-tabs.vue'
 import newReqModule from '@/store/new-request-module'
 import Stats from '@/components/new-request/stats'
 import Tabs from '@/components/tabs'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
-  components: { ApplicantInfo, AnalyzePending, AnalyzeResults, LowerContainer, Stats, Tabs }
+  components: { SubmissionTabs, AnalyzePending, AnalyzeResults, LowerContainer, Stats, Tabs }
 })
 export default class Landing extends Vue {
   get displayedComponent () {
@@ -49,7 +49,7 @@ export default class Landing extends Vue {
   color: $text
   font-size: 16px
   margin-bottom: auto
-  margin-top: 25px
+  margin-top: 0
   padding: 0
 
 #upper-row

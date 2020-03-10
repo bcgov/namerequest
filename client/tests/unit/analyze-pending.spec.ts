@@ -1,6 +1,5 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuetify from 'vuetify'
-import Vuex from 'vuex'
 import Comp from '@/components/new-request/analyze-pending.vue'
 
 const localVue = createLocalVue()
