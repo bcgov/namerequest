@@ -262,6 +262,11 @@
                   {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }} {{ entityText }}
                   </v-col>
                 </v-row>
+                <v-row>
+                  <v-col cols="12" class="text-center">
+                    <ReserveSubmit id="available-reserve-submit" />
+                  </v-col>
+                </v-row>
               </v-col>
             </v-row>
           </template>
