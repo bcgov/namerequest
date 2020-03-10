@@ -77,7 +77,8 @@
               </v-row>
               <v-row justify="end">
                 <v-col class="text-center small-copy"> Stay away from protected names and trade marks.
-                  <br><a href="#">Search Canadian trade marked names</a>
+                  <br><a href="https://www.ic.gc.ca/app/opic-cipo/trdmrks/srch/home?lang=eng">
+                    Search Canadian trade marked names</a>
                   <v-icon class="launch-icon">launch</v-icon>
                 </v-col>
               </v-row>
@@ -157,8 +158,8 @@
 </template>
 
 <script lang="ts">
-import ExampleNameGenerator from './example-name-generator.vue'
-import Footer from '@/components/lower-info-area/footer.vue'
+import ExampleNameGenerator from './example-name-generator'
+import Footer from '@/components/lower-info-area/footer'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({

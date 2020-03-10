@@ -1,12 +1,13 @@
-export type DisplayedComponentT = 'ExistingRequestSearch' | 'ExistingRequestDisplay' | 'NewRequest'
-export type LocationT = 'BC' | 'CA' | 'IN'
+export type DisplayedComponentT = 'Search' | 'AnalyzeResults' | 'AnalyzePending' | 'ApplicantInfo' | 'Tabs'
+export type LocationT = 'BC' | 'CA' | 'IN' | 'HELP'
 export type NrDataResponseT = RequestDataI | null
 export type NrDataT = string | null
 export type SearchComponentT = 'search' | 'analyzing' | 'results'
 
 export interface AnalysisJSONI {
-  issues: Array<IssueI>
-  status: string
+  header?: string
+  issues: IssueI[] | null
+  status: 'fa' | 'rc' | 'ar'
 }
 export interface EntityI {
   text: string
@@ -28,36 +29,41 @@ export interface StatsI {
   }
 }
 export interface IssueI {
-  consenting_body: Object
-  issue_type: string
-  name_actions: NameActionI[]
-  designations: string[]
-  descriptive_words?: [
+  consenting_body?: {
+    name: string
+    contact: string
+  }
+  conflicts?: {
+    name: string
+    date: string
+  }
+  designations?: string[]
+  issue_type:  string
+  line1?: string
+  line2?: string
+  name_actions?: [
     {
-      category: string
-      word_list: string[]
+      type: 'brackets' | 'highlight' | 'spelling' | 'strike'
+      index: number
+      word: string
+      position ?: 'start' | 'end'
+      message ?: string
     }
   ]
+  setup: SetupI[]
   show_examination_button: boolean
-  conflicts?: [
-    {
-      name: string
-      date: string
-    }
-  ]
-  word: string,
-  word_index: number
+  show_resere_button: boolean
 }
-export interface NameActionI {
-  type: string
-  position?: string
-  message?: string
-  word?: string
-  word_index?: number
+export interface SetupI {
+  button?: 'examine' | 'reserve' | 'consent-body' | 'consent-corp' | 'restart' | 'next'
+  checkbox?: 'examine' | 'consent-corp' | 'consent-body'
+  header: string
+  text1: string
+  text2?: string
 }
 export interface NewRequestNameSearchI {
   name: string
-  request_type: string
+  request_action: string
   entity_type: string
   location: LocationT
 }

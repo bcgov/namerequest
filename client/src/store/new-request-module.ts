@@ -1,4 +1,5 @@
-import Axios, { cancelToken } from '@/plugins/axios'
+import Axios from '@/plugins/axios'
+import axios from 'axios'
 import store from '@/store'
 import {
   AnalysisJSONI,
@@ -13,13 +14,12 @@ import {
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import { normalizeWordCase } from '@/plugins/utilities'
 
+let source
+
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
 export class NewRequestModule extends VuexModule {
-  analysisJSON: AnalysisJSONI = {
-    issues: [],
-    status: ''
-  }
-  displayedComponent: DisplayedComponentT = 'NewRequest'
+  analysisJSON: AnalysisJSONI | null = null
+  displayedComponent: DisplayedComponentT = 'Tabs'
   entityType: string = 'CR'
   entityTypesBC: EntityI[] = [
     {
@@ -45,7 +45,7 @@ export class NewRequestModule extends VuexModule {
       ]
     },
     {
-      text: 'BC Corporation',
+      text: 'Corporation',
       cat: 'Corporations',
       blurb: [
         `A company that may have one or more people who own shares with some personal responsibility for debt and
@@ -232,19 +232,26 @@ export class NewRequestModule extends VuexModule {
       value: 'XSO'
     }
   ]
-  errors: Array<string> = []
+  errors: string[] = []
+  examinationRequestedIndex = {
+    0: false,
+    1: false,
+    2: false
+  }
   extendedEntitySelection: SelectOptionsI | null = null
   extendedRequestType: SelectOptionsI | null = null
   helpMeChooseModalVisible: boolean = false
+  issueIndex: number = 0
   location: LocationT = 'BC'
+  locationInfoModalVisible: boolean = false
   name: string = ''
   nrRequiredModalVisible: boolean = false
   pickEntityModalVisible: boolean = false
   pickRequestTypeModalVisible: boolean = false
-  requestType: string = 'NEW'
+  requestAction: string = 'NEW'
   requestTypes: EntityI[] = [
     {
-      text: 'Start a New Business',
+      text: 'Start a New',
       value: 'NEW',
       blurb: `Start a new business in BC. This applies to starting fresh from here or having a business in another 
               province or country that you want to operate in BC as well.`
@@ -270,7 +277,6 @@ export class NewRequestModule extends VuexModule {
       value: 'AML',
       blurb: 'You are merging with another company and you want a new name.'
     },
-
     {
       text: 'Convert to Another Structure',
       value: 'CNV',
@@ -279,17 +285,21 @@ export class NewRequestModule extends VuexModule {
               Registries).`
     },
     {
-      text: 'Restore a Historical Business',
+      text: 'Restore Using a Historical Name',
       value: 'REH',
       blurb: 'blah blah'
     },
     {
-      text: 'Restore by starting a New Business',
+      text: 'Restore with a New Name',
       value: 'REN',
+      blurb: 'blah blah'
+    },
+    {
+      text: 'Change Registration to Sole Prop, GP or DBA.',
+      value: 'CRG',
       blurb: 'blah blah'
     }
   ]
-  searchShowStage: SearchComponentT = 'search'
   stats: StatsI | null = null
   tabNumber: number = 0
 
@@ -323,13 +333,20 @@ export class NewRequestModule extends VuexModule {
     let options = [
       { text: 'BC', value: 'BC' },
       { text: 'Canada', value: 'CA' },
-      { text: 'Foreign', value: 'IN' }
+      { text: 'Foreign', value: 'IN' },
+      { text: 'Help', value: 'HELP' }
     ]
-    if (this.requestType === 'MVE') {
+    if (this.requestAction === 'MVE') {
       let optionsLessBC = [...options]
       return optionsLessBC.splice(1, 2)
     }
     return options
+  }
+  get newOrExistingRequest () {
+    if (this.tabNumber) {
+      return 'existing'
+    }
+    return 'new'
   }
   get pickEntityTableBC () {
     let catagories = []
@@ -391,19 +408,27 @@ export class NewRequestModule extends VuexModule {
     })
   }
 
-  @Action
+  @Action({ rawError: true })
   async getStats () {
-    let resp = await Axios.get('/stats')
+    let resp
+    try {
+      resp = await Axios.get('/stats')
+    } catch {
+      return Promise.resolve()
+    }
     this.mutateStats(resp.data)
-    return resp.data
+    return Promise.resolve(resp.data)
   }
-  @Action
+  @Action({ rawError: true })
   async startAnalyzeName () {
     if (this.entityType === 'all') {
       this.setErrors('entity')
     }
-    if (this.requestType === 'all') {
+    if (this.requestAction === 'all') {
       this.setErrors('request')
+    }
+    if (this.location === 'HELP') {
+      this.setErrors('location')
     }
     if (this.name !== '' && this.name.length < 3) {
       this.setErrors('length')
@@ -412,41 +437,46 @@ export class NewRequestModule extends VuexModule {
       this.setErrors('name')
     }
     if (this.errors.length > 0) {
-      return
+      return Promise.resolve()
     }
     let name = normalizeWordCase(this.name)
     this.mutateName(name)
-    this.mutateSearchShowStage('analyzing')
+    this.mutateDisplayedComponent('AnalyzePending')
     let params: NewRequestNameSearchI = {
       name,
       location: this.location,
       entity_type: this.entityType,
-      request_type: this.requestType
+      request_action: this.requestAction
     }
-    let resp = await Axios.get('/name-analysis', {
-      params,
-      cancelToken
-    })
+    let resp
+    let CancelToken = axios.CancelToken
+    source = CancelToken.source()
+
+    try {
+      resp = await Axios.get('/name-analysis', {
+        params,
+        cancelToken: source.token
+      })
+    } catch (error) {
+      this.mutateDisplayedComponent('Tabs')
+      return Promise.resolve(error)
+    }
     this.mutateAnalysisJSON(resp.data)
-    this.mutateSearchShowStage('results')
-    return resp.data
+    this.mutateDisplayedComponent('AnalyzeResults')
+    return Promise.resolve(resp.data)
   }
-  @Action
+  @Action({ rawError: true })
   stopAnalyzeName () {
-    cancelToken.cancel()
-    this.mutateSearchShowStage('search')
-    this.mutateAnalysisJSON({
-      issues: [],
-      status: ''
-    })
+    source.cancel()
+    this.mutateDisplayedComponent('Tabs')
+    this.mutateAnalysisJSON(null)
+    return Promise.resolve()
   }
-  @Action
+  @Action({ rawError: true })
   startAgain () {
-    this.mutateAnalysisJSON({
-      issues: [],
-      status: ''
-    })
-    this.mutateSearchShowStage('search')
+    this.mutateAnalysisJSON(null)
+    this.mutateDisplayedComponent('Tabs')
+    return Promise.resolve()
   }
 
   @Mutation
@@ -464,15 +494,14 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateDisplayedComponent (comp: DisplayedComponentT) {
     this.displayedComponent = comp
-    if (comp === 'NewRequest') {
-      this.tabNumber = 0
-    } else {
-      this.tabNumber = 1
-    }
   }
   @Mutation
   mutateEntityType (type: string) {
     this.entityType = type
+  }
+  @Mutation
+  mutateExaminationRequestedIndex (value: boolean) {
+    this.examinationRequestedIndex[this.issueIndex] = value
   }
   @Mutation
   mutateExtendedEntitySelectOption (option: SelectOptionsI) {
@@ -491,6 +520,10 @@ export class NewRequestModule extends VuexModule {
     if (location === this.location) {
       return
     }
+    if (location === 'HELP') {
+      this.location = location
+      return
+    }
     if (this.location === 'CA' || this.location === 'IN') {
       if (location === 'CA' || location === 'IN') {
         this.location = location
@@ -504,6 +537,10 @@ export class NewRequestModule extends VuexModule {
       this.entityType = 'XCR'
     }
     this.location = location
+  }
+  @Mutation
+  mutateLocationInfoModalVisible (value: boolean) {
+    this.locationInfoModalVisible = value
   }
   @Mutation
   mutateName (name: string) {
@@ -522,30 +559,20 @@ export class NewRequestModule extends VuexModule {
     this.pickRequestTypeModalVisible = value
   }
   @Mutation
-  mutateSearchShowStage (value: SearchComponentT) {
-    this.searchShowStage = value
-  }
-  @Mutation
-  mutateStats (stats: StatsI) {
+  mutateStats (stats) {
     this.stats = stats
   }
   @Mutation
-  mutateRequestType (type: string) {
-    this.requestType = type
-    if (type === 'MVE' && this.location === 'BC') {
+  mutateRequestAction (action: string) {
+    this.requestAction = action
+    if (action === 'MVE' && this.location === 'BC') {
       this.location = 'CA'
       this.entityType = 'XCR'
     }
   }
   @Mutation
-  mutateTabNumber (number: number) {
-    this.tabNumber = number
-    if (number === 0) {
-      this.displayedComponent = 'NewRequest'
-    }
-    if (number === 1) {
-      this.displayedComponent = 'ExistingRequestSearch'
-    }
+  mutateTabNumber (tab: number) {
+    this.tabNumber = tab
   }
 
   getEntities (catagory) {

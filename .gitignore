@@ -8,6 +8,9 @@ node_modules
 /tests/e2e/reports/
 selenium-debug.log
 
+# quokka.js config
+.quokka
+
 # local env files
 .env.local
 .env.*.local

@@ -1,31 +1,27 @@
 <template>
-  <v-row no-gutters class="mt-1">
-    <v-col cols="12">
-      <v-form @submit="handleSubmit">
-        <v-text-field :error-messages="message"
-                      @input="clearErrors()"
-                      autocomplete="off"
-                      filled
-                      id="name-input-text-field"
-                      placeholder="Search a Name"
-                      v-model="nameSearch">
-          <template v-slot:append>
-            <v-icon class="name-search-icon"
-                    id="name-input-icon"
-                    @click="handleSubmit">search</v-icon>
-          </template>
-        </v-text-field>
-      </v-form>
-    </v-col>
-  </v-row>
+  <v-col cols="12" @keydown.enter="handleSubmit">
+    <v-text-field :error-messages="message"
+                  @input="clearErrors()"
+                  autocomplete="off"
+                  filled
+                  id="name-input-text-field"
+                  placeholder="Search a Name"
+                  v-model="nameSearch">
+      <template v-slot:append>
+        <v-icon class="name-search-icon"
+                id="name-input-icon"
+                @click="handleSubmit">search</v-icon>
+      </template>
+    </v-text-field>
+  </v-col>
 </template>
 
 <script lang="ts">
 import newReqModule from '@/store/new-request-module'
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component({})
-export default class NewRequestNameInput extends Vue {
+export default class NameInput extends Vue {
   get errors () {
     return newReqModule.errors
   }

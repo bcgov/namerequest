@@ -1,15 +1,19 @@
 <template>
-  <v-dialog v-model="showModal" max-width="600px">
-    <v-card class="pa-3" id="pick-request-type-modal-card">
-      <v-card-text class="h3">What would you like to do?</v-card-text>
+  <v-dialog v-model="showModal"
+            id="pick-request-type-modal"
+            max-width="600px"
+            hide-overlay>
+    <v-card class="pa-0" id="pick-request-type-modal-card">
+      <v-card-text class="h4 pa-3 px-5">What would you like to do?</v-card-text>
       <v-container class="my-n4 pt-0">
         <v-row>
           <v-col cols="6">
-            <v-simple-table class="text-center">
+            <v-simple-table class="text-left">
           <tr v-for="type in tableDataCol1" :key="type.value+'-tr'">
-            <td class="clickable-cell" :id="type.value" @click="chooseType(type)"><v-tooltip bottom>
+            <td class="clickable-cell" :id="type.value" @click="chooseType(type)">
+              <v-tooltip bottom max-width="500" open-delay="500">
               <template v-slot:activator="scope">
-                <span v-on="scope.on">{{ type.text }}</span>
+                <button class="small-link-sans-ul" v-on="scope.on">{{ type.text }}</button>
               </template>
               <span>{{ type.blurb }}</span>
             </v-tooltip>
@@ -18,11 +22,12 @@
         </v-simple-table>
           </v-col>
           <v-col cols="6">
-            <v-simple-table class="text-center">
+            <v-simple-table class="text-left">
           <tr v-for="type in tableDataCol2" :key="type.value+'-tr'">
-            <td class="clickable-cell" :id="type.value" @click="chooseType(type)"><v-tooltip bottom>
+            <td class="clickable-cell" :id="type.value" @click="chooseType(type)">
+              <v-tooltip bottom max-width="500" open-delay="500">
               <template v-slot:activator="scope">
-                <span v-on="scope.on">{{ type.text }}</span>
+                <button class="small-link-sans-ul" v-on="scope.on">{{ type.text }}</button>
               </template>
               <span>{{ type.blurb }}</span>
             </v-tooltip>
@@ -32,6 +37,11 @@
           </v-col>
         </v-row>
       </v-container>
+      <v-card-actions class="bg-grey-1 text-center">
+        <div style="display: block; width: 100%;">
+          <button @click="showModal = false"><v-icon>close</v-icon> Close</button>
+        </div>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -59,10 +69,11 @@ export default class PickRequestType extends Vue {
   }
 
   chooseType (request: SelectOptionsI) {
+    newReqModule.clearErrors()
     if (request.value !== 'NEW') {
       newReqModule.mutateExtendedRequestType(request)
     }
-    newReqModule.mutateRequestType(request.value)
+    newReqModule.mutateRequestAction(request.value)
     this.showModal = false
   }
 }

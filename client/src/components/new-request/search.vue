@@ -1,11 +1,11 @@
 <template>
-  <v-container fluid id="new-request-container">
+  <v-container fluid id="new-request-container" class="normal-copy">
     <v-row class="pa-6" justify="end">
-      <v-col cols="6" class="mb-n3">I need a name to:</v-col>
+      <v-col cols="6" class="mb-n3 normal-copy">I need a name to:</v-col>
       <v-col cols="6" style="display: flex; justify-content: flex-end" class="mb-n3">
-        <span class="normal-link"
+        <button class="normal-link"
               id="help-me-choose-activator"
-              @click="activateHMCModal()">Help Me Choose</span>
+              @change="activateHMCModal()">Help Me Choose</button>
       </v-col>
       <v-col cols="5">
         <v-select :error-messages="errors.includes('request') ? 'Please select a type' : ''"
@@ -14,12 +14,13 @@
                   @change="clearErrors()"
                   filled
                   id="search-type-options-select"
-                  v-model="requestType" />
+                  v-model="requestAction" />
       </v-col>
       <v-col cols="2">
-        <v-select :items="locationOptions"
+        <v-select :error-messages="errors.includes('location') ? 'Please select a location' : ''"
+                  :hide-details="!errors.includes('location')"
+                  :items="locationOptions"
                   filled
-                  hide-details
                   id="location-options-select"
                   v-model="location" />
       </v-col>
@@ -32,9 +33,7 @@
                   id="entity-type-options-select"
                   v-model="entityType" />
       </v-col>
-      <v-col cols="12">
-        <NewRequestNameInput :class="inputCompClass" id="name-input-component" />
-      </v-col>
+      <NameInput :class="inputCompClass" id="name-input-component" :handleSubmit="handleSubmit" />
       <v-col cols="auto"
              class="my-n9">
         <span id="nr-required-activator"
@@ -42,43 +41,44 @@
               @click="activateNRRModal()">Check to see if you need to file a a name request</span>
       </v-col>
     </v-row>
-    <NrNotRequired />
-    <HelpMeChoose />
-    <PickEntity />
-    <PickRequestType />
   </v-container>
 </template>
 
 <script lang="ts">
-import HelpMeChoose from '@/components/modals/help-me-choose.vue'
-import Stats from '@/components/new-request/stats.vue'
+import Stats from '@/components/new-request/stats'
 import newReqModule from '../../store/new-request-module'
-import NewRequestNameInput from './name-input.vue'
-import NrNotRequired from '@/components/modals/nr-not-required.vue'
-import PickEntity from '@/components/modals/pick-entity.vue'
-import PickRequestType from '@/components/modals/pick-request-type.vue'
-import { Component, Vue } from 'vue-property-decorator'
+import NameInput from './name-input'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { LocationT } from '@/models'
 
 @Component({
-  components: {
-    Stats,
-    HelpMeChoose,
-    NewRequestNameInput,
-    NrNotRequired,
-    PickEntity,
-    PickRequestType
-  }
+  components: { Stats, NameInput }
 })
-export default class NewRequest extends Vue {
+export default class Search extends Vue {
+  @Watch('location')
+  handleLocation (newVal, oldVal) {
+    if (newVal === 'HELP') {
+      let type = this.entityType
+      newReqModule.mutateLocationInfoModalVisible(true)
+      this.$nextTick(function () {
+        this.location = oldVal
+        this.entityType = type
+      })
+    }
+  }
+
+  @Watch('entityType')
+  handleEntityType (newVal, oldVal) {
+    if (newVal === 'all' && oldVal !== 'all') {
+      newReqModule.mutatePickEntityModalVisible(true)
+    }
+  }
+
   get entityType () {
     return newReqModule.entityType
   }
   set entityType (type: string) {
     newReqModule.mutateEntityType(type)
-    if (type === 'all') {
-      newReqModule.mutatePickEntityModalVisible(true)
-    }
   }
   get entityTypeOptions () {
     return newReqModule.entityTypeOptions
@@ -87,7 +87,8 @@ export default class NewRequest extends Vue {
     return newReqModule.errors
   }
   get inputCompClass () {
-    if (this.errors.includes('entity') || this.errors.includes('request')) {
+    let errorTypes = ['entity', 'request', 'location']
+    if (errorTypes.some(type => this.errors.includes(type))) {
       return 'mt-n5'
     }
     return 'mt-n2'
@@ -101,11 +102,11 @@ export default class NewRequest extends Vue {
   get locationOptions () {
     return newReqModule.locationOptions
   }
-  get requestType () {
-    return newReqModule.requestType
+  get requestAction () {
+    return newReqModule.requestAction
   }
-  set requestType (value: string) {
-    newReqModule.mutateRequestType(value)
+  set requestAction (value: string) {
+    newReqModule.mutateRequestAction(value)
     if (value === 'all') {
       newReqModule.mutatePickRequestTypeModalVisible(true)
     }
@@ -122,6 +123,12 @@ export default class NewRequest extends Vue {
   }
   clearErrors () {
     newReqModule.clearErrors()
+  }
+  handleSubmit (event: Event) {
+    // eslint-disable-next-line
+    console.log('lalal')
+    event.preventDefault()
+    newReqModule.startAnalyzeName()
   }
 }
 
