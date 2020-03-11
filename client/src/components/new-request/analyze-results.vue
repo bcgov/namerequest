@@ -11,12 +11,13 @@
                class="modal-activator pa-0"
                @click="startAgain()"><span class="normal-link">  Start Search Over</span></button>
       </v-col>
-      <v-col cols="12" class="mt-3">
+      <v-col cols="12" class="mt-3" @click="toggleRealInput">
         <v-form @submit="handleSubmit">
           <v-text-field v-model="name"
                         filled
                         autocomplete="off"
-                        v-if="showActualInput || !nameActions || issue.issue_type === 'none'"
+                        @focus="toggleRealInput"
+                        v-if="showActualInput || !hasNameActions"
                         placeholder="Search a Name"
                         id="analyze-name-text-field">
             <template v-slot:append>
@@ -372,6 +373,12 @@ export default class AnalyzeResults extends Vue {
     }
     return []
   }
+  get hasNameActions () {
+    if (!this.issue || this.issue.name_actions.length === 0) {
+      return false
+    }
+    return true
+  }
   get designationIsFixed () {
     if (this.issue.issue_type === 'designation_mismatch') {
       let { designations } = this.issue
@@ -499,6 +506,16 @@ export default class AnalyzeResults extends Vue {
   handleSubmit (event: Event) {
     event.preventDefault()
     newReqModule.startAnalyzeName()
+  }
+  async toggleRealInput () {
+    if (!this.showActualInput) {
+      this.showActualInput = true
+      await this.$nextTick()
+      let position = this.name.length
+      let elem = document.getElementById('analyze-name-text-field')
+      elem.focus()
+      elem.setSelectionRange(position, position)
+    }
   }
   optionClasses (i) {
     if (this.issue && Array.isArray(this.issue.setup)) {
