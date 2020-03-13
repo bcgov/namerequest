@@ -439,7 +439,8 @@ export class NewRequestModule extends VuexModule {
     if (this.errors.length > 0) {
       return Promise.resolve()
     }
-    let name = normalizeWordCase(this.name)
+    let name = this.name.trim()
+    name = normalizeWordCase(name)
     this.mutateName(name)
     this.mutateDisplayedComponent('AnalyzePending')
     let params: NewRequestNameSearchI = {
