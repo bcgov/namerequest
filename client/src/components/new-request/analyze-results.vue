@@ -68,14 +68,10 @@
             </v-row>
 
             <!--CORP CONFLICT TABLE-->
-            <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n7">
-              <v-col cols="auto" class="py-4">
-                <div style="width: 600px;" v-for="(corp, n) in conflicts" :key="n">
-                  <div style="display: inline-block; border-bottom: 1px dashed grey; width: 80%">
-                    {{ corp.name }}</div>
-                  <div style="display: inline-block; border-bottom: 1px dashed grey; width: 20%"
-                       class="text-right">{{ corp.date }}
-                  </div>
+            <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n7 py-5">
+              <v-col cols="auto">
+                <div v-for="(corp, n) in conflicts" :key="'conflict-' + n">
+                  {{ corp.name }}
                 </div>
               </v-col>
             </v-row>
