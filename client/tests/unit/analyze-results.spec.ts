@@ -77,7 +77,7 @@ describe('analyze-results.vue', () => {
             "designations": [
               "Inc"
             ],
-            "issue_type": "wrong_designation",
+            "issue_type": "designation_mismatch",
             "line1": "Designation \u003cb\u003eCooperative\u003c/b\u003e cannot be used with selected business type of \u003cb\u003eCorporation\u003c/b\u003e",
             "line2": "",
             "name_actions": [
@@ -89,14 +89,14 @@ describe('analyze-results.vue', () => {
             ],
             "setup": [
               {
-                "button": "designation",
+                "type": "replace_designation",
                 "checkbox": "",
                 "header": "Option 1",
                 "line1": "If your intention was to reserve a name for a BC Corporation, you can replace Cooperative with a comptatible designation.  The folling are allowed:",
                 "line2": ""
               },
               {
-                "button": "restart",
+                "type": "change_entity_type",
                 "checkbox": "",
                 "header": "Option 2",
                 "line1": "If you would like to start a Cooperative business instead of a Corporation, start your search over and change your business type to “Cooperative”.",
@@ -121,23 +121,17 @@ describe('analyze-results.vue', () => {
       expect(wrapper.text()).toContain('Designation Cooperative cannot be used with selected business type of Corporation')
       expect(wrapper.text()).toContain('Option 1')
       expect(wrapper.text()).toContain('Option 2')
+      expect(wrapper.text()).toContain('Designation Cooperative cannot be used with selected business type of Corporation')
     })
     it('Changes the designation to the clicked designation automatically', async () => {
-      expect(wrapper.vm.name).toBe('Action Cooperative')
-      let ending = wrapper.find('#designation-0')
-      ending.trigger('click')
+      let button = wrapper.find('#designation-0')
+      button.trigger('click')
       await wrapper.vm.$nextTick()
       expect(wrapper.vm.name).toBe('Action Inc')
-      expect(newReqModule.name).toBe('Action Inc')
-      expect(wrapper.text()).toContain('You may proceed')
     })
     it('Detetcts changes in the base name', async () => {
-      newReqModule.mutateName('Actions Inc')
-      wrapper.vm.originalName = 'Action Inc'
-      expect(wrapper.vm.name).toBe('Actions Inc')
-      await wrapper.vm.$nextTick()
+      newReqModule.mutateName('Lester Inc')
       expect(wrapper.vm.changesInBaseName).toBe(true)
-      expect(wrapper.vm.designationIsFixed).toBe(false)
     })
   })
   describe('corp_conflict', () => {
@@ -186,14 +180,14 @@ describe('analyze-results.vue', () => {
                 "line2": "Or you can remove the word Action."
               },
               {
-                "button": "examine",
+                "type": "send_to_examiner",
                 "checkbox": "",
                 "header": "Option 2",
                 "line1": "You can send your name for examination.",
                 "line2": ""
               },
               {
-                "button": "consent_corp",
+                "type": "conflict_self_consent",
                 "checkbox": "",
                 "header": "Option 3",
                 "line1": "You can provide consent if you are the registered owner.",
@@ -225,8 +219,8 @@ describe('analyze-results.vue', () => {
     it('renders a button to send for examination', () => {
       expect(wrapper.contains('#reserve-submit-examine')).toBe(true)
     })
-    it('renders the consent_corp checkbox/button elememnt', () => {
-      expect(wrapper.contains('#consent-corp-checkbox')).toBe(true)
+    it('renders the conflict_self_consent button', () => {
+      expect(wrapper.contains('#reserve-submit-consent')).toBe(true)
     })
   })
   describe('add_descriptive', () => {
@@ -280,7 +274,7 @@ describe('analyze-results.vue', () => {
       let options = ['Helpful Hint']
       options.every(option => expect(wrapper.text()).toContain(option))
     })
-    it('displays the Add Descriptive Text text', () => {
+    it('displays the Add Descriptive text', () => {
       expect(wrapper.text()).toContain('Add a word to the end of your name that describes the business category.')
     })
     it('does not render a button to send for examination', () => {
@@ -326,21 +320,19 @@ describe('analyze-results.vue', () => {
             ],
             "setup": [
               {
-                "button": "",
-                "checkbox": "",
+                "type":'',
                 "header": "Option 1",
                 "line1": "You can add a word that makes your name distinct.",
                 "line2": "Or you can remove the word Action."
               },
               {
-                "button": "examine",
-                "checkbox": "",
+                "type": "send_to_examiner",
                 "header": "Option 2",
                 "line1": "You can send your name for examination.",
                 "line2": ""
               },
               {
-                "button": "consent_corp",
+                "type": "conflict_self_consent",
                 "checkbox": "",
                 "header": "Option 3",
                 "line1": "You can provide consent if you are the registered owner.",
@@ -370,11 +362,10 @@ describe('analyze-results.vue', () => {
       expect(wrapper.text()).toContain('Or you can remove the word Action.')
     })
     it('renders a button to send for examination', () => {
-      console.log(wrapper.html())
       expect(wrapper.contains('#reserve-submit-examine')).toBe(true)
     })
-    it('renders the consent_corp checkbox/button elememnt', () => {
-      expect(wrapper.contains('#consent-corp-checkbox')).toBe(true)
+    it('renders the conflict_self_consent button', () => {
+      expect(wrapper.contains('#reserve-submit-consent')).toBe(true)
     })
   })
   describe('unclassified_word', () => {
@@ -423,15 +414,13 @@ describe('analyze-results.vue', () => {
                 "line2": "Or you can remove the word Action."
               },
               {
-                "button": "examine",
-                "checkbox": "",
+                "type": "send_to_examiner",
                 "header": "Option 2",
                 "line1": "You can send your name for examination.",
                 "line2": ""
               },
               {
-                "button": "consent_corp",
-                "checkbox": "",
+                "type": "conflict_self_consent",
                 "header": "Option 3",
                 "line1": "You can provide consent if you are the registered owner.",
                 "line2": ""
@@ -463,7 +452,7 @@ describe('analyze-results.vue', () => {
       expect(wrapper.contains('#reserve-submit-examine')).toBe(true)
     })
     it('renders the consent_corp checkbox/button elememnt', () => {
-      expect(wrapper.contains('#consent-corp-checkbox')).toBe(true)
+      expect(wrapper.contains('#reserve-submit-consent')).toBe(true)
     })
   })
   describe('word_to_avoid', () => {
@@ -512,15 +501,13 @@ describe('analyze-results.vue', () => {
                 "line2": "Or you can remove the word Action."
               },
               {
-                "button": "examine",
-                "checkbox": "",
+                "type": "send_to_examiner",
                 "header": "Option 2",
                 "line1": "You can send your name for examination.",
                 "line2": ""
               },
               {
-                "button": "consent_corp",
-                "checkbox": "",
+                "type": "conflict_self_consent",
                 "header": "Option 3",
                 "line1": "You can provide consent if you are the registered owner.",
                 "line2": ""
@@ -552,7 +539,7 @@ describe('analyze-results.vue', () => {
       expect(wrapper.contains('#reserve-submit-examine')).toBe(true)
     })
     it('renders the consent_corp checkbox/button elememnt', () => {
-      expect(wrapper.contains('#consent-corp-checkbox')).toBe(true)
+      expect(wrapper.contains('#reserve-submit-consent')).toBe(true)
     })
   })
   describe('corp_conflict + consent_required + wrong_designation', () => {
@@ -594,22 +581,18 @@ describe('analyze-results.vue', () => {
             ],
             "setup": [
               {
-                "button": "",
-                "checkbox": "",
                 "header": "Option 1",
                 "line1": "You can add a word that makes your name distinct.",
                 "line2": "Or you can remove the word Action."
               },
               {
-                "button": "examine",
-                "checkbox": "",
+                "type": "send_to_examiner",
                 "header": "Option 2",
                 "line1": "You can send your name for examination.",
                 "line2": ""
               },
               {
-                "button": "consent_corp",
-                "checkbox": "",
+                "type": "conflict_self_consent",
                 "header": "Option 3",
                 "line1": "You can provide consent if you are the registered owner.",
                 "line2": ""
@@ -640,8 +623,8 @@ describe('analyze-results.vue', () => {
     it('renders a button to send for examination', () => {
       expect(wrapper.contains('#reserve-submit-examine')).toBe(true)
     })
-    it('renders the consent_corp checkbox/button elememnt', () => {
-      expect(wrapper.contains('#consent-corp-checkbox')).toBe(true)
+    it('renders the conflict_self_consent reserve-submit button', () => {
+      expect(wrapper.contains('#reserve-submit-consent')).toBe(true)
     })
   })
 })

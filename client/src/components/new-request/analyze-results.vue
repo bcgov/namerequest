@@ -170,7 +170,8 @@
                       <v-col v-if="option.type === 'send_to_examiner' && !displayCheckbox"
                              id="examine-checkbox-col"
                              class="pa-0">
-                        <ReserveSubmit id="reserve-submit-designation" style="display: inline"
+                        <ReserveSubmit id="reserve-submit-examine"
+                                       style="display: inline"
                                        :setup="json.issues.length > 1 ? reserveAction : 'examine'"/>
                       </v-col>
                       <v-col v-if="option.type === 'obtain_consent' && displayCheckbox"
@@ -185,7 +186,8 @@
                       <v-col v-if="option.type === 'obtain_consent' && !displayCheckbox"
                              id="consent-body-checkbox-col"
                              class="pa-0">
-                        <ReserveSubmit id="reserve-submit-designation" style="display: inline"
+                        <ReserveSubmit id="reserve-submit-consent"
+                                       style="display: inline"
                                        :setup="json.issues.length > 1 ? reserveAction : 'consent'" />
                       </v-col>
                       <v-col v-if="option.type === 'conflict_self_consent' && displayCheckbox"
@@ -200,7 +202,8 @@
                       <v-col v-if="option.type === 'conflict_self_consent' && !displayCheckbox"
                              id="consent-corp-checkbox-col"
                              class="pa-0">
-                        <ReserveSubmit id="reserve-submit-designation" style="display: inline"
+                        <ReserveSubmit id="reserve-submit-consent"
+                                       style="display: inline"
                                        :setup="json.issues.length > 1 ? reserveAction : 'consent'" />
                       </v-col>
                       <v-col v-if="issue.type === 'replace_designation'" id="examine-checkbox-col">
@@ -219,7 +222,7 @@
                    justify="center"
                    class="mt-3">
               <v-col cols="auto">
-                <ReserveSubmit id="reserve-submit-large"
+                <ReserveSubmit :id="issue.show_examination_button ? 'reserve-submit-examine' : 'reserve-submit-normal'"
                                :setup="issue.show_examination_button ? 'examine' : ''" />
               </v-col>
             </v-row>
@@ -265,7 +268,7 @@
                 </v-row>
                 <v-row>
                   <v-col cols="12" class="text-center">
-                    <ReserveSubmit id="available-reserve-submit" />
+                    <ReserveSubmit id="reserve-submit-normal" />
                   </v-col>
                 </v-row>
               </v-col>
