@@ -515,7 +515,7 @@ export default class AnalyzeResults extends Vue {
       this.showActualInput = true
       this.$nextTick(function () {
         let position = this.name.length
-        let elem = document.getElementById('analyze-name-text-field')
+        let elem = document.getElementById('analyze-name-text-field') as HTMLInputElement
         if (elem.setSelectionRange) {
           elem.focus()
           elem.setSelectionRange(position, position)
