@@ -507,14 +507,19 @@ export default class AnalyzeResults extends Vue {
     event.preventDefault()
     newReqModule.startAnalyzeName()
   }
-  async toggleRealInput () {
+  toggleRealInput () {
     if (!this.showActualInput) {
       this.showActualInput = true
-      await this.$nextTick()
-      let position = this.name.length
-      let elem = document.getElementById('analyze-name-text-field')
-      elem.focus()
-      elem.setSelectionRange(position, position)
+      this.$nextTick(function () {
+        let position = this.name.length
+        let elem = document.getElementById('analyze-name-text-field')
+        if (elem.setSelectionRange) {
+          elem.focus()
+          elem.setSelectionRange(position, position)
+          return
+        }
+        elem.focus()
+      })
     }
   }
   optionClasses (i) {
