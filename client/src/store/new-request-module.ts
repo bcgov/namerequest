@@ -1,5 +1,6 @@
 import Axios from '@/plugins/axios'
 import axios from 'axios'
+import removeAccents from 'remove-accents'
 import store from '@/store'
 import {
   AnalysisJSONI,
@@ -421,6 +422,11 @@ export class NewRequestModule extends VuexModule {
   }
   @Action({ rawError: true })
   async startAnalyzeName () {
+    let name = this.name.trim()
+    name = removeAccents(name)
+    name = name.replace(/[\s]\W/g, '')
+    name = normalizeWordCase(name)
+    this.mutateName(name)
     if (this.entityType === 'all') {
       this.setErrors('entity')
     }
@@ -439,9 +445,7 @@ export class NewRequestModule extends VuexModule {
     if (this.errors.length > 0) {
       return Promise.resolve()
     }
-    let name = this.name.trim()
-    name = normalizeWordCase(name)
-    this.mutateName(name)
+
     this.mutateDisplayedComponent('AnalyzePending')
     let params: NewRequestNameSearchI = {
       name,
