@@ -422,11 +422,16 @@ export class NewRequestModule extends VuexModule {
   }
   @Action({ rawError: true })
   async startAnalyzeName () {
-    let name = this.name.trim()
-    name = removeAccents(name)
-    name = name.replace(/[\s]\W/g, '')
-    name = normalizeWordCase(name)
-    this.mutateName(name)
+    let name
+    if (this.name) {
+      name = removeAccents(this.name)
+      name = name.replace(/[^\sa-zA-Z0-9*+&().,="'#@!?;:-]/g, '')
+      name = normalizeWordCase(name)
+      this.mutateName(name)
+    } else {
+      this.setErrors('name')
+    }
+
     if (this.entityType === 'all') {
       this.setErrors('entity')
     }
@@ -438,9 +443,6 @@ export class NewRequestModule extends VuexModule {
     }
     if (this.name !== '' && this.name.length < 3) {
       this.setErrors('length')
-    }
-    if (!this.name) {
-      this.setErrors('name')
     }
     if (this.errors.length > 0) {
       return Promise.resolve()
