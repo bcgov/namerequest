@@ -200,7 +200,7 @@
                              class="pa-0">
                         <ReserveSubmit id="reserve-submit-consent"
                                        style="display: inline"
-                                       :setup="json.issues.length > 1 ? reserveAction : 'consent'" />
+                                       :setup="json.issues && json.issues.length > 1 ? reserveAction : 'consent'" />
                       </v-col>
                       <v-col v-if="issue.type === 'replace_designation'" id="examine-checkbox-col">
                         <p>{{ option.line1 }}</p>
@@ -373,10 +373,12 @@ export default class AnalyzeResults extends Vue {
     return []
   }
   get hasNameActions () {
-    if (!this.issue || this.issue.name_actions.length === 0) {
-      return false
+    if (this.issue && this.issue.name_actions && Array.isArray(this.issue.name_actions)) {
+      if (this.issue.name_actions.length > 1) {
+        return true
+      }
     }
-    return true
+    return false
   }
   get designationIsFixed () {
     if (this.issue.issue_type === 'designation_mismatch') {

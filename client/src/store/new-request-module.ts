@@ -411,27 +411,25 @@ export class NewRequestModule extends VuexModule {
 
   @Action({ rawError: true })
   async getStats () {
-    let resp
     try {
-      resp = await Axios.get('/stats')
+      let resp = await Axios.get('/stats')
+      this.mutateStats(resp.data)
+      return Promise.resolve(resp.data)
     } catch {
       return Promise.resolve()
     }
-    this.mutateStats(resp.data)
-    return Promise.resolve(resp.data)
   }
   @Action({ rawError: true })
   async startAnalyzeName () {
     let name
     if (this.name) {
-      name = removeAccents(this.name)
-      name = name.replace(/[^\sa-zA-Z0-9*+&().,="'#@!?;:-]/g, '')
-      name = name.toUpperCase()
-      this.mutateName(name)
+      let edits = removeAccents(this.name)
+      let edits2 = edits.replace(/[^\sa-zA-Z0-9*+&().,="'#@!?;:-]/g, '')q
+      name = edits2.toUpperCase()
     } else {
       this.setErrors('name')
     }
-
+    this.mutateName(name)
     if (this.entityType === 'all') {
       this.setErrors('entity')
     }
