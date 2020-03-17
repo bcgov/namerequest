@@ -426,7 +426,7 @@ export class NewRequestModule extends VuexModule {
     if (this.name) {
       name = removeAccents(this.name)
       name = name.replace(/[^\sa-zA-Z0-9*+&().,="'#@!?;:-]/g, '')
-      name = normalizeWordCase(name)
+      name = name.toUpperCase()
       this.mutateName(name)
     } else {
       this.setErrors('name')
