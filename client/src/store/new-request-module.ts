@@ -424,7 +424,7 @@ export class NewRequestModule extends VuexModule {
     let name
     if (this.name) {
       let edits = removeAccents(this.name)
-      let edits2 = edits.replace(/[^\sa-zA-Z0-9*+&().,="'#@!?;:-]/g, '')q
+      let edits2 = edits.replace(/[^\sa-zA-Z0-9*+&().,="'#@!?;:-]/g, '')
       name = edits2.toUpperCase()
     } else {
       this.setErrors('name')
