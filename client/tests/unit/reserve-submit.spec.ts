@@ -4,9 +4,11 @@ import newReqModule from '@/store/new-request-module'
 import Vuetify from 'vuetify'
 
 const localVue = createLocalVue()
+const vuetify = new Vuetify()
+
+localVue.use(Vuetify)
 
 describe('reserve-submit.vue', () => {
-  let vuetify = new Vuetify()
   it('renders a Send For Examination button', () => {
     let wrapper = shallowMount(ReserveSubmit, {
       vuetify,

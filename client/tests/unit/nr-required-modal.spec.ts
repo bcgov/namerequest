@@ -1,13 +1,18 @@
 import Modal from '@/components/modals/nr-not-required.vue'
-import { mount } from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
 import Vuetify from 'vuetify'
+
+const localVue = createLocalVue()
+const vuetify = new Vuetify()
+
+localVue.use(Vuetify)
 
 describe('nr-not-required.vue', () => {
   let wrapper: any
 
   beforeEach(() => {
-    let vuetify = new Vuetify()
     wrapper = mount(Modal, {
+      localVue,
       vuetify
     })
   })

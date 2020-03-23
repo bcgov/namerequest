@@ -1,19 +1,23 @@
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
 import newReqModule from '@/store/new-request-module'
 import Search from '@/components/new-request/search'
 import Vuetify from 'vuetify'
 
 const localVue = createLocalVue()
+const vuetify = new Vuetify()
+
+localVue.use(Vuetify)
 
 describe('search.vue', () => {
   let wrapper: any
 
-  beforeEach( () => {
-    let vuetify = new Vuetify()
-    wrapper = shallowMount(Search, {
-      vuetify,
-      localVue
-    })
+  beforeEach( async (done) => {
+    wrapper = mount(Search, {
+      localVue,
+      vuetify
+     })
+    await wrapper.vm.$nextTick()
+    done()
   })
 
   it('Displays the necessary UI components', () => {
@@ -37,8 +41,7 @@ describe('search.vue', () => {
     expect(newReqModule.nrRequiredModalVisible).toBe(true)
   })
   it('Initially renders with the BC Corporation entity type pre-selected and the PickEntity modal invisible', () => {
-    let field = wrapper.find('#entity-type-options-select')
-    expect(field.attributes().value).toBe('CR')
+    expect(wrapper.vm.entityType).toBe('CR')
     expect(newReqModule.pickEntityModalVisible).toBe(false)
   })
   it('Sets PickEntityModal visibility state to true when View All Business Structures is selected', async () => {

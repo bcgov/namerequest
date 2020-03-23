@@ -5,13 +5,13 @@ import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import newReqModule from '@/store/new-request-module'
 import Vuetify from 'vuetify'
 
-let stubs = [ 'ReserveSubmit', 'NameWordRenderer', 'NameInput' ]
+const localVue = createLocalVue()
+const vuetify = new Vuetify()
+const stubs = [ 'ReserveSubmit', 'NameWordRenderer', 'NameInput' ]
+
+localVue.use(Vuetify)
 
 describe('analyze-results.vue', () => {
-  let vuetify = new Vuetify()
-  let localVue = createLocalVue()
-  localVue.use(Vuetify)
-
   describe('add_distinctive', () => {
     let wrapper: any
 
@@ -69,7 +69,7 @@ describe('analyze-results.vue', () => {
     let wrapper: any
 
     beforeAll(async (done) => {
-      newReqModule.mutateName('Action Cooperative')
+      newReqModule.mutateName('ACTION COOPERATIVE')
       newReqModule.mutateAnalysisJSON({
         "header": "Further Action Required",
         "issues": [
@@ -78,13 +78,14 @@ describe('analyze-results.vue', () => {
               "Inc"
             ],
             "issue_type": "designation_mismatch",
-            "line1": "Designation \u003cb\u003eCooperative\u003c/b\u003e cannot be used with selected business type of \u003cb\u003eCorporation\u003c/b\u003e",
+            "line1": "Designation \u003cb\u003eCooperative\u003c/b\u003e cannot be used with selected business " +
+            "type of \u003cb\u003eCorporation\u003c/b\u003e",
             "line2": "",
             "name_actions": [
               {
                 "index": 1,
                 "type": "highlight",
-                "word": "Cooperative"
+                "word": "COOPERATIVE"
               }
             ],
             "setup": [
@@ -92,14 +93,16 @@ describe('analyze-results.vue', () => {
                 "type": "replace_designation",
                 "checkbox": "",
                 "header": "Option 1",
-                "line1": "If your intention was to reserve a name for a BC Corporation, you can replace Cooperative with a comptatible designation.  The folling are allowed:",
+                "line1": "If your intention was to reserve a name for a BC Corporation, you can replace Cooperative " +
+                "with a comptatible designation.  The folling are allowed:",
                 "line2": ""
               },
               {
                 "type": "change_entity_type",
                 "checkbox": "",
                 "header": "Option 2",
-                "line1": "If you would like to start a Cooperative business instead of a Corporation, start your search over and change your business type to “Cooperative”.",
+                "line1": "If you would like to start a Cooperative business instead of a Corporation, start your " +
+                "search over and change your business type to “Cooperative”.",
                 "line2": ""
               }
             ],
@@ -127,7 +130,7 @@ describe('analyze-results.vue', () => {
       let button = wrapper.find('#designation-0')
       button.trigger('click')
       await wrapper.vm.$nextTick()
-      expect(wrapper.vm.name).toBe('Action Inc')
+      expect(wrapper.vm.name).toBe('ACTION INC')
     })
     it('Detetcts changes in the base name', async () => {
       newReqModule.mutateName('Lester Inc')
@@ -138,8 +141,8 @@ describe('analyze-results.vue', () => {
     let wrapper: any
 
     beforeAll(async (done) => {
-      newReqModule.store.state.newRequestModule.name = 'Action Inc'
-      newReqModule.store.state.newRequestModule.analysisJSON = {
+      newReqModule.mutateName('Action Inc')
+      newReqModule.mutateAnalysisJSON({
         "header": "Further Action Required",
         "issues": [
           {
@@ -199,7 +202,7 @@ describe('analyze-results.vue', () => {
           }
         ],
         "status": "fa"
-      }
+      })
       wrapper = mount(AnalyzeResults, {
         localVue,
         vuetify,
@@ -227,8 +230,8 @@ describe('analyze-results.vue', () => {
     let wrapper: any
 
     beforeAll(async (done) => {
-      newReqModule.mutateName('Smart Name Inc')
-      newReqModule.mutateAnalysisJSON( {
+      newReqModule.mutateName('SMART NAME INC')
+      newReqModule.mutateAnalysisJSON({
         header: 'Further Action Required',
         issues: [
           {
@@ -244,7 +247,7 @@ describe('analyze-results.vue', () => {
                 message: 'Add a Descriptive Word Here',
                 position: 'end',
                 type: 'brackets',
-                word: 'Smart'
+                word: 'smart'
               }
             ],
             setup: [
@@ -285,8 +288,8 @@ describe('analyze-results.vue', () => {
     let wrapper: any
 
     beforeAll(async (done) => {
-      newReqModule.store.state.newRequestModule.name = 'Action Inc'
-      newReqModule.store.state.newRequestModule.analysisJSON = {
+      newReqModule.mutateName('Action Inc')
+      newReqModule.mutateAnalysisJSON({
         "header": "Further Action Required",
         "issues": [
           {
@@ -344,7 +347,7 @@ describe('analyze-results.vue', () => {
           }
         ],
         "status": "fa"
-      }
+      })
       wrapper = mount(AnalyzeResults, {
         localVue,
         vuetify,
@@ -372,8 +375,8 @@ describe('analyze-results.vue', () => {
     let wrapper: any
 
     beforeAll(async (done) => {
-      newReqModule.store.state.newRequestModule.name = 'Action Inc'
-      newReqModule.store.state.newRequestModule.analysisJSON = {
+      newReqModule.mutateName('Action Inc')
+      newReqModule.mutateAnalysisJSON({
         "header": "Further Action Required",
         "issues": [
           {
@@ -431,7 +434,7 @@ describe('analyze-results.vue', () => {
           }
         ],
         "status": "fa"
-      }
+      })
       wrapper = mount(AnalyzeResults, {
         localVue,
         vuetify,
@@ -459,8 +462,8 @@ describe('analyze-results.vue', () => {
     let wrapper: any
 
     beforeAll(async (done) => {
-      newReqModule.store.state.newRequestModule.name = 'Action Inc'
-      newReqModule.store.state.newRequestModule.analysisJSON = {
+      newReqModule.mutateName('Action Inc')
+      newReqModule.mutateAnalysisJSON({
         "header": "Further Action Required",
         "issues": [
           {
@@ -518,7 +521,7 @@ describe('analyze-results.vue', () => {
           }
         ],
         "status": "fa"
-      }
+      })
       wrapper = mount(AnalyzeResults, {
         localVue,
         vuetify,

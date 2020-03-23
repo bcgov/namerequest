@@ -4,11 +4,12 @@ import { mount, createLocalVue } from '@vue/test-utils'
 import Vuetify from 'vuetify'
 
 const localVue = createLocalVue()
+const vuetify = new Vuetify()
+
+localVue.use(Vuetify)
 
 describe('pick-request-type.vue', (): void => {
-  let wrapper: any, vuetify: any
-  vuetify = new Vuetify()
-  localVue.use(Vuetify)
+  let wrapper: any
 
   beforeEach(() => {
     wrapper = mount(Modal, {
@@ -31,11 +32,6 @@ describe('pick-request-type.vue', (): void => {
     await wrapper.vm.$nextTick()
     expect(wrapper.contains('#pick-request-type-modal-card')).toBe(true)
     expect(wrapper.vm.showModal).toBe(true)
-  })
-  it('displays the extended request type chart', async () => {
-    newReqModule.store.state.newRequestModule.pickRequestTypeModalVisible = true
-    await wrapper.vm.$nextTick()
-    expect(wrapper.text().includes('Convert to Another Structure')).toBe(true)
   })
   it('clicking an entity sets the entityType and closes the modal', async () => {
     wrapper.vm.showModal = true
