@@ -154,53 +154,56 @@
                           </div>
                         </v-col>
                       </transition>
-                      <v-col v-if="option.type === 'send_to_examiner' && displayCheckbox"
+                      <v-col v-if="option.type === 'send_to_examiner'"
                              class="pa-0"
                              id="examine-checkbox-col">
                         <v-checkbox :error="highlightCheckboxes"
                                     :label="checkBoxLabel(option.type)"
                                     class="ma-0 pa-0"
                                     id="examine-checkbox"
+                                    v-if="displayCheckbox"
                                     v-model="examine[issueIndex]" />
-                      </v-col>
-                      <v-col v-if="option.type === 'send_to_examiner' && !displayCheckbox"
-                             id="examine-checkbox-col"
-                             class="pa-0">
                         <ReserveSubmit id="reserve-submit-examine"
+                                       v-else
                                        style="display: inline"
-                                       :setup="json.issues.length > 1 ? reserveAction : 'examine'"/>
+                                       setup="examine"/>
                       </v-col>
-                      <v-col v-if="option.type === 'obtain_consent' && displayCheckbox"
-                             id="consent-body-checkbox-col"
+                      <!--OBTAIN CONSENT WITH CHECKBOX-->
+                      <v-col v-if="option.type === 'obtain_consent'"
+                             id="obtain-consent-col"
                              class="pa-0">
-                        <v-checkbox :error="highlightCheckboxes"
-                                    class="ma-0 pa-0"
-                                    id="consent-body-checkbox"
-                                    :label="checkBoxLabel(option.type)"
-                                    v-model="consentBody[issueIndex]" />
+                        <transition name="fade" mode="out-in">
+                          <v-checkbox :error="highlightCheckboxes"
+                                      class="ma-0 pa-0"
+                                      :key="option.type+'-checkbox'"
+                                      id="obtain-consent-checkbox"
+                                      :label="checkBoxLabel(option.type)"
+                                      v-if="displayCheckbox ||  buttonThenCheckbox(option.type)"
+                                      v-model="consentBody[issueIndex]" />
+                          <ReserveSubmit id="reserve-submit-obtain-consent"
+                                         style="display: inline"
+                                         :key="option.type+'-reserve-submit'"
+                                         v-else
+                                         :setup="examinationRequested ? 'examine' : 'consent'" />
+                        </transition>
                       </v-col>
-                      <v-col v-if="option.type === 'obtain_consent' && !displayCheckbox"
-                             id="consent-body-checkbox-col"
+                      <v-col v-if="option.type === 'conflict_self_consent'"
+                             id="conflict_self_consent-col"
                              class="pa-0">
-                        <ReserveSubmit id="reserve-submit-consent"
-                                       style="display: inline"
-                                       :setup="json.issues.length > 1 ? reserveAction : 'consent'" />
-                      </v-col>
-                      <v-col v-if="option.type === 'conflict_self_consent' && displayCheckbox"
-                             id="consent-body-checkbox-col"
-                             class="pa-0">
-                        <v-checkbox :error="highlightCheckboxes"
-                                    class="ma-0 pa-0"
-                                    id="consent-body-checkbox"
-                                    :label="checkBoxLabel(option.type)"
-                                    v-model="consentCorp[issueIndex]" />
-                      </v-col>
-                      <v-col v-if="option.type === 'conflict_self_consent' && !displayCheckbox"
-                             id="consent-corp-checkbox-col"
-                             class="pa-0">
-                        <ReserveSubmit id="reserve-submit-consent"
-                                       style="display: inline"
-                                       :setup="json.issues && json.issues.length > 1 ? reserveAction : 'consent'" />
+                        <transition name="fade" mode="out-in" >
+                          <v-checkbox :error="highlightCheckboxes"
+                                      class="ma-0 pa-0"
+                                      :key="option.type+'-checkbox'"
+                                      id="conflict-self-consent-checkbox"
+                                      v-if="displayCheckbox || buttonThenCheckbox(option.type)"
+                                      :label="checkBoxLabel(option.type)"
+                                      v-model="consentCorp[issueIndex]" />
+                         <ReserveSubmit id="reserve-submit-conflict-self-consent"
+                                        style="display: inline"
+                                        :key="option.type+'-reserve-submit'"
+                                        v-else
+                                        :setup="examinationRequested ? 'examine' : 'consent'" />
+                        </transition>
                       </v-col>
                       <v-col v-if="issue.type === 'replace_designation'" id="examine-checkbox-col">
                         <p>{{ option.line1 }}</p>
@@ -314,7 +317,14 @@ export default class AnalyzeResults extends Vue {
   created () {
     this.originalName = newReqModule.name
   }
-
+  @Watch('issueIndex')
+  handleIndex (newVal, oldVal) {
+    let lastIssue = this.json.issues.length - 1
+    if (newVal < oldVal && oldVal === lastIssue) {
+      this.consentBody[oldVal] = false
+      this.consentCorp[oldVal] = false
+    }
+  }
   @Watch('examine', { deep: true })
   handlerExamine (newVal, oldVal) {
     if (newVal[this.issueIndex]) {
@@ -389,16 +399,24 @@ export default class AnalyzeResults extends Vue {
     return false
   }
   get designationIsFixed () {
-    if (this.issue.issue_type === 'designation_mismatch') {
+    if (this.issue.issue_type === 'designation_mismatch' && !this.changesInBaseName) {
       let { designations } = this.issue
       for (let des of designations) {
-        des = des.toLowerCase()
-        let name = this.name.toLowerCase()
-        let regexStr = new RegExp('\\b' + des + '\\b')
-        if (name.match(regexStr) !== null) {
-          if (!this.changesInBaseName) {
-            return true
-          }
+        des = des.toUpperCase()
+        let name = this.name.toUpperCase()
+        let compare = this.originalName.replace(this.word, des).toUpperCase()
+        if (name === compare) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+  get examinationRequested () {
+    if (this.issueIndex >= 1) {
+      for (let n = this.issueIndex - 1; n >= 0; n--) {
+        if (this.examine[n]) {
+          return true
         }
       }
     }
@@ -487,6 +505,22 @@ export default class AnalyzeResults extends Vue {
     return ''
   }
 
+  buttonThenCheckbox (type) {
+    if (this.examinationRequested) {
+      if (type === 'conflict_self_consent') {
+        if (this.consentCorp[this.issueIndex]) {
+          return false
+        }
+      }
+      if (type === 'obtain_consent') {
+        if (this.consentBody[this.issueIndex]) {
+          return false
+        }
+      }
+      return true
+    }
+    return false
+  }
   changeDesignation (designation) {
     this.showActualInput = true
     this.name = this.originalName.replace(this.word, designation)
@@ -614,7 +648,7 @@ export default class AnalyzeResults extends Vue {
 .fade-enter
   opacity: 0
 .fade-enter-active, .fade-leave-active
-  transition: all .15s ease-in
+  transition: all .25s ease-in
 .fade-enter-to
   opacity: 1
 .fade-leave

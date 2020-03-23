@@ -223,7 +223,7 @@ describe('analyze-results.vue', () => {
       expect(wrapper.contains('#reserve-submit-examine')).toBe(true)
     })
     it('renders the conflict_self_consent button', () => {
-      expect(wrapper.contains('#reserve-submit-consent')).toBe(true)
+      expect(wrapper.contains('#reserve-submit-conflict-self-consent')).toBe(true)
     })
   })
   describe('add_descriptive', () => {
@@ -368,7 +368,7 @@ describe('analyze-results.vue', () => {
       expect(wrapper.contains('#reserve-submit-examine')).toBe(true)
     })
     it('renders the conflict_self_consent button', () => {
-      expect(wrapper.contains('#reserve-submit-consent')).toBe(true)
+      expect(wrapper.contains('#reserve-submit-conflict-self-consent')).toBe(true)
     })
   })
   describe('unclassified_word', () => {
@@ -454,8 +454,8 @@ describe('analyze-results.vue', () => {
     it('renders a button to send for examination', () => {
       expect(wrapper.contains('#reserve-submit-examine')).toBe(true)
     })
-    it('renders the consent_corp checkbox/button elememnt', () => {
-      expect(wrapper.contains('#reserve-submit-consent')).toBe(true)
+    it('renders the conflict_self_consent checkbox/button elememnt', () => {
+      expect(wrapper.contains('#reserve-submit-conflict-self-consent')).toBe(true)
     })
   })
   describe('word_to_avoid', () => {
@@ -541,16 +541,16 @@ describe('analyze-results.vue', () => {
     it('renders a button to send for examination', () => {
       expect(wrapper.contains('#reserve-submit-examine')).toBe(true)
     })
-    it('renders the consent_corp checkbox/button elememnt', () => {
-      expect(wrapper.contains('#reserve-submit-consent')).toBe(true)
+    it('renders the obtain_consent checkbox/button elememnt', () => {
+      expect(wrapper.contains('#reserve-submit-conflict-self-consent')).toBe(true)
     })
   })
   describe('corp_conflict + consent_required + wrong_designation', () => {
     let wrapper: any
 
     beforeAll(async (done) => {
-      newReqModule.store.state.newRequestModule.name = 'Action Inc'
-      newReqModule.store.state.newRequestModule.analysisJSON = {
+      newReqModule.mutateName('Action Inc')
+      newReqModule.mutateAnalysisJSON({
         "header": "Further Action Required",
         "issues": [
           {
@@ -606,7 +606,7 @@ describe('analyze-results.vue', () => {
           }
         ],
         "status": "fa"
-      }
+      })
       wrapper = mount(AnalyzeResults, {
         localVue,
         vuetify,
@@ -627,7 +627,7 @@ describe('analyze-results.vue', () => {
       expect(wrapper.contains('#reserve-submit-examine')).toBe(true)
     })
     it('renders the conflict_self_consent reserve-submit button', () => {
-      expect(wrapper.contains('#reserve-submit-consent')).toBe(true)
+      expect(wrapper.contains('#reserve-submit-conflict-self-consent')).toBe(true)
     })
   })
 })
