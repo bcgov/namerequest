@@ -144,7 +144,7 @@
                                     :id="'designation-'+d"
                                     @click="changeDesignation(des)"
                                     class="small-link mr-2"
-                                    v-for="(des, d) in issue.designations">
+                                    v-for="(des, d) in designations">
                               {{ des }}{{ (d !== issue.designations.length - 1) ? ',' : '' }}
                             </button>
                           </div>
@@ -158,7 +158,7 @@
                              class="pa-0"
                              id="examine-checkbox-col">
                         <v-checkbox :error="highlightCheckboxes"
-                                    :label="examineLabel"
+                                    :label="checkBoxLabel(option.type)"
                                     class="ma-0 pa-0"
                                     id="examine-checkbox"
                                     v-model="examine[issueIndex]" />
@@ -176,7 +176,7 @@
                         <v-checkbox :error="highlightCheckboxes"
                                     class="ma-0 pa-0"
                                     id="consent-body-checkbox"
-                                    label="I am able to obtain and send written consent"
+                                    :label="checkBoxLabel(option.type)"
                                     v-model="consentBody[issueIndex]" />
                       </v-col>
                       <v-col v-if="option.type === 'obtain_consent' && !displayCheckbox"
@@ -192,7 +192,7 @@
                         <v-checkbox :error="highlightCheckboxes"
                                     class="ma-0 pa-0"
                                     id="consent-body-checkbox"
-                                    label="I have authority over the conflicting name.  I will send written consent."
+                                    :label="checkBoxLabel(option.type)"
                                     v-model="consentCorp[issueIndex]" />
                       </v-col>
                       <v-col v-if="option.type === 'conflict_self_consent' && !displayCheckbox"
@@ -372,9 +372,17 @@ export default class AnalyzeResults extends Vue {
     }
     return []
   }
+  get designations () {
+    if (this.issue && Array.isArray(this.issue.designations)) {
+      if (this.issue.designations.length > 0) {
+        return this.issue.designations.map(des => des.toUpperCase())
+      }
+    }
+    return null
+  }
   get hasNameActions () {
     if (this.issue && this.issue.name_actions && Array.isArray(this.issue.name_actions)) {
-      if (this.issue.name_actions.length > 1) {
+      if (this.issue.name_actions.length > 0) {
         return true
       }
     }
@@ -410,12 +418,6 @@ export default class AnalyzeResults extends Vue {
   get entityType () {
     return newReqModule.entityType
   }
-  get examineLabel () {
-    if (this.issue && this.issue.issue_type === 'corp_conflict') {
-      return `I do not have authority over the conflicting name but I want my name examined.`
-    }
-    return `I do not need consent to use this word in this context. I want my name examined.`
-  }
   get issue () {
     if (Array.isArray(this.json.issues)) {
       return this.json.issues[this.issueIndex]
@@ -434,6 +436,7 @@ export default class AnalyzeResults extends Vue {
     return newReqModule.name
   }
   set name (name: string) {
+    name = name.toUpperCase()
     newReqModule.mutateName(name)
   }
   get nameActions () {
@@ -479,14 +482,24 @@ export default class AnalyzeResults extends Vue {
   }
   get word () {
     if (Array.isArray(this.issue.name_actions) && this.issue.name_actions[0]) {
-      return this.issue.name_actions[0].word
+      return this.issue.name_actions[0].word.toUpperCase()
     }
     return ''
   }
 
-  changeDesignation (des) {
+  changeDesignation (designation) {
     this.showActualInput = true
-    this.name = this.originalName.replace(this.word, des)
+    this.name = this.originalName.replace(this.word, designation)
+  }
+  checkBoxLabel (type) {
+    switch (type) {
+      case 'send_to_examiner':
+        return 'I want to send my name to be examined'
+      case 'obtain_consent':
+        return 'I will obtain and submit consent'
+      case 'conflict_self_consent':
+        return 'I have authority over the conflicting name; I will submit written consent'
+    }
   }
   clickNext () {
     let reset = () => {
