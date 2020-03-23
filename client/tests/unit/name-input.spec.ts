@@ -3,18 +3,20 @@ import NameInput from '@/components/new-request/name-input.vue'
 import newReqModule from '@/store/new-request-module'
 import Vuetify from 'vuetify'
 
-describe('name-input.vue', () => {
-  let localVue = createLocalVue()
-  let wrapper: any
-  let vuetify = new Vuetify
-  localVue.use(Vuetify)
+const localVue = createLocalVue()
+const vuetify = new Vuetify()
 
-  beforeEach( () => {
-    vuetify = new Vuetify()
+localVue.use(Vuetify)
+
+describe('name-input.vue', () => {
+  let wrapper: any
+
+  beforeEach( async () => {
     wrapper = mount(NameInput, {
       localVue,
       vuetify
     })
+    await wrapper.vm.$nextTick()
     wrapper.vm.clearErrors()
   })
 

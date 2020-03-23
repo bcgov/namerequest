@@ -4,12 +4,14 @@ import { mount, createLocalVue } from '@vue/test-utils'
 import Vuetify from 'vuetify'
 
 const localVue = createLocalVue()
+const vuetify = new Vuetify()
+
+localVue.use(Vuetify)
 
 describe('name-input.vue', () => {
-  let wrapper: any, vuetify: any
+  let wrapper: any
 
   beforeEach( () => {
-    vuetify = new Vuetify()
     wrapper = mount(Modal, {
       localVue,
       vuetify
@@ -20,8 +22,9 @@ describe('name-input.vue', () => {
     expect(wrapper.vm.tableData).toStrictEqual(wrapper.vm.tableDataBC)
   })
 
-  it('When the location is not set to BC, it displays XPRO options', () => {
-    newReqModule.store.state.newRequestModule.location = 'CA'
+  it('When the location is not set to BC, it displays XPRO options', async () => {
+    newReqModule.mutateLocation('CA')
+    await wrapper.vm.$nextTick()
     expect(wrapper.vm.tableData).toStrictEqual(wrapper.vm.tableDataXPRO)
   })
   it('clicking an entity sets the entityType and closes the modal', async (): Promise<void> => {

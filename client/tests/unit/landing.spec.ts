@@ -6,6 +6,11 @@ import store from '@/store'
 import sinon from 'sinon'
 import newReqModule from '@/store/new-request-module'
 
+const localVue = createLocalVue()
+const vuetify = new Vuetify()
+
+localVue.use(Vuetify)
+
 describe('landing.vue', () => {
   let stub: any, wrapper: any
 
@@ -16,9 +21,9 @@ describe('landing.vue', () => {
     })
   })
   beforeEach(() => {
-    let vuetify = new Vuetify()
     wrapper = mount(Landing, {
-      vuetify
+      vuetify,
+      localVue
     })
   })
 

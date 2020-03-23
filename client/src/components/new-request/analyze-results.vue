@@ -68,14 +68,10 @@
             </v-row>
 
             <!--CORP CONFLICT TABLE-->
-            <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n7">
-              <v-col cols="auto" class="py-4">
-                <div style="width: 600px;" v-for="(corp, n) in conflicts" :key="n">
-                  <div style="display: inline-block; border-bottom: 1px dashed grey; width: 80%">
-                    {{ corp.name }}</div>
-                  <div style="display: inline-block; border-bottom: 1px dashed grey; width: 20%"
-                       class="text-right">{{ corp.date }}
-                  </div>
+            <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n7 py-5">
+              <v-col cols="auto">
+                <div v-for="(corp, n) in conflicts" :key="'conflict-' + n">
+                  {{ corp.name }}
                 </div>
               </v-col>
             </v-row>
@@ -148,7 +144,7 @@
                                     :id="'designation-'+d"
                                     @click="changeDesignation(des)"
                                     class="small-link mr-2"
-                                    v-for="(des, d) in issue.designations">
+                                    v-for="(des, d) in designations">
                               {{ des }}{{ (d !== issue.designations.length - 1) ? ',' : '' }}
                             </button>
                           </div>
@@ -158,50 +154,56 @@
                           </div>
                         </v-col>
                       </transition>
-                      <v-col v-if="option.type === 'send_to_examiner' && displayCheckbox"
+                      <v-col v-if="option.type === 'send_to_examiner'"
                              class="pa-0"
                              id="examine-checkbox-col">
                         <v-checkbox :error="highlightCheckboxes"
-                                    :label="examineLabel"
+                                    :label="checkBoxLabel(option.type)"
                                     class="ma-0 pa-0"
                                     id="examine-checkbox"
+                                    v-if="displayCheckbox"
                                     v-model="examine[issueIndex]" />
+                        <ReserveSubmit id="reserve-submit-examine"
+                                       v-else
+                                       style="display: inline"
+                                       setup="examine"/>
                       </v-col>
-                      <v-col v-if="option.type === 'send_to_examiner' && !displayCheckbox"
-                             id="examine-checkbox-col"
+                      <!--OBTAIN CONSENT WITH CHECKBOX-->
+                      <v-col v-if="option.type === 'obtain_consent'"
+                             id="obtain-consent-col"
                              class="pa-0">
-                        <ReserveSubmit id="reserve-submit-designation" style="display: inline"
-                                       :setup="json.issues.length > 1 ? reserveAction : 'examine'"/>
+                        <transition name="fade" mode="out-in">
+                          <v-checkbox :error="highlightCheckboxes"
+                                      class="ma-0 pa-0"
+                                      :key="option.type+'-checkbox'"
+                                      id="obtain-consent-checkbox"
+                                      :label="checkBoxLabel(option.type)"
+                                      v-if="displayCheckbox ||  buttonThenCheckbox(option.type)"
+                                      v-model="consentBody[issueIndex]" />
+                          <ReserveSubmit id="reserve-submit-obtain-consent"
+                                         style="display: inline"
+                                         :key="option.type+'-reserve-submit'"
+                                         v-else
+                                         :setup="examinationRequested ? 'examine' : 'consent'" />
+                        </transition>
                       </v-col>
-                      <v-col v-if="option.type === 'obtain_consent' && displayCheckbox"
-                             id="consent-body-checkbox-col"
+                      <v-col v-if="option.type === 'conflict_self_consent'"
+                             id="conflict_self_consent-col"
                              class="pa-0">
-                        <v-checkbox :error="highlightCheckboxes"
-                                    class="ma-0 pa-0"
-                                    id="consent-body-checkbox"
-                                    label="I am able to obtain and send written consent"
-                                    v-model="consentBody[issueIndex]" />
-                      </v-col>
-                      <v-col v-if="option.type === 'obtain_consent' && !displayCheckbox"
-                             id="consent-body-checkbox-col"
-                             class="pa-0">
-                        <ReserveSubmit id="reserve-submit-designation" style="display: inline"
-                                       :setup="json.issues.length > 1 ? reserveAction : 'consent'" />
-                      </v-col>
-                      <v-col v-if="option.type === 'conflict_self_consent' && displayCheckbox"
-                             id="consent-body-checkbox-col"
-                             class="pa-0">
-                        <v-checkbox :error="highlightCheckboxes"
-                                    class="ma-0 pa-0"
-                                    id="consent-body-checkbox"
-                                    label="I have authority over the conflicting name.  I will send written consent."
-                                    v-model="consentCorp[issueIndex]" />
-                      </v-col>
-                      <v-col v-if="option.type === 'conflict_self_consent' && !displayCheckbox"
-                             id="consent-corp-checkbox-col"
-                             class="pa-0">
-                        <ReserveSubmit id="reserve-submit-designation" style="display: inline"
-                                       :setup="json.issues.length > 1 ? reserveAction : 'consent'" />
+                        <transition name="fade" mode="out-in" >
+                          <v-checkbox :error="highlightCheckboxes"
+                                      class="ma-0 pa-0"
+                                      :key="option.type+'-checkbox'"
+                                      id="conflict-self-consent-checkbox"
+                                      v-if="displayCheckbox || buttonThenCheckbox(option.type)"
+                                      :label="checkBoxLabel(option.type)"
+                                      v-model="consentCorp[issueIndex]" />
+                         <ReserveSubmit id="reserve-submit-conflict-self-consent"
+                                        style="display: inline"
+                                        :key="option.type+'-reserve-submit'"
+                                        v-else
+                                        :setup="examinationRequested ? 'examine' : 'consent'" />
+                        </transition>
                       </v-col>
                       <v-col v-if="issue.type === 'replace_designation'" id="examine-checkbox-col">
                         <p>{{ option.line1 }}</p>
@@ -219,7 +221,7 @@
                    justify="center"
                    class="mt-3">
               <v-col cols="auto">
-                <ReserveSubmit id="reserve-submit-large"
+                <ReserveSubmit :id="issue.show_examination_button ? 'reserve-submit-examine' : 'reserve-submit-normal'"
                                :setup="issue.show_examination_button ? 'examine' : ''" />
               </v-col>
             </v-row>
@@ -265,7 +267,7 @@
                 </v-row>
                 <v-row>
                   <v-col cols="12" class="text-center">
-                    <ReserveSubmit id="available-reserve-submit" />
+                    <ReserveSubmit id="reserve-submit-normal" />
                   </v-col>
                 </v-row>
               </v-col>
@@ -315,7 +317,14 @@ export default class AnalyzeResults extends Vue {
   created () {
     this.originalName = newReqModule.name
   }
-
+  @Watch('issueIndex')
+  handleIndex (newVal, oldVal) {
+    let lastIssue = this.json.issues.length - 1
+    if (newVal < oldVal && oldVal === lastIssue) {
+      this.consentBody[oldVal] = false
+      this.consentCorp[oldVal] = false
+    }
+  }
   @Watch('examine', { deep: true })
   handlerExamine (newVal, oldVal) {
     if (newVal[this.issueIndex]) {
@@ -373,23 +382,41 @@ export default class AnalyzeResults extends Vue {
     }
     return []
   }
-  get hasNameActions () {
-    if (!this.issue || this.issue.name_actions.length === 0) {
-      return false
+  get designations () {
+    if (this.issue && Array.isArray(this.issue.designations)) {
+      if (this.issue.designations.length > 0) {
+        return this.issue.designations.map(des => des.toUpperCase())
+      }
     }
-    return true
+    return null
+  }
+  get hasNameActions () {
+    if (this.issue && this.issue.name_actions && Array.isArray(this.issue.name_actions)) {
+      if (this.issue.name_actions.length > 0) {
+        return true
+      }
+    }
+    return false
   }
   get designationIsFixed () {
-    if (this.issue.issue_type === 'designation_mismatch') {
+    if (this.issue.issue_type === 'designation_mismatch' && !this.changesInBaseName) {
       let { designations } = this.issue
       for (let des of designations) {
-        des = des.toLowerCase()
-        let name = this.name.toLowerCase()
-        let regexStr = new RegExp('\\b' + des + '\\b')
-        if (name.match(regexStr) !== null) {
-          if (!this.changesInBaseName) {
-            return true
-          }
+        des = des.toUpperCase()
+        let name = this.name.toUpperCase()
+        let compare = this.originalName.replace(this.word, des).toUpperCase()
+        if (name === compare) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+  get examinationRequested () {
+    if (this.issueIndex >= 1) {
+      for (let n = this.issueIndex - 1; n >= 0; n--) {
+        if (this.examine[n]) {
+          return true
         }
       }
     }
@@ -409,12 +436,6 @@ export default class AnalyzeResults extends Vue {
   get entityType () {
     return newReqModule.entityType
   }
-  get examineLabel () {
-    if (this.issue && this.issue.issue_type === 'corp_conflict') {
-      return `I do not have authority over the conflicting name but I want my name examined.`
-    }
-    return `I do not need consent to use this word in this context. I want my name examined.`
-  }
   get issue () {
     if (Array.isArray(this.json.issues)) {
       return this.json.issues[this.issueIndex]
@@ -433,6 +454,7 @@ export default class AnalyzeResults extends Vue {
     return newReqModule.name
   }
   set name (name: string) {
+    name = name.toUpperCase()
     newReqModule.mutateName(name)
   }
   get nameActions () {
@@ -478,14 +500,40 @@ export default class AnalyzeResults extends Vue {
   }
   get word () {
     if (Array.isArray(this.issue.name_actions) && this.issue.name_actions[0]) {
-      return this.issue.name_actions[0].word
+      return this.issue.name_actions[0].word.toUpperCase()
     }
     return ''
   }
 
-  changeDesignation (des) {
+  buttonThenCheckbox (type) {
+    if (this.examinationRequested) {
+      if (type === 'conflict_self_consent') {
+        if (this.consentCorp[this.issueIndex]) {
+          return false
+        }
+      }
+      if (type === 'obtain_consent') {
+        if (this.consentBody[this.issueIndex]) {
+          return false
+        }
+      }
+      return true
+    }
+    return false
+  }
+  changeDesignation (designation) {
     this.showActualInput = true
-    this.name = this.originalName.replace(this.word, des)
+    this.name = this.originalName.replace(this.word, designation)
+  }
+  checkBoxLabel (type) {
+    switch (type) {
+      case 'send_to_examiner':
+        return 'I want to send my name to be examined'
+      case 'obtain_consent':
+        return 'I will obtain and submit consent'
+      case 'conflict_self_consent':
+        return 'I have authority over the conflicting name; I will submit written consent'
+    }
   }
   clickNext () {
     let reset = () => {
@@ -507,14 +555,19 @@ export default class AnalyzeResults extends Vue {
     event.preventDefault()
     newReqModule.startAnalyzeName()
   }
-  async toggleRealInput () {
+  toggleRealInput () {
     if (!this.showActualInput) {
       this.showActualInput = true
-      await this.$nextTick()
-      let position = this.name.length
-      let elem = document.getElementById('analyze-name-text-field')
-      elem.focus()
-      elem.setSelectionRange(position, position)
+      this.$nextTick(function () {
+        let position = this.name.length
+        let elem = document.getElementById('analyze-name-text-field') as HTMLInputElement
+        if (elem.setSelectionRange) {
+          elem.focus()
+          elem.setSelectionRange(position, position)
+          return
+        }
+        elem.focus()
+      })
     }
   }
   optionClasses (i) {
@@ -595,7 +648,7 @@ export default class AnalyzeResults extends Vue {
 .fade-enter
   opacity: 0
 .fade-enter-active, .fade-leave-active
-  transition: all .15s ease-in
+  transition: all .25s ease-in
 .fade-enter-to
   opacity: 1
 .fade-leave

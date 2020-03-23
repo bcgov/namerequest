@@ -1,5 +1,6 @@
 import Axios from '@/plugins/axios'
 import axios from 'axios'
+import removeAccents from 'remove-accents'
 import store from '@/store'
 import {
   AnalysisJSONI,
@@ -410,17 +411,25 @@ export class NewRequestModule extends VuexModule {
 
   @Action({ rawError: true })
   async getStats () {
-    let resp
     try {
-      resp = await Axios.get('/stats')
+      let resp = await Axios.get('/stats')
+      this.mutateStats(resp.data)
+      return Promise.resolve(resp.data)
     } catch {
       return Promise.resolve()
     }
-    this.mutateStats(resp.data)
-    return Promise.resolve(resp.data)
   }
   @Action({ rawError: true })
   async startAnalyzeName () {
+    let name
+    if (this.name) {
+      let edits = removeAccents(this.name)
+      let edits2 = edits.replace(/[^\sa-zA-Z0-9*+&().,="'#@!?;:-]/g, '')
+      name = edits2.toUpperCase()
+    } else {
+      this.setErrors('name')
+    }
+    this.mutateName(name)
     if (this.entityType === 'all') {
       this.setErrors('entity')
     }
@@ -433,14 +442,10 @@ export class NewRequestModule extends VuexModule {
     if (this.name !== '' && this.name.length < 3) {
       this.setErrors('length')
     }
-    if (!this.name) {
-      this.setErrors('name')
-    }
     if (this.errors.length > 0) {
       return Promise.resolve()
     }
-    let name = normalizeWordCase(this.name)
-    this.mutateName(name)
+
     this.mutateDisplayedComponent('AnalyzePending')
     let params: NewRequestNameSearchI = {
       name,
