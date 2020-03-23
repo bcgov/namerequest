@@ -20,14 +20,14 @@ let source
 
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
 export class NewRequestModule extends VuexModule {
-  actingOnOwnBehalf: boolean = true
+  actingOnOwnBehalf: boolean = false
   additionalInfo: string = ''
   address1: string = ''
   address2: string = ''
   analysisJSON: AnalysisJSONI | null = null
   city: string = ''
   country: string = 'CA'
-  displayedComponent: DisplayedComponentT = 'Tabs'
+  displayedComponent: DisplayedComponentT = 'SubmissionTabs'
   email: string = ''
   entityType: string = 'CR'
   entityTypesBC: EntityI[] = [
@@ -329,7 +329,7 @@ export class NewRequestModule extends VuexModule {
     }
   ]
   stats: StatsI | null = null
-  submissionTabNumber: number = 0
+  submissionTabNumber: number = 2
   submissionType: SubmissionTypeT | null = null
   tabNumber: number = 0
 

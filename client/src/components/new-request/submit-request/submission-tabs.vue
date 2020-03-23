@@ -18,7 +18,8 @@
             <ApplicantInfo1 />
           </v-tab-item>
           <v-tab-item>
-            <ApplicantInfo2 />
+            <ApplicantInfo2 v-if="actingOnOwnBehalf" />
+            <ApplicantInfo3 v-else />
           </v-tab-item>
         </v-tabs-items>
       </v-tabs>
@@ -30,14 +31,18 @@
 import MainContainer from '@/components/new-request/main-container.vue'
 import ApplicantInfo1 from '@/components/new-request/submit-request/applicant-info-1.vue'
 import ApplicantInfo2 from '@/components/new-request/submit-request/applicant-info-2.vue'
+import ApplicantInfo3 from '@/components/new-request/submit-request/applicant-info-3.vue'
 import SendForExamination from '@/components/new-request/submit-request/send-for-examination.vue'
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
-  components: { SendForExamination, ApplicantInfo1, ApplicantInfo2, MainContainer }
+  components: { ApplicantInfo3, SendForExamination, ApplicantInfo1, ApplicantInfo2, MainContainer }
 })
 export default class SubmissionTabs extends Vue {
+  get actingOnOwnBehalf () {
+    return newReqModule.actingOnOwnBehalf
+  }
   get submissionTabNumber () {
     return newReqModule.submissionTabNumber
   }2
