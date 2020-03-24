@@ -1,80 +1,80 @@
 <template>
-  <v-container class="pa-9 pt-6 normal-copy" id="analyze-results-container">
-    <v-row no-gutters justify="space-between" align-content="space-around">
-      <v-col cols="auto" class="bold-text">
+  <MainContainer id="analyze-results-container">
+    <template v-slot:container-header>
+      <v-col cols="auto" class="h4">
         You are searching for a name for {{ requestAction }}
         {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }}
         {{ entityText }}
       </v-col>
-      <v-col cols="auto">
-        <button id="back-to-search-btn"
-               class="modal-activator pa-0"
-               @click="startAgain()"><span class="normal-link">  Start Search Over</span></button>
-      </v-col>
-      <v-col cols="12" class="mt-3" @click="toggleRealInput">
-        <v-form @submit="handleSubmit">
-          <v-text-field v-model="name"
-                        filled
-                        autocomplete="off"
-                        @focus="toggleRealInput"
+    </template>
+    <template v-slot:content>
+      <v-row>
+        <v-col cols="12" class="mt-3" @click="toggleRealInput">
+          <v-form @submit="handleSubmit">
+            <v-text-field v-model="name"
+                          filled
+                          autocomplete="off"
+                          @focus="toggleRealInput"
                         v-if="showActualInput || !hasNameActions"
-                        placeholder="Search a Name"
-                        id="analyze-name-text-field">
-            <template v-slot:append>
-              <v-icon class="name-search-icon" @click="handleSubmit">search</v-icon>
-            </template>
-          </v-text-field>
-          <v-text-field filled
-                        autocomplete="off"
-                        v-else
-                        id="analyze-name-text-field-2">
-            <template v-slot:append>
-              <v-icon class="name-search-icon" @click="handleSubmit">search</v-icon>
-            </template>
-            <template v-slot:prepend-inner>
-              <template v-for="(word, i) in chunkedName">
-                <name-word-renderer :key="word+i" :word="word" :index="i" :actions="nameActions" />
+                          placeholder="Search a Name"
+                          id="analyze-name-text-field">
+              <template v-slot:append>
+                <v-icon class="name-search-icon" @click="handleSubmit">search</v-icon>
               </template>
-            </template>
-          </v-text-field>
-        </v-form>
-      </v-col>
-    </v-row>
-    <transition name="fade" mode="out-in" >
-      <v-row no-gutters  :key="issueIndex+'vcol'">
-        <v-col>
-          <!--"FURTHER ACTION REQUIRED" OR "APPROVABLE" TEXT + ICON-->
-          <v-row no-gutters justify="center" class="mt-n4">
-            <v-col cols="auto" :class="json.status === 'Available' ? 'approved' : 'action' " class="h4">
-              <v-icon :class="json.status === 'Available' ? 'approved' : 'action' ">
-                {{ json.status === 'Available' ? 'check_circle' : 'stars' }}
-              </v-icon>
-              {{ json.header }}
-            </v-col>
-          </v-row>
-
-          <!--ISSUE_TYPE: FURTHER ACTION REQUIRED-->
-          <template v-if="issue && issue.issue_type">
-            <!--MAIN HEADINGS / INFO: LINE 1 & LINE 2-->
-            <v-row no-gutters justify="center">
-              <v-col class="pt-2 pb-4 mt-n1 text-center"
-                     cols="12"
-                     v-html="issue.line1"
-                     v-if="issue.line1" />
-              <v-col class="mt-n3 pb-4 text-center"
-                     cols="12"
-                     v-html="issue.line2"
-                     v-if="issue.line2" />
-            </v-row>
-
-            <!--CORP CONFLICT TABLE-->
-            <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n7 py-5">
-              <v-col cols="auto">
-                <div v-for="(corp, n) in conflicts" :key="'conflict-' + n">
-                  {{ corp.name }}
-                </div>
+            </v-text-field>
+            <v-text-field filled
+                          autocomplete="off"
+                          v-else
+                          @focus="toggleActualInput()"
+                          id="analyze-name-text-field-2">
+              <template v-slot:append>
+                <v-icon class="name-search-icon" @click="handleSubmit">search</v-icon>
+              </template>
+              <template v-slot:prepend-inner>
+                <template v-for="(word, i) in chunkedName">
+                  <name-word-renderer :key="word+i" :word="word" :index="i" :actions="nameActions" />
+                </template>
+              </template>
+            </v-text-field>
+          </v-form>
+        </v-col>
+      </v-row>
+      <transition name="fade" mode="out-in" >
+        <v-row no-gutters  :key="issueIndex+'vcol'">
+          <v-col>
+            <!--"FURTHER ACTION REQUIRED" OR "APPROVABLE" TEXT + ICON-->
+            <v-row no-gutters justify="center" class="mt-n4">
+              <v-col cols="auto" :class="json.status === 'Available' ? 'approved' : 'action' " class="h4">
+                <v-icon :class="json.status === 'Available' ? 'approved' : 'action' ">
+                  {{ json.status === 'Available' ? 'check_circle' : 'stars' }}
+                </v-icon>
+                {{ json.header }}
               </v-col>
             </v-row>
+
+            <!--ISSUE_TYPE: FURTHER ACTION REQUIRED-->
+            <template v-if="issue && issue.issue_type">
+              <!--MAIN HEADINGS / INFO: LINE 1 & LINE 2-->
+              <v-row no-gutters justify="center">
+                <v-col class="pt-2 pb-4 mt-n1 text-center"
+                       cols="12"
+                       v-html="issue.line1"
+                       v-if="issue.line1" />
+                <v-col class="mt-n3 pb-4 text-center"
+                       cols="12"
+                       v-html="issue.line2"
+                       v-if="issue.line2" />
+              </v-row>
+
+              <!--CORP CONFLICT TABLE-->
+              <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n7py-5">
+                <v-col cols="auto" >
+                  <div v-for="(corp, n) in conflicts" :key="'conflict-' +n">
+
+                      {{ corp.name }}
+                  </div>
+                </v-col>
+              </v-row>
 
             <!--GREY BOXES-->
             <div class="row pale-blue-text no-gutters justify-center"
@@ -162,7 +162,7 @@
                                     class="ma-0 pa-0"
                                     id="examine-checkbox"
                                     v-if="displayCheckbox"
-                                    v-model="examine[issueIndex]" />
+                                    v-model="requestExaminationStep[issueIndex]" />
                         <ReserveSubmit id="reserve-submit-examine"
                                        v-else
                                        style="display: inline"
@@ -179,7 +179,7 @@
                                       id="obtain-consent-checkbox"
                                       :label="checkBoxLabel(option.type)"
                                       v-if="displayCheckbox ||  buttonThenCheckbox(option.type)"
-                                      v-model="consentBody[issueIndex]" />
+                                      v-model="obtainConsentStep[issueIndex]" />
                           <ReserveSubmit id="reserve-submit-obtain-consent"
                                          style="display: inline"
                                          :key="option.type+'-reserve-submit'"
@@ -197,7 +197,7 @@
                                       id="conflict-self-consent-checkbox"
                                       v-if="displayCheckbox || buttonThenCheckbox(option.type)"
                                       :label="checkBoxLabel(option.type)"
-                                      v-model="consentCorp[issueIndex]" />
+                                      v-model="obtainSelfConsentStep[issueIndex]" />
                          <ReserveSubmit id="reserve-submit-conflict-self-consent"
                                         style="display: inline"
                                         :key="option.type+'-reserve-submit'"
@@ -216,81 +216,82 @@
               </v-col>
             </div>
 
-            <!--SUBMISSION BUTTON-->
-            <v-row v-if="issue.show_examination_button || issue.show_reserve_button"
-                   justify="center"
-                   class="mt-3">
-              <v-col cols="auto">
+              <!--SUBMISSION BUTTON-->
+              <v-row v-if="issue.show_examination_button || issue.show_reserve_button"
+                     justify="center"
+                     class="mt-3">
+                <v-col cols="auto">
                 <ReserveSubmit :id="issue.show_examination_button ? 'reserve-submit-examine' : 'reserve-submit-normal'"
                                :setup="issue.show_examination_button ? 'examine' : ''" />
-              </v-col>
-            </v-row>
+                </v-col>
+              </v-row>
 
-            <!--ERROR MESSAGE / NEXT - PREVIOUS BUTTONS-->
-            <v-row v-if="json.issues.length > 1" justify="end" no-gutters>
-              <v-col v-if="highlightCheckboxes"
-                     class="small-copy text-center">
-                <div class="error-message">
-                  You must either tick whichever box applies or take the action prescribed in Option 1.
-                </div>
-              </v-col>
-              <v-col cols="auto" class="text-right">
-                <v-btn @click="issueIndex--"
-                       class="mt-3 mb-n4 rnd-wht-btn"
-                       color="#1669bb"
-                       id="previous-issue-btn"
-                       large
-                       outlined
-                       v-if="issueIndex > 0">Previous Issue
-                </v-btn>
-                <v-btn :class="nextButtonDisabled ? 'disabled-issue-btn' : 'active-issue-btn'"
-                       @click="clickNext"
-                       class="mt-3 mb-n4"
-                       id="next-issue-btn"
-                       large
-                       outlined
-                       v-if="(json.issues.length - 1) > issueIndex">Next Issue
-                </v-btn>
-              </v-col>
-            </v-row>
-          </template>
-          <!--APPROVABLE NAME, NO ISSUES-->
-          <template v-else>
-            <!--APPROVED TEXT-->
-            <v-row no-gutters justify="center">
-              <v-col cols="12" class="normal-copy pt-2 pb-4">
-                <v-row justify="center">
-                  <v-col cols="auto">
-                  Name is available for {{ requestAction }}
-                  {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }} {{ entityText }}
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col cols="12" class="text-center">
-                    <ReserveSubmit id="reserve-submit-normal" />
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-          </template>
-        </v-col>
-      </v-row>
-    </transition>
-
-    <!--TITLE, START OVER, SEARCH FIELD-->
-
-  </v-container>
+              <!--ERROR MESSAGE / NEXT - PREVIOUS BUTTONS-->
+              <v-row v-if="json.issues.length > 1" justify="end" no-gutters>
+                <v-col v-if="highlightCheckboxes"
+                       class="small-copy text-center">
+                  <div class="error-message">
+                    You must either tick whichever box applies or take the action prescribed in Option 1.
+                  </div>
+                </v-col>
+                <v-col cols="auto" class="text-right mt-1 mb-7">
+                  <v-btn @click="issueIndex--"
+                         class="mt-3 mb-n4 rnd-wht-btn"
+                         color="#1669bb"
+                         id="previous-issue-btn"
+                         large
+                         outlined
+                         v-if="issueIndex > 0">Previous Issue
+                  </v-btn>
+                  <v-btn :class="nextButtonDisabled ? 'disabled-issue-btn' : 'active-issue-btn'"
+                         @click="clickNext"
+                         class="mt-3 mb-n4"
+                         id="next-issue-btn"
+                         large
+                         outlined
+                         v-if="(json.issues.length - 1) > issueIndex">Next Issue
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </template>
+            <!--APPROVABLE NAME, NO ISSUES-->
+            <template v-else>
+              <!--APPROVED TEXT-->
+              <v-row no-gutters justify="center">
+                <v-col cols="12" class="normal-copy pt-2 pb-4">
+                  <v-row justify="center">
+                    <v-col cols="auto">
+                      Name is available for {{ requestAction }}
+                      {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }}
+                      {{ ' ' + entityText }}
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" class="text-center">
+                      <ReserveSubmit id="reserve-submit-normal" />
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </template>
+          </v-col>
+        </v-row>
+      </transition>
+      <!--TITLE, START OVER, SEARCH FIELD-->
+    </template>
+  </MainContainer>
 </template>
 
 <script lang="ts">
-import ReserveSubmit from '@/components/new-request/reserve-submit'
+import MainContainer from '@/components/new-request/main-container.vue'
+import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
 import NameWordRenderer from '@/components/new-request/analyzed-name-word-renderer'
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { IssueI, SetupI, DisplayedComponentT } from '@/models'
 
 @Component({
-  components: { ReserveSubmit, NameWordRenderer }
+  components: { MainContainer, ReserveSubmit, NameWordRenderer }
 })
 export default class AnalyzeResults extends Vue {
   issueIndex: number = 0
@@ -298,17 +299,17 @@ export default class AnalyzeResults extends Vue {
   showActualInput: boolean = false
   originalName: string | null = null
   highlightCheckboxes: boolean = false
-  consentBody = {
+  obtainConsentStep = {
     0: false,
     1: false,
     2: false
   }
-  consentCorp = {
+  obtainSelfConsentStep = {
     0: false,
     1: false,
     2: false
   }
-  examine = {
+  requestExaminationStep = {
     0: false,
     1: false,
     2: false
@@ -319,46 +320,49 @@ export default class AnalyzeResults extends Vue {
   }
   @Watch('issueIndex')
   handleIndex (newVal, oldVal) {
+    this.showActualInput = false
     let lastIssue = this.json.issues.length - 1
-    if (newVal < oldVal && oldVal === lastIssue) {
-      this.consentBody[oldVal] = false
-      this.consentCorp[oldVal] = false
+    if (newVal < oldVal) {
+      if (oldVal === lastIssue) {
+        this.obtainConsentStep[oldVal] = false
+        this.obtainSelfConsentStep[oldVal] = false
+      }
     }
   }
-  @Watch('examine', { deep: true })
+  @Watch('requestExaminationStep', { deep: true })
   handlerExamine (newVal, oldVal) {
     if (newVal[this.issueIndex]) {
-      this.consentBody[this.issueIndex] = false
-      this.consentCorp[this.issueIndex] = false
+      this.obtainConsentStep[this.issueIndex] = false
+      this.obtainSelfConsentStep[this.issueIndex] = false
     }
   }
-  @Watch('consentBody', { deep: true })
+  @Watch('obtainConsentStep', { deep: true })
   handlerBody (newVal, oldVal) {
     if (newVal[this.issueIndex]) {
-      this.examine[this.issueIndex] = false
+      this.requestExaminationStep[this.issueIndex] = false
     }
   }
-  @Watch('consentCorp', { deep: true })
+  @Watch('obtainSelfConsentStep', { deep: true })
   handlerCorp (newVal, oldVal) {
     if (newVal[this.issueIndex]) {
-      this.examine[this.issueIndex] = false
+      this.requestExaminationStep[this.issueIndex] = false
     }
   }
 
   get buttonSetup () {
     let output: string = ''
-    for (let step in this.consentBody) {
-      if (this.consentBody[step]) {
+    for (let step in this.obtainConsentStep) {
+      if (this.obtainConsentStep[step]) {
         output = 'consent'
       }
     }
-    for (let step in this.consentCorp) {
-      if (this.consentCorp[step]) {
+    for (let step in this.obtainSelfConsentStep) {
+      if (this.obtainSelfConsentStep[step]) {
         output = 'consent'
       }
     }
-    for (let step in this.examine) {
-      if (this.examine[step]) {
+    for (let step in this.requestExaminationStep) {
+      if (this.requestExaminationStep[step]) {
         output = 'examine'
       }
     }
@@ -415,7 +419,7 @@ export default class AnalyzeResults extends Vue {
   get examinationRequested () {
     if (this.issueIndex >= 1) {
       for (let n = this.issueIndex - 1; n >= 0; n--) {
-        if (this.examine[n]) {
+        if (this.requestExaminationStep[n]) {
           return true
         }
       }
@@ -423,8 +427,9 @@ export default class AnalyzeResults extends Vue {
     return false
   }
   get displayCheckbox () {
-    if (Array.isArray(this.json.issues) && this.json.issues.length > 1) {
-      if (this.issueIndex < this.json.issues.length - 1) {
+    if (this.json.issues && Array.isArray(this.json.issues)) {
+      let { issues } = this.json
+      if (issues.length > 1 && this.issueIndex < issues.length - 1) {
         return true
       }
     }
@@ -464,7 +469,9 @@ export default class AnalyzeResults extends Vue {
     return null
   }
   get nextButtonDisabled () {
-    if (this.consentCorp[this.issueIndex] || this.consentBody[this.issueIndex] || this.examine[this.issueIndex]) {
+    if (this.obtainSelfConsentStep[this.issueIndex] ||
+        this.obtainConsentStep[this.issueIndex] ||
+        this.requestExaminationStep[this.issueIndex]) {
       return false
     }
     return true
@@ -481,18 +488,18 @@ export default class AnalyzeResults extends Vue {
   }
   get reserveAction () {
     let output
-    for (let step in this.consentBody) {
-      if (this.consentBody[step]) {
+    for (let step in this.obtainConsentStep) {
+      if (this.obtainConsentStep[step]) {
         output = 'consent'
       }
     }
-    for (let step in this.consentCorp) {
-      if (this.consentCorp[step]) {
+    for (let step in this.obtainSelfConsentStep) {
+      if (this.obtainSelfConsentStep[step]) {
         output = 'consent'
       }
     }
-    for (let step in this.examine) {
-      if (this.examine[step]) {
+    for (let step in this.requestExaminationStep) {
+      if (this.requestExaminationStep[step]) {
         output = 'examine'
       }
     }
@@ -508,12 +515,12 @@ export default class AnalyzeResults extends Vue {
   buttonThenCheckbox (type) {
     if (this.examinationRequested) {
       if (type === 'conflict_self_consent') {
-        if (this.consentCorp[this.issueIndex]) {
+        if (this.obtainSelfConsentStep[this.issueIndex]) {
           return false
         }
       }
       if (type === 'obtain_consent') {
-        if (this.consentBody[this.issueIndex]) {
+        if (this.obtainConsentStep[this.issueIndex]) {
           return false
         }
       }
@@ -533,6 +540,11 @@ export default class AnalyzeResults extends Vue {
         return 'I will obtain and submit consent'
       case 'conflict_self_consent':
         return 'I have authority over the conflicting name; I will submit written consent'
+    }
+  }
+  toggleActualInput () {
+    if (!this.showActualInput) {
+      this.showActualInput = true
     }
   }
   clickNext () {

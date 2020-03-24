@@ -55,15 +55,14 @@ describe('name-input.vue', () => {
     expect(wrapper.vm.errors).toStrictEqual(['request'])
   })
   it('Resists submission when there is no name entered and detects the correct error type', async () => {
-    newReqModule.store.state.newRequestModule.entityType = 'CR'
-    newReqModule.store.state.newRequestModule.requestAction = 'CNV'
-    await wrapper.vm.$nextTick()
+    newReqModule.mutateEntityType('CR')
+    newReqModule.mutateRequestAction('CNV')
 
     let button = wrapper.find('#name-input-icon')
     button.trigger('click')
     await wrapper.vm.$nextTick()
     expect(newReqModule.displayedComponent).toBe('Tabs')
-    expect(newReqModule.errors).toStrictEqual(['name'])
+    expect(newReqModule.errors).toEqual(['name'])
   })
   it('Resists submission when the name entered is too short and detects the correct error type', async () => {
     wrapper.vm.nameSearch = 'ab'

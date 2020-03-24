@@ -1,8 +1,9 @@
-export type DisplayedComponentT = 'Search' | 'AnalyzeResults' | 'AnalyzePending' | 'ApplicantInfo' | 'Tabs'
+export type DisplayedComponentT = 'Tabs' | 'AnalyzePending' | 'AnalyzeResults' | 'SubmissionTabs'
 export type LocationT = 'BC' | 'CA' | 'IN' | 'HELP'
 export type NrDataResponseT = RequestDataI | null
 export type NrDataT = string | null
 export type SearchComponentT = 'search' | 'analyzing' | 'results'
+export type SubmissionTypeT = 'examination' | 'consent' | 'normal'
 
 export interface AnalysisJSONI {
   header?: string
@@ -66,6 +67,11 @@ export interface NewRequestNameSearchI {
   request_action: string
   entity_type: string
   location: LocationT
+}
+export interface NameChoicesI {
+  nameChoice1: string | null
+  designation1: string | null
+  [propName: string]: string
 }
 export interface RequestDataI {
   nrNumber: number

@@ -1,6 +1,6 @@
 import AnalyzeResults from '@/components/new-request/analyze-results'
 import NameWordRenderer from '@/components/new-request/analyzed-name-word-renderer'
-import ReserveSubmit from '@/components/new-request/reserve-submit.vue'
+import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import newReqModule from '@/store/new-request-module'
 import Vuetify from 'vuetify'

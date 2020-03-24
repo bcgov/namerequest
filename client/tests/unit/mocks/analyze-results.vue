@@ -13,7 +13,3 @@ import { Component, Vue } from 'vue-property-decorator'
 export default class AnalyzeResults extends Vue {
 }
 </script>
-
-<style scoped lang="sass">
-
-</style>
