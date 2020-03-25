@@ -5,7 +5,7 @@
         <v-col cols="2" class="py-0 h5" align-self="center">
           First Choice
         </v-col>
-        <v-col cols="7" class="py-0" style="height:60px">
+        <v-col :cols="designationAtEnd ? 7 : 10" class="py-0" style="height:60px">
           <v-text-field filled
                         hide-details
                         readonly
@@ -13,11 +13,12 @@
                         @input="editChoices('name1', $event)"
                         :value="nameChoices.name1" />
         </v-col>
-        <v-col cols="3" class="py-0">
+        <v-col cols="3" class="py-0" v-if="designationAtEnd">
           <v-select filled
                     :error-messages="des1Message"
                     hide-details="auto"
                     :items="items"
+                    placeholder="Designation"
                     id="designation-1-select"
                     @input="editChoices('designation1', $event)"
                     :value="nameChoices.designation1" />
@@ -31,15 +32,15 @@
         <v-col cols="2" class="py-0 h5" align-self="center">
           Second Choice
         </v-col>
-        <v-col cols="7" class="py-0">
+        <v-col :cols="designationAtEnd ? 7 : 10" class="py-0">
           <v-text-field filled
                         hide-details
                         id="choice-2-text-field"
-                        placeholder="Name Choice 2 (Optional)"
+                        placeholder="Second Alternate Name (Optional)"
                         @input="editChoices('name2', $event)"
                         :value="nameChoices.name2" />
         </v-col>
-        <v-col cols="3" class="py-0">
+        <v-col cols="3" class="py-0" v-if="designationAtEnd">
           <v-select filled
                     :error-messages="des2Message"
                     hide-details="auto"
@@ -54,16 +55,16 @@
         <v-col cols="2" class="py-0 h5" align-self="center">
           Third Choice
         </v-col>
-        <v-col cols="7" class="py-0" style="height:60px">
+        <v-col :cols="designationAtEnd ? 7 : 10" class="py-0" style="height:60px">
           <v-text-field filled
                         :error-messages="name3Message"
                         hide-details="auto"
                         id="choice-3-text-field"
-                        placeholder="Name Choice 3 (Optional)"
+                        placeholder="Third Alternate Name (Optional)"
                         @input="editChoices('name3', $event)"
                         :value="nameChoices.name3" />
         </v-col>
-        <v-col cols="3" class="py-0" style="height: 60px">
+        <v-col cols="3" class="py-0" style="height: 60px" v-if="designationAtEnd">
           <v-select filled
                     :error-messages="des3Message"
                     hide-details="auto"
@@ -93,23 +94,30 @@
 <script lang="ts">
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
+import designations from '@/store/list-data/designations'
 
 @Component({})
 export default class SendForExamination extends Vue {
   des1Message = ''
   des2Message = ''
   des3Message = ''
-  items = [
-    { text: 'Incorporated', value: 'incorporated' },
-    { text: 'Inc', value: 'inc' },
-    { text: 'Ltd', value: 'ltd' },
-    { text: 'Limited', value: 'limited' }
-  ]
   name3Message = ''
   isValid: boolean = false
 
-  created () {
+  mounted () {
     newReqModule.mutateSubmissionType('examination')
+    this.$nextTick(function () {
+      if (this.designationAtEnd) {
+        for (let item of this.items) {
+          if (this.name.endsWith(item.text)) {
+            this.editChoices('designation1', item.text)
+            let value = this.name.replace(item.text, '').trim()
+            newReqModule.mutateNameChoices({ key: 'name1', value })
+            return
+          }
+        }
+      }
+    })
     newReqModule.mutateNameChoices({ key: 'name1', value: this.name })
   }
 
@@ -139,21 +147,28 @@ export default class SendForExamination extends Vue {
     }
     return false
   }
+  get entityType () {
+    return newReqModule.entityType
+  }
+  get designationAtEnd () {
+    return designations[this.entityType].end
+  }
   get name () {
     return newReqModule.name
   }
   get nameChoices () {
     return newReqModule.nameChoices
   }
+  get items () {
+    return newReqModule.designationItems
+  }
 
   editChoices (key, value) {
-    let choiceObj = {
-      key, value
-    }
-    newReqModule.mutateNameChoices(choiceObj)
-    let messages = ['des1Message', 'des2Message', 'des3Message', 'name3Message']
-    messages.forEach(msg => {
-      this[msg] = ''
+    value = value.toUpperCase()
+    newReqModule.mutateNameChoices({ key, value })
+    let messages = ['des1Message', 'des2Message', 'des3Message']
+    messages.forEach(messsage => {
+      this[messsage] = ''
     })
   }
   showNextTab () {

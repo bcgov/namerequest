@@ -1,40 +1,42 @@
 <template>
-  <v-form v-model="step1Valid" ref="step1" @input="clearValidation" id="applicant-info-1-form">
-    <v-container fluid class="pa-0 mt-2" id="applicant-info-1">
-      <v-row  class="mt-2">
-        <v-col cols="2" class="py-0 h5" align-self="start">
+  <v-form v-model="step1Valid" ref="step1" id="applicant-info-1-form">
+    <v-container fluid class="mt-n3" id="applicant-info-1">
+      <v-row>
+        <v-col cols="2" align-self="start" class="h5 ml-n3 mr-3">
           Applicant
         </v-col>
-        <v-col cols="10" class="pa-0 my-0">
+        <v-col cols="10" class="pa-0">
           <!--FIRST NAME, LAST NAME, MIDDLE NAME-->
           <v-row>
-            <v-col cols="4" class="py-0 my-0">
+            <v-col cols="4">
               <v-text-field :messages="messages['last']"
                             :rules="requiredRules"
+                            :value="applicant.lastName"
                             @blur="messages = {}"
                             @focus="messages['last'] = 'Last Name'"
+                            @input="updateApplicant('lastName', $event)"
                             dense
                             filled
                             height="50"
                             hide-details="auto"
                             placeholder="Last Name"
-                            ref="last"
-                            v-model="lastName" />
+                            ref="last" />
             </v-col>
-            <v-col cols="4" class="py-0 my-0">
+            <v-col cols="4" >
               <v-text-field :messages="messages['first']"
                             :rules="requiredRules"
+                            :value="applicant.firstName"
                             @blur="messages = {}"
                             @focus="messages['first'] = 'First Name'"
+                            @input="updateApplicant('firstName', $event)"
                             dense
                             filled
                             height="50"
                             hide-details="auto"
                             placeholder="First Name"
-                            ref="first"
-                            v-model="firstName" />
+                            ref="first" />
             </v-col>
-            <v-col cols="4" class="py-0 my-0">
+            <v-col cols="4" >
               <v-text-field :messages="messages['middle']"
                             @blur="messages = {}"
                             @focus="messages['middle'] = 'Middle Name'"
@@ -44,11 +46,12 @@
                             hide-details="auto"
                             placeholder="Middle Name (Optional)"
                             ref="middle"
-                            v-model="middleName" />
+                            @input="updateApplicant('middleName', $event)"
+                            :value="applicant.middleName" />
             </v-col>
           </v-row>
           <!--ADDDRESS !-->
-          <v-row class="mt-2">
+          <v-row class="mt-n1">
             <v-col cols="12" class="py-0 my-0">
               <v-text-field :messages="messages['address1']"
                             :rules="requiredRules"
@@ -61,7 +64,8 @@
                             hide-details="auto"
                             placeholder="Street Address"
                             ref="address1"
-                            v-model="address1" />
+                            @input="updateApplicant('address1', $event)"
+                            :value="applicant.address1" />
             </v-col>
           </v-row>
           <v-row class="mt-2">
@@ -75,7 +79,8 @@
                             hide-details="auto"
                             placeholder="Additional Street Address (Optional)"
                             ref="address2"
-                            v-model="address2" />
+                            @input="updateApplicant('address2', $event)"
+                            :value="applicant.address2" />
             </v-col>
           </v-row>
           <v-row class="mt-2">
@@ -90,10 +95,11 @@
                             hide-details="auto"
                             placeholder="City"
                             ref="city"
-                            v-model="city" />
+                            @input="updateApplicant('city', $event)"
+                            :value="applicant.city" />
             </v-col>
             <v-col cols="6" class="py-0 my-0">
-              <v-select :items="provinces"
+              <v-select :items="jurisdictionOptions"
                         :rules="requiredRules"
                         dense
                         filled
@@ -101,20 +107,35 @@
                         hide-details="auto"
                         placeholder="Province"
                         ref="provinceState"
-                        v-model="provinceState" />
+                        v-if="location === 'CA' || location === 'BC'"
+                        @input="updateApplicant('provinceState', $event)"
+                        :value="applicant.provinceState" />
+              <v-text-field :rules="requiredRules"
+                            @blur="messages = {}"
+                            @focus="messages['provState'] = 'Province/State'"
+                            dense
+                            filled
+                            height="50"
+                            hide-details="auto"
+                            placeholder="Province/State"
+                            ref="provinceState"
+                            v-else
+                            @input="updateApplicant('provinceState', $event)"
+                            :value="applicant.provinceState" />
             </v-col>
           </v-row>
           <v-row class="mt-2">
             <v-col cols="6" class="py-0 my-0">
-              <v-select :items="countries"
+              <v-select :items="countryOptions"
                         :rules="requiredRules"
                         dense
                         filled
                         height="50"
                         hide-details="auto"
-                        placeholder="Canada"
+                        placeholder="Country"
                         ref="country"
-                        v-model="country" />
+                        @input="updateApplicant('country', $event)"
+                        :value="applicant.country" />
             </v-col>
             <v-col cols="6" class="py-0 my-0">
               <v-text-field :messages="messages['post']"
@@ -126,28 +147,29 @@
                             height="50"
                             hide-details="auto"
                             placeholder="Postal/Zip Code"
-                            v-model="postalCode" />
+                            @input="updateApplicant('postalCode', $event)"
+                            :value="applicant.postalCode" />
             </v-col>
           </v-row>
-          <v-row class="mt-2">
+          <v-row class="mt-2" v-if="location !== 'BC'">
             <v-col cols="6" class="py-0 my-0">
-              <v-text-field :messages="messages['juris']"
+              <v-select :messages="messages['juris']"
                             :rules="requiredRules"
                             @blur="messages = {}"
                             @focus="messages['juris'] = 'Business Jurisdiction'"
                             dense
                             filled
+                            :items="jurisdictionOptions"
                             height="50"
                             hide-details="auto"
                             placeholder="Business Jurisdiction"
-                            v-model="jurisdiction" />
+                            @input="updateApplicant('jurisdiction', $event)"
+                            :value="applicant.jurisdiction" />
             </v-col>
-            <v-col cols="6" class="py-0 my-0">
-              <v-checkbox label="I have an NWPTA Reservation Number" v-model="haveNWPTA" />
-            </v-col>
+            <v-col cols="6" class="py-0 my-0" />
           </v-row>
-          <v-row class="my-n4">
-            <v-col cols="7">
+          <v-row :class="location === 'BC' ? 'mt-n2 mb-n4' : 'mt-n5 mb-n4'">
+            <v-col cols="7" align-self="start">
               <v-checkbox label="I am completing this reservation on my own behalf" v-model="actingOnOwnBehalf" />
             </v-col>
             <v-col cols="5" class="text-right" align-self="center">
@@ -173,118 +195,75 @@
 </template>
 
 <script lang="ts">
+import designations from '@/assets/d'
+import jurisdictionsCA from '@/store/list-data/canada-jurisdictions'
+import jurisdictionsIN from '@/store/list-data/intl-jurisdictions'
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({})
 export default class ApplicantInfo1 extends Vue {
-  countries = [
-    { text: 'Canada', value: 'CA' },
-    { text: 'United States', value: 'US' },
-    { text: 'Other', value: 'OT' }
-  ]
   messages = {}
-  provinces = [
-    { text: 'British Columbia', value: 'BC' },
-    { text: 'Alberta', value: 'AB' },
-    { text: 'Saskatchewan', value: 'SK' },
-    { text: 'Yukon', value: 'YK' }
-  ]
   requiredRules = [
     v => !!v || 'Required field'
   ]
   step1Valid: boolean = false
 
+  mounted () {
+    if (this.location === 'BC') {
+      this.updateApplicant('provinceState', 'BC')
+      this.updateApplicant('country', 'CA')
+    }
+    if (this.location === 'CA') {
+      this.updateApplicant('country', 'CA')
+    }
+  }
+
   get actingOnOwnBehalf () {
     return newReqModule.actingOnOwnBehalf
-  }
-  get address1 () {
-    return newReqModule.address1
-  }
-  get address2 () {
-    return newReqModule.address2
-  }
-  get city () {
-    return newReqModule.city
-  }
-  get country () {
-    return newReqModule.country
-  }
-  get firstName () {
-    return newReqModule.firstName
-  }
-  get firstNameRef () {
-    return this.$refs.firstName
-  }
-  get haveNWPTA () {
-    return newReqModule.haveNWPTA
-  }
-  get jurisdiction () {
-    return newReqModule.jurisdiction
-  }
-  get lastName () {
-    return newReqModule.lastName
-  }
-  get middleName () {
-    return newReqModule.middleName
-  }
-  get postalCode () {
-    return newReqModule.postalCode
-  }
-  get provinceState () {
-    return newReqModule.provinceState
-  }
-  get submissionType () {
-    return newReqModule.submissionType
   }
   set actingOnOwnBehalf (value) {
     newReqModule.mutateActingOnOwnBehalf(value)
   }
-  set address1 (value) {
-    newReqModule.mutateAddress1(value)
+  get applicant () {
+    return newReqModule.applicant
   }
-  set address2 (value) {
-    newReqModule.mutateAddress2(value)
+  get countryOptions () {
+    return jurisdictionsIN
   }
-  set city (value) {
-    newReqModule.mutateCity(value)
+  get provinceStateOptions () {
+    if (this.location === 'IN') {
+      return null
+    }
+    return jurisdictionsCA
   }
-  set country (value) {
-    newReqModule.mutateCountry(value)
+  get jurisdictionOptions () {
+    if (this.location === 'IN') {
+      return jurisdictionsIN
+    }
+    return jurisdictionsCA
   }
-  set firstName (value) {
-    newReqModule.mutateFirstName(value)
+  get location () {
+    return newReqModule.location
   }
-  set haveNWPTA (value) {
-    newReqModule.mutateHaveNWPTA(value)
-  }
-  set jurisdiction (value) {
-    newReqModule.mutateJurisdiction(value)
-  }
-  set lastName (value) {
-    newReqModule.mutateLastName(value)
-  }
-  set middleName (value) {
-    newReqModule.mutateMiddleName(value)
-  }
-  set postalCode (value) {
-    newReqModule.mutatePostalCode(value)
-  }
-  set provinceState (value) {
-    newReqModule.mutateProvinceState(value)
+  get submissionType () {
+    return newReqModule.submissionType
   }
 
-  clearValidation (e) {
+  clearValidation () {
     if (this.$refs.step1 as Vue) {
       (this.$refs.step1 as any).resetValidation()
     }
-    return e
   }
   showNextTab () {
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo2')
   }
   showPreviousTab () {
     newReqModule.mutateSubmissionTabComponent('SendForExamination')
+  }
+  updateApplicant (key, value) {
+    this.clearValidation()
+    newReqModule.mutateApplicant({ key, value })
   }
   validate () {
     if (this.$refs.step1 as Vue) {

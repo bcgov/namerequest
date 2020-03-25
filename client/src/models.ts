@@ -62,6 +62,18 @@ export interface SetupI {
   text1: string
   text2?: string
 }
+export interface ApplicantInfoI {
+  firstName: string
+  lastName: string
+  midddleName?: string
+  address1: string
+  address2?: string
+  country: string
+  postalCode: string
+  city: string
+  provState?: string
+  jurisdiction: string
+}
 export interface NewRequestNameSearchI {
   name: string
   request_action: string

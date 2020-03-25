@@ -1,70 +1,75 @@
 <template>
-  <v-form v-model="isValid" ref="step2" @input="clearValidation" id="applicant-info-2-form">
-    <v-container fluid class="pa-0 pt-9">
+  <v-form v-model="isValid" ref="step2" id="applicant-info-2-form">
+    <v-container fluid class="pa-0 pt-2">
       <v-row>
         <v-col cols="2" class="h5" align-self="start">
           Contact Info
         </v-col>
         <v-col cols="5">
-          <v-text-field hide-details="auto"
-                        :messages="messages['email']"
-                        @focus="messages['email'] = 'Email'"
-                        @blur="messages = {}"
-                        placeholder="Email"
-                        filled
+          <v-text-field :messages="messages['email']"
                         :rules="emailRules"
-                        v-model="email" />
+                        :value="contact.email"
+                        @blur="messages = {}"
+                        @focus="messages['email'] = 'Notification Email'"
+                        @input="updateContact('email', $event)"
+                        filled
+                        hide-details="auto"
+                        placeholder="Email Address (for notifications)" />
         </v-col>
         <v-col cols="5" />
       </v-row>
-      <v-row>
+      <v-row class="mt-n3">
         <v-col cols="2" />
         <v-col cols="5">
-          <v-text-field hide-details="auto"
-                        :messages="messages['phone']"
-                        @focus="messages['phone'] = 'Phone Number'"
+          <v-text-field :messages="messages['phone']"
+                        :value="contact.phone"
                         @blur="messages = {}"
-                        placeholder="Phone Number (Optional)"
+                        @focus="messages['phone'] = 'Phone Number (Optional)'"
+                        @input="updateContact('phone', $event)"
                         filled
-                        v-model="phoneNumber" />
+                        hide-details="auto"
+                        placeholder="Phone Number (Optional)" />
         </v-col>
         <v-col cols="5">
-          <v-text-field hide-details="auto"
-                        :messages="messages['fax']"
-                        @focus="messages['fax'] = 'Fax Number'"
+          <v-text-field :messages="messages['fax']"
+                        :value="contact.fax"
                         @blur="messages = {}"
-                        placeholder="Fax Number (Optional)"
+                        @focus="messages['fax'] = 'Fax Number (Optional)'"
+                        @input="updateContact('fax', $event)"
                         filled
-                        v-model="faxNumber" />
+                        hide-details="auto"
+                        placeholder="Fax Number (Optional)" />
         </v-col>
       </v-row>
-      <v-row class="mt-6">
+      <v-row class="mt-3">
         <v-col cols="2" class="h5" align-self="start">
           About Your Business
         </v-col>
         <v-col cols="5" align-self="start">
-          <v-textarea placeholder="Nature of Business"
-                      hide-details="auto"
-                      :messages="messages['nature']"
-                      @focus="messages['nature'] = 'Nature of Business'"
-                      @blur="messages = {}"
-                      rows="3"
+          <v-textarea :messages="messages['nature']"
                       :rules="requiredRule"
+                      :value="businessInfo.natureOfBusiness"
+                      @blur="messages = {}"
+                      @focus="messages['nature'] = 'Nature of Business'"
+                      @input="updateBusinessInfo('natureOfBusiness', $event)"
                       filled
-                      v-model="natureOfBusiness" />
+                      hide-details="auto"
+                      placeholder="Nature of Business"
+                      rows="3" />
         </v-col>
         <v-col cols="5" align-self="start">
-          <v-textarea placeholder="Additional Business Info (Optional)"
-                      :messages="messages['additional']"
-                      @focus="messages['additional'] = 'Additional Info'"
+          <v-textarea :messages="messages['additional']"
+                      :value="businessInfo.additionalInfo"
                       @blur="messages = {}"
-                      rows="3"
-                      hide-details="auto"
+                      @focus="messages['additional'] = 'Additional Info'"
+                      @input="updateBusinessInfo('additionalInfo', $event)"
                       filled
-                      v-model="additionalInfo" />
+                      hide-details="auto"
+                      placeholder="Additional Business Info (Optional)"
+                      rows="3" />
         </v-col>
       </v-row>
-      <v-row no gutters>
+      <v-row>
         <v-col cols="2" class="h5" >
           Additional Services
         </v-col>
@@ -77,7 +82,7 @@
         </v-col>
         <v-col cols="5" class="py-0" />
       </v-row>
-      <v-row class="mt-n4">
+      <v-row class="mt-n7 mb-3">
         <v-col cols="12" class="text-right">
           <v-btn x-large
                  id="submit-back-btn"
@@ -112,35 +117,11 @@ export default class ApplicantInfo2 extends Vue {
   ]
   isValid: boolean = false
 
-  get additionalInfo () {
-    return newReqModule.additionalInfo
+  get businessInfo () {
+    return newReqModule.businessInfo
   }
-  set additionalInfo (value) {
-    newReqModule.mutateAdditionalInfo(value)
-  }
-  get email () {
-    return newReqModule.email
-  }
-  set email (value) {
-    newReqModule.mutateEmail(value)
-  }
-  get faxNumber () {
-    return newReqModule.faxNumber
-  }
-  set faxNumber (value) {
-    newReqModule.mutateFaxNumber(value)
-  }
-  get natureOfBusiness () {
-    return newReqModule.natureOfBusiness
-  }
-  set natureOfBusiness (value) {
-    newReqModule.mutateNatureOfBusiness(value)
-  }
-  get phoneNumber () {
-    return newReqModule.phoneNumber
-  }
-  set phoneNumber (value) {
-    newReqModule.mutatePhoneNumber(value)
+  get contact () {
+    return newReqModule.contact
   }
   get priorityRequest () {
     return newReqModule.priorityRequest
@@ -155,14 +136,21 @@ export default class ApplicantInfo2 extends Vue {
     newReqModule.mutateSubmissionTabNumber(value)
   }
 
-  clearValidation (e) {
+  clearValidation () {
     if (this.$refs.step2 as Vue) {
       (this.$refs.step2 as any).resetValidation()
     }
-    return e
   }
   showPreviousTab () {
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
+  }
+  updateBusinessInfo (key, value) {
+    this.clearValidation()
+    newReqModule.mutateBusinessInfo({ key, value })
+  }
+  updateContact (key, value) {
+    this.clearValidation()
+    newReqModule.mutateContact({ key, value })
   }
   validate () {
     if (this.$refs.step2 as Vue) {
@@ -171,7 +159,3 @@ export default class ApplicantInfo2 extends Vue {
   }
 }
 </script>
-
-<style scoped lang="sass">
-
-</style>

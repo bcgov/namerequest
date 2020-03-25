@@ -1,99 +1,117 @@
 <template>
-  <v-form v-model="isValid" ref="step2" @input="clearValidation" id="applicant-info-3-form">
-    <v-container fluid class="pa-0 b-n3 pt-3">
-      <v-row>
+  <v-form v-model="isValid" ref="step2" id="applicant-info-3-form">
+    <v-container fluid class="pa-0 pt-2">
+      <v-row class="mt-n2">
         <v-col cols="2" class="h5" align-self="start">
           Contact Person
         </v-col>
         <v-col cols="10">
-          <v-text-field hide-details="auto"
-                        :messages="messages['contact']"
-                        @focus="messages['contact'] = 'Contact Person (if other than applicant. optional)'"
+          <v-text-field :messages="messages['contact']"
+                        :value="contact.name"
                         @blur="messages = {}"
-                        placeholder="Contact Person (if other than applicant. optional)"
+                        @focus="messages['contact'] = 'Contact Person (if other than applicant. optional)'"
+                        @input="updateContact('name', $event)"
                         filled
-                        :rules="requiredRule" />
+                        hide-details="auto"
+                        placeholder="Contact Person (if other than applicant. optional)" />
         </v-col>
       </v-row>
-      <v-row class="mt-n2">
+      <v-row class="mt-n3">
         <v-col cols="2" class="h5" align-self="start">
         Contact Info
         </v-col>
         <v-col cols="5">
-          <v-text-field hide-details="auto"
-                        :messages="messages['email']"
-                        @focus="messages['email'] = 'Notification Email'"
+          <v-text-field :messages="messages['email']"
+                        :rules="emailRules"
+                        :value="contact.email"
                         @blur="messages = {}"
-                        placeholder="Email Address (for notifications)"
-                        filled />
+                        @focus="messages['email'] = 'Notification Email'"
+                        @input="updateContact('email', $event)"
+                        filled
+                        hide-details="auto"
+                        placeholder="Email Address (for notifications)" />
         </v-col>
         <v-col cols="5" />
       </v-row>
-      <v-row class="mt-n2">
+      <v-row class="mt-n3">
         <v-col cols="2" />
         <v-col cols="5">
-          <v-text-field hide-details="auto"
-                        :messages="messages['fax']"
-                        @focus="messages['fax'] = 'Fax Number'"
+          <v-text-field :messages="messages['phone']"
+                        :value="contact.phone"
                         @blur="messages = {}"
-                        placeholder="Fax Number (Optional)"
-                        filled />
+                        @focus="messages['phone'] = 'Phone Number (Optional)'"
+                        @input="updateContact('phone', $event)"
+                        filled
+                        hide-details="auto"
+                        placeholder="Phone Number (Optional)" />
         </v-col>
         <v-col cols="5">
-          <v-text-field hide-details="auto"
-                        :messages="messages['fax']"
-                        @focus="messages['fax'] = 'Fax Number'"
+          <v-text-field :messages="messages['fax']"
+                        :value="contact.fax"
                         @blur="messages = {}"
-                        placeholder="Fax Number (Optional)"
-                        filled />
+                        @focus="messages['fax'] = 'Fax Number (Optional)'"
+                        @input="updateContact('fax', $event)"
+                        filled
+                        hide-details="auto"
+                        placeholder="Fax Number (Optional)" />
         </v-col>
       </v-row>
-      <v-row class="mt-n2">
+      <v-row class="mt-n3">
         <v-col cols="2" class="h5" align-self="start">
           Client
         </v-col>
         <v-col cols="5">
-          <v-text-field hide-details="auto"
-                        :messages="messages['fax']"
-                        @focus="messages['fax'] = 'Fax Number'"
+          <v-text-field :messages="messages['clientLast']"
+                        :rules="requiredRule"
+                        :value="client.lastName"
                         @blur="messages = {}"
-                        placeholder="Fax Number (Optional)"
-                        filled />
+                        @focus="messages['clientLast'] = 'Last Name'"
+                        @input="updateClient('lastName', $event)"
+                        filled
+                        hide-details="auto"
+                        placeholder="Last Name" />
         </v-col>
         <v-col cols="5">
-          <v-text-field hide-details="auto"
-                        :messages="messages['fax']"
-                        @focus="messages['fax'] = 'Fax Number'"
+          <v-text-field :messages="messages['clientFirst']"
+                        :rules="requiredRule"
+                        :value="client.firstName"
                         @blur="messages = {}"
-                        placeholder="Fax Number (Optional)"
-                        filled />
+                        @focus="messages['clientFirst'] = 'First Name'"
+                        @input="updateClient('firstName', $event)"
+                        filled
+                        hide-details="auto"
+                        placeholder="First Name" />
         </v-col>
       </v-row>
-      <v-row class="mt-n2">
+      <v-row class="mt-n3">
         <v-col cols="2" class="h5" align-self="start">
           About Your Business
         </v-col>
         <v-col cols="5" align-self="start">
-          <v-textarea placeholder="Nature of Business"
-                      hide-details="auto"
-                      :messages="messages['nature']"
-                      @focus="messages['nature'] = 'Nature of Business'"
-                      @blur="messages = {}"
-                      rows="3"
+          <v-textarea :messages="messages['nature']"
                       :rules="requiredRule"
-                      filled />
+                      :value="businessInfo.natureOfBusiness"
+                      @blur="messages = {}"
+                      @focus="messages['nature'] = 'Nature of Business'"
+                      @input="updateBusinessInfo('natureOfBusiness', $event)"
+                      filled
+                      hide-details="auto"
+                      placeholder="Nature of Business"
+                      rows="3" />
         </v-col>
         <v-col cols="5" align-self="start">
-          <v-textarea placeholder="Additional Business Info (Optional)"
-                      :messages="messages['additional']"
-                      @focus="messages['additional'] = 'Additional Info'"
+          <v-textarea :messages="messages['additional']"
+                      :value="businessInfo.additionalInfo"
                       @blur="messages = {}"
-                      rows="3"
+                      @focus="messages['additional'] = 'Additional Info'"
+                      @input="updateBusinessInfo('additionalInfo', $event)"
+                      filled
                       hide-details="auto"
-                      filled />
+                      placeholder="Additional Business Info (Optional)"
+                      rows="3" />
         </v-col>
       </v-row>
-      <v-row class="mt-n2">
+      <v-row class="mt-n4">
         <v-col cols="2" class="h5" >
           Additional Services
         </v-col>
@@ -127,31 +145,58 @@
 
 <script lang="ts">
 import newReqModule from '@/store/new-request-module'
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 
 @Component({})
-export default class ApplicantInfo2 extends Vue {
-  messages = {}
-  requiredRule = [
-    v => !!v || 'Required field'
-  ]
+export default class ApplicantInfo3 extends Vue {
   emailRules = [
     v => !!v || 'Required field',
     v => /.+@.+/.test(v) || 'Not a valid email'
   ]
   isValid: boolean = false
+  messages = {}
+  requiredRule = [
+    v => !!v || 'Required field'
+  ]
+  notRequired = [
+    v => !!v || ''
+  ]
 
-  get actingOnOwnBehalf () {
-    return newReqModule.actingOnOwnBehalf
+  get businessInfo () {
+    return newReqModule.businessInfo
   }
-  clearValidation (e) {
+  get client () {
+    return newReqModule.client
+  }
+  get contact () {
+    return newReqModule.contact
+  }
+  get priorityRequest () {
+    return newReqModule.priorityRequest
+  }
+  set priorityRequest (value) {
+    newReqModule.mutatePriorityRequest(value)
+  }
+
+  clearValidation () {
     if (this.$refs.step2 as Vue) {
       (this.$refs.step2 as any).resetValidation()
     }
-    return e
   }
   showPreviousTab () {
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
+  }
+  updateBusinessInfo (key, value) {
+    this.clearValidation()
+    newReqModule.mutateBusinessInfo({ key, value })
+  }
+  updateClient (key, value) {
+    this.clearValidation()
+    newReqModule.mutateClient({ key, value })
+  }
+  updateContact (key, value) {
+    this.clearValidation()
+    newReqModule.mutateContact({ key, value })
   }
   validate () {
     if (this.$refs.step2 as Vue) {
