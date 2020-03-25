@@ -12,8 +12,7 @@
                         @blur="messages = {}"
                         placeholder="Contact Person (if other than applicant. optional)"
                         filled
-                        :rules="requiredRule"
-                        v-model="contact" />
+                        :rules="requiredRule" />
         </v-col>
       </v-row>
       <v-row class="mt-n2">
@@ -26,8 +25,7 @@
                         @focus="messages['email'] = 'Notification Email'"
                         @blur="messages = {}"
                         placeholder="Email Address (for notifications)"
-                        filled
-                        v-model="contactEmail" />
+                        filled />
         </v-col>
         <v-col cols="5" />
       </v-row>
@@ -39,8 +37,7 @@
                         @focus="messages['fax'] = 'Fax Number'"
                         @blur="messages = {}"
                         placeholder="Fax Number (Optional)"
-                        filled
-                        v-model="faxNumber" />
+                        filled />
         </v-col>
         <v-col cols="5">
           <v-text-field hide-details="auto"
@@ -48,8 +45,7 @@
                         @focus="messages['fax'] = 'Fax Number'"
                         @blur="messages = {}"
                         placeholder="Fax Number (Optional)"
-                        filled
-                        v-model="faxNumber" />
+                        filled />
         </v-col>
       </v-row>
       <v-row class="mt-n2">
@@ -62,8 +58,7 @@
                         @focus="messages['fax'] = 'Fax Number'"
                         @blur="messages = {}"
                         placeholder="Fax Number (Optional)"
-                        filled
-                        v-model="faxNumber" />
+                        filled />
         </v-col>
         <v-col cols="5">
           <v-text-field hide-details="auto"
@@ -71,8 +66,7 @@
                         @focus="messages['fax'] = 'Fax Number'"
                         @blur="messages = {}"
                         placeholder="Fax Number (Optional)"
-                        filled
-                        v-model="faxNumber" />
+                        filled />
         </v-col>
       </v-row>
       <v-row class="mt-n2">
@@ -87,8 +81,7 @@
                       @blur="messages = {}"
                       rows="3"
                       :rules="requiredRule"
-                      filled
-                      v-model="natureOfBusiness" />
+                      filled />
         </v-col>
         <v-col cols="5" align-self="start">
           <v-textarea placeholder="Additional Business Info (Optional)"
@@ -97,8 +90,7 @@
                       @blur="messages = {}"
                       rows="3"
                       hide-details="auto"
-                      filled
-                      v-model="additionalInfo" />
+                      filled />
         </v-col>
       </v-row>
       <v-row class="mt-n2">
@@ -106,7 +98,7 @@
           Additional Services
         </v-col>
         <v-col cols="5" align-self="start">
-          <v-checkbox class="pa-0 ma-0 mt-2" v-model="priorityRequest">
+          <v-checkbox class="pa-0 ma-0 mt-2">
             <template v-slot:label>
               Priority Request - <b>$100 Fee</b>
             </template>
