@@ -1,8 +1,10 @@
 import Axios from '@/plugins/axios'
 import axios from 'axios'
 import removeAccents from 'remove-accents'
+import designations from './list-data/designations'
 import store from '@/store'
 import {
+  ApplicantInfoI,
   AnalysisJSONI,
   DisplayedComponentT,
   EntityI,
@@ -11,7 +13,8 @@ import {
   NewRequestNameSearchI,
   SearchComponentT,
   SelectOptionsI,
-  StatsI, SubmissionTypeT
+  StatsI,
+  SubmissionTypeT
 } from '@/models'
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import { normalizeWordCase } from '@/plugins/utilities'
@@ -20,15 +23,39 @@ let source
 
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
 export class NewRequestModule extends VuexModule {
-  actingOnOwnBehalf: boolean = false
-  additionalInfo: string = ''
-  address1: string = ''
-  address2: string = ''
+  actingOnOwnBehalf: boolean = true
   analysisJSON: AnalysisJSONI | null = null
-  city: string = ''
-  country: string = 'CA'
+  applicant = {
+    firstName: '',
+    lastName: '',
+    middleName: '',
+    address1: '',
+    address2: '',
+    country: '',
+    postalCode: '',
+    city: '',
+    provinceState: '',
+    jurisdiction: ''
+  }
+  @Mutation
+  mutateApplicant (v) {
+    this.applicant[v.key] = v.value
+  }
+  businessInfo = {
+    natureOfBusiness: '',
+    additionalInfo: ''
+  }
+  client = {
+    firstName: '',
+    lastName: ''
+  }
+  contact = {
+    name: '',
+    phone: '',
+    email: '',
+    fax: ''
+  }
   displayedComponent: DisplayedComponentT = 'Tabs'
-  email: string = ''
   entityType: string = 'CR'
   entityTypesBC: EntityI[] = [
     {
@@ -249,16 +276,10 @@ export class NewRequestModule extends VuexModule {
   }
   extendedEntitySelection: SelectOptionsI | null = null
   extendedRequestType: SelectOptionsI | null = null
-  faxNumber: string = ''
-  firstName: string = ''
-  haveNWPTA: boolean = false
   helpMeChooseModalVisible: boolean = false
   issueIndex: number = 0
-  jurisdiction: string = ''
-  lastName: string = ''
   location: LocationT = 'BC'
   locationInfoModalVisible: boolean = false
-  middleName: string = ''
   name: string = ''
   nameChoices = {
     name1: '',
@@ -268,14 +289,10 @@ export class NewRequestModule extends VuexModule {
     name3: '',
     designation3: ''
   }
-  natureOfBusiness: string = ''
   nrRequiredModalVisible: boolean = false
-  phoneNumber: string = ''
   pickEntityModalVisible: boolean = false
   pickRequestTypeModalVisible: boolean = false
-  postalCode: string = ''
   priorityRequest: boolean = false
-  provinceState: string = 'BC'
   requestAction: string = 'NEW'
   requestTypes: EntityI[] = [
     {
@@ -437,6 +454,13 @@ export class NewRequestModule extends VuexModule {
       return 0
     })
   }
+  get designationItems () {
+    if (this.entityType && designations[this.entityType]) {
+      let { words } = designations[this.entityType]
+      return words.map(des => ({ value: des, text: des }))
+    }
+    return []
+  }
 
   @Action({ rawError: true })
   async getStats () {
@@ -526,36 +550,24 @@ export class NewRequestModule extends VuexModule {
     this.actingOnOwnBehalf = value
   }
   @Mutation
-  mutateAdditionalInfo (value) {
-    this.additionalInfo = value
-  }
-  @Mutation
-  mutateAddress1 (value) {
-    this.address1 = value
-  }
-  @Mutation
-  mutateAddress2 (value) {
-    this.address2 = value
-  }
-  @Mutation
   mutateAnalysisJSON (value: AnalysisJSONI) {
     this.analysisJSON = value
   }
   @Mutation
-  mutateCity (value) {
-    this.city = value
+  mutateBusinessInfo (v) {
+    this.businessInfo[v.key] = v.value
   }
   @Mutation
-  mutateCountry (value) {
-    this.country = value
+  mutateClient (v) {
+    this.client[v.key] = v.value
+  }
+  @Mutation
+  mutateContact (v) {
+    this.contact[v.key] = v.value
   }
   @Mutation
   mutateDisplayedComponent (comp: DisplayedComponentT) {
     this.displayedComponent = comp
-  }
-  @Mutation
-  mutateEmail (value) {
-    this.email = value
   }
   @Mutation
   mutateEntityType (type: string) {
@@ -576,26 +588,6 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateHelpMeChooseModalVisible (value: boolean) {
     this.helpMeChooseModalVisible = value
-  }
-  @Mutation
-  mutateFaxNumber (value) {
-    this.faxNumber = value
-  }
-  @Mutation
-  mutateFirstName (value) {
-    this.firstName = value
-  }
-  @Mutation
-  mutateHaveNWPTA (value) {
-    this.haveNWPTA = value
-  }
-  @Mutation
-  mutateJurisdiction (value) {
-    this.jurisdiction = value
-  }
-  @Mutation
-  mutateLastName (value) {
-    this.lastName = value
   }
   @Mutation
   mutateLocation (location: LocationT) {
@@ -625,10 +617,6 @@ export class NewRequestModule extends VuexModule {
     this.locationInfoModalVisible = value
   }
   @Mutation
-  mutateMiddleName (value) {
-    this.middleName = value
-  }
-  @Mutation
   mutateName (name: string) {
     this.name = name
   }
@@ -637,16 +625,8 @@ export class NewRequestModule extends VuexModule {
     this.nameChoices[choiceObj.key] = choiceObj.value
   }
   @Mutation
-  mutateNatureOfBusiness (value) {
-    this.natureOfBusiness = value
-  }
-  @Mutation
   mutateNrRequiredModalVisible (value: boolean) {
     this.nrRequiredModalVisible = value
-  }
-  @Mutation
-  mutatePhoneNumber (value) {
-    this.phoneNumber = value
   }
   @Mutation
   mutatePickEntityModalVisible (value: boolean) {
@@ -657,16 +637,16 @@ export class NewRequestModule extends VuexModule {
     this.pickRequestTypeModalVisible = value
   }
   @Mutation
-  mutatePostalCode (value) {
-    this.postalCode = value
-  }
-  @Mutation
   mutatePriorityRequest (value) {
     this.priorityRequest = value
   }
   @Mutation
-  mutateProvinceState (value) {
-    this.provinceState = value
+  mutateRequestAction (action: string) {
+    this.requestAction = action
+    if (action === 'MVE' && this.location === 'BC') {
+      this.location = 'CA'
+      this.entityType = 'XCR'
+    }
   }
   @Mutation
   mutateStats (stats) {
@@ -689,14 +669,6 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateSubmissionType (type) {
     this.submissionType = type
-  }
-  @Mutation
-  mutateRequestAction (action: string) {
-    this.requestAction = action
-    if (action === 'MVE' && this.location === 'BC') {
-      this.location = 'CA'
-      this.entityType = 'XCR'
-    }
   }
   @Mutation
   mutateTabNumber (tab: number) {

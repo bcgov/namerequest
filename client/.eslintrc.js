@@ -11,7 +11,8 @@ module.exports = {
   ],
   rules: {
     'max-len': ['warn', { code: 120 }],
-    'no-unused-vars': 'off'
+    'no-unused-vars': 'off',
+    'quotes': 'off'
   },
   parserOptions: {
     parser: '@typescript-eslint/parser',
