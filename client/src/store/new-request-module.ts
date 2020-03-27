@@ -150,7 +150,7 @@ export class NewRequestModule extends VuexModule {
     },
     {
       text: 'Benefit Co.',
-      cat: 'Social Enterprises',
+      cat: 'Corporations',
       blurb: [
         `Similar to BC Corporations but with commitments to conduct business in a responsible and sustainable way.`,
         'Reported as Corporate tax',
