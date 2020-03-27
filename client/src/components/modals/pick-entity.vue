@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="showModal" :max-width="width" hide-overlay>
-    <v-card class="pa-0" style="border-radius: 0">
+    <v-card class="pa-0" style="border-radius: 0" v-if="!showSocietiesInfo">
       <v-card-text style="display: flex; justify-items: center; width: 100%" class="py-4">
         <v-simple-table v-for="(catagory, i) in tableData" :key="'cat'+i">
           <tr>
@@ -39,18 +39,51 @@
         </div>
       </v-card-actions>
     </v-card>
+    <v-card class="pa-0" style="border-radius: 0" v-else>
+      <v-card-title>Please Use Societies Online</v-card-title>
+      <v-card-text class="py-4 text-center">
+        <p class="px-9">In order to provide users with complete information about their options for forming a legal
+                      entity within the Province of British Columbia, we have included "Society" on the list of
+                        entities.</p>
+        <p class="px-9">However, this tool does not support them.  Please proceed to
+          <a href=" https://www.bcregistry.ca/societies/"> Societies Online</a> (https://www.bcregistry.ca/societies/)
+        </p>
+        <p><v-btn style="text-transform: none"
+                  @click="showSocietiesInfo = false">Return to Entity Type Selector</v-btn></p>
+      </v-card-text>
+      <v-card-actions class="bg-grey-1 text-center">
+        <div style="display: block; width: 100%;">
+          <button @click="showModal = false"><v-icon>close</v-icon> Close</button>
+        </div>
+      </v-card-actions>
+    </v-card>
   </v-dialog>
 </template>
 
 <script lang="ts">
 import newReqModule from '@/store/new-request-module'
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SelectOptionsI } from '@/models'
 
 @Component({})
 export default class PickEntity extends Vue {
+  showSocietiesInfo = false
+
+  @Watch('showModal')
+  handleModalClose (newVal) {
+    if (!newVal) {
+      this.showSocietiesInfo = false
+    }
+  }
+
   get location () {
     return newReqModule.location
+  }
+  get entityType () {
+    return newReqModule.entityType
+  }
+  set entityType (value) {
+    newReqModule.mutateEntityType(value)
   }
   get showModal () {
     return newReqModule.pickEntityModalVisible
@@ -77,6 +110,9 @@ export default class PickEntity extends Vue {
     }
     return '620px'
   }
+  clearEntitySelection () {
+    this.entityType = 'all'
+  }
 
   chooseType (entity: SelectOptionsI) {
     let index = newReqModule.entityTypeOptions.findIndex((ent: any) => ent.value === entity.value)
@@ -84,6 +120,11 @@ export default class PickEntity extends Vue {
       newReqModule.mutateExtendedEntitySelectOption(entity)
     }
     newReqModule.mutateEntityType(entity.value)
+    if (entity.value === 'SO' || entity.value === 'XSO') {
+      this.showSocietiesInfo = true
+      this.clearEntitySelection()
+      return
+    }
     this.showModal = false
   }
 }

@@ -67,18 +67,14 @@ export default class Search extends Vue {
     }
   }
 
-  @Watch('entityType')
-  handleEntityType (newVal, oldVal) {
-    if (newVal === 'all' && oldVal !== 'all') {
-      newReqModule.mutatePickEntityModalVisible(true)
-    }
-  }
-
   get entityType () {
     return newReqModule.entityType
   }
   set entityType (type: string) {
     newReqModule.mutateEntityType(type)
+    if (type === 'all') {
+      newReqModule.mutatePickEntityModalVisible(true)
+    }
   }
   get entityTypeOptions () {
     return newReqModule.entityTypeOptions
