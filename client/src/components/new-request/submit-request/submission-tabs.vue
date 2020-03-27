@@ -12,6 +12,11 @@
       <v-tabs v-model="submissionTabNumber" id="applicant-info-slider">
         <v-tabs-items v-model="submissionTabNumber">
           <v-tab-item>
+            <keep-alive>
+              <EntityCannotBeAutoAnalyzed />
+            </keep-alive>
+          </v-tab-item>
+          <v-tab-item>
             <SendForExamination />
           </v-tab-item>
           <v-tab-item>
@@ -28,16 +33,24 @@
 </template>
 
 <script lang="ts">
-import MainContainer from '@/components/new-request/main-container.vue'
-import ApplicantInfo1 from '@/components/new-request/submit-request/applicant-info-1.vue'
-import ApplicantInfo2 from '@/components/new-request/submit-request/applicant-info-2.vue'
-import ApplicantInfo3 from '@/components/new-request/submit-request/applicant-info-3.vue'
-import SendForExamination from '@/components/new-request/submit-request/send-for-examination.vue'
+import MainContainer from '../main-container'
+import ApplicantInfo1 from './applicant-info-1.vue'
+import ApplicantInfo2 from './applicant-info-2.vue'
+import ApplicantInfo3 from './applicant-info-3.vue'
+import EntityCannotBeAutoAnalyzed from './entity-cannot-be-auto-analyzed.vue'
+import SendForExamination from './send-for-examination.vue'
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
-  components: { ApplicantInfo3, SendForExamination, ApplicantInfo1, ApplicantInfo2, MainContainer }
+  components: {
+    EntityCannotBeAutoAnalyzed,
+    ApplicantInfo3,
+    SendForExamination,
+    ApplicantInfo1,
+    ApplicantInfo2,
+    MainContainer
+  }
 })
 export default class SubmissionTabs extends Vue {
   get actingOnOwnBehalf () {

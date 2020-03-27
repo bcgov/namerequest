@@ -198,6 +198,16 @@ export class NewRequestModule extends VuexModule {
         'Has name protection in BC'
       ],
       value: 'FI'
+    },
+    {
+      text: 'Parish',
+      cat: 'Other',
+      blurb: [
+        'Church Parish',
+        'Something to say here',
+        'Perhaps another point'
+      ],
+      value: 'PAR'
     }
   ]
   entityTypesXPRO: EntityI[] = [
@@ -504,7 +514,12 @@ export class NewRequestModule extends VuexModule {
     if (this.errors.length > 0) {
       return Promise.resolve()
     }
-
+    let notAnalyzedEntityType = ['PAR', 'CCC', 'BC', 'CP,', 'PA', 'FI']
+    if (notAnalyzedEntityType.includes(this.entityType)) {
+      this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
+      this.mutateDisplayedComponent('SubmissionTabs')
+      return
+    }
     this.mutateDisplayedComponent('AnalyzePending')
     let params: NewRequestNameSearchI = {
       name,
@@ -655,6 +670,7 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateSubmissionTabComponent (comp) {
     enum Components {
+      EntityNotAutoAnalyzed,
       SendForExamination,
       ApplicantInfo1,
       ApplicantInfo2

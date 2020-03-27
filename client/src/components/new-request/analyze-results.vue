@@ -625,13 +625,6 @@ export default class AnalyzeResults extends Vue {
   color: red
   margin-left: 20px
   margin-top: 15px
-.helpful-hint
-  padding: 15px 25px 15px 25px
-  border-radius: 4px
-  border: 1px dashed $pale-blue
-  background-color: $grey-1
-  min-width: 80%
-  max-width: 80%
 .square-card-x2
   height: 215px
   width: 420px
