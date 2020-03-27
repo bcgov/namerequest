@@ -30,10 +30,10 @@ describe('name-input.vue', () => {
   it('clicking an entity sets the entityType and closes the modal', async (): Promise<void> => {
     wrapper.vm.showModal = true
     await wrapper.vm.$nextTick()
-    let foreignSociety = wrapper.find('#XSO')
-    foreignSociety.trigger('click')
+    let foreignCorp = wrapper.find('#XCR')
+    foreignCorp.trigger('click')
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.showModal).toBe(false)
-    expect(newReqModule.entityType).toBe('XSO')
+    expect(newReqModule.entityType).toBe('XCR')
   })
 })
