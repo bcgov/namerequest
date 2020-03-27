@@ -56,6 +56,7 @@ export class NewRequestModule extends VuexModule {
     fax: ''
   }
   displayedComponent: DisplayedComponentT = 'Tabs'
+  doNotAnalyzeEntities: string[] = ['PAR', 'CCC', 'BC', 'CP,', 'PA', 'FI']
   entityType: string = 'CR'
   entityTypesBC: EntityI[] = [
     {
@@ -299,6 +300,7 @@ export class NewRequestModule extends VuexModule {
     name3: '',
     designation3: ''
   }
+  nameIncludesLastName: boolean = false
   nrRequiredModalVisible: boolean = false
   pickEntityModalVisible: boolean = false
   pickRequestTypeModalVisible: boolean = false
@@ -514,8 +516,7 @@ export class NewRequestModule extends VuexModule {
     if (this.errors.length > 0) {
       return Promise.resolve()
     }
-    let notAnalyzedEntityType = ['PAR', 'CCC', 'BC', 'CP,', 'PA', 'FI']
-    if (notAnalyzedEntityType.includes(this.entityType)) {
+    if (this.doNotAnalyzeEntities.includes(this.entityType) || this.nameIncludesLastName) {
       this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
       this.mutateDisplayedComponent('SubmissionTabs')
       return
@@ -638,6 +639,10 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateNameChoices (choiceObj) {
     this.nameChoices[choiceObj.key] = choiceObj.value
+  }
+  @Mutation
+  mutateNameIncludesLastName (value) {
+    this.nameIncludesLastName = value
   }
   @Mutation
   mutateNrRequiredModalVisible (value: boolean) {

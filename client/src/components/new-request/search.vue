@@ -33,7 +33,14 @@
                   id="entity-type-options-select"
                   v-model="entityType" />
       </v-col>
-      <NameInput :class="inputCompClass" id="name-input-component" :handleSubmit="handleSubmit" />
+      <NameInput :class="inputCompClass"
+                 id="name-input-component"
+                 class="mb-n7"/>
+      <v-col cols="12" class="mt-n9">
+        <v-checkbox v-model="nameIncludesLastName"
+                    label="The above name includes my last name, my first and last names, or my last name and initials">
+        </v-checkbox>
+      </v-col>
       <v-col cols="auto"
              class="my-n9">
         <span id="nr-required-activator"
@@ -97,6 +104,12 @@ export default class Search extends Vue {
   }
   get locationOptions () {
     return newReqModule.locationOptions
+  }
+  get nameIncludesLastName () {
+    return newReqModule.nameIncludesLastName
+  }
+  set nameIncludesLastName (value) {
+    newReqModule.mutateNameIncludesLastName(value)
   }
   get requestAction () {
     return newReqModule.requestAction
