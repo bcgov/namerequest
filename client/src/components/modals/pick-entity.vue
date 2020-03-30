@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="showModal" :max-width="width" hide-overlay>
-    <v-card class="pa-0" style="border-radius: 0">
+    <v-card class="pa-0" style="border-radius: 0" v-if="!showSocietiesInfo">
       <v-card-text style="display: flex; justify-items: center; width: 100%" class="py-4">
         <v-simple-table v-for="(catagory, i) in tableData" :key="'cat'+i">
           <tr>
@@ -39,18 +39,47 @@
         </div>
       </v-card-actions>
     </v-card>
+    <v-card class="px-0 py-5" style="border-radius: 0" v-else>
+      <v-card-text>
+        <v-container fluid>
+          <v-row no-gutters class="text-center">
+            <v-col cols="12">To request a name for a Society</v-col>
+            <v-col cols="12">please use the Societies Online website</v-col>
+            <v-col cols="12">
+              <a href="https://www.bcregistry.ca/societies/">https://www.bcregistry.ca/societies/</a>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
+
+    </v-card>
   </v-dialog>
 </template>
 
 <script lang="ts">
 import newReqModule from '@/store/new-request-module'
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SelectOptionsI } from '@/models'
 
 @Component({})
 export default class PickEntity extends Vue {
+  showSocietiesInfo = false
+
+  @Watch('showModal')
+  handleModalClose (newVal) {
+    if (!newVal) {
+      setTimeout(() => { this.showSocietiesInfo = false }, 500)
+    }
+  }
+
   get location () {
     return newReqModule.location
+  }
+  get entityType () {
+    return newReqModule.entityType
+  }
+  set entityType (value) {
+    newReqModule.mutateEntityType(value)
   }
   get showModal () {
     return newReqModule.pickEntityModalVisible
@@ -72,18 +101,34 @@ export default class PickEntity extends Vue {
     return newReqModule.pickEntityTableXPRO
   }
   get width () {
+    if (this.showSocietiesInfo) {
+      return '500px'
+    }
     if (this.location === 'BC') {
       return '900px'
     }
     return '620px'
   }
+  clearEntitySelection () {
+    this.entityType = 'all'
+  }
 
   chooseType (entity: SelectOptionsI) {
+    if (entity.value === 'SO' || entity.value === 'XSO') {
+      this.showSocietiesInfo = true
+      this.clearEntitySelection()
+      return
+    }
     let index = newReqModule.entityTypeOptions.findIndex((ent: any) => ent.value === entity.value)
     if (index === -1) {
       newReqModule.mutateExtendedEntitySelectOption(entity)
     }
     newReqModule.mutateEntityType(entity.value)
+    if (entity.value === 'SO' || entity.value === 'XSO') {
+      this.showSocietiesInfo = true
+      this.clearEntitySelection()
+      return
+    }
     this.showModal = false
   }
 }

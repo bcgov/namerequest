@@ -15,7 +15,7 @@
                           filled
                           autocomplete="off"
                           @focus="toggleRealInput"
-                        v-if="showActualInput || !hasNameActions"
+                          v-if="showActualInput || !hasNameActions"
                           placeholder="Search a Name"
                           id="analyze-name-text-field">
               <template v-slot:append>
@@ -128,7 +128,7 @@
                                cols="12"
                                v-html="option.line2" />
                       </template>
-                                            <!--button / checkbox driven ui-->
+                      <!--button / checkbox driven ui-->
                       <transition name="fade" mode="out-in">
                         <v-col v-if="option.type === 'replace_designation'"
                                :key="changesInBaseName+designationIsFixed+'key'">
@@ -174,17 +174,17 @@
                              class="pa-0">
                         <transition name="fade" mode="out-in">
                           <v-checkbox :error="highlightCheckboxes"
-                                      class="ma-0 pa-0"
                                       :key="option.type+'-checkbox'"
-                                      id="obtain-consent-checkbox"
                                       :label="checkBoxLabel(option.type)"
+                                      class="ma-0 pa-0"
+                                      id="obtain-consent-checkbox"
                                       v-if="displayCheckbox ||  buttonThenCheckbox(option.type)"
                                       v-model="obtainConsentStep[issueIndex]" />
-                          <ReserveSubmit id="reserve-submit-obtain-consent"
+                          <ReserveSubmit :key="option.type+'-reserve-submit'"
+                                         :setup="examinationRequested ? 'examine' : 'consent'"
+                                         id="reserve-submit-obtain-consent"
                                          style="display: inline"
-                                         :key="option.type+'-reserve-submit'"
-                                         v-else
-                                         :setup="examinationRequested ? 'examine' : 'consent'" />
+                                         v-else />
                         </transition>
                       </v-col>
                       <v-col v-if="option.type === 'conflict_self_consent'"
@@ -192,17 +192,17 @@
                              class="pa-0">
                         <transition name="fade" mode="out-in" >
                           <v-checkbox :error="highlightCheckboxes"
-                                      class="ma-0 pa-0"
                                       :key="option.type+'-checkbox'"
+                                      :label="checkBoxLabel(option.type)"
+                                      class="ma-0 pa-0"
                                       id="conflict-self-consent-checkbox"
                                       v-if="displayCheckbox || buttonThenCheckbox(option.type)"
-                                      :label="checkBoxLabel(option.type)"
                                       v-model="obtainSelfConsentStep[issueIndex]" />
-                         <ReserveSubmit id="reserve-submit-conflict-self-consent"
+                         <ReserveSubmit :key="option.type+'-reserve-submit'"
+                                        :setup="examinationRequested ? 'examine' : 'consent'"
+                                        id="reserve-submit-conflict-self-consent"
                                         style="display: inline"
-                                        :key="option.type+'-reserve-submit'"
-                                        v-else
-                                        :setup="examinationRequested ? 'examine' : 'consent'" />
+                                        v-else />
                         </transition>
                       </v-col>
                       <v-col v-if="issue.type === 'replace_designation'" id="examine-checkbox-col">
@@ -617,28 +617,18 @@ export default class AnalyzeResults extends Vue {
 #examine-checkbox
   font-size: 13px !important
   line-height: 16px !important
+
 .action
   color: $error !important
+
 .approved
   color: $approved !important
+
 .error-message
   color: red
   margin-left: 20px
   margin-top: 15px
-.helpful-hint
-  padding: 15px 25px 15px 25px
-  border-radius: 4px
-  border: 1px dashed $pale-blue
-  background-color: $grey-1
-  min-width: 80%
-  max-width: 80%
-.square-card-x2
-  height: 215px
-  width: 420px
-  padding: 15px 25px 15px 25px
-  border-radius: 4px
-  border: 1px dashed $pale-blue
-  background-color: $grey-1
+
 .modal-activator
   color: $link !important
   letter-spacing: unset !important
@@ -646,26 +636,8 @@ export default class AnalyzeResults extends Vue {
   cursor: pointer !important
   background-color: unset !important
   text-transform: none !important
-.pale-blue-text
-  color: $p-blue-text !important
-.square-card-x3
-  height: 215px
-  width: 280px
-  padding: 15px 25px 15px 25px
-  border-radius: 4px
-  border: 1px dashed $pale-blue
-  background-color: $grey-1
+
 .strike
   text-decoration-line: line-through
-.fade-enter
-  opacity: 0
-.fade-enter-active, .fade-leave-active
-  transition: all .25s ease-in
-.fade-enter-to
-  opacity: 1
-.fade-leave
-  opacity: 1
-.fade-leave-to
-  opacity: 0
 
 </style>

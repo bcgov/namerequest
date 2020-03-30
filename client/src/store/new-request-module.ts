@@ -56,6 +56,7 @@ export class NewRequestModule extends VuexModule {
     fax: ''
   }
   displayedComponent: DisplayedComponentT = 'Tabs'
+  doNotAnalyzeEntities: string[] = ['PAR', 'CCC', 'BC', 'CP,', 'PA', 'FI']
   entityType: string = 'CR'
   entityTypesBC: EntityI[] = [
     {
@@ -150,7 +151,7 @@ export class NewRequestModule extends VuexModule {
     },
     {
       text: 'Benefit Co.',
-      cat: 'Social Enterprises',
+      cat: 'Corporations',
       blurb: [
         `Similar to BC Corporations but with commitments to conduct business in a responsible and sustainable way.`,
         'Reported as Corporate tax',
@@ -198,6 +199,16 @@ export class NewRequestModule extends VuexModule {
         'Has name protection in BC'
       ],
       value: 'FI'
+    },
+    {
+      text: 'Parish',
+      cat: 'Other',
+      blurb: [
+        'Church Parish',
+        'Something to say here',
+        'Perhaps another point'
+      ],
+      value: 'PAR'
     }
   ]
   entityTypesXPRO: EntityI[] = [
@@ -289,6 +300,7 @@ export class NewRequestModule extends VuexModule {
     name3: '',
     designation3: ''
   }
+  nameIncludesLastName: boolean = false
   nrRequiredModalVisible: boolean = false
   pickEntityModalVisible: boolean = false
   pickRequestTypeModalVisible: boolean = false
@@ -504,7 +516,11 @@ export class NewRequestModule extends VuexModule {
     if (this.errors.length > 0) {
       return Promise.resolve()
     }
-
+    if (this.doNotAnalyzeEntities.includes(this.entityType) || this.nameIncludesLastName) {
+      this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
+      this.mutateDisplayedComponent('SubmissionTabs')
+      return
+    }
     this.mutateDisplayedComponent('AnalyzePending')
     let params: NewRequestNameSearchI = {
       name,
@@ -625,6 +641,10 @@ export class NewRequestModule extends VuexModule {
     this.nameChoices[choiceObj.key] = choiceObj.value
   }
   @Mutation
+  mutateNameIncludesLastName (value) {
+    this.nameIncludesLastName = value
+  }
+  @Mutation
   mutateNrRequiredModalVisible (value: boolean) {
     this.nrRequiredModalVisible = value
   }
@@ -655,6 +675,7 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateSubmissionTabComponent (comp) {
     enum Components {
+      EntityNotAutoAnalyzed,
       SendForExamination,
       ApplicantInfo1,
       ApplicantInfo2

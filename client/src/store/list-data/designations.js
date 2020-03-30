@@ -63,7 +63,17 @@ const designations = {
     ],
     end: true
   },
-  BC: corporateDesignations
+  BC: corporateDesignations,
+  PA: {
+    end: false
+  },
+  FI: {
+    end: false
+  },
+  PAR: {
+    end: false
+  }
+
 }
 
 export default designations
