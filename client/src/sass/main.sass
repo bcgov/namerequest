@@ -193,9 +193,11 @@
 
 #previous-issue-btn
   margin-left: 20px !important
+
 #next-issue-btn.disabled-issue-btn
   color: lightgrey !important
   border-color: lightgrey !important
+
 #next-issue-btn.active-issue-btn, #previous-issue-btn
   color: $link !important
   border-color: $link !important
@@ -210,6 +212,37 @@
   position: relative !important
   color: $link !important
 
+#applicant-info-1 .v-text-field__details
+  margin: 0 !important
+
+#submit-continue-btn
+  text-transform: none !important
+
+#submit-continue-btn-disabled
+  text-transform: none !important
+  background-color: $grey-2 !important
+  color: #A8ACB0 !important
+  box-shadow: none !important
+
+#submit-back-btn
+  background-color: white !important
+  color: $link !important
+  border: 1px solid $link !important
+  box-shadow: none !important
+  text-transform: none !important
+
+.fade-enter, .fade-leave-to
+  opacity: 0
+
+.fade-enter-active, .fade-leave-active
+  transition: all .25s ease-in
+
+.fadeslower-enter, .fadeslower-leave-to
+  opacity: 0
+
+.fadeslower-enter-active, .fadeslower-leave-active
+  transition: all .40s ease-in
+
 .helpful-hint
   padding: 15px 25px 15px 25px
   border-radius: 4px
@@ -218,18 +251,21 @@
   min-width: 80%
   max-width: 80%
 
-#applicant-info-1 .v-text-field__details
-  margin: 0 !important
-#submit-continue-btn
-  text-transform: none !important
-#submit-continue-btn-disabled
-  text-transform: none !important
-  background-color: $grey-2 !important
-  color: #A8ACB0 !important
-  box-shadow: none !important
-#submit-back-btn
-  background-color: white !important
-  color: $link !important
-  border: 1px solid $link !important
-  box-shadow: none !important
-  text-transform: none !important
+.square-card-x2
+  height: 215px
+  width: 420px
+  padding: 15px 25px 15px 25px
+  border-radius: 4px
+  border: 1px dashed $pale-blue
+  background-color: $grey-1
+
+.square-card-x3
+  height: 215px
+  width: 280px
+  padding: 15px 25px 15px 25px
+  border-radius: 4px
+  border: 1px dashed $pale-blue
+  background-color: $grey-1
+
+.pale-blue-text
+  color: $p-blue-text !important

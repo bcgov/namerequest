@@ -39,23 +39,19 @@
         </div>
       </v-card-actions>
     </v-card>
-    <v-card class="pa-0" style="border-radius: 0" v-else>
-      <v-card-title>Please Use Societies Online</v-card-title>
-      <v-card-text class="py-4 text-center">
-        <p class="px-9">In order to provide users with complete information about their options for forming a legal
-                      entity within the Province of British Columbia, we have included "Society" on the list of
-                        entities.</p>
-        <p class="px-9">However, this tool does not support them.  Please proceed to
-          <a href=" https://www.bcregistry.ca/societies/"> Societies Online</a> (https://www.bcregistry.ca/societies/)
-        </p>
-        <p><v-btn style="text-transform: none"
-                  @click="showSocietiesInfo = false">Return to Entity Type Selector</v-btn></p>
+    <v-card class="px-0 py-5" style="border-radius: 0" v-else>
+      <v-card-text>
+        <v-container fluid>
+          <v-row no-gutters class="text-center">
+            <v-col cols="12">To request a name for a Society</v-col>
+            <v-col cols="12">please use the Societies Online website</v-col>
+            <v-col cols="12">
+              <a href="https://www.bcregistry.ca/societies/">https://www.bcregistry.ca/societies/</a>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-card-text>
-      <v-card-actions class="bg-grey-1 text-center">
-        <div style="display: block; width: 100%;">
-          <button @click="showModal = false"><v-icon>close</v-icon> Close</button>
-        </div>
-      </v-card-actions>
+
     </v-card>
   </v-dialog>
 </template>
@@ -72,7 +68,7 @@ export default class PickEntity extends Vue {
   @Watch('showModal')
   handleModalClose (newVal) {
     if (!newVal) {
-      this.showSocietiesInfo = false
+      setTimeout(() => { this.showSocietiesInfo = false }, 500)
     }
   }
 
@@ -105,6 +101,9 @@ export default class PickEntity extends Vue {
     return newReqModule.pickEntityTableXPRO
   }
   get width () {
+    if (this.showSocietiesInfo) {
+      return '500px'
+    }
     if (this.location === 'BC') {
       return '900px'
     }
@@ -115,6 +114,11 @@ export default class PickEntity extends Vue {
   }
 
   chooseType (entity: SelectOptionsI) {
+    if (entity.value === 'SO' || entity.value === 'XSO') {
+      this.showSocietiesInfo = true
+      this.clearEntitySelection()
+      return
+    }
     let index = newReqModule.entityTypeOptions.findIndex((ent: any) => ent.value === entity.value)
     if (index === -1) {
       newReqModule.mutateExtendedEntitySelectOption(entity)

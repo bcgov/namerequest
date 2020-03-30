@@ -36,13 +36,33 @@
       <NameInput :class="inputCompClass"
                  id="name-input-component"
                  class="mb-n7"/>
-      <v-col cols="12" class="mt-n9">
-        <v-checkbox v-model="nameIncludesLastName"
-                    label="The above name includes my last name, my first and last names, or my last name and initials">
-        </v-checkbox>
-      </v-col>
+      <v-tooltip bottom
+                 open-delay="200"
+                 close-delay="100"
+                 attach="#name-input-component"
+                 nudge-left="340"
+                 nudge-top="30">
+        <template v-slot:activator="{ on }">
+          <v-col v-on="on"
+                 id="name-checkbox-col"
+                 class="mb-n9 mt-n7">
+            <transition name="fadeslower" >
+              <v-checkbox v-model="nameIncludesLastName"
+                          id="name-checkbox"
+                          class="small-copy"
+                          v-if="showNameCheckBox"
+                          label="I am using my someone's name for my entity name" />
+            </transition>
+          </v-col>
+        </template>
+        <p class="py-0 my-0">Check this box if you are...</p>
+        <ul>
+          <li>Incorporating under your own name (eg. a Doctor)</li>
+          <li>Using name that is only names (eg. Blake & Chan & Douglas)</li>
+        </ul>
+      </v-tooltip>
       <v-col cols="auto"
-             class="my-n9">
+             class="mb-n3 mt-n2">
         <span id="nr-required-activator"
               class="normal-link"
               @click="activateNRRModal()">Check to see if you need to file a a name request</span>
@@ -52,16 +72,17 @@
 </template>
 
 <script lang="ts">
-import Stats from '@/components/new-request/stats'
-import newReqModule from '../../store/new-request-module'
 import NameInput from './name-input'
+import newReqModule from '../../store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { LocationT } from '@/models'
 
 @Component({
-  components: { Stats, NameInput }
+  components: { NameInput }
 })
 export default class Search extends Vue {
+  showToolTip = false
+
   @Watch('location')
   handleLocation (newVal, oldVal) {
     if (newVal === 'HELP') {
@@ -71,6 +92,13 @@ export default class Search extends Vue {
         this.location = oldVal
         this.entityType = type
       })
+    }
+  }
+
+  @Watch('entityType')
+  uncheckBox (newVal) {
+    if (newVal !== 'CR') {
+      this.nameIncludesLastName = false
     }
   }
 
@@ -122,6 +150,12 @@ export default class Search extends Vue {
   }
   get requestTypeOptions () {
     return newReqModule.requestTypeOptions
+  }
+  get showNameCheckBox () {
+    if (this.location === 'BC' && this.entityType === 'CR') {
+      return true
+    }
+    return false
   }
 
   activateHMCModal () {
