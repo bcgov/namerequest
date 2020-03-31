@@ -2,17 +2,17 @@
     <v-container fluid class="paz-0 ma-0">
       <v-row class="text-center">
         <v-col cols="12" class="h5 text-center mt-n6">
-          You Must Send Your Name Request For Examination
+          Further Information
         </v-col>
         <v-col cols="12"
                class="text-center mt-n4"
                v-if="entityTypeNotAnalyzed">
-          Name Requests for the <b>{{ entityText }}</b> entity type cannot be decisioned automatically.
+          Name Requests for the <b>{{ entityText }}</b> entity type cannot be reserved immediately.
         </v-col>
         <v-col cols="12"
                class="text-center mt-n4"
                v-else>
-          Name Requests that include a personal name cannot be decisioned automatically.
+          Name Requests that are personal name(s) cannot be reserved immediately.
         </v-col>
           <v-col v-for="(box, i) in boxes" :key="'box-'+i">
             <v-container class="small-copy text-left" :class="box.class">
