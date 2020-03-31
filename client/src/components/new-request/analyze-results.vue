@@ -67,10 +67,9 @@
               </v-row>
 
               <!--CORP CONFLICT TABLE-->
-              <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n7py-5">
+              <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n7 py-5">
                 <v-col cols="auto" >
                   <div v-for="(corp, n) in conflicts" :key="'conflict-' +n">
-
                       {{ corp.name }}
                   </div>
                 </v-col>
@@ -128,7 +127,7 @@
                                cols="12"
                                v-html="option.line2" />
                       </template>
-                      <!--button / checkbox driven ui-->
+                     <!--button / checkbox driven ui-->
                       <transition name="fade" mode="out-in">
                         <v-col v-if="option.type === 'replace_designation'"
                                :key="changesInBaseName+designationIsFixed+'key'">
@@ -185,6 +184,21 @@
                                          id="reserve-submit-obtain-consent"
                                          style="display: inline"
                                          v-else />
+                        </transition>
+                      </v-col>
+                      <v-col v-if="issue.issue_type === 'designation_misplaced'"
+                             id="designation-misplaced-col"
+                             coks="12"
+                             class="pa-0 text-center">
+                        <transition name="fade" mode="out-in">
+                          <v-btn :key="`${option.type}-fix-btn`"
+                                 @click="moveDesignation"
+                                 v-if="!designationIsMoved">Move Designation</v-btn>
+                          <ReserveSubmit id="reserve-submit-obtain-consent"
+                                         style="display: inline"
+                                         :key="option.type+'-reserve-submit'"
+                                         v-else
+                                         :setup="reserveAction" />
                         </transition>
                       </v-col>
                       <v-col v-if="option.type === 'conflict_self_consent'"
@@ -416,6 +430,16 @@ export default class AnalyzeResults extends Vue {
     }
     return false
   }
+  get designationIsMoved () {
+    if (this.issue.issue_type === 'designation_misplaced') {
+      let { word } = this.issue.name_actions.find(action => action.word)
+      word = word.toUpperCase()
+      if (this.name.endsWith(word)) {
+        return true
+      }
+    }
+    return false
+  }
   get examinationRequested () {
     if (this.issueIndex >= 1) {
       for (let n = this.issueIndex - 1; n >= 0; n--) {
@@ -566,6 +590,14 @@ export default class AnalyzeResults extends Vue {
   handleSubmit (event: Event) {
     event.preventDefault()
     newReqModule.startAnalyzeName()
+  }
+  moveDesignation () {
+    this.showActualInput = true
+    let { index, word } = this.issue.name_actions.find(action => action.index)
+    let chunked = this.chunkedName
+    chunked.splice(index, 1)
+    let name = chunked.join(' ')
+    this.name = name + ' ' + word
   }
   toggleRealInput () {
     if (!this.showActualInput) {

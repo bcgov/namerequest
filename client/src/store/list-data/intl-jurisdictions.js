@@ -1256,4 +1256,16 @@
   }
 ]
 
-export default jurisdictions
+let jurisdictionsSorted = jurisdictions.sort((a, b) => {
+  if (a.text >= b.text) {
+    return 1
+  }
+  if (a.text <= b.text) {
+    return -1
+  }
+  if (a.text === b.text) {
+    return 0
+  }
+})
+
+export default jurisdictionsSorted
