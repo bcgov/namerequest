@@ -297,6 +297,7 @@
 </template>
 
 <script lang="ts">
+import designations from '@/store/list-data/designations'
 import MainContainer from '@/components/new-request/main-container.vue'
 import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
 import NameWordRenderer from '@/components/new-request/analyzed-name-word-renderer'
@@ -400,22 +401,6 @@ export default class AnalyzeResults extends Vue {
     }
     return []
   }
-  get designations () {
-    if (this.issue && Array.isArray(this.issue.designations)) {
-      if (this.issue.designations.length > 0) {
-        return this.issue.designations.map(des => des.toUpperCase())
-      }
-    }
-    return null
-  }
-  get hasNameActions () {
-    if (this.issue && this.issue.name_actions && Array.isArray(this.issue.name_actions)) {
-      if (this.issue.name_actions.length > 0) {
-        return true
-      }
-    }
-    return false
-  }
   get designationIsFixed () {
     if (this.issue.issue_type === 'designation_mismatch' && !this.changesInBaseName) {
       let { designations } = this.issue
@@ -440,15 +425,13 @@ export default class AnalyzeResults extends Vue {
     }
     return false
   }
-  get examinationRequested () {
-    if (this.issueIndex >= 1) {
-      for (let n = this.issueIndex - 1; n >= 0; n--) {
-        if (this.requestExaminationStep[n]) {
-          return true
-        }
+  get designations () {
+    if (this.issue && Array.isArray(this.issue.designations)) {
+      if (this.issue.designations.length > 0) {
+        return this.issue.designations.map(des => des.toUpperCase())
       }
     }
-    return false
+    return null
   }
   get displayCheckbox () {
     if (this.json.issues && Array.isArray(this.json.issues)) {
@@ -464,6 +447,24 @@ export default class AnalyzeResults extends Vue {
   }
   get entityType () {
     return newReqModule.entityType
+  }
+  get examinationRequested () {
+    if (this.issueIndex >= 1) {
+      for (let n = this.issueIndex - 1; n >= 0; n--) {
+        if (this.requestExaminationStep[n]) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+  get hasNameActions () {
+    if (this.issue && this.issue.name_actions && Array.isArray(this.issue.name_actions)) {
+      if (this.issue.name_actions.length > 0) {
+        return true
+      }
+    }
+    return false
   }
   get issue () {
     if (Array.isArray(this.json.issues)) {
@@ -482,6 +483,7 @@ export default class AnalyzeResults extends Vue {
   get name () {
     return newReqModule.name
   }
+
   set name (name: string) {
     name = name.toUpperCase()
     newReqModule.mutateName(name)
@@ -555,6 +557,16 @@ export default class AnalyzeResults extends Vue {
   changeDesignation (designation) {
     this.showActualInput = true
     this.name = this.originalName.replace(this.word, designation)
+    if (designations[this.entityType].end) {
+      if (!this.name.endsWith(designation)) {
+        let chunked = this.name.split(' ')
+        chunked.splice(chunked.indexOf(designation), 1)
+        this.name = chunked.join(' ') + ' ' + designation
+        let { word } = this.issue.name_actions.find(action => action.word)
+        word = word.toUpperCase()
+        this.originalName = chunked.join(' ') + ' ' + word
+      }
+    }
   }
   checkBoxLabel (type) {
     switch (type) {
@@ -564,11 +576,6 @@ export default class AnalyzeResults extends Vue {
         return 'I will obtain and submit consent'
       case 'conflict_self_consent':
         return 'I have authority over the conflicting name; I will submit written consent'
-    }
-  }
-  toggleActualInput () {
-    if (!this.showActualInput) {
-      this.showActualInput = true
     }
   }
   clickNext () {
@@ -599,21 +606,6 @@ export default class AnalyzeResults extends Vue {
     let name = chunked.join(' ')
     this.name = name + ' ' + word
   }
-  toggleRealInput () {
-    if (!this.showActualInput) {
-      this.showActualInput = true
-      this.$nextTick(function () {
-        let position = this.name.length
-        let elem = document.getElementById('analyze-name-text-field') as HTMLInputElement
-        if (elem.setSelectionRange) {
-          elem.focus()
-          elem.setSelectionRange(position, position)
-          return
-        }
-        elem.focus()
-      })
-    }
-  }
   optionClasses (i) {
     if (this.issue && Array.isArray(this.issue.setup)) {
       switch (this.issue.setup.length) {
@@ -640,6 +632,26 @@ export default class AnalyzeResults extends Vue {
   }
   startAgain () {
     newReqModule.startAgain()
+  }
+  toggleActualInput () {
+    if (!this.showActualInput) {
+      this.showActualInput = true
+    }
+  }
+  toggleRealInput () {
+    if (!this.showActualInput) {
+      this.showActualInput = true
+      this.$nextTick(function () {
+        let position = this.name.length
+        let elem = document.getElementById('analyze-name-text-field') as HTMLInputElement
+        if (elem.setSelectionRange) {
+          elem.focus()
+          elem.setSelectionRange(position, position)
+          return
+        }
+        elem.focus()
+      })
+    }
   }
 }
 
