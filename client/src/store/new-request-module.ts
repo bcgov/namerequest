@@ -56,7 +56,7 @@ export class NewRequestModule extends VuexModule {
     fax: ''
   }
   displayedComponent: DisplayedComponentT = 'Tabs'
-  doNotAnalyzeEntities: string[] = ['PAR', 'CCC', 'BC', 'CP,', 'PA', 'FI']
+  doNotAnalyzeEntities: string[] = [ 'PAR', 'CC', 'BC', 'CP', 'PA', 'FI', 'XCP' ]
   entityType: string = 'CR'
   entityTypesBC: EntityI[] = [
     {
