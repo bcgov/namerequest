@@ -51,14 +51,15 @@
                           id="name-checkbox"
                           class="small-copy"
                           v-if="showNameCheckBox"
-                          label="I am using my someone's name for my entity name" />
+                          label="The name is a person's name" />
             </transition>
           </v-col>
         </template>
         <p class="py-0 my-0">Check this box if you are...</p>
         <ul>
-          <li>Incorporating under your own name (eg. a Doctor)</li>
-          <li>Using name that is only names (eg. Blake & Chan & Douglas)</li>
+          <li>Incorporating under your own name (eg. DR. JOE SMITH INC.)</li>
+          <li>The name contains one or more names. (eg. BLAKE, CHAN & DOUGLAS INC.)</li>
+          <li>The name contains one or more names. (eg. FRANKLIN INC.)</li>
         </ul>
       </v-tooltip>
       <v-col cols="auto"

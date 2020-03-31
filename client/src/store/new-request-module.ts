@@ -176,7 +176,7 @@ export class NewRequestModule extends VuexModule {
       blurb: [
         `A non-profit organization.`,
         'Has name protection in BC',
-        'Must use Societies Online to register name'
+        'Must use Societies Online to register a name and incorporate'
       ],
       value: 'SO'
     },
@@ -322,12 +322,13 @@ export class NewRequestModule extends VuexModule {
       text: 'Change your Name',
       value: 'CHG',
       blurb: `You have an existing business that is registered in BC and you want to change your name. You will need 
-              your incorporation or firm number or your B/N assigned to you by CRA.`
+              your incorporation or firm number assigned to you by Registries.`
     },
     {
       text: 'Get a New Tradename',
       value: 'DBA',
-      blurb: 'blah blah'
+      blurb: `You have an existing business. You want to request a name to use as a trade name. You will need 
+              your incorporation or firm number assigned to you by Registries.`
     },
     {
       text: 'Amalgamate',
@@ -338,18 +339,20 @@ export class NewRequestModule extends VuexModule {
       text: 'Convert to Another Structure',
       value: 'CNV',
       blurb: `Convert from one business structure to another. Such as converting from a ULC to a BC Corp. You will need 
-              to identify your business with your B/N # (assigned by CRA) or your Corp. #/Firm # (assigned by 
+              to identify your business with your Corp. #/Firm # (assigned by 
               Registries).`
     },
     {
       text: 'Restore Using a Historical Name',
       value: 'REH',
-      blurb: 'blah blah'
+      blurb: `You have a business that has been dissolved or cancelled. You want to start up again and use the same name. You will need 
+              your incorporation or firm number assigned to you by Registries.`
     },
     {
       text: 'Restore with a New Name',
       value: 'REN',
-      blurb: 'blah blah'
+      blurb: `You have a business that has been dissolved or cancelled. You want to start up again with a new name. You will need 
+              your incorporation or firm number assigned to you by Registries.`
     },
     {
       text: 'Change Registration to Sole Prop, GP or DBA.',
@@ -377,7 +380,7 @@ export class NewRequestModule extends VuexModule {
       options = options.concat(this.extendedEntitySelection)
       n = 5
     }
-    options = options.concat({ text: 'View All Business Structures', value: 'all', rank: n })
+    options = options.concat({ text: 'View All Entity Types', value: 'all', rank: n })
     return options.sort((a, b) => {
       if (a.rank < b.rank) {
         return -1
@@ -455,7 +458,7 @@ export class NewRequestModule extends VuexModule {
       options.push(this.extendedRequestType)
       n = 3
     }
-    options.push({ text: 'View All Request Types', value: 'all', rank: n })
+    options.push({ text: 'View All Request Actions', value: 'all', rank: n })
     return options.sort((a, b) => {
       if (a.rank < b.rank) {
         return -1
