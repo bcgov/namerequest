@@ -10,8 +10,6 @@ env:
 jobs:
 
   build:
-    env:
-      working-directory: ./client
 
     runs-on: ubuntu-latest
 
@@ -26,26 +24,26 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: install
+        working-directory: ./client
         run: |
           npm ci
         env:
           CI: true
-        working-directory: ${{env.working-directory}}
       - name: lint
+        working-directory: ./client
         run: |
           npm run lint:nofix
         env:
           CI: true
-        working-directory: ${{env.working-directory}}
       - name: unit test
+        working-directory: ./client
         run: |
           npm run test:unit
         env:
           CI: true
-        working-directory: ${{env.working-directory}}
       - name: build to check strictness
+        working-directory: ./client
         run: |
           npm run build
         env:
           CI: true
-        working-directory: ${{env.working-directory}}
