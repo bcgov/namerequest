@@ -72,7 +72,7 @@ jobs:
         working-directory: ${{env.working-directory}}
       - name: unit test
         run: |
-          npm run test:unit
+          npm run test
         env:
           CI: true
         working-directory: ${{env.working-directory}}
