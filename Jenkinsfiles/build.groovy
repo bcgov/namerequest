@@ -79,7 +79,6 @@ if( !triggerBuild(CONTEXT_DIRECTORY) ) {
 }
 
 if( run_pipeline ) {
-    // uncomment to run linter/jest tests in pipeline
     // create NodeJS pod to run verification steps
     def nodejs_label = "jenkins-nodejs-${UUID.randomUUID().toString()}"
     podTemplate(label: nodejs_label, name: nodejs_label, serviceAccount: 'jenkins', cloud: 'openshift', containers: [
@@ -124,15 +123,16 @@ if( run_pipeline ) {
                         def lintResults = sh(script: "npm run lint:nofix", returnStatus: true)
 
                         echo "Linter ran, returned ${lintResults}"
-                        if (lintResults > 0) {
-                            try {
-                                timeout(time: 1, unit: 'DAYS') {
-                                    input message: "Linter failed. Continue?", id: "2"
-                                }
-                            } catch (Exception e) {
-                                error('Abort')
-                            }
-                        }
+                        // uncomment to pause pipeline on failed linter
+                        // if (lintResults > 0) {
+                        //     try {
+                        //         timeout(time: 1, unit: 'DAYS') {
+                        //             input message: "Linter failed. Continue?", id: "2"
+                        //         }
+                        //     } catch (Exception e) {
+                        //         error('Abort')
+                        //     }
+                        // }
                     }
 
                 } catch (Exception e) {
