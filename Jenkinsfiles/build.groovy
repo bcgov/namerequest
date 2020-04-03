@@ -157,7 +157,7 @@ if( run_pipeline ) {
       }
     }
 
-    stage("Build ${IMAGESTREAM_NAME}") {
+    stage("Build ${CHAINED_BUILD_CONFIG}") {
       script {
         openshift.withCluster() {
           openshift.withProject() {
