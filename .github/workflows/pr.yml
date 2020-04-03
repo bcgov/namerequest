@@ -8,10 +8,11 @@ env:
   IMAGE_NAME: namerequest-ui
 
 jobs:
-  env:
-    working-directory: ./client
 
   build:
+    env:
+      working-directory: ./client
+
     runs-on: ubuntu-latest
 
     strategy:
