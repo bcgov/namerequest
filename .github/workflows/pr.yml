@@ -48,3 +48,37 @@ jobs:
         env:
           CI: true
         working-directory: ${{env.working-directory}}
+  # to be taken out when linting passes
+  tests:
+    env:
+      working-directory: ./client
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: install
+        run: |
+          npm ci
+        env:
+          CI: true
+        working-directory: ${{env.working-directory}}
+      - name: unit test
+        run: |
+          npm run test:unit
+        env:
+          CI: true
+        working-directory: ${{env.working-directory}}
+      - name: build to check strictness
+        run: |
+          npm run build
+        env:
+          CI: true
+        working-directory: ${{env.working-directory}}
