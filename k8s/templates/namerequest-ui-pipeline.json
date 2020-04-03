@@ -2,7 +2,7 @@
     "kind": "Template",
     "apiVersion": "v1",
     "metadata": {
-        "name": "NAMEREQUEST-project-pipeline-template"
+        "name": "namerequest-ui-pipeline-template"
     },
     "objects": [
         {
@@ -58,7 +58,7 @@
             "displayName": "Name",
             "description": "The name assigned to all of the resources defined in this template.",
             "required": true,
-            "value": "namerequest"
+            "value": "namerequest-ui"
         },
         {
             "name": "PIPELINE_PURPOSE",
@@ -72,7 +72,7 @@
             "displayName": "Git Repo URL",
             "description": "The URL to your GIT repo.",
             "required": true,
-            "value": "https://github.com/bcgov/lear.git"
+            "value": "https://github.com/bcgov/namerequest.git"
         },
         {
             "name": "GIT_REF",
@@ -93,7 +93,7 @@
             "displayName": "Source Context Directory",
             "description": "The source context directory.",
             "required": false,
-            "value": "/src"
+            "value": "/client/src"
         },
         {
             "name": "JENKINS_FILE",
