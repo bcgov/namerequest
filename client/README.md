@@ -1,6 +1,6 @@
 # Name Request Online Frontend
 
-####This project is still a WIP very early in its development.
+####This project is still very early in its development. WIP
 
 ## Project setup
 ```
