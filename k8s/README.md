@@ -5,5 +5,5 @@
 2. **Create the pipeline** process the template referencing your parameter file.
 
 ```bash 
-oc process -f templates/namerequest-pipeline.json -p namerequest-build-pipeline.param  | oc create -f -
+oc process -f templates/namerequest-ui-pipeline.json --param-file=namerequest-ui-pipeline.param  | oc create -f -
 ```

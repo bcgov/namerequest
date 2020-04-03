@@ -3,12 +3,12 @@
 # Project: namerequest
 # Component: pipeline
 # Action: build
-# Template File: templates/namerequest-pipeline.json
+# Template File: templates/namerequest-ui-pipeline.json
 #=========================================================
-NAME="namerequest"
+NAME="namerequest-ui"
 PIPELINE_PURPOSE="build"
 GIT_REPO_URL="https://github.com/bcgov/namerequest.git"
 GIT_REF="master"
-SOURCE_CONTEXT_DIR="src"
+SOURCE_CONTEXT_DIR="."
 JENKINS_FILE="Jenkinsfiles/build.groovy"
 WEBHOOK="unknown"
