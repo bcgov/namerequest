@@ -8,6 +8,9 @@ env:
   IMAGE_NAME: namerequest-ui
 
 jobs:
+  env:
+    working-directory: ./client
+
   build:
     runs-on: ubuntu-latest
 
@@ -26,18 +29,22 @@ jobs:
           npm ci
         env:
           CI: true
+        working-directory: ${{env.working-directory}}
       - name: lint
         run: |
           npm run lint:nofix
         env:
           CI: true
+        working-directory: ${{env.working-directory}}
       - name: unit test
         run: |
           npm run test:unit
         env:
           CI: true
+        working-directory: ${{env.working-directory}}
       - name: build to check strictness
         run: |
           npm run build
         env:
           CI: true
+        working-directory: ${{env.working-directory}}
