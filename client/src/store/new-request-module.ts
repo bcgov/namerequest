@@ -2,8 +2,10 @@ import Axios from '@/plugins/axios'
 import axios from 'axios'
 import removeAccents from 'remove-accents'
 import designations from './list-data/designations'
+import querystring from 'qs'
 import store from '@/store'
 import {
+  ApplicantI,
   ApplicantInfoI,
   AnalysisJSONI,
   DisplayedComponentT,
@@ -18,28 +20,32 @@ import {
 } from '@/models'
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import { normalizeWordCase } from '@/plugins/utilities'
+import Vue from 'vue'
 
+const qs: any = querystring
+const canadaPostAPIKey = process.env.NODE_ENV === 'Production'
+  ? process.env.VUE_APP_ADDRESS_KEY_PROD : process.env.VUE_APP_ADDRESS_KEY_DEV
 let source
+let blockCall = 0
+let timeOut
+let params
 
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
 export class NewRequestModule extends VuexModule {
   actingOnOwnBehalf: boolean = true
+  addressSuggestions: object | null = null
   analysisJSON: AnalysisJSONI | null = null
   applicant = {
     firstName: '',
     lastName: '',
     middleName: '',
-    address1: '',
-    address2: '',
-    country: '',
-    postalCode: '',
-    city: '',
+    Line1: '',
+    Line2: '',
+    Country: '',
+    PostalCode: '',
+    City: '',
     provinceState: '',
-    jurisdiction: ''
-  }
-  @Mutation
-  mutateApplicant (v) {
-    this.applicant[v.key] = v.value
+    Jurisdiction: ''
   }
   businessInfo = {
     natureOfBusiness: '',
@@ -55,6 +61,7 @@ export class NewRequestModule extends VuexModule {
     email: '',
     fax: ''
   }
+  disableSuggestions: boolean = false
   displayedComponent: DisplayedComponentT = 'Tabs'
   doNotAnalyzeEntities: string[] = [ 'PAR', 'CC', 'BC', 'CP', 'PA', 'FI', 'XCP' ]
   entityType: string = 'CR'
@@ -345,14 +352,14 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Restore Using a Historical Name',
       value: 'REH',
-      blurb: `You have a business that has been dissolved or cancelled. You want to start up again and use the same name. You will need 
-              your incorporation or firm number assigned to you by Registries.`
+      blurb: 'You have a business that has been dissolved or cancelled. You want to start up again and use the same' +
+             ' name. You will need your incorporation or firm number assigned to you by Registries.'
     },
     {
       text: 'Restore with a New Name',
       value: 'REN',
-      blurb: `You have a business that has been dissolved or cancelled. You want to start up again with a new name. You will need 
-              your incorporation or firm number assigned to you by Registries.`
+      blurb: 'You have a business that has been dissolved or cancelled. You want to start up again with a new name.' +
+             ' You will need your incorporation or firm number assigned to you by Registries.'
     },
     {
       text: 'Change Registration to Sole Prop, GP or DBA.',
@@ -364,6 +371,7 @@ export class NewRequestModule extends VuexModule {
   submissionTabNumber: number = 0
   submissionType: SubmissionTypeT | null = null
   tabNumber: number = 0
+  waitingAddressSearch: ApplicantI | null = null
 
   get entityTextFromValue () {
     let list = [...this.entityTypesBC, ...this.entityTypesXPRO]
@@ -478,6 +486,65 @@ export class NewRequestModule extends VuexModule {
   }
 
   @Action({ rawError: true })
+  async getAddressDetails (id) {
+    const url = 'http://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Retrieve/v2.11/json3.ws'
+    let params = {
+      Key: canadaPostAPIKey,
+      Id: id
+    }
+
+    let resp
+    try {
+      resp = await Axios.post(url, qs.stringify(params), {
+        headers: { 'Content-type': 'application/x-www-form-urlencoded' }
+      })
+      if (resp.data.Items && Array.isArray(resp.data.Items)) {
+        let Item = resp.data.Items.find(item => item.Language === 'ENG')
+        let fields = ['Line1', 'Line2', 'City', 'PostalCode', 'Province', 'Country']
+        for (let field of fields) {
+          if (Item[field]) {
+            let value = Item[field].toUpperCase()
+            this.mutateApplicant({ key: field, value })
+          }
+        }
+      }
+      return
+    } catch (error) {
+      return error
+    }
+  }
+  @Action({ rawError: true })
+  async getAddressSuggestions (appKV) {
+    if (!appKV.value) {
+      return
+    }
+    const url = 'http://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Find/v2.10/json3.ws'
+    let params = {
+      Key: canadaPostAPIKey,
+      SearchTerm: appKV.value,
+      MaxSuggestions: 3,
+      Country: this.applicant.Country
+    }
+
+    let resp
+    try {
+      resp = await Axios.post(url, qs.stringify(params), {
+        headers: { 'Content-type': 'application/x-www-form-urlencoded' }
+      })
+      if (Array.isArray(resp.data.Items)) {
+        let filteredItems = resp.data.Items.filter(item => item.Next === 'Retrieve')
+        if (this.applicant.Line1) {
+          this.mutateAddressSuggestions(filteredItems)
+        }
+        return
+      }
+      this.mutateAddressSuggestions(null)
+      return
+    } catch (error) {
+      return error
+    }
+  }
+  @Action({ rawError: true })
   async getStats () {
     try {
       let resp = await Axios.get('/stats')
@@ -555,6 +622,27 @@ export class NewRequestModule extends VuexModule {
     this.mutateAnalysisJSON(null)
     return Promise.resolve()
   }
+  @Action({ rawError: true })
+  updateApplicantDetails (appKV) {
+    this.mutateApplicant(appKV)
+    if (!appKV.value || appKV.key !== 'Line1' || this.disableSuggestions) {
+      this.mutateAddressSuggestions(null)
+      return
+    }
+    if (blockCall === 0) {
+      this.getAddressSuggestions(appKV)
+      blockCall = 1
+      timeOut = setTimeout(() => {
+        blockCall = 0
+        if (params) {
+          this.getAddressSuggestions(params)
+          params = null
+        }
+      }, 1000)
+      return
+    }
+    params = appKV
+  }
 
   @Mutation
   clearErrors () {
@@ -569,8 +657,35 @@ export class NewRequestModule extends VuexModule {
     this.actingOnOwnBehalf = value
   }
   @Mutation
+  mutateAddressSuggestions (value) {
+    if (!value) {
+      if (timeOut && timeOut.clearInterval) {
+        timeOut.clearInterval()
+      }
+      this.addressSuggestions = null
+      return
+    }
+    let output = []
+    for (let n = 0; n < value.length; n++) {
+      value[n].Text = value[n].Text.toUpperCase()
+      value[n].Description = value[n].Description.toUpperCase()
+    }
+    this.addressSuggestions = Object.assign([], value)
+  }
+  @Mutation
   mutateAnalysisJSON (value: AnalysisJSONI) {
     this.analysisJSON = value
+  }
+  @Mutation
+  mutateApplicant (appKV) {
+    if (Array.isArray(appKV)) {
+      for (let address of appKV) {
+        address.value = address.value.toUpperCase()
+        this.applicant[address.name] = address.value
+      }
+    }
+    appKV.value = appKV.value.toUpperCase()
+    this.applicant[appKV.key] = appKV.value
   }
   @Mutation
   mutateBusinessInfo (v) {
@@ -583,6 +698,10 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateContact (v) {
     this.contact[v.key] = v.value
+  }
+  @Mutation
+  mutateDisableSuggestions (value) {
+    this.disableSuggestions = value
   }
   @Mutation
   mutateDisplayedComponent (comp: DisplayedComponentT) {
@@ -697,6 +816,10 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateTabNumber (tab: number) {
     this.tabNumber = tab
+  }
+  @Mutation
+  mutateWaitingAddressSearch (appKV: ApplicantI) {
+    this.waitingAddressSearch = appKV
   }
 
   getEntities (catagory) {

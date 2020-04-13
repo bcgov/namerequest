@@ -5,6 +5,10 @@ export type NrDataT = string | null
 export type SearchComponentT = 'search' | 'analyzing' | 'results'
 export type SubmissionTypeT = 'examination' | 'consent' | 'normal'
 
+export interface ApplicantI {
+  text: string
+  value: string
+}
 export interface AnalysisJSONI {
   header?: string
   issues: IssueI[] | null
@@ -66,13 +70,13 @@ export interface ApplicantInfoI {
   firstName: string
   lastName: string
   midddleName?: string
-  address1: string
-  address2?: string
-  country: string
-  postalCode: string
-  city: string
+  Line1: string
+  Line2?: string
+  Country: string
+  PostalCode: string
+  City: string
   provState?: string
-  jurisdiction: string
+  Jurisdiction: string
 }
 export interface NewRequestNameSearchI {
   name: string

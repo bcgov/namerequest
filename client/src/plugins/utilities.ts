@@ -2,8 +2,6 @@ export function normalizeWordCase (name: string) {
   name = name.replace(/\s\s+/g, ' ')
   name = name.toLowerCase()
   let nameArray = name.split(' ')
-  // eslint-disable-next-line
-  console.log(nameArray)
   if (nameArray.length <= 1) {
     let first = name[0].toUpperCase()
     let length = name.length
