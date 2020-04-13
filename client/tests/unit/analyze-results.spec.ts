@@ -15,7 +15,7 @@ describe('analyze-results.vue', () => {
   describe('add_distinctive', () => {
     let wrapper: any
 
-    beforeAll( async (done) => {
+    beforeAll(async (done) => {
       newReqModule.mutateAnalysisJSON({
         "header": "Further Action Required",
         "issues": [
@@ -37,7 +37,8 @@ describe('analyze-results.vue', () => {
                 "button": "",
                 "checkbox": "",
                 "header": "Helpful Hint",
-                "line1": "Some words that can set your name apart include an individual\u0027s name or intials; ageographic location; a colour; a coined, made-up word; or an acronym.",
+                "line1": "Some words that can set your name apart include an individual\u0027s name or intials; " +
+                "ageographic location; a colour; a coined, made-up word; or an acronym.",
                 "line2": ""
               }
             ],
@@ -121,10 +122,12 @@ describe('analyze-results.vue', () => {
       done()
     })
     it('Renders the correct text content', () => {
-      expect(wrapper.text()).toContain('Designation Cooperative cannot be used with selected business type of Corporation')
+      expect(wrapper.text()).toContain('Designation Cooperative cannot be used with selected business type of ' +
+      'Corporation')
       expect(wrapper.text()).toContain('Option 1')
       expect(wrapper.text()).toContain('Option 2')
-      expect(wrapper.text()).toContain('Designation Cooperative cannot be used with selected business type of Corporation')
+      expect(wrapper.text()).toContain('Designation Cooperative cannot be used with selected business type of ' +
+      'Corporation')
     })
     it('Changes the designation to the clicked designation automatically', async () => {
       let button = wrapper.find('#designation-0')
@@ -195,7 +198,7 @@ describe('analyze-results.vue', () => {
                 "header": "Option 3",
                 "line1": "You can provide consent if you are the registered owner.",
                 "line2": ""
-              },
+              }
             ],
             "show_examination_button": false,
             "show_reserve_button": false
@@ -256,7 +259,7 @@ describe('analyze-results.vue', () => {
                 checkbox: '',
                 header: 'Helpful Hint',
                 line1: 'Add a word to the end of your name that describes the business category.',
-                line2: '',
+                line2: ''
               }
             ],
             show_examination_button: false,
@@ -323,7 +326,7 @@ describe('analyze-results.vue', () => {
             ],
             "setup": [
               {
-                "type":'',
+                "type": '',
                 "header": "Option 1",
                 "line1": "You can add a word that makes your name distinct.",
                 "line2": "Or you can remove the word Action."
@@ -340,7 +343,7 @@ describe('analyze-results.vue', () => {
                 "header": "Option 3",
                 "line1": "You can provide consent if you are the registered owner.",
                 "line2": ""
-              },
+              }
             ],
             "show_examination_button": false,
             "show_reserve_button": false
@@ -427,7 +430,7 @@ describe('analyze-results.vue', () => {
                 "header": "Option 3",
                 "line1": "You can provide consent if you are the registered owner.",
                 "line2": ""
-              },
+              }
             ],
             "show_examination_button": false,
             "show_reserve_button": false
@@ -514,7 +517,7 @@ describe('analyze-results.vue', () => {
                 "header": "Option 3",
                 "line1": "You can provide consent if you are the registered owner.",
                 "line2": ""
-              },
+              }
             ],
             "show_examination_button": false,
             "show_reserve_button": false
@@ -599,7 +602,7 @@ describe('analyze-results.vue', () => {
                 "header": "Option 3",
                 "line1": "You can provide consent if you are the registered owner.",
                 "line2": ""
-              },
+              }
             ],
             "show_examination_button": false,
             "show_reserve_button": false

@@ -69,7 +69,7 @@
                       rows="3" />
         </v-col>
       </v-row>
-      <v-row>
+      <v-row v-if="submissionType === 'examination'">
         <v-col cols="2" class="h5" >
           Additional Services
         </v-col>
@@ -82,7 +82,7 @@
         </v-col>
         <v-col cols="5" class="py-0" />
       </v-row>
-      <v-row class="mt-n7 mb-3">
+      <v-row :class="submissionType === 'examination' ? 'mt-n7 mb-3' : '' ">
         <v-col cols="12" class="text-right">
           <v-btn x-large
                  id="submit-back-btn"
@@ -134,6 +134,9 @@ export default class ApplicantInfo2 extends Vue {
   }
   set submissionTabNumber (value) {
     newReqModule.mutateSubmissionTabNumber(value)
+  }
+  get submissionType () {
+    return newReqModule.submissionType
   }
 
   clearValidation () {

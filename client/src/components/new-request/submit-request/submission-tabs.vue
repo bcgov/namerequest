@@ -54,6 +54,12 @@ import { Component, Vue } from 'vue-property-decorator'
   }
 })
 export default class SubmissionTabs extends Vue {
+  mounted () {
+    let link = document.createElement('link')
+    link.setAttribute('href', 'https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic.min.css')
+    link.setAttribute('rel', 'stylesheet')
+    document.head.appendChild(link)
+  }
   get actingOnOwnBehalf () {
     return newReqModule.actingOnOwnBehalf
   }

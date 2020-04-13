@@ -11,7 +11,7 @@ localVue.use(Vuetify)
 describe('name-input.vue', () => {
   let wrapper: any
 
-  beforeEach( () => {
+  beforeEach(() => {
     wrapper = mount(Modal, {
       localVue,
       vuetify

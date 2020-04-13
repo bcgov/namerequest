@@ -15,7 +15,7 @@ describe('applicant-info-1.vue', () => {
   beforeAll(async (done) => {
     wrapper = mount(ApplicantInfo1, {
       localVue,
-      vuetify,
+      vuetify
     })
     await wrapper.vm.$nextTick()
     done()

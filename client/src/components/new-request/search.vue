@@ -46,13 +46,10 @@
           <v-col v-on="on"
                  id="name-checkbox-col"
                  class="mb-n9 mt-n7">
-            <transition name="fadeslower" >
-              <v-checkbox v-model="nameIncludesLastName"
-                          id="name-checkbox"
-                          class="small-copy"
-                          v-if="showNameCheckBox"
-                          label="The name is a person's name" />
-            </transition>
+            <v-checkbox v-model="nameIncludesLastName"
+                        id="name-checkbox"
+                        class="small-copy"
+                        label="The name is a person's name" />
           </v-col>
         </template>
         <p class="py-0 my-0">Check this box if you are...</p>

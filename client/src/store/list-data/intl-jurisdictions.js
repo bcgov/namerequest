@@ -1,4 +1,4 @@
-﻿const jurisdictions = [
+const jurisdictions = [
   {
     "value": "TM",
     "SHORT_DESC": "TURKMENISTAN",

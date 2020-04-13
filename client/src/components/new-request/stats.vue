@@ -76,7 +76,7 @@ export default class Stats extends Vue {
   }
 
   mounted () {
-    newReqModule.getStats()
+    // newReqModule.getStats()
   }
 }
 
