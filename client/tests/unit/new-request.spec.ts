@@ -11,11 +11,11 @@ localVue.use(Vuetify)
 describe('search.vue', () => {
   let wrapper: any
 
-  beforeEach( async (done) => {
+  beforeEach(async (done) => {
     wrapper = mount(Search, {
       localVue,
       vuetify
-     })
+    })
     await wrapper.vm.$nextTick()
     done()
   })

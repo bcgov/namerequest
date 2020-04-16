@@ -14,7 +14,7 @@ describe('It initially renders correctly', () => {
   beforeEach(async (done) => {
     wrapper = mount(ApplicantInfo2, {
       localVue,
-      vuetify,
+      vuetify
     })
     await wrapper.vm.$nextTick()
     done()

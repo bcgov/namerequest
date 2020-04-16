@@ -12,7 +12,7 @@ localVue.use(Vuetify)
 describe('landing.vue', () => {
   let wrapper: any
 
-  beforeAll( () => {
+  beforeAll(() => {
     newReqModule.mutateDisplayedComponent('Tabs')
   })
   beforeEach(() => {
@@ -32,7 +32,7 @@ describe('landing.vue', () => {
 describe('landing.vue', () => {
   let wrapper: any
 
-  beforeAll( () => {
+  beforeAll(() => {
     newReqModule.mutateDisplayedComponent('AnalyzePending')
   })
   beforeEach(() => {

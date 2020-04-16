@@ -4,14 +4,14 @@ const middleware = jsonServer.defaults()
 
 server.use(middleware)
 
-//mock end point for wait-time stats
+// mock end point for wait-time stats
 server.get('/api/v1/stats', (req, res) => {
   let o = Math.random()
   let p = o.toString()
   let resp = {
     auto: p[3] + p[2],
     priority: {
-      value:  p[5] + p[9],
+      value: p[5] + p[9],
       unit: 'mins'
     },
     standard: {
@@ -29,12 +29,12 @@ server.get('/api/v1/name-analysis', (req, res) => {
   let l = split.length
   let resp
 
-  //add_descriptive
+  // add_descriptive
   if (split.includes('Smart')) {
     let index = split.indexOf('Smart')
     resp = {
       header: 'Further Action Required',
-        issues: [
+      issues: [
         {
           conflicts: null,
           consenting_body: null,
@@ -56,17 +56,17 @@ server.get('/api/v1/name-analysis', (req, res) => {
               type: 'add_descriptive',
               header: 'Helpful Hint',
               line1: 'Add a word to the end of your name that describes the business category.',
-              line2: '',
+              line2: ''
             }
           ],
           show_examination_button: false,
           show_reserve_button: false
         }
       ],
-        status: 'fa'
+      status: 'fa'
     }
   }
-  //add_distinctive
+  // add_distinctive
   if (split.includes('Distributors')) {
     let index = split.indexOf('Distributors')
     resp = {
@@ -94,7 +94,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
               header: 'Helpful Hint',
               line1: "Some words that can set your name apart include an individual's name or intials; a" +
                  "geographic location; a colour; a coined, made-up word; or an acronym.",
-              line2: '',
+              line2: ''
             }
           ],
           show_examination_button: false,
@@ -104,7 +104,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
       status: 'fa'
     }
   }
-  //consent_required
+  // consent_required
   if (split.includes('Engineering')) {
     let index = split.indexOf('Engineering')
     resp = {
@@ -156,7 +156,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
       status: 'rc'
     }
   }
-  //corp_conflict
+  // corp_conflict
   if (split[0] === 'Conflict') {
     resp = {
       header: 'Further Action Required',
@@ -219,7 +219,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
       status: 'fa'
     }
   }
-  //excess_words
+  // excess_words
   if (split.length > 4) {
     resp = {
       header: 'Further Action Required',
@@ -249,7 +249,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
       status: 'fa'
     }
   }
-  //unclassified_word
+  // unclassified_word
   if (split.includes('Flerkin')) {
     let index = split.indexOf('Flerkin')
     resp = {
@@ -266,7 +266,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
             {
               index: index,
               type: 'highlight',
-              word: 'flerkin',
+              word: 'flerkin'
             }
           ],
           setup: [
@@ -285,7 +285,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
       status: 'fa'
     }
   }
-  //word_to_avoid
+  // word_to_avoid
   if (split.includes('Walmart')) {
     let index = split.indexOf('Walmart')
     resp = {
@@ -320,7 +320,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
       status: 'fa'
     }
   }
-  //wrong_designation
+  // wrong_designation
   if (split[l - 1] === 'Cooperative') {
     resp = {
       header: 'Further Action Required',
@@ -343,7 +343,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
             {
               index: l - 1,
               type: 'highlight',
-              word: 'Cooperative',
+              word: 'Cooperative'
             }
           ],
           setup: [
@@ -368,7 +368,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
       status: 'fa'
     }
   }
-  //consent_required + wrong_designation
+  // consent_required + wrong_designation
   if (split.includes('Engineering') && split.includes('Cooperative')) {
     let index = split.indexOf('Engineering')
     resp = {
@@ -460,7 +460,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
       status: 'fa'
     }
   }
-  //corp_conflict + wrong_designation
+  // corp_conflict + wrong_designation
   if (split.includes('Conflict') && split.includes('Cooperative')) {
     let index = split.indexOf('Engineering')
     resp = {
@@ -566,7 +566,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
       status: 'fa'
     }
   }
-  //consent_required + corp_conflict
+  // consent_required + corp_conflict
   if (split.includes('Engineering') && split.includes('Conflict')) {
     let index = split.indexOf('Engineering')
     resp = {
@@ -676,7 +676,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
       status: 'fa'
     }
   }
-  //consent_required + corp_conflict + wrong_designation
+  // consent_required + corp_conflict + wrong_designation
   if (split.includes('Engineering') && split.includes('Conflict') && split.includes('Cooperative')) {
     let index = split.indexOf('Engineering')
     resp = {
@@ -828,7 +828,7 @@ server.get('/api/v1/name-analysis', (req, res) => {
     }
   }
 
-  //unclassified_word + consent_required
+  // unclassified_word + consent_required
   if (split.includes('Engineering') && split.includes('Flerkij')) {
     let index = split.indexOf('Engineering')
     resp = {
@@ -981,17 +981,14 @@ server.get('/api/v1/name-analysis', (req, res) => {
       status: 'fa'
     }
   }
-  //Approved name for BC Corporation
+  // Approved name for BC Corporation
 
-
-if (query.name === 'Happy Runners Cooperative') {
-  resp =
+  if (query.name === 'Happy Runners Cooperative') {
+    resp =
   {
-    "header"
-  :
+    "header":
     "Further Action Required",
-      "issues"
-  :
+    "issues":
     [
       {
         "designations": [
@@ -1037,11 +1034,10 @@ if (query.name === 'Happy Runners Cooperative') {
         "show_reserve_button": false
       }
     ],
-      "status"
-  :
+    "status":
     "fa"
   }
-}
+  }
 
   if (!resp) {
     resp = {
@@ -1055,5 +1051,6 @@ if (query.name === 'Happy Runners Cooperative') {
 })
 
 server.listen(5000, () => {
+  // eslint-disable-next-line
   console.log(`json-server mock API listening on http://localhost:5000`)
 })

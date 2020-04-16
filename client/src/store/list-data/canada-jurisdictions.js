@@ -1,4 +1,4 @@
-﻿const jurisdictions = [
+const jurisdictions = [
   {
     "value": "AB",
     "SHORT_DESC": "AB",

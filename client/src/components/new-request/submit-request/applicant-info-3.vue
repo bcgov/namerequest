@@ -111,7 +111,7 @@
                       rows="3" />
         </v-col>
       </v-row>
-      <v-row class="mt-n4">
+      <v-row class="mt-n4" v-if="submissionType === 'examination'">
         <v-col cols="2" class="h5" >
           Additional Services
         </v-col>
@@ -124,7 +124,7 @@
         </v-col>
         <v-col cols="5" class="py-0" />
       </v-row>
-      <v-row class="mt-n9">
+      <v-row :class="lastRowClass">
         <v-col cols="12" class="text-right mt-n4">
           <v-btn x-large
                  id="submit-back-btn"
@@ -171,15 +171,24 @@ export default class ApplicantInfo3 extends Vue {
   get contact () {
     return newReqModule.contact
   }
+  get lastRowClass () {
+    if (this.submissionType === 'examination' || !this.isValid) {
+      return 'mt-n9'
+    }
+    return ''
+  }
   get priorityRequest () {
     return newReqModule.priorityRequest
   }
   set priorityRequest (value) {
     newReqModule.mutatePriorityRequest(value)
   }
+  get submissionType () {
+    return newReqModule.submissionType
+  }
 
   clearValidation () {
-    if (this.$refs.step2 as Vue) {
+    if (this.$refs.step2 as any) {
       (this.$refs.step2 as any).resetValidation()
     }
   }
@@ -199,13 +208,9 @@ export default class ApplicantInfo3 extends Vue {
     newReqModule.mutateContact({ key, value })
   }
   validate () {
-    if (this.$refs.step2 as Vue) {
+    if (this.$refs.step2 as any) {
       (this.$refs.step2 as any).validate()
     }
   }
 }
 </script>
-
-<style scoped lang="sass">
-
-</style>

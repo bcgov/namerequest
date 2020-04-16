@@ -17,7 +17,7 @@ describe('send-for-examination.vue', () => {
       store.mutateName('Test Name')
       wrapper = mount(SendForExamination, {
         localVue,
-        vuetify,
+        vuetify
       })
       await wrapper.vm.$nextTick()
       done()
@@ -72,4 +72,4 @@ describe('send-for-examination.vue', () => {
       expect(wrapper.vm.choice2Valid).toBe(false)
     })
   })
- })
+})

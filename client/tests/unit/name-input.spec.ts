@@ -11,7 +11,7 @@ localVue.use(Vuetify)
 describe('name-input.vue', () => {
   let wrapper: any
 
-  beforeEach( async () => {
+  beforeEach(async () => {
     wrapper = mount(NameInput, {
       localVue,
       vuetify
@@ -20,13 +20,13 @@ describe('name-input.vue', () => {
     wrapper.vm.clearErrors()
   })
 
-  afterEach( () => {
+  afterEach(() => {
     newReqModule.store.state.newRequestModule.entityType = 'CR'
     newReqModule.store.state.newRequestModule.requestAction = 'NEW'
     newReqModule.store.state.newRequestModule.name = ''
   })
 
-  it('Displays the required ui elements', () => {2
+  it('Displays the required ui elements', () => {
     expect(wrapper.contains('#name-input-text-field')).toBe(true)
     expect(wrapper.contains('#name-input-icon')).toBe(true)
   })
