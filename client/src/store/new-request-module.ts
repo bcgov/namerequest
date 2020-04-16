@@ -486,7 +486,7 @@ export class NewRequestModule extends VuexModule {
 
   @Action({ rawError: true })
   async getAddressDetails (id) {
-    const url = 'http://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Retrieve/v2.11/json3.ws'
+    const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Retrieve/v2.11/json3.ws'
     let params = {
       Key: canadaPostAPIKey,
       Id: id
@@ -517,7 +517,7 @@ export class NewRequestModule extends VuexModule {
     if (!appKV.value) {
       return
     }
-    const url = 'http://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Find/v2.10/json3.ws'
+    const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Find/v2.10/json3.ws'
     let params = {
       Key: canadaPostAPIKey,
       SearchTerm: appKV.value,
