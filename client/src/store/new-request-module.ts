@@ -31,7 +31,7 @@ let params
 
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
 export class NewRequestModule extends VuexModule {
-  actingOnOwnBehalf: boolean = true
+  actingOnOwnBehalf: boolean = false
   addressSuggestions: object | null = null
   analysisJSON: AnalysisJSONI | null = null
   applicant = {
@@ -48,7 +48,8 @@ export class NewRequestModule extends VuexModule {
   }
   businessInfo = {
     natureOfBusiness: '',
-    additionalInfo: ''
+    additionalInfo: '',
+    tm: ''
   }
   client = {
     firstName: '',
@@ -61,7 +62,7 @@ export class NewRequestModule extends VuexModule {
     fax: ''
   }
   disableSuggestions: boolean = false
-  displayedComponent: DisplayedComponentT = 'Tabs'
+  displayedComponent: DisplayedComponentT = 'SubmissionTabs'
   doNotAnalyzeEntities: string[] = [ 'PAR', 'CC', 'BC', 'CP', 'PA', 'FI', 'XCP' ]
   entityType: string = 'CR'
   entityTypesBC: EntityI[] = [
@@ -306,7 +307,7 @@ export class NewRequestModule extends VuexModule {
     name3: '',
     designation3: ''
   }
-  nameIncludesLastName: boolean = false
+  isPersonsName: boolean = true
   nrRequiredModalVisible: boolean = false
   pickEntityModalVisible: boolean = false
   pickRequestTypeModalVisible: boolean = false
@@ -367,8 +368,8 @@ export class NewRequestModule extends VuexModule {
     }
   ]
   stats: StatsI | null = null
-  submissionTabNumber: number = 0
-  submissionType: SubmissionTypeT | null = null
+  submissionTabNumber: number = 3
+  submissionType: SubmissionTypeT | null = 'examination'
   tabNumber: number = 0
   waitingAddressSearch: ApplicantI | null = null
 
@@ -585,7 +586,7 @@ export class NewRequestModule extends VuexModule {
     if (this.errors.length > 0) {
       return Promise.resolve()
     }
-    if (this.doNotAnalyzeEntities.includes(this.entityType) || this.nameIncludesLastName) {
+    if (this.doNotAnalyzeEntities.includes(this.entityType) || this.isPersonsName) {
       this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
       this.mutateDisplayedComponent('SubmissionTabs')
       return
@@ -763,7 +764,7 @@ export class NewRequestModule extends VuexModule {
   }
   @Mutation
   mutateNameIncludesLastName (value) {
-    this.nameIncludesLastName = value
+    this.isPersonsName = value
   }
   @Mutation
   mutateNrRequiredModalVisible (value: boolean) {
