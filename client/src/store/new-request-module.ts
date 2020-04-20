@@ -5,22 +5,19 @@ import designations from './list-data/designations'
 import querystring from 'qs'
 import store from '@/store'
 import {
-  ApplicantI,
-  ApplicantInfoI,
   AnalysisJSONI,
+  ApplicantI,
   DisplayedComponentT,
   EntityI,
   LocationT,
-  NameChoicesI,
   NewRequestNameSearchI,
-  SearchComponentT,
   SelectOptionsI,
   StatsI,
   SubmissionTypeT
 } from '@/models'
 import canadaPostAPIKey from './config'
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
-import { normalizeWordCase } from '@/plugins/utilities'
+import { normalizeWordCase, sanitizeName } from '@/plugins/utilities'
 import Vue from 'vue'
 
 const qs: any = querystring
@@ -31,7 +28,7 @@ let params
 
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
 export class NewRequestModule extends VuexModule {
-  actingOnOwnBehalf: boolean = false
+  actingOnOwnBehalf: boolean = true
   addressSuggestions: object | null = null
   analysisJSON: AnalysisJSONI | null = null
   applicant = {
@@ -63,7 +60,7 @@ export class NewRequestModule extends VuexModule {
   }
   disableSuggestions: boolean = false
   displayedComponent: DisplayedComponentT = 'Tabs'
-  doNotAnalyzeEntities: string[] = [ 'PAR', 'CC', 'BC', 'CP', 'PA', 'FI', 'XCP' ]
+  doNotAnalyzeEntities: string[] = ['PAR', 'CC', 'BC', 'CP', 'PA', 'FI', 'XCP']
   entityType: string = 'CR'
   entityTypesBC: EntityI[] = [
     {
@@ -235,7 +232,7 @@ export class NewRequestModule extends VuexModule {
       cat: 'Corporations',
       blurb: [
         'ULC established and operating in another province or country. Plans to operate in BC as well. ',
-        'Has name protetion in BC'
+        'Has name protection in BC'
       ],
       value: 'XUL'
     },
@@ -307,7 +304,8 @@ export class NewRequestModule extends VuexModule {
     name3: '',
     designation3: ''
   }
-  isPersonsName: boolean = true
+  isPersonsName: boolean = false
+  nameIsEnglish: boolean = true
   nrRequiredModalVisible: boolean = false
   pickEntityModalVisible: boolean = false
   pickRequestTypeModalVisible: boolean = false
@@ -320,7 +318,8 @@ export class NewRequestModule extends VuexModule {
       blurb: `Start a new business in BC. This applies to starting fresh from here or having a business in another 
               province or country that you want to operate in BC as well.`
     },
-    { text: 'Move your Business to BC',
+    {
+      text: 'Move your Business to BC',
       value: 'MVE',
       blurb: `You have an existing business in another province. You are closing your business there and moving your 
               business to BC.`
@@ -353,13 +352,13 @@ export class NewRequestModule extends VuexModule {
       text: 'Restore Using a Historical Name',
       value: 'REH',
       blurb: 'You have a business that has been dissolved or cancelled. You want to start up again and use the same' +
-             ' name. You will need your incorporation or firm number assigned to you by Registries.'
+        ' name. You will need your incorporation or firm number assigned to you by Registries.'
     },
     {
       text: 'Restore with a New Name',
       value: 'REN',
       blurb: 'You have a business that has been dissolved or cancelled. You want to start up again with a new name.' +
-             ' You will need your incorporation or firm number assigned to you by Registries.'
+        ' You will need your incorporation or firm number assigned to you by Registries.'
     },
     {
       text: 'Change Registration to Sole Prop, GP or DBA.',
@@ -378,6 +377,7 @@ export class NewRequestModule extends VuexModule {
     let type = list.find(t => t.value === this.entityType)
     return type.text
   }
+
   get entityTypeOptions () {
     let bcOptions: SelectOptionsI[] = this.entityTypesBC.filter(type => type.shortlist)
     let xproOptions: SelectOptionsI[] = this.entityTypesXPRO.filter(type => type.shortlist)
@@ -388,7 +388,7 @@ export class NewRequestModule extends VuexModule {
       options = options.concat(this.extendedEntitySelection)
       n = 5
     }
-    options = options.concat({ text: 'View All Entity Types', value: 'all', rank: n })
+    options = options.concat({ text: 'View All Entity Types', value: 'INFO', rank: n })
     return options.sort((a, b) => {
       if (a.rank < b.rank) {
         return -1
@@ -399,12 +399,13 @@ export class NewRequestModule extends VuexModule {
       return 0
     })
   }
+
   get locationOptions () {
     let options = [
       { text: 'BC', value: 'BC' },
       { text: 'Canada', value: 'CA' },
       { text: 'Foreign', value: 'IN' },
-      { text: 'Help', value: 'HELP' }
+      { text: 'Help', value: 'INFO' }
     ]
     if (this.requestAction === 'MVE') {
       let optionsLessBC = [...options]
@@ -412,12 +413,14 @@ export class NewRequestModule extends VuexModule {
     }
     return options
   }
+
   get newOrExistingRequest () {
     if (this.tabNumber) {
       return 'existing'
     }
     return 'new'
   }
+
   get pickEntityTableBC () {
     let catagories = []
     for (let type of this.entityTypesBC) {
@@ -437,6 +440,7 @@ export class NewRequestModule extends VuexModule {
     )
     return output
   }
+
   get pickEntityTableXPRO () {
     let catagories = []
     for (let type of this.entityTypesXPRO) {
@@ -456,17 +460,18 @@ export class NewRequestModule extends VuexModule {
     )
     return output
   }
+
   get requestTypeOptions () {
     let option = this.requestTypes.find(type => type.value === 'NEW')
     option.rank = 1
-    let options = [ option ]
+    let options = [option]
     let n = 2
     if (this.extendedRequestType) {
       this.extendedRequestType.rank = 2
       options.push(this.extendedRequestType)
       n = 3
     }
-    options.push({ text: 'View All Request Actions', value: 'all', rank: n })
+    options.push({ text: 'View All Request Actions', value: 'INFO', rank: n })
     return options.sort((a, b) => {
       if (a.rank < b.rank) {
         return -1
@@ -477,6 +482,7 @@ export class NewRequestModule extends VuexModule {
       return 0
     })
   }
+
   get designationItems () {
     if (this.entityType && designations[this.entityType]) {
       let { words } = designations[this.entityType]
@@ -513,6 +519,7 @@ export class NewRequestModule extends VuexModule {
       return error
     }
   }
+
   @Action({ rawError: true })
   async getAddressSuggestions (appKV) {
     if (!appKV.value) {
@@ -544,6 +551,7 @@ export class NewRequestModule extends VuexModule {
       return error
     }
   }
+
   @Action({ rawError: true })
   async getStats () {
     try {
@@ -554,67 +562,70 @@ export class NewRequestModule extends VuexModule {
       return Promise.resolve()
     }
   }
+
   @Action({ rawError: true })
   startAgain () {
     this.mutateAnalysisJSON(null)
     this.mutateDisplayedComponent('Tabs')
     this.resetApplicantDetails()
   }
+
   @Action({ rawError: true })
-  async startAnalyzeName () {
-    let name
+  startAnalyzeName () {
     if (this.name) {
-      let edits = removeAccents(this.name)
-      let edits2 = edits.replace(/[^\sa-zA-Z0-9*/+&().,="'#@!?;:-]/g, '')
-      name = edits2.toUpperCase()
-    } else {
+      let name = sanitizeName(this.name)
+      this.mutateName(name)
+    }
+    ['entityType', 'requestAction', 'location'].forEach(field => {
+      if (this[field] === 'INFO') {
+        this.setErrors(field)
+      }
+    })
+    if (!this.name) {
       this.setErrors('name')
+      return
     }
-    this.mutateName(name)
-    if (this.entityType === 'all') {
-      this.setErrors('entity')
-    }
-    if (this.requestAction === 'all') {
-      this.setErrors('request')
-    }
-    if (this.location === 'HELP') {
-      this.setErrors('location')
-    }
-    if (this.name !== '' && this.name.length < 3) {
+    if (this.name.length < 3) {
       this.setErrors('length')
+      return
     }
     if (this.errors.length > 0) {
-      return Promise.resolve()
+      return
     }
-    if (this.doNotAnalyzeEntities.includes(this.entityType) || this.isPersonsName) {
+    if (this.doNotAnalyzeEntities.includes(this.entityType) || (this.isPersonsName && !this.nameIsEnglish)) {
       this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
       this.mutateDisplayedComponent('SubmissionTabs')
       return
     }
+    this.getNameRequest()
+  }
+
+  @Action({ rawError: true })
+  async getNameRequest () {
     this.mutateDisplayedComponent('AnalyzePending')
+
     let params: NewRequestNameSearchI = {
-      name,
+      name: this.name,
       location: this.location,
       entity_type: this.entityType,
       request_action: this.requestAction
     }
-    let resp
-    let CancelToken = axios.CancelToken
-    source = CancelToken.source()
 
     try {
-      resp = await Axios.get('/name-analysis', {
+      let CancelToken = axios.CancelToken
+      source = CancelToken.source()
+      let resp = await Axios.get('/name-analysis', {
         params,
         cancelToken: source.token
       })
+      this.mutateAnalysisJSON(resp.data)
+      this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
       this.mutateDisplayedComponent('Tabs')
-      return Promise.resolve(error)
+      return error
     }
-    this.mutateAnalysisJSON(resp.data)
-    this.mutateDisplayedComponent('AnalyzeResults')
-    return Promise.resolve(resp.data)
   }
+
   @Action({ rawError: true })
   stopAnalyzeName () {
     source.cancel()
@@ -622,6 +633,7 @@ export class NewRequestModule extends VuexModule {
     this.mutateAnalysisJSON(null)
     return Promise.resolve()
   }
+
   @Action({ rawError: true })
   updateApplicantDetails (appKV) {
     this.mutateApplicant(appKV)
@@ -648,14 +660,21 @@ export class NewRequestModule extends VuexModule {
   clearErrors () {
     this.errors = []
   }
+
   @Mutation
   setErrors (value: string) {
-    this.errors = this.errors.concat(value)
+    if (Array.isArray(this.errors) && this.errors.length > 0) {
+      this.errors = this.errors.concat(value)
+      return
+    }
+    this.errors = [value]
   }
+
   @Mutation
   mutateActingOnOwnBehalf (value) {
     this.actingOnOwnBehalf = value
   }
+
   @Mutation
   mutateAddressSuggestions (value) {
     if (!value) {
@@ -672,10 +691,12 @@ export class NewRequestModule extends VuexModule {
     }
     this.addressSuggestions = Object.assign([], value)
   }
+
   @Mutation
   mutateAnalysisJSON (value: AnalysisJSONI) {
     this.analysisJSON = value
   }
+
   @Mutation
   mutateApplicant (appKV) {
     if (Array.isArray(appKV)) {
@@ -687,52 +708,63 @@ export class NewRequestModule extends VuexModule {
     appKV.value = appKV.value.toUpperCase()
     this.applicant[appKV.key] = appKV.value
   }
+
   @Mutation
   mutateBusinessInfo (v) {
     this.businessInfo[v.key] = v.value
   }
+
   @Mutation
   mutateClient (v) {
     this.client[v.key] = v.value
   }
+
   @Mutation
   mutateContact (v) {
     this.contact[v.key] = v.value
   }
+
   @Mutation
   mutateDisableSuggestions (value) {
     this.disableSuggestions = value
   }
+
   @Mutation
   mutateDisplayedComponent (comp: DisplayedComponentT) {
     this.displayedComponent = comp
   }
+
   @Mutation
   mutateEntityType (type: string) {
     this.entityType = type
   }
+
   @Mutation
   mutateExaminationRequestedIndex (value: boolean) {
     this.examinationRequestedIndex[this.issueIndex] = value
   }
+
   @Mutation
   mutateExtendedEntitySelectOption (option: SelectOptionsI) {
     this.extendedEntitySelection = option
   }
+
   @Mutation
   mutateExtendedRequestType (option: SelectOptionsI) {
     this.extendedRequestType = option
   }
+
   @Mutation
   mutateHelpMeChooseModalVisible (value: boolean) {
     this.helpMeChooseModalVisible = value
   }
+
   @Mutation
   mutateLocation (location: LocationT) {
     if (location === this.location) {
       return
     }
-    if (location === 'HELP') {
+    if (location === 'INFO') {
       this.location = location
       return
     }
@@ -750,38 +782,52 @@ export class NewRequestModule extends VuexModule {
     }
     this.location = location
   }
+
   @Mutation
   mutateLocationInfoModalVisible (value: boolean) {
     this.locationInfoModalVisible = value
   }
+
   @Mutation
   mutateName (name: string) {
     this.name = name
   }
+
   @Mutation
   mutateNameChoices (choiceObj) {
     this.nameChoices[choiceObj.key] = choiceObj.value
   }
+
   @Mutation
-  mutateNameIncludesLastName (value) {
+  mutateisPersonsName (value) {
     this.isPersonsName = value
   }
+
+  @Mutation
+  mutateNameIsEnglish (value) {
+    this.nameIsEnglish = value
+  }
+
   @Mutation
   mutateNrRequiredModalVisible (value: boolean) {
     this.nrRequiredModalVisible = value
   }
+
   @Mutation
   mutatePickEntityModalVisible (value: boolean) {
     this.pickEntityModalVisible = value
   }
+
   @Mutation
   mutatePickRequestTypeModalVisible (value: boolean) {
     this.pickRequestTypeModalVisible = value
   }
+
   @Mutation
   mutatePriorityRequest (value) {
     this.priorityRequest = value
   }
+
   @Mutation
   mutateRequestAction (action: string) {
     this.requestAction = action
@@ -790,10 +836,12 @@ export class NewRequestModule extends VuexModule {
       this.entityType = 'XCR'
     }
   }
+
   @Mutation
   mutateStats (stats) {
     this.stats = stats
   }
+
   @Mutation
   mutateSubmissionTabComponent (comp) {
     enum Components {
@@ -802,25 +850,31 @@ export class NewRequestModule extends VuexModule {
       ApplicantInfo1,
       ApplicantInfo2
     }
+
     let tab = parseInt(Components[comp])
     this.submissionTabNumber = tab
   }
+
   @Mutation
   mutateSubmissionTabNumber (value) {
     this.submissionTabNumber = value
   }
+
   @Mutation
   mutateSubmissionType (type) {
     this.submissionType = type
   }
+
   @Mutation
   mutateTabNumber (tab: number) {
     this.tabNumber = tab
   }
+
   @Mutation
   mutateWaitingAddressSearch (appKV: ApplicantI) {
     this.waitingAddressSearch = appKV
   }
+
   @Mutation
   resetApplicantDetails () {
     Object.keys(this.applicant).forEach(key => {

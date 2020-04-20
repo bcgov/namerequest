@@ -1,3 +1,5 @@
+import removeAccents from 'remove-accents'
+
 export function normalizeWordCase (name: string) {
   name = name.replace(/\s\s+/g, ' ')
   name = name.toLowerCase()
@@ -14,4 +16,10 @@ export function normalizeWordCase (name: string) {
     }
   }
   return nameArray.join(' ')
+}
+
+export function sanitizeName (name) {
+  let edits = removeAccents(name)
+  let edits2 = edits.replace(/[^\sa-zA-Z0-9*/+&().,="'#@!?;:-]/g, '')
+  return edits2.toUpperCase()
 }

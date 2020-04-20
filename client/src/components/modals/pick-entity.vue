@@ -110,7 +110,7 @@ export default class PickEntity extends Vue {
     return '620px'
   }
   clearEntitySelection () {
-    this.entityType = 'all'
+    this.entityType = 'INFO'
   }
 
   chooseType (entity: SelectOptionsI) {

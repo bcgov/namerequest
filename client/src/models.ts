@@ -1,5 +1,5 @@
 export type DisplayedComponentT = 'Tabs' | 'AnalyzePending' | 'AnalyzeResults' | 'SubmissionTabs'
-export type LocationT = 'BC' | 'CA' | 'IN' | 'HELP'
+export type LocationT = 'BC' | 'CA' | 'IN' | 'INFO'
 export type NrDataResponseT = RequestDataI | null
 export type NrDataT = string | null
 export type SearchComponentT = 'search' | 'analyzing' | 'results'
