@@ -62,7 +62,7 @@ export class NewRequestModule extends VuexModule {
     fax: ''
   }
   disableSuggestions: boolean = false
-  displayedComponent: DisplayedComponentT = 'SubmissionTabs'
+  displayedComponent: DisplayedComponentT = 'Tabs'
   doNotAnalyzeEntities: string[] = [ 'PAR', 'CC', 'BC', 'CP', 'PA', 'FI', 'XCP' ]
   entityType: string = 'CR'
   entityTypesBC: EntityI[] = [
@@ -368,8 +368,8 @@ export class NewRequestModule extends VuexModule {
     }
   ]
   stats: StatsI | null = null
-  submissionTabNumber: number = 3
-  submissionType: SubmissionTypeT | null = 'examination'
+  submissionTabNumber: number = 0
+  submissionType: SubmissionTypeT | null = null
   tabNumber: number = 0
   waitingAddressSearch: ApplicantI | null = null
 
