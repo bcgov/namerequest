@@ -55,8 +55,8 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   get entityType () {
     return newReqModule.entityType
   }
-  get nameIncludesLastName () {
-    return newReqModule.nameIncludesLastName
+  get isPersonsName () {
+    return newReqModule.isPersonsName
   }
   get entityTypeNotAnalyzed () {
     if (this.doNotAnalyzeEntities.includes(this.entityType)) {
@@ -80,7 +80,7 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
       text: 'You can choose a different entity type and search again.  Please consult with a lawyer' +
       '/accounting professional if you are unsure about the most appropriate structure for your situation.'
     }
-    if (this.nameIncludesLastName) {
+    if (this.isPersonsName) {
       output.push(nameExplanation)
     }
     if (this.entityTypeNotAnalyzed) {

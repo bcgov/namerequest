@@ -1,6 +1,6 @@
 <template>
   <v-container class="main-container-style px-9 normal-copy">
-    <v-row justify="space-between">
+    <v-row justify="space-between" class="submission-tabs-top">
       <slot name="container-header" />
       <v-col cols="auto">
         <button id="back-to-search-btn"

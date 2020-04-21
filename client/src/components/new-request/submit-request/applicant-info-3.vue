@@ -1,7 +1,7 @@
 <template>
   <v-form v-model="isValid" ref="step2" id="applicant-info-3-form">
-    <v-container fluid class="pa-0 pt-2">
-      <v-row class="mt-n2">
+    <v-container fluid class="pa-0">
+      <v-row>
         <v-col cols="2" class="h5" align-self="start">
           Contact Person
         </v-col>
@@ -16,7 +16,7 @@
                         placeholder="Contact Person (if other than applicant. optional)" />
         </v-col>
       </v-row>
-      <v-row class="mt-n3">
+      <v-row>
         <v-col cols="2" class="h5" align-self="start">
         Contact Info
         </v-col>
@@ -33,7 +33,7 @@
         </v-col>
         <v-col cols="5" />
       </v-row>
-      <v-row class="mt-n3">
+      <v-row>
         <v-col cols="2" />
         <v-col cols="5">
           <v-text-field :messages="messages['phone']"
@@ -56,7 +56,7 @@
                         placeholder="Fax Number (Optional)" />
         </v-col>
       </v-row>
-      <v-row class="mt-n3">
+      <v-row>
         <v-col cols="2" class="h5" align-self="start">
           Client
         </v-col>
@@ -83,9 +83,9 @@
                         placeholder="First Name" />
         </v-col>
       </v-row>
-      <v-row class="mt-n3">
+      <v-row>
         <v-col cols="2" class="h5" align-self="start">
-          About Your Business
+          About The Business
         </v-col>
         <v-col cols="5" align-self="start">
           <v-textarea :messages="messages['nature']"
@@ -111,21 +111,32 @@
                       rows="3" />
         </v-col>
       </v-row>
-      <v-row class="mt-n4" v-if="submissionType === 'examination'">
-        <v-col cols="2" class="h5" >
-          Additional Services
+      <v-row v-if="submissionType === 'examination' || isPersonsName">
+        <v-col cols="2" />
+        <v-col cols="5" v-if="isPersonsName">
+          <v-text-field :messages="messages['tm']"
+                        :value="businessInfo.tm"
+                        @blur="messages = {}"
+                        @focus="messages['tm'] = 'Registered Trademark (Optional)'"
+                        @input="updateBusinessInfo('tm', $event)"
+                        filled
+                        hide-details="auto"
+                        placeholder="Registered Trademark (Optional)" />
         </v-col>
-        <v-col cols="5" align-self="start">
-          <v-checkbox class="pa-0 ma-0 mt-2">
+        <v-col cols="5" v-else />
+        <v-col cols="5" align-self="end" v-if="submissionType === 'examination'">
+          <v-checkbox v-model="priorityRequest" class="ma-0 pa-0">
             <template v-slot:label>
               Priority Request - <b>$100 Fee</b>
             </template>
           </v-checkbox>
         </v-col>
-        <v-col cols="5" class="py-0" />
+        <v-col cols="5" v-else />
       </v-row>
-      <v-row :class="lastRowClass">
-        <v-col cols="12" class="text-right mt-n4">
+      <v-row>
+        <v-col cols="12"
+               class="text-right"
+               :class="submissionType === 'examination' || isPersonsName ? 'mt-n4' : 'mt-4'">
           <v-btn x-large
                  id="submit-back-btn"
                  class="mr-3"
@@ -171,11 +182,8 @@ export default class ApplicantInfo3 extends Vue {
   get contact () {
     return newReqModule.contact
   }
-  get lastRowClass () {
-    if (this.submissionType === 'examination' || !this.isValid) {
-      return 'mt-n9'
-    }
-    return ''
+  get isPersonsName () {
+    return newReqModule.isPersonsName
   }
   get priorityRequest () {
     return newReqModule.priorityRequest
@@ -214,3 +222,7 @@ export default class ApplicantInfo3 extends Vue {
   }
 }
 </script>
+
+<style lang="sass">
+
+</style>

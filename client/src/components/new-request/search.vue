@@ -46,7 +46,7 @@
           <v-col v-on="on"
                  id="name-checkbox-col"
                  class="mb-n9 mt-n7">
-            <v-checkbox v-model="nameIncludesLastName"
+            <v-checkbox v-model="isPersonsName"
                         id="name-checkbox"
                         class="small-copy"
                         label="The name is a person's name" />
@@ -96,7 +96,7 @@ export default class Search extends Vue {
   @Watch('entityType')
   uncheckBox (newVal) {
     if (newVal !== 'CR') {
-      this.nameIncludesLastName = false
+      this.isPersonsName = false
     }
   }
 
@@ -131,10 +131,10 @@ export default class Search extends Vue {
   get locationOptions () {
     return newReqModule.locationOptions
   }
-  get nameIncludesLastName () {
-    return newReqModule.nameIncludesLastName
+  get isPersonsName () {
+    return newReqModule.isPersonsName
   }
-  set nameIncludesLastName (value) {
+  set isPersonsName (value) {
     newReqModule.mutateNameIncludesLastName(value)
   }
   get requestAction () {

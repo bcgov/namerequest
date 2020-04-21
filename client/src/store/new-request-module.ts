@@ -31,7 +31,7 @@ let params
 
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
 export class NewRequestModule extends VuexModule {
-  actingOnOwnBehalf: boolean = true
+  actingOnOwnBehalf: boolean = false
   addressSuggestions: object | null = null
   analysisJSON: AnalysisJSONI | null = null
   applicant = {
@@ -48,7 +48,8 @@ export class NewRequestModule extends VuexModule {
   }
   businessInfo = {
     natureOfBusiness: '',
-    additionalInfo: ''
+    additionalInfo: '',
+    tm: ''
   }
   client = {
     firstName: '',
@@ -306,7 +307,7 @@ export class NewRequestModule extends VuexModule {
     name3: '',
     designation3: ''
   }
-  nameIncludesLastName: boolean = false
+  isPersonsName: boolean = true
   nrRequiredModalVisible: boolean = false
   pickEntityModalVisible: boolean = false
   pickRequestTypeModalVisible: boolean = false
@@ -585,7 +586,7 @@ export class NewRequestModule extends VuexModule {
     if (this.errors.length > 0) {
       return Promise.resolve()
     }
-    if (this.doNotAnalyzeEntities.includes(this.entityType) || this.nameIncludesLastName) {
+    if (this.doNotAnalyzeEntities.includes(this.entityType) || this.isPersonsName) {
       this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
       this.mutateDisplayedComponent('SubmissionTabs')
       return
@@ -763,7 +764,7 @@ export class NewRequestModule extends VuexModule {
   }
   @Mutation
   mutateNameIncludesLastName (value) {
-    this.nameIncludesLastName = value
+    this.isPersonsName = value
   }
   @Mutation
   mutateNrRequiredModalVisible (value: boolean) {

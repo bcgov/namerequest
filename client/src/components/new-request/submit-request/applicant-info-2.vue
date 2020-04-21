@@ -18,7 +18,7 @@
         </v-col>
         <v-col cols="5" />
       </v-row>
-      <v-row class="mt-n3">
+      <v-row>
         <v-col cols="2" />
         <v-col cols="5">
           <v-text-field :messages="messages['phone']"
@@ -41,7 +41,7 @@
                         placeholder="Fax Number (Optional)" />
         </v-col>
       </v-row>
-      <v-row class="mt-3">
+      <v-row>
         <v-col cols="2" class="h5" align-self="start">
           About Your Business
         </v-col>
@@ -69,20 +69,31 @@
                       rows="3" />
         </v-col>
       </v-row>
-      <v-row v-if="submissionType === 'examination'">
-        <v-col cols="2" class="h5" >
+      <v-row v-if="submissionType === 'examination' || isPersonsName">
+        <v-col cols="2" class="h5">
           Additional Services
         </v-col>
-        <v-col cols="5" align-self="start">
-          <v-checkbox class="pa-0 ma-0 mt-2" v-model="priorityRequest">
+        <v-col cols="5" align-self="center" v-if="submissionType === 'examination'">
+          <v-checkbox v-model="priorityRequest">
             <template v-slot:label>
               Priority Request - <b>$100 Fee</b>
             </template>
           </v-checkbox>
         </v-col>
-        <v-col cols="5" class="py-0" />
+        <v-col cols="5" v-else />
+        <v-col cols="5" v-if="isPersonsName">
+          <v-text-field :messages="messages['tm']"
+                        :value="businessInfo.tm"
+                        @blur="messages = {}"
+                        @focus="messages['tm'] = 'Registered Trademark (Optional)'"
+                        @input="updateBusinessInfo('tm', $event)"
+                        filled
+                        hide-details="auto"
+                        placeholder="Registered Trademark (Optional)" />
+        </v-col>
+        <v-col cols="5" v-else />
       </v-row>
-      <v-row :class="submissionType === 'examination' ? 'mt-n7 mb-3' : '' ">
+      <v-row>
         <v-col cols="12" class="text-right">
           <v-btn x-large
                  id="submit-back-btn"
@@ -122,6 +133,9 @@ export default class ApplicantInfo2 extends Vue {
   }
   get contact () {
     return newReqModule.contact
+  }
+  get isPersonsName () {
+    return newReqModule.isPersonsName
   }
   get priorityRequest () {
     return newReqModule.priorityRequest
