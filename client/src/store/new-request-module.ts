@@ -572,9 +572,9 @@ export class NewRequestModule extends VuexModule {
 
   @Action({ rawError: true })
   startAnalyzeName () {
+    let name
     if (this.name) {
-      let name = sanitizeName(this.name)
-      this.mutateName(name)
+      name = sanitizeName(this.name)
     }
     ['entityType', 'requestAction', 'location'].forEach(field => {
       if (this[field] === 'INFO') {
@@ -592,6 +592,12 @@ export class NewRequestModule extends VuexModule {
     if (this.errors.length > 0) {
       return
     }
+    if (name !== this.name.toUpperCase()) {
+      this.mutateDisplayedComponent('AnalyzeCharacters')
+      this.mutateName(name)
+      return
+    }
+    this.mutateName(name)
     if (this.doNotAnalyzeEntities.includes(this.entityType) || (this.isPersonsName && !this.nameIsEnglish)) {
       this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
       this.mutateDisplayedComponent('SubmissionTabs')
