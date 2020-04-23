@@ -45,7 +45,7 @@ describe('search.vue', () => {
     expect(newReqModule.pickEntityModalVisible).toBe(false)
   })
   it('Sets PickEntityModal visibility state to true when View All Entity Types is selected', async () => {
-    wrapper.vm.entityType = 'all'
+    wrapper.vm.entityType = 'INFO'
     await wrapper.vm.$nextTick()
     expect(newReqModule.pickEntityModalVisible).toBe(true)
   })

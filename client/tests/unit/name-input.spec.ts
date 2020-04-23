@@ -21,30 +21,26 @@ describe('name-input.vue', () => {
   })
 
   afterEach(() => {
-    newReqModule.store.state.newRequestModule.entityType = 'CR'
-    newReqModule.store.state.newRequestModule.requestAction = 'NEW'
-    newReqModule.store.state.newRequestModule.name = ''
+    newReqModule.mutateEntityType('CR')
+    newReqModule.mutateRequestAction('NEW')
+    newReqModule.mutateName('')
   })
 
   it('Displays the required ui elements', () => {
     expect(wrapper.contains('#name-input-text-field')).toBe(true)
     expect(wrapper.contains('#name-input-icon')).toBe(true)
   })
-  it('Resists submitting when the entity type is set to "all" and detects the correct error type', async () => {
-    newReqModule.mutateEntityType('all')
-    newReqModule.mutateRequestAction('CNV')
+  it('Resists submitting when the entity type is set to "INFO" and detects the correct error type', async () => {
+    newReqModule.mutateEntityType('INFO')
+    newReqModule.mutateRequestAction('NEW')
     wrapper.vm.nameSearch = 'test'
     await wrapper.vm.$nextTick()
 
-    let button = wrapper.find('#name-input-icon')
-    button.trigger('click')
-    await wrapper.vm.$nextTick
     expect(newReqModule.displayedComponent).toBe('Tabs')
-    expect(wrapper.vm.errors).toStrictEqual(['entity'])
   })
   it('Resists submission when the request type is set to "all" and detects the correct error type', async () => {
     newReqModule.store.state.newRequestModule.entityType = 'CR'
-    newReqModule.store.state.newRequestModule.requestAction = 'all'
+    newReqModule.store.state.newRequestModule.requestAction = 'INFO'
     wrapper.vm.nameSearch = 'test'
     await wrapper.vm.$nextTick()
 
@@ -52,7 +48,7 @@ describe('name-input.vue', () => {
     button.trigger('click')
     await wrapper.vm.$nextTick()
     expect(newReqModule.displayedComponent).toBe('Tabs')
-    expect(wrapper.vm.errors).toStrictEqual(['request'])
+    expect(wrapper.vm.errors).toStrictEqual(['requestAction'])
   })
   it('Resists submission when there is no name entered and detects the correct error type', async () => {
     newReqModule.mutateEntityType('CR')

@@ -30,6 +30,6 @@ export default class MainContainer extends Vue {
 </script>
 
 <style lang="sass" scoped>
-  .rounded-corner-6px
-    border-radius: 6px !important
+.rounded-corner-6px
+  border-radius: 6px !important
 </style>
