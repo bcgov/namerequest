@@ -93,6 +93,7 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
     newReqModule.mutateSubmissionTabComponent('SendForExamination')
   }
   startAgain () {
+    this.$root.$emit('start-search-again')
     newReqModule.startAgain()
   }
 }

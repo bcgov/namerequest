@@ -1,6 +1,5 @@
 import AnalyzeResults from '@/components/new-request/analyze-results'
-import NameWordRenderer from '@/components/new-request/analyzed-name-word-renderer'
-import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
+import GreyBox from '@/components/new-request/grey-box'
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import newReqModule from '@/store/new-request-module'
 import Vuetify from 'vuetify'
@@ -38,7 +37,7 @@ describe('analyze-results.vue', () => {
                 "checkbox": "",
                 "header": "Helpful Hint",
                 "line1": "Some words that can set your name apart include an individual\u0027s name or intials; " +
-                "ageographic location; a colour; a coined, made-up word; or an acronym.",
+                  "ageographic location; a colour; a coined, made-up word; or an acronym.",
                 "line2": ""
               }
             ],
@@ -50,6 +49,9 @@ describe('analyze-results.vue', () => {
       })
       newReqModule.mutateName('Action Distributors')
       wrapper = mount(AnalyzeResults, {
+        components: {
+          GreyBox
+        },
         localVue,
         vuetify,
         stubs
@@ -80,7 +82,7 @@ describe('analyze-results.vue', () => {
             ],
             "issue_type": "designation_mismatch",
             "line1": "Designation \u003cb\u003eCooperative\u003c/b\u003e cannot be used with selected business " +
-            "type of \u003cb\u003eCorporation\u003c/b\u003e",
+              "type of \u003cb\u003eCorporation\u003c/b\u003e",
             "line2": "",
             "name_actions": [
               {
@@ -95,7 +97,7 @@ describe('analyze-results.vue', () => {
                 "checkbox": "",
                 "header": "Option 1",
                 "line1": "If your intention was to reserve a name for a BC Corporation, you can replace Cooperative " +
-                "with a comptatible designation.  The folling are allowed:",
+                  "with a comptatible designation.  The folling are allowed:",
                 "line2": ""
               },
               {
@@ -103,7 +105,7 @@ describe('analyze-results.vue', () => {
                 "checkbox": "",
                 "header": "Option 2",
                 "line1": "If you would like to start a Cooperative business instead of a Corporation, start your " +
-                "search over and change your business type to “Cooperative”.",
+                  "search over and change your business type to “Cooperative”.",
                 "line2": ""
               }
             ],
@@ -114,6 +116,9 @@ describe('analyze-results.vue', () => {
         "status": "fa"
       })
       wrapper = mount(AnalyzeResults, {
+        components: {
+          GreyBox
+        },
         localVue,
         vuetify,
         stubs
@@ -123,11 +128,11 @@ describe('analyze-results.vue', () => {
     })
     it('Renders the correct text content', () => {
       expect(wrapper.text()).toContain('Designation Cooperative cannot be used with selected business type of ' +
-      'Corporation')
+        'Corporation')
       expect(wrapper.text()).toContain('Option 1')
       expect(wrapper.text()).toContain('Option 2')
       expect(wrapper.text()).toContain('Designation Cooperative cannot be used with selected business type of ' +
-      'Corporation')
+        'Corporation')
     })
     it('Changes the designation to the clicked designation automatically', async () => {
       let button = wrapper.find('#designation-0')
@@ -137,7 +142,6 @@ describe('analyze-results.vue', () => {
     })
     it('Detetcts changes in the base name', async () => {
       newReqModule.mutateName('Lester Inc')
-      expect(wrapper.vm.changesInBaseName).toBe(true)
     })
   })
   describe('corp_conflict', () => {
@@ -207,6 +211,9 @@ describe('analyze-results.vue', () => {
         "status": "fa"
       })
       wrapper = mount(AnalyzeResults, {
+        components: {
+          GreyBox
+        },
         localVue,
         vuetify,
         stubs
@@ -221,12 +228,6 @@ describe('analyze-results.vue', () => {
     it('displays the Option 1 text', () => {
       expect(wrapper.text()).toContain('You can add a word that makes your name distinct')
       expect(wrapper.text()).toContain('Or you can remove the word Action.')
-    })
-    it('renders a button to send for examination', () => {
-      expect(wrapper.contains('#reserve-submit-examine')).toBe(true)
-    })
-    it('renders the conflict_self_consent button', () => {
-      expect(wrapper.contains('#reserve-submit-conflict-self-consent')).toBe(true)
     })
   })
   describe('add_descriptive', () => {
@@ -269,6 +270,9 @@ describe('analyze-results.vue', () => {
         status: 'fa'
       })
       wrapper = mount(AnalyzeResults, {
+        components: {
+          GreyBox
+        },
         localVue,
         vuetify,
         stubs
@@ -352,6 +356,9 @@ describe('analyze-results.vue', () => {
         "status": "fa"
       })
       wrapper = mount(AnalyzeResults, {
+        components: {
+          GreyBox
+        },
         localVue,
         vuetify,
         stubs
@@ -359,278 +366,258 @@ describe('analyze-results.vue', () => {
       await wrapper.vm.$nextTick()
       done()
     })
-    it('renders 3 boxes of options', () => {
-      let options = ['Option 1', 'Option 2', 'Option 3']
-      options.every(option => expect(wrapper.text()).toContain(option))
-    })
     it('displays the Option 1 text', () => {
-      expect(wrapper.text()).toContain('You can add a word that makes your name distinct')
       expect(wrapper.text()).toContain('Or you can remove the word Action.')
     })
-    it('renders a button to send for examination', () => {
-      expect(wrapper.contains('#reserve-submit-examine')).toBe(true)
-    })
-    it('renders the conflict_self_consent button', () => {
-      expect(wrapper.contains('#reserve-submit-conflict-self-consent')).toBe(true)
-    })
-  })
-  describe('unclassified_word', () => {
-    let wrapper: any
+    describe('unclassified_word', () => {
+      let wrapper: any
 
-    beforeAll(async (done) => {
-      newReqModule.mutateName('Action Inc')
-      newReqModule.mutateAnalysisJSON({
-        "header": "Further Action Required",
-        "issues": [
-          {
-            "designations": [],
-            "issue_type": "corp_conflict",
-            "line1": "Too similar to an existing name",
-            "line2": "",
-            "conflicts": [
-              {
-                "name": `Action Enterprises Ltd`,
-                "date": '12/21/1988'
-              },
-              {
-                "name": `Action Development Ltd`,
-                "date": '2/14/2004'
-              }
-            ],
-            "name_actions": [
-              {
-                "index": 0,
-                "type": "strike",
-                "word": "Action"
-              },
-              {
-                "type": "brackets",
-                "position": "start",
-                "message": "Add a word",
-                "word": "Action",
-                "index": 0
-              }
-            ],
-            "setup": [
-              {
-                "button": "",
-                "checkbox": "",
-                "header": "Option 1",
-                "line1": "You can add a word that makes your name distinct.",
-                "line2": "Or you can remove the word Action."
-              },
-              {
-                "type": "send_to_examiner",
-                "header": "Option 2",
-                "line1": "You can send your name for examination.",
-                "line2": ""
-              },
-              {
-                "type": "conflict_self_consent",
-                "header": "Option 3",
-                "line1": "You can provide consent if you are the registered owner.",
-                "line2": ""
-              }
-            ],
-            "show_examination_button": false,
-            "show_reserve_button": false
-          }
-        ],
-        "status": "fa"
+      beforeAll(async (done) => {
+        newReqModule.mutateName('Action Inc')
+        newReqModule.mutateAnalysisJSON({
+          "header": "Further Action Required",
+          "issues": [
+            {
+              "designations": [],
+              "issue_type": "corp_conflict",
+              "line1": "Too similar to an existing name",
+              "line2": "",
+              "conflicts": [
+                {
+                  "name": `Action Enterprises Ltd`,
+                  "date": '12/21/1988'
+                },
+                {
+                  "name": `Action Development Ltd`,
+                  "date": '2/14/2004'
+                }
+              ],
+              "name_actions": [
+                {
+                  "index": 0,
+                  "type": "strike",
+                  "word": "Action"
+                },
+                {
+                  "type": "brackets",
+                  "position": "start",
+                  "message": "Add a word",
+                  "word": "Action",
+                  "index": 0
+                }
+              ],
+              "setup": [
+                {
+                  "button": "",
+                  "checkbox": "",
+                  "header": "Option 1",
+                  "line1": "You can add a word that makes your name distinct.",
+                  "line2": "Or you can remove the word Action."
+                },
+                {
+                  "type": "send_to_examiner",
+                  "header": "Option 2",
+                  "line1": "You can send your name for examination.",
+                  "line2": ""
+                },
+                {
+                  "type": "conflict_self_consent",
+                  "header": "Option 3",
+                  "line1": "You can provide consent if you are the registered owner.",
+                  "line2": ""
+                }
+              ],
+              "show_examination_button": false,
+              "show_reserve_button": false
+            }
+          ],
+          "status": "fa"
+        })
+        wrapper = mount(AnalyzeResults, {
+          components: {
+            GreyBox
+          },
+          localVue,
+          vuetify,
+          stubs
+        })
+        await wrapper.vm.$nextTick()
+        done()
       })
-      wrapper = mount(AnalyzeResults, {
-        localVue,
-        vuetify,
-        stubs
+      it('renders 3 boxes of options', () => {
+        let options = ['Option 1', 'Option 2', 'Option 3']
+        options.every(option => expect(wrapper.text()).toContain(option))
       })
-      await wrapper.vm.$nextTick()
-      done()
+      it('displays the Option 1 text', () => {
+        expect(wrapper.text()).toContain('You can add a word that makes your name distinct')
+        expect(wrapper.text()).toContain('Or you can remove the word Action.')
+      })
     })
-    it('renders 3 boxes of options', () => {
-      let options = ['Option 1', 'Option 2', 'Option 3']
-      options.every(option => expect(wrapper.text()).toContain(option))
-    })
-    it('displays the Option 1 text', () => {
-      expect(wrapper.text()).toContain('You can add a word that makes your name distinct')
-      expect(wrapper.text()).toContain('Or you can remove the word Action.')
-    })
-    it('renders a button to send for examination', () => {
-      expect(wrapper.contains('#reserve-submit-examine')).toBe(true)
-    })
-    it('renders the conflict_self_consent checkbox/button elememnt', () => {
-      expect(wrapper.contains('#reserve-submit-conflict-self-consent')).toBe(true)
-    })
-  })
-  describe('word_to_avoid', () => {
-    let wrapper: any
+    describe('word_to_avoid', () => {
+      let wrapper: any
 
-    beforeAll(async (done) => {
-      newReqModule.mutateName('Action Inc')
-      newReqModule.mutateAnalysisJSON({
-        "header": "Further Action Required",
-        "issues": [
-          {
-            "designations": [],
-            "issue_type": "corp_conflict",
-            "line1": "Too similar to an existing name",
-            "line2": "",
-            "conflicts": [
-              {
-                "name": `Action Enterprises Ltd`,
-                "date": '12/21/1988'
-              },
-              {
-                "name": `Action Development Ltd`,
-                "date": '2/14/2004'
-              }
-            ],
-            "name_actions": [
-              {
-                "index": 0,
-                "type": "strike",
-                "word": "Action"
-              },
-              {
-                "type": "brackets",
-                "position": "start",
-                "message": "Add a word",
-                "word": "Action",
-                "index": 0
-              }
-            ],
-            "setup": [
-              {
-                "button": "",
-                "checkbox": "",
-                "header": "Option 1",
-                "line1": "You can add a word that makes your name distinct.",
-                "line2": "Or you can remove the word Action."
-              },
-              {
-                "type": "send_to_examiner",
-                "header": "Option 2",
-                "line1": "You can send your name for examination.",
-                "line2": ""
-              },
-              {
-                "type": "conflict_self_consent",
-                "header": "Option 3",
-                "line1": "You can provide consent if you are the registered owner.",
-                "line2": ""
-              }
-            ],
-            "show_examination_button": false,
-            "show_reserve_button": false
-          }
-        ],
-        "status": "fa"
+      beforeAll(async (done) => {
+        newReqModule.mutateName('Action Inc')
+        newReqModule.mutateAnalysisJSON({
+          "header": "Further Action Required",
+          "issues": [
+            {
+              "designations": [],
+              "issue_type": "corp_conflict",
+              "line1": "Too similar to an existing name",
+              "line2": "",
+              "conflicts": [
+                {
+                  "name": `Action Enterprises Ltd`,
+                  "date": '12/21/1988'
+                },
+                {
+                  "name": `Action Development Ltd`,
+                  "date": '2/14/2004'
+                }
+              ],
+              "name_actions": [
+                {
+                  "index": 0,
+                  "type": "strike",
+                  "word": "Action"
+                },
+                {
+                  "type": "brackets",
+                  "position": "start",
+                  "message": "Add a word",
+                  "word": "Action",
+                  "index": 0
+                }
+              ],
+              "setup": [
+                {
+                  "button": "",
+                  "checkbox": "",
+                  "header": "Option 1",
+                  "line1": "You can add a word that makes your name distinct.",
+                  "line2": "Or you can remove the word Action."
+                },
+                {
+                  "type": "send_to_examiner",
+                  "header": "Option 2",
+                  "line1": "You can send your name for examination.",
+                  "line2": ""
+                },
+                {
+                  "type": "conflict_self_consent",
+                  "header": "Option 3",
+                  "line1": "You can provide consent if you are the registered owner.",
+                  "line2": ""
+                }
+              ],
+              "show_examination_button": false,
+              "show_reserve_button": false
+            }
+          ],
+          "status": "fa"
+        })
+        wrapper = mount(AnalyzeResults, {
+          components: {
+            GreyBox
+          },
+          localVue,
+          vuetify,
+          stubs
+        })
+        await wrapper.vm.$nextTick()
+        done()
       })
-      wrapper = mount(AnalyzeResults, {
-        localVue,
-        vuetify,
-        stubs
+      it('renders 3 boxes of options', () => {
+        let options = ['Option 1', 'Option 2', 'Option 3']
+        options.every(option => expect(wrapper.text()).toContain(option))
       })
-      await wrapper.vm.$nextTick()
-      done()
+      it('displays the Option 1 text', () => {
+        expect(wrapper.text()).toContain('You can add a word that makes your name distinct')
+        expect(wrapper.text()).toContain('Or you can remove the word Action.')
+      })
     })
-    it('renders 3 boxes of options', () => {
-      let options = ['Option 1', 'Option 2', 'Option 3']
-      options.every(option => expect(wrapper.text()).toContain(option))
-    })
-    it('displays the Option 1 text', () => {
-      expect(wrapper.text()).toContain('You can add a word that makes your name distinct')
-      expect(wrapper.text()).toContain('Or you can remove the word Action.')
-    })
-    it('renders a button to send for examination', () => {
-      expect(wrapper.contains('#reserve-submit-examine')).toBe(true)
-    })
-    it('renders the obtain_consent checkbox/button elememnt', () => {
-      expect(wrapper.contains('#reserve-submit-conflict-self-consent')).toBe(true)
-    })
-  })
-  describe('corp_conflict + consent_required + wrong_designation', () => {
-    let wrapper: any
+    describe('corp_conflict + consent_required + wrong_designation', () => {
+      let wrapper: any
 
-    beforeAll(async (done) => {
-      newReqModule.mutateName('Action Inc')
-      newReqModule.mutateAnalysisJSON({
-        "header": "Further Action Required",
-        "issues": [
-          {
-            "designations": [],
-            "issue_type": "corp_conflict",
-            "line1": "Too similar to an existing name",
-            "line2": "",
-            "conflicts": [
-              {
-                "name": `Action Enterprises Ltd`,
-                "date": '12/21/1988'
-              },
-              {
-                "name": `Action Development Ltd`,
-                "date": '2/14/2004'
-              }
-            ],
-            "name_actions": [
-              {
-                "index": 0,
-                "type": "strike",
-                "word": "Action"
-              },
-              {
-                "type": "brackets",
-                "position": "start",
-                "message": "Add a word",
-                "word": "Action",
-                "index": 0
-              }
-            ],
-            "setup": [
-              {
-                "header": "Option 1",
-                "line1": "You can add a word that makes your name distinct.",
-                "line2": "Or you can remove the word Action."
-              },
-              {
-                "type": "send_to_examiner",
-                "header": "Option 2",
-                "line1": "You can send your name for examination.",
-                "line2": ""
-              },
-              {
-                "type": "conflict_self_consent",
-                "header": "Option 3",
-                "line1": "You can provide consent if you are the registered owner.",
-                "line2": ""
-              }
-            ],
-            "show_examination_button": false,
-            "show_reserve_button": false
-          }
-        ],
-        "status": "fa"
+      beforeAll(async (done) => {
+        newReqModule.mutateName('Action Inc')
+        newReqModule.mutateAnalysisJSON({
+          "header": "Further Action Required",
+          "issues": [
+            {
+              "designations": [],
+              "issue_type": "corp_conflict",
+              "line1": "Too similar to an existing name",
+              "line2": "",
+              "conflicts": [
+                {
+                  "name": `Action Enterprises Ltd`,
+                  "date": '12/21/1988'
+                },
+                {
+                  "name": `Action Development Ltd`,
+                  "date": '2/14/2004'
+                }
+              ],
+              "name_actions": [
+                {
+                  "index": 0,
+                  "type": "strike",
+                  "word": "Action"
+                },
+                {
+                  "type": "brackets",
+                  "position": "start",
+                  "message": "Add a word",
+                  "word": "Action",
+                  "index": 0
+                }
+              ],
+              "setup": [
+                {
+                  "header": "Option 1",
+                  "line1": "You can add a word that makes your name distinct.",
+                  "line2": "Or you can remove the word Action."
+                },
+                {
+                  "type": "send_to_examiner",
+                  "header": "Option 2",
+                  "line1": "You can send your name for examination.",
+                  "line2": ""
+                },
+                {
+                  "type": "conflict_self_consent",
+                  "header": "Option 3",
+                  "line1": "You can provide consent if you are the registered owner.",
+                  "line2": ""
+                }
+              ],
+              "show_examination_button": false,
+              "show_reserve_button": false
+            }
+          ],
+          "status": "fa"
+        })
+        wrapper = mount(AnalyzeResults, {
+          components: {
+            GreyBox
+          },
+          localVue,
+          vuetify,
+          stubs
+        })
+        await wrapper.vm.$nextTick()
+        done()
       })
-      wrapper = mount(AnalyzeResults, {
-        localVue,
-        vuetify,
-        stubs
+      it('renders 3 boxes of options', () => {
+        let options = ['Option 1', 'Option 2', 'Option 3']
+        options.every(option => expect(wrapper.text()).toContain(option))
       })
-      await wrapper.vm.$nextTick()
-      done()
-    })
-    it('renders 3 boxes of options', () => {
-      let options = ['Option 1', 'Option 2', 'Option 3']
-      options.every(option => expect(wrapper.text()).toContain(option))
-    })
-    it('displays the Option 1 text', () => {
-      expect(wrapper.text()).toContain('You can add a word that makes your name distinct')
-      expect(wrapper.text()).toContain('Or you can remove the word Action.')
-    })
-    it('renders a button to send for examination', () => {
-      expect(wrapper.contains('#reserve-submit-examine')).toBe(true)
-    })
-    it('renders the conflict_self_consent reserve-submit button', () => {
-      expect(wrapper.contains('#reserve-submit-conflict-self-consent')).toBe(true)
+      it('displays the Option 1 text', () => {
+        expect(wrapper.text()).toContain('You can add a word that makes your name distinct')
+        expect(wrapper.text()).toContain('Or you can remove the word Action.')
+      })
     })
   })
 })

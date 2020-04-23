@@ -89,6 +89,15 @@ export interface NameChoicesI {
   designation1: string | null
   [propName: string]: string
 }
+export interface OptionI {
+  button?: string
+  checkbox?: string
+  header: string
+  label?: string
+  line1: string
+  line2?: string
+  type: string
+}
 export interface RequestDataI {
   nrNumber: number
   name: string
