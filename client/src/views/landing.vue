@@ -18,17 +18,26 @@
 </template>
 
 <script lang="ts">
+import AnalyzeCharacters from '@/components/new-request/analyze-characters'
 import AnalyzePending from '@/components/new-request/analyze-pending'
 import AnalyzeResults from '@/components/new-request/analyze-results'
 import LowerContainer from '@/components/lower-info-area/lower-container'
-import SubmissionTabs from '@/components/new-request/submit-request/submission-tabs.vue'
 import newReqModule from '@/store/new-request-module'
 import Stats from '@/components/new-request/stats'
+import SubmissionTabs from '@/components/new-request/submit-request/submission-tabs'
 import Tabs from '@/components/tabs'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
-  components: { SubmissionTabs, AnalyzePending, AnalyzeResults, LowerContainer, Stats, Tabs }
+  components: {
+    AnalyzeCharacters,
+    AnalyzePending,
+    AnalyzeResults,
+    LowerContainer,
+    Stats,
+    SubmissionTabs,
+    Tabs
+  }
 })
 export default class Landing extends Vue {
   get displayedComponent () {

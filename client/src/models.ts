@@ -1,4 +1,4 @@
-export type DisplayedComponentT = 'Tabs' | 'AnalyzePending' | 'AnalyzeResults' | 'SubmissionTabs'
+export type DisplayedComponentT = 'Tabs' | 'AnalyzePending' | 'AnalyzeResults' | 'SubmissionTabs' | 'AnalyzeCharacters'
 export type LocationT = 'BC' | 'CA' | 'IN' | 'INFO'
 export type NrDataResponseT = RequestDataI | null
 export type NrDataT = string | null
