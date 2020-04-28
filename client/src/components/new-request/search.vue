@@ -37,7 +37,7 @@
                  id="name-input-component"
                  class="mb-n7"/>
       <v-row no-gutters class="mt-n3 px-3" align="center">
-        <v-col @mouseenter="handleMouseEnter"
+        <v-col @mouseenter="handleMouseEnter('name', $event)"
                @mouseleave="handleMouseLeave"
                cols="*"
                id="name-checkbox-col">
@@ -46,14 +46,11 @@
                       class="small-copy px-0 mx-0"
                       label="The name is a person's name" />
         </v-col>
-        <v-col cols="3">
-          <transition :name="displayedComponent === 'Tabs' ? 'fadeslower' : ''">
-            <v-checkbox v-model="nameIsEnglish"
-                        v-if="isPersonsName"
-                        id="name-checkbox"
-                        class="small-copy ml-n6"
-                        label="The name is English" />
-          </transition>
+        <v-col cols="3" @mouseenter="handleMouseEnter('language', $event)" @mouseleave="handleMouseLeave">
+          <v-checkbox v-model="nameIsEnglish"
+                      id="name-checkbox"
+                      class="small-copy ml-n6"
+                      label="The name is English" />
         </v-col>
         <v-col cols="5">
         <span id="nr-required-activator"
@@ -64,16 +61,31 @@
       </v-row>
     </v-row>
     <v-tooltip v-model="showToolTip"
-               fixed
+               absolute
                bottom
+               :nudge-bottom="nudgeY"
+               max-width="525"
                :position-x="toolTipX"
                :position-y="toolTipY">
-      <p class="py-0 my-0">Check this box if you are...</p>
-      <ul>
-        <li>Incorporating under your own name (eg. DR. JOE SMITH INC.)</li>
-        <li>The name contains one or more names. (eg. BLAKE, CHAN & DOUGLAS INC.)</li>
-        <li>The name contains one or more names. (eg. FRANKLIN INC.)</li>
-      </ul>
+      <template v-if="toolTipActivator === 'name'">
+        <p class="py-0 my-0">Check this box if you are...</p>
+        <ul>
+          <li>Incorporating under your own name (eg. DR. JOE SMITH INC.)</li>
+          <li>The name contains one or more names. (eg. BLAKE, CHAN & DOUGLAS INC.)</li>
+          <li>The name contains one or more names. (eg. FRANKLIN INC.)</li>
+        </ul>
+      </template>
+      <template v-else>
+        <p class="py-0 my-0">This refers to the language of the words in your name.</p>
+        <ul>
+          <li>Leave this box checked if your name contains <b>only</b> English <b>or a mix</b> of English and
+            another Language
+          </li>
+          <li>Uncheck this box if your name is written <b>entirely</b> in another language and does <b>not</b> contain
+            any English
+          </li>
+        </ul>
+      </template>
     </v-tooltip>
   </v-container>
 </template>
@@ -90,10 +102,12 @@ let timer: any
   components: { NameInput }
 })
 export default class Search extends Vue {
-  hoveringNow = false
-  showToolTip = false
-  toolTipX = 0
-  toolTipY = 0
+  hoveringNow: boolean = false
+  nudgeY: number = 0
+  showToolTip: boolean = false
+  toolTipActivator: string | null = null
+  toolTipX: number = 0
+  toolTipY: number = 0
 
   @Watch('location')
   handleLocation (newVal, oldVal) {
@@ -152,12 +166,18 @@ export default class Search extends Vue {
     return newReqModule.isPersonsName
   }
   set isPersonsName (value) {
+    if (this.nameIsEnglish) {
+      this.nameIsEnglish = false
+    }
     newReqModule.mutateisPersonsName(value)
   }
   get nameIsEnglish () {
     return newReqModule.nameIsEnglish
   }
   set nameIsEnglish (value) {
+    if (this.isPersonsName) {
+      this.isPersonsName = false
+    }
     newReqModule.mutateNameIsEnglish(value)
   }
   get requestAction () {
@@ -200,22 +220,30 @@ export default class Search extends Vue {
       timer = null
     }
   }
-  handleMouseEnter ({ pageX, pageY }) {
+  handleMouseEnter (activator, event) {
     if (timer && timer.clearTimeout) {
       timer.clearTimeout()
       timer = null
     }
     this.hoveringNow = true
-    let showToolTip = () => {
+    let showToolTip = (activator) => {
+      this.toolTipActivator = activator
       if (this.hoveringNow) {
+        // eslint-disable-next-line
+        console.log(event)
+        let { pageX, pageY } = event
+        // eslint-disable-next-line
+        console.log(window.scrollY)
+
         this.toolTipX = pageX
         this.toolTipY = pageY + 25
+        this.nudgeY = window.scrollY
         this.$nextTick(function () {
           this.showToolTip = true
         })
       }
     }
-    timer = setTimeout(showToolTip, 250)
+    timer = setTimeout(showToolTip, 350, activator)
   }
 }
 

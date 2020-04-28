@@ -618,7 +618,7 @@ export class NewRequestModule extends VuexModule {
       return
     }
     this.mutateName(name)
-    if (this.doNotAnalyzeEntities.includes(this.entityType) || (this.isPersonsName && !this.nameIsEnglish)) {
+    if (this.doNotAnalyzeEntities.includes(this.entityType) || !this.nameIsEnglish) {
       this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
       this.mutateDisplayedComponent('SubmissionTabs')
       return
