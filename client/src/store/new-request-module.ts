@@ -17,7 +17,7 @@ import {
 } from '@/models'
 import canadaPostAPIKey from './config'
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
-import { normalizeWordCase, sanitizeName } from '@/plugins/utilities'
+import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
 import Vue from 'vue'
 
 const qs: any = querystring
@@ -432,6 +432,21 @@ export class NewRequestModule extends VuexModule {
     return options
   }
 
+  get nameIsSlashed () {
+    if (this.name) {
+      let { name } = this
+      if (name.includes('/') && name.split('/').length === 2) {
+        name = name.replace(/(\s+|(?=.))\/(\s+|(?=.))/g, '/')
+        let leftSideWords = name.split('/')[0].split(' ')
+        let rightSideWords = name.split('/')[1].split(' ')
+        if (leftSideWords.length >= 2 && rightSideWords.length >= 2) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
   get newOrExistingRequest () {
     if (this.tabNumber) {
       return 'existing'
@@ -612,13 +627,21 @@ export class NewRequestModule extends VuexModule {
     if (this.errors.length > 0) {
       return
     }
-    if (name !== this.name.toUpperCase()) {
+    let testName = this.name.toUpperCase()
+    testName = removeExcessSpaces(testName)
+    if (name !== testName) {
       this.mutateDisplayedComponent('AnalyzeCharacters')
       this.mutateName(name)
       return
     }
+    if (this.nameIsSlashed) {
+      this.mutateName(name)
+      this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
+      this.mutateDisplayedComponent('SubmissionTabs')
+      return
+    }
     this.mutateName(name)
-    if (this.doNotAnalyzeEntities.includes(this.entityType) || !this.nameIsEnglish) {
+    if (this.doNotAnalyzeEntities.includes(this.entityType) || !this.nameIsEnglish || this.isPersonsName) {
       this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
       this.mutateDisplayedComponent('SubmissionTabs')
       return
