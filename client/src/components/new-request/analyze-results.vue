@@ -24,13 +24,14 @@
             </v-text-field>
             <v-text-field filled
                           autocomplete="off"
-                          v-else
-                          @focus="toggleActualInput()"
+                          v-if="!showActualInput && hasNameActions"
+                          @focus="toggleRealInput()"
                           id="analyze-name-text-field-2">
               <template v-slot:append>
                 <v-icon class="name-search-icon" @click="handleSubmit">search</v-icon>
               </template>
               <template v-slot:prepend-inner>
+
                 <template v-for="(word, i) in chunkedName">
                   <name-word-renderer :key="word+i" :word="word" :index="i" :actions="nameActions" />
                 </template>
@@ -69,166 +70,20 @@
               <!--CORP CONFLICT TABLE-->
               <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n7 py-5">
                 <v-col cols="auto" >
-                  <div v-for="(corp, n) in conflicts" :key="'conflict-' +n">
+                  <div v-for="(corp, n) in conflicts" :key="'conflict-' + n">
                       {{ corp.name }}
                   </div>
                 </v-col>
               </v-row>
 
             <!--GREY BOXES-->
-            <div class="row pale-blue-text no-gutters justify-center"
-                 name="fade"
-                 tag="div">
-              <v-col :key="issue.issue_type + '-' + option.header + '-' + i"
+            <v-row class="row pale-blue-text no-gutters justify-center">
+              <v-col :key="issue.issue_type + '-' + option.header + '-' + optionIndex"
                      cols="auto"
-                     v-for="(option, i) in issue.setup">
-                <v-container :class="optionClasses(i)"
-                             :key="issue.issue_type + '-' + i  + '-container'">
-                  <transition :name="i === 0 ? 'fade' : '' " mode="out-in">
-                    <v-row class="small-copy pale-blue-text"
-                           align-content="space-between"
-                           :key="changesInBaseName+designationIsFixed+'key'+i">
-                      <!-- Line 1 and Line 2-->
-                      <v-col class="bold-text mt-n3" cols="12">
-                        <h5><v-icon class="pr-2 pale-blue-text">info</v-icon>
-                          {{ option.header }}</h5>
-                      </v-col>
-                      <!--LINE 1 + LINE 2 WHEN THERE ARE NO CHANGES IN BASE NAME AND REPLACE_DESIGNATION-->
-                      <template v-if="option.type === 'replace_designation' && !changesInBaseName">
-                        <v-col class="small-copy pale-blue-text pt-0"
-                               cols="12"
-                               v-if="!designationIsFixed"
-                               v-html="option.line1" />
-                        <v-col class="small-copy pale-blue-text pt-0"
-                               cols="12"
-                               v-if="!designationIsFixed"
-                               v-html="option.line2" />
-                        <v-col class="small-copy pale-blue-text pt-0"
-                               cols="12"
-                               v-else>
-                          You have changed the designation to a compatible one.  You may proceed.
-                        </v-col>
-                      </template>
-                      <template v-else-if="option.type === 'change_entity_type'">
-                        <v-col class="small-copy pale-blue-text pt-0"
-                               key="change-entity-type-col"
-                               cols="12"
-                               v-html="option.line1" />
-                        <v-col class="text-center mt-4">
-                          <v-btn @click="startAgain()">Restart and Change Type</v-btn>
-                        </v-col>
-                      </template>
-                      <!--LINE 1 + LINE 2 WHEN REPLACE_DESIGNATION AND CHANGES IN BASE NAME + ANY OTHER SCENARIO-->
-                      <template v-else>
-                        <v-col class="small-copy pale-blue-text pt-0"
-                               cols="12"
-                               v-html="option.line1" />
-                        <v-col class="small-copy pale-blue-text pt-0 flex-fill"
-                               cols="12"
-                               v-html="option.line2" />
-                      </template>
-                     <!--button / checkbox driven ui-->
-                      <transition name="fade" mode="out-in">
-                        <v-col v-if="option.type === 'replace_designation'"
-                               :key="changesInBaseName+designationIsFixed+'key'">
-                          <!--Designation based issues-->
-                          <p v-if="changesInBaseName">
-                            You have made changes to the base name.
-                            You must either change the name back or run a new search.
-                          </p>
-                          <div v-if="!designationIsFixed && !changesInBaseName">
-                            <p class="mt-n3 mb-1 small-copy">Please choose one of the following:</p>
-                            <button tag="div"
-                                    :key="'designation-'+d"
-                                    :id="'designation-'+d"
-                                    @click="changeDesignation(des)"
-                                    class="small-link mr-2"
-                                    v-for="(des, d) in designations">
-                              {{ des }}{{ (d !== issue.designations.length - 1) ? ',' : '' }}
-                            </button>
-                          </div>
-                          <div v-if="designationIsFixed && !changesInBaseName" class="text-center">
-                            <ReserveSubmit id="reserve-submit-designation" style="display: inline"
-                                           :setup="reserveAction" />
-                          </div>
-                        </v-col>
-                      </transition>
-                      <v-col v-if="option.type === 'send_to_examiner'"
-                             class="pa-0"
-                             id="examine-checkbox-col">
-                        <v-checkbox :error="highlightCheckboxes"
-                                    :label="checkBoxLabel(option.type)"
-                                    class="ma-0 pa-0"
-                                    id="examine-checkbox"
-                                    v-if="displayCheckbox"
-                                    v-model="requestExaminationStep[issueIndex]" />
-                        <ReserveSubmit id="reserve-submit-examine"
-                                       v-else
-                                       style="display: inline"
-                                       setup="examine"/>
-                      </v-col>
-                      <!--OBTAIN CONSENT WITH CHECKBOX-->
-                      <v-col v-if="option.type === 'obtain_consent'"
-                             id="obtain-consent-col"
-                             class="pa-0">
-                        <transition name="fade" mode="out-in">
-                          <v-checkbox :error="highlightCheckboxes"
-                                      :key="option.type+'-checkbox'"
-                                      :label="checkBoxLabel(option.type)"
-                                      class="ma-0 pa-0"
-                                      id="obtain-consent-checkbox"
-                                      v-if="displayCheckbox ||  buttonThenCheckbox(option.type)"
-                                      v-model="obtainConsentStep[issueIndex]" />
-                          <ReserveSubmit :key="option.type+'-reserve-submit'"
-                                         :setup="examinationRequested ? 'examine' : 'consent'"
-                                         id="reserve-submit-obtain-consent"
-                                         style="display: inline"
-                                         v-else />
-                        </transition>
-                      </v-col>
-                      <v-col v-if="issue.issue_type === 'designation_misplaced'"
-                             id="designation-misplaced-col"
-                             coks="12"
-                             class="pa-0 text-center">
-                        <transition name="fade" mode="out-in">
-                          <v-btn :key="`${option.type}-fix-btn`"
-                                 @click="moveDesignation"
-                                 v-if="!designationIsMoved">Move Designation</v-btn>
-                          <ReserveSubmit id="reserve-submit-obtain-consent"
-                                         style="display: inline"
-                                         :key="option.type+'-reserve-submit'"
-                                         v-else
-                                         :setup="reserveAction" />
-                        </transition>
-                      </v-col>
-                      <v-col v-if="option.type === 'conflict_self_consent'"
-                             id="conflict_self_consent-col"
-                             class="pa-0">
-                        <transition name="fade" mode="out-in" >
-                          <v-checkbox :error="highlightCheckboxes"
-                                      :key="option.type+'-checkbox'"
-                                      :label="checkBoxLabel(option.type)"
-                                      class="ma-0 pa-0"
-                                      id="conflict-self-consent-checkbox"
-                                      v-if="displayCheckbox || buttonThenCheckbox(option.type)"
-                                      v-model="obtainSelfConsentStep[issueIndex]" />
-                         <ReserveSubmit :key="option.type+'-reserve-submit'"
-                                        :setup="examinationRequested ? 'examine' : 'consent'"
-                                        id="reserve-submit-conflict-self-consent"
-                                        style="display: inline"
-                                        v-else />
-                        </transition>
-                      </v-col>
-                      <v-col v-if="issue.type === 'replace_designation'" id="examine-checkbox-col">
-                        <p>{{ option.line1 }}</p>
-                        <v-btn @click="restartNewType()" id="change-designation-restart-btn">
-                          Change Type and Restart</v-btn>
-                      </v-col>
-                    </v-row>
-                  </transition>
-                </v-container>
+                     v-for="(option, optionIndex) of issue.setup">
+                <GreyBox :issueIndex="issueIndex" :i="optionIndex" :option="option" :originalName="originalName" />
               </v-col>
-            </div>
+            </v-row>
 
               <!--SUBMISSION BUTTON-->
               <v-row v-if="issue.show_examination_button || issue.show_reserve_button"
@@ -297,101 +152,33 @@
 </template>
 
 <script lang="ts">
-import designations from '@/store/list-data/designations'
-import MainContainer from '@/components/new-request/main-container.vue'
-import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
+import GreyBox from '@/components/new-request/grey-box'
+import MainContainer from '@/components/new-request/main-container'
+import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit'
 import NameWordRenderer from '@/components/new-request/analyzed-name-word-renderer'
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { IssueI, SetupI, DisplayedComponentT } from '@/models'
+import { IssueI } from '@/models'
 
 @Component({
-  components: { MainContainer, ReserveSubmit, NameWordRenderer }
+  components: { GreyBox, MainContainer, NameWordRenderer, ReserveSubmit }
 })
 export default class AnalyzeResults extends Vue {
   issueIndex: number = 0
-  openedCategory: string = ''
-  showActualInput: boolean = false
   originalName: string | null = null
   highlightCheckboxes: boolean = false
-  obtainConsentStep = {
-    0: false,
-    1: false,
-    2: false
-  }
-  obtainSelfConsentStep = {
-    0: false,
-    1: false,
-    2: false
-  }
-  requestExaminationStep = {
-    0: false,
-    1: false,
-    2: false
+
+  @Watch('issueIndex')
+  resetShowActualInput (newVal, oldVal) {
+    if (newVal !== oldVal) {
+      this.showActualInput = false
+    }
   }
 
   created () {
     this.originalName = newReqModule.name
   }
-  @Watch('issueIndex')
-  handleIndex (newVal, oldVal) {
-    this.showActualInput = false
-    let lastIssue = this.json.issues.length - 1
-    if (newVal < oldVal) {
-      if (oldVal === lastIssue) {
-        this.obtainConsentStep[oldVal] = false
-        this.obtainSelfConsentStep[oldVal] = false
-      }
-    }
-  }
-  @Watch('requestExaminationStep', { deep: true })
-  handlerExamine (newVal, oldVal) {
-    if (newVal[this.issueIndex]) {
-      this.obtainConsentStep[this.issueIndex] = false
-      this.obtainSelfConsentStep[this.issueIndex] = false
-    }
-  }
-  @Watch('obtainConsentStep', { deep: true })
-  handlerBody (newVal, oldVal) {
-    if (newVal[this.issueIndex]) {
-      this.requestExaminationStep[this.issueIndex] = false
-    }
-  }
-  @Watch('obtainSelfConsentStep', { deep: true })
-  handlerCorp (newVal, oldVal) {
-    if (newVal[this.issueIndex]) {
-      this.requestExaminationStep[this.issueIndex] = false
-    }
-  }
 
-  get buttonSetup () {
-    let output: string = ''
-    for (let step in this.obtainConsentStep) {
-      if (this.obtainConsentStep[step]) {
-        output = 'consent'
-      }
-    }
-    for (let step in this.obtainSelfConsentStep) {
-      if (this.obtainSelfConsentStep[step]) {
-        output = 'consent'
-      }
-    }
-    for (let step in this.requestExaminationStep) {
-      if (this.requestExaminationStep[step]) {
-        output = 'examine'
-      }
-    }
-    return output
-  }
-  get changesInBaseName () {
-    if (this.issue.issue_type === 'designation_mismatch') {
-      let nameEnd = this.originalName.indexOf(this.word)
-      if (this.originalName.slice(0, nameEnd) !== this.name.slice(0, nameEnd)) {
-        return true
-      }
-    }
-    return false
-  }
   get chunkedName () {
     return this.name.split(' ')
   }
@@ -401,62 +188,11 @@ export default class AnalyzeResults extends Vue {
     }
     return []
   }
-  get designationIsFixed () {
-    if (this.issue.issue_type === 'designation_mismatch' && !this.changesInBaseName) {
-      let { designations } = this.issue
-      for (let des of designations) {
-        des = des.toUpperCase()
-        let name = this.name.toUpperCase()
-        let compare = this.originalName.replace(this.word, des).toUpperCase()
-        if (name === compare) {
-          return true
-        }
-      }
-    }
-    return false
-  }
-  get designationIsMoved () {
-    if (this.issue.issue_type === 'designation_misplaced') {
-      let { word } = this.issue.name_actions.find(action => action.word)
-      word = word.toUpperCase()
-      if (this.name.endsWith(word)) {
-        return true
-      }
-    }
-    return false
-  }
-  get designations () {
-    if (this.issue && Array.isArray(this.issue.designations)) {
-      if (this.issue.designations.length > 0) {
-        return this.issue.designations.map(des => des.toUpperCase())
-      }
-    }
-    return null
-  }
-  get displayCheckbox () {
-    if (this.json.issues && Array.isArray(this.json.issues)) {
-      let { issues } = this.json
-      if (issues.length > 1 && this.issueIndex < issues.length - 1) {
-        return true
-      }
-    }
-    return false
-  }
   get entityText () {
     return newReqModule.entityTextFromValue
   }
   get entityType () {
     return newReqModule.entityType
-  }
-  get examinationRequested () {
-    if (this.issueIndex >= 1) {
-      for (let n = this.issueIndex - 1; n >= 0; n--) {
-        if (this.requestExaminationStep[n]) {
-          return true
-        }
-      }
-    }
-    return false
   }
   get hasNameActions () {
     if (this.issue && this.issue.name_actions && Array.isArray(this.issue.name_actions)) {
@@ -483,7 +219,6 @@ export default class AnalyzeResults extends Vue {
   get name () {
     return newReqModule.name
   }
-
   set name (name: string) {
     name = name.toUpperCase()
     newReqModule.mutateName(name)
@@ -495,10 +230,10 @@ export default class AnalyzeResults extends Vue {
     return null
   }
   get nextButtonDisabled () {
-    if (this.obtainSelfConsentStep[this.issueIndex] ||
-        this.obtainConsentStep[this.issueIndex] ||
-        this.requestExaminationStep[this.issueIndex]) {
-      return false
+    for (let type of ['obtain_consent', 'conflict_self_consent', 'send_to_examiner']) {
+      if (this.requestExaminationOrProvideConsent[this.issueIndex][type]) {
+        return false
+      }
     }
     return true
   }
@@ -512,24 +247,14 @@ export default class AnalyzeResults extends Vue {
         return 'a new'
     }
   }
-  get reserveAction () {
-    let output
-    for (let step in this.obtainConsentStep) {
-      if (this.obtainConsentStep[step]) {
-        output = 'consent'
-      }
-    }
-    for (let step in this.obtainSelfConsentStep) {
-      if (this.obtainSelfConsentStep[step]) {
-        output = 'consent'
-      }
-    }
-    for (let step in this.requestExaminationStep) {
-      if (this.requestExaminationStep[step]) {
-        output = 'examine'
-      }
-    }
-    return output
+  get requestExaminationOrProvideConsent () {
+    return newReqModule.requestExaminationOrProvideConsent
+  }
+  get showActualInput () {
+    return newReqModule.showActualInput
+  }
+  set showActualInput (value) {
+    newReqModule.mutateShowActualInput(value)
   }
   get word () {
     if (Array.isArray(this.issue.name_actions) && this.issue.name_actions[0]) {
@@ -538,46 +263,6 @@ export default class AnalyzeResults extends Vue {
     return ''
   }
 
-  buttonThenCheckbox (type) {
-    if (this.examinationRequested) {
-      if (type === 'conflict_self_consent') {
-        if (this.obtainSelfConsentStep[this.issueIndex]) {
-          return false
-        }
-      }
-      if (type === 'obtain_consent') {
-        if (this.obtainConsentStep[this.issueIndex]) {
-          return false
-        }
-      }
-      return true
-    }
-    return false
-  }
-  changeDesignation (designation) {
-    this.showActualInput = true
-    this.name = this.originalName.replace(this.word, designation)
-    if (designations[this.entityType].end) {
-      if (!this.name.endsWith(designation)) {
-        let chunked = this.name.split(' ')
-        chunked.splice(chunked.indexOf(designation), 1)
-        this.name = chunked.join(' ') + ' ' + designation
-        let { word } = this.issue.name_actions.find(action => action.word)
-        word = word.toUpperCase()
-        this.originalName = chunked.join(' ') + ' ' + word
-      }
-    }
-  }
-  checkBoxLabel (type) {
-    switch (type) {
-      case 'send_to_examiner':
-        return 'I want to send my name to be examined'
-      case 'obtain_consent':
-        return 'I will obtain and submit consent'
-      case 'conflict_self_consent':
-        return 'I have authority over the conflicting name; I will submit written consent'
-    }
-  }
   clickNext () {
     let reset = () => {
       this.highlightCheckboxes = false
@@ -591,52 +276,12 @@ export default class AnalyzeResults extends Vue {
       setTimeout(() => { reset() }, 4000)
     }
   }
-  clickReserveNow () {
-    newReqModule.mutateDisplayedComponent('ApplicantInfo')
-  }
   handleSubmit (event: Event) {
     event.preventDefault()
     newReqModule.startAnalyzeName()
   }
-  moveDesignation () {
-    this.showActualInput = true
-    let { index, word } = this.issue.name_actions.find(action => action.index)
-    let chunked = this.chunkedName
-    chunked.splice(index, 1)
-    let name = chunked.join(' ')
-    this.name = name + ' ' + word
-  }
-  optionClasses (i) {
-    if (this.issue && Array.isArray(this.issue.setup)) {
-      switch (this.issue.setup.length) {
-        case 1:
-          return 'helpful-hint'
-        case 2:
-          if (i === 1) {
-            return 'square-card-x2 ml-3'
-          }
-          return 'square-card-x2'
-        case 3:
-          if (i === 1) {
-            return 'square-card-x3 mx-3'
-          }
-          return 'square-card-x3'
-        default:
-          return ''
-      }
-    }
-    return ''
-  }
-  restartNewType () {
-    newReqModule.mutate('search')
-  }
   startAgain () {
     newReqModule.startAgain()
-  }
-  toggleActualInput () {
-    if (!this.showActualInput) {
-      this.showActualInput = true
-    }
   }
   toggleRealInput () {
     if (!this.showActualInput) {
@@ -658,10 +303,6 @@ export default class AnalyzeResults extends Vue {
 </script>
 
 <style scoped lang="sass">
-#examine-checkbox
-  font-size: 13px !important
-  line-height: 16px !important
-
 .action
   color: $error !important
 

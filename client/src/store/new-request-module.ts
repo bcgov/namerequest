@@ -311,6 +311,23 @@ export class NewRequestModule extends VuexModule {
   pickRequestTypeModalVisible: boolean = false
   priorityRequest: boolean = false
   requestAction: string = 'NEW'
+  requestExaminationOrProvideConsent = {
+    0: {
+      send_to_examiner: false,
+      obtain_consent: false,
+      conflict_self_consent: false
+    },
+    1: {
+      send_to_examiner: false,
+      obtain_consent: false,
+      conflict_self_consent: false
+    },
+    2: {
+      send_to_examiner: false,
+      obtain_consent: false,
+      conflict_self_consent: false
+    }
+  }
   requestTypes: EntityI[] = [
     {
       text: 'Start a New',
@@ -366,6 +383,7 @@ export class NewRequestModule extends VuexModule {
       blurb: 'blah blah'
     }
   ]
+  showActualInput: boolean = false
   stats: StatsI | null = null
   submissionTabNumber: number = 0
   submissionType: SubmissionTypeT | null = null
@@ -568,10 +586,12 @@ export class NewRequestModule extends VuexModule {
     this.mutateAnalysisJSON(null)
     this.mutateDisplayedComponent('Tabs')
     this.resetApplicantDetails()
+    this.resetRequestExaminationOrProvideConsent()
   }
 
   @Action({ rawError: true })
   startAnalyzeName () {
+    this.mutateShowActualInput(false)
     let name
     if (this.name) {
       name = sanitizeName(this.name)
@@ -609,6 +629,7 @@ export class NewRequestModule extends VuexModule {
   @Action({ rawError: true })
   async getNameRequest () {
     this.mutateDisplayedComponent('AnalyzePending')
+    this.resetRequestExaminationOrProvideConsent()
 
     let params: NewRequestNameSearchI = {
       name: this.name,
@@ -635,6 +656,7 @@ export class NewRequestModule extends VuexModule {
   @Action({ rawError: true })
   stopAnalyzeName () {
     source.cancel()
+    this.mutateShowActualInput(false)
     this.mutateDisplayedComponent('Tabs')
     this.mutateAnalysisJSON(null)
     return Promise.resolve()
@@ -844,6 +866,16 @@ export class NewRequestModule extends VuexModule {
   }
 
   @Mutation
+  mutateRequestExaminationOrProvideConsent ({ index, type, value }) {
+    this.requestExaminationOrProvideConsent[index][type] = value
+  }
+
+  @Mutation
+  mutateShowActualInput (value) {
+    this.showActualInput = value
+  }
+
+  @Mutation
   mutateStats (stats) {
     this.stats = stats
   }
@@ -886,6 +918,15 @@ export class NewRequestModule extends VuexModule {
     Object.keys(this.applicant).forEach(key => {
       this.applicant[key] = ''
     })
+  }
+
+  @Mutation
+  resetRequestExaminationOrProvideConsent () {
+    for (let n of [0, 1, 2]) {
+      for (let type of ['send_to_examiner', 'obtain_consent', 'conflict_self_consent']) {
+        this.requestExaminationOrProvideConsent[n][type] = false
+      }
+    }
   }
 
   getEntities (catagory) {
