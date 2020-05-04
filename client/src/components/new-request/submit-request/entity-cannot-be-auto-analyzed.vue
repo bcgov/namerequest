@@ -11,30 +11,35 @@
         </v-col>
         <v-col cols="12"
                class="text-center mt-n4"
-               v-else>
+               v-else-if="isPersonsName">
           Name Requests that are personal name(s) cannot be reserved immediately.
         </v-col>
-          <v-col v-for="(box, i) in boxes" :key="'box-'+i">
-            <v-container class="small-copy text-left" :class="box.class">
-              <v-row align-content="space-between" style="height: 100%">
-                <v-col class="h5 py-0"><v-icon class="pr-2 pale-blue-text">info</v-icon>
-                  {{ box.title }}</v-col>
-                <v-col cols="12">
-                  {{ box.text }}
-                </v-col>
-                 <v-col class="text-center">
-                  <v-btn x-large
-                         id="submit-continue-btn"
-                         v-if="box.button === 'examine'"
-                         @click="showNextTab">Send For Examination</v-btn>
-                  <v-btn x-large
-                         id="submit-continue-btn"
-                         v-if="box.button === 'restart'"
-                         @click="startAgain()">Start Search Over</v-btn>
-                </v-col>
-                </v-row>
-            </v-container>
-          </v-col>
+        <v-col cols="12"
+               class="text-center mt-n4"
+               v-else-if="!nameIsEnglish">
+          Name Requests that contain words that are not English cannot be reserved immediately.
+        </v-col>
+        <v-col v-for="(box, i) in boxes" :key="'box-'+i">
+          <v-container class="small-copy text-left" :class="box.class">
+            <v-row align-content="space-between" style="height: 100%">
+              <v-col class="h5 py-0"><v-icon class="pr-2 pale-blue-text">info</v-icon>
+                {{ box.title }}</v-col>
+              <v-col cols="12">
+                {{ box.text }}
+              </v-col>
+               <v-col class="text-center">
+                <v-btn x-large
+                       id="submit-continue-btn"
+                       v-if="box.button === 'examine'"
+                       @click="showNextTab">Send For Examination</v-btn>
+                <v-btn x-large
+                       id="submit-continue-btn"
+                       v-if="box.button === 'restart'"
+                       @click="startAgain()">Start Search Over</v-btn>
+              </v-col>
+              </v-row>
+          </v-container>
+        </v-col>
       </v-row>
    </v-container>
 </template>
@@ -54,6 +59,9 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   }
   get entityType () {
     return newReqModule.entityType
+  }
+  get nameIsEnglish () {
+    return newReqModule.nameIsEnglish
   }
   get isPersonsName () {
     return newReqModule.isPersonsName
@@ -80,7 +88,7 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
       text: 'You can choose a different entity type and search again.  Please consult with a lawyer' +
       '/accounting professional if you are unsure about the most appropriate structure for your situation.'
     }
-    if (this.isPersonsName) {
+    if (this.isPersonsName || !this.nameIsEnglish) {
       output.push(nameExplanation)
     }
     if (this.entityTypeNotAnalyzed) {

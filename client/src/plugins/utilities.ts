@@ -19,7 +19,8 @@ export function normalizeWordCase (name: string) {
 }
 
 export function sanitizeName (name) {
-  let edits = removeAccents(name)
-  let edits2 = edits.replace(/[^\sa-zA-Z0-9*/+&().,="'#@!?;:-]/g, '')
-  return edits2.toUpperCase()
+  name = removeAccents(name)
+  name = name.replace(/[^\sa-zA-Z0-9*/+&().,="'#@!?;:-]/g, '')
+  name = name.replace(/\s\s+/g, ' ')
+  return name.toUpperCase()
 }
