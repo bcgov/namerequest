@@ -36,46 +36,36 @@
       <NameInput :class="inputCompClass"
                  id="name-input-component"
                  class="mb-n7"/>
-      <v-row no-gutters class="mt-n3 px-3" align="center">
-        <v-col @mouseenter="handleMouseEnter('name', $event)"
-               @mouseleave="handleMouseLeave"
-               cols="*"
-               id="name-checkbox-col">
-          <v-checkbox v-model="isPersonsName"
-                      id="name-checkbox"
-                      class="small-copy px-0 mx-0"
-                      label="The name is a person's name" />
-        </v-col>
-        <v-col cols="3" @mouseenter="handleMouseEnter('language', $event)" @mouseleave="handleMouseLeave">
-          <v-checkbox v-model="nameIsEnglish"
-                      id="name-checkbox"
-                      class="small-copy ml-n6"
-                      label="The name is English" />
-        </v-col>
-        <v-col cols="5">
-        <span id="nr-required-activator"
-              class="normal-link"
-              style="margin-left: auto"
-              @click="activateNRRModal()">Check to see if you need to file a a name request</span>
-        </v-col>
-      </v-row>
     </v-row>
-    <v-tooltip v-model="showToolTip"
-               absolute
-               bottom
-               :nudge-bottom="nudgeY"
-               max-width="525"
-               :position-x="toolTipX"
-               :position-y="toolTipY">
-      <template v-if="toolTipActivator === 'name'">
+    <v-row no-gutters class="ma-0 pa-0 mt-n3" align="center">
+      <v-col cols="4">
+      <v-tooltip bottom open-delay="300">
+        <template v-slot:activator="{on}">
+            <v-checkbox v-model="isPersonsName"
+                        v-on="on"
+                        id="name-checkbox"
+                        class="small-copy px-0 mx-0"
+                        label="The name is a person's name" />
+        </template>
         <p class="py-0 my-0">Check this box if you are...</p>
-        <ul>
-          <li>Incorporating under your own name (eg. DR. JOE SMITH INC.)</li>
-          <li>The name contains one or more names. (eg. BLAKE, CHAN & DOUGLAS INC.)</li>
-          <li>The name contains one or more names. (eg. FRANKLIN INC.)</li>
-        </ul>
-      </template>
-      <template v-else>
+          <ul>
+            <li>Incorporating under your own name (eg. DR. JOE SMITH INC.)</li>
+            <li>The name contains one or more names. (eg. BLAKE, CHAN & DOUGLAS INC.)</li>
+            <li>The name contains one or more names. (eg. FRANKLIN INC.)</li>
+          </ul>
+      </v-tooltip>
+      </v-col>
+      <v-col cols="3">
+      <v-tooltip bottom open-delay="300">
+        <template v-slot:activator="{on}">
+
+            <v-checkbox v-model="nameIsEnglish"
+                        v-on="on"
+                        id="name-checkbox"
+                        class="small-copy ml-n6"
+                        label="The name is English" />
+
+        </template>
         <p class="py-0 my-0">This refers to the language of the words in your name.</p>
         <ul>
           <li>Leave this box checked if your name contains <b>only</b> English <b>or a mix</b> of English and
@@ -85,8 +75,15 @@
             any English
           </li>
         </ul>
-      </template>
-    </v-tooltip>
+      </v-tooltip>
+      </v-col>
+      <v-col cols="5">
+        <span id="nr-required-activator"
+              class="normal-link"
+              style="margin-left: auto"
+              @click="activateNRRModal()">Check to see if you need to file a a name request</span>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -95,8 +92,6 @@ import NameInput from './name-input'
 import newReqModule from '../../store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { LocationT } from '@/models'
-
-let timer: any
 
 @Component({
   components: { NameInput }
@@ -118,13 +113,6 @@ export default class Search extends Vue {
         this.location = oldVal
         this.entityType = type
       })
-    }
-  }
-
-  @Watch('entityType')
-  uncheckBox (newVal) {
-    if (newVal !== 'CR') {
-      this.isPersonsName = false
     }
   }
 
@@ -166,18 +154,12 @@ export default class Search extends Vue {
     return newReqModule.isPersonsName
   }
   set isPersonsName (value) {
-    if (this.nameIsEnglish) {
-      this.nameIsEnglish = false
-    }
     newReqModule.mutateisPersonsName(value)
   }
   get nameIsEnglish () {
     return newReqModule.nameIsEnglish
   }
   set nameIsEnglish (value) {
-    if (this.isPersonsName) {
-      this.isPersonsName = false
-    }
     newReqModule.mutateNameIsEnglish(value)
   }
   get requestAction () {
@@ -211,39 +193,6 @@ export default class Search extends Vue {
   handleSubmit (event: Event) {
     event.preventDefault()
     newReqModule.startAnalyzeName()
-  }
-  handleMouseLeave () {
-    this.hoveringNow = false
-    this.showToolTip = false
-    if (timer && timer.clearTimeout) {
-      timer.clearTimeout()
-      timer = null
-    }
-  }
-  handleMouseEnter (activator, event) {
-    if (timer && timer.clearTimeout) {
-      timer.clearTimeout()
-      timer = null
-    }
-    this.hoveringNow = true
-    let showToolTip = (activator) => {
-      this.toolTipActivator = activator
-      if (this.hoveringNow) {
-        // eslint-disable-next-line
-        console.log(event)
-        let { pageX, pageY } = event
-        // eslint-disable-next-line
-        console.log(window.scrollY)
-
-        this.toolTipX = pageX
-        this.toolTipY = pageY + 25
-        this.nudgeY = window.scrollY
-        this.$nextTick(function () {
-          this.showToolTip = true
-        })
-      }
-    }
-    timer = setTimeout(showToolTip, 350, activator)
   }
 }
 
