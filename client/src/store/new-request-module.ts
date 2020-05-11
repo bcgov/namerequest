@@ -1,4 +1,3 @@
-import Axios from '@/plugins/axios'
 import axios from 'axios'
 import removeAccents from 'remove-accents'
 import designations from './list-data/designations'
@@ -20,9 +19,10 @@ import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-dec
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
 import Vue from 'vue'
 
+const Axios = axios.create({ baseURL: sessionStorage.getItem('BASE_URL') })
 const qs: any = querystring
 let source
-let blockCall = 0
+let blockCall = 1
 let timeOut
 let params
 
