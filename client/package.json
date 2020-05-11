@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "serve-mock": "cross-env VUE_APP_MOCK_API=yes npm run serve",
     "build": "vue-cli-service build",
     "test": "vue-cli-service test:unit  --verbose",
     "lint": "vue-cli-service lint",

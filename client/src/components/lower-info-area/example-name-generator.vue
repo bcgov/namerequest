@@ -38,7 +38,6 @@
 </template>
 
 <script lang="ts">
-import Axios from '@/plugins/axios'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({})
@@ -47,7 +46,7 @@ export default class ExampleNameGenerator extends Vue {
   wordTwo: string = 'Placeholder'
 
   handleClick () {
-    Axios.get('/word-generator')
+    return null
   }
 }
 

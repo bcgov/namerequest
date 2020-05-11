@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
-import Axios from '@/plugins/axios'
+import { getConfig } from '@/plugins/getConfig'
 
 import vuetify from './plugins/vuetify'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
@@ -12,11 +12,16 @@ import '@/sass/overrides.sass'
 
 Vue.config.productionTip = true
 Vue.config.devtools = true
-Vue.prototype.$axios = Axios
 
-new Vue({
-  router,
-  store,
-  vuetify,
-  render: h => h(App)
-}).$mount('#app')
+async function startVue () {
+  await getConfig()
+
+  new Vue({
+    router,
+    store,
+    vuetify,
+    render: h => h(App)
+  }).$mount('#app')
+}
+
+startVue()
