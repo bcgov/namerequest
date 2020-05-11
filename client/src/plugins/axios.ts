@@ -1,16 +1,10 @@
 import axios from 'axios'
 
-let baseURL = function () {
-  if (process.env.NODE_ENV === 'development') {
-    if (process.env.VUE_APP_MOCK_API === 'yes') {
-      return process.env.VUE_APP_API_URL_MOCK
-    }
-  }
-  return process.env.VUE_APP_API_URL
-}
+let baseURL = process.env.VUE_APP_API_URL || process.env.APP_API_URL
+baseURL = baseURL + '/api/v1'
 
 const Axios: any = axios.create({
-  baseURL: baseURL() + '/api/v1'
+  baseURL
 })
 
 export default Axios
