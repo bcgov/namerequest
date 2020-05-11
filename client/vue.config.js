@@ -17,5 +17,5 @@ module.exports = {
     'vuetify',
     'vuex-module-decorators'
   ],
-  publicPath: process.env.VUE_APP_PATH
+  publicPath: '/namerequest'
 }
