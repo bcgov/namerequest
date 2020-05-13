@@ -7,7 +7,7 @@
         </v-col>
         <v-col cols="10">
           <v-text-field :messages="messages['contact']"
-                        :value="contact.name"
+                        :value="contact.contact"
                         @blur="messages = {}"
                         @focus="messages['contact'] = 'Contact Person (if other than applicant. optional)'"
                         @input="updateContact('name', $event)"
@@ -23,10 +23,10 @@
         <v-col cols="5">
           <v-text-field :messages="messages['email']"
                         :rules="emailRules"
-                        :value="contact.email"
+                        :value="contact.emailAddress"
                         @blur="messages = {}"
                         @focus="messages['email'] = 'Notification Email'"
-                        @input="updateContact('email', $event)"
+                        @input="updateContact('emailAddress', $event)"
                         filled
                         hide-details="auto"
                         placeholder="Email Address (for notifications)" />
@@ -37,20 +37,20 @@
         <v-col cols="2" />
         <v-col cols="5">
           <v-text-field :messages="messages['phone']"
-                        :value="contact.phone"
+                        :value="contact.phoneNumber"
                         @blur="messages = {}"
                         @focus="messages['phone'] = 'Phone Number (Optional)'"
-                        @input="updateContact('phone', $event)"
+                        @input="updateContact('phoneNumber', $event)"
                         filled
                         hide-details="auto"
                         placeholder="Phone Number (Optional)" />
         </v-col>
         <v-col cols="5">
           <v-text-field :messages="messages['fax']"
-                        :value="contact.fax"
+                        :value="contact.faxNumber"
                         @blur="messages = {}"
                         @focus="messages['fax'] = 'Fax Number (Optional)'"
-                        @input="updateContact('fax', $event)"
+                        @input="updateContact('faxNumber', $event)"
                         filled
                         hide-details="auto"
                         placeholder="Fax Number (Optional)" />
@@ -63,7 +63,7 @@
         <v-col cols="5">
           <v-text-field :messages="messages['clientLast']"
                         :rules="requiredRule"
-                        :value="client.lastName"
+                        :value="client.clientLastName"
                         @blur="messages = {}"
                         @focus="messages['clientLast'] = 'Last Name'"
                         @input="updateClient('lastName', $event)"
@@ -74,7 +74,7 @@
         <v-col cols="5">
           <v-text-field :messages="messages['clientFirst']"
                         :rules="requiredRule"
-                        :value="client.firstName"
+                        :value="client.clientFirstName"
                         @blur="messages = {}"
                         @focus="messages['clientFirst'] = 'First Name'"
                         @input="updateClient('firstName', $event)"
@@ -147,6 +147,7 @@
                  @click="validate()">Continue to Payment</v-btn>
           <v-btn x-large
                  v-else
+                 @click="submit"
                  id="submit-continue-btn">Continue to Payment</v-btn>
         </v-col>
       </v-row>
@@ -202,6 +203,9 @@ export default class ApplicantInfo3 extends Vue {
   }
   showPreviousTab () {
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
+  }
+  submit () {
+    newReqModule.postNameReservation()
   }
   updateBusinessInfo (key, value) {
     this.clearValidation()

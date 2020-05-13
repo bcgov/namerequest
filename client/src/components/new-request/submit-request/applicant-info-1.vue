@@ -63,9 +63,9 @@
                 <template v-slot:activator="{ on }">
                   <v-text-field :messages="messages['Line1']"
                                 :rules="requiredRules"
-                                :value="applicant.Line1"
+                                :value="applicant.addrLine1"
                                 @blur="messages = {}"
-                                @input="updateApplicant('Line1', $event)"
+                                @input="updateApplicant('addrLine1', $event)"
                                 class="pa-0"
                                 dense
                                 filled
@@ -77,7 +77,7 @@
                                 single-line />
                 </template>
                 <v-list class="ma-0 pa-0" style="border-radius: 0">
-                  <v-list-item dense v-if="!addressSuggestions && applicant.Line1" class="pa-2">
+                  <v-list-item dense v-if="!addressSuggestions && applicant.addrLine1" class="pa-2">
                     <v-progress-circular color="orange"
                                          id="address-suggest-spinner"
                                          indeterminate
@@ -85,7 +85,7 @@
                     Searching...</v-list-item>
                   <v-list-item class="pa-2"
                                dense
-                               v-if="!addressSuggestions && !applicant.Line1">
+                               v-if="!addressSuggestions && !applicant.addrLine1">
                     Start typing an address to get suggestions
                   </v-list-item>
                   <v-list-item :class="getClass(address.Id)"
@@ -108,9 +108,9 @@
                                align-self="center"><h5>Country</h5></v-col>
                         <v-col cols="5" class="ma-0 pa-0"><v-select :items="countryOptions"
                                                                     :menu-props="{ auto: true, eager: true }"
-                                                                    :value="applicant.Country"
+                                                                    :value="applicant.countryTypeCd"
                                                                     @click.capture.stop
-                                                                    @input="updateApplicant('Country', $event)"
+                                                                    @input="updateApplicant('countryTypeCd', $event)"
                                                                     class="mb-1 small-copy mr-2"
                                                                     dense
                                                                     eager
@@ -129,10 +129,10 @@
           <v-row class="mt-2">
             <v-col cols="12" class="py-0 my-0">
               <v-text-field :messages="messages['Line2']"
-                            :value="applicant.Line2"
+                            :value="applicant.addrLine2"
                             @blur="messages = {}"
                             @focus="handleFocus('Line2', 'Street Address 2 (Optional)')"
-                            @input="updateApplicant('Line2', $event)"
+                            @input="updateApplicant('addrLine2', $event)"
                             dense
                             filled
                             height="50"
@@ -147,10 +147,10 @@
               <v-text-field
                             :messages="messages['City']"
                             :rules="requiredRules"
-                            :value="applicant.City"
+                            :value="applicant.city"
                             @blur="messages = {}"
                             @focus="handleFocus('City', 'City')"
-                            @input="updateApplicant('City', $event)"
+                            @input="updateApplicant('city', $event)"
                             dense
                             filled
                             height="50"
@@ -163,8 +163,8 @@
             <v-col cols="6" class="py-0 my-0">
               <v-select :items="jurisdictionOptions"
                         :rules="requiredRules"
-                        :value="applicant.Province"
-                        @input="updateApplicant('Province', $event)"
+                        :value="applicant.stateProvinceCd"
+                        @input="updateApplicant('stateProvinceCd', $event)"
                         dense
                         filled
                         height="50"
@@ -172,12 +172,12 @@
                         id="Province"
                         placeholder="Province"
                         ref="Province"
-                        v-if="applicant.Country === 'CA'" />
+                        v-if="applicant.countryTypeCd === 'CA'" />
               <v-text-field :rules="requiredRules"
-                            :value="applicant.Province"
+                            :value="applicant.stateProvinceCd"
                             @blur="messages = {}"
                             @focus="handleFocus('Province', 'Province/State')"
-                            @input="updateApplicant('Province', $event)"
+                            @input="updateApplicant('stateProvinceCd', $event)"
                             dense
                             filled
                             height="50"
@@ -202,8 +202,8 @@
                         id="Country"
                         placeholder="Country"
                         ref="Country"
-                        @input="updateApplicant('Country', $event)"
-                        :value="applicant.Country" />
+                        @input="updateApplicant('countryTypeCd', $event)"
+                        :value="applicant.countryTypeCd" />
             </v-col>
             <v-col cols="6" class="py-0 my-0">
               <v-text-field :messages="messages['PostalCode']"
@@ -215,8 +215,8 @@
                             height="50"
                             hide-details="auto"
                             placeholder="Postal/Zip Code"
-                            @input="updateApplicant('PostalCode', $event)"
-                            :value="applicant.PostalCode" />
+                            @input="updateApplicant('postalCd', $event)"
+                            :value="applicant.postalCd" />
             </v-col>
           </v-row>
           <v-row class="mt-2" v-if="location !== 'BC'">
@@ -282,8 +282,8 @@ export default class ApplicantInfo1 extends Vue {
   showAddressMenu: boolean = false
 
   mounted () {
-    this.updateApplicant('provState', 'BC')
-    this.updateApplicant('Country', 'CA')
+    this.updateApplicant('stateProvinceCd', 'BC')
+    this.updateApplicant('countryTypeCd', 'CA')
     document.addEventListener('keydown', this.handleKeydown)
   }
   beforeDestoy () {
@@ -359,7 +359,7 @@ export default class ApplicantInfo1 extends Vue {
   }
   handleFocus (id, message) {
     this.messages[id] = message
-    if (id !== 'Line1') {
+    if (id !== 'addrLine1') {
       this.showAddressMenu = false
     }
   }
@@ -405,17 +405,17 @@ export default class ApplicantInfo1 extends Vue {
   updateApplicant (key, value) {
     this.clearValidation()
     newReqModule.updateApplicantDetails({ key, value })
-    if (this.showAddressMenu && key === 'Country') {
+    if (this.showAddressMenu && key === 'countryTypeCd') {
       this.$nextTick(function () {
         this.showAddressMenu = true
         let appKV = {
-          value: this.applicant.Line1
+          value: this.applicant.addrLine1
         }
         newReqModule.getAddressSuggestions(appKV)
       })
       return
     }
-    if (key === 'Line1') {
+    if (key === 'addrLine1') {
       this.showAddressMenu = true
       return
     }

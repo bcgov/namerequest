@@ -35,12 +35,12 @@ export class NewRequestModule extends VuexModule {
     firstName: '',
     lastName: '',
     middleName: '',
-    Line1: '',
-    Line2: '',
-    Country: '',
-    PostalCode: '',
-    City: '',
-    provinceState: '',
+    addrLine1: '',
+    addrLine2: '',
+    countryTypeCd: '',
+    postalCd: '',
+    city: '',
+    stateProvinceCd: '',
     Jurisdiction: ''
   }
   businessInfo = {
@@ -49,14 +49,14 @@ export class NewRequestModule extends VuexModule {
     tm: ''
   }
   client = {
-    firstName: '',
-    lastName: ''
+    clientFirstName: '',
+    clientLastName: ''
   }
   contact = {
-    name: '',
-    phone: '',
-    email: '',
-    fax: ''
+    contact: '',
+    phoneNumber: '',
+    emailAddress: '',
+    faxNumber: ''
   }
   disableSuggestions: boolean = false
   displayedComponent: DisplayedComponentT = 'Tabs'
@@ -538,12 +538,21 @@ export class NewRequestModule extends VuexModule {
         headers: { 'Content-type': 'application/x-www-form-urlencoded' }
       })
       if (resp.data.Items && Array.isArray(resp.data.Items)) {
-        let Item = resp.data.Items.find(item => item.Language === 'ENG')
-        let fields = ['Line1', 'Line2', 'City', 'PostalCode', 'Province', 'Country']
+        let addressData = resp.data.Items.find(item => item.Language === 'ENG')
+        let canadaPostFieldsMapping = {
+          CountryIso2: 'countryTypeCd',
+          PostalCode: 'postalCd',
+          ProvinceCode: 'stateProvinceCd',
+          City: 'city',
+          Line1: 'addrLine1',
+          Line2: 'addrLine2'
+        }
+        let fields = ['Line1', 'Line2', 'City', 'PostalCode', 'ProvinceCode', 'CountryIso2']
         for (let field of fields) {
-          if (Item[field]) {
-            let value = Item[field].toUpperCase()
-            this.mutateApplicant({ key: field, value })
+          if (addressData[field]) {
+            let value = addressData[field].toUpperCase()
+            let mappedField = canadaPostFieldsMapping[field]
+            this.mutateApplicant({ key: mappedField, value })
           }
         }
       }
@@ -551,6 +560,22 @@ export class NewRequestModule extends VuexModule {
     } catch (error) {
       return error
     }
+  }
+
+  @Action({ rawError: true })
+  async postNameReservation () {
+    let postData = {}
+    let dataSources = ['applicant', 'client', 'contact']
+    dataSources.forEach(source => {
+      let fields = Object.keys(this[source])
+      fields.forEach(field => {
+        if (this[source][field]) {
+          postData[field] = this[source][field]
+        }
+      })
+    })
+    // eslint-disable-next-line
+    console.log(postData)
   }
 
   @Action({ rawError: true })
@@ -563,7 +588,7 @@ export class NewRequestModule extends VuexModule {
       Key: canadaPostAPIKey,
       SearchTerm: appKV.value,
       MaxSuggestions: 3,
-      Country: this.applicant.Country
+      Country: this.applicant.countryTypeCd
     }
 
     let resp
@@ -573,7 +598,7 @@ export class NewRequestModule extends VuexModule {
       })
       if (Array.isArray(resp.data.Items)) {
         let filteredItems = resp.data.Items.filter(item => item.Next === 'Retrieve')
-        if (this.applicant.Line1) {
+        if (this.applicant.addrLine1) {
           this.mutateAddressSuggestions(filteredItems)
         }
         return
@@ -688,7 +713,7 @@ export class NewRequestModule extends VuexModule {
   @Action({ rawError: true })
   updateApplicantDetails (appKV) {
     this.mutateApplicant(appKV)
-    if (!appKV.value || appKV.key !== 'Line1' || this.disableSuggestions) {
+    if (!appKV.value || appKV.key !== 'addrLine1' || this.disableSuggestions) {
       this.mutateAddressSuggestions(null)
       return
     }

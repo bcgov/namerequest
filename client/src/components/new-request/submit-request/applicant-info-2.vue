@@ -8,10 +8,10 @@
         <v-col cols="5">
           <v-text-field :messages="messages['email']"
                         :rules="emailRules"
-                        :value="contact.email"
+                        :value="contact.emailAddress"
                         @blur="messages = {}"
                         @focus="messages['email'] = 'Notification Email'"
-                        @input="updateContact('email', $event)"
+                        @input="updateContact('emailAddress', $event)"
                         filled
                         hide-details="auto"
                         placeholder="Email Address (for notifications)" />
@@ -22,20 +22,20 @@
         <v-col cols="2" />
         <v-col cols="5">
           <v-text-field :messages="messages['phone']"
-                        :value="contact.phone"
+                        :value="contact.phoneNumber"
                         @blur="messages = {}"
                         @focus="messages['phone'] = 'Phone Number (Optional)'"
-                        @input="updateContact('phone', $event)"
+                        @input="updateContact('phoneNumber', $event)"
                         filled
                         hide-details="auto"
                         placeholder="Phone Number (Optional)" />
         </v-col>
         <v-col cols="5">
           <v-text-field :messages="messages['fax']"
-                        :value="contact.fax"
+                        :value="contact.faxNumber"
                         @blur="messages = {}"
                         @focus="messages['fax'] = 'Fax Number (Optional)'"
-                        @input="updateContact('fax', $event)"
+                        @input="updateContact('faxNumber', $event)"
                         filled
                         hide-details="auto"
                         placeholder="Fax Number (Optional)" />

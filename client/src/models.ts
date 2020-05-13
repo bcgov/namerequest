@@ -70,12 +70,12 @@ export interface ApplicantInfoI {
   firstName: string
   lastName: string
   midddleName?: string
-  Line1: string
-  Line2?: string
-  Country: string
-  PostalCode: string
-  City: string
-  provState?: string
+  addrLine1: string
+  addrLine2?: string
+  countryTypeCd: string
+  postalCd: string
+  city: string
+  stateProvinceCd?: string
   Jurisdiction: string
 }
 export interface NewRequestNameSearchI {
@@ -110,8 +110,8 @@ export interface RequestDataI {
 export interface SearchDataI {
   nrNumber?: string
   name?: string
-  email?: string
-  phone?: string
+  emailAddress?: string
+  phoneNumber?: string
 }
 export interface SelectOptionsI {
   text: string
