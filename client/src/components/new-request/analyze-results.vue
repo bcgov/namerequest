@@ -280,8 +280,8 @@ export default class AnalyzeResults extends Vue {
     event.preventDefault()
     newReqModule.startAnalyzeName()
   }
-  startAgain () {
-    newReqModule.startAgain()
+  cancelAnalyzeName () {
+    newReqModule.cancelAnalyzeName()
   }
   toggleRealInput () {
     if (!this.showActualInput) {

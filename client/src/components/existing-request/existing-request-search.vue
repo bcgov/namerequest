@@ -24,7 +24,7 @@
              height="60" />
     </v-col>
     <v-col class="max-height mt-4">
-      <v-text-field v-model="email"
+      <v-text-field v-model="emailAddress"
                     filled
                     placeholder="Applicant's Notification Email"
                     id="existing-req-email-field">
@@ -32,7 +32,7 @@
     </v-col>
     <v-col class="max-height shrink mt-auto"> or </v-col>
     <v-col class="max-height mt-4">
-      <v-text-field v-model="email"
+      <v-text-field v-model="emailAddress"
                     filled
                     placeholder="Applicant's Notification Email"
                     id="existing-req-email-field">
@@ -64,7 +64,7 @@ export default class ExistingRequstSearch extends Vue {
     newReqModule.toggleForgotNRModal(value)
   }
   get email (): NrDataT {
-    return newReqModule.email
+    return null
   }
   set email (addr: NrDataT) {
     newReqModule.setEmail(addr)

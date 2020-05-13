@@ -67,7 +67,7 @@ export default class AnalyzeCharacters extends Vue {
   }
 
   startOver () {
-    newReqModule.stopAnalyzeName()
+    newReqModule.cancelAnalyzeName()
   }
 }
 
