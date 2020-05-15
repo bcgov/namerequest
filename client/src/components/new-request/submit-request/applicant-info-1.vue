@@ -72,7 +72,7 @@
                                 height="50"
                                 hide-details="auto"
                                 id="Line1"
-                                placeholder="Start typing address here..."
+                                placeholder="Start typing an address here..."
                                 ref="Line1"
                                 single-line />
                 </template>
@@ -126,7 +126,7 @@
               </v-menu>
             </v-col>
           </v-row>
-          <v-row class="mt-2">
+          <v-row class="mt-2" v-if="applicant.addrLine1 && !showAddressMenu">
             <v-col cols="12" class="py-0 my-0">
               <v-text-field :messages="messages['Line2']"
                             :value="applicant.addrLine2"
@@ -140,6 +140,22 @@
                             id="Line2"
                             placeholder="Additional Street Address (Optional)"
                             ref="Line2" />
+            </v-col>
+          </v-row>
+          <v-row class="mt-2" v-if="applicant.addrLine2 && !showAddressMenu">
+            <v-col cols="12" class="py-0 my-0">
+              <v-text-field :messages="messages['Line3']"
+                            :value="applicant.addrLine3"
+                            @blur="messages = {}"
+                            @focus="handleFocus('Line2', 'Street Address 3 (Optional)')"
+                            @input="updateApplicant('addrLine3', $event)"
+                            dense
+                            filled
+                            height="50"
+                            hide-details="auto"
+                            id="Line3"
+                            placeholder="Additional Street Address (Optional)"
+                            ref="Line3" />
             </v-col>
           </v-row>
           <v-row class="mt-2">
@@ -221,19 +237,19 @@
           </v-row>
           <v-row class="mt-2" v-if="location !== 'BC'">
             <v-col cols="6" class="py-0 my-0">
-              <v-select :messages="messages['Jurisdiction']"
+              <v-select :messages="messages['xproJurisdiction']"
                         :rules="requiredRules"
                         @blur="messages = {}"
-                        @focus="handleFocus('Jurisdiction', 'Business Jurisdiction')"
+                        @focus="handleFocus('xproJurisdiction', 'Business xproJurisdiction')"
                         dense
                         filled
                         eager
                         :items="jurisdictionOptions"
                         height="50"
                         hide-details="auto"
-                        placeholder="Business Jurisdiction"
-                        @input="updateApplicant('Jurisdiction', $event)"
-                        :value="applicant.Jurisdiction" />
+                        placeholder="Business xproJurisdiction"
+                        @input="updateBusinessInfo('xproJurisdiction', $event)"
+                        :value="applicant.xproJurisdiction" />
             </v-col>
             <v-col cols="6" class="py-0 my-0" />
           </v-row>
@@ -242,19 +258,20 @@
               <v-checkbox label="I am completing this reservation on my own behalf" v-model="actingOnOwnBehalf" />
             </v-col>
             <v-col cols="5" class="text-right" align-self="center">
-              <v-btn @click="showPreviousTab()"
-                     class="mr-3"
+              <!--
+              <v-btn @click="test()"
+       ``              class="mr-3"
                      id="submit-back-btn"
                      v-if="submissionType === 'examination'"
-                     x-large>Back</v-btn>
-              <v-btn @click="showNextTab()"
+                     x-large>Back</v-btn>-->
+              <v-btn @click="test()"
                      id="submit-continue-btn"
-                     v-if="step1Valid"
                      x-large>Continue</v-btn>
+              <!--
               <v-btn @click="validate()"
                      id="submit-continue-btn-disabled"
                      v-else
-                     x-large>Continue</v-btn>
+                     x-large>Continue</v-btn>-->
             </v-col>
           </v-row>
         </v-col>
@@ -312,6 +329,9 @@ export default class ApplicantInfo1 extends Vue {
   }
   get applicant () {
     return newReqModule.applicant
+  }
+  get businessInfo () {
+    return newReqModule.businessInfo
   }
   get countryOptions () {
     return jurisdictionsIN
@@ -405,7 +425,7 @@ export default class ApplicantInfo1 extends Vue {
   updateApplicant (key, value) {
     this.clearValidation()
     newReqModule.updateApplicantDetails({ key, value })
-    if (this.showAddressMenu && key === 'countryTypeCd') {
+    if (this.showAddressMenu && (key === 'addrLine1' || key === 'countryTypeCd')) {
       this.$nextTick(function () {
         this.showAddressMenu = true
         let appKV = {
@@ -421,6 +441,12 @@ export default class ApplicantInfo1 extends Vue {
     }
     this.showAddressMenu = false
   }
+  test () {
+    newReqModule.postNameReservation()
+  }
+  updateBusinessInfo (key, value) {
+    newReqModule.mutateBusinessInfo({ key, value })
+  }
   validate () {
     if (this.$refs.step1 as Vue) {
       (this.$refs.step1 as any).validate()
@@ -431,5 +457,5 @@ export default class ApplicantInfo1 extends Vue {
 
 <style scoped lang="sass">
 .highlight-list-item
-  background-color: $grey-3 !important
+  background-color: $grey-3
 </style>

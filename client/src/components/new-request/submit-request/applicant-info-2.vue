@@ -48,10 +48,10 @@
         <v-col cols="5" align-self="start">
           <v-textarea :messages="messages['nature']"
                       :rules="requiredRule"
-                      :value="businessInfo.natureOfBusiness"
+                      :value="businessInfo.natureBusinessInfo"
                       @blur="messages = {}"
                       @focus="messages['nature'] = 'Nature of Business'"
-                      @input="updateBusinessInfo('natureOfBusiness', $event)"
+                      @input="updateBusinessInfo('natureBusinessInfo', $event)"
                       filled
                       hide-details="auto"
                       placeholder="Nature of Business"
@@ -82,11 +82,11 @@
         </v-col>
         <v-col cols="5" v-else />
         <v-col cols="5" v-if="isPersonsName">
-          <v-text-field :messages="messages['tm']"
-                        :value="businessInfo.tm"
+          <v-text-field :messages="messages['tradeMark']"
+                        :value="businessInfo.tradeMark"
                         @blur="messages = {}"
-                        @focus="messages['tm'] = 'Registered Trademark (Optional)'"
-                        @input="updateBusinessInfo('tm', $event)"
+                        @focus="messages['tradeMark'] = 'Registered Trademark (Optional)'"
+                        @input="updateBusinessInfo('tradeMark', $event)"
                         filled
                         hide-details="auto"
                         placeholder="Registered Trademark (Optional)" />
@@ -105,6 +105,7 @@
                  @click="validate()">Continue to Payment</v-btn>
           <v-btn x-large
                  v-else
+                 @click="submit"
                  id="submit-continue-btn">Continue to Payment</v-btn>
         </v-col>
       </v-row>
@@ -160,6 +161,9 @@ export default class ApplicantInfo2 extends Vue {
   }
   showPreviousTab () {
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
+  }
+  submit () {
+    newReqModule.postNameReservation()
   }
   updateBusinessInfo (key, value) {
     this.clearValidation()

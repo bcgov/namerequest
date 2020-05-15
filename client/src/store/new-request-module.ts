@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { CancelToken } from 'axios'
 import removeAccents from 'remove-accents'
 import designations from './list-data/designations'
 import querystring from 'qs'
@@ -18,10 +18,12 @@ import canadaPostAPIKey from './config'
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
 import Vue from 'vue'
+import { throttle } from 'underscore'
 
 const Axios = axios.create({ baseURL: sessionStorage.getItem('BASE_URL') })
+const createThrottle = require('async-throttle')
 const qs: any = querystring
-let source
+let source: CancelToken | null = null
 let blockCall = 1
 let timeOut
 let params
@@ -41,12 +43,12 @@ export class NewRequestModule extends VuexModule {
     postalCd: '',
     city: '',
     stateProvinceCd: '',
-    Jurisdiction: ''
+    xproJurisdiction: ''
   }
   businessInfo = {
-    natureOfBusiness: '',
+    natureBusinessInfo: '',
     additionalInfo: '',
-    tm: ''
+    tradeMark: ''
   }
   client = {
     clientFirstName: '',
@@ -59,7 +61,7 @@ export class NewRequestModule extends VuexModule {
     faxNumber: ''
   }
   disableSuggestions: boolean = false
-  displayedComponent: DisplayedComponentT = 'Tabs'
+  displayedComponent: DisplayedComponentT = 'SubmissionTabs'
   doNotAnalyzeEntities: string[] = ['PAR', 'CC', 'BC', 'CP', 'PA', 'FI', 'XCP']
   entityType: string = 'CR'
   entityTypesBC: EntityI[] = [
@@ -297,8 +299,8 @@ export class NewRequestModule extends VuexModule {
   locationInfoModalVisible: boolean = false
   name: string = ''
   nameChoices = {
-    name1: '',
-    designation1: '',
+    name1: 'Lala Moon',
+    designation1: 'Inc.',
     name2: '',
     designation2: '',
     name3: '',
@@ -385,7 +387,7 @@ export class NewRequestModule extends VuexModule {
   ]
   showActualInput: boolean = false
   stats: StatsI | null = null
-  submissionTabNumber: number = 0
+  submissionTabNumber: number = 2
   submissionType: SubmissionTypeT | null = null
   tabNumber: number = 0
   waitingAddressSearch: ApplicantI | null = null
@@ -563,22 +565,6 @@ export class NewRequestModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  async postNameReservation () {
-    let postData = {}
-    let dataSources = ['applicant', 'client', 'contact']
-    dataSources.forEach(source => {
-      let fields = Object.keys(this[source])
-      fields.forEach(field => {
-        if (this[source][field]) {
-          postData[field] = this[source][field]
-        }
-      })
-    })
-    // eslint-disable-next-line
-    console.log(postData)
-  }
-
-  @Action({ rawError: true })
   async getAddressSuggestions (appKV) {
     if (!appKV.value) {
       return
@@ -591,22 +577,179 @@ export class NewRequestModule extends VuexModule {
       Country: this.applicant.countryTypeCd
     }
 
-    let resp
-    try {
-      resp = await Axios.post(url, qs.stringify(params), {
-        headers: { 'Content-type': 'application/x-www-form-urlencoded' }
-      })
-      if (Array.isArray(resp.data.Items)) {
-        let filteredItems = resp.data.Items.filter(item => item.Next === 'Retrieve')
-        if (this.applicant.addrLine1) {
-          this.mutateAddressSuggestions(filteredItems)
+    let getData = async () => {
+      try {
+        let resp = await Axios.post(url, qs.stringify(params), {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+        if (Array.isArray(resp.data.Items)) {
+          let filteredItems = resp.data.Items.filter(item => item.Next === 'Retrieve')
+          if (this.applicant.addrLine1) {
+            this.mutateAddressSuggestions(filteredItems)
+          }
+          return
         }
+        this.mutateAddressSuggestions(null)
         return
+      } catch (error) {
+        return error
       }
-      this.mutateAddressSuggestions(null)
-      return
+    }
+    const throttle = createThrottle(2)
+    const throttledGetData = throttle(getData)
+    throttledGetData()
+  }
+
+  @Action({ rawError: true })
+  async postNameReservation () {
+    /*
+    let names = []
+    if (this.nameChoices.name1) {
+      names.push({
+        name: this.nameChoices.name1,
+        choice: 1,
+        designation: this.nameChoices.designation1,
+        name_type_cd: '',
+        state: '',
+        conflict1_num: '',
+        conflict1: '',
+        consent_words: ''
+      })
+      if (this.nameChoices.name2) {
+        names.push({
+          name: this.nameChoices.name2,
+          choice: 2,
+          designation: this.nameChoices.designation2
+        })
+      }
+      if (this.nameChoices.name3) {
+        names.push({
+          name: this.nameChoices.name3,
+          choice: 3,
+          designation: this.nameChoices.designation3
+        })
+      }
+    }
+
+    let applicants = {}
+    let applicantObjects = [ 'applicant', 'client', 'contact' ]
+    for (let object of applicantObjects) {
+      for (let field in this[object]) {
+        if (this[object][field]) {
+          applicants[field] = this[object][field]
+        }
+      }
+    }
+    let more = {
+      contact: 'Sara Morton',
+      clientFirstName: 'Jenny',
+      clientLastName: 'Martin',
+      faxNumber: 2501447789,
+      addrLine2: 'Some line of address'
+    }
+    applicants = { ...applicants, ...more }
+    let businessInfo = {}
+    for (let field in this.businessInfo) {
+     // if (this.businessInfo[field]) {
+        businessInfo[field] = this.businessInfo[field]
+     // }
+    }
+
+    let postData = {
+      applicants,
+      names,
+      ...businessInfo,
+      entity_type: this.entityType,
+      location: 'BC',
+      english: this.nameIsEnglish,
+      submit_count: 1,
+      priorityCd: this.priorityRequest ? 'Y' : 'N',
+      request_action: this.requestAction,
+      state: 'DRAFT',
+      nameFlag: 'N',
+      trademark: ''
+    }
+    // eslint-disable-next-line
+    console.log(postData)
+     */
+    let data = {
+      "additionalInfo": "Sales, service and installation",
+      "applicants": [
+        {
+          "lastName": "TRENT",
+          "firstName": "LORNA",
+          "middleName": "JANE",
+          "contact": "JOE TAYLOR",
+          "clientFirstName": "JANE",
+          "clientLastName": "ABBOTT",
+          "phoneNumber": "555-555-1212",
+          "faxNumber": "",
+          "emailAddress": "lorna.trent@gov.bc.ca",
+          "addrLine1": "4326 BIRCH AVE.",
+          "addrLine2": "",
+          "city": "TERRACE",
+          "stateProvinceCd": "BC",
+          "postalCd": "V8G 4T8",
+          "countryTypeCd": "CA"
+        }
+      ],
+      "corpNum": "",
+      "english": true,
+      "entity_type": "CR",
+      "homeJurisNum": "",
+      "nameFlag": true,
+      "names": [
+        {
+          "choice": 1,
+          "conflict1": "",
+          "conflict1_num": "",
+          "consent_words": ["HOMALCO"],
+          "designation": "INC.",
+          "name": "HOMALCO HEAT EXPERTS INC.",
+          "name_type_cd": "CO",
+          "state": ""
+        },
+        {
+          "choice": 2,
+          "conflict1": "",
+          "conflict1_num": "",
+          "consent_words": [],
+          "designation": "INC.",
+          "name": "ABC HEAT EXPERTS INC.",
+          "name_type_cd": "CO",
+          "state": ""
+        },
+        {
+          "choice": 3,
+          "conflict1": "",
+          "conflict1_num": "",
+          "consent_words": [],
+          "designation": "INC.",
+          "name": "INVINITY HEAT EXPERTS INC.",
+          "name_type_cd": "CO",
+          "state": ""
+      ]
+      "natureBusinessInfo": "Wood stoves",
+      "previousRequestId": "",
+      "priorityCd": "Y",
+      "request_action": "NEW",
+      "stateCd": "DRAFT",
+      "submit_count": 1,
+      "tradeMark": "",
+      "xproJurisdiction": "",
+    }
+    let response
+    try {
+      response = await Axios.post('/namerequests', JSON.stringify(data), {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      // eslint-disable-next-line
+      console.log(response)
     } catch (error) {
-      return error
+      // eslint-disable-next-line
+      console.log(error)
     }
   }
 
@@ -619,14 +762,6 @@ export class NewRequestModule extends VuexModule {
     } catch {
       return Promise.resolve()
     }
-  }
-
-  @Action({ rawError: true })
-  startAgain () {
-    this.mutateAnalysisJSON(null)
-    this.mutateDisplayedComponent('Tabs')
-    this.resetApplicantDetails()
-    this.resetRequestExaminationOrProvideConsent()
   }
 
   @Action({ rawError: true })
@@ -702,12 +837,16 @@ export class NewRequestModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  stopAnalyzeName () {
-    source.cancel()
-    this.mutateShowActualInput(false)
-    this.mutateDisplayedComponent('Tabs')
+  cancelAnalyzeName () {
+    if (source.cancel) {
+      source.cancel()
+      source = null
+    }
     this.mutateAnalysisJSON(null)
-    return Promise.resolve()
+    this.mutateDisplayedComponent('Tabs')
+    this.mutateShowActualInput(false)
+    this.resetApplicantDetails()
+    this.resetRequestExaminationOrProvideConsent()
   }
 
   @Action({ rawError: true })

@@ -76,7 +76,7 @@ export interface ApplicantInfoI {
   postalCd: string
   city: string
   stateProvinceCd?: string
-  Jurisdiction: string
+  xproJurisdiction: string
 }
 export interface NewRequestNameSearchI {
   name: string

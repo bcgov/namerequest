@@ -73,7 +73,7 @@ export default class AnalyzePending extends Vue {
   }
 
   startOver () {
-    newReqModule.stopAnalyzeName()
+    newReqModule.cancelAnalyzeName()
   }
 }
 

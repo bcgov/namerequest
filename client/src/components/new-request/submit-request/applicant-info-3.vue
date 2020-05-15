@@ -10,7 +10,7 @@
                         :value="contact.contact"
                         @blur="messages = {}"
                         @focus="messages['contact'] = 'Contact Person (if other than applicant. optional)'"
-                        @input="updateContact('name', $event)"
+                        @input="updateContact('contact', $event)"
                         filled
                         hide-details="auto"
                         placeholder="Contact Person (if other than applicant. optional)" />
@@ -66,7 +66,7 @@
                         :value="client.clientLastName"
                         @blur="messages = {}"
                         @focus="messages['clientLast'] = 'Last Name'"
-                        @input="updateClient('lastName', $event)"
+                        @input="updateClient('clientLastName', $event)"
                         filled
                         hide-details="auto"
                         placeholder="Last Name" />
@@ -77,7 +77,7 @@
                         :value="client.clientFirstName"
                         @blur="messages = {}"
                         @focus="messages['clientFirst'] = 'First Name'"
-                        @input="updateClient('firstName', $event)"
+                        @input="updateClient('clientFirstName', $event)"
                         filled
                         hide-details="auto"
                         placeholder="First Name" />
@@ -90,10 +90,10 @@
         <v-col cols="5" align-self="start">
           <v-textarea :messages="messages['nature']"
                       :rules="requiredRule"
-                      :value="businessInfo.natureOfBusiness"
+                      :value="businessInfo.natureBusinessInfo"
                       @blur="messages = {}"
                       @focus="messages['nature'] = 'Nature of Business'"
-                      @input="updateBusinessInfo('natureOfBusiness', $event)"
+                      @input="updateBusinessInfo('natureBusinessInfo', $event)"
                       filled
                       hide-details="auto"
                       placeholder="Nature of Business"
@@ -114,11 +114,11 @@
       <v-row v-if="submissionType === 'examination' || isPersonsName">
         <v-col cols="2" />
         <v-col cols="5" v-if="isPersonsName">
-          <v-text-field :messages="messages['tm']"
-                        :value="businessInfo.tm"
+          <v-text-field :messages="messages['tradeMark']"
+                        :value="businessInfo.tradeMark"
                         @blur="messages = {}"
-                        @focus="messages['tm'] = 'Registered Trademark (Optional)'"
-                        @input="updateBusinessInfo('tm', $event)"
+                        @focus="messages['tradeMark'] = 'Registered Trademark (Optional)'"
+                        @input="updateBusinessInfo('tradeMark', $event)"
                         filled
                         hide-details="auto"
                         placeholder="Registered Trademark (Optional)" />
