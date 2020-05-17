@@ -1,21 +1,20 @@
-import axios, { AxiosInstance } from 'axios'
+import axios from 'axios'
 
 // Detailed commentary on how this works @ github.com/bcgov/business-filings-ui/utils/fetch-config.ts
-export async function getConfig (): Promise<void> {
-  const { BASE_URL } = process.env
-  const { origin } = window.location
-  const configURL = origin + BASE_URL + 'config/configuration.json'
-  const headers = {
-    'Accept': 'application/json',
-    'ResponseType': 'application/json',
-    'Cache-Control': 'no-cache'
-  }
+export function getConfig (): Promise<void> {
+  return new Promise(async resolve => {
+    const { origin } = window.location
+    const { BASE_URL } = process.env
 
-  let response = await axios.get(configURL, { headers })
-  let configJSON = response.data[0]
-  let baseURL = configJSON['URL']
-  baseURL = baseURL + '/api/v1'
-  sessionStorage.setItem('BASE_URL', baseURL)
-
-  return Promise.resolve()
+    let response = await axios.get(origin + BASE_URL + 'config/configuration.json', {
+      headers: {
+        'Accept': 'application/json',
+        'ResponseType': 'application/json',
+        'Cache-Control': 'no-cache'
+      }
+    })
+    const baseURL = response.data[0]['URL'] + '/api/v1'
+    axios.defaults.baseURL = baseURL
+    resolve()
+  })
 }

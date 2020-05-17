@@ -19,9 +19,8 @@ import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-dec
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
 import Vue from 'vue'
 
-const Axios = axios.create({ baseURL: sessionStorage.getItem('BASE_URL') })
 const qs: any = querystring
-let source
+let source: any
 let blockCall = 1
 let timeOut
 let params
@@ -534,7 +533,7 @@ export class NewRequestModule extends VuexModule {
 
     let resp
     try {
-      resp = await Axios.post(url, qs.stringify(params), {
+      resp = await axios.post(url, qs.stringify(params), {
         headers: { 'Content-type': 'application/x-www-form-urlencoded' }
       })
       if (resp.data.Items && Array.isArray(resp.data.Items)) {
@@ -555,6 +554,8 @@ export class NewRequestModule extends VuexModule {
 
   @Action({ rawError: true })
   async getAddressSuggestions (appKV) {
+    // eslint-disable-next-line
+    console.log('getAddressSuggestions')
     if (!appKV.value) {
       return
     }
@@ -568,7 +569,7 @@ export class NewRequestModule extends VuexModule {
 
     let resp
     try {
-      resp = await Axios.post(url, qs.stringify(params), {
+      resp = await axios.post(url, qs.stringify(params), {
         headers: { 'Content-type': 'application/x-www-form-urlencoded' }
       })
       if (Array.isArray(resp.data.Items)) {
@@ -581,14 +582,14 @@ export class NewRequestModule extends VuexModule {
       this.mutateAddressSuggestions(null)
       return
     } catch (error) {
-      return error
+      return
     }
   }
 
   @Action({ rawError: true })
   async getStats () {
     try {
-      let resp = await Axios.get('/stats')
+      let resp = await axios.get('/stats')
       this.mutateStats(resp.data)
       return Promise.resolve(resp.data)
     } catch {
@@ -662,9 +663,10 @@ export class NewRequestModule extends VuexModule {
     }
 
     try {
-      let CancelToken = axios.CancelToken
+      const { CancelToken } = axios
       source = CancelToken.source()
-      let resp = await Axios.get('/name-analysis', {
+
+      let resp = await axios.get('/name-analysis', {
         params,
         cancelToken: source.token
       })
@@ -672,7 +674,7 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
       this.mutateDisplayedComponent('Tabs')
-      return error
+      return
     }
   }
 
@@ -692,19 +694,6 @@ export class NewRequestModule extends VuexModule {
       this.mutateAddressSuggestions(null)
       return
     }
-    if (blockCall === 0) {
-      this.getAddressSuggestions(appKV)
-      blockCall = 1
-      timeOut = setTimeout(() => {
-        blockCall = 0
-        if (params) {
-          this.getAddressSuggestions(params)
-          params = null
-        }
-      }, 1000)
-      return
-    }
-    params = appKV
   }
 
   @Mutation

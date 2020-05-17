@@ -3,6 +3,9 @@ const path = require("path")
 module.exports = {
   configureWebpack: {
     devtool: 'eval-source-map',
+    devServer: {
+      hot: false
+    },
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json', '.vue', '.jsx']
     }

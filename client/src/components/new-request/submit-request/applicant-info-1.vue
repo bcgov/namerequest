@@ -268,6 +268,9 @@ import jurisdictionsCA from '@/store/list-data/canada-jurisdictions'
 import jurisdictionsIN from '@/store/list-data/intl-jurisdictions'
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
+import _ from 'lodash'
+
+let debounced: any = null
 
 @Component({})
 export default class ApplicantInfo1 extends Vue {
@@ -285,6 +288,7 @@ export default class ApplicantInfo1 extends Vue {
     this.updateApplicant('provState', 'BC')
     this.updateApplicant('Country', 'CA')
     document.addEventListener('keydown', this.handleKeydown)
+    debounced = null
   }
   beforeDestoy () {
     document.removeEventListener('keydown', this.handleKeydown)
@@ -316,12 +320,6 @@ export default class ApplicantInfo1 extends Vue {
   get countryOptions () {
     return jurisdictionsIN
   }
-  /* get disableSuggestions () {
-    return newReqModule.disableSuggestions
-  }
-  set disableSuggestions (value) {
-    newReqModule.mutateDisableSuggestions(value)
-  } */
   get jurisdictionOptions () {
     if (this.location === 'IN') {
       return jurisdictionsIN
@@ -345,6 +343,15 @@ export default class ApplicantInfo1 extends Vue {
     if (this.$refs.step1 as any) {
       (this.$refs.step1 as any).resetValidation()
     }
+  }
+  debouncedGetAddressSuggestions (key, value) {
+    if (!debounced) {
+      debounced = _.debounce(this.getAddressSuggestions, 400)
+    }
+    debounced(key, value)
+  }
+  getAddressSuggestions (key, value) {
+    newReqModule.getAddressSuggestions({key, value})
   }
   getClass (Id) {
     if (this.highlightedSuggestion) {
@@ -405,18 +412,19 @@ export default class ApplicantInfo1 extends Vue {
   updateApplicant (key, value) {
     this.clearValidation()
     newReqModule.updateApplicantDetails({ key, value })
+    if (key === 'Line1') {
+      this.showAddressMenu = true
+      this.debouncedGetAddressSuggestions(key, value)
+      return
+    }
     if (this.showAddressMenu && key === 'Country') {
       this.$nextTick(function () {
         this.showAddressMenu = true
         let appKV = {
-          value: this.applicant.Line1
+          value: this.applicant.line1
         }
         newReqModule.getAddressSuggestions(appKV)
       })
-      return
-    }
-    if (key === 'Line1') {
-      this.showAddressMenu = true
       return
     }
     this.showAddressMenu = false
