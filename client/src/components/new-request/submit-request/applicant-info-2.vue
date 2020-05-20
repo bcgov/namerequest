@@ -8,10 +8,10 @@
         <v-col cols="5">
           <v-text-field :messages="messages['email']"
                         :rules="emailRules"
-                        :value="contact.email"
+                        :value="applicant.emailAddress"
                         @blur="messages = {}"
                         @focus="messages['email'] = 'Notification Email'"
-                        @input="updateContact('email', $event)"
+                        @input="mutateApplicant('emailAddress', $event)"
                         filled
                         hide-details="auto"
                         placeholder="Email Address (for notifications)" />
@@ -22,20 +22,20 @@
         <v-col cols="2" />
         <v-col cols="5">
           <v-text-field :messages="messages['phone']"
-                        :value="contact.phone"
+                        :value="applicant.phoneNumber"
                         @blur="messages = {}"
                         @focus="messages['phone'] = 'Phone Number (Optional)'"
-                        @input="updateContact('phone', $event)"
+                        @input="mutateApplicant('phoneNumber', $event)"
                         filled
                         hide-details="auto"
                         placeholder="Phone Number (Optional)" />
         </v-col>
         <v-col cols="5">
           <v-text-field :messages="messages['fax']"
-                        :value="contact.fax"
+                        :value="applicant.faxNumber"
                         @blur="messages = {}"
                         @focus="messages['fax'] = 'Fax Number (Optional)'"
-                        @input="updateContact('fax', $event)"
+                        @input="mutateApplicant('faxNumber', $event)"
                         filled
                         hide-details="auto"
                         placeholder="Fax Number (Optional)" />
@@ -48,10 +48,10 @@
         <v-col cols="5" align-self="start">
           <v-textarea :messages="messages['nature']"
                       :rules="requiredRule"
-                      :value="businessInfo.natureOfBusiness"
+                      :value="nrData.natureBusinessInfo"
                       @blur="messages = {}"
                       @focus="messages['nature'] = 'Nature of Business'"
-                      @input="updateBusinessInfo('natureOfBusiness', $event)"
+                      @input="mutateNRData('natureBusinessInfo', $event)"
                       filled
                       hide-details="auto"
                       placeholder="Nature of Business"
@@ -59,10 +59,10 @@
         </v-col>
         <v-col cols="5" align-self="start">
           <v-textarea :messages="messages['additional']"
-                      :value="businessInfo.additionalInfo"
+                      :value="nrData.additionalInfo"
                       @blur="messages = {}"
                       @focus="messages['additional'] = 'Additional Info'"
-                      @input="updateBusinessInfo('additionalInfo', $event)"
+                      @input="mutateNRData('additionalInfo', $event)"
                       filled
                       hide-details="auto"
                       placeholder="Additional Business Info (Optional)"
@@ -82,11 +82,11 @@
         </v-col>
         <v-col cols="5" v-else />
         <v-col cols="5" v-if="isPersonsName">
-          <v-text-field :messages="messages['tm']"
-                        :value="businessInfo.tm"
+          <v-text-field :messages="messages['tradeMark']"
+                        :value="nrData.tradeMark"
                         @blur="messages = {}"
-                        @focus="messages['tm'] = 'Registered Trademark (Optional)'"
-                        @input="updateBusinessInfo('tm', $event)"
+                        @focus="messages['tradeMark'] = 'Registered Trademark (Optional)'"
+                        @input="mutateNRData('tradeMark', $event)"
                         filled
                         hide-details="auto"
                         placeholder="Registered Trademark (Optional)" />
@@ -105,6 +105,7 @@
                  @click="validate()">Continue to Payment</v-btn>
           <v-btn x-large
                  v-else
+                 @click="submit"
                  id="submit-continue-btn">Continue to Payment</v-btn>
         </v-col>
       </v-row>
@@ -128,11 +129,11 @@ export default class ApplicantInfo2 extends Vue {
   ]
   isValid: boolean = false
 
-  get businessInfo () {
-    return newReqModule.businessInfo
+  get applicant () {
+    return newReqModule.applicant
   }
-  get contact () {
-    return newReqModule.contact
+  get nrData () {
+    return newReqModule.nrData
   }
   get isPersonsName () {
     return newReqModule.isPersonsName
@@ -158,16 +159,17 @@ export default class ApplicantInfo2 extends Vue {
       (this.$refs.step2 as any).resetValidation()
     }
   }
+  mutateApplicant (key, value) {
+    newReqModule.mutateApplicant({ key, value })
+  }
+  mutateNRData (key, value) {
+    newReqModule.mutateNRData({ key, value })
+  }
   showPreviousTab () {
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
   }
-  updateBusinessInfo (key, value) {
-    this.clearValidation()
-    newReqModule.mutateBusinessInfo({ key, value })
-  }
-  updateContact (key, value) {
-    this.clearValidation()
-    newReqModule.mutateContact({ key, value })
+  submit () {
+    newReqModule.postNameReservation('draft')
   }
   validate () {
     if (this.$refs.step2 as Vue) {

@@ -24,7 +24,7 @@
                 <v-btn x-large
                        id="submit-continue-btn"
                        v-if="box.button === 'restart'"
-                       @click="startAgain()">Start Search Over</v-btn>
+                       @click="cancelAnalyzeName()">Start Search Over</v-btn>
                  <v-btn x-large
                         id="submit-continue-btn"
                         v-if="box.button === 'english'"
@@ -149,9 +149,9 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   showNextTab () {
     newReqModule.mutateSubmissionTabComponent('SendForExamination')
   }
-  startAgain () {
+  cancelAnalyzeName () {
     this.$root.$emit('start-search-again')
-    newReqModule.startAgain()
+    newReqModule.cancelAnalyzeName()
   }
 }
 </script>

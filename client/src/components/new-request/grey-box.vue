@@ -68,7 +68,7 @@
         <!-- CHANGE_ENTITY_TYPE OPTION BOX -->
         <template v-if="option.type === 'change_entity_type'">
            <v-col class="text-center mt-4">
-            <v-btn @click="startAgain()">Restart and Change Type</v-btn>
+            <v-btn @click="cancelAnalyzeName()">Restart and Change Type</v-btn>
           </v-col>
         </template>
 

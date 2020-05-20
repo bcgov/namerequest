@@ -5,14 +5,18 @@ export type NrDataT = string | null
 export type SearchComponentT = 'search' | 'analyzing' | 'results'
 export type SubmissionTypeT = 'examination' | 'consent' | 'normal'
 
-export interface ApplicantI {
-  text: string
-  value: string
-}
 export interface AnalysisJSONI {
   header?: string
   issues: IssueI[] | null
   status: 'fa' | 'rc' | 'ar'
+}
+export interface ApplicantI {
+  text: string
+  value: string
+}
+export interface ConsentConflictI {
+  name: string
+  [propName: string]: any
 }
 export interface EntityI {
   text: string
@@ -21,17 +25,6 @@ export interface EntityI {
   blurb?: string[] | string
   shortlist?: boolean
   rank?: number
-}
-export interface StatsI {
-  auto: number,
-  priority: {
-    value: number,
-    unit: string
-  },
-  standard: {
-    value: number,
-    unit: string
-  }
 }
 export interface IssueI {
   consenting_body?: {
@@ -59,35 +52,15 @@ export interface IssueI {
   show_examination_button: boolean
   show_resere_button: boolean
 }
-export interface SetupI {
-  button?: 'examine' | 'reserve' | 'consent-body' | 'consent-corp' | 'restart' | 'next'
-  checkbox?: 'examine' | 'consent-corp' | 'consent-body'
-  header: string
-  text1: string
-  text2?: string
-}
-export interface ApplicantInfoI {
-  firstName: string
-  lastName: string
-  midddleName?: string
-  Line1: string
-  Line2?: string
-  Country: string
-  PostalCode: string
-  City: string
-  provState?: string
-  Jurisdiction: string
+export interface NameDesignationI {
+  name: string
+  designation: string
 }
 export interface NewRequestNameSearchI {
   name: string
   request_action: string
   entity_type: string
   location: LocationT
-}
-export interface NameChoicesI {
-  nameChoice1: string | null
-  designation1: string | null
-  [propName: string]: string
 }
 export interface OptionI {
   button?: string
@@ -98,6 +71,89 @@ export interface OptionI {
   line2?: string
   type: string
 }
+export interface PostApplicantI {
+  addrLine1: string
+  addrLine2?: string
+  city: string
+  clientFirstName?: string
+  clientLastName?: string
+  contact: string
+  countryTypeCd: string
+  emailAddress: string
+  faxNumber?: string
+  firstName: string
+  lastName: string
+  middleName?: string
+  phoneNumber?: string
+  postalCd: string
+  stateProvinceCd: string
+}
+export interface PostConditionalReqI {
+  additionalInfo: string
+  applicants: []
+  corpNum?: string
+  english: boolean
+  entity_type: string
+  homeJurisNum?: string
+  nameFlag: boolean
+  names: PostNameI[]
+  natureBusinessInfo: string
+  previousRequestId?: string
+  priorityCd: string
+  request_action: string
+  stateCd: 'COND-RESERVE'
+  submit_count: number
+  tradeMark: string
+  xproJurisdiction?: string
+}
+
+export interface PostDraftReqI {
+  additionalInfo: string
+  applicants: [ PostApplicantI ]
+  corpNum?: string
+  english: boolean
+  entity_type: string
+  homeJurisNum?: string
+  nameFlag: boolean
+  names: PostNameI[]
+  natureBusinessInfo: string
+  previousRequestId?: string
+  priorityCd: string
+  request_action: string
+  stateCd: 'DRAFT'
+  submit_count: number
+  tradeMark: string
+  xproJurisdiction?: string
+}
+
+export interface PostNameI {
+  choice: number
+  name: string
+  name_type_cd: string
+  designation: string
+  consent_words: "" | string[]
+  conflict1: string
+  conflict1_num: string
+}
+export interface PostReservedReqI {
+  additionalInfo: string
+  applicants: []
+  corpNum?: string
+  english: boolean
+  entity_type: string
+  homeJurisNum?: string
+  nameFlag: boolean
+  names: PostNameI[]
+  natureBusinessInfo: string
+  previousRequestId?: string
+  priorityCd: string
+  request_action: string
+  stateCd: 'RESERVED'
+  submit_count: number
+  tradeMark: string
+  xproJurisdiction?: string
+}
+
 export interface RequestDataI {
   nrNumber: number
   name: string
@@ -110,11 +166,29 @@ export interface RequestDataI {
 export interface SearchDataI {
   nrNumber?: string
   name?: string
-  email?: string
-  phone?: string
+  emailAddress?: string
+  phoneNumber?: string
 }
 export interface SelectOptionsI {
   text: string
   value: any
   [propName: string]: any
+}
+export interface SetupI {
+  button?: 'examine' | 'reserve' | 'consent-body' | 'consent-corp' | 'restart' | 'next'
+  checkbox?: 'examine' | 'consent-corp' | 'consent-body'
+  header: string
+  text1: string
+  text2?: string
+}
+export interface StatsI {
+  auto: number,
+  priority: {
+    value: number,
+    unit: string
+  },
+  standard: {
+    value: number,
+    unit: string
+  }
 }

@@ -5,58 +5,58 @@ import querystring from 'qs'
 import store from '@/store'
 import {
   AnalysisJSONI,
-  ApplicantI,
+  ApplicantI, ConsentConflictI,
   DisplayedComponentT,
   EntityI,
-  LocationT,
+  LocationT, NameDesignationI,
   NewRequestNameSearchI,
+  PostApplicantI,
+  PostConditionalReqI,
+  PostDraftReqI,
+  PostNameI,
+  PostReservedReqI,
   SelectOptionsI,
   StatsI,
   SubmissionTypeT
 } from '@/models'
 import canadaPostAPIKey from './config'
-import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
+import { Action, config, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
-import Vue from 'vue'
+// config.rawError = true
 
-const Axios = axios.create({ baseURL: sessionStorage.getItem('BASE_URL') })
 const qs: any = querystring
-let source
-let blockCall = 1
-let timeOut
-let params
+let source: any
 
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
 export class NewRequestModule extends VuexModule {
   actingOnOwnBehalf: boolean = true
   addressSuggestions: object | null = null
   analysisJSON: AnalysisJSONI | null = null
-  applicant = {
+  applicant: PostApplicantI = {
+    addrLine1: '',
+    addrLine2: '',
+    city: '',
+    clientFirstName: '',
+    clientLastName: '',
+    contact: '',
+    countryTypeCd: '',
+    emailAddress: '',
+    faxNumber: '',
     firstName: '',
     lastName: '',
     middleName: '',
-    Line1: '',
-    Line2: '',
-    Country: '',
-    PostalCode: '',
-    City: '',
-    provinceState: '',
-    Jurisdiction: ''
+    phoneNumber: '',
+    postalCd: '',
+    stateProvinceCd: ''
   }
-  businessInfo = {
-    natureOfBusiness: '',
+  nrData = {
     additionalInfo: '',
-    tm: ''
-  }
-  client = {
-    firstName: '',
-    lastName: ''
-  }
-  contact = {
-    name: '',
-    phone: '',
-    email: '',
-    fax: ''
+    corpNum: '',
+    homeJurisNum: '',
+    natureBusinessInfo: '',
+    previousRequestId: '',
+    tradeMark: '',
+    xproJurisdiction: ''
   }
   disableSuggestions: boolean = false
   displayedComponent: DisplayedComponentT = 'Tabs'
@@ -304,6 +304,7 @@ export class NewRequestModule extends VuexModule {
     name3: '',
     designation3: ''
   }
+  nrPostResponseObject: Partial<PostDraftReqI> | null = null
   isPersonsName: boolean = false
   nameIsEnglish: boolean = true
   nrRequiredModalVisible: boolean = false
@@ -323,6 +324,11 @@ export class NewRequestModule extends VuexModule {
       conflict_self_consent: false
     },
     2: {
+      send_to_examiner: false,
+      obtain_consent: false,
+      conflict_self_consent: false
+    },
+    3: {
       send_to_examiner: false,
       obtain_consent: false,
       conflict_self_consent: false
@@ -390,12 +396,44 @@ export class NewRequestModule extends VuexModule {
   tabNumber: number = 0
   waitingAddressSearch: ApplicantI | null = null
 
+  get consentConflicts (): ConsentConflictI {
+    let output = {
+      name: ''
+    }
+    for (let key in this.requestExaminationOrProvideConsent) {
+      if (this.requestExaminationOrProvideConsent[key].conflict_self_consent) {
+        output.name = this.analysisJSON.issues[key].conflicts[0].name
+      }
+    }
+    return output
+  }
+  get consentWords () {
+    let consentWords = []
+    for (let step in this.requestExaminationOrProvideConsent) {
+      if (this.requestExaminationOrProvideConsent[step].obtain_consent) {
+        consentWords.push(this.analysisJSON.issues[step].name_actions[0].word)
+      }
+    }
+    return consentWords
+  }
+  get designationItems () {
+    if (this.entityType && designations[this.entityType]) {
+      let { words } = designations[this.entityType]
+      return words.map(des => ({ value: des, text: des }))
+    }
+    return []
+  }
+  get designationObject () {
+    if (designations[this.entityType]) {
+      return designations[this.entityType]
+    }
+    return ''
+  }
   get entityTextFromValue () {
     let list = [...this.entityTypesBC, ...this.entityTypesXPRO]
     let type = list.find(t => t.value === this.entityType)
     return type.text
   }
-
   get entityTypeOptions () {
     let bcOptions: SelectOptionsI[] = this.entityTypesBC.filter(type => type.shortlist)
     let xproOptions: SelectOptionsI[] = this.entityTypesXPRO.filter(type => type.shortlist)
@@ -417,7 +455,6 @@ export class NewRequestModule extends VuexModule {
       return 0
     })
   }
-
   get locationOptions () {
     let options = [
       { text: 'BC', value: 'BC' },
@@ -426,12 +463,10 @@ export class NewRequestModule extends VuexModule {
       { text: 'Help', value: 'INFO' }
     ]
     if (this.requestAction === 'MVE') {
-      let optionsLessBC = [...options]
-      return optionsLessBC.splice(1, 2)
+      return options.filter(option => option.text !== 'BC')
     }
     return options
   }
-
   get nameIsSlashed () {
     if (this.name) {
       let { name } = this
@@ -446,14 +481,6 @@ export class NewRequestModule extends VuexModule {
     }
     return false
   }
-
-  get newOrExistingRequest () {
-    if (this.tabNumber) {
-      return 'existing'
-    }
-    return 'new'
-  }
-
   get pickEntityTableBC () {
     let catagories = []
     for (let type of this.entityTypesBC) {
@@ -473,7 +500,6 @@ export class NewRequestModule extends VuexModule {
     )
     return output
   }
-
   get pickEntityTableXPRO () {
     let catagories = []
     for (let type of this.entityTypesXPRO) {
@@ -493,7 +519,15 @@ export class NewRequestModule extends VuexModule {
     )
     return output
   }
-
+  get postType () {
+    if (this.nameChoices.name1) {
+      return 'draft'
+    }
+    if (this.consentWords.length > 0 || this.consentConflicts.name) {
+      return 'conditional'
+    }
+    return 'reserved'
+  }
   get requestTypeOptions () {
     let option = this.requestTypes.find(type => type.value === 'NEW')
     option.rank = 1
@@ -515,16 +549,25 @@ export class NewRequestModule extends VuexModule {
       return 0
     })
   }
-
-  get designationItems () {
-    if (this.entityType && designations[this.entityType]) {
-      let { words } = designations[this.entityType]
-      return words.map(des => ({ value: des, text: des }))
+  get splitNameDesignation (): NameDesignationI {
+    if (this.name && this.designationObject && this.designationObject.end) {
+      let { words } = this.designationObject
+      for (let word of words) {
+        if (this.name.endsWith(word)) {
+          let designation = word
+          let name = this.name.replace(word, '')
+          name = name.trim()
+          return ({ name, designation })
+        }
+      }
     }
-    return []
+    return ({
+      name: '',
+      designation: ''
+    })
   }
 
-  @Action({ rawError: true })
+  @Action
   async getAddressDetails (id) {
     const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Retrieve/v2.11/json3.ws'
     let params = {
@@ -532,18 +575,26 @@ export class NewRequestModule extends VuexModule {
       Id: id
     }
 
-    let resp
     try {
-      resp = await Axios.post(url, qs.stringify(params), {
+      let resp = await axios.post(url, qs.stringify(params), {
         headers: { 'Content-type': 'application/x-www-form-urlencoded' }
       })
       if (resp.data.Items && Array.isArray(resp.data.Items)) {
-        let Item = resp.data.Items.find(item => item.Language === 'ENG')
-        let fields = ['Line1', 'Line2', 'City', 'PostalCode', 'Province', 'Country']
+        let addressData = resp.data.Items.find(item => item.Language === 'ENG')
+        let canadaPostFieldsMapping = {
+          CountryIso2: 'countryTypeCd',
+          PostalCode: 'postalCd',
+          ProvinceCode: 'stateProvinceCd',
+          City: 'city',
+          Line1: 'addrLine1',
+          Line2: 'addrLine2'
+        }
+        let fields = ['Line1', 'Line2', 'City', 'PostalCode', 'ProvinceCode', 'CountryIso2']
         for (let field of fields) {
-          if (Item[field]) {
-            let value = Item[field].toUpperCase()
-            this.mutateApplicant({ key: field, value })
+          if (addressData[field]) {
+            let value = addressData[field].toUpperCase()
+            let mappedField = canadaPostFieldsMapping[field]
+            this.mutateApplicant({ key: mappedField, value })
           }
         }
       }
@@ -552,8 +603,7 @@ export class NewRequestModule extends VuexModule {
       return error
     }
   }
-
-  @Action({ rawError: true })
+  @Action
   async getAddressSuggestions (appKV) {
     if (!appKV.value) {
       return
@@ -563,17 +613,15 @@ export class NewRequestModule extends VuexModule {
       Key: canadaPostAPIKey,
       SearchTerm: appKV.value,
       MaxSuggestions: 3,
-      Country: this.applicant.Country
+      Country: this.applicant.countryTypeCd
     }
-
-    let resp
     try {
-      resp = await Axios.post(url, qs.stringify(params), {
-        headers: { 'Content-type': 'application/x-www-form-urlencoded' }
+      let resp = await axios.post(url, qs.stringify(params), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
       if (Array.isArray(resp.data.Items)) {
         let filteredItems = resp.data.Items.filter(item => item.Next === 'Retrieve')
-        if (this.applicant.Line1) {
+        if (this.applicant.addrLine1) {
           this.mutateAddressSuggestions(filteredItems)
         }
         return
@@ -584,27 +632,177 @@ export class NewRequestModule extends VuexModule {
       return error
     }
   }
+  @Action
+  async getNameRequest () {
+    this.mutateDisplayedComponent('AnalyzePending')
+    this.resetRequestExaminationOrProvideConsent()
 
-  @Action({ rawError: true })
+    let params: NewRequestNameSearchI = {
+      name: this.name,
+      location: this.location,
+      entity_type: this.entityType,
+      request_action: this.requestAction
+    }
+
+    try {
+      let { CancelToken } = axios
+      source = CancelToken.source()
+
+      let resp = await axios.get('/name-analysis', {
+        params,
+        cancelToken: source.token
+      })
+      this.mutateAnalysisJSON(resp.data)
+      this.mutateDisplayedComponent('AnalyzeResults')
+    } catch (error) {
+      this.mutateDisplayedComponent('Tabs')
+      return
+    }
+  }
+  @Action
   async getStats () {
     try {
-      let resp = await Axios.get('/stats')
+      let resp = await axios.get('/stats')
       this.mutateStats(resp.data)
       return Promise.resolve(resp.data)
     } catch {
       return Promise.resolve()
     }
   }
-
-  @Action({ rawError: true })
-  startAgain () {
+  @Action
+  async postNameReservation (type) {
+    let postData: any
+    switch (type) {
+      case 'draft': {
+        let applicant: PostApplicantI = this.applicant
+        let names = []
+        if (this.nameChoices.name1) {
+          let name1: PostNameI = {
+            name: this.nameChoices.name1,
+            choice: 1,
+            designation: this.nameChoices.designation1,
+            name_type_cd: 'CO',
+            consent_words: '',
+            conflict1: '',
+            conflict1_num: ''
+          }
+          names.push(name1)
+          if (this.nameChoices.name2) {
+            let name2: PostNameI = {
+              name: this.nameChoices.name2,
+              choice: 2,
+              designation: this.nameChoices.designation2,
+              name_type_cd: 'CO',
+              consent_words: '',
+              conflict1: '',
+              conflict1_num: ''
+            }
+            names.push(name2)
+          }
+          if (this.nameChoices.name3) {
+            let name3: PostNameI = {
+              name: this.nameChoices.name3,
+              choice: 3,
+              designation: this.nameChoices.designation3,
+              name_type_cd: 'CO',
+              consent_words: '',
+              conflict1: '',
+              conflict1_num: ''
+            }
+            names.push(name3)
+          }
+        }
+        let caseData: PostDraftReqI = {
+          applicants: [applicant],
+          names,
+          ...this.nrData,
+          priorityCd: this.priorityRequest ? 'Y' : 'N',
+          entity_type: this.entityType,
+          request_action: this.requestAction,
+          stateCd: 'DRAFT',
+          english: this.nameIsEnglish,
+          nameFlag: this.isPersonsName,
+          submit_count: 0
+        }
+        postData = caseData
+        break
+      }
+      case 'conditional': {
+        let name: PostNameI = {
+          name: this.splitNameDesignation.name,
+          choice: 1,
+          designation: this.splitNameDesignation.designation,
+          name_type_cd: 'CO',
+          consent_words: this.consentWords.length > 0 ? this.consentWords : '',
+          conflict1: this.consentConflicts.name,
+          conflict1_num: this.consentConflicts.name ? '464666' : ''
+        }
+        let caseData: PostConditionalReqI = {
+          names: [ name ],
+          applicants: [],
+          ...this.nrData,
+          priorityCd: 'N',
+          entity_type: this.entityType,
+          request_action: this.requestAction,
+          stateCd: 'COND-RESERVE',
+          english: this.nameIsEnglish,
+          nameFlag: this.isPersonsName,
+          submit_count: 0
+        }
+        postData = caseData
+        break
+      }
+      case 'reserved': {
+        let name: PostNameI = {
+          name: this.splitNameDesignation.name,
+          choice: 1,
+          designation: this.splitNameDesignation.designation,
+          name_type_cd: 'CO',
+          consent_words: '',
+          conflict1: '',
+          conflict1_num: ''
+        }
+        let caseData: PostReservedReqI = {
+          names: [ name ],
+          applicants: [],
+          ...this.nrData,
+          priorityCd: 'N',
+          entity_type: this.entityType,
+          request_action: this.requestAction,
+          stateCd: 'RESERVED',
+          english: this.nameIsEnglish,
+          nameFlag: this.isPersonsName,
+          submit_count: 0
+        }
+        postData = caseData
+      }
+    }
+    let response
+    try {
+      response = await axios.post('/namerequests', postData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      this.setNRPostResponseObject(response.data)
+    } catch (error) {
+      // eslint-disable-next-line
+      console.log(error)
+    }
+  }
+  @Action
+  cancelAnalyzeName () {
+    if (source.cancel) {
+      source.cancel()
+      source = null
+    }
     this.mutateAnalysisJSON(null)
     this.mutateDisplayedComponent('Tabs')
+    this.mutateShowActualInput(false)
     this.resetApplicantDetails()
     this.resetRequestExaminationOrProvideConsent()
   }
-
-  @Action({ rawError: true })
+  @Action
   startAnalyzeName () {
     this.mutateShowActualInput(false)
     let name
@@ -648,63 +846,13 @@ export class NewRequestModule extends VuexModule {
     }
     this.getNameRequest()
   }
-
-  @Action({ rawError: true })
-  async getNameRequest () {
-    this.mutateDisplayedComponent('AnalyzePending')
-    this.resetRequestExaminationOrProvideConsent()
-
-    let params: NewRequestNameSearchI = {
-      name: this.name,
-      location: this.location,
-      entity_type: this.entityType,
-      request_action: this.requestAction
-    }
-
-    try {
-      let CancelToken = axios.CancelToken
-      source = CancelToken.source()
-      let resp = await Axios.get('/name-analysis', {
-        params,
-        cancelToken: source.token
-      })
-      this.mutateAnalysisJSON(resp.data)
-      this.mutateDisplayedComponent('AnalyzeResults')
-    } catch (error) {
-      this.mutateDisplayedComponent('Tabs')
-      return error
-    }
-  }
-
-  @Action({ rawError: true })
-  stopAnalyzeName () {
-    source.cancel()
-    this.mutateShowActualInput(false)
-    this.mutateDisplayedComponent('Tabs')
-    this.mutateAnalysisJSON(null)
-    return Promise.resolve()
-  }
-
-  @Action({ rawError: true })
+  @Action
   updateApplicantDetails (appKV) {
     this.mutateApplicant(appKV)
-    if (!appKV.value || appKV.key !== 'Line1' || this.disableSuggestions) {
+    if (!appKV.value || appKV.key !== 'addrLine1' || this.disableSuggestions) {
       this.mutateAddressSuggestions(null)
       return
     }
-    if (blockCall === 0) {
-      this.getAddressSuggestions(appKV)
-      blockCall = 1
-      timeOut = setTimeout(() => {
-        blockCall = 0
-        if (params) {
-          this.getAddressSuggestions(params)
-          params = null
-        }
-      }, 1000)
-      return
-    }
-    params = appKV
   }
 
   @Mutation
@@ -729,13 +877,9 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateAddressSuggestions (value) {
     if (!value) {
-      if (timeOut && timeOut.clearInterval) {
-        timeOut.clearInterval()
-      }
       this.addressSuggestions = null
       return
     }
-    let output = []
     for (let n = 0; n < value.length; n++) {
       value[n].Text = value[n].Text.toUpperCase()
       value[n].Description = value[n].Description.toUpperCase()
@@ -758,21 +902,6 @@ export class NewRequestModule extends VuexModule {
     }
     appKV.value = appKV.value.toUpperCase()
     this.applicant[appKV.key] = appKV.value
-  }
-
-  @Mutation
-  mutateBusinessInfo (v) {
-    this.businessInfo[v.key] = v.value
-  }
-
-  @Mutation
-  mutateClient (v) {
-    this.client[v.key] = v.value
-  }
-
-  @Mutation
-  mutateContact (v) {
-    this.contact[v.key] = v.value
   }
 
   @Mutation
@@ -857,6 +986,11 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateNameIsEnglish (value) {
     this.nameIsEnglish = value
+  }
+
+  @Mutation
+  mutateNRData ({ key, value }) {
+    this.nrData[key] = value
   }
 
   @Mutation
@@ -950,6 +1084,11 @@ export class NewRequestModule extends VuexModule {
         this.requestExaminationOrProvideConsent[n][type] = false
       }
     }
+  }
+
+  @Mutation
+  setNRPostResponseObject (value) {
+    this.nrPostResponseObject = value
   }
 
   getEntities (catagory) {
