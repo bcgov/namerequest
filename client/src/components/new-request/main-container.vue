@@ -5,7 +5,7 @@
       <v-col cols="auto">
         <button id="back-to-search-btn"
                 class="modal-activator pa-0 normal-link-sans-ul"
-                @click="cancelAnalyzeName()">
+                @click="cancelAnalyzeName">
           <span class="normal-link-sans-ul">
             <v-icon class="ma-0 pa-0 mr-n1 mini-back-arrow">arrow_back_ios</v-icon>
             Start Search Over
