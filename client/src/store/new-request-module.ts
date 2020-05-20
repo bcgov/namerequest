@@ -678,7 +678,7 @@ export class NewRequestModule extends VuexModule {
         let names = []
         if (this.nameChoices.name1) {
           let name1: PostNameI = {
-            name: this.nameChoices.name1,
+            name: this.nameChoices.name1 + ' ' + this.nameChoices.designation1,
             choice: 1,
             designation: this.nameChoices.designation1,
             name_type_cd: 'CO',
@@ -689,7 +689,7 @@ export class NewRequestModule extends VuexModule {
           names.push(name1)
           if (this.nameChoices.name2) {
             let name2: PostNameI = {
-              name: this.nameChoices.name2,
+              name: this.nameChoices.name2 + ' ' + this.nameChoices.designation2,
               choice: 2,
               designation: this.nameChoices.designation2,
               name_type_cd: 'CO',
@@ -701,7 +701,7 @@ export class NewRequestModule extends VuexModule {
           }
           if (this.nameChoices.name3) {
             let name3: PostNameI = {
-              name: this.nameChoices.name3,
+              name: this.nameChoices.name3 + ' ' + this.nameChoices.designation3,
               choice: 3,
               designation: this.nameChoices.designation3,
               name_type_cd: 'CO',
@@ -729,7 +729,7 @@ export class NewRequestModule extends VuexModule {
       }
       case 'conditional': {
         let name: PostNameI = {
-          name: this.splitNameDesignation.name,
+          name: this.name,
           choice: 1,
           designation: this.splitNameDesignation.designation,
           name_type_cd: 'CO',
@@ -754,7 +754,7 @@ export class NewRequestModule extends VuexModule {
       }
       case 'reserved': {
         let name: PostNameI = {
-          name: this.splitNameDesignation.name,
+          name: this.name,
           choice: 1,
           designation: this.splitNameDesignation.designation,
           name_type_cd: 'CO',
@@ -792,7 +792,7 @@ export class NewRequestModule extends VuexModule {
   }
   @Action
   cancelAnalyzeName () {
-    if (source.cancel) {
+    if (source && source.cancel) {
       source.cancel()
       source = null
     }
@@ -900,7 +900,9 @@ export class NewRequestModule extends VuexModule {
         this.applicant[address.name] = address.value
       }
     }
-    appKV.value = appKV.value.toUpperCase()
+    if (appKV.key !== 'emailAddress') {
+      appKV.value = appKV.value.toUpperCase()
+    }
     this.applicant[appKV.key] = appKV.value
   }
 
