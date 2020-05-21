@@ -108,14 +108,16 @@ export default class SendForExamination extends Vue {
   mounted () {
     newReqModule.mutateSubmissionType('examination')
     this.$nextTick(function () {
+      newReqModule.mutateNameChoicesToInitialState()
       if (this.designationAtEnd) {
         for (let item of this.items) {
-          if (this.name.endsWith(item.text)) {
-            this.editChoices('designation1', item.text)
-            let value = this.name.replace(item.text, '').trim()
+          if (this.name.endsWith(item)) {
+            this.editChoices('designation1', item)
+            let value = this.name.replace(item, '').trim()
             newReqModule.mutateNameChoices({ key: 'name1', value })
             return
           }
+          newReqModule.mutateNameChoices({ key: 'name1', value: this.name })
         }
       }
     })
@@ -179,7 +181,7 @@ export default class SendForExamination extends Vue {
     return newReqModule.nameChoices
   }
   get items () {
-    return newReqModule.designationItems
+    return designations[this.entityType].words
   }
 
   editChoices (key, value) {

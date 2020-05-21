@@ -1,6 +1,6 @@
 const corporateDesignations = {
   words: [
-    'CORP',
+    'CORP.',
     'CORPORATION',
     'INC.',
     'INCORPORATED',
@@ -40,7 +40,7 @@ const designations = {
       'LLP',
       'LIMITED LIABILITY PARTNERSHIP',
       'SOCIETE A RESPONSABILITE LIMITEE',
-      'OCIETE EN NOM COLLECTIF A RESPONSABILITE LIMITEE',
+      'SOCIETE EN NOM COLLECTIF A RESPONSABILITE LIMITEE',
       'SLR',
       'SENCRL'
     ],
@@ -54,7 +54,7 @@ const designations = {
       'COMMUNITY CONTRIBUTION COMPANY',
       ...corporateDesignations.words
     ],
-    end: false
+    end: true
   },
   UL: {
     words: [
@@ -65,15 +65,30 @@ const designations = {
   },
   BC: corporateDesignations,
   PA: {
+    words: [],
     end: false
   },
   FI: {
+    words: [],
     end: false
   },
   PAR: {
+    words: [],
     end: false
   }
-
 }
 
+function getAllDesignations () {
+  let output = []
+  for (let entity in designations) {
+    for (let word of designations[entity].words) {
+      if (!output.includes(word)) {
+        output.push(word)
+      }
+    }
+  }
+  return output
+}
+
+export const allDesignationsList = getAllDesignations()
 export default designations

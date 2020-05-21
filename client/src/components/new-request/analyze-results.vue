@@ -12,10 +12,10 @@
         <v-col cols="12" class="mt-3" @click="clickNameField">
           <quill-editor ref="quill"
                         id="name-search-bar"
-                        v-model="nameEdit"
+                        :contents="contents"
                         :options="config"
-                        @change.native="handleChange($event)"
-                        @keydown.enter.native.prevent.capture="handleEnterKey" />
+                        @change="handleChange($event)"
+                        @keydown.native.capture="handleEnterKey" />
           <div style="position: relative; left: 865px; top: -45px; z-index: 1000">
             <v-icon class="name-search-icon"
                     id="name-input-icon"
@@ -157,65 +157,56 @@ export default class AnalyzeResults extends Vue {
   }
   highlightCheckboxes: boolean = false
   issueIndex: number = 0
-  nameEdit: string = ''
+  contents: string = ''
   originalName: string | null = null
   originalOps = []
 
-  created () {
-    this.originalName = newReqModule.name
-  }
-
-  mounted () {
-    document.addEventListener('keydown', this.handleEnterKey)
-    this.$nextTick(function () {
-      this.quill.setContents([])
-      let ops: QuillOpsI[] = this.getBaseNameOps()
-      if (!Array.isArray(this.nameActions) || this.nameActions.length < 1) {
-        this.quill.setContents(ops)
-        return
-      }
-      this.nameActions.forEach(action => {
-        if (action.type === 'brackets') {
-          let op: QuillOpsI = { insert: ` [${action.message}]`, attributes: { color: 'red' } }
-          if (action.position === 'start') {
-            ops.splice(action.index, 0, op)
-          } else if (action.position === 'end') {
-            ops.splice(action.index + 1, 0, op)
-          }
-        }
-        if (action.type === 'highlight') {
-          ops[action.index] = { ...ops[action.index], attributes: { color: 'red' } }
-        }
-        if (action.type === 'strike') {
-          ops[action.index] = { ...ops[action.index], attributes: { color: 'red', strike: true } }
-        }
-      })
-      this.quill.setContents(ops)
-      this.originalOps = ops
-    })
-  }
-
-  beforeDestroy () {
-    document.removeEventListener('keydown', this.handleEnterKey)
-  }
-
-  @Watch('name')
-  updateLocalName (newVal) {
-    if (this.nameEdit !== newVal) {
-      this.quill.setText(newVal)
-    }
-  }
   @Watch('issueIndex')
   resetShowActualInput (newVal, oldVal) {
     if (newVal !== oldVal) {
       this.showActualInput = false
     }
   }
-  @Watch('nameEdit')
-  removeNewParagraphs (newVal) {
-    if (newVal.includes('</p><p>')) {
-      this.nameEdit = newVal.replace('</p><p>', '')
-    }
+
+  created () {
+    this.originalName = newReqModule.name
+  }
+  mounted () {
+    this.$root.$on('updatecontents', this.updateContents)
+    document.addEventListener('keydown', this.handleEnterKey)
+    this.$nextTick(function () {
+      this.quill.setContents([])
+      let ops: QuillOpsI[] = this.getBaseNameOps()
+      if (!this.hasNameActions) {
+        this.quill.setContents(ops)
+        this.originalOps = ops
+        return
+      }
+      let { length } = this.chunkedName
+      this.nameActions.forEach(action => {
+        if (action.index < length) {
+          if (action.type === 'brackets') {
+            let op: QuillOpsI = { insert: ` [${action.message}]`, attributes: { color: 'red' } }
+            if (action.position === 'start') {
+              ops.splice(action.index, 0, op)
+            } else if (action.position === 'end') {
+              ops.splice(action.index + 1, 0, op)
+            }
+          }
+          if (action.type === 'highlight') {
+            ops[action.index] = { ...ops[action.index], attributes: { color: 'red' } }
+          }
+          if (action.type === 'strike') {
+            ops[action.index] = { ...ops[action.index], attributes: { color: 'red', strike: true } }
+          }
+        }
+      })
+      this.quill.setContents(ops)
+      this.originalOps = ops
+    })
+  }
+  beforeDestroy () {
+    document.removeEventListener('keydown', this.handleEnterKey)
   }
 
   get chunkedName () {
@@ -241,6 +232,9 @@ export default class AnalyzeResults extends Vue {
     }
     return false
   }
+  get isApproved () {
+    return (this.json.status === 'Available')
+  }
   get issue () {
     if (Array.isArray(this.json.issues)) {
       return this.json.issues[this.issueIndex]
@@ -260,7 +254,6 @@ export default class AnalyzeResults extends Vue {
   }
   set name (name: string) {
     newReqModule.mutateName(name)
-    this.quill.setText(name)
   }
   get nameActions () {
     if ((this.issue as IssueI) && (this.issue as IssueI).name_actions) {
@@ -269,6 +262,11 @@ export default class AnalyzeResults extends Vue {
     return null
   }
   get nextButtonDisabled () {
+    if (this.issue.issue_type === 'designation_misplaced') {
+      if (newReqModule.designationIsFixed && this.issueIndex < this.json.issues.length) {
+        return false
+      }
+    }
     for (let type of ['obtain_consent', 'conflict_self_consent', 'send_to_examiner']) {
       if (this.requestExaminationOrProvideConsent[this.issueIndex][type]) {
         return false
@@ -365,21 +363,42 @@ export default class AnalyzeResults extends Vue {
     }
   }
   getBaseNameOps () {
-    return this.chunkedName.map((name, i) => (
-      { insert: i > 0 ? ' ' + name : name }
+    let nameWords = this.name.split(' ')
+    return nameWords.map((word, i) => (
+      { insert: (i > 0) ? (' ' + word) : (word) }
     ))
   }
-  handleChange ({ quill, html, text }) {
-    this.name = text
+  handleChange ({ html, text }) {
+    if (this.showActualInput) {
+      if (text.endsWith('\n')) {
+        text = removeExcessSpaces(text.replace('\n', ''))
+      }
+      this.name = text.toUpperCase()
+    }
+    if (html.includes('</p><p>')) {
+      html = html.replace('</p><p>', '')
+    }
+    this.contents = html
   }
   handleEnterKey (event) {
+    if (this.isApproved) {
+      // eslint-disable-next-line
+      console.log('not this')
+      event.preventDefault()
+      this.quill.setText(this.originalName)
+      return
+    }
     if (event.key === 'Enter') {
+      // eslint-disable-next-line
+      console.log('bur rhis')
       event.stopPropagation()
       event.stopImmediatePropagation()
       event.preventDefault()
       this.name = this.quill.getText()
       let Action = this.nameActions.find(action => action.type === 'brackets')
       if (Action && Action.message) {
+        // eslint-disable-next-line
+        console.log('was actuiob')
         let replace = '[' + Action.message + ']'
         this.name = removeExcessSpaces(this.name.replace(replace, ''))
       }
@@ -390,6 +409,9 @@ export default class AnalyzeResults extends Vue {
     event.preventDefault()
     this.name = this.quill.getText()
     newReqModule.startAnalyzeName()
+  }
+  updateContents (text) {
+    this.quill.setText(text)
   }
 }
 
