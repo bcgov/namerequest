@@ -37,7 +37,7 @@
 
 <script lang="ts">
 import Search from '@/components/new-request/search.vue'
-import ExistingRequestSearch from './existing-request/existing-request-search'
+import ExistingRequestSearch from './existing-request/existing-request-search.vue'
 import newReqModule from '../store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
 

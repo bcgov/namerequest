@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import ForgotNrModal from '@/components/modals/forgot-nr'
+import ForgotNrModal from '@/components/modals/forgot-nr.vue'
 import newReqModule from '@/store/existing-request-module'
 import { Component, Vue } from 'vue-property-decorator'
 import { RequestDataI } from '@/models'

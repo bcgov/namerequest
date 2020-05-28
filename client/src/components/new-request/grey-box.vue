@@ -103,7 +103,7 @@ import allDesignations from '@/store/list-data/designations'
 import newReqModule from '@/store/new-request-module'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { IssueI, OptionI } from '@/models'
-import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit'
+import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
 
 @Component({
   components: { ReserveSubmit }
@@ -363,9 +363,6 @@ export default class GreyBox extends Vue {
         let chunked = this.name.split(' ')
         chunked.splice(chunked.indexOf(designation), 1)
         this.name = chunked.join(' ') + ' ' + designation
-        let { word } = this.issue.name_actions.find(action => action.word)
-        word = word.toUpperCase()
-        this.originalName = chunked.join(' ') + ' ' + word
       }
     }
   }

@@ -88,7 +88,7 @@
 </template>
 
 <script lang="ts">
-import NameInput from './name-input'
+import NameInput from './name-input.vue'
 import newReqModule from '../../store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { LocationT } from '@/models'

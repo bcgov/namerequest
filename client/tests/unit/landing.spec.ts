@@ -1,13 +1,22 @@
 import Vuetify from 'vuetify'
 import Landing from '@/views/landing.vue'
 import AnalyzeResults from './mocks/analyze-results.vue'
-import { mount, shallowMount, createLocalVue } from '@vue/test-utils'
+import { mount, createLocalVue } from '@vue/test-utils'
 import newReqModule from '@/store/new-request-module'
+import LowerContainer from '@/components/lower-info-area/lower-container.vue'
 
 const localVue = createLocalVue()
 const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
+
+const stubs = {
+  AnalyzeCharacters: true,
+  AnalyzeResults,
+  LowerContainer,
+  Stats: true,
+  quillEditor: true
+}
 
 describe('landing.vue', () => {
   let wrapper: any
@@ -17,6 +26,7 @@ describe('landing.vue', () => {
   })
   beforeEach(() => {
     wrapper = mount(Landing, {
+      stubs,
       localVue,
       vuetify
     })
@@ -37,6 +47,7 @@ describe('landing.vue', () => {
   })
   beforeEach(() => {
     wrapper = mount(Landing, {
+      stubs,
       localVue,
       vuetify
     })
@@ -57,14 +68,13 @@ describe('landing.vue', () => {
 
     wrapper = mount(Landing, {
       localVue,
-      stubs: {
-        AnalyzeResults
-      },
+      stubs,
       vuetify
     })
   })
 
-  it('When the state.displayedComponent key is set to "AnalyzeResults", it shows only the results container', () => {
+  it('When state.displayedComponent === "AnalyzeResults", it shows only the results container', async () => {
+    await wrapper.vm.$nextTick()
     expect(wrapper.contains('#new-req-existing-req-container')).toBe(false)
     expect(wrapper.contains('#nanalyze-pending-container')).toBe(false)
     expect(wrapper.contains('#analyze-results-container')).toBe(true)

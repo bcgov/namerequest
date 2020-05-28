@@ -5,6 +5,26 @@ export type NrDataT = string | null
 export type SearchComponentT = 'search' | 'analyzing' | 'results'
 export type SubmissionTypeT = 'examination' | 'consent' | 'normal'
 
+export interface QuillI {
+  setContents(ops: QuillOpsI[]): void
+  getRangeAt(index: number): Range
+  setText(text: string): void
+  getText(): string
+
+}
+export interface SelectionI {
+  index?: number
+  length?: number
+}
+interface QuillAttributesI {
+  color: string
+  strike?: boolean
+}
+export interface QuillOpsI {
+  insert: string
+  attributes?: QuillAttributesI
+}
+
 export interface AnalysisJSONI {
   header?: string
   issues: IssueI[] | null

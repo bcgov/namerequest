@@ -1,59 +1,89 @@
 import { Vue } from 'vue-property-decorator'
 
 const NameWordRenderer = Vue.component('name-word-renderer', {
-  props: ['word', 'actions', 'index'],
+  props: ['word', 'actions', 'index', 'name'],
   data () {
     return {
+      lastIndexStyle: {
+        display: 'inline',
+        paddingRight: '0',
+        paddingLeft: '0',
+        marginRight: '4px',
+        marginLeft: '0'
+      },
       style: {
-        display: 'inline'
+        display: 'inline',
+        paddingRight: '0',
+        paddingLeft: '0',
+        marginRight: '0',
+        marginLeft: '0'
       }
     }
   },
   computed: {
-    output: function () {
-      let div = [['div', { style: this.style }, this.word + '\xa0']]
-      if (Array.isArray(this.actions)) {
-        let filteredActions = this.actions.filter(action => action.index === this.index)
-        if (filteredActions.length === 0) {
-          return div
-        }
-        let nonBracketsActions = filteredActions.filter(action => action.type !== 'brackets')
-        let BracketsActions = filteredActions.filter(action => action.type === 'brackets')
-        if (nonBracketsActions.length > 0) {
-          let style = { ...this.style }
-          for (let action of nonBracketsActions) {
-            switch (action.type) {
-              case 'strike':
-                style.color = '#d3272c'
-                style.textDecoration = style.textDecoration ? style.textDecoration + ' line-through' : 'line-through'
-                break
-              case 'highlight':
-                style.color = '#d3272c'
-                break
-              case 'spelling':
-                style.textDecoration = style.textDecoration
-                  ? style.textDecoration + ' underline wavy #d3272c' : 'underline wavy #d3272c'
-                break
+    lastIndex () {
+      return this.letters.length - 1
+    },
+    letters () {
+      return Array.from(this.word)
+    },
+    output () {
+      let filteredActions = this.actions.filter(action => action.index === this.index)
+      let style = { ...this.style }
+      if (filteredActions.some(action => action.type === 'strike')) {
+        style.textDecoration = 'line-through'
+        style.color = '#d3272c'
+      }
+      if (filteredActions.some(action => action.type === 'highlight')) {
+        style.color = '#d3272c'
+      }
+      let elements = this.letters.map((letter, i) =>
+        ([
+          'div',
+          { style,
+            attrs: {
+              id: `${this.index}-letter-${i}`
             }
+          },
+          letter
+        ])
+      )
+      elements[this.lastIndex] = [
+        'div',
+        { style: { ...style, ...{ marginRight: '4px' } } },
+        this.letters[this.lastIndex]
+      ]
+      let BracketsActions = filteredActions.filter(action => action.type === 'brackets')
+      if (BracketsActions.length > 0) {
+        let bracketStyle = { ...this.style }
+        bracketStyle.color = '#d3272c'
+        for (let action of BracketsActions) {
+          let message = '[' + action.message + ']\xa0'
+          let el = [
+            'div',
+            { style: bracketStyle, attrs: { id: `${this.index}-bracket-${action.position}` } },
+            message
+          ]
+          if (action.position === 'start') {
+            elements.unshift(el)
           }
-          div = [['div', { style }, this.word + '\xa0']]
-        }
-        if (BracketsActions.length > 0) {
-          let style = { ...this.style }
-          style.color = '#d3272c'
-          for (let action of BracketsActions) {
-            let message = '[' + action.message + ']\xa0'
-            let el = ['div', { style }, message]
-            if (action.position === 'start') {
-              div.unshift(el)
-            }
-            if (action.position === 'end') {
-              div.push(el)
-            }
+          if (action.position === 'end') {
+            elements.push(el)
           }
         }
       }
-      return div
+      elements.forEach(el => {
+        el[1].on = {
+          mouseover: this.handleClick,
+          click: this.handleClick
+        }
+      })
+      return elements
+    }
+  },
+  methods: {
+    handleClick (event) {
+      this.$root.$emit('position-caret', event.target.id)
     }
   },
   render (createEl) {

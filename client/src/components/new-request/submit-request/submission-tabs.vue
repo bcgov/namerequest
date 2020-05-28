@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import MainContainer from '../main-container'
+import MainContainer from '../main-container.vue'
 import ApplicantInfo1 from './applicant-info-1.vue'
 import ApplicantInfo2 from './applicant-info-2.vue'
 import ApplicantInfo3 from './applicant-info-3.vue'

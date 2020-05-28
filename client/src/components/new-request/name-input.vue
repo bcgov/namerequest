@@ -53,8 +53,5 @@ export default class NameInput extends Vue {
 </script>
 
 <style lang="sass" scoped>
-.name-search-icon
-  color: $link
-  cursor: pointer
 
 </style>

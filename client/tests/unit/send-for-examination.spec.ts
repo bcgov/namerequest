@@ -1,4 +1,4 @@
-import SendForExamination from '@/components/new-request/submit-request/send-for-examination'
+import SendForExamination from '@/components/new-request/submit-request/send-for-examination.vue'
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import newReqModule from '@/store/new-request-module'
 import Vuetify from 'vuetify'
