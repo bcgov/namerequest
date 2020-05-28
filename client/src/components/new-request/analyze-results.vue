@@ -14,7 +14,7 @@
             <v-text-field v-model="name"
                           filled
                           autocomplete="off"
-                          @focus="toggleRealInput"
+                          @blur="upperCasifyName"
                           v-if="showActualInput || !hasNameActions"
                           placeholder="Search a Name"
                           id="analyze-name-text-field">
@@ -31,9 +31,8 @@
                 <v-icon class="name-search-icon" @click="handleSubmit">search</v-icon>
               </template>
               <template v-slot:prepend-inner>
-
                 <template v-for="(word, i) in chunkedName">
-                  <name-word-renderer :key="word+i" :word="word" :index="i" :actions="nameActions" />
+                  <name-word-renderer :key="word+i" :word="word" :index="i" :actions="nameActions" :name="name" />
                 </template>
               </template>
             </v-text-field>
@@ -167,6 +166,8 @@ export default class AnalyzeResults extends Vue {
   issueIndex: number = 0
   originalName: string | null = null
   highlightCheckboxes: boolean = false
+  timeOut = null
+  letterId = ''
 
   @Watch('issueIndex')
   resetShowActualInput (newVal, oldVal) {
@@ -177,6 +178,10 @@ export default class AnalyzeResults extends Vue {
 
   created () {
     this.originalName = newReqModule.name
+  }
+
+  mounted () {
+    this.$root.$on('position-caret', (id) => this.handleCaret(id))
   }
 
   get chunkedName () {
@@ -220,8 +225,12 @@ export default class AnalyzeResults extends Vue {
     return newReqModule.name
   }
   set name (name: string) {
-    name = name.toUpperCase()
     newReqModule.mutateName(name)
+    clearTimeout(this.timeOut)
+    this.timeOut = setTimeout(() => {
+      this.name = this.name.toUpperCase()
+      this.timeOut = null
+    }, 6000)
   }
   get nameActions () {
     if ((this.issue as IssueI) && (this.issue as IssueI).name_actions) {
@@ -277,8 +286,12 @@ export default class AnalyzeResults extends Vue {
     }
   }
   handleSubmit (event: Event) {
+    event = Object.assign(event)
     event.preventDefault()
     newReqModule.startAnalyzeName()
+  }
+  handleCaret (id) {
+    this.letterId = id
   }
   cancelAnalyzeName () {
     newReqModule.cancelAnalyzeName()
@@ -286,17 +299,37 @@ export default class AnalyzeResults extends Vue {
   toggleRealInput () {
     if (!this.showActualInput) {
       this.showActualInput = true
+      let index: number
       this.$nextTick(function () {
-        let position = this.name.length
+        if (this.letterId) {
+          let caretInfo = this.letterId.split('-')
+          let wordIndex = parseInt(caretInfo[0])
+          let type = caretInfo[1]
+          if (type === 'letter') {
+            let count = 0
+            for (let i = 0; i < wordIndex; i++) {
+              count = count + this.chunkedName[i].length
+              if (i > 0) {
+                count = count + i + 1
+              }
+            }
+            index = count + parseInt(caretInfo[2])
+          }
+        } else {
+          index = this.name.length
+        }
         let elem = document.getElementById('analyze-name-text-field') as HTMLInputElement
         if (elem.setSelectionRange) {
           elem.focus()
-          elem.setSelectionRange(position, position)
+          elem.setSelectionRange(index, index)
           return
         }
         elem.focus()
       })
     }
+  }
+  upperCasifyName () {
+    this.name = this.name.toUpperCase()
   }
 }
 
