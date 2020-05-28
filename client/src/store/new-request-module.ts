@@ -660,6 +660,35 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
+  async getNameRequestXPRO () {
+    this.mutateDisplayedComponent('AnalyzePending')
+    this.resetRequestExaminationOrProvideConsent()
+
+    let params: NewRequestNameSearchI = {
+      name: this.name,
+      location: this.location,
+      entity_type: this.entityType,
+      request_action: this.requestAction
+    }
+
+    try {
+      let { CancelToken } = axios
+      source = CancelToken.source()
+
+      let resp = await axios.get('/xpro-name-analysis', {
+        params,
+        cancelToken: source.token
+      })
+      this.mutateAnalysisJSON(resp.data)
+      this.mutateDisplayedComponent('AnalyzeResults')
+    } catch (error) {
+      this.mutateDisplayedComponent('Tabs')
+      // eslint-disable-next-line
+      console.log(error)
+      return
+    }
+  }
+  @Action
   async getStats () {
     try {
       let resp = await axios.get('/stats')
@@ -844,7 +873,11 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('SubmissionTabs')
       return
     }
-    this.getNameRequest()
+    if (this.location === 'BC') {
+      this.getNameRequest()
+      return
+    }
+    this.getNameRequestXPRO()
   }
   @Action
   updateApplicantDetails (appKV) {

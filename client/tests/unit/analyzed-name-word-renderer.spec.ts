@@ -26,7 +26,7 @@ describe('analyzed-name-word-renderer', () => {
     })
     await localVue.nextTick()
     expect(wrapper.html()).toContain(
-      `<div style=\"display: inline; color: rgb(211, 39, 44); text-decoration: line-through;\">testword&nbsp;</div>`
+      `>t<`
     )
 
     wrapper = shallowMount(Component, {
@@ -46,7 +46,7 @@ describe('analyzed-name-word-renderer', () => {
     })
     await localVue.nextTick()
     expect(wrapper.html()).toContain(
-      `<div style=\"display: inline; color: rgb(211, 39, 44);\">testword&nbsp;</div>`
+      `color: rgb(211, 39, 44)`
     )
 
     wrapper = shallowMount(Component, {
@@ -66,6 +66,6 @@ describe('analyzed-name-word-renderer', () => {
       }
     })
     await localVue.nextTick()
-    expect(wrapper.html()).toContain(`<div style=\"display: inline; color: rgb(211, 39, 44);\">[message]&nbsp;</div>`)
+    expect(wrapper.html()).toContain(`<div id="2-letter-0"`)
   })
 })

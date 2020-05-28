@@ -9,35 +9,14 @@
     </template>
     <template v-slot:content>
       <v-row>
-        <v-col cols="12" class="mt-3" @click="toggleRealInput">
-          <v-form @submit="handleSubmit">
-            <v-text-field v-model="name"
-                          filled
-                          autocomplete="off"
-                          @focus="toggleRealInput"
-                          v-if="showActualInput || !hasNameActions"
-                          placeholder="Search a Name"
-                          id="analyze-name-text-field">
-              <template v-slot:append>
-                <v-icon class="name-search-icon" @click="handleSubmit">search</v-icon>
-              </template>
-            </v-text-field>
-            <v-text-field filled
-                          autocomplete="off"
-                          v-if="!showActualInput && hasNameActions"
-                          @focus="toggleRealInput()"
-                          id="analyze-name-text-field-2">
-              <template v-slot:append>
-                <v-icon class="name-search-icon" @click="handleSubmit">search</v-icon>
-              </template>
-              <template v-slot:prepend-inner>
-
-                <template v-for="(word, i) in chunkedName">
-                  <name-word-renderer :key="word+i" :word="word" :index="i" :actions="nameActions" />
-                </template>
-              </template>
-            </v-text-field>
-          </v-form>
+        <v-col cols="12" class="mt-3" @click="clickNameField">
+          <quill-editor ref="quill"
+                        id="name-search-bar"
+                        v-model="nameEdit"
+                        :content="content"
+                        :options="quillConfig"
+                        @change.native="handleChange($event)"
+                        @keydown.enter.native.capture.prevent="handleEnterKey" />
         </v-col>
       </v-row>
       <transition name="fade" mode="out-in" >
@@ -159,14 +138,37 @@ import NameWordRenderer from '@/components/new-request/analyzed-name-word-render
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { IssueI } from '@/models'
+import { quillEditor } from 'vue-quill-editor'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import { removeExcessSpaces } from '@/plugins/utilities'
 
 @Component({
-  components: { GreyBox, MainContainer, NameWordRenderer, ReserveSubmit }
+  components: { GreyBox, MainContainer, NameWordRenderer, quillEditor, ReserveSubmit }
 })
 export default class AnalyzeResults extends Vue {
-  issueIndex: number = 0
-  originalName: string | null = null
   highlightCheckboxes: boolean = false
+  issueIndex: number = 0
+  letterId = ''
+  originalName: string | null = null
+  content: string = ''
+  nameEdit: string = ''
+  quillConfig = {
+    modules: {
+      toolbar: false
+    },
+    scrollingContainer: false
+  }
+  timeOut = null
+  originalOps = []
+  listener
+
+  @Watch('name')
+  updateLocalName (newVal) {
+    if (this.nameEdit !== newVal) {
+      this.$refs.quill.quill.setText(newVal)
+    }
+  }
 
   @Watch('issueIndex')
   resetShowActualInput (newVal, oldVal) {
@@ -179,6 +181,31 @@ export default class AnalyzeResults extends Vue {
     this.originalName = newReqModule.name
   }
 
+  mounted () {
+    let ops = this.getBaseNameOps()
+    if (!Array.isArray(this.nameActions) || this.nameActions.length === 0) {
+      this.$refs.quill.quill.setContents(ops)
+      return
+    }
+    this.nameActions.forEach(action => {
+      if (action.type === 'brackets') {
+        let op = { insert: ` [${action.message}]`, attributes: { color: 'red' } }
+        if (action.position === 'start') {
+          ops.splice(action.index, 0, op)
+        } else if (action.position === 'end') {
+          ops.splice(action.index + 1, 0, op)
+        }
+      }
+      if (action.type === 'highlight') {
+        ops[action.index] = { ...ops[action.index], attributes: { color: 'red' } }
+      }
+      if (action.type === 'strike') {
+        ops[action.index] = { ...ops[action.index], attributes: { color: 'red', strike: true } }
+      }
+    })
+    this.$refs.quill.quill.setContents(ops)
+    this.originalOps = ops
+  }
   get chunkedName () {
     return this.name.split(' ')
   }
@@ -216,12 +243,18 @@ export default class AnalyzeResults extends Vue {
     let options = newReqModule.locationOptions
     return options.find((opt: any) => opt.value === value)
   }
+  get quill () {
+    return this.nameEdit
+  }
+  set quill (value) {
+    this.$refs.quill.quill.setText(value)
+  }
   get name () {
     return newReqModule.name
   }
   set name (name: string) {
-    name = name.toUpperCase()
     newReqModule.mutateName(name)
+    this.$refs.quill.quill.setText(name)
   }
   get nameActions () {
     if ((this.issue as IssueI) && (this.issue as IssueI).name_actions) {
@@ -273,30 +306,69 @@ export default class AnalyzeResults extends Vue {
     }
     if (this.nextButtonDisabled) {
       this.highlightCheckboxes = true
+      // reset () => highlightedCheckboxes = true
       setTimeout(() => { reset() }, 4000)
     }
   }
   handleSubmit (event: Event) {
     event.preventDefault()
+    this.name = this.$refs.quill.quill.getText()
     newReqModule.startAnalyzeName()
   }
   cancelAnalyzeName () {
     newReqModule.cancelAnalyzeName()
   }
-  toggleRealInput () {
+  getBaseNameOps () {
+    return this.chunkedName.map((name, i) => (
+      { insert: i > 0 ? ' ' + name : name }
+    ))
+  }
+  clickNameField () {
     if (!this.showActualInput) {
       this.showActualInput = true
-      this.$nextTick(function () {
-        let position = this.name.length
-        let elem = document.getElementById('analyze-name-text-field') as HTMLInputElement
-        if (elem.setSelectionRange) {
-          elem.focus()
-          elem.setSelectionRange(position, position)
-          return
+      let selection = this.$refs.quill.quill.getSelection()
+      selection = { ...selection }
+      let inserts = this.originalOps.map(op => op.insert)
+      let indexMap = {}
+      let unmappedIndex = 0
+      let mappedIndex = 0
+      inserts.forEach(insert => {
+        let { length } = insert
+
+        if (!insert.match(/\[.+\]/)) {
+          for (let n = 0; n < length; n++) {
+            indexMap[unmappedIndex + n] = mappedIndex + n
+          }
+          mappedIndex = mappedIndex + length
+          unmappedIndex = unmappedIndex + length
+        } else {
+          for (let n = 0; n < length; n++) {
+            indexMap[unmappedIndex + n] = mappedIndex
+          }
+          unmappedIndex = unmappedIndex + length
         }
-        elem.focus()
       })
+      let lastIndex = Object.keys(indexMap).length
+      indexMap[lastIndex] = indexMap[lastIndex - 1] + 1
+      let ops = this.getBaseNameOps()
+      this.$refs.quill.quill.setContents(ops)
+      let { index } = selection
+      selection.index = indexMap[index]
+      this.$refs.quill.quill.setSelection(selection)
     }
+  }
+  handleChange ({ quill, html, text }) {
+    this.name = text
+  }
+  handleEnterKey (event) {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      this.name = this.$refs.quill.quill.getText()
+      newReqModule.startAnalyzeName()
+    }
+  }
+  upperCasifyName () {
+    this.name = this.name.toUpperCase()
   }
 }
 
@@ -324,5 +396,9 @@ export default class AnalyzeResults extends Vue {
 
 .strike
   text-decoration-line: line-through
+#name-search-bar
+  min-height: 40px
+  max-height: 40px
+  margin: -20px 0 20px 0
 
 </style>
