@@ -5,7 +5,8 @@ import querystring from 'qs'
 import store from '@/store'
 import {
   AnalysisJSONI,
-  ApplicantI, ConsentConflictI,
+  ApplicantI,
+  ConsentConflictI,
   DisplayedComponentT,
   EntityI,
   LocationT, NameDesignationI,
@@ -519,15 +520,6 @@ export class NewRequestModule extends VuexModule {
     )
     return output
   }
-  get postType () {
-    if (this.nameChoices.name1) {
-      return 'draft'
-    }
-    if (this.consentWords.length > 0 || this.consentConflicts.name) {
-      return 'conditional'
-    }
-    return 'reserved'
-  }
   get requestTypeOptions () {
     let option = this.requestTypes.find(type => type.value === 'NEW')
     option.rank = 1
@@ -656,6 +648,35 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
       this.mutateDisplayedComponent('Tabs')
+      return
+    }
+  }
+  @Action
+  async getNameRequestXPRO () {
+    this.mutateDisplayedComponent('AnalyzePending')
+    this.resetRequestExaminationOrProvideConsent()
+
+    let params: NewRequestNameSearchI = {
+      name: this.name,
+      location: this.location,
+      entity_type: this.entityType,
+      request_action: this.requestAction
+    }
+
+    try {
+      let { CancelToken } = axios
+      source = CancelToken.source()
+
+      let resp = await axios.get('/xpro-name-analysis', {
+        params,
+        cancelToken: source.token
+      })
+      this.mutateAnalysisJSON(resp.data)
+      this.mutateDisplayedComponent('AnalyzeResults')
+    } catch (error) {
+      this.mutateDisplayedComponent('Tabs')
+      // eslint-disable-next-line
+      console.log(error)
       return
     }
   }
@@ -844,7 +865,11 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('SubmissionTabs')
       return
     }
-    this.getNameRequest()
+    if (this.location === 'BC') {
+      this.getNameRequest()
+      return
+    }
+    this.getNameRequestXPRO()
   }
   @Action
   updateApplicantDetails (appKV) {
@@ -859,7 +884,6 @@ export class NewRequestModule extends VuexModule {
   clearErrors () {
     this.errors = []
   }
-
   @Mutation
   setErrors (value: string) {
     if (Array.isArray(this.errors) && this.errors.length > 0) {
@@ -868,12 +892,10 @@ export class NewRequestModule extends VuexModule {
     }
     this.errors = [value]
   }
-
   @Mutation
   mutateActingOnOwnBehalf (value) {
     this.actingOnOwnBehalf = value
   }
-
   @Mutation
   mutateAddressSuggestions (value) {
     if (!value) {
@@ -886,12 +908,10 @@ export class NewRequestModule extends VuexModule {
     }
     this.addressSuggestions = Object.assign([], value)
   }
-
   @Mutation
   mutateAnalysisJSON (value: AnalysisJSONI) {
     this.analysisJSON = value
   }
-
   @Mutation
   mutateApplicant (appKV) {
     if (Array.isArray(appKV)) {
@@ -905,42 +925,34 @@ export class NewRequestModule extends VuexModule {
     }
     this.applicant[appKV.key] = appKV.value
   }
-
   @Mutation
   mutateDisableSuggestions (value) {
     this.disableSuggestions = value
   }
-
   @Mutation
   mutateDisplayedComponent (comp: DisplayedComponentT) {
     this.displayedComponent = comp
   }
-
   @Mutation
   mutateEntityType (type: string) {
     this.entityType = type
   }
-
   @Mutation
   mutateExaminationRequestedIndex (value: boolean) {
     this.examinationRequestedIndex[this.issueIndex] = value
   }
-
   @Mutation
   mutateExtendedEntitySelectOption (option: SelectOptionsI) {
     this.extendedEntitySelection = option
   }
-
   @Mutation
   mutateExtendedRequestType (option: SelectOptionsI) {
     this.extendedRequestType = option
   }
-
   @Mutation
   mutateHelpMeChooseModalVisible (value: boolean) {
     this.helpMeChooseModalVisible = value
   }
-
   @Mutation
   mutateLocation (location: LocationT) {
     if (location === this.location) {
@@ -964,57 +976,46 @@ export class NewRequestModule extends VuexModule {
     }
     this.location = location
   }
-
   @Mutation
   mutateLocationInfoModalVisible (value: boolean) {
     this.locationInfoModalVisible = value
   }
-
   @Mutation
   mutateName (name: string) {
     this.name = name
   }
-
   @Mutation
   mutateNameChoices (choiceObj) {
     this.nameChoices[choiceObj.key] = choiceObj.value
   }
-
   @Mutation
   mutateisPersonsName (value) {
     this.isPersonsName = value
   }
-
   @Mutation
   mutateNameIsEnglish (value) {
     this.nameIsEnglish = value
   }
-
   @Mutation
   mutateNRData ({ key, value }) {
     this.nrData[key] = value
   }
-
   @Mutation
   mutateNrRequiredModalVisible (value: boolean) {
     this.nrRequiredModalVisible = value
   }
-
   @Mutation
   mutatePickEntityModalVisible (value: boolean) {
     this.pickEntityModalVisible = value
   }
-
   @Mutation
   mutatePickRequestTypeModalVisible (value: boolean) {
     this.pickRequestTypeModalVisible = value
   }
-
   @Mutation
   mutatePriorityRequest (value) {
     this.priorityRequest = value
   }
-
   @Mutation
   mutateRequestAction (action: string) {
     this.requestAction = action
@@ -1023,22 +1024,18 @@ export class NewRequestModule extends VuexModule {
       this.entityType = 'XCR'
     }
   }
-
   @Mutation
   mutateRequestExaminationOrProvideConsent ({ index, type, value }) {
     this.requestExaminationOrProvideConsent[index][type] = value
   }
-
   @Mutation
   mutateShowActualInput (value) {
     this.showActualInput = value
   }
-
   @Mutation
   mutateStats (stats) {
     this.stats = stats
   }
-
   @Mutation
   mutateSubmissionTabComponent (comp) {
     enum Components {
@@ -1051,34 +1048,28 @@ export class NewRequestModule extends VuexModule {
     let tab = parseInt(Components[comp])
     this.submissionTabNumber = tab
   }
-
   @Mutation
   mutateSubmissionTabNumber (value) {
     this.submissionTabNumber = value
   }
-
   @Mutation
   mutateSubmissionType (type) {
     this.submissionType = type
   }
-
   @Mutation
   mutateTabNumber (tab: number) {
     this.tabNumber = tab
   }
-
   @Mutation
   mutateWaitingAddressSearch (appKV: ApplicantI) {
     this.waitingAddressSearch = appKV
   }
-
   @Mutation
   resetApplicantDetails () {
     Object.keys(this.applicant).forEach(key => {
       this.applicant[key] = ''
     })
   }
-
   @Mutation
   resetRequestExaminationOrProvideConsent () {
     for (let n of [0, 1, 2]) {
@@ -1087,7 +1078,6 @@ export class NewRequestModule extends VuexModule {
       }
     }
   }
-
   @Mutation
   setNRPostResponseObject (value) {
     this.nrPostResponseObject = value

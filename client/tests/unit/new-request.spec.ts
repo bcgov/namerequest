@@ -1,6 +1,6 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import newReqModule from '@/store/new-request-module'
-import Search from '@/components/new-request/search'
+import Search from '@/components/new-request/search.vue'
 import Vuetify from 'vuetify'
 
 const localVue = createLocalVue()

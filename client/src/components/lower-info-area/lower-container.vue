@@ -158,8 +158,8 @@
 </template>
 
 <script lang="ts">
-import ExampleNameGenerator from './example-name-generator'
-import Footer from '@/components/lower-info-area/footer'
+import ExampleNameGenerator from './example-name-generator.vue'
+import Footer from '@/components/lower-info-area/footer.vue'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({

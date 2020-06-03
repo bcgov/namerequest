@@ -26,22 +26,16 @@ export default class ReserveSubmitButton extends Vue {
   showNextStep () {
     newReqModule.mutateDisplayedComponent('SubmissionTabs')
     if (this.setup === 'examine') {
-      // eslint-disable-next-line
-      console.log('it was examine')
       newReqModule.mutateSubmissionTabComponent('SendForExamination')
       newReqModule.mutateSubmissionType('examination')
       return
     }
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
     if (this.setup === 'consent') {
-      // eslint-disable-next-line
-      console.log('it was consent')
       newReqModule.postNameReservation('conditional')
       newReqModule.mutateSubmissionType('consent')
       return
     }
-    // eslint-disable-next-line
-    console.log('it was reserved')
     newReqModule.postNameReservation('reserved')
     newReqModule.mutateSubmissionType('normal')
   }

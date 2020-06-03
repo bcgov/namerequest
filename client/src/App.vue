@@ -20,7 +20,7 @@ import NrNotRequired from '@/components/modals/nr-not-required.vue'
 import PickEntity from '@/components/modals/pick-entity.vue'
 import PickRequestType from '@/components/modals/pick-request-type.vue'
 import { Component, Vue, Ref } from 'vue-property-decorator'
-import Header from '@/components/header'
+import Header from '@/components/header.vue'
 
 @Component({
   components: { LocationInfoModal, NrNotRequired, HelpMeChoose, PickEntity, PickRequestType, Header }
