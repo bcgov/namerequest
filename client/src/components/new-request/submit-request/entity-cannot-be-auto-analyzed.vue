@@ -55,6 +55,28 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
     }
   }
   get boxes () {
+    let entityExplanation = {
+      title: 'Option 2',
+      class: 'square-card-x2',
+      button: 'restart',
+      text: 'You can choose a different entity type and search again.  Please consult with a lawyer' +
+      '/accounting professional if you are unsure about the most appropriate structure for your situation.'
+    }
+    let nameExplanation = {
+      title: 'Helpful Hint',
+      class: 'helpful-hint',
+      button: 'examine',
+      text: 'Click the button below to submit your request.  Please check the wait times listed at the top of' +
+      ' the screen.  Rush services are also available.'
+    }
+    let requestActionExplanation = {
+      title: 'Option 1',
+      class: 'helpful-hint',
+      button: 'examine',
+      text: `Currently only requests for New Names, New Tradenames and Name Changes are handled automatically.
+        Click the button below to submit your request to examination.  Please check the wait times listed at the top of
+        the screen.  Rush services are also available.`
+    }
     let slashEditExplanation = {
       title: 'Option 1',
       class: 'square-card-x2',
@@ -68,19 +90,8 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
       button: 'examine',
       text: 'You can choose to submit this name to examination. Please check wait times at the top of the screen.'
     }
-    let nameExplanation = {
-      title: 'Helpful Hint',
-      class: 'helpful-hint',
-      button: 'examine',
-      text: 'Click the button below to submit your request.  Please check the wait times listed at the top of' +
-      ' the screen.  Rush services are also available.'
-    }
-    let entityExplanation = {
-      title: 'Option 2',
-      class: 'square-card-x2',
-      button: 'restart',
-      text: 'You can choose a different entity type and search again.  Please consult with a lawyer' +
-      '/accounting professional if you are unsure about the most appropriate structure for your situation.'
+    if (this.requestActionNotSupported) {
+      return [requestActionExplanation]
     }
     if (this.entityTypeNotAnalyzed) {
       let edits = { title: 'Option 1', class: 'square-card-x2' }
@@ -109,9 +120,6 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
     }
     return false
   }
-  get nameIsSlashed () {
-    return newReqModule.nameIsSlashed
-  }
   get isPersonsName () {
     return newReqModule.isPersonsName
   }
@@ -124,9 +132,22 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   get nameIsEnglish () {
     return newReqModule.nameIsEnglish
   }
+  get nameIsSlashed () {
+    return newReqModule.nameIsSlashed
+  }
+  get requestActionNotSupported () {
+    return !(['NEW', 'DBA', 'CHG'].includes(newReqModule.requestAction))
+  }
+  get requestActionText () {
+    return newReqModule.requestTextFromValue
+  }
   get title () {
+    if (this.requestActionNotSupported) {
+      return `Name requests to <b>${this.requestActionText}</b> cannot be auto-analyzed and must be sent<br> to
+      examination for review`
+    }
     if (this.entityTypeNotAnalyzed) {
-      return ` Name Requests for the <b>${this.entityText}</b> entity type cannot be reserved immediately.`
+      return `Name Requests for the <b>${this.entityText}</b> entity type cannot be reserved immediately.`
     }
     if (this.nameIsSlashed) {
       return 'The slash "/" followed by a number of words implies the name is an English name followed by a French' +

@@ -51,6 +51,7 @@ export class NewRequestModule extends VuexModule {
     postalCd: '',
     stateProvinceCd: ''
   }
+  assumedName: boolean = false
   nrData = {
     additionalInfo: '',
     corpNum: '',
@@ -63,7 +64,7 @@ export class NewRequestModule extends VuexModule {
   designationIsFixed: boolean = false
   disableSuggestions: boolean = false
   displayedComponent: DisplayedComponentT = 'Tabs'
-  doNotAnalyzeEntities: string[] = ['PAR', 'CC', 'BC', 'CP', 'PA', 'FI', 'XCP']
+  doNotAnalyzeEntities: string[] = ['PAR', 'CC', 'CP', 'PA', 'FI', 'XCP']
   entityType: string = 'CR'
   entityTypesBC: EntityI[] = [
     {
@@ -533,6 +534,12 @@ export class NewRequestModule extends VuexModule {
     )
     return output
   }
+  get requestTextFromValue () {
+    if (this.requestAction) {
+      return this.requestTypeOptions.find(req => req.value === this.requestAction).text
+    }
+    return null
+  }
   get requestTypeOptions () {
     let option = this.requestTypes.find(type => type.value === 'NEW')
     option.rank = 1
@@ -872,12 +879,18 @@ export class NewRequestModule extends VuexModule {
       return
     }
     this.mutateName(name)
-    if (this.doNotAnalyzeEntities.includes(this.entityType) || !this.nameIsEnglish || this.isPersonsName) {
+    if (this.location === 'BC') {
+      if (this.nameIsEnglish && !this.isPersonsName && !this.doNotAnalyzeEntities.includes(this.entityType)) {
+        if (['NEW', 'DBA', 'CHG'].includes(this.requestAction)) {
+          this.getNameRequest()
+          return
+        }
+      }
       this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
       this.mutateDisplayedComponent('SubmissionTabs')
       return
     }
-    if (this.location === 'BC') {
+    if (this.requestAction === 'MVE') {
       this.getNameRequest()
       return
     }
@@ -936,6 +949,10 @@ export class NewRequestModule extends VuexModule {
       appKV.value = appKV.value.toUpperCase()
     }
     this.applicant[appKV.key] = appKV.value
+  }
+  @Mutation
+  mutateAssumedName (value) {
+    this.assumedName = value
   }
   @Mutation
   mutateDesignationIsFixed (value) {
