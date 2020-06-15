@@ -13,6 +13,9 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 export default class ReserveSubmitButton extends Vue {
   @Prop(String) setup: string
   get text () {
+    if (this.location !== 'BC') {
+      return 'Send For Examination'
+    }
     switch (this.setup) {
       case 'consent':
         return 'Conditionally Reserve'
@@ -22,10 +25,13 @@ export default class ReserveSubmitButton extends Vue {
         return 'Reserve and Continue'
     }
   }
+  get location () {
+    return newReqModule.location
+  }
 
   showNextStep () {
     newReqModule.mutateDisplayedComponent('SubmissionTabs')
-    if (this.setup === 'examine') {
+    if (this.setup === 'examine' || this.location !== 'BC') {
       newReqModule.mutateSubmissionTabComponent('SendForExamination')
       newReqModule.mutateSubmissionType('examination')
       return

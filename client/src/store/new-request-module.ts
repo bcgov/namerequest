@@ -23,6 +23,7 @@ import {
 import canadaPostAPIKey from './config'
 import { Action, config, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
+import Vue from 'vue'
 // config.rawError = true
 
 const qs: any = querystring
@@ -59,6 +60,7 @@ export class NewRequestModule extends VuexModule {
     tradeMark: '',
     xproJurisdiction: ''
   }
+  designationIsFixed: boolean = false
   disableSuggestions: boolean = false
   displayedComponent: DisplayedComponentT = 'Tabs'
   doNotAnalyzeEntities: string[] = ['PAR', 'CC', 'BC', 'CP', 'PA', 'FI', 'XCP']
@@ -397,6 +399,17 @@ export class NewRequestModule extends VuexModule {
   tabNumber: number = 0
   waitingAddressSearch: ApplicantI | null = null
 
+  get allDesignationWords () {
+    let output = []
+    for (let des in designations) {
+      designations[des].words.forEach(word => {
+        if (!output.includes(word)) {
+          output.push(word)
+        }
+      })
+    }
+    return output
+  }
   get consentConflicts (): ConsentConflictI {
     let output = {
       name: ''
@@ -425,7 +438,7 @@ export class NewRequestModule extends VuexModule {
     return []
   }
   get designationObject () {
-    if (designations[this.entityType]) {
+    if (this.entityType && designations[this.entityType]) {
       return designations[this.entityType]
     }
     return ''
@@ -675,8 +688,6 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
       this.mutateDisplayedComponent('Tabs')
-      // eslint-disable-next-line
-      console.log(error)
       return
     }
   }
@@ -817,6 +828,7 @@ export class NewRequestModule extends VuexModule {
       source.cancel()
       source = null
     }
+    this.mutateName('')
     this.mutateAnalysisJSON(null)
     this.mutateDisplayedComponent('Tabs')
     this.mutateShowActualInput(false)
@@ -926,6 +938,10 @@ export class NewRequestModule extends VuexModule {
     this.applicant[appKV.key] = appKV.value
   }
   @Mutation
+  mutateDesignationIsFixed (value) {
+    this.designationIsFixed = value
+  }
+  @Mutation
   mutateDisableSuggestions (value) {
     this.disableSuggestions = value
   }
@@ -983,6 +999,17 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateName (name: string) {
     this.name = name
+  }
+  @Mutation
+  mutateNameChoicesToInitialState () {
+    Vue.set(this, 'nameChoices', {
+      name1: '',
+      designation1: '',
+      name2: '',
+      designation2: '',
+      name3: '',
+      designation3: ''
+    })
   }
   @Mutation
   mutateNameChoices (choiceObj) {

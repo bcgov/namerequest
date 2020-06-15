@@ -2,16 +2,8 @@ export type DisplayedComponentT = 'Tabs' | 'AnalyzePending' | 'AnalyzeResults' |
 export type LocationT = 'BC' | 'CA' | 'IN' | 'INFO'
 export type NrDataResponseT = RequestDataI | null
 export type NrDataT = string | null
-export type SearchComponentT = 'search' | 'analyzing' | 'results'
 export type SubmissionTypeT = 'examination' | 'consent' | 'normal'
 
-export interface QuillI {
-  setContents(ops: QuillOpsI[]): void
-  getRangeAt(index: number): Range
-  setText(text: string): void
-  getText(): string
-
-}
 export interface SelectionI {
   index?: number
   length?: number
@@ -70,7 +62,7 @@ export interface IssueI {
   ]
   setup: SetupI[]
   show_examination_button: boolean
-  show_resere_button: boolean
+  show_reservxe_button: boolean
 }
 export interface NameDesignationI {
   name: string

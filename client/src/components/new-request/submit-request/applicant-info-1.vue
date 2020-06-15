@@ -64,7 +64,8 @@
                   <v-text-field :messages="messages['Line1']"
                                 :rules="requiredRules"
                                 :value="applicant.addrLine1"
-                                @blur="messages = {}"
+                                @blur="blurAddress1"
+                                @focus="focusAddress1"
                                 @input="updateApplicant('addrLine1', $event)"
                                 class="pa-0"
                                 dense
@@ -303,7 +304,6 @@ export default class ApplicantInfo1 extends Vue {
   mounted () {
     this.updateApplicant('stateProvinceCd', 'BC')
     this.updateApplicant('countryTypeCd', 'CA')
-    document.addEventListener('keydown', this.handleKeydown)
     debounced = null
   }
   beforeDestoy () {
@@ -357,7 +357,13 @@ export default class ApplicantInfo1 extends Vue {
   get submissionType () {
     return newReqModule.submissionType
   }
-
+  blurAddress1 () {
+    this.messages = {}
+    document.removeEventListener('keydown', this.handleKeydown)
+  }
+  focusAddress1 () {
+    document.addEventListener('keydown', this.handleKeydown)
+  }
   clearValidation () {
     if (this.$refs.step1 as any) {
       (this.$refs.step1 as any).resetValidation()
@@ -390,6 +396,9 @@ export default class ApplicantInfo1 extends Vue {
     }
   }
   handleKeydown (event) {
+    if (!this.showAddressMenu) {
+      return event
+    }
     if (this.addressSuggestions && this.showAddressMenu) {
       if (event.key === 'Tab') {
         event.preventDefault()
