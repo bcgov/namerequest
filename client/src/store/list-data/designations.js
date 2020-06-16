@@ -75,6 +75,18 @@ const designations = {
   PAR: {
     words: [],
     end: false
+  },
+  FR: {
+    words: [],
+    end: false
+  },
+  GP: {
+    words: [],
+    end: false
+  },
+  DBA: {
+    words: [],
+    end: false
   }
 }
 
