@@ -59,15 +59,12 @@ describe('analyze-results.vue', () => {
       })
       wrapper = mount(AnalyzeResults, {
         localVue,
-        vuetify,
-        mocks: {
-          quillEditor
-        }
+        vuetify
       })
     })
     it('renders the nameActions properly', async () => {
       await wrapper.vm.$nextTick()
-      expect(wrapper.vm.contents.includes(wrapper.vm.name)).toBe(true)
+      expect(wrapper.html()).toContain('<span style=&quot;color: red;&quot;> [Add a Word Here]</span>')
     })
   })
 })

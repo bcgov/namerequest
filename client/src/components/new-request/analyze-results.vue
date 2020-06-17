@@ -172,7 +172,8 @@ export default class AnalyzeResults extends Vue {
     this.originalName = newReqModule.name
   }
   mounted () {
-    this.$root.$on('updatecontents', this.updateContents)
+    newReqModule.mutateDesignationIsFixed(false)
+    this.$root.$on('updatecontents', (name) => { this.updateContents(name) })
     document.addEventListener('keydown', this.handleEnterKey)
     this.$nextTick(function () {
       this.quill.setContents([])
@@ -262,7 +263,7 @@ export default class AnalyzeResults extends Vue {
     return null
   }
   get nextButtonDisabled () {
-    if (this.issue.issue_type === 'designation_misplaced') {
+    if (['designation_misplaced', 'end_designation_more_than_once'].includes(this.issue.issue_type)) {
       if (newReqModule.designationIsFixed && this.issueIndex < this.json.issues.length) {
         return false
       }
@@ -369,12 +370,8 @@ export default class AnalyzeResults extends Vue {
     ))
   }
   handleChange ({ html, text }) {
-    if (this.showActualInput) {
-      if (text.endsWith('\n')) {
-        text = removeExcessSpaces(text.replace('\n', ''))
-      }
-      this.name = text.toUpperCase()
-    }
+    text = text.replace('\n', '')
+    this.name = text
     if (html.includes('</p><p>')) {
       html = html.replace('</p><p>', '')
     }
@@ -382,23 +379,17 @@ export default class AnalyzeResults extends Vue {
   }
   handleEnterKey (event) {
     if (this.isApproved) {
-      // eslint-disable-next-line
-      console.log('not this')
       event.preventDefault()
       this.quill.setText(this.originalName)
       return
     }
     if (event.key === 'Enter') {
-      // eslint-disable-next-line
-      console.log('bur rhis')
       event.stopPropagation()
       event.stopImmediatePropagation()
       event.preventDefault()
       this.name = this.quill.getText()
       let Action = this.nameActions.find(action => action.type === 'brackets')
       if (Action && Action.message) {
-        // eslint-disable-next-line
-        console.log('was actuiob')
         let replace = '[' + Action.message + ']'
         this.name = removeExcessSpaces(this.name.replace(replace, ''))
       }

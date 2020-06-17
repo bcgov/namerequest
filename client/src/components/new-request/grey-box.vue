@@ -19,7 +19,8 @@
         <v-col class="small-copy pale-blue-text pt-0"
                v-if="designationIsFixed && isDesignationIssueType && i === 0"
                cols="12">
-          No additional issues were identified with your name.  You may proceed.
+          {{ isLastIndex ? 'No additional issues were identified with your name.  You may proceed.' :
+                           'Please click the "Next Issue" button to continue' }}
         </v-col>
         <v-col class="small-copy pale-blue-text pt-0"
                v-else-if="changesInBaseName && isDesignationIssueType && i === 0"
@@ -162,6 +163,17 @@ export default class GreyBox extends Vue {
   get allDesignationsStripped () {
     return this.stripAllDesignations(this.originalName)
   }
+  get baseWordsAreUnchanged () {
+    let nameTest = this.stripAllDesignations(this.name)
+    let { allDesignationsStripped } = this
+    if (this.nameActionWords.length > 0) {
+      for (let word of this.nameActionWords) {
+        nameTest = replaceWord(nameTest, word)
+        allDesignationsStripped = replaceWord(allDesignationsStripped, word)
+      }
+    }
+    return (allDesignationsStripped === nameTest)
+  }
   get boxIsChecked () {
     let { type } = this.option
     return this.requestExaminationOrProvideConsent[this.issueIndex][type]
@@ -190,71 +202,7 @@ export default class GreyBox extends Vue {
     if (this.name === this.originalName) {
       return false
     }
-    switch (this.issueType) {
-      case 'designation_non_existent': {
-        if (this.name.length === this.originalName.length) {
-          if (this.name.includes(this.originalName)) {
-            return false
-          }
-          return true
-        }
-        if (this.name.startsWith(this.originalName + ' ')) {
-          return false
-        }
-        return true
-      }
-      case 'designation_mismatch': {
-        let { allDesignationsStripped } = this
-        if (this.nameActionWords.length > 0) {
-          for (let word of this.nameActionWords) {
-            allDesignationsStripped = replaceWord(allDesignationsStripped, word)
-          }
-        }
-        if (this.name.includes(allDesignationsStripped + ' ')) {
-          return false
-        }
-        return true
-      }
-      case 'end_designation_more_than_once':
-      case 'designation_misplaced': {
-        let chunkedOriginalNameBase = this.originalNameBase.split(' ')
-        let chunkedName = removeExcessSpaces(this.name).split(' ')
-        let checkBaseName = () => {
-          // check that every word in the original base name is still exactly in the name
-          return chunkedOriginalNameBase.every(word => {
-            return chunkedName.some(chunk => chunk === word)
-          })
-        }
-        let outcome = !checkBaseName()
-        // if all the words are exactly in the nane, we know the words have not been modified and none are missing
-        // check length to ensure none are added
-        if (this.clickedDesignation) {
-          let max: number
-          if (Array.isArray(this.designations) && this.designations.length > 0) {
-            this.designations.forEach(des => {
-              let l = des.split(' ').length
-              if (!max || l > max) {
-                max = l
-              }
-            })
-          }
-          if (chunkedOriginalNameBase && chunkedName) {
-            let newMaxLength = chunkedOriginalNameBase.length + max
-            if (chunkedName.length < chunkedOriginalNameBase.length || chunkedName.length > newMaxLength) {
-              outcome = true
-            }
-          }
-        }
-        return outcome
-      }
-      case '':
-      default: {
-        if (this.name === this.originalName) {
-          return false
-        }
-        return true
-      }
-    }
+    return !this.baseWordsAreUnchanged
   }
   get checkBoxLabel () {
     switch (this.option.type) {
@@ -270,75 +218,72 @@ export default class GreyBox extends Vue {
   }
   get designationIsFixed () {
     if (!this.changesInBaseName) {
-      if (this.issueType === 'end_designation_more_than_once') {
-        let designations = this.designations.map(des => des.toUpperCase())
-        let chosenDesignation = designations.find(des => this.name.includes(' ' + des))
-        if (!chosenDesignation) {
-          return false
-        }
-        let otherDesignations = designations.filter(des => des !== chosenDesignation)
-        if (otherDesignations.every(des => !this.name.includes(' ' + des))) {
-          return true
-        }
-        return false
-      }
-      if (this.issueType === 'designation_misplaced') {
-        if (this.name.endsWith(' ' + this.word)) {
-          return true
-        }
-        return false
-      }
-      if (this.issueType === 'designation_mismatch') {
-        let end: string
-        for (let des of this.designations) {
-          if (this.name.endsWith(' ' + des)) {
-            end = des
-          }
-        }
-        if (!end) {
-          return false
-        }
-        let { allDesignationsStripped } = this
+      let AllDesignationsList = allDesignationsList
+      if (allDesignations[this.entityType].words.length === 0) {
         if (this.nameActionWords.length > 0) {
           for (let word of this.nameActionWords) {
-            allDesignationsStripped = replaceWord(allDesignationsStripped, word)
+            if (!AllDesignationsList.includes(word)) {
+              AllDesignationsList = AllDesignationsList.concat(word)
+            }
           }
         }
-        if (this.name === allDesignationsStripped + ' ' + end) {
-          return true
+        for (let designation of AllDesignationsList) {
+          if (matchWord(this.name, designation)) {
+            return false
+          }
         }
+        return true
+      }
+      let end: string
+      AllDesignationsList.forEach(designation => {
+        if (this.name.endsWith(' ' + designation)) {
+          end = designation
+        }
+      })
+      if (!end) {
         return false
       }
-      if (this.word && !this.clickedDesignation) {
-        if (this.name.includes(' ' + this.word)) {
-          return true
+      if (this.nameActionWords.length > 0) {
+        for (let word of this.nameActionWords) {
+          if (!AllDesignationsList.includes(word)) {
+            AllDesignationsList = AllDesignationsList.concat(word)
+          }
         }
+      }
+      let matches = []
+      for (let designation of AllDesignationsList) {
+        if (matches.includes(designation)) {
+          continue
+        }
+        let matchedWords = matchWord(this.name, designation)
+        if (matchedWords) {
+          if (matchedWords.length > 1) {
+            return false
+          }
+          if (matchedWords.length === 1) {
+            matches.push(designation)
+          }
+        }
+      }
+      if (this.isMisplacedPrecedingMismatch) {
+        let nextWords = []
+        if (Array.isArray(newReqModule.analysisJSON.issues[this.issueIndex + 1].name_actions)) {
+          nextWords = newReqModule.analysisJSON.issues[this.issueIndex + 1].name_actions.map(
+            action => action.word.toUpperCase()
+          )
+          nextWords = nextWords.filter(word => word !== end)
+          matches = matches.filter(match => !nextWords.includes(match))
+        }
+      }
+      if (matches.length > 1) {
         return false
       }
-      if (this.issueType === 'designation_non_existent') {
-        let designation = this.designations.find(des => this.name.endsWith(des.toUpperCase()))
-        if (!designation) {
-          return false
-        }
-        return (this.name === this.originalName + ' ' + designation.toUpperCase())
-      }
-      let designations
       if (Array.isArray(this.designations) && this.designations.length > 0) {
-        designations = this.designations
-      } else {
-        designations = allDesignations[this.entityType].words
-      }
-      designations = designations.map(des => des.toUpperCase())
-      if (allDesignations[this.entityType].end) {
-        for (let designation of designations) {
-          if (this.name.endsWith(' ' + designation)) {
-            return true
-          }
+        if (this.designations.some(designation => this.name.endsWith(designation))) {
+          return true
         }
-        return false
-      }
-      for (let designation of designations) {
-        if (this.name.includes(' ' + designation)) {
+      } else {
+        if (allDesignations[this.entityType].words.some(word => this.name.endsWith(word))) {
           return true
         }
       }
@@ -384,8 +329,21 @@ export default class GreyBox extends Vue {
     }
     return false
   }
+  get isMisplacedPrecedingMismatch () {
+    if (this.issueLength > 1 && this.issueIndex < this.issueLength) {
+      if (['designation_misplaced', 'end_designation_more_than_once'].includes(this.issueType)) {
+        if (newReqModule.analysisJSON.issues[this.issueIndex + 1]) {
+          return (newReqModule.analysisJSON.issues[this.issueIndex + 1].issue_type === 'designation_mismatch')
+        }
+      }
+    }
+    return false
+  }
   get issue () {
     return newReqModule.analysisJSON.issues[this.issueIndex]
+  }
+  get isLastIndex () {
+    return (this.issueIndex === this.issueLength - 1)
   }
   get issueLength () {
     if (Array.isArray(newReqModule.analysisJSON.issues)) {

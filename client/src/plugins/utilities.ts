@@ -12,18 +12,18 @@ export function sanitizeName (name: string): string {
   return name.toUpperCase()
 }
 
-export function replaceWord (name: string, word: string, substitution: string = ' ') {
-  name = name.toUpperCase()
-  word = word.toUpperCase().replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')
-  if (substitution !== ' ') {
-    substitution = substitution.toUpperCase()
-    substitution = ` ${substitution} `
-  }
-  return removeExcessSpaces(name.replace(new RegExp('(^|\\s)' + word + '(\\W(\\s|$)|($|\\s))'), substitution))
-}
-
 export function matchWord (name: string, word: string) {
   name = name.toUpperCase()
   word = word.toUpperCase().replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')
-  return name.match(new RegExp('(^|\\s)' + word + '(($|\\s))'))
+  return name.match(new RegExp('(?<=(^|\\s))' + word + '(?=(\\s|$))', 'g'))
+}
+
+export function replaceWord (name: string, word: string, substitution: string | null = null) {
+  name = name.toUpperCase()
+  word = word.toUpperCase().replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')
+  if (substitution) {
+    substitution = substitution.toUpperCase()
+    return removeExcessSpaces(name.replace(new RegExp('(?<=(^|\\s))' + word + '(?=(\\s|$))'), substitution))
+  }
+  return removeExcessSpaces(name.replace(new RegExp('(?<=(^|\\s))' + word + '(?=(\\s|$))', 'g'), ''))
 }
