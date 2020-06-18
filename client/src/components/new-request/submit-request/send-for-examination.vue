@@ -107,8 +107,8 @@ export default class SendForExamination extends Vue {
 
   mounted () {
     newReqModule.mutateSubmissionType('examination')
+    newReqModule.mutateNameChoicesToInitialState()
     this.$nextTick(function () {
-      newReqModule.mutateNameChoicesToInitialState()
       if (this.designationAtEnd) {
         for (let item of this.items) {
           if (this.name.endsWith(item)) {
@@ -171,7 +171,16 @@ export default class SendForExamination extends Vue {
   get entityType () {
     return newReqModule.entityType
   }
+  get location () {
+    return newReqModule.location
+  }
+  get requestAction () {
+    return newReqModule.requestAction
+  }
   get designationAtEnd () {
+    if (this.location !== 'BC' && this.requestAction !== 'MVE') {
+      return false
+    }
     return designations[this.entityType].end
   }
   get name () {

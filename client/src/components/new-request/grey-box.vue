@@ -73,7 +73,26 @@
             <v-btn @click="cancelAnalyzeName()">Restart and Change Type</v-btn>
           </v-col>
         </template>
-
+        <!-- ASSUMED NAME OPTION BOX -->
+        <template v-else-if="option.type === 'assumed name'">
+          <v-col :id="option.type + '-button-checkbox-col'"
+                 v-if="i !== 0"
+                 class="pa-0 grey-box-checkbox-button text-center">
+            <transition name="fade" mode="out-in" >
+              <v-checkbox :key="option.type+'-checkbox'"
+                          label="I acknowledge I cannot use my company's original name and I will adopt an assumed name"
+                          class="ma-0 pa-0"
+                          id="assumed-name-checkbox"
+                          v-if="!isLastIndex && !assumedName"
+                          v-model="assumedName" />
+              <ReserveSubmit :key="option.type+'-reserve-submit'"
+                             :setup="reserveSubmitConfig"
+                             id="reserve-submit-button"
+                             style="display: inline"
+                             v-if="showCheckBoxOrButton === 'button'" />
+            </transition>
+          </v-col>
+        </template>
         <!-- ALL OTHER TYPES OF OPTION BOXES -->
         <template v-else>
           <v-col :id="option.type + '-button-checkbox-col'"
@@ -160,6 +179,12 @@ export default class GreyBox extends Vue {
   }
   types = ['send_to_examiner', 'obtain_consent', 'conflict_self_consent']
 
+  get assumedName () {
+    return newReqModule.assumedName
+  }
+  set assumedName (value) {
+    newReqModule.mutateAssumedName(value)
+  }
   get allDesignationsStripped () {
     return this.stripAllDesignations(this.originalName)
   }
