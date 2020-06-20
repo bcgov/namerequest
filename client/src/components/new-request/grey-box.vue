@@ -1,7 +1,8 @@
 <template>
-  <v-container :class="optionClasses(i)"
+  <v-container :class="optionClasses"
                class="grey-box-class py-2 px-3"
-               :key="option.type + '-' + i  + '-container'">
+               v-if="!hideSubmissionButtons || (hideSubmissionButtons && i < 2)"
+               :key="option.type + '-' + i  + '-container' + optionClasses">
     <v-col class="bold-text mt-n3" cols="12">
       <div style="display: flex; width: 100%; justify-content: flex-start">
         <div class="h5">
@@ -10,7 +11,7 @@
         </div>
       </div>
     </v-col>
-    <transition :name="i === 0 ? 'fade' : '' " mode="out-in">
+    <transition :name="i === 0 ? 'fade' : 'fade' " mode="out-in">
       <v-row class="small-copy pale-blue-text"
              align-content="start"
              :key="changesInBaseName+designationIsFixed+'key'+i">
@@ -19,20 +20,26 @@
         <v-col class="small-copy pale-blue-text pt-0"
                v-if="designationIsFixed && isDesignationIssueType && i === 0"
                cols="12">
-          {{ isLastIndex ? 'No additional issues were identified with your name.  You may proceed.' :
-                           'Please click the "Next Issue" button to continue' }}
+          {{ isLastIndex ? 'No additional issues were identified with your name. You may proceed.' :
+          'Please click the "Next Issue" button to continue' }}
         </v-col>
         <v-col class="small-copy pale-blue-text pt-0"
                v-else-if="changesInBaseName && isDesignationIssueType && i === 0"
                cols="12">
-          You have altered the base text of your name.  You must
+          You have altered the base text of your name. You must
           either change it back or click the magnifying glass to run a new search for your edited name.
+        </v-col>
+        <v-col class="small-copy pale-blue-text pt-0"
+               v-else-if="hideSubmissionButtons && i > 0"
+               cols="12">
+          It looks like you're taking Option 1 and making some changes. You can always
+          <b><a @click.prevent="changeItBack()">Change It Back</a></b> to see the other options again.
         </v-col>
         <v-col class="small-copy pale-blue-text pt-0"
                v-else
                cols="12">
-          <p v-if="option.line1" class="ma-0 pa-0" v-html="option.line1" />
-          <p v-if="option.line2" class="ma-0 pa-0 pt-2" v-html="option.line2" />
+          <p v-if="option.line1" class="ma-0 pa-0" v-html="option.line1"/>
+          <p v-if="option.line2" class="ma-0 pa-0 pt-2" v-html="option.line2"/>
         </v-col>
 
         <!-- NAME/DESIGNATION-MANIPULATING OPTION BOXES -->
@@ -62,14 +69,14 @@
                    key="designation-fixed-col" class="text-center">
               <ReserveSubmit id="reserve-submit-button"
                              style="display: inline"
-                             :setup="reserveSubmitConfig" />
+                             :setup="reserveSubmitConfig"/>
             </v-col>
           </transition>
         </template>
 
         <!-- CHANGE_ENTITY_TYPE OPTION BOX -->
         <template v-if="option.type === 'change_entity_type'">
-           <v-col class="text-center mt-4">
+          <v-col class="text-center mt-4">
             <v-btn @click="cancelAnalyzeName()">Restart and Change Type</v-btn>
           </v-col>
         </template>
@@ -78,39 +85,39 @@
           <v-col :id="option.type + '-button-checkbox-col'"
                  v-if="i !== 0"
                  class="pa-0 grey-box-checkbox-button text-center">
-            <transition name="fade" mode="out-in" >
+            <transition name="fade" mode="out-in">
               <v-checkbox :key="option.type+'-checkbox'"
                           label="I acknowledge I cannot use my company's original name and I will adopt an assumed name"
                           class="ma-0 pa-0"
                           id="assumed-name-checkbox"
                           v-if="!isLastIndex && !assumedName"
-                          v-model="assumedName" />
+                          v-model="assumedName"/>
               <ReserveSubmit :key="option.type+'-reserve-submit'"
                              :setup="reserveSubmitConfig"
                              id="reserve-submit-button"
                              style="display: inline"
-                             v-if="showCheckBoxOrButton === 'button'" />
+                             v-if="showCheckBoxOrButton === 'button'"/>
             </transition>
           </v-col>
         </template>
         <!-- ALL OTHER TYPES OF OPTION BOXES -->
         <template v-else>
           <v-col :id="option.type + '-button-checkbox-col'"
-                 v-if="i !== 0"
+                 v-if="i !== 0 && !hideSubmissionButtons"
                  class="pa-0 grey-box-checkbox-button text-center">
-            <transition name="fade" mode="out-in" >
+            <transition name="fade" mode="out-in">
               <v-checkbox :error="showError"
                           :key="option.type+'-checkbox'"
                           :label="checkBoxLabel"
                           class="ma-0 pa-0"
                           id="conflict-self-consent-checkbox"
                           v-if="showCheckBoxOrButton === 'checkbox'"
-                          v-model="boxIsChecked" />
+                          v-model="boxIsChecked"/>
               <ReserveSubmit :key="option.type+'-reserve-submit'"
                              :setup="reserveSubmitConfig"
                              id="reserve-submit-button"
                              style="display: inline"
-                             v-if="showCheckBoxOrButton === 'button'" />
+                             v-if="showCheckBoxOrButton === 'button'"/>
             </transition>
           </v-col>
         </template>
@@ -135,9 +142,17 @@ export default class GreyBox extends Vue {
   @Prop(Number) issueIndex: number
   @Prop(Object) option: OptionI
   @Prop(String) originalName: string
+
   @Watch('designationIsFixed')
-  updateStore (newVal) {
-    newReqModule.mutateDesignationIsFixed(newVal)
+  updateDIF (newVal) {
+    this.updateDesignationIsFixed(newVal)
+  }
+
+  @Watch('hideSubmissionButtons')
+  updateStore2 (newVal) {
+    // eslint-disable-next-line
+    console.log(newVal)
+    newReqModule.mutateChangesInBaseName(newVal)
   }
 
   mounted () {
@@ -187,6 +202,12 @@ export default class GreyBox extends Vue {
   }
   get allDesignationsStripped () {
     return this.stripAllDesignations(this.originalName)
+  }
+  get hideSubmissionButtons () {
+    if (this.name === this.originalName) {
+      return false
+    }
+    return ((this.changesInBaseName || !this.designationIsFixed) && !this.isDesignationIssueType)
   }
   get baseWordsAreUnchanged () {
     let nameTest = this.stripAllDesignations(this.name)
@@ -242,6 +263,11 @@ export default class GreyBox extends Vue {
     }
   }
   get designationIsFixed () {
+    if (!this.isDesignationIssueType) {
+      if (this.originalName === this.name) {
+        return true
+      }
+    }
     if (!this.changesInBaseName) {
       let AllDesignationsList = allDesignationsList
       if (allDesignations[this.entityType].words.length === 0) {
@@ -346,6 +372,9 @@ export default class GreyBox extends Vue {
     }
     return false
   }
+  get isLastIndex () {
+    return (this.issueIndex === this.issueLength - 1)
+  }
   get isMismatchFollowingMisplaced () {
     if (this.issueIndex > 0 &&
         this.issueType === 'designation_mismatch' &&
@@ -366,9 +395,6 @@ export default class GreyBox extends Vue {
   }
   get issue () {
     return newReqModule.analysisJSON.issues[this.issueIndex]
-  }
-  get isLastIndex () {
-    return (this.issueIndex === this.issueLength - 1)
   }
   get issueLength () {
     if (Array.isArray(newReqModule.analysisJSON.issues)) {
@@ -410,6 +436,36 @@ export default class GreyBox extends Vue {
       return this.nameActions.map(action => action.word.toUpperCase())
     }
     return []
+  }
+  get optionClasses () {
+    let { i } = this
+    if (this.issue && Array.isArray(this.issue.setup)) {
+      if (this.hideSubmissionButtons) {
+        if (i === 0) {
+          return 'square-card-x2'
+        }
+        if (i === 1) {
+          return 'square-card-x2 ml-3'
+        }
+      }
+      switch (this.issue.setup.length) {
+        case 1:
+          return 'helpful-hint'
+        case 2:
+          if (i === 1) {
+            return 'square-card-x2 ml-3'
+          }
+          return 'square-card-x2'
+        case 3:
+          if (i === 1) {
+            return 'square-card-x3 mx-3'
+          }
+          return 'square-card-x3'
+        default:
+          return ''
+      }
+    }
+    return ''
   }
   get requestExaminationOrProvideConsent () {
     return newReqModule.requestExaminationOrProvideConsent
@@ -502,6 +558,9 @@ export default class GreyBox extends Vue {
       return
     }
   }
+  changeItBack () {
+    this.name = this.originalName
+  }
   extractInnerDesignation (name, designation = null) {
     let { words } = allDesignations[this.entityType]
     let index, length
@@ -524,27 +583,7 @@ export default class GreyBox extends Vue {
     }
     this.name = baseName + ' ' + this.word
   }
-  optionClasses (i) {
-    if (this.issue && Array.isArray(this.issue.setup)) {
-      switch (this.issue.setup.length) {
-        case 1:
-          return 'helpful-hint'
-        case 2:
-          if (i === 1) {
-            return 'square-card-x2 ml-3'
-          }
-          return 'square-card-x2'
-        case 3:
-          if (i === 1) {
-            return 'square-card-x3 mx-3'
-          }
-          return 'square-card-x3'
-        default:
-          return ''
-      }
-    }
-    return ''
-  }
+
   removeMismatchedDesignations (name, designation = null) {
     if (designation) {
       return replaceWord(name, designation)
@@ -570,5 +609,38 @@ export default class GreyBox extends Vue {
     }
     return name
   }
+  updateDesignationIsFixed (value: boolean) {
+    newReqModule.designationIsFixed(value)
+  }
 }
 </script>
+
+<style lang="sass">
+  .scale-enter
+    transform: scale(.01)
+  .scale-enter-to
+    transform: scale(1)
+  .scale-leave-to
+    transform: scale(.01)
+  .scale-leave
+    transform: scale(1)
+  .scale-leave-active
+    transition: .25s ease-in
+  .scale-enter-active
+    transition: .25s ease-in
+
+  .translate-enter
+    transform: scale(.01)
+    opacity: 0
+  .translate-enter-to
+    transform: scale(1)
+    opacity: .5
+  .translate-leave
+    transform: scale(1)
+  .translate-leave-to
+    transform: scale(.01)
+  .translate-leave-active
+    transition: all .25s ease-in
+  .translate-enter-active
+    transition: all .5s ease-in
+</style>

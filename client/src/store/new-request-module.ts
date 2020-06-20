@@ -9,7 +9,8 @@ import {
   ConsentConflictI,
   DisplayedComponentT,
   EntityI,
-  LocationT, NameDesignationI,
+  LocationT,
+  NameDesignationI,
   NewRequestNameSearchI,
   PostApplicantI,
   PostConditionalReqI,
@@ -31,6 +32,7 @@ let source: any
 
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
 export class NewRequestModule extends VuexModule {
+  changesInBaseName: boolean = false
   actingOnOwnBehalf: boolean = true
   addressSuggestions: object | null = null
   analysisJSON: AnalysisJSONI | null = null
@@ -61,7 +63,7 @@ export class NewRequestModule extends VuexModule {
     tradeMark: '',
     xproJurisdiction: ''
   }
-  designationIsFixed: boolean = false
+  designationIsFixed: boolean = true
   disableSuggestions: boolean = false
   displayedComponent: DisplayedComponentT = 'Tabs'
   doNotAnalyzeEntities: string[] = ['PAR', 'CC', 'CP', 'PA', 'FI', 'XCP']
@@ -1125,6 +1127,10 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   setNRPostResponseObject (value) {
     this.nrPostResponseObject = value
+  }
+  @Mutation
+  mutateChangesInBaseName (value) {
+    this.changesInBaseName = value
   }
 
   getEntities (catagory) {

@@ -60,13 +60,15 @@
               </v-row>
 
             <!--GREY BOXES-->
-            <v-row class="row pale-blue-text no-gutters justify-center">
-              <v-col :key="issue.issue_type + '-' + option.header + '-' + optionIndex"
-                     cols="auto"
-                     v-for="(option, optionIndex) of issue.setup">
-                <GreyBox :issueIndex="issueIndex" :i="optionIndex" :option="option" :originalName="originalName" />
-              </v-col>
-            </v-row>
+            <transition mode="out-in" name="fade">
+              <v-row class="row pale-blue-text no-gutters justify-center" :key="issueLength + changesInBaseName">
+                <v-col :key="issue.issue_type + '-' + option.header + '-' + optionIndex"
+                       cols="auto"
+                       v-for="(option, optionIndex) of issue.setup">
+                   <GreyBox :issueIndex="issueIndex" :i="optionIndex" :option="option" :originalName="originalName" />
+                </v-col>
+              </v-row>
+            </transition>
 
               <!--SUBMISSION BUTTON-->
               <v-row v-if="issue.show_examination_button || issue.show_reserve_button"
@@ -82,7 +84,10 @@
               <v-row v-if="json.issues.length > 1" justify="end" no-gutters>
                 <v-col v-if="highlightCheckboxes"
                        class="small-copy text-center">
-                  <div class="error-message">
+                  <div class="error-message" v-if="originalName !== name">
+                    You must either undo the changes to your name or search again.
+                  </div>
+                  <div class="error-message" v-else>
                     You must either tick whichever box applies or take the action prescribed in Option 1.
                   </div>
                 </v-col>
@@ -206,6 +211,9 @@ export default class AnalyzeResults extends Vue {
       this.originalOps = ops
     })
   }
+  get designationIsFixed () {
+    return newReqModule.designationIsFixed
+  }
   beforeDestroy () {
     document.removeEventListener('keydown', this.handleEnterKey)
   }
@@ -225,6 +233,12 @@ export default class AnalyzeResults extends Vue {
   get entityType () {
     return newReqModule.entityType
   }
+  get issueLength () {
+    if (Array.isArray(newReqModule.analysisJSON.issues)) {
+      return newReqModule.analysisJSON.issues.length
+    }
+    return 0
+  }
   get hasNameActions () {
     if (this.issue && this.issue.name_actions && Array.isArray(this.issue.name_actions)) {
       if (this.issue.name_actions.length > 0) {
@@ -241,6 +255,9 @@ export default class AnalyzeResults extends Vue {
       return this.json.issues[this.issueIndex]
     }
     return {}
+  }
+  get changesInBaseName () {
+    return newReqModule.changesInBaseName
   }
   get json () {
     return newReqModule.analysisJSON
@@ -263,6 +280,9 @@ export default class AnalyzeResults extends Vue {
     return null
   }
   get nextButtonDisabled () {
+    if (this.changesInBaseName) {
+      return true
+    }
     if (['designation_misplaced', 'end_designation_more_than_once'].includes(this.issue.issue_type)) {
       if (newReqModule.designationIsFixed && this.issueIndex < this.json.issues.length) {
         return false
@@ -402,13 +422,17 @@ export default class AnalyzeResults extends Vue {
     newReqModule.startAnalyzeName()
   }
   updateContents (text) {
-    this.quill.setText(text)
+    this.quill.setContents([
+      { insert: text }
+    ])
   }
 }
 
 </script>
 
 <style scoped lang="sass">
+#analyze-results-container
+  max-height: 550px
 .action
   color: $error !important
 
