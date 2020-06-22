@@ -11,7 +11,6 @@
     <PickEntity />
     <PickRequestType />
     <PaymentModal />
-    <ReceiptModal />
   </v-app>
 </template>
 
@@ -22,8 +21,6 @@ import NrNotRequired from '@/components/modals/nr-not-required.vue'
 import PickEntity from '@/components/modals/pick-entity.vue'
 import PickRequestType from '@/components/modals/pick-request-type.vue'
 import PaymentModal from '@/components/modals/payment.vue'
-import ReceiptModal from '@/components/modals/receipt.vue'
-
 import { Component, Vue, Ref } from 'vue-property-decorator'
 
 import Header from '@/components/header.vue'
@@ -36,8 +33,7 @@ import Header from '@/components/header.vue'
     HelpMeChoose,
     PickEntity,
     PickRequestType,
-    PaymentModal,
-    ReceiptModal
+    PaymentModal
   }
 })
 export default class App extends Vue {}

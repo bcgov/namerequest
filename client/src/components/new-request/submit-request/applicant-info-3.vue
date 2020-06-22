@@ -156,7 +156,7 @@
 </template>
 
 <script lang="ts">
-import newReqModule, { NewRequestModule } from '@/store/new-request-module'
+import newReqModule from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
@@ -222,13 +222,7 @@ export default class ApplicantInfo3 extends Vue {
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
   }
   async submit () {
-    const { nrNum } = this
-    if (!nrNum) {
-      await newReqModule.postNameReservation('draft')
-    } else {
-      await newReqModule.putNameReservation(nrNum)
-    }
-
+    // await newReqModule.postNameReservation('draft')
     await paymentModule.togglePaymentModal(true)
   }
   validate () {

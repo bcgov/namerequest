@@ -116,7 +116,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-import newReqModule, { NewRequestModule } from '@/store/new-request-module'
+import newReqModule from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 
 @Component({})
@@ -181,13 +181,7 @@ export default class ApplicantInfo2 extends Vue {
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
   }
   async submit () {
-    const { nrNum } = this
-    if (!nrNum) {
-      await newReqModule.postNameReservation('draft')
-    } else {
-      await newReqModule.putNameReservation(nrNum)
-    }
-
+    // await newReqModule.postNameReservation('draft')
     await paymentModule.togglePaymentModal(true)
   }
   validate () {
