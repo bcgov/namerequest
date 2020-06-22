@@ -57,13 +57,15 @@ export default class ReceiptModal extends Vue {
   }
 
   async fetchInvoice () {
-    const paymentId = null
-    const response = await paymentService.getInvoiceRequest(paymentId, {})
+    const paymentId = 'abcd123'
+    const response = await paymentService.getInvoiceRequest(paymentId, {
+      'invoice_id': '123'
+    })
     await paymentModule.setPaymentInvoice(response.data)
   }
 
   async fetchReceipt () {
-    const paymentId = null
+    const paymentId = 'abcd123'
     const response = await paymentService.getReceiptRequest(paymentId, {})
     await paymentModule.setPaymentReceipt(response.data)
   }
