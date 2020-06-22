@@ -12,8 +12,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="createPayment" id="payment-pay-btn" text>Accept</v-btn>
-        <v-btn @click="hideModal" id="payment-close-btn" text>Cancel</v-btn>
+        <v-btn @click="createPayment" id="payment-pay-btn" class="primary" text>Accept</v-btn>
+        <v-btn @click="hideModal" id="payment-close-btn" class="normal" text>Cancel</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

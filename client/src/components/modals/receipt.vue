@@ -8,8 +8,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="hideModal" id="receipt-close-btn" text>OK</v-btn>
-        <v-btn @click="downloadReceipt" id="download-receipt-btn" text>Download Receipt</v-btn>
+        <v-btn @click="hideModal" id="receipt-close-btn" class="normal" text>OK</v-btn>
+        <v-btn @click="downloadReceipt" id="download-receipt-btn" class="primary" text>Download Receipt</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
