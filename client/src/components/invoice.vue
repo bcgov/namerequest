@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <header class="font-weight-bold px-3 py-3">
-      <slot name="header">Invoice Details</slot>
+      <slot name="header">Invoice</slot>
     </header>
 
     <div v-show="fetchError">
@@ -9,21 +9,26 @@
     </div>
 
     <ul class="fee-list" v-show="!fetchError && invoice">
+      <!--<li class="container fee-list__item">
+        <div class="fee-list__item-name">Account ID</div>
+        <div class="fee-list__item-value">{{invoice.account_id}}</div>
+      </li>-->
       <li class="container fee-list__item">
         <div class="fee-list__item-name">Ref #</div>
-        <div class="fee-list__item-value">{{invoice.references[0].reference_number}}</div>
+        <div class="fee-list__item-value">{{invoice.reference_number}}</div>
       </li>
       <li class="container fee-list__item">
         <div class="fee-list__item-name">Payment Date</div>
+        <!--<div class="fee-list__item-value">{{invoice.payment_date}}</div>-->
         <div class="fee-list__item-value">{{new Date(invoice.created_on).toLocaleDateString("en-US")}}</div>
       </li>
       <li class="container fee-list__item">
         <div class="fee-list__item-name">Amount</div>
-        <div class="fee-list__item-value">${{invoice.total.toFixed(2)}} CAD</div>
+        <div class="fee-list__item-value">{{invoice.paid}}</div>
       </li>
       <li class="container fee-list__item">
         <div class="fee-list__item-name">Status</div>
-        <div class="fee-list__item-value">{{invoice.references[0].status_code}}</div>
+        <div class="fee-list__item-value">{{invoice.status_code}}</div>
       </li>
     </ul>
   </v-card>
@@ -37,25 +42,17 @@ import '../plugins/vuetify'
 export default class Invoice extends Vue {
   /* class properties */
   @Prop({ default: {
-    reference_number: null,
+    account_id: null,
+    created_by: null,
     created_on: null,
-    created_name: '',
-    updated_on: null,
-    updated_name: '',
+    id: null,
+    line_items: null,
+    links: [],
     paid: 0.00,
-    refund: null,
-    service_fees: 0.00,
-    total: 0.00,
-    // The payment reference
-    references: [
-      {
-        id: '',
-        invoice_number: '',
-        reference_number: '',
-        status_code: ''
-      }
-    ],
-    status_code: ''
+    payment_date: null,
+    payment_id: null,
+    reference_number: null,
+    status_code: null
   } })
   protected invoice: any
 
@@ -129,15 +126,8 @@ header {
   font-weight: bold;
 }
 
-.fee-list__item-name {
-  font-weight: bold;
-}
-
+.container.fee-total,
 .container.fee-list__item {
   justify-content: space-between;
-}
-
-.container.fee-list__item {
-  border-bottom: 1px dotted grey;
 }
 </style>

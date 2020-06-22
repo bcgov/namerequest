@@ -4,6 +4,10 @@
       <v-card-text class="h3">Payment Successful</v-card-text>
       <v-card-text class="normal-copy">
         <div>
+          <invoice
+            :key="paymentInvoice.id"
+            v-bind:invoice="paymentInvoice"
+          />
         </div>
       </v-card-text>
       <v-card-actions>
@@ -16,6 +20,8 @@
 </template>
 
 <script lang="ts">
+import Invoice from '@/components/invoice.vue'
+
 import paymentModule from '@/modules/payment'
 
 import * as paymentService from '@/modules/payment/services'
@@ -25,6 +31,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 
 @Component({
   components: {
+    Invoice
   },
   data: () => ({
   }),
@@ -38,7 +45,8 @@ export default class ReceiptModal extends Vue {
   @Watch('isVisible')
   onModalShow (val: boolean, oldVal: string): void {
     if (val) {
-      this.fetchInvoice()
+      // this.fetchInvoice()
+      // this.fetchInvoices()
       this.fetchReceipt()
     }
   }
@@ -54,6 +62,12 @@ export default class ReceiptModal extends Vue {
   async downloadReceipt () {
     // Reset
     window.location.href = 'http://localhost:8080/namerequest/'
+  }
+
+  async fetchInvoices () {
+    const paymentId = 'abcd123'
+    const response = await paymentService.getInvoicesRequest(paymentId, {})
+    await paymentModule.setPaymentInvoice(response.data[0])
   }
 
   async fetchInvoice () {

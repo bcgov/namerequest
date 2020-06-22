@@ -21,16 +21,28 @@ const state = {
     priority: false,
     futureEffective: false,
     fees: {
-      filingFees: 20,
-      processing_fees: 0,
-      service_fees: 0,
+      filing_fees: 20.00,
+      processing_fees: 0.00,
+      service_fees: 0.00,
       tax: [
-        { gst: null, pst: null },
         { gst: null, pst: null }
       ]
     },
     request: {},
-    invoice: {},
+    payment: {},
+    invoice: {
+      account_id: null,
+      created_by: null,
+      created_on: null,
+      id: null,
+      line_items: null,
+      links: [],
+      paid: 0.00,
+      payment_date: null,
+      payment_id: null,
+      reference_number: null,
+      status_code: null
+    },
     receipt: {}
   }
 }

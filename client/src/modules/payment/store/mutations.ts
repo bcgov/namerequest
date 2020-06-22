@@ -20,8 +20,8 @@ export default {
   [types.SET_PAYMENT_IS_PROCESSING]: (state, isProcessing: boolean) => {
     state[STATE_KEY].isProcessing = isProcessing || false
   },
-  [types.SET_PAYMENT]: (state) => (request: any) => {
-    state[STATE_KEY].request = request || {}
+  [types.SET_PAYMENT]: (state, payment: any) => {
+    state[STATE_KEY].payment = payment || {}
   },
   [types.TOGGLE_RECEIPT_MODAL]: (state, isVisible: boolean) => {
     state[STATE_KEY].isReceiptVisible = isVisible || false
