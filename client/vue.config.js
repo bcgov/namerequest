@@ -8,6 +8,14 @@ module.exports = {
     },
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json', '.vue', '.jsx']
+    },
+    module: {
+      rules: [
+        {
+          test: /\.scss$/,
+          use: ['postcss-loader']
+        }
+      ]
     }
   },
   pluginOptions: {

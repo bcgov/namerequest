@@ -114,8 +114,10 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
+
+import newReqModule from '@/store/new-request-module'
+import paymentModule from '@/modules/payment'
 
 @Component({})
 export default class ApplicantInfo2 extends Vue {
@@ -168,8 +170,9 @@ export default class ApplicantInfo2 extends Vue {
   showPreviousTab () {
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
   }
-  submit () {
-    newReqModule.postNameReservation('draft')
+  async submit () {
+    // await newReqModule.postNameReservation('draft')
+    await paymentModule.togglePaymentModal(true)
   }
   validate () {
     if (this.$refs.step2 as Vue) {
