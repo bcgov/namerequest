@@ -74,8 +74,9 @@ export default class PaymentModal extends Vue {
   async createPayment () {
     const response = await paymentService.createPaymentRequest({
       'payment_info': {
-        'method_of_payment': 'string'
+        'method_of_payment': 'CC'
       },
+      // Use previously posted data, don't require this...
       'business_info': {
         'business_identifier': 'string',
         'business_name': 'string',
@@ -88,6 +89,7 @@ export default class PaymentModal extends Vue {
           'postal_code': 'string'
         }
       },
+      // Use frontend data
       'filing_info': {
         'corp_type': 'string',
         'date': 'string',
@@ -101,7 +103,10 @@ export default class PaymentModal extends Vue {
       }
     })
 
+    const { invoices = [] } = response.data
+
     await paymentModule.setPayment(response.data)
+    await paymentModule.setPaymentInvoice(invoices[0])
 
     this.hideModal()
 

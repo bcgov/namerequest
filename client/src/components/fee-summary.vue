@@ -17,7 +17,7 @@
           :key="lineItem.filing_type"
           >
           <div class="fee-list__item-name">{{lineItem.filing_type}}</div>
-          <div class="fee-list__item-value" v-if="lineItem.filing_fees > 0">{{lineItem.filing_fees | currency}}</div>
+          <div class="fee-list__item-value" v-if="lineItem.filing_fees > 0">{{lineItem.filing_fees}}</div>
           <div class="fee-list__item-value" v-else>No Fee</div>
         </li>
         <li class="container fee-list__item"
@@ -25,14 +25,14 @@
           :key="lineItem.filing_type_code+'-priority'"
           >
           <div class="fee-list__item-name pl-3">Priority Fee</div>
-          <div class="fee-list__item-value">{{lineItem.priority_fees | currency}}</div>
+          <div class="fee-list__item-value">{{lineItem.priority_fees}}</div>
         </li>
         <li class="container fee-list__item"
           v-if="lineItem.service_fees"
           :key="lineItem.filing_type_code+'-transaction'"
           >
           <div class="fee-list__item-name pl-3">Service Fee</div>
-          <div class="fee-list__item-value">{{lineItem.service_fees | currency}}</div>
+          <div class="fee-list__item-value">{{lineItem.service_fees}}</div>
         </li>
       </template>
     </v-slide-y-transition>
@@ -42,7 +42,7 @@
       <div class="fee-total__currency">CAD</div>
       <div class="fee-total__value">
         <v-slide-y-reverse-transition name="slide" mode="out-in">
-          <div>{{totalFilingFees | currency}}</div>
+          <div>{{totalFilingFees}}</div>
         </v-slide-y-reverse-transition>
       </div>
     </div>
@@ -55,7 +55,7 @@ import '../plugins/vuetify'
 import { Fee, FilingData } from 'sbc-common-components/src/models'
 
 @Component({})
-export default class SbcFeeSummary extends Vue {
+export default class FeeSummary extends Vue {
   /* This prop is an array of filing data. See model for details. */
   @Prop({ default: [] })
   protected filingData!: Array<FilingData>
@@ -175,5 +175,14 @@ header {
     font-size: 1.65rem;
     font-weight: 700;
   }
+}
+
+.container.fee-total {
+  font-weight: bold;
+}
+
+.container.fee-total,
+.container.fee-list__item {
+  justify-content: space-between;
 }
 </style>
