@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <header class="font-weight-bold px-3 py-3">
-      <slot name="header">Payment Details</slot>
+      <slot name="header">Fee Summary</slot>
     </header>
 
     <div v-show="fetchError">
@@ -17,7 +17,7 @@
           :key="lineItem.filing_type"
           >
           <div class="fee-list__item-name">{{lineItem.filing_type}}</div>
-          <div class="fee-list__item-value" v-if="lineItem.filing_fees > 0">${{lineItem.filing_fees.toFixed(2)}}</div>
+          <div class="fee-list__item-value" v-if="lineItem.filing_fees > 0">{{lineItem.filing_fees | currency}}</div>
           <div class="fee-list__item-value" v-else>No Fee</div>
         </li>
         <li class="container fee-list__item"
@@ -25,42 +25,24 @@
           :key="lineItem.filing_type_code+'-priority'"
           >
           <div class="fee-list__item-name pl-3">Priority Fee</div>
-          <div class="fee-list__item-value">${{lineItem.priority_fees.toFixed(2)}}</div>
+          <div class="fee-list__item-value">{{lineItem.priority_fees | currency}}</div>
         </li>
         <li class="container fee-list__item"
           v-if="lineItem.service_fees"
           :key="lineItem.filing_type_code+'-transaction'"
           >
           <div class="fee-list__item-name pl-3">Service Fee</div>
-          <div class="fee-list__item-value">${{lineItem.service_fees.toFixed(2)}}</div>
+          <div class="fee-list__item-value">{{lineItem.service_fees | currency}}</div>
         </li>
       </template>
     </v-slide-y-transition>
 
     <div class="container fee-total" v-show="!fetchError">
-      <div class="fee-total__name">Fees</div>
-      <!--<div class="fee-total__currency">CAD</div>-->
+      <div class="fee-total__name">Total Fees</div>
+      <div class="fee-total__currency">CAD</div>
       <div class="fee-total__value">
         <v-slide-y-reverse-transition name="slide" mode="out-in">
-          <div>${{totalFees.toFixed(2)}}</div>
-        </v-slide-y-reverse-transition>
-      </div>
-    </div>
-    <div class="container fee-total tax-total" v-show="!fetchError">
-      <div class="fee-total__name">Tax</div>
-      <!--<div class="fee-total__currency">CAD</div>-->
-      <div class="fee-total__value">
-        <v-slide-y-reverse-transition name="slide" mode="out-in">
-          <div>${{totalTax.toFixed(2)}}</div>
-        </v-slide-y-reverse-transition>
-      </div>
-    </div>
-    <div class="container fee-total payment-total" v-show="!fetchError">
-      <div class="fee-total__name">Total</div>
-      <!--<div class="fee-total__currency">CAD</div>-->
-      <div class="fee-total__value">
-        <v-slide-y-reverse-transition name="slide" mode="out-in">
-          <div><b>${{total.toFixed(2)}}</b></div>
+          <div>{{totalFilingFees | currency}}</div>
         </v-slide-y-reverse-transition>
       </div>
     </div>
@@ -73,7 +55,7 @@ import '../plugins/vuetify'
 import { Fee, FilingData } from 'sbc-common-components/src/models'
 
 @Component({})
-export default class FeeSummary extends Vue {
+export default class SbcFeeSummary extends Vue {
   /* This prop is an array of filing data. See model for details. */
   @Prop({ default: [] })
   protected filingData!: Array<FilingData>
@@ -90,33 +72,41 @@ export default class FeeSummary extends Vue {
   /* lifecycle event */
   protected mounted (): void {
     // console.log('%c FeeModule-Data Received on Mount as %s %s', 'color: blue; font-size: 12px',
+    //   JSON.stringify(this.filingData), this.payURL)
+
+    /* FeeServices.getFee(this.filingData, this.payURL)
+      .then(data => {
+        this.fetchError = ''
+        this.filing_fees = data
+        this.emitTotalFee(this.totalFilingFees)
+      })
+      .catch((error: any) => {
+        this.fetchError = 'Error fetching fees' + error
+      }) */
   }
 
   /* getter */
-  protected get totalFees (): number {
-    return this.fees.reduce((feeTotal: number, item: any) => {
-      return feeTotal + item.filing_fees + item.future_effective_fees + item.priority_fees + item.service_fees
-    }, 0)
+  protected get totalFilingFees (): number {
+    return this.fees.reduce((acc: number, item: any) => acc + item.filing_fees, 0)
   }
 
   protected get totalTax (): number {
-    return this.fees.reduce((taxTotal: number, item: any) => {
-      return taxTotal + item.tax.reduce((taxTypeTotal: number, taxType) => {
-        return taxTypeTotal + taxType.gst + taxType.pst
-      }, 0)
-    }, 0)
-  }
-
-  protected get total (): number {
-    return this.fees.reduce((feeTotal: number, item: any) => {
-      return feeTotal + item.total
-    }, 0)
+    return this.fees.reduce((acc: number, item: any) => acc + item.filing_fees, 0)
   }
 
   /* watcher */
   @Watch('filingData')
   protected onFilingDataChanged (val: string, oldVal: string): void {
     // console.log('%c FeeModule-Watch Activated as %s', 'color: blue; font-size: 12px',
+    //   JSON.stringify(this.filingData))
+
+    /* FeeServices.getFee(this.filingData, this.payURL).then((data: any) => {
+      this.fetchError = ''
+      this.filing_fees = data
+      this.emitTotalFee(this.totalFilingFees)
+    }).catch((error: any) => {
+      this.fetchError = 'Error fetching fees' + error
+    }) */
   }
 
   /* emitter */
@@ -185,27 +175,5 @@ header {
     font-size: 1.65rem;
     font-weight: 700;
   }
-}
-
-.container.fee-total {
-  font-weight: bold;
-}
-
-.fee-list__item-name {
-  font-weight: bold;
-}
-
-.container.fee-total,
-.container.fee-list__item {
-  justify-content: space-between;
-}
-
-.container.fee-list__item {
-  border-bottom: 1px dotted grey;
-}
-
-.fee-total,
-.tax-total {
-  border-bottom: 1px dotted grey;
 }
 </style>

@@ -4,7 +4,7 @@ import { STATE_KEY } from '@/modules/payment/store'
 
 export default {
   [types.TOGGLE_PAYMENT_MODAL]: (state, isVisible: boolean) => {
-    state[STATE_KEY].isVisible = isVisible || false
+    state[STATE_KEY].isPaymentVisible = isVisible || false
   },
   [types.START_PAYMENT_TIMEOUT_TIMER]: (state, timer: any) => {
     state[STATE_KEY].timer = timer
@@ -22,6 +22,9 @@ export default {
   },
   [types.SET_PAYMENT]: (state) => (request: any) => {
     state[STATE_KEY].request = request || {}
+  },
+  [types.TOGGLE_RECEIPT_MODAL]: (state, isVisible: boolean) => {
+    state[STATE_KEY].isReceiptVisible = isVisible || false
   },
   [types.SET_PAYMENT_INVOICE]: (state, invoice: any) => {
     state[STATE_KEY].invoice = invoice || {}

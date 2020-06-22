@@ -4,51 +4,39 @@
       <v-card-text class="h3">Make a Payment</v-card-text>
       <v-card-text class="normal-copy">
         <div>
-          <sbc-fee-summary v-bind:filingData="[...feeDataOrDefault]"></sbc-fee-summary>
+          <fee-summary
+            v-bind:filingData="[...paymentDetails]"
+            v-bind:fees="[...paymentFees]"
+          />
         </div>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn @click="createPayment" id="payment-pay-btn" text>Accept</v-btn>
-        <v-btn @click="showModal = false" id="payment-close-btn" text>Cancel</v-btn>
+        <v-btn @click="hideModal" id="payment-close-btn" text>Cancel</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script lang="ts">
-import SbcFeeSummary from 'sbc-common-components/src/components/SbcFeeSummary.vue'
-
-import * as paymentService from '@/modules/payment/services'
-import * as paymentTypes from '@/modules/payment/store/types'
+import FeeSummary from '@/components/fee-summary.vue'
 
 import paymentModule from '@/modules/payment'
 
-// import PaymentCalculator from './payment-calculator.vue'
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import * as paymentService from '@/modules/payment/services'
+import * as paymentTypes from '@/modules/payment/store/types'
+import * as filingTypes from '@/modules/payment/filing-types'
+import * as corpTypes from '@/modules/payment/corp-types'
+import * as jurisdictions from '@/modules/payment/jurisdictions'
+
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 
 @Component({
   components: {
-    // PaymentCalculator,
-    SbcFeeSummary
+    FeeSummary
   },
   data: () => ({
-    filingData: {
-      filingTypeCode: '', // mandatory
-      entityType: '', // mandatory
-      filingDescription: '',
-      waiveFees: false,
-      priority: false,
-      futureEffective: false
-    },
-    feeData: {
-      filingTypeCode: 'OTANN',
-      entityType: 'CP',
-      filingDescription: '',
-      waiveFees: false,
-      priority: false,
-      futureEffective: false
-    }
   }),
   computed: {
     isVisible: () => {
@@ -57,87 +45,87 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
   }
 })
 export default class PaymentModal extends Vue {
-  mounted () {
-    this.fetchFees()
+  @Watch('isVisible')
+  onModalShow (val: boolean, oldVal: string): void {
+    if (val) {
+      this.fetchFees()
+    }
   }
 
-  get showModal () {
-    return null
+  async showModal () {
+    await paymentModule.togglePaymentModal(true)
   }
 
-  set showModal (value: boolean) {
+  async hideModal () {
+    await paymentModule.togglePaymentModal(false)
   }
 
   async fetchFees () {
-    const response = await paymentService.getPaymentFees({})
-    await this.$store.dispatch(paymentTypes.GET_PAYMENT_FEES, response)
+    const response = await paymentService.getPaymentFees({
+      'corp_type': corpTypes.CR,
+      'filing_type_code': filingTypes.NM606,
+      'jurisdiction': jurisdictions.BC,
+      'date': new Date().toISOString(),
+      'priority': 'true'
+    })
+    await paymentModule.setPaymentFees(response.data)
   }
 
   async createPayment () {
-    const response = await paymentService.createPaymentRequest({})
-    await this.$store.dispatch(paymentTypes.GET_PAYMENT_REQUEST, response)
+    const response = await paymentService.createPaymentRequest({
+      'payment_info': {
+        'method_of_payment': 'string'
+      },
+      'business_info': {
+        'business_identifier': 'string',
+        'business_name': 'string',
+        'contact_info': {
+          'first_name': 'string',
+          'last_name': 'string',
+          'address': 'string',
+          'city': 'string',
+          'province': 'string',
+          'postal_code': 'string'
+        }
+      },
+      'filing_info': {
+        'corp_type': 'string',
+        'date': 'string',
+        'filing_types': [
+          {
+            'filing_type_code': 'string',
+            'priority': true,
+            'filing_description': 'string'
+          }
+        ]
+      }
+    })
+
+    await paymentModule.setPayment(response.data)
+
+    this.hideModal()
+
+    paymentModule.toggleReceiptModal(true)
   }
 
   async fetchInvoice () {
     const paymentId = null
     const response = await paymentService.getInvoiceRequest(paymentId, {})
-    await this.$store.dispatch(paymentTypes.GET_PAYMENT_INVOICE, response)
+    await paymentModule.setPaymentInvoice(response.data)
   }
 
   async fetchReceipt () {
     const paymentId = null
     const response = await paymentService.getReceiptRequest(paymentId, {})
-    await this.$store.dispatch(paymentTypes.GET_PAYMENT_RECEIPT, response)
+    await paymentModule.setPaymentReceipt(response.data)
   }
 
-  fileAR () {
-    /* do your filing logic here */
-
-    this.$data.feeData = {
-      filingTypeCode: 'OTANN',
-      entityType: 'CP',
-      filingDescription: '',
-      waiveFees: false,
-      priority: false,
-      futureEffective: false
-    }
+  get paymentDetails () {
+    return this.$store.getters[paymentTypes.GET_PAYMENT_DETAILS]
   }
 
-  clearAllFiling () {
-    /* do your filing logic here */
-    this.$data.feeData = []
-    // console.log("Change Prop1:" + JSON.stringify(this.$data.feeData))
-  }
-  fileARandDirectorChangeAndAddress () {
-    /* do your filing logic here */
-    this.$data.feeData = [{
-      filingTypeCode: 'OTANN',
-      entityType: 'CP',
-      filingDescription: 'COPS Annual Fee',
-      waiveFees: false,
-      priority: false,
-      futureEffective: false
-    },
-    {
-      filingTypeCode: 'OTADD',
-      entityType: 'CP',
-      filingDescription: 'Director Change Fee',
-      waiveFees: false,
-      priority: true,
-      futureEffective: false
-    },
-    {
-      filingTypeCode: 'OTAOAD',
-      entityType: 'CP',
-      filingDescription: 'Address',
-      waiveFees: false,
-      priority: false,
-      futureEffective: true
-    }]
-  }
-
-  get feeDataOrDefault () {
-    return this.$data.feeData || this.$data.filingData
+  get paymentFees () {
+    return this.$store.getters[paymentTypes.GET_PAYMENT_FEES]
   }
 }
 </script>
