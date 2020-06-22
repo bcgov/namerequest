@@ -4,47 +4,16 @@ import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
 // import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // import { addAxiosInterceptors } from 'sbc-common-components/src/util/interceptors'
 
-const PAYMENT_API_URL = 'localhost:5000/payments'
+const PAYMENT_API_URL = 'payments'
 
 export async function createPaymentRequest (params): Promise<AxiosResponse<any>> {
-  const url = `${PAYMENT_API_URL}/payment`
-  return axios.post(url, { params })
+  const url = `${PAYMENT_API_URL}`
+  return axios.post(url, params)
 }
 
-/**
- * const requestBody = {
-    "payment_info": {
-      "method_of_payment": "string"
-    },
-    "business_info": {
-      "business_identifier": "string",
-      "business_name": "string",
-      "contact_info": {
-        "first_name": "string",
-        "last_name": "string",
-        "address": "string",
-        "city": "string",
-        "province": "string",
-        "postal_code": "string"
-      }
-    },
-    "filing_info": {
-      "corp_type": "string",
-      "date": "string",
-      "filing_types": [
-        {
-          "filing_type_code": "string",
-          "priority": true,
-          "filing_description": "string"
-        }
-      ]
-    }
-  }
- * @param params
- */
 export async function getPaymentFees (params): Promise<AxiosResponse<any>> {
   const url = `${PAYMENT_API_URL}/fees`
-  return axios.post(url, { params })
+  return axios.post(url, params)
 }
 
 export async function getInvoiceRequest (paymentId, params): Promise<AxiosResponse<any>> {
