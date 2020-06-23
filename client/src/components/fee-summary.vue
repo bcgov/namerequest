@@ -17,7 +17,7 @@
           :key="lineItem.filing_type"
           >
           <div class="fee-list__item-name">{{lineItem.filing_type}}</div>
-          <div class="fee-list__item-value" v-if="lineItem.filing_fees > 0">{{lineItem.filing_fees}}</div>
+          <div class="fee-list__item-value" v-if="lineItem.filing_fees > 0">${{lineItem.filing_fees.toFixed(2)}}</div>
           <div class="fee-list__item-value" v-else>No Fee</div>
         </li>
         <li class="container fee-list__item"
@@ -25,24 +25,24 @@
           :key="lineItem.filing_type_code+'-priority'"
           >
           <div class="fee-list__item-name pl-3">Priority Fee</div>
-          <div class="fee-list__item-value">{{lineItem.priority_fees}}</div>
+          <div class="fee-list__item-value">${{lineItem.priority_fees.toFixed(2)}}</div>
         </li>
         <li class="container fee-list__item"
           v-if="lineItem.service_fees"
           :key="lineItem.filing_type_code+'-transaction'"
           >
           <div class="fee-list__item-name pl-3">Service Fee</div>
-          <div class="fee-list__item-value">{{lineItem.service_fees}}</div>
+          <div class="fee-list__item-value">${{lineItem.service_fees.toFixed(2)}}</div>
         </li>
       </template>
     </v-slide-y-transition>
 
     <div class="container fee-total" v-show="!fetchError">
       <div class="fee-total__name">Total Fees</div>
-      <div class="fee-total__currency">CAD</div>
+      <!--<div class="fee-total__currency">CAD</div>-->
       <div class="fee-total__value">
         <v-slide-y-reverse-transition name="slide" mode="out-in">
-          <div>{{totalFilingFees}}</div>
+          <div>${{totalFilingFees.toFixed(2)}} CAD</div>
         </v-slide-y-reverse-transition>
       </div>
     </div>
@@ -181,8 +181,16 @@ header {
   font-weight: bold;
 }
 
+.fee-list__item-name {
+  font-weight: bold;
+}
+
 .container.fee-total,
 .container.fee-list__item {
   justify-content: space-between;
+}
+
+.container.fee-list__item {
+  border-bottom: 1px dotted grey;
 }
 </style>

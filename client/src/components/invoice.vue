@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <header class="font-weight-bold px-3 py-3">
-      <slot name="header">Invoice</slot>
+      <slot name="header">Details</slot>
     </header>
 
     <div v-show="fetchError">
@@ -24,7 +24,7 @@
       </li>
       <li class="container fee-list__item">
         <div class="fee-list__item-name">Amount</div>
-        <div class="fee-list__item-value">{{invoice.paid}}</div>
+        <div class="fee-list__item-value">${{invoice.paid.toFixed(2)}} CAD</div>
       </li>
       <li class="container fee-list__item">
         <div class="fee-list__item-name">Status</div>
@@ -126,8 +126,16 @@ header {
   font-weight: bold;
 }
 
+.fee-list__item-name {
+  font-weight: bold;
+}
+
 .container.fee-total,
 .container.fee-list__item {
   justify-content: space-between;
+}
+
+.container.fee-list__item {
+  border-bottom: 1px dotted grey;
 }
 </style>
