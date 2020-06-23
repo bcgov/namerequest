@@ -130,7 +130,6 @@ header {
   font-weight: bold;
 }
 
-.container.fee-total,
 .container.fee-list__item {
   justify-content: space-between;
 }

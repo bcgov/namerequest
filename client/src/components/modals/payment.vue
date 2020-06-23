@@ -1,7 +1,7 @@
 <template>
   <v-dialog max-width="40%" :value="isVisible" persistent>
     <v-card class="pa-9">
-      <v-card-text class="h3">Make a Payment</v-card-text>
+      <v-card-text class="h3">Confirm Order</v-card-text>
       <v-card-text class="normal-copy">
         <div>
           <fee-summary
@@ -11,6 +11,7 @@
         </div>
       </v-card-text>
       <v-card-actions>
+        <span>Time Remaining - 10:00</span>
         <v-spacer></v-spacer>
         <v-btn @click="createPayment" id="payment-pay-btn" class="primary" text>Accept</v-btn>
         <v-btn @click="hideModal" id="payment-close-btn" class="normal" text>Cancel</v-btn>
@@ -91,13 +92,13 @@ export default class PaymentModal extends Vue {
       },
       // Use frontend data
       'filing_info': {
-        'corp_type': 'string',
-        'date': 'string',
+        'corp_type': corpTypes.CR,
+        'date': new Date().toISOString(),
         'filing_types': [
           {
-            'filing_type_code': 'string',
+            'filing_type_code': filingTypes.NM606,
             'priority': true,
-            'filing_description': 'string'
+            'filing_description': filingTypes.NM606
           }
         ]
       }

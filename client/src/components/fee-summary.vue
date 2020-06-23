@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <header class="font-weight-bold px-3 py-3">
-      <slot name="header">Fee Summary</slot>
+      <slot name="header">Payment Details</slot>
     </header>
 
     <div v-show="fetchError">
@@ -38,11 +38,29 @@
     </v-slide-y-transition>
 
     <div class="container fee-total" v-show="!fetchError">
-      <div class="fee-total__name">Total Fees</div>
+      <div class="fee-total__name">Fees</div>
       <!--<div class="fee-total__currency">CAD</div>-->
       <div class="fee-total__value">
         <v-slide-y-reverse-transition name="slide" mode="out-in">
-          <div>${{totalFilingFees.toFixed(2)}} CAD</div>
+          <div>${{totalFees.toFixed(2)}}</div>
+        </v-slide-y-reverse-transition>
+      </div>
+    </div>
+    <div class="container fee-total tax-total" v-show="!fetchError">
+      <div class="fee-total__name">Tax</div>
+      <!--<div class="fee-total__currency">CAD</div>-->
+      <div class="fee-total__value">
+        <v-slide-y-reverse-transition name="slide" mode="out-in">
+          <div>${{totalTax.toFixed(2)}}</div>
+        </v-slide-y-reverse-transition>
+      </div>
+    </div>
+    <div class="container fee-total payment-total" v-show="!fetchError">
+      <div class="fee-total__name">Total</div>
+      <!--<div class="fee-total__currency">CAD</div>-->
+      <div class="fee-total__value">
+        <v-slide-y-reverse-transition name="slide" mode="out-in">
+          <div><b>${{total.toFixed(2)}}</b></div>
         </v-slide-y-reverse-transition>
       </div>
     </div>
@@ -78,7 +96,7 @@ export default class FeeSummary extends Vue {
       .then(data => {
         this.fetchError = ''
         this.filing_fees = data
-        this.emitTotalFee(this.totalFilingFees)
+        this.emitTotalFee(this.totalFees)
       })
       .catch((error: any) => {
         this.fetchError = 'Error fetching fees' + error
@@ -86,12 +104,22 @@ export default class FeeSummary extends Vue {
   }
 
   /* getter */
-  protected get totalFilingFees (): number {
-    return this.fees.reduce((acc: number, item: any) => acc + item.filing_fees, 0)
+  protected get totalFees (): number {
+    return this.fees.reduce((feeTotal: number, item: any) => {
+      return feeTotal + item.filing_fees
+    }, 0)
   }
 
   protected get totalTax (): number {
-    return this.fees.reduce((acc: number, item: any) => acc + item.filing_fees, 0)
+    return this.fees.reduce((taxTotal: number, item: any) => {
+      return taxTotal + item.tax.reduce((taxTypeTotal: number, taxType) => {
+        return taxTypeTotal + taxType.gst + taxType.pst
+      }, 0)
+    }, 0)
+  }
+
+  protected get total (): number {
+    return this.totalFees + this.totalTax
   }
 
   /* watcher */
@@ -103,7 +131,7 @@ export default class FeeSummary extends Vue {
     /* FeeServices.getFee(this.filingData, this.payURL).then((data: any) => {
       this.fetchError = ''
       this.filing_fees = data
-      this.emitTotalFee(this.totalFilingFees)
+      this.emitTotalFee(this.totalFees)
     }).catch((error: any) => {
       this.fetchError = 'Error fetching fees' + error
     }) */
@@ -191,6 +219,11 @@ header {
 }
 
 .container.fee-list__item {
+  border-bottom: 1px dotted grey;
+}
+
+.fee-total,
+.tax-total {
   border-bottom: 1px dotted grey;
 }
 </style>
