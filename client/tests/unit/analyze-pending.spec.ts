@@ -13,9 +13,9 @@ describe('analyze-pending.vue', () => {
     vuetify
   })
   it('renders a spinner', () => {
-    expect(wrapper.contains('#analyze-pending-spinner')).toBe(true)
+    expect(wrapper.find('#analyze-pending-spinner').element).toBeTruthy()
   })
   it('renders a stop button', () => {
-    expect(wrapper.contains('#analyze-pending-stop-button')).toBe(true)
+    expect(wrapper.find('#analyze-pending-stop-button').element).toBeTruthy()
   })
 })

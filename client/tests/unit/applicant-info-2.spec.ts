@@ -21,11 +21,11 @@ describe('It initially renders correctly', () => {
   })
 
   it('renders the form', () => {
-    expect(wrapper.contains('#applicant-info-2-form')).toBe(true)
+    expect(wrapper.find('#applicant-info-2-form').element).toBeTruthy()
   })
   it('Initially renders the disabled continue button', () => {
-    expect(wrapper.contains('#submit-continue-btn-disabled')).toBe(true)
-    expect(wrapper.contains('#submit-continue-btn')).toBe(false)
+    expect(wrapper.find('#submit-continue-btn-disabled').element).toBeTruthy()
+    expect(wrapper.find('#submit-continue-btn').element).toBeFalsy()
   })
   it('calls validate when Continue button is pressed', async () => {
     wrapper.vm.validate = jest.fn()

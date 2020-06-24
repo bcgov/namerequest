@@ -33,9 +33,9 @@ describe('landing.vue', () => {
   })
 
   it('Landing initially displays only the New Request Tabs component', () => {
-    expect(wrapper.contains('#tabs-landing-comp')).toBe(true)
-    expect(wrapper.contains('#analyze-pending-container')).toBe(false)
-    expect(wrapper.contains('#analyze-results-container')).toBe(false)
+    expect(wrapper.find('#tabs-landing-comp').element).toBeTruthy()
+    expect(wrapper.find('#analyze-pending-container').element).toBeFalsy()
+    expect(wrapper.find('#analyze-results-container').element).toBeFalsy()
   })
 })
 
@@ -54,9 +54,9 @@ describe('landing.vue', () => {
   })
 
   it('When the state.searchShowStage key is set to "analysing", it shows only the pending container', () => {
-    expect(wrapper.contains('#new-req-existing-req-container')).toBe(false)
-    expect(wrapper.contains('#analyze-pending-container')).toBe(true)
-    expect(wrapper.contains('#analyze-results-container')).toBe(false)
+    expect(wrapper.find('#new-req-existing-req-container').element).toBeFalsy()
+    expect(wrapper.find('#analyze-pending-container').element).toBeTruthy()
+    expect(wrapper.find('#analyze-results-container').element).toBeFalsy()
   })
 })
 
@@ -75,8 +75,8 @@ describe('landing.vue', () => {
 
   it('When state.displayedComponent === "AnalyzeResults", it shows only the results container', async () => {
     await wrapper.vm.$nextTick()
-    expect(wrapper.contains('#new-req-existing-req-container')).toBe(false)
-    expect(wrapper.contains('#nanalyze-pending-container')).toBe(false)
-    expect(wrapper.contains('#analyze-results-container')).toBe(true)
+    expect(wrapper.find('#new-req-existing-req-container').element).toBeFalsy()
+    expect(wrapper.find('#nanalyze-pending-container').element).toBeFalsy()
+    expect(wrapper.find('#analyze-results-container').element).toBeTruthy()
   })
 })

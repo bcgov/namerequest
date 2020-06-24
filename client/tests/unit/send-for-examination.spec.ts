@@ -1,11 +1,10 @@
 import SendForExamination from '@/components/new-request/submit-request/send-for-examination.vue'
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
-import newReqModule from '@/store/new-request-module'
+import store from '@/store/new-request-module'
 import Vuetify from 'vuetify'
 
 const localVue = createLocalVue()
 const vuetify = new Vuetify()
-const store = newReqModule
 
 localVue.use(Vuetify)
 
@@ -23,20 +22,16 @@ describe('send-for-examination.vue', () => {
       done()
     })
     it('displays the first choice text field and designation select', () => {
-      expect(wrapper.contains('#choice-1-text-field')).toBe(true)
-      expect(wrapper.contains('#designation-1-select')).toBe(true)
+      expect(wrapper.find('#choice-1-text-field').element).toBeTruthy()
+      expect(wrapper.find('#designation-1-select').element).toBeTruthy()
     })
     it('sets the first name choice to the analyzed name', () => {
       expect(wrapper.vm.nameChoices.name1).toBe('Test Name')
     })
-    it('initially validates choice 2 and choice 3', () => {
-      expect(wrapper.vm.choice2Valid).toBe(true)
-      expect(wrapper.vm.choice3Valid).toBe(true)
-    })
     it('Initially renders the disabled continue button', () => {
-      expect(wrapper.vm.choice1Valid).toBe(false)
-      expect(wrapper.contains('#submit-continue-btn-disabled')).toBe(true)
-      expect(wrapper.contains('#submit-continue-btn')).toBe(false)
+      expect(wrapper.vm.isValid).toBe(false)
+      expect(wrapper.find('#submit-continue-btn-disabled').element).toBeTruthy()
+      expect(wrapper.find('#submit-continue-btn').element).toBeFalsy()
     })
     it('calls validate when Continue button is pressed', async () => {
       wrapper.vm.validate = jest.fn()
@@ -45,31 +40,40 @@ describe('send-for-examination.vue', () => {
       expect(wrapper.vm.validate).toHaveBeenCalled()
     })
     it('demonstrates correct validation logic when designation-1 is entered', async () => {
-      store.mutateNameChoices({ key: 'designation1', value: 'inc' })
+      store.mutateNameChoices({ key: 'name1', value: 'A Really Nice Name' })
+      store.mutateNameChoices({ key: 'designation1', value: 'INC.' })
       await wrapper.vm.$nextTick()
-      expect(wrapper.vm.choice1Valid).toBe(true)
-      expect(wrapper.contains('#submit-continue-btn-disabled')).toBe(false)
-      expect(wrapper.contains('#submit-continue-btn')).toBe(true)
+      expect(wrapper.vm.isValid).toBe(true)
+      expect(wrapper.find('#submit-continue-btn-disabled').element).toBeFalsy()
+      expect(wrapper.find('#submit-continue-btn').element).toBeTruthy()
     })
     it('calls showNextComponent() when continue button is clicked and form is valid', async () => {
-      store.mutateNameChoices({ key: 'designation1', value: 'inc' })
+      store.mutateNameChoicesToInitialState()
+      store.mutateNameChoices({ key: 'name1', value: 'LALA NAME' })
+      store.mutateNameChoices({ key: 'designation1', value: 'INC.' })
+      wrapper.vm.validate = jest.fn()
       await wrapper.vm.$nextTick()
-      wrapper.vm.showNextTab = jest.fn()
       let btn = wrapper.find('#submit-continue-btn')
       btn.trigger('click')
-      expect(wrapper.vm.showNextTab).toHaveBeenCalled()
+      await wrapper.vm.$nextTick()
+      expect(wrapper.vm.isValid).toBeTruthy()
+      expect(wrapper.vm.validate).toHaveBeenCalled()
     })
     it('detects when choice3 is made without choice2', async () => {
+      store.mutateNameChoices({ key: 'name1', value: 'a great name' })
+      store.mutateNameChoices({ key: 'designation1', value: 'LTD.' })
+      store.mutateNameChoices({ key: 'name2', value: 'a great name' })
+      store.mutateNameChoices({ key: 'designation2', value: 'LTD.' })
       store.mutateNameChoices({ key: 'name3', value: 'a great name' })
-      store.mutateNameChoices({ key: 'designation3', value: 'a great name' })
+      store.mutateNameChoices({ key: 'designation3', value: '' })
       await wrapper.vm.$nextTick()
-      expect(wrapper.vm.choice3Valid).toBe(false)
-      expect(wrapper.vm.choice2Valid).toBe(true)
+      expect(wrapper.vm.isValid).toBe(false)
+      expect(wrapper.vm.messages.des3).toBe('Please choose a designation')
     })
     it('detects when choice2 is made without a designation', async () => {
       store.mutateNameChoices({ key: 'name2', value: 'a great name' })
       await wrapper.vm.$nextTick()
-      expect(wrapper.vm.choice2Valid).toBe(false)
+      expect(wrapper.vm.isValid).toBe(false)
     })
   })
 })

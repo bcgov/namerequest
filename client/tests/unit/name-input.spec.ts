@@ -27,8 +27,8 @@ describe('name-input.vue', () => {
   })
 
   it('Displays the required ui elements', () => {
-    expect(wrapper.contains('#name-input-text-field')).toBe(true)
-    expect(wrapper.contains('#name-input-icon')).toBe(true)
+    expect(wrapper.find('#name-input-text-field').element).toBeTruthy()
+    expect(wrapper.find('#name-input-icon').element).toBeTruthy()
   })
   it('Resists submitting when the entity type is set to "INFO" and detects the correct error type', async () => {
     newReqModule.mutateEntityType('INFO')

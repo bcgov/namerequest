@@ -19,7 +19,7 @@ describe('nr-not-required.vue', () => {
   it('Shows the modal when the state is set and it displays the required info', async () => {
     wrapper.vm.showModal = true
     await wrapper.vm.$nextTick()
-    expect(wrapper.contains('#nr-required-close-btn')).toBe(true)
+    expect(wrapper.find('#nr-required-close-btn').element).toBeTruthy()
     expect(wrapper.text().includes('You want a numbered company. The business does not need a name.')).toBe(true)
   })
   it('Closes the modal when the close button is pressed', async () => {
