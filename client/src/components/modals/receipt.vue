@@ -12,7 +12,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="hideModal" id="receipt-close-btn" class="normal" text>OK</v-btn>
+        <v-btn @click="redirectToStart" id="receipt-close-btn" class="normal" text>OK</v-btn>
         <v-btn @click="downloadReceipt" id="download-receipt-btn" class="primary" text>Download Receipt</v-btn>
       </v-card-actions>
     </v-card>
@@ -73,6 +73,10 @@ export default class ReceiptModal extends Vue {
 
   async hideModal () {
     await paymentModule.toggleReceiptModal(false)
+  }
+
+  async redirectToStart () {
+    window.location.href = 'http://localhost:8080/namerequest/'
   }
 
   async downloadReceipt () {
