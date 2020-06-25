@@ -117,7 +117,7 @@ export default class PaymentModal extends Vue {
     const corpType = 'NRO' // We may need to handle more than one type at some point?
     const methodOfPayment = 'CC' // We may need to handle more than one type at some point?
 
-    const { applicant, name, filingType, priorityRequest, paymentId, nrData } = this
+    const { applicant, name, filingType, priorityRequest, nrData } = this
 
     const { addrLine1, addrLine2, city, stateProvinceCd, countryTypeCd, postalCd } = applicant
     const { corpNum } = nrData
@@ -157,12 +157,14 @@ export default class PaymentModal extends Vue {
     await paymentModule.setPayment(response.data)
     await paymentModule.setPaymentInvoice(invoices[0])
 
+    // Grab the new payment ID
+    const { paymentId } = this
     // Store the payment ID to sessionStorage, that way we can start the user back where we left off
     sessionStorage.setItem('paymentInProgress', 'true')
     sessionStorage.setItem('paymentId', `${paymentId}`)
 
     // Redirect user to Service BC Pay Portal
-    const redirectUrl = encodeURIComponent(`http://localhost:8080/namerequest/?paymentSuccess=true&paymentId=${this.paymentId}`)
+    const redirectUrl = encodeURIComponent(`http://localhost:8080/namerequest/?paymentSuccess=true&paymentId=${paymentId}`)
     const paymentPortalUrl = `https://dev.bcregistry.ca/business/auth/makepayment/${paymentId}/${redirectUrl}`
     window.location.href = paymentPortalUrl
   }
