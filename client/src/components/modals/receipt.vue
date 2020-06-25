@@ -40,8 +40,6 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
       // Check for a payment ID in sessionStorage, if it has been set, we've been redirected away from the application,
       // and need to rehydrate the application using the payment ID (for now, it could be some other token too)!
       // TODO: Set the timer here!
-      const visible = false
-
       const paymentInProgress: boolean = (sessionStorage.getItem('paymentInProgress') === 'true')
       const paymentId = (paymentInProgress && sessionStorage.getItem('paymentId'))
         ? parseInt(sessionStorage.getItem('paymentId'))
@@ -51,11 +49,11 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
         // Clear the sessionStorage variables
         sessionStorage.removeItem('paymentInProgress')
         sessionStorage.removeItem('paymentId')
+
+        paymentModule.toggleReceiptModal(true)
       }
 
-      // TODO: Maybe trigger an action to set the flag
-      // Something like paymentModule.toggleReceiptModal(true) ?
-      return (paymentId) ? true : paymentModule[paymentTypes.RECEIPT_MODAL_IS_VISIBLE]
+      return paymentModule[paymentTypes.RECEIPT_MODAL_IS_VISIBLE]
     }
   }
 })
