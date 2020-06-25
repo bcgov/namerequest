@@ -95,7 +95,7 @@ export default class FeeSummary extends Vue {
   /* getter */
   protected get totalFees (): number {
     return this.fees.reduce((feeTotal: number, item: any) => {
-      return feeTotal + item.filing_fees + item.service_fees
+      return feeTotal + item.filing_fees + item.future_effective_fees + item.priority_fees + item.service_fees
     }, 0)
   }
 
@@ -108,7 +108,9 @@ export default class FeeSummary extends Vue {
   }
 
   protected get total (): number {
-    return this.totalFees + this.totalTax
+    return this.fees.reduce((feeTotal: number, item: any) => {
+      return feeTotal + item.total
+    }, 0)
   }
 
   /* watcher */

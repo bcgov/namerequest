@@ -221,8 +221,8 @@ export default class PaymentModal extends Vue {
     const { priorityRequest } = this
     let filingType = filingTypes.NM620
     if (priorityRequest) {
-      // TODO: NM521 isn't working...
-      filingType = filingTypes.NM606
+      // TODO: NM521 isn't working for calculating fees...
+      filingType = filingTypes.NM620
     }
 
     return filingType
