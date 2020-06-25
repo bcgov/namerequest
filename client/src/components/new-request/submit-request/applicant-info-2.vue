@@ -171,7 +171,7 @@ export default class ApplicantInfo2 extends Vue {
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
   }
   async submit () {
-    // await newReqModule.postNameReservation('draft')
+    await newReqModule.postNameReservation('draft')
     await paymentModule.togglePaymentModal(true)
   }
   validate () {

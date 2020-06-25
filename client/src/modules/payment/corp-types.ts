@@ -1,1 +1,1 @@
-export const CR = 'CR'
+export const NRO = 'NRO'

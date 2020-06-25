@@ -21,9 +21,9 @@ const state = {
     priority: false,
     futureEffective: false,
     fees: {
-      filing_fees: 20.00,
-      processing_fees: 0.00,
-      service_fees: 0.00,
+      filingFees: 20.00,
+      processingFees: 0.00,
+      serviceFees: 0.00,
       tax: [
         { gst: null, pst: null }
       ]
@@ -31,17 +31,17 @@ const state = {
     request: {},
     payment: {},
     invoice: {
-      account_id: null,
-      created_by: null,
-      created_on: null,
+      accountId: null,
+      createdBy: null,
+      createdOn: null,
       id: null,
-      line_items: null,
+      lineItems: null,
       links: [],
       paid: 0.00,
-      payment_date: null,
-      payment_id: null,
-      reference_number: null,
-      status_code: null
+      paymentDate: null,
+      paymentId: null,
+      referenceNumber: null,
+      statusCode: null
     },
     receipt: {}
   }
