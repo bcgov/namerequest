@@ -159,9 +159,14 @@ export default class PaymentModal extends Vue {
     await paymentModule.setPayment(response.data)
     await paymentModule.setPaymentInvoice(invoices[0])
 
-    this.hideModal()
+    // Store the payment ID to sessionStorage, that way we can start the user back where we left off
+    sessionStorage.setItem('paymentInProgress', 'true')
+    sessionStorage.setItem('paymentId', `${this.paymentId}`)
 
-    paymentModule.toggleReceiptModal(true)
+    // Redirect user to Service BC Pay Portal
+    const redirectUrl = encodeURIComponent(`http://localhost:8080/namerequest/?paymentSuccess=true&paymentId=${this.paymentId}`)
+    const paymentPortalUrl = `https://dev.bcregistry.ca/business/auth/makepayment/${this.paymentId}/${redirectUrl}`
+    window.location.href = paymentPortalUrl
   }
 
   async fetchInvoice () {
@@ -210,6 +215,14 @@ export default class PaymentModal extends Vue {
     const nameRequest: NewRequestModule = newRequestModule
     const priorityRequest: boolean = nameRequest.priorityRequest
     return priorityRequest
+  }
+
+  get payment () {
+    return this.$store.getters[paymentTypes.GET_PAYMENT]
+  }
+
+  get paymentId () {
+    return this.$store.getters[paymentTypes.GET_PAYMENT_ID]
   }
 
   get paymentDetails () {
