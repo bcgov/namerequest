@@ -90,23 +90,12 @@ export default class FeeSummary extends Vue {
   /* lifecycle event */
   protected mounted (): void {
     // console.log('%c FeeModule-Data Received on Mount as %s %s', 'color: blue; font-size: 12px',
-    //   JSON.stringify(this.filingData), this.payURL)
-
-    /* FeeServices.getFee(this.filingData, this.payURL)
-      .then(data => {
-        this.fetchError = ''
-        this.filing_fees = data
-        this.emitTotalFee(this.totalFees)
-      })
-      .catch((error: any) => {
-        this.fetchError = 'Error fetching fees' + error
-      }) */
   }
 
   /* getter */
   protected get totalFees (): number {
     return this.fees.reduce((feeTotal: number, item: any) => {
-      return feeTotal + item.filing_fees
+      return feeTotal + item.filing_fees + item.service_fees
     }, 0)
   }
 
@@ -126,15 +115,6 @@ export default class FeeSummary extends Vue {
   @Watch('filingData')
   protected onFilingDataChanged (val: string, oldVal: string): void {
     // console.log('%c FeeModule-Watch Activated as %s', 'color: blue; font-size: 12px',
-    //   JSON.stringify(this.filingData))
-
-    /* FeeServices.getFee(this.filingData, this.payURL).then((data: any) => {
-      this.fetchError = ''
-      this.filing_fees = data
-      this.emitTotalFee(this.totalFees)
-    }).catch((error: any) => {
-      this.fetchError = 'Error fetching fees' + error
-    }) */
   }
 
   /* emitter */

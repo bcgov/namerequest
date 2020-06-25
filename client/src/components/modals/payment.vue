@@ -42,7 +42,6 @@
         />
       </v-card-text>
       <v-card-actions>
-        <span>Time Remaining - 10:00</span>
         <v-spacer></v-spacer>
         <v-btn @click="createPayment" id="payment-pay-btn" class="primary" text>Accept</v-btn>
         <v-btn @click="hideModal" id="payment-close-btn" class="normal" text>Cancel</v-btn>
@@ -105,7 +104,7 @@ export default class PaymentModal extends Vue {
 
     const response = await paymentService.getPaymentFees({
       'corp_type': corpType,
-      'filing_type_code': filingTypes.NM606,
+      'filing_type_code': this.filingType,
       'jurisdiction': jurisdictions.BC,
       'date': new Date().toISOString(),
       'priority': this.priorityRequest || false
@@ -118,8 +117,10 @@ export default class PaymentModal extends Vue {
     const corpType = 'NRO' // We may need to handle more than one type at some point?
     const methodOfPayment = 'CC' // We may need to handle more than one type at some point?
 
-    const { firstName, lastName, addrLine1, addrLine2, city, stateProvinceCd, countryTypeCd, postalCd } = this.applicant
-    const { corpNum } = this.nrData
+    const { applicant, name, filingType, priorityRequest, paymentId, nrData } = this
+
+    const { addrLine1, addrLine2, city, stateProvinceCd, countryTypeCd, postalCd } = applicant
+    const { corpNum } = nrData
 
     const response = await paymentService.createPaymentRequest({
       paymentInfo: {
@@ -129,15 +130,12 @@ export default class PaymentModal extends Vue {
       businessInfo: {
         corpType: corpType,
         businessIdentifier: corpNum || 'TST12345678', // TODO: Confirm this!
-        businessName: this.name,
+        businessName: name,
         contactInfo: {
-          // firstName: firstName,
-          // lastName: lastName,
           addressLine1: `${addrLine1} ${addrLine2}`,
           city: city,
           province: stateProvinceCd,
           country: countryTypeCd,
-          // postalCode: postalCd
           postalCode: postalCd
         }
       },
@@ -146,9 +144,9 @@ export default class PaymentModal extends Vue {
         date: '2020-06-24',
         filingTypes: [
           {
-            filingTypeCode: filingTypes.NM606,
-            priority: this.priorityRequest || false,
-            filingDescription: filingTypes.NM606
+            filingTypeCode: filingType,
+            priority: priorityRequest || false,
+            filingDescription: `${filingType}: ${name} (${corpNum})`
           }
         ]
       }
@@ -161,11 +159,11 @@ export default class PaymentModal extends Vue {
 
     // Store the payment ID to sessionStorage, that way we can start the user back where we left off
     sessionStorage.setItem('paymentInProgress', 'true')
-    sessionStorage.setItem('paymentId', `${this.paymentId}`)
+    sessionStorage.setItem('paymentId', `${paymentId}`)
 
     // Redirect user to Service BC Pay Portal
     const redirectUrl = encodeURIComponent(`http://localhost:8080/namerequest/?paymentSuccess=true&paymentId=${this.paymentId}`)
-    const paymentPortalUrl = `https://dev.bcregistry.ca/business/auth/makepayment/${this.paymentId}/${redirectUrl}`
+    const paymentPortalUrl = `https://dev.bcregistry.ca/business/auth/makepayment/${paymentId}/${redirectUrl}`
     window.location.href = paymentPortalUrl
   }
 
@@ -215,6 +213,17 @@ export default class PaymentModal extends Vue {
     const nameRequest: NewRequestModule = newRequestModule
     const priorityRequest: boolean = nameRequest.priorityRequest
     return priorityRequest
+  }
+
+  get filingType () {
+    const { priorityRequest } = this
+    let filingType = filingTypes.NM620
+    if (priorityRequest) {
+      // TODO: NM521 isn't working...
+      filingType = filingTypes.NM606
+    }
+
+    return filingType
   }
 
   get payment () {

@@ -11,6 +11,7 @@
         </div>
       </v-card-text>
       <v-card-actions>
+        <span>Time Remaining - 10:00</span>
         <v-spacer></v-spacer>
         <v-btn @click="redirectToStart" id="receipt-close-btn" class="normal" text>OK</v-btn>
         <v-btn @click="downloadReceipt" id="download-receipt-btn" class="primary" text>Download Receipt</v-btn>
