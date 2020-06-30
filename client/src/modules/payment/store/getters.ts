@@ -28,7 +28,17 @@ export default {
       futureEffective
     }
   },
-  [types.GET_PAYMENT_REQUEST]: state => state[STATE_KEY].request,
+  [types.GET_PAYMENT_REQUEST]: state => {
+    // TODO: Zap the payment request when timer expires?
+    let paymentRequestState
+    if ((!state[STATE_KEY].request || Object.keys(state[STATE_KEY].request).length === 0) && sessionStorage.getItem('paymentRequest')) {
+      paymentRequestState = JSON.parse(sessionStorage.getItem('paymentRequest'))
+    } else {
+      paymentRequestState = state[STATE_KEY].request
+    }
+
+    return paymentRequestState
+  },
   [types.GET_PAYMENT_INVOICE]: state => state[STATE_KEY].invoice,
   [types.GET_PAYMENT_RECEIPT]: state => state[STATE_KEY].receipt
 }

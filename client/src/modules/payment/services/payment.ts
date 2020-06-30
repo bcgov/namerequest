@@ -6,9 +6,9 @@ import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
 
 const PAYMENT_API_URL = 'payments'
 
-export async function createPaymentRequest (params): Promise<AxiosResponse<any>> {
+export async function createPaymentRequest (data): Promise<AxiosResponse<any>> {
   const url = `${PAYMENT_API_URL}`
-  return axios.post(url, params)
+  return axios.post(url, data)
 }
 
 export async function getPayment (paymentId, params): Promise<AxiosResponse<any>> {
@@ -31,7 +31,9 @@ export async function getInvoicesRequest (paymentId, params): Promise<AxiosRespo
   return axios.get(url, params)
 }
 
-export async function getReceiptRequest (paymentId, invoiceId, params): Promise<AxiosResponse<any>> {
-  const url = `${PAYMENT_API_URL}/${paymentId}/receipt/${invoiceId}`
-  return axios.post(url, params)
+export async function getReceiptRequest (paymentId, invoiceId, data): Promise<AxiosResponse<any>> {
+  // const url = `${PAYMENT_API_URL}/${paymentId}/receipt/${invoiceId}`
+  const params = { responseType: 'blob' } as AxiosRequestConfig
+  const url = `${PAYMENT_API_URL}/${paymentId}/receipt`
+  return axios.post(url, data, params)
 }

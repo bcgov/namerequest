@@ -12,12 +12,16 @@ export const setPaymentIsProcessing = ({ commit }, isProcessing: boolean) => {
   commit(types.SET_PAYMENT_IS_PROCESSING, isProcessing)
 }
 
-export const setPayment = ({ commit }, payment: any) => {
-  commit(types.SET_PAYMENT, payment)
-}
-
 export const toggleReceiptModal = ({ commit }, isVisible: boolean) => {
   commit(types.TOGGLE_RECEIPT_MODAL, isVisible)
+}
+
+export const setPaymentRequest = ({ commit }, req: any) => {
+  commit(types.SET_PAYMENT_REQUEST, req)
+}
+
+export const setPayment = ({ commit }, payment: any) => {
+  commit(types.SET_PAYMENT, payment)
 }
 
 export const setPaymentInvoice = ({ commit }, invoice: any) => {

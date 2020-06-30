@@ -17,6 +17,10 @@ export default {
       state[STATE_KEY].fees = fees
     }
   },
+  [types.SET_PAYMENT_REQUEST]: (state, req: any) => {
+    state[STATE_KEY].request = req || {}
+    sessionStorage.setItem('paymentRequest', JSON.stringify(req))
+  },
   [types.SET_PAYMENT_IS_PROCESSING]: (state, isProcessing: boolean) => {
     state[STATE_KEY].isProcessing = isProcessing || false
   },

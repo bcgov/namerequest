@@ -118,7 +118,7 @@ export default class PaymentModal extends Vue {
     const { addrLine1, addrLine2, city, stateProvinceCd, countryTypeCd, postalCd } = applicant
     const { corpNum } = nrData
 
-    const response = await paymentService.createPaymentRequest({
+    const req = {
       paymentInfo: {
         methodOfPayment: methodOfPayment
       },
@@ -146,12 +146,15 @@ export default class PaymentModal extends Vue {
           }
         ]
       }
-    })
+    }
+
+    const response = await paymentService.createPaymentRequest(req)
 
     const { invoices = [] } = response.data
 
     await paymentModule.setPayment(response.data)
     await paymentModule.setPaymentInvoice(invoices[0])
+    await paymentModule.setPaymentRequest(req)
 
     // Grab the new payment ID
     const { paymentId } = this

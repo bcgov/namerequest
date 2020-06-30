@@ -69,15 +69,24 @@ export default class ReceiptModal extends Vue {
   }
 
   async downloadReceipt () {
-    const { paymentId, paymentInvoiceId, paymentInvoice } = this
+    const { paymentId, paymentInvoiceId, paymentInvoice, paymentRequest } = this
+    const { businessInfo = { businessName: null, businessIdentifier: null }, filingInfo = { date: null } } = paymentRequest
     await this.fetchData(false)
 
-    const params = {
-      'filingDateTime': new Date(paymentInvoice.created_on).toISOString()
+    const data = {
+      // 'corpType': businessInfo.corpType,
+      'corpName': businessInfo.businessName,
+      // 'businessNumber': businessInfo.businessIdentifier, // TODO: Is this the same as business identifier?
+      // 'filingIdentifier': businessInfo.businessIdentifier, // TODO: Is this the same as business identifier?
+      'filingDateTime': filingInfo.date // TODO: Is this a date or a datetime?
     }
 
     // window.location.href = 'http://localhost:8080/namerequest/'
-    await this.fetchReceiptPdf(paymentId, paymentInvoiceId, params)
+    await this.fetchReceiptPdf(paymentId, paymentInvoiceId, data)
+  }
+
+  get paymentRequest () {
+    return this.$store.getters[paymentTypes.GET_PAYMENT_REQUEST]
   }
 
   get paymentInProgress (): boolean {
@@ -154,11 +163,17 @@ export default class ReceiptModal extends Vue {
    * Grab the receipt PDF and download / display it for the user...
    * @param paymentId
    * @param invoiceId
+   * @param params
    */
-  async fetchReceiptPdf (paymentId, invoiceId, params) {
-    const response = await paymentService.getReceiptRequest(paymentId, invoiceId, params)
+  async fetchReceiptPdf (paymentId, invoiceId, data) {
+    const response = await paymentService.getReceiptRequest(paymentId, invoiceId, data)
     // eslint-disable-next-line no-console
-    console.log(response)
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `payment-invoice-${invoiceId}.pdf`)
+    document.body.appendChild(link)
+    link.click()
   }
 }
 </script>
