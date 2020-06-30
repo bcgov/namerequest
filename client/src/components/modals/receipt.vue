@@ -47,7 +47,7 @@ export default class ReceiptModal extends Vue {
     // TODO: Set the timer here!
     if (this.paymentId) {
       // TODO: Remember to clear the session when we're done building this out
-      this.fetchData(false)
+      this.fetchData(true)
         .then(() => paymentModule.toggleReceiptModal(true))
     }
   }
@@ -71,7 +71,7 @@ export default class ReceiptModal extends Vue {
   async downloadReceipt () {
     const { paymentId, paymentInvoiceId, paymentInvoice, paymentRequest } = this
     const { businessInfo = { businessName: null, businessIdentifier: null }, filingInfo = { date: null } } = paymentRequest
-    await this.fetchData(false)
+    await this.fetchData(true)
 
     const data = {
       // 'corpType': businessInfo.corpType,
