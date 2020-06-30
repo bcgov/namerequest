@@ -7,28 +7,46 @@
           <div>
             <ul style="list-style: none; padding-left: 0">
               <li>
-                <h4>Requested Name(s)</h4>
+                <h4>Requested Name Choices</h4>
                 <ul style="list-style: none; padding-left: 0">
                   <li><span class="choice-indicator" v-if="nameChoices && nameChoices.length > 0">1</span>{{name}}</li>
                   <li v-if="nameChoices[1]"><span class="choice-indicator" v-if="nameChoices && nameChoices.length > 0">2</span>{{nameChoices[1]}}</li>
                   <li v-if="nameChoices[2]"><span class="choice-indicator" v-if="nameChoices && nameChoices.length > 1">3</span>{{nameChoices[2]}}</li>
                 </ul>
               </li>
-            </ul>
-          </div>
-          <div>
-            <ul style="list-style: none; padding-left: 0">
-              <li>
-                <h4>Contact Info</h4>
+              <li v-if="client">
+                <h4>Client Name</h4>
                 <ul style="list-style: none; padding-left: 0">
-                  <li>{{`${applicant.firstName} ${applicant.middleName} ${applicant.lastName}`}}</li>
-                  <li>{{`${applicant.addrLine1} ${applicant.addrLine2}`}}</li>
-                  <li>{{`${applicant.city}, ${applicant.stateProvinceCd}`}}</li>
-                  <li>{{`${applicant.countryTypeCd}, ${applicant.postalCd}`}}</li>
+                  <li>{{`${client}`}}</li>
+                </ul>
+              </li>
+              <li v-if="contactPerson">
+                <h4>Primary Contact</h4>
+                <ul style="list-style: none; padding-left: 0">
+                  <li>{{`${contactPerson}`}}</li>
                   <li>{{applicant.emailAddress}}</li>
                   <li>{{applicant.phoneNumber}}</li>
                 </ul>
               </li>
+              <li v-if="!contactPerson">
+                <h4>Primary Contact</h4>
+                <ul style="list-style: none; padding-left: 0">
+                  <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
+                  <li>{{`${applicant.firstName} ${applicant.middleName} ${applicant.lastName}`}}</li>
+                  <li>{{applicant.emailAddress}}</li>
+                  <li>{{applicant.phoneNumber}}</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4>Applicant Info</h4>
+            <ul style="list-style: none; padding-left: 0">
+              <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
+              <li >{{`${applicant.firstName} ${applicant.middleName} ${applicant.lastName}`}}</li>
+              <li>{{`${applicant.addrLine1} ${applicant.addrLine2}`}}</li>
+              <li>{{`${applicant.city}, ${applicant.stateProvinceCd}`}}</li>
+              <li>{{`${applicant.countryTypeCd === 'CA' ? 'Canada' : applicant.countryTypeCd}, ${applicant.postalCd}`}}</li>
             </ul>
           </div>
         </div>
@@ -175,6 +193,18 @@ export default class PaymentModal extends Vue {
     return applicantInfo
   }
 
+  get contactPerson () {
+    const { applicant = { contact: '' } } = this
+    return (applicant.contact) ? `${applicant.contact}` : undefined
+  }
+
+  get client () {
+    const { applicant = { clientFirstName: '', clientLastName: '' } } = this
+    return (applicant.clientFirstName || applicant.clientLastName)
+      ? `${applicant.clientFirstName} ${applicant.clientLastName}`
+      : undefined
+  }
+
   get isPersonsName () {
     const nameRequest: NewRequestModule = newRequestModule
     const isPersonsName: boolean = nameRequest.isPersonsName
@@ -222,7 +252,14 @@ export default class PaymentModal extends Vue {
           names[nameIdx][typeKey] = nameChoices[key]
           return names
         }, [])
-        .map((choice) => `${choice.name} ${choice.designation}`)
+        .map((choice) => {
+          return (choice.name && choice.designation)
+            ? `${choice.name} ${choice.designation}`
+            : (choice.name && !choice.designation)
+              ? `${choice.name}`
+              : undefined
+        })
+        .filter((name) => !!name)
     }
 
     return parseNameChoices(nameRequestChoices)
