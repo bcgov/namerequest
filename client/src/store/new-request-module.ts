@@ -660,7 +660,7 @@ export class NewRequestModule extends VuexModule {
       let { CancelToken } = axios
       source = CancelToken.source()
 
-      let resp = await axios.get('/name-analysis', {
+      let resp = await axios.get('name-analysis', {
         params,
         cancelToken: source.token
       })

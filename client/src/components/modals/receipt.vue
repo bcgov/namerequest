@@ -65,7 +65,7 @@ export default class ReceiptModal extends Vue {
   }
 
   async redirectToStart () {
-    window.location.href = 'http://localhost:8080/namerequest/'
+    window.location.href = document.baseURI
   }
 
   async downloadReceipt () {
@@ -81,7 +81,6 @@ export default class ReceiptModal extends Vue {
       'filingDateTime': filingInfo.date // TODO: Is this a date or a datetime?
     }
 
-    // window.location.href = 'http://localhost:8080/namerequest/'
     await this.fetchReceiptPdf(paymentId, paymentInvoiceId, data)
   }
 
@@ -122,8 +121,6 @@ export default class ReceiptModal extends Vue {
     if (paymentId) {
       paymentModule.toggleReceiptModal(true)
       await this.fetchPayment(paymentId)
-      // this.fetchInvoice(paymentId, null)
-      // this.fetchReceipt(paymentId)
     }
   }
 
@@ -136,11 +133,11 @@ export default class ReceiptModal extends Vue {
     await paymentModule.setPaymentInvoice(invoices[0])
   }
 
-  /* async fetchInvoices (paymentId) {
-    const response = await paymentService.getInvoicesRequest(paymentId, {})
-    await paymentModule.setPaymentInvoice(response.data[0])
-  } */
-
+  /**
+   * Not currently in use... but might be useful later
+   * @param paymentId
+   * @param invoiceId
+   */
   async fetchInvoice (paymentId, invoiceId) {
     const response = await paymentService.getInvoiceRequest(paymentId, {
       'invoice_id': invoiceId
@@ -163,7 +160,7 @@ export default class ReceiptModal extends Vue {
    * Grab the receipt PDF and download / display it for the user...
    * @param paymentId
    * @param invoiceId
-   * @param params
+   * @param data
    */
   async fetchReceiptPdf (paymentId, invoiceId, data) {
     const response = await paymentService.getReceiptRequest(paymentId, invoiceId, data)

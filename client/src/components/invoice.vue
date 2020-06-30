@@ -9,17 +9,12 @@
     </div>
 
     <ul class="fee-list" v-show="!fetchError && invoice">
-      <!--<li class="container fee-list__item">
-        <div class="fee-list__item-name">Account ID</div>
-        <div class="fee-list__item-value">{{invoice.account_id}}</div>
-      </li>-->
       <li class="container fee-list__item">
         <div class="fee-list__item-name">Ref #</div>
         <div class="fee-list__item-value">{{invoice.references[0].reference_number}}</div>
       </li>
       <li class="container fee-list__item">
         <div class="fee-list__item-name">Payment Date</div>
-        <!--<div class="fee-list__item-value">{{invoice.payment_date}}</div>-->
         <div class="fee-list__item-value">{{new Date(invoice.created_on).toLocaleDateString("en-US")}}</div>
       </li>
       <li class="container fee-list__item">

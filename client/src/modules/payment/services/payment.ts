@@ -1,9 +1,5 @@
 import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
 
-// import ConfigHelper from 'sbc-common-components/src/util/config-helper'
-// import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
-// import { addAxiosInterceptors } from 'sbc-common-components/src/util/interceptors'
-
 const PAYMENT_API_URL = 'payments'
 
 export async function createPaymentRequest (data): Promise<AxiosResponse<any>> {
@@ -32,7 +28,6 @@ export async function getInvoicesRequest (paymentId, params): Promise<AxiosRespo
 }
 
 export async function getReceiptRequest (paymentId, invoiceId, data): Promise<AxiosResponse<any>> {
-  // const url = `${PAYMENT_API_URL}/${paymentId}/receipt/${invoiceId}`
   const params = { responseType: 'blob' } as AxiosRequestConfig
   const url = `${PAYMENT_API_URL}/${paymentId}/receipt`
   return axios.post(url, data, params)

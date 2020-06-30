@@ -140,10 +140,10 @@ export default class PaymentModal extends Vue {
       paymentInfo: {
         methodOfPayment: methodOfPayment
       },
-      // We can also use previously posted data, dont require this...
       businessInfo: {
         corpType: corpType,
-        businessIdentifier: corpNum || 'TST12345678', // TODO: Confirm this!
+        // TODO: Double check this!
+        businessIdentifier: name,
         businessName: name,
         contactInfo: {
           addressLine1: `${addrLine1} ${addrLine2}`,
@@ -155,7 +155,7 @@ export default class PaymentModal extends Vue {
       },
       // This info comes from the frontend
       filingInfo: {
-        date: '2020-06-24',
+        date: new Date().toJSON().slice(0, 10), // Today's date
         filingTypes: [
           {
             filingTypeCode: filingType,
@@ -181,8 +181,7 @@ export default class PaymentModal extends Vue {
     sessionStorage.setItem('paymentId', `${paymentId}`)
 
     // Redirect user to Service BC Pay Portal
-    // TODO: Fix these URLs
-    const redirectUrl = encodeURIComponent(`http://localhost:8080/namerequest/?paymentSuccess=true&paymentId=${paymentId}`)
+    const redirectUrl = encodeURIComponent(`${document.baseURI}/?paymentSuccess=true&paymentId=${paymentId}`)
     const paymentPortalUrl = `https://dev.bcregistry.ca/business/auth/makepayment/${paymentId}/${redirectUrl}`
     window.location.href = paymentPortalUrl
   }
