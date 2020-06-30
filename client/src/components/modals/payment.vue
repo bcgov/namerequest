@@ -124,7 +124,6 @@ export default class PaymentModal extends Vue {
       paymentInfo: {
         methodOfPayment: methodOfPayment
       },
-      // We can also use previously posted data, dont require this...
       businessInfo: {
         corpType: corpType,
         businessIdentifier: corpNum || 'TST12345678', // TODO: Confirm this!
