@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <header class="font-weight-bold px-3 py-3">
-      <slot name="header">Details</slot>
+      <slot name="header">Invoice Details</slot>
     </header>
 
     <div v-show="fetchError">
@@ -15,7 +15,7 @@
       </li>-->
       <li class="container fee-list__item">
         <div class="fee-list__item-name">Ref #</div>
-        <div class="fee-list__item-value">{{invoice.reference_number}}</div>
+        <div class="fee-list__item-value">{{invoice.references[0].reference_number}}</div>
       </li>
       <li class="container fee-list__item">
         <div class="fee-list__item-name">Payment Date</div>
@@ -24,11 +24,11 @@
       </li>
       <li class="container fee-list__item">
         <div class="fee-list__item-name">Amount</div>
-        <div class="fee-list__item-value">${{invoice.paid.toFixed(2)}} CAD</div>
+        <div class="fee-list__item-value">${{invoice.total.toFixed(2)}} CAD</div>
       </li>
       <li class="container fee-list__item">
         <div class="fee-list__item-name">Status</div>
-        <div class="fee-list__item-value">{{invoice.status_code}}</div>
+        <div class="fee-list__item-value">{{invoice.references[0].status_code}}</div>
       </li>
     </ul>
   </v-card>
@@ -42,17 +42,25 @@ import '../plugins/vuetify'
 export default class Invoice extends Vue {
   /* class properties */
   @Prop({ default: {
-    account_id: null,
-    created_by: null,
-    created_on: null,
-    id: null,
-    line_items: null,
-    links: [],
-    paid: 0.00,
-    payment_date: null,
-    payment_id: null,
     reference_number: null,
-    status_code: null
+    created_on: null,
+    created_name: '',
+    updated_on: null,
+    updated_name: '',
+    paid: 0.00,
+    refund: null,
+    service_fees: 0.00,
+    total: 0.00,
+    // The payment reference
+    references: [
+      {
+        id: '',
+        invoice_number: '',
+        reference_number: '',
+        status_code: ''
+      }
+    ],
+    status_code: ''
   } })
   protected invoice: any
 

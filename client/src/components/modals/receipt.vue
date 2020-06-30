@@ -11,7 +11,7 @@
         </div>
       </v-card-text>
       <v-card-actions>
-        <span>Time Remaining - 10:00</span>
+        <!--<span>Time Remaining - 10:00</span>-->
         <v-spacer></v-spacer>
         <v-btn @click="redirectToStart" id="receipt-close-btn" class="normal" text>OK</v-btn>
         <v-btn @click="downloadReceipt" id="download-receipt-btn" class="primary" text>Download Receipt</v-btn>
@@ -37,35 +37,23 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
   data: () => ({
   }),
   computed: {
-    isVisible: () => {
-      // Check for a payment ID in sessionStorage, if it has been set, we've been redirected away from the application,
-      // and need to rehydrate the application using the payment ID (for now, it could be some other token too)!
-      // TODO: Set the timer here!
-      const paymentInProgress: boolean = (sessionStorage.getItem('paymentInProgress') === 'true')
-      const paymentId = (paymentInProgress && sessionStorage.getItem('paymentId'))
-        ? parseInt(sessionStorage.getItem('paymentId'))
-        : undefined
-
-      if (paymentId) {
-        // Clear the sessionStorage variables
-        sessionStorage.removeItem('paymentInProgress')
-        sessionStorage.removeItem('paymentId')
-
-        paymentModule.toggleReceiptModal(true)
-      }
-
-      return paymentModule[paymentTypes.RECEIPT_MODAL_IS_VISIBLE]
-    }
+    isVisible: () => paymentModule[paymentTypes.RECEIPT_MODAL_IS_VISIBLE]
   }
 })
 export default class ReceiptModal extends Vue {
+  mounted () {
+    // Check for a payment ID in sessionStorage, if it has been set, we've been redirected away from the application,
+    // and need to rehydrate the application using the payment ID (for now, it could be some other token too)!
+    // TODO: Set the timer here!
+    if (this.paymentId) {
+      // TODO: Remember to clear the session when we're done building this out
+      this.fetchData(false)
+        .then(() => paymentModule.toggleReceiptModal(true))
+    }
+  }
+
   @Watch('isVisible')
   onModalShow (val: boolean, oldVal: string): void {
-    if (val) {
-      // this.fetchInvoice()
-      // this.fetchInvoices()
-      this.fetchReceipt()
-    }
   }
 
   async showModal () {
@@ -81,36 +69,96 @@ export default class ReceiptModal extends Vue {
   }
 
   async downloadReceipt () {
-    // Reset
-    window.location.href = 'http://localhost:8080/namerequest/'
+    const { paymentId, paymentInvoiceId, paymentInvoice } = this
+    await this.fetchData(false)
+
+    const params = {
+      'filingDateTime': new Date(paymentInvoice.created_on).toISOString()
+    }
+
+    // window.location.href = 'http://localhost:8080/namerequest/'
+    await this.fetchReceiptPdf(paymentId, paymentInvoiceId, params)
   }
 
-  async fetchInvoices () {
-    const paymentId = 'abcd123'
-    const response = await paymentService.getInvoicesRequest(paymentId, {})
-    await paymentModule.setPaymentInvoice(response.data[0])
+  get paymentInProgress (): boolean {
+    return (sessionStorage.getItem('paymentInProgress') === 'true')
   }
 
-  async fetchInvoice () {
-    const paymentId = 'abcd123'
-    const response = await paymentService.getInvoiceRequest(paymentId, {
-      'invoice_id': '123'
-    })
-    await paymentModule.setPaymentInvoice(response.data)
-  }
-
-  async fetchReceipt () {
-    const paymentId = 'abcd123'
-    const response = await paymentService.getReceiptRequest(paymentId, {})
-    await paymentModule.setPaymentReceipt(response.data)
+  get paymentId () {
+    return (this.paymentInProgress && sessionStorage.getItem('paymentId'))
+      ? parseInt(sessionStorage.getItem('paymentId'))
+      : undefined
   }
 
   get paymentInvoice () {
     return this.$store.getters[paymentTypes.GET_PAYMENT_INVOICE]
   }
 
+  get paymentInvoiceId () {
+    return this.paymentInvoice ? this.paymentInvoice.id : undefined
+  }
+
   get paymentReceipt () {
     return this.$store.getters[paymentTypes.GET_PAYMENT_RECEIPT]
+  }
+
+  async fetchData (clearSession: boolean = true) {
+    const { paymentId } = this
+    if (clearSession) {
+      // Clear the sessionStorage variables
+      sessionStorage.removeItem('paymentInProgress')
+      sessionStorage.removeItem('paymentId')
+    }
+
+    if (paymentId) {
+      paymentModule.toggleReceiptModal(true)
+      await this.fetchPayment(paymentId)
+      // this.fetchInvoice(paymentId, null)
+      // this.fetchReceipt(paymentId)
+    }
+  }
+
+  async fetchPayment (paymentId) {
+    const response = await paymentService.getPayment(paymentId, {})
+
+    const payment = response.data
+    const { invoices = [] } = response.data
+    await paymentModule.setPayment(payment)
+    await paymentModule.setPaymentInvoice(invoices[0])
+  }
+
+  /* async fetchInvoices (paymentId) {
+    const response = await paymentService.getInvoicesRequest(paymentId, {})
+    await paymentModule.setPaymentInvoice(response.data[0])
+  } */
+
+  async fetchInvoice (paymentId, invoiceId) {
+    const response = await paymentService.getInvoiceRequest(paymentId, {
+      'invoice_id': invoiceId
+    })
+    await paymentModule.setPaymentInvoice(response.data)
+  }
+
+  /**
+   * Not currently in use... right now receipt data isn't exposed anywhere,
+   * there's just the PDF option in the Service BC Pay API
+   * @param paymentId
+   * @param invoiceId
+   */
+  async fetchReceipt (paymentId, invoiceId) {
+    const response = await paymentService.getReceiptRequest(paymentId, invoiceId, {})
+    await paymentModule.setPaymentReceipt(response.data)
+  }
+
+  /**
+   * Grab the receipt PDF and download / display it for the user...
+   * @param paymentId
+   * @param invoiceId
+   */
+  async fetchReceiptPdf (paymentId, invoiceId, params) {
+    const response = await paymentService.getReceiptRequest(paymentId, invoiceId, params)
+    // eslint-disable-next-line no-console
+    console.log(response)
   }
 }
 </script>

@@ -7,16 +7,12 @@
           <div>
             <ul style="list-style: none; padding-left: 0">
               <li>
-                <h4>Requested Name</h4>
-                {{name}}
-              </li>
-              <li>
-                <h4>Nature of Business</h4>
-                {{nrData.natureBusinessInfo}}
-              </li>
-              <li>
-                <h4>Additional Business Info</h4>
-                {{nrData.additionalInfo}}
+                <h4>Requested Name(s)</h4>
+                <ul style="list-style: none; padding-left: 0">
+                  <li><span class="choice-indicator" v-if="nameChoices && nameChoices.length > 0">1</span>{{name}}</li>
+                  <li v-if="nameChoices[1]"><span class="choice-indicator" v-if="nameChoices && nameChoices.length > 0">2</span>{{nameChoices[1]}}</li>
+                  <li v-if="nameChoices[2]"><span class="choice-indicator" v-if="nameChoices && nameChoices.length > 1">3</span>{{nameChoices[2]}}</li>
+                </ul>
               </li>
             </ul>
           </div>
@@ -164,21 +160,10 @@ export default class PaymentModal extends Vue {
     sessionStorage.setItem('paymentId', `${paymentId}`)
 
     // Redirect user to Service BC Pay Portal
+    // TODO: Fix these URLs
     const redirectUrl = encodeURIComponent(`http://localhost:8080/namerequest/?paymentSuccess=true&paymentId=${paymentId}`)
     const paymentPortalUrl = `https://dev.bcregistry.ca/business/auth/makepayment/${paymentId}/${redirectUrl}`
     window.location.href = paymentPortalUrl
-  }
-
-  async fetchInvoice () {
-    const paymentId = null
-    const response = await paymentService.getInvoiceRequest(paymentId, {})
-    await paymentModule.setPaymentInvoice(response.data)
-  }
-
-  async fetchReceipt () {
-    const paymentId = null
-    const response = await paymentService.getReceiptRequest(paymentId, {})
-    await paymentModule.setPaymentReceipt(response.data)
   }
 
   get applicant () {
@@ -197,6 +182,47 @@ export default class PaymentModal extends Vue {
     const nameRequest: NewRequestModule = newRequestModule
     const name: string = nameRequest.name
     return name
+  }
+
+  /**
+   * eg:
+   * {
+   *     name1: 'ACME Construction',
+   *     name2: 'ACME Home Construction',
+   *     name3: 'ACME Commercial Construction',
+   *     designation1: 'Ltd.',
+   *     designation2: 'Ltd.',
+   *     designation3: 'Ltd.'
+   * }
+   */
+  get nameChoices () {
+    const nameRequest: NewRequestModule = newRequestModule
+    const nameRequestChoices: {} = nameRequest.nameChoices || {}
+
+    /** Test
+     {
+        name1: 'ACME Construction',
+        name2: 'ACME Home Construction',
+        name3: 'ACME Commercial Construction',
+        designation1: 'Ltd.',
+        designation2: 'Ltd.',
+        designation3: 'Ltd.'
+     }
+     */
+    const parseNameChoices = (nameChoices) => {
+      return Object.keys(nameChoices)
+        .reduce((names, key, idx) => {
+          // Key will be either 'name' or 'designation'
+          const nameIdx = key.match(/[\d]+$/)[0]
+          const typeKey = key.substring(0, key.lastIndexOf(nameIdx))
+          names[nameIdx] = names[nameIdx] || { name: undefined, designation: undefined }
+          names[nameIdx][typeKey] = nameChoices[key]
+          return names
+        }, [])
+        .map((choice) => `${choice.name} ${choice.designation}`)
+    }
+
+    return parseNameChoices(nameRequestChoices)
   }
 
   get entityType () {
@@ -245,3 +271,21 @@ export default class PaymentModal extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+  .choice-indicator {
+    background-color: #002e5e;
+    color: white;
+    border-radius: 100%;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-right: 0.5rem;
+    margin-bottom: 5px;
+    box-sizing: border-box;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+</style>

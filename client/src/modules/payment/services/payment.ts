@@ -11,6 +11,11 @@ export async function createPaymentRequest (params): Promise<AxiosResponse<any>>
   return axios.post(url, params)
 }
 
+export async function getPayment (paymentId, params): Promise<AxiosResponse<any>> {
+  const url = `${PAYMENT_API_URL}/${paymentId}`
+  return axios.get(url, params)
+}
+
 export async function getPaymentFees (params): Promise<AxiosResponse<any>> {
   const url = `${PAYMENT_API_URL}/fees`
   return axios.post(url, params)
@@ -18,15 +23,15 @@ export async function getPaymentFees (params): Promise<AxiosResponse<any>> {
 
 export async function getInvoiceRequest (paymentId, params): Promise<AxiosResponse<any>> {
   const url = `${PAYMENT_API_URL}/${paymentId}/invoice`
-  return axios.get(url, { params })
+  return axios.get(url, params)
 }
 
 export async function getInvoicesRequest (paymentId, params): Promise<AxiosResponse<any>> {
   const url = `${PAYMENT_API_URL}/${paymentId}/invoices`
-  return axios.get(url, { params })
+  return axios.get(url, params)
 }
 
-export async function getReceiptRequest (paymentId, params): Promise<AxiosResponse<any>> {
-  const url = `${PAYMENT_API_URL}/${paymentId}/receipt`
-  return axios.get(url, { params })
+export async function getReceiptRequest (paymentId, invoiceId, params): Promise<AxiosResponse<any>> {
+  const url = `${PAYMENT_API_URL}/${paymentId}/receipt/${invoiceId}`
+  return axios.post(url, params)
 }
