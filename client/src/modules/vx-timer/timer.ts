@@ -10,7 +10,8 @@ export function Timer (opts) {
   /**
    * @param {string} opts.id The name of the timer.  Used as a unique ID.
    * @param {function} opts.expiration_fn This function will be called when the timer expires.
-   * @param {number} opts.timeout_ms The time interval in milliseconds, before the timer will be considered to have expired.
+   * @param {number} opts.timeout_ms The time interval in milliseconds,
+   * before the timer will be considered to have expired.
    * @memberof core.components.timers.Timer
    */
   this.id = opts.id

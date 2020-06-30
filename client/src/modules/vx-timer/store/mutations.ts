@@ -37,7 +37,7 @@ export default {
       this.createAndStartNewTimer({
         name: `promiseTimer:${name}`,
         timeout_ms: milliseconds,
-        expiration_fn() {
+        expiration_fn () {
           resolve()
         },
         poll_rate: 100 // Check every 100 milliseconds

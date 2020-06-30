@@ -31,7 +31,8 @@ export default {
   [types.GET_PAYMENT_REQUEST]: state => {
     // TODO: Zap the payment request when timer expires?
     let paymentRequestState
-    if ((!state[STATE_KEY].request || Object.keys(state[STATE_KEY].request).length === 0) && sessionStorage.getItem('paymentRequest')) {
+    if ((!state[STATE_KEY].request || Object.keys(state[STATE_KEY].request).length === 0) &&
+      sessionStorage.getItem('paymentRequest')) {
       paymentRequestState = JSON.parse(sessionStorage.getItem('paymentRequest'))
     } else {
       paymentRequestState = state[STATE_KEY].request

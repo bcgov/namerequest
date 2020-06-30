@@ -46,7 +46,9 @@
               <li >{{`${applicant.firstName} ${applicant.middleName} ${applicant.lastName}`}}</li>
               <li>{{`${applicant.addrLine1} ${applicant.addrLine2}`}}</li>
               <li>{{`${applicant.city}, ${applicant.stateProvinceCd}`}}</li>
-              <li>{{`${applicant.countryTypeCd === 'CA' ? 'Canada' : applicant.countryTypeCd}, ${applicant.postalCd}`}}</li>
+              <li>
+                {{`${applicant.countryTypeCd === 'CA' ? 'Canada' : applicant.countryTypeCd}, ${applicant.postalCd}`}}
+              </li>
             </ul>
           </div>
         </div>
@@ -181,7 +183,10 @@ export default class PaymentModal extends Vue {
     sessionStorage.setItem('paymentId', `${paymentId}`)
 
     // Redirect user to Service BC Pay Portal
-    const redirectUrl = encodeURIComponent(`${document.baseURI}/?paymentSuccess=true&paymentId=${paymentId}`)
+    const redirectUrl = encodeURIComponent(
+      `${document.baseURI}/?paymentSuccess=true&paymentId=${paymentId}`
+    )
+
     const paymentPortalUrl = `https://dev.bcregistry.ca/business/auth/makepayment/${paymentId}/${redirectUrl}`
     window.location.href = paymentPortalUrl
   }
