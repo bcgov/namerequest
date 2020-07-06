@@ -116,7 +116,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-import newReqModule from '@/store/new-request-module'
+import newReqModule, { NewRequestModule } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 
 @Component({})
@@ -137,14 +137,14 @@ export default class ApplicantInfo2 extends Vue {
   get nrData () {
     return newReqModule.nrData
   }
-  get nrResponseObject () {
+  get nrPostResponseObject () {
     const nameRequest: NewRequestModule = newReqModule
-    const nrResponseObject: Partial<any> = nameRequest.nrResponseObject || {}
-    return nrResponseObject
+    const nrPostResponseObject: Partial<any> = nameRequest.nrPostResponseObject || {}
+    return nrPostResponseObject
   }
   get nrNum () {
-    const { nrResponseObject } = this
-    const { nrNum } = nrResponseObject
+    const { nrPostResponseObject } = this
+    const { nrNum } = nrPostResponseObject
     return nrNum || undefined
   }
   get isPersonsName () {
@@ -181,7 +181,13 @@ export default class ApplicantInfo2 extends Vue {
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
   }
   async submit () {
-    await newReqModule.postNameReservation('draft')
+    const { nrNum } = this
+    if (nrNum) {
+      await newReqModule.postNameReservation('draft')
+    } else {
+      await newReqModule.putNameReservation('draft')
+    }
+
     await paymentModule.togglePaymentModal(true)
   }
   validate () {

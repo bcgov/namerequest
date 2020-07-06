@@ -205,6 +205,12 @@ export default class PaymentModal extends Vue {
     return nrData
   }
 
+  get nrPostResponseObject () {
+    const nameRequest: NewRequestModule = newRequestModule
+    const nrPostResponseObject: Partial<any> = nameRequest.nrPostResponseObject || {}
+    return nrPostResponseObject
+  }
+
   get priorityRequest () {
     const nameRequest: NewRequestModule = newRequestModule
     const priorityRequest: boolean = nameRequest.priorityRequest
