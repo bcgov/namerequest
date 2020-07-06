@@ -244,14 +244,19 @@ export default class GreyBox extends Vue {
   get designationIsFixed () {
     if (!this.changesInBaseName) {
       let AllDesignationsList = allDesignationsList
+      // below condition is entity types PAR, FI, PA, and the proprietorships - don't use a designation
       if (allDesignations[this.entityType].words.length === 0) {
         if (this.nameActionWords.length > 0) {
           for (let word of this.nameActionWords) {
+            // in addition to checking the name for the inclusion of designations from the list-data, check for any
+            // designation-like words that the back-end is providing in the name_actions (eg. INC, CORP)
             if (!AllDesignationsList.includes(word)) {
               AllDesignationsList = AllDesignationsList.concat(word)
             }
           }
         }
+        // these entity types do not use designations, so they should not have one in their text
+        // fail the test (return false) if any are found
         for (let designation of AllDesignationsList) {
           if (matchWord(this.name, designation)) {
             return false
@@ -265,7 +270,10 @@ export default class GreyBox extends Vue {
           end = designation
         }
       })
+      // entities which don't use ending designations have either been dealt with above or are not covered by
+      // the name-request app so by this point, any name still being considered by this getter use one
       if (!end) {
+        // so fail the test if there is no ending designation
         return false
       }
       if (this.nameActionWords.length > 0) {
@@ -406,7 +414,7 @@ export default class GreyBox extends Vue {
     return []
   }
   get nameActionWords () {
-    if (Array.isArray(this.nameActions)) {
+    if (Array.isArray(this.nameActions) && this.nameActions.length > 0) {
       return this.nameActions.map(action => action.word.toUpperCase())
     }
     return []

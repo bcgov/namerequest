@@ -4,10 +4,10 @@ const corporateDesignations = {
     'CORPORATION',
     'INC.',
     'INCORPORATED',
-    'INCORPOREE',
     'LIMITED',
-    'LIMITEE',
     'LTD.',
+    'INCORPOREE',
+    'LIMITEE',
     'LTEE'
   ],
   end: true
@@ -24,30 +24,7 @@ const cooperativeDesignations = {
 }
 
 const designations = {
-  CR: corporateDesignations,
-  XCR: corporateDesignations,
-  RLC: {
-    words: [
-      'L.L.C.',
-      'LIMITED LIABILITY CO.',
-      'LIMITED LIABILITY COMPANY',
-      'LLC'
-    ],
-    end: true
-  },
-  LL: {
-    words: [
-      'LLP',
-      'LIMITED LIABILITY PARTNERSHIP',
-      'SOCIETE A RESPONSABILITE LIMITEE',
-      'SOCIETE EN NOM COLLECTIF A RESPONSABILITE LIMITEE',
-      'SLR',
-      'SENCRL'
-    ],
-    end: true
-  },
-  CP: cooperativeDesignations,
-  XCP: cooperativeDesignations,
+  BC: corporateDesignations,
   CC: {
     words: [
       'CCC',
@@ -56,23 +33,13 @@ const designations = {
     ],
     end: true
   },
-  UL: {
-    words: [
-      'ULC',
-      'UNLIMITED LIABILITY COMPANY'
-    ],
-    end: true
-  },
-  BC: corporateDesignations,
-  PA: {
+  CP: cooperativeDesignations,
+  CR: corporateDesignations,
+  DBA: {
     words: [],
     end: false
   },
   FI: {
-    words: [],
-    end: false
-  },
-  PAR: {
     words: [],
     end: false
   },
@@ -84,10 +51,47 @@ const designations = {
     words: [],
     end: false
   },
-  DBA: {
+  LL: {
+    words: [
+      'LIMITED LIABILITY PARTNERSHIP',
+      'LLP',
+      'SENCRL',
+      'SLR',
+      'SOCIETE A RESPONSABILITE LIMITEE',
+      'SOCIETE EN NOM COLLECTIF A RESPONSABILITE LIMITEE'
+    ],
+    end: true
+  },
+  LP: {
+    words: ['LIMITED PARTNERSHIP'],
+    end: true
+  },
+  PA: {
     words: [],
     end: false
-  }
+  },
+  PAR: {
+    words: [],
+    end: false
+  },
+  RLC: {
+    words: [
+      'L.L.C.',
+      'LIMITED LIABILITY CO.',
+      'LIMITED LIABILITY COMPANY',
+      'LLC'
+    ],
+    end: true
+  },
+  UL: {
+    words: [
+      'ULC',
+      'UNLIMITED LIABILITY COMPANY'
+    ],
+    end: true
+  },
+  XCP: cooperativeDesignations,
+  XCR: corporateDesignations
 }
 
 function getAllDesignations () {

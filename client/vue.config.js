@@ -4,7 +4,7 @@ module.exports = {
   configureWebpack: {
     devtool: 'eval-source-map',
     devServer: {
-      hot: false
+      hot: true
     },
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json', '.vue', '.jsx']

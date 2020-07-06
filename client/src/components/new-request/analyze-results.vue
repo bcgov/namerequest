@@ -364,7 +364,7 @@ export default class AnalyzeResults extends Vue {
     }
   }
   getBaseNameOps () {
-    let nameWords = this.name.split(' ')
+    let nameWords = this.originalName.split(' ')
     return nameWords.map((word, i) => (
       { insert: (i > 0) ? (' ' + word) : (word) }
     ))
@@ -402,7 +402,9 @@ export default class AnalyzeResults extends Vue {
     newReqModule.startAnalyzeName()
   }
   updateContents (text) {
-    this.quill.setText(text)
+    this.quill.setContents([
+      { insert: text }
+    ])
   }
 }
 
