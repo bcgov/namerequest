@@ -156,7 +156,7 @@
 </template>
 
 <script lang="ts">
-import newReqModule, {NewRequestModule} from '@/store/new-request-module'
+import newReqModule, { NewRequestModule } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
@@ -194,7 +194,6 @@ export default class ApplicantInfo3 extends Vue {
     const { nrPostResponseObject } = this
     const { nrNum } = nrPostResponseObject
     return nrNum || undefined
-
   }
   get priorityRequest () {
     return newReqModule.priorityRequest
@@ -227,7 +226,7 @@ export default class ApplicantInfo3 extends Vue {
     if (nrNum) {
       await newReqModule.postNameReservation('draft')
     } else {
-      await newReqModule.putNameReservation('draft')
+      await newReqModule.postNameReservation('draft')
     }
 
     await paymentModule.togglePaymentModal(true)
