@@ -21,14 +21,14 @@ describe('search.vue', () => {
   })
 
   it('Displays the necessary UI components', () => {
-    expect(wrapper.contains('#search-type-options-select')).toBe(true)
-    expect(wrapper.contains('#location-options-select')).toBe(true)
-    expect(wrapper.contains('#entity-type-options-select')).toBe(true)
-    expect(wrapper.contains('#name-input-component')).toBe(true)
+    expect(wrapper.find('#search-type-options-select').element).toBeTruthy()
+    expect(wrapper.find('#location-options-select').element).toBeTruthy()
+    expect(wrapper.find('#entity-type-options-select').element).toBeTruthy()
+    expect(wrapper.find('#name-input-component').element).toBeTruthy()
   })
   it('Displays the two modal activators', () => {
-    expect(wrapper.contains('#help-me-choose-activator')).toBe(true)
-    expect(wrapper.contains('#nr-required-activator')).toBe(true)
+    expect(wrapper.find('#help-me-choose-activator').element).toBeTruthy()
+    expect(wrapper.find('#nr-required-activator').element).toBeTruthy()
   })
   it('Initially sets the state for controlling both info modals visibility to false', () => {
     expect(newReqModule.nrRequiredModalVisible).toBe(false)

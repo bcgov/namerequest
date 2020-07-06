@@ -24,13 +24,13 @@ describe('pick-request-type.vue', (): void => {
   })
 
   it('and it does not show the modal', () => {
-    expect(wrapper.contains('#pick-request-type-modal-card')).toBe(false)
+    expect(wrapper.find('#pick-request-type-modal-card').element).toBeFalsy()
   })
 
   it('When the modal visibility state key is set to true, expect the opposite', async () => {
     newReqModule.store.state.newRequestModule.pickRequestTypeModalVisible = true
     await wrapper.vm.$nextTick()
-    expect(wrapper.contains('#pick-request-type-modal-card')).toBe(true)
+    expect(wrapper.find('#pick-request-type-modal-card').element).toBeTruthy()
     expect(wrapper.vm.showModal).toBe(true)
   })
   it('clicking an entity sets the entityType and closes the modal', async () => {
