@@ -2,8 +2,8 @@ import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
 
 const PAYMENT_API_URL = 'payments'
 
-export async function createPaymentRequest (data): Promise<AxiosResponse<any>> {
-  const url = `${PAYMENT_API_URL}`
+export async function createPaymentRequest (nrNumber, data): Promise<AxiosResponse<any>> {
+  const url = `${PAYMENT_API_URL}/${nrNumber}`
   return axios.post(url, data)
 }
 

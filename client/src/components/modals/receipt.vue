@@ -24,6 +24,7 @@
 import Invoice from '@/components/invoice.vue'
 
 import paymentModule from '@/modules/payment'
+import newRequestModule from '@/store/new-request-module'
 
 import * as paymentService from '@/modules/payment/services'
 import * as paymentTypes from '@/modules/payment/store/types'
@@ -48,7 +49,7 @@ export default class ReceiptModal extends Vue {
     if (this.paymentId) {
       // TODO: Remember to clear the session when we're done building this out
       this.fetchData(true)
-        .then(() => paymentModule.toggleReceiptModal(true))
+        .then(() => paymentModule.toggleReceiptModal(true)) // TODO: This toggle should have been executed already
     }
   }
 
@@ -119,8 +120,9 @@ export default class ReceiptModal extends Vue {
     }
 
     if (paymentId) {
-      paymentModule.toggleReceiptModal(true)
+      // Get the payment
       await this.fetchPayment(paymentId)
+      paymentModule.toggleReceiptModal(true)
     }
   }
 

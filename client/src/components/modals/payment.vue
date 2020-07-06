@@ -133,10 +133,17 @@ export default class PaymentModal extends Vue {
     const corpType = 'NRO' // We may need to handle more than one type at some point?
     const methodOfPayment = 'CC' // We may need to handle more than one type at some point?
 
-    const { applicant, name, filingType, priorityRequest, nrData } = this
+    const { applicant, name, filingType, priorityRequest, nrData, nrPostResponseObject } = this
 
     const { addrLine1, addrLine2, city, stateProvinceCd, countryTypeCd, postalCd } = applicant
     const { corpNum } = nrData
+    const { nrNum } = nrPostResponseObject
+
+    if (!nrNum) {
+      // eslint-disable-next-line no-console
+      console.warn('NR number is not present in nrPostResponseObject, cannot continue!')
+      return
+    }
 
     const req = {
       paymentInfo: {
@@ -144,8 +151,9 @@ export default class PaymentModal extends Vue {
       },
       businessInfo: {
         corpType: corpType,
-        // TODO: Double check this!
-        businessIdentifier: name,
+        // TODO: Replace this with the NR Number? Or is this the actual business number?
+        // TODO: Do they even have a business number at this point?
+        businessIdentifier: corpNum || nrNum,
         businessName: name,
         contactInfo: {
           addressLine1: `${addrLine1} ${addrLine2}`,
@@ -168,7 +176,7 @@ export default class PaymentModal extends Vue {
       }
     }
 
-    const response = await paymentService.createPaymentRequest(req)
+    const response = await paymentService.createPaymentRequest(nrNum, req)
 
     const { invoices = [] } = response.data
 
@@ -279,6 +287,12 @@ export default class PaymentModal extends Vue {
     const nameRequest: NewRequestModule = newRequestModule
     const nrData: Partial<any> = nameRequest.nrData || {}
     return nrData
+  }
+
+  get nrPostResponseObject () {
+    const nameRequest: NewRequestModule = newRequestModule
+    const nrPostResponseObject: Partial<any> = nameRequest.nrPostResponseObject || {}
+    return nrPostResponseObject
   }
 
   get priorityRequest () {
