@@ -133,15 +133,15 @@ export default class PaymentModal extends Vue {
     const corpType = 'NRO' // We may need to handle more than one type at some point?
     const methodOfPayment = 'CC' // We may need to handle more than one type at some point?
 
-    const { applicant, name, filingType, priorityRequest, nrData, nrPostResponseObject } = this
+    const { applicant, name, filingType, priorityRequest, nrData, nrResponseObject } = this
 
     const { addrLine1, addrLine2, city, stateProvinceCd, countryTypeCd, postalCd } = applicant
     const { corpNum } = nrData
-    const { nrNum } = nrPostResponseObject
+    const { nrNum } = nrResponseObject
 
     if (!nrNum) {
       // eslint-disable-next-line no-console
-      console.warn('NR number is not present in nrPostResponseObject, cannot continue!')
+      console.warn('NR number is not present in nrResponseObject, cannot continue!')
       return
     }
 
@@ -189,6 +189,7 @@ export default class PaymentModal extends Vue {
     // Store the payment ID to sessionStorage, that way we can start the user back where we left off
     sessionStorage.setItem('paymentInProgress', 'true')
     sessionStorage.setItem('paymentId', `${paymentId}`)
+    sessionStorage.setItem('nrNum', `${nrNum}`)
 
     // Redirect user to Service BC Pay Portal
     const redirectUrl = encodeURIComponent(
@@ -289,10 +290,10 @@ export default class PaymentModal extends Vue {
     return nrData
   }
 
-  get nrPostResponseObject () {
+  get nrResponseObject () {
     const nameRequest: NewRequestModule = newRequestModule
-    const nrPostResponseObject: Partial<any> = nameRequest.nrPostResponseObject || {}
-    return nrPostResponseObject
+    const nrResponseObject: Partial<any> = nameRequest.nrResponseObject || {}
+    return nrResponseObject
   }
 
   get priorityRequest () {

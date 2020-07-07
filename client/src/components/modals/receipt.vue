@@ -24,7 +24,7 @@
 import Invoice from '@/components/invoice.vue'
 
 import paymentModule from '@/modules/payment'
-import newRequestModule from '@/store/new-request-module'
+import newRequestModule, { NewRequestModule } from '@/store/new-request-module'
 
 import * as paymentService from '@/modules/payment/services'
 import * as paymentTypes from '@/modules/payment/store/types'
@@ -43,13 +43,14 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 })
 export default class ReceiptModal extends Vue {
   mounted () {
+    const { sessionPaymentId } = this
     // Check for a payment ID in sessionStorage, if it has been set, we've been redirected away from the application,
     // and need to rehydrate the application using the payment ID (for now, it could be some other token too)!
     // TODO: Set the timer here!
-    if (this.paymentId) {
+    if (sessionPaymentId) {
       // TODO: Remember to clear the session when we're done building this out
       this.fetchData(true)
-        .then(() => paymentModule.toggleReceiptModal(true)) // TODO: This toggle should have been executed already
+        .then(() => this.completePayment(sessionPaymentId))
     }
   }
 
@@ -70,7 +71,7 @@ export default class ReceiptModal extends Vue {
   }
 
   async downloadReceipt () {
-    const { paymentId, paymentInvoiceId, paymentInvoice, paymentRequest } = this
+    const { sessionPaymentId, paymentInvoiceId, paymentRequest } = this
     const { businessInfo = { businessName: null, businessIdentifier: null }, filingInfo = { date: null } } = paymentRequest
     await this.fetchData(true)
 
@@ -82,7 +83,19 @@ export default class ReceiptModal extends Vue {
       'filingDateTime': filingInfo.date // TODO: Is this a date or a datetime?
     }
 
-    await this.fetchReceiptPdf(paymentId, paymentInvoiceId, data)
+    await this.fetchReceiptPdf(sessionPaymentId, paymentInvoiceId, data)
+  }
+
+  get nrResponseObject () {
+    const nameRequest: NewRequestModule = newRequestModule
+    const nrResponseObject: Partial<any> = nameRequest.nrResponseObject || {}
+    return nrResponseObject
+  }
+
+  get nrNum () {
+    const { nrResponseObject } = this
+    const { nrNum } = nrResponseObject
+    return nrNum || undefined
   }
 
   get paymentRequest () {
@@ -93,9 +106,15 @@ export default class ReceiptModal extends Vue {
     return (sessionStorage.getItem('paymentInProgress') === 'true')
   }
 
-  get paymentId () {
+  get sessionPaymentId () {
     return (this.paymentInProgress && sessionStorage.getItem('paymentId'))
       ? parseInt(sessionStorage.getItem('paymentId'))
+      : undefined
+  }
+
+  get sessionNrNum () {
+    return (this.paymentInProgress && sessionStorage.getItem('nrNum'))
+      ? sessionStorage.getItem('nrNum')
       : undefined
   }
 
@@ -112,17 +131,20 @@ export default class ReceiptModal extends Vue {
   }
 
   async fetchData (clearSession: boolean = true) {
-    const { paymentId } = this
+    const { sessionPaymentId, sessionNrNum } = this
+
     if (clearSession) {
       // Clear the sessionStorage variables
       sessionStorage.removeItem('paymentInProgress')
       sessionStorage.removeItem('paymentId')
+      sessionStorage.removeItem('nrNum')
     }
 
-    if (paymentId) {
+    if (sessionNrNum && sessionPaymentId) {
       // Get the payment
-      await this.fetchPayment(paymentId)
-      paymentModule.toggleReceiptModal(true)
+      await this.fetchNr(sessionNrNum)
+      // Get the payment
+      await this.fetchPayment(sessionPaymentId)
     }
   }
 
@@ -133,6 +155,16 @@ export default class ReceiptModal extends Vue {
     const { invoices = [] } = response.data
     await paymentModule.setPayment(payment)
     await paymentModule.setPaymentInvoice(invoices[0])
+  }
+
+  async fetchNr (nrNum) {
+    await newRequestModule.getNameReservation(nrNum)
+  }
+
+  async completePayment (paymentId) {
+    const { nrNum } = this
+    await newRequestModule.putNameReservation(nrNum, paymentId, {})
+    paymentModule.toggleReceiptModal(true)
   }
 
   /**

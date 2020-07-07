@@ -308,7 +308,7 @@ export class NewRequestModule extends VuexModule {
     name3: '',
     designation3: ''
   }
-  nrPostResponseObject: Partial<PostDraftReqI> | null = null
+  nrResponseObject: Partial<PostDraftReqI> | null = null
   isPersonsName: boolean = false
   nameIsEnglish: boolean = true
   nrRequiredModalVisible: boolean = false
@@ -579,6 +579,110 @@ export class NewRequestModule extends VuexModule {
     })
   }
 
+  get draftNameReservation () {
+    let applicant: PostApplicantI = this.applicant
+    let names = []
+    if (this.nameChoices.name1) {
+      let name1: PostNameI = {
+        name: this.nameChoices.name1 + ' ' + this.nameChoices.designation1,
+        choice: 1,
+        designation: this.nameChoices.designation1,
+        name_type_cd: 'CO',
+        consent_words: '',
+        conflict1: '',
+        conflict1_num: ''
+      }
+      names.push(name1)
+      if (this.nameChoices.name2) {
+        let name2: PostNameI = {
+          name: this.nameChoices.name2 + ' ' + this.nameChoices.designation2,
+          choice: 2,
+          designation: this.nameChoices.designation2,
+          name_type_cd: 'CO',
+          consent_words: '',
+          conflict1: '',
+          conflict1_num: ''
+        }
+        names.push(name2)
+      }
+      if (this.nameChoices.name3) {
+        let name3: PostNameI = {
+          name: this.nameChoices.name3 + ' ' + this.nameChoices.designation3,
+          choice: 3,
+          designation: this.nameChoices.designation3,
+          name_type_cd: 'CO',
+          consent_words: '',
+          conflict1: '',
+          conflict1_num: ''
+        }
+        names.push(name3)
+      }
+    }
+    let caseData: PostDraftReqI = {
+      applicants: [applicant],
+      names,
+      ...this.nrData,
+      priorityCd: this.priorityRequest ? 'Y' : 'N',
+      entity_type: this.entityType,
+      request_action: this.requestAction,
+      stateCd: 'DRAFT',
+      english: this.nameIsEnglish,
+      nameFlag: this.isPersonsName,
+      submit_count: 0
+    }
+    return caseData
+  }
+
+  get conditionalNameReservation () {
+    let name: PostNameI = {
+      name: this.name,
+      choice: 1,
+      designation: this.splitNameDesignation.designation,
+      name_type_cd: 'CO',
+      consent_words: this.consentWords.length > 0 ? this.consentWords : '',
+      conflict1: this.consentConflicts.name,
+      conflict1_num: this.consentConflicts.name ? '464666' : ''
+    }
+    let caseData: PostConditionalReqI = {
+      names: [ name ],
+      applicants: [],
+      ...this.nrData,
+      priorityCd: 'N',
+      entity_type: this.entityType,
+      request_action: this.requestAction,
+      stateCd: 'COND-RESERVE',
+      english: this.nameIsEnglish,
+      nameFlag: this.isPersonsName,
+      submit_count: 0
+    }
+    return caseData
+  }
+
+  get reservedNameReservation () {
+    let name: PostNameI = {
+      name: this.name,
+      choice: 1,
+      designation: this.splitNameDesignation.designation,
+      name_type_cd: 'CO',
+      consent_words: '',
+      conflict1: '',
+      conflict1_num: ''
+    }
+    let caseData: PostReservedReqI = {
+      names: [ name ],
+      applicants: [],
+      ...this.nrData,
+      priorityCd: 'N',
+      entity_type: this.entityType,
+      request_action: this.requestAction,
+      stateCd: 'RESERVED',
+      english: this.nameIsEnglish,
+      nameFlag: this.isPersonsName,
+      submit_count: 0
+    }
+    return caseData
+  }
+
   @Action
   async getAddressDetails (id) {
     const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Retrieve/v2.11/json3.ws'
@@ -708,243 +812,68 @@ export class NewRequestModule extends VuexModule {
       return Promise.resolve()
     }
   }
+
   @Action
-  async postNameReservation (type) {
-    let postData: any
-    switch (type) {
-      case 'draft': {
-        let applicant: PostApplicantI = this.applicant
-        let names = []
-        if (this.nameChoices.name1) {
-          let name1: PostNameI = {
-            name: this.nameChoices.name1 + ' ' + this.nameChoices.designation1,
-            choice: 1,
-            designation: this.nameChoices.designation1,
-            name_type_cd: 'CO',
-            consent_words: '',
-            conflict1: '',
-            conflict1_num: ''
-          }
-          names.push(name1)
-          if (this.nameChoices.name2) {
-            let name2: PostNameI = {
-              name: this.nameChoices.name2 + ' ' + this.nameChoices.designation2,
-              choice: 2,
-              designation: this.nameChoices.designation2,
-              name_type_cd: 'CO',
-              consent_words: '',
-              conflict1: '',
-              conflict1_num: ''
-            }
-            names.push(name2)
-          }
-          if (this.nameChoices.name3) {
-            let name3: PostNameI = {
-              name: this.nameChoices.name3 + ' ' + this.nameChoices.designation3,
-              choice: 3,
-              designation: this.nameChoices.designation3,
-              name_type_cd: 'CO',
-              consent_words: '',
-              conflict1: '',
-              conflict1_num: ''
-            }
-            names.push(name3)
-          }
-        }
-        let caseData: PostDraftReqI = {
-          applicants: [applicant],
-          names,
-          ...this.nrData,
-          priorityCd: this.priorityRequest ? 'Y' : 'N',
-          entity_type: this.entityType,
-          request_action: this.requestAction,
-          stateCd: 'DRAFT',
-          english: this.nameIsEnglish,
-          nameFlag: this.isPersonsName,
-          submit_count: 0
-        }
-        postData = caseData
-        break
-      }
-      case 'conditional': {
-        let name: PostNameI = {
-          name: this.name,
-          choice: 1,
-          designation: this.splitNameDesignation.designation,
-          name_type_cd: 'CO',
-          consent_words: this.consentWords.length > 0 ? this.consentWords : '',
-          conflict1: this.consentConflicts.name,
-          conflict1_num: this.consentConflicts.name ? '464666' : ''
-        }
-        let caseData: PostConditionalReqI = {
-          names: [ name ],
-          applicants: [],
-          ...this.nrData,
-          priorityCd: 'N',
-          entity_type: this.entityType,
-          request_action: this.requestAction,
-          stateCd: 'COND-RESERVE',
-          english: this.nameIsEnglish,
-          nameFlag: this.isPersonsName,
-          submit_count: 0
-        }
-        postData = caseData
-        break
-      }
-      case 'reserved': {
-        let name: PostNameI = {
-          name: this.name,
-          choice: 1,
-          designation: this.splitNameDesignation.designation,
-          name_type_cd: 'CO',
-          consent_words: '',
-          conflict1: '',
-          conflict1_num: ''
-        }
-        let caseData: PostReservedReqI = {
-          names: [ name ],
-          applicants: [],
-          ...this.nrData,
-          priorityCd: 'N',
-          entity_type: this.entityType,
-          request_action: this.requestAction,
-          stateCd: 'RESERVED',
-          english: this.nameIsEnglish,
-          nameFlag: this.isPersonsName,
-          submit_count: 0
-        }
-        postData = caseData
-      }
-    }
+  async getNameReservation (nrNum) {
     let response
     try {
-      response = await axios.post('/namerequests', postData, {
+      // eslint-disable-next-line no-console
+      console.log('getNameReservation action dispatched')
+      // eslint-disable-next-line no-console
+      // console.trace()
+      response = await axios.get(`/namerequests/${nrNum}`, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
-      this.setNRPostResponseObject(response.data)
+      this.setNrResponseObject(response.data)
     } catch (error) {
       // eslint-disable-next-line
       console.log(error)
     }
   }
   @Action
-  async putNameReservation (type) {
-    let requestData: any
-    switch (type) {
-      case 'draft': {
-        let applicant: PostApplicantI = this.applicant
-        let names = []
-        if (this.nameChoices.name1) {
-          let name1: PostNameI = {
-            name: this.nameChoices.name1 + ' ' + this.nameChoices.designation1,
-            choice: 1,
-            designation: this.nameChoices.designation1,
-            name_type_cd: 'CO',
-            consent_words: '',
-            conflict1: '',
-            conflict1_num: ''
-          }
-          names.push(name1)
-          if (this.nameChoices.name2) {
-            let name2: PostNameI = {
-              name: this.nameChoices.name2 + ' ' + this.nameChoices.designation2,
-              choice: 2,
-              designation: this.nameChoices.designation2,
-              name_type_cd: 'CO',
-              consent_words: '',
-              conflict1: '',
-              conflict1_num: ''
-            }
-            names.push(name2)
-          }
-          if (this.nameChoices.name3) {
-            let name3: PostNameI = {
-              name: this.nameChoices.name3 + ' ' + this.nameChoices.designation3,
-              choice: 3,
-              designation: this.nameChoices.designation3,
-              name_type_cd: 'CO',
-              consent_words: '',
-              conflict1: '',
-              conflict1_num: ''
-            }
-            names.push(name3)
-          }
-        }
-        let caseData: PostDraftReqI = {
-          applicants: [applicant],
-          names,
-          ...this.nrData,
-          priorityCd: this.priorityRequest ? 'Y' : 'N',
-          entity_type: this.entityType,
-          request_action: this.requestAction,
-          stateCd: 'DRAFT',
-          english: this.nameIsEnglish,
-          nameFlag: this.isPersonsName,
-          submit_count: 0
-        }
-        requestData = caseData
-        break
-      }
-      case 'conditional': {
-        let name: PostNameI = {
-          name: this.name,
-          choice: 1,
-          designation: this.splitNameDesignation.designation,
-          name_type_cd: 'CO',
-          consent_words: this.consentWords.length > 0 ? this.consentWords : '',
-          conflict1: this.consentConflicts.name,
-          conflict1_num: this.consentConflicts.name ? '464666' : ''
-        }
-        let caseData: PostConditionalReqI = {
-          names: [ name ],
-          applicants: [],
-          ...this.nrData,
-          priorityCd: 'N',
-          entity_type: this.entityType,
-          request_action: this.requestAction,
-          stateCd: 'COND-RESERVE',
-          english: this.nameIsEnglish,
-          nameFlag: this.isPersonsName,
-          submit_count: 0
-        }
-        requestData = caseData
-        break
-      }
-      case 'reserved': {
-        let name: PostNameI = {
-          name: this.name,
-          choice: 1,
-          designation: this.splitNameDesignation.designation,
-          name_type_cd: 'CO',
-          consent_words: '',
-          conflict1: '',
-          conflict1_num: ''
-        }
-        let caseData: PostReservedReqI = {
-          names: [ name ],
-          applicants: [],
-          ...this.nrData,
-          priorityCd: 'N',
-          entity_type: this.entityType,
-          request_action: this.requestAction,
-          stateCd: 'RESERVED',
-          english: this.nameIsEnglish,
-          nameFlag: this.isPersonsName,
-          submit_count: 0
-        }
-        requestData = caseData
-      }
-    }
+  async postNameReservation (type) {
     let response
     try {
-      response = await axios.put('/namerequests', requestData, {
+      // eslint-disable-next-line no-console
+      console.log('postNameReservation action dispatched')
+      // eslint-disable-next-line no-console
+      // console.trace()
+      let postData: any
+      switch (type) {
+        case 'draft':
+          postData = this.draftNameReservation
+          break
+        case 'conditional':
+          postData = this.conditionalNameReservation
+          break
+        case 'reserved':
+          postData = this.reservedNameReservation
+          break
+      }
+
+      response = await axios.post(`/namerequests`, postData, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
-      this.setNRPostResponseObject(response.data)
+      this.setNrResponseObject(response.data)
+    } catch (error) {
+      // eslint-disable-next-line
+      console.log(error)
+    }
+  }
+  @Action
+  async putNameReservation (nrNum, paymentId) {
+    let response
+    try {
+      response = await axios.put(`/namerequests/${nrNum}`, {}, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      this.setNrResponseObject(response.data)
     } catch (error) {
       // eslint-disable-next-line
       console.log(error)
@@ -1244,8 +1173,8 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Mutation
-  setNRPostResponseObject (value) {
-    this.nrPostResponseObject = value
+  setNrResponseObject (value) {
+    this.nrResponseObject = value
   }
 
   getEntities (catagory) {

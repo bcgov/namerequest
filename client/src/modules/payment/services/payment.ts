@@ -7,6 +7,11 @@ export async function createPaymentRequest (nrNumber, data): Promise<AxiosRespon
   return axios.post(url, data)
 }
 
+/* export async function completePaymentRequest (nrNumber, data): Promise<AxiosResponse<any>> {
+  const url = `${PAYMENT_API_URL}/${nrNumber}`
+  return axios.put(url, data)
+} */
+
 export async function getPayment (paymentId, params): Promise<AxiosResponse<any>> {
   const url = `${PAYMENT_API_URL}/${paymentId}`
   return axios.get(url, params)
