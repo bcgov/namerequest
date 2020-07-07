@@ -23,7 +23,7 @@
 import Invoice from '@/components/invoice.vue'
 
 import paymentModule from '@/modules/payment'
-import newRequestModule from '@/store/new-request-module'
+import newRequestModule, { NewRequestModule } from '@/store/new-request-module'
 
 import * as paymentService from '@/modules/payment/services'
 import * as paymentTypes from '@/modules/payment/store/types'
@@ -81,6 +81,12 @@ export default class ReceiptModal extends Vue {
     const paymentId = null
     const response = await paymentService.getReceiptRequest(paymentId, {})
     await paymentModule.setPaymentReceipt(response.data)
+  }
+
+  get sessionNrNum () {
+    return (this.paymentInProgress && sessionStorage.getItem('nrNum'))
+      ? sessionStorage.getItem('nrNum')
+      : undefined
   }
 
   get paymentInvoice () {

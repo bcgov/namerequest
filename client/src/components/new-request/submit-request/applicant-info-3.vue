@@ -185,14 +185,14 @@ export default class ApplicantInfo3 extends Vue {
   get nrData () {
     return newReqModule.nrData
   }
-  get nrPostResponseObject () {
+  get nrResponseObject () {
     const nameRequest: NewRequestModule = newReqModule
-    const nrPostResponseObject: Partial<any> = nameRequest.nrPostResponseObject || {}
-    return nrPostResponseObject
+    const nrResponseObject: Partial<any> = nameRequest.nrResponseObject || {}
+    return nrResponseObject
   }
   get nrNum () {
-    const { nrPostResponseObject } = this
-    const { nrNum } = nrPostResponseObject
+    const { nrResponseObject } = this
+    const { nrNum } = nrResponseObject
     return nrNum || undefined
 
   }

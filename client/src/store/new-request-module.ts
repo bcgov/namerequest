@@ -344,8 +344,7 @@ export class NewRequestModule extends VuexModule {
     name3: '',
     designation3: ''
   }
-  nrRequestNameMap: RequestNameMapI[] = []
-  nrResponseObject: Partial<any> | null = null
+  nrResponseObject: Partial<PostDraftReqI> | null = null
   isPersonsName: boolean = false
   nameIsEnglish: boolean = true
   nrRequiredModalVisible: boolean = false
@@ -616,105 +615,49 @@ export class NewRequestModule extends VuexModule {
     })
   }
 
-  get nrNum () {
-    const { nrResponseObject } = this
-    let nrNum
-    if (nrResponseObject) nrNum = nrResponseObject.nrNum
-    return nrNum
-  }
-
-  get nrState () {
-    const { nrResponseObject } = this
-    let state
-    if (nrResponseObject) state = nrResponseObject.state
-    return state
-  }
-
-  get nrNames () {
-    const { nrResponseObject } = this
+  get draftNameReservation () {
+    let applicant: PostApplicantI = this.applicant
     let names = []
-    if (nrResponseObject) names = nrResponseObject.names
-    return names
-  }
-
-  /**
-   * This getter combines the NR response data objects names against nameChoices,
-   * which contains the actual form values, building the request object required for a Name.
-   * nameChoices are identified by the 'choice' index, which is what we use to map values.
-   */
-  get nrRequestNames (): RequestNameI[] {
-    const { nameChoices, nrNames } = this
-    const defaultValues = {
-      name_type_cd: 'CO',
-      consent_words: '',
-      conflict1: '',
-      conflict1_num: ''
-    }
-
-    // Check to make sure there are nameChoices that have been set
-    const nameChoicesAreSet = (parseNameChoices(nameChoices).length > 0)
-
-    let requestNames = []
-    if (nameChoicesAreSet) {
-      // We only allow three choices
-      let choiceIdx = 1
-      while (choiceIdx <= 3) {
-        if (nameChoices[`name${choiceIdx}`] as boolean) {
-          // Create the requestName
-          requestNames.push({
-            name: nameChoices[`name${choiceIdx}`],
-            designation: nameChoices[`designation${choiceIdx}`],
-            choice: choiceIdx,
-            ...defaultValues
-          })
-        }
-        choiceIdx++
-      }
-    } else {
-      // Just use the 'name' property to fill in the requestName
-      requestNames.push({
-        name: this.name,
-        designation: this.splitNameDesignation.designation,
+    if (this.nameChoices.name1) {
+      let name1: PostNameI = {
+        name: this.nameChoices.name1 + ' ' + this.nameChoices.designation1,
         choice: 1,
-        ...defaultValues
-      })
-    }
-
-    requestNames = requestNames.map((requestName, idx) => {
-      if (nrNames) {
-        const existingName = nrNames.find(nrName => nrName.choice === requestName.choice)
-        if (existingName) {
-          return {
-            ...existingName,
-            // Merge in requestName form values
-            ...requestName,
-            // Merge conflicts and consent words
-            consent_words: !existingName.consent_words
-              ? this.consentWords.length > 0 ? this.consentWords : ''
-              : existingName.consent_words,
-            conflict1: !existingName.conflict1
-              ? this.consentConflicts.name
-              : existingName.conflict1,
-            conflict1_num: !existingName.conflict1_num
-              ? this.consentConflicts.name ? '464666' : ''
-              : existingName.conflict1_num
-          } as RequestNameI
-        }
+        designation: this.nameChoices.designation1,
+        name_type_cd: 'CO',
+        consent_words: '',
+        conflict1: '',
+        conflict1_num: ''
       }
-
-      return { ...requestName } as RequestNameI
-    })
-
-    return requestNames
-  }
-
-  get draftNameReservation (): DraftReqI {
-    const { applicant, nrData, nrRequestNames } = this
-
-    const caseData: DraftReqI = {
+      names.push(name1)
+      if (this.nameChoices.name2) {
+        let name2: PostNameI = {
+          name: this.nameChoices.name2 + ' ' + this.nameChoices.designation2,
+          choice: 2,
+          designation: this.nameChoices.designation2,
+          name_type_cd: 'CO',
+          consent_words: '',
+          conflict1: '',
+          conflict1_num: ''
+        }
+        names.push(name2)
+      }
+      if (this.nameChoices.name3) {
+        let name3: PostNameI = {
+          name: this.nameChoices.name3 + ' ' + this.nameChoices.designation3,
+          choice: 3,
+          designation: this.nameChoices.designation3,
+          name_type_cd: 'CO',
+          consent_words: '',
+          conflict1: '',
+          conflict1_num: ''
+        }
+        names.push(name3)
+      }
+    }
+    let caseData: PostDraftReqI = {
       applicants: [applicant],
-      names: nrRequestNames,
-      ...nrData,
+      names,
+      ...this.nrData,
       priorityCd: this.priorityRequest ? 'Y' : 'N',
       entity_type: this.entityType,
       request_action: this.requestAction,
@@ -726,32 +669,20 @@ export class NewRequestModule extends VuexModule {
     return caseData
   }
 
-  get conditionalNameReservation (): ConditionalReqI {
-    const { applicant, nrData, nrNames } = this
-    let names
-    if (nrNames && nrNames.length > 0) {
-      // If we're updating use these mapped names -> nrRequestNames
-      const { nrRequestNames } = this
-      names = nrRequestNames
-    } else {
-      // Otherwise we're creating a new conditional, there won't be a multiple name inputs, build as follows...
-      const name: RequestNameI = {
-        name: this.name,
-        choice: 1,
-        designation: this.splitNameDesignation.designation,
-        name_type_cd: 'CO',
-        consent_words: this.consentWords.length > 0 ? this.consentWords : '',
-        conflict1: this.consentConflicts.name,
-        conflict1_num: this.consentConflicts.name ? '464666' : ''
-      }
-
-      names = [name]
+  get conditionalNameReservation () {
+    let name: PostNameI = {
+      name: this.name,
+      choice: 1,
+      designation: this.splitNameDesignation.designation,
+      name_type_cd: 'CO',
+      consent_words: this.consentWords.length > 0 ? this.consentWords : '',
+      conflict1: this.consentConflicts.name,
+      conflict1_num: this.consentConflicts.name ? '464666' : ''
     }
-
-    const caseData: ConditionalReqI = {
-      applicants: [applicant],
-      names: names,
-      ...nrData,
+    let caseData: PostConditionalReqI = {
+      names: [ name ],
+      applicants: [],
+      ...this.nrData,
       priorityCd: 'N',
       entity_type: this.entityType,
       request_action: this.requestAction,
@@ -763,21 +694,20 @@ export class NewRequestModule extends VuexModule {
     return caseData
   }
 
-  get reservedNameReservation (): ReservedReqI {
-    const { applicant, nrData, nrRequestNames } = this
-
-    // TODO: Not sure if this is needed anymore!
-    /* const name: RequestNameI = {
+  get reservedNameReservation () {
+    let name: PostNameI = {
       name: this.name,
       choice: 1,
       designation: this.splitNameDesignation.designation,
-      name_type_cd: 'CO'
-    } */
-
-    const caseData: ReservedReqI = {
-      applicants: [applicant],
-      names: nrRequestNames,
-      ...nrData,
+      name_type_cd: 'CO',
+      consent_words: '',
+      conflict1: '',
+      conflict1_num: ''
+    }
+    let caseData: PostReservedReqI = {
+      names: [ name ],
+      applicants: [],
+      ...this.nrData,
       priorityCd: 'N',
       entity_type: this.entityType,
       request_action: this.requestAction,
@@ -932,13 +862,7 @@ export class NewRequestModule extends VuexModule {
           'Content-Type': 'application/json'
         }
       })
-
-      const { data } = response
-      const { names } = data
-
-      this.setNrResponseObject(data)
-      this.updateReservationNames(names)
-      this.resetApplicantDetails()
+      this.setNrResponseObject(response.data)
     } catch (error) {
       // eslint-disable-next-line
       console.log(error)
@@ -948,195 +872,44 @@ export class NewRequestModule extends VuexModule {
   async postNameReservation (type) {
     let response
     try {
-      let requestData: any
+      // eslint-disable-next-line no-console
+      console.log('postNameReservation action dispatched')
+      // eslint-disable-next-line no-console
+      // console.trace()
+      let postData: any
       switch (type) {
         case 'draft':
-          requestData = this.draftNameReservation
+          postData = this.draftNameReservation
           break
         case 'conditional':
-          requestData = this.conditionalNameReservation
+          postData = this.conditionalNameReservation
           break
         case 'reserved':
-          requestData = this.reservedNameReservation
+          postData = this.reservedNameReservation
           break
       }
 
-      response = await axios.post(`/namerequests`, requestData, {
+      response = await axios.post(`/namerequests`, postData, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
-
       this.setNrResponseObject(response.data)
-
-      const { nrResponseObject } = this
-      const { applicants = [] } = nrResponseObject
-
-      if (applicants instanceof Array) {
-        this.setApplicantDetails(applicants[0])
-      } else if (applicants) {
-        this.setApplicantDetails(applicants)
-      }
     } catch (error) {
       // eslint-disable-next-line
       console.log(error)
     }
   }
   @Action
-  async putNameReservation (nrNum) {
-    const { nrState } = this
+  async putNameReservation (nrNum, paymentId) {
     let response
     try {
-      let requestData: any
-      switch (nrState) {
-        case 'DRAFT':
-          requestData = this.draftNameReservation
-          break
-        case 'COND-RESERVE':
-          requestData = this.conditionalNameReservation
-          break
-        case 'RESERVED':
-          requestData = this.reservedNameReservation
-          break
-      }
-
-      response = await axios.put(`/namerequests/${nrNum}`, requestData, {
+      response = await axios.put(`/namerequests/${nrNum}`, {}, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
-
       this.setNrResponseObject(response.data)
-
-      const { nrResponseObject } = this
-      const { applicants = [] } = nrResponseObject
-
-      if (applicants instanceof Array) {
-        this.setApplicantDetails(applicants[0])
-      } else if (applicants) {
-        this.setApplicantDetails(applicants)
-      }
-    } catch (error) {
-      // eslint-disable-next-line
-      console.log(error)
-    }
-  }
-  @Action
-  async putNameReservation (type) {
-    let requestData: any
-    switch (type) {
-      case 'draft': {
-        let applicant: PostApplicantI = this.applicant
-        let names = []
-        if (this.nameChoices.name1) {
-          let name1: PostNameI = {
-            name: this.nameChoices.name1 + ' ' + this.nameChoices.designation1,
-            choice: 1,
-            designation: this.nameChoices.designation1,
-            name_type_cd: 'CO',
-            consent_words: '',
-            conflict1: '',
-            conflict1_num: ''
-          }
-          names.push(name1)
-          if (this.nameChoices.name2) {
-            let name2: PostNameI = {
-              name: this.nameChoices.name2 + ' ' + this.nameChoices.designation2,
-              choice: 2,
-              designation: this.nameChoices.designation2,
-              name_type_cd: 'CO',
-              consent_words: '',
-              conflict1: '',
-              conflict1_num: ''
-            }
-            names.push(name2)
-          }
-          if (this.nameChoices.name3) {
-            let name3: PostNameI = {
-              name: this.nameChoices.name3 + ' ' + this.nameChoices.designation3,
-              choice: 3,
-              designation: this.nameChoices.designation3,
-              name_type_cd: 'CO',
-              consent_words: '',
-              conflict1: '',
-              conflict1_num: ''
-            }
-            names.push(name3)
-          }
-        }
-        let caseData: PostDraftReqI = {
-          applicants: [applicant],
-          names,
-          ...this.nrData,
-          priorityCd: this.priorityRequest ? 'Y' : 'N',
-          entity_type: this.entityType,
-          request_action: this.requestAction,
-          stateCd: 'DRAFT',
-          english: this.nameIsEnglish,
-          nameFlag: this.isPersonsName,
-          submit_count: 0
-        }
-        requestData = caseData
-        break
-      }
-      case 'conditional': {
-        let name: PostNameI = {
-          name: this.name,
-          choice: 1,
-          designation: this.splitNameDesignation.designation,
-          name_type_cd: 'CO',
-          consent_words: this.consentWords.length > 0 ? this.consentWords : '',
-          conflict1: this.consentConflicts.name,
-          conflict1_num: this.consentConflicts.name ? '464666' : ''
-        }
-        let caseData: PostConditionalReqI = {
-          names: [ name ],
-          applicants: [],
-          ...this.nrData,
-          priorityCd: 'N',
-          entity_type: this.entityType,
-          request_action: this.requestAction,
-          stateCd: 'COND-RESERVE',
-          english: this.nameIsEnglish,
-          nameFlag: this.isPersonsName,
-          submit_count: 0
-        }
-        requestData = caseData
-        break
-      }
-      case 'reserved': {
-        let name: PostNameI = {
-          name: this.name,
-          choice: 1,
-          designation: this.splitNameDesignation.designation,
-          name_type_cd: 'CO',
-          consent_words: '',
-          conflict1: '',
-          conflict1_num: ''
-        }
-        let caseData: PostReservedReqI = {
-          names: [ name ],
-          applicants: [],
-          ...this.nrData,
-          priorityCd: 'N',
-          entity_type: this.entityType,
-          request_action: this.requestAction,
-          stateCd: 'RESERVED',
-          english: this.nameIsEnglish,
-          nameFlag: this.isPersonsName,
-          submit_count: 0
-        }
-        requestData = caseData
-      }
-    }
-    let response
-    try {
-      response = await axios.put('/namerequests', requestData, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      this.setNRPostResponseObject(response.data)
     } catch (error) {
       // eslint-disable-next-line
       console.log(error)
@@ -1445,14 +1218,6 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   setNrResponseObject (value) {
     this.nrResponseObject = value
-  }
-  @Mutation
-  updateReservationNames (nrName: [] = []) {
-    const { nameChoices } = this
-    nrName.forEach(({ choice, name = '', designation = '' }) => {
-      nameChoices[`name${choice}`] = name
-      nameChoices[`designation${choice}`] = designation
-    })
   }
 
   getEntities (category) {
