@@ -97,6 +97,7 @@ export class NewRequestModule extends VuexModule {
     tradeMark: '',
     xproJurisdiction: ''
   }
+  conflictId: string | null = null
   designationIsFixed: boolean = false
   disableSuggestions: boolean = false
   displayedComponent: DisplayedComponentT = 'Tabs'
@@ -332,6 +333,7 @@ export class NewRequestModule extends VuexModule {
   extendedEntitySelection: SelectOptionsI | null = null
   extendedRequestType: SelectOptionsI | null = null
   helpMeChooseModalVisible: boolean = false
+  isPersonsName: boolean = false
   issueIndex: number = 0
   location: LocationT = 'BC'
   locationInfoModalVisible: boolean = false
@@ -346,7 +348,6 @@ export class NewRequestModule extends VuexModule {
   }
   nrRequestNameMap: RequestNameMapI[] = []
   nrResponseObject: Partial<any> | null = null
-  isPersonsName: boolean = false
   nameIsEnglish: boolean = true
   nrRequiredModalVisible: boolean = false
   pickEntityModalVisible: boolean = false
@@ -449,12 +450,17 @@ export class NewRequestModule extends VuexModule {
     return output
   }
   get consentConflicts (): ConsentConflictI {
-    let output = {
+    let output: ConsentConflictI = {
       name: ''
     }
     for (let key in this.requestExaminationOrProvideConsent) {
       if (this.requestExaminationOrProvideConsent[key].conflict_self_consent) {
         output.name = this.analysisJSON.issues[key].conflicts[0].name
+        if (this.analysisJSON.issues[key].conflicts[0].id) {
+          if (!this.analysisJSON.issues[key].conflicts[0].id.startsWith('NR')) {
+            output.corpNum = this.analysisJSON.issues[key].conflicts[0].id
+          }
+        }
       }
     }
     return output
@@ -695,9 +701,7 @@ export class NewRequestModule extends VuexModule {
             conflict1: !existingName.conflict1
               ? this.consentConflicts.name
               : existingName.conflict1,
-            conflict1_num: !existingName.conflict1_num
-              ? this.consentConflicts.name ? '464666' : ''
-              : existingName.conflict1_num
+            conflict1_num: existingName.conflict1_num ? existingName.conflict1_num : ''
           } as RequestNameI
         }
       }
@@ -742,7 +746,7 @@ export class NewRequestModule extends VuexModule {
         name_type_cd: 'CO',
         consent_words: this.consentWords.length > 0 ? this.consentWords : '',
         conflict1: this.consentConflicts.name,
-        conflict1_num: this.consentConflicts.name ? '464666' : ''
+        conflict1_num: this.consentConflicts.corpNum ? this.consentConflicts.corpNum : ''
       }
 
       names = [name]
@@ -874,7 +878,17 @@ export class NewRequestModule extends VuexModule {
         params,
         cancelToken: source.token
       })
-      this.mutateAnalysisJSON(resp.data)
+      let json = resp.data
+      this.mutateAnalysisJSON(json)
+      if (Array.isArray(json.issues) && json.issues.length > 0) {
+        let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
+        if (corpConflict && Array.isArray(corpConflict.conflicts) && corpConflict.conflicts.length > 0) {
+          let firstConflict = corpConflict.conflicts[0]
+          if (firstConflict.id) {
+            this.mutateConflictId(firstConflict.id)
+          }
+        }
+      }
       this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
       this.mutateDisplayedComponent('Tabs')
@@ -901,7 +915,17 @@ export class NewRequestModule extends VuexModule {
         params,
         cancelToken: source.token
       })
-      this.mutateAnalysisJSON(resp.data)
+      let json = resp.data
+      this.mutateAnalysisJSON(json)
+      if (Array.isArray(json.issues) && json.issues.length > 0) {
+        let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
+        if (corpConflict && Array.isArray(corpConflict.conflicts) && corpConflict.conflicts.length > 0) {
+          let firstConflict = corpConflict.conflicts[0]
+          if (firstConflict.id) {
+            this.mutateConflictId(firstConflict.id)
+          }
+        }
+      }
       this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
       this.mutateDisplayedComponent('Tabs')
@@ -1027,12 +1051,12 @@ export class NewRequestModule extends VuexModule {
       source.cancel()
       source = null
     }
-    this.mutateName('')
-    this.mutateAnalysisJSON(null)
     this.mutateDisplayedComponent('Tabs')
     this.mutateShowActualInput(false)
     this.resetApplicantDetails()
     this.resetRequestExaminationOrProvideConsent()
+    this.mutateName('')
+    this.mutateAnalysisJSON(null)
   }
   @Action
   startAnalyzeName () {
@@ -1059,7 +1083,7 @@ export class NewRequestModule extends VuexModule {
     }
     let testName = this.name.toUpperCase()
     testName = removeExcessSpaces(testName)
-    if (name !== testName) {
+    if ((name !== testName) || name.match(/^[\[\]\^*\+-\/\=&\(\)\.,"'#@\!\?;:]/)) {
       this.mutateDisplayedComponent('AnalyzeCharacters')
       this.mutateName(name)
       return
@@ -1126,8 +1150,8 @@ export class NewRequestModule extends VuexModule {
     this.addressSuggestions = Object.assign([], value)
   }
   @Mutation
-  mutateAnalysisJSON (value: AnalysisJSONI) {
-    this.analysisJSON = value
+  mutateAnalysisJSON (json: AnalysisJSONI) {
+    this.analysisJSON = json
   }
   @Mutation
   mutateApplicant (appKV) {
@@ -1225,7 +1249,11 @@ export class NewRequestModule extends VuexModule {
     this.nameChoices[choiceObj.key] = choiceObj.value
   }
   @Mutation
-  mutateisPersonsName (value) {
+  mutateConflictId (id) {
+    this.conflictId = id
+  }
+  @Mutation
+  mutateIsPersonsName (value) {
     this.isPersonsName = value
   }
   @Mutation
