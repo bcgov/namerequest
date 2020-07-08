@@ -113,11 +113,9 @@ export interface ApplicantI {
   postalCd: string
   stateProvinceCd: string
 }
-
-export interface DraftReqI {
-  id?: number
+export interface ConditionalReqI {
   additionalInfo: string
-  applicants: [ ApplicantI ]
+  applicants: [ PostApplicantI ]
   corpNum?: string
   english: boolean
   entity_type: string
@@ -134,8 +132,7 @@ export interface DraftReqI {
   xproJurisdiction?: string
 }
 
-export interface ConditionalReqI {
-  id?: number
+export interface DraftReqI {
   additionalInfo: string
   applicants: [ ApplicantI ]
   corpNum?: string
@@ -154,10 +151,18 @@ export interface ConditionalReqI {
   xproJurisdiction?: string
 }
 
+export interface PostNameI {
+  choice: number
+  name: string
+  name_type_cd: string
+  designation: string
+  consent_words: "" | string[]
+  conflict1: string
+  conflict1_num: string
+}
 export interface ReservedReqI {
-  id?: number
   additionalInfo: string
-  applicants: [ ApplicantI ]
+  applicants: [ PostApplicantI ]
   corpNum?: string
   english: boolean
   entity_type: string

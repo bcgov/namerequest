@@ -12,10 +12,10 @@ import {
   LocationT, NameDesignationI,
   NameReqT,
   NewRequestNameSearchI,
-  ApplicantI,
+  PostApplicantI,
   ConditionalReqI,
   DraftReqI,
-  RequestNameI,
+  PostNameI,
   ReservedReqI,
   SelectOptionsI,
   StatsI,
@@ -344,7 +344,7 @@ export class NewRequestModule extends VuexModule {
     name3: '',
     designation3: ''
   }
-  nrResponseObject: Partial<PostDraftReqI> | null = null
+  nrResponseObject: Partial<any> | null = null
   isPersonsName: boolean = false
   nameIsEnglish: boolean = true
   nrRequiredModalVisible: boolean = false
@@ -615,9 +615,21 @@ export class NewRequestModule extends VuexModule {
     })
   }
 
+  get nrNum () {
+    const { nrResponseObject } = this
+    const { nrNum } = nrResponseObject
+    return nrNum || undefined
+  }
+
+  get nrState () {
+    const { nrResponseObject } = this
+    const { state } = nrResponseObject
+    return state || undefined
+  }
+
   get draftNameReservation () {
-    let applicant: PostApplicantI = this.applicant
-    let names = []
+    const applicant: PostApplicantI = this.applicant
+    const names = []
     if (this.nameChoices.name1) {
       let name1: PostNameI = {
         name: this.nameChoices.name1 + ' ' + this.nameChoices.designation1,
@@ -654,7 +666,7 @@ export class NewRequestModule extends VuexModule {
         names.push(name3)
       }
     }
-    let caseData: PostDraftReqI = {
+    const caseData: DraftReqI = {
       applicants: [applicant],
       names,
       ...this.nrData,
@@ -670,7 +682,8 @@ export class NewRequestModule extends VuexModule {
   }
 
   get conditionalNameReservation () {
-    let name: PostNameI = {
+    const applicant: PostApplicantI = this.applicant
+    const name: PostNameI = {
       name: this.name,
       choice: 1,
       designation: this.splitNameDesignation.designation,
@@ -679,9 +692,9 @@ export class NewRequestModule extends VuexModule {
       conflict1: this.consentConflicts.name,
       conflict1_num: this.consentConflicts.name ? '464666' : ''
     }
-    let caseData: PostConditionalReqI = {
-      names: [ name ],
-      applicants: [],
+    const caseData: ConditionalReqI = {
+      names: [name],
+      applicants: [applicant],
       ...this.nrData,
       priorityCd: 'N',
       entity_type: this.entityType,
@@ -695,7 +708,8 @@ export class NewRequestModule extends VuexModule {
   }
 
   get reservedNameReservation () {
-    let name: PostNameI = {
+    const applicant: PostApplicantI = this.applicant
+    const name: PostNameI = {
       name: this.name,
       choice: 1,
       designation: this.splitNameDesignation.designation,
@@ -704,9 +718,9 @@ export class NewRequestModule extends VuexModule {
       conflict1: '',
       conflict1_num: ''
     }
-    let caseData: PostReservedReqI = {
-      names: [ name ],
-      applicants: [],
+    const caseData: ReservedReqI = {
+      names: [name],
+      applicants: [applicant],
       ...this.nrData,
       priorityCd: 'N',
       entity_type: this.entityType,
@@ -876,20 +890,20 @@ export class NewRequestModule extends VuexModule {
       console.log('postNameReservation action dispatched')
       // eslint-disable-next-line no-console
       // console.trace()
-      let postData: any
+      let requestData: any
       switch (type) {
         case 'draft':
-          postData = this.draftNameReservation
+          requestData = this.draftNameReservation
           break
         case 'conditional':
-          postData = this.conditionalNameReservation
+          requestData = this.conditionalNameReservation
           break
         case 'reserved':
-          postData = this.reservedNameReservation
+          requestData = this.reservedNameReservation
           break
       }
 
-      response = await axios.post(`/namerequests`, postData, {
+      response = await axios.post(`/namerequests`, requestData, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -901,10 +915,25 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
-  async putNameReservation (nrNum, paymentId) {
+  async putNameReservation (nrNum) {
+    const { nrState } = this
     let response
     try {
-      response = await axios.put(`/namerequests/${nrNum}`, {}, {
+      let requestData: any
+      // TODO: We need a mapper for these states...
+      switch (nrState) {
+        case 'DRAFT':
+          requestData = this.draftNameReservation
+          break
+        case 'COND-RESERVE':
+          requestData = this.conditionalNameReservation
+          break
+        case 'RESERVED':
+          requestData = this.reservedNameReservation
+          break
+      }
+
+      response = await axios.put(`/namerequests/${nrNum}`, requestData, {
         headers: {
           'Content-Type': 'application/json'
         }
