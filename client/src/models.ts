@@ -113,7 +113,8 @@ export interface ApplicantI {
   postalCd: string
   stateProvinceCd: string
 }
-export interface ConditionalReqI {
+
+export interface DraftReqI {
   id?: number
   additionalInfo: string
   applicants: [ ApplicantI ]
@@ -133,7 +134,7 @@ export interface ConditionalReqI {
   xproJurisdiction?: string
 }
 
-export interface DraftReqI {
+export interface ConditionalReqI {
   id?: number
   additionalInfo: string
   applicants: [ ApplicantI ]
