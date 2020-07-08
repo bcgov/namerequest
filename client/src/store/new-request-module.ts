@@ -5,17 +5,17 @@ import querystring from 'qs'
 import store from '@/store'
 import {
   AnalysisJSONI,
-  ApplicantI,
+  WaitingAddressSearchI,
   ConsentConflictI,
   DisplayedComponentT,
   EntityI,
   LocationT, NameDesignationI,
   NameReqT,
   NewRequestNameSearchI,
-  PostApplicantI,
+  ApplicantI,
   ConditionalReqI,
   DraftReqI,
-  PostNameI,
+  RequestNameI,
   ReservedReqI,
   SelectOptionsI,
   StatsI,
@@ -36,7 +36,7 @@ export class NewRequestModule extends VuexModule {
   actingOnOwnBehalf: boolean = true
   addressSuggestions: object | null = null
   analysisJSON: AnalysisJSONI | null = null
-  applicant: PostApplicantI = {
+  applicant: ApplicantI = {
     addrLine1: '',
     addrLine2: '',
     city: '',
@@ -400,7 +400,7 @@ export class NewRequestModule extends VuexModule {
   submissionTabNumber: number = 0
   submissionType: SubmissionTypeT | null = null
   tabNumber: number = 0
-  waitingAddressSearch: ApplicantI | null = null
+  waitingAddressSearch: WaitingAddressSearchI | null = null
 
   get allDesignationWords () {
     let output = []
@@ -593,11 +593,11 @@ export class NewRequestModule extends VuexModule {
     return state || undefined
   }
 
-  get draftNameReservation () {
-    const applicant: PostApplicantI = this.applicant
+  get draftNameReservation (): DraftReqI {
+    const applicant: ApplicantI = this.applicant
     const names = []
     if (this.nameChoices.name1) {
-      let name1: PostNameI = {
+      let name1: RequestNameI = {
         name: this.nameChoices.name1 + ' ' + this.nameChoices.designation1,
         choice: 1,
         designation: this.nameChoices.designation1,
@@ -608,7 +608,7 @@ export class NewRequestModule extends VuexModule {
       }
       names.push(name1)
       if (this.nameChoices.name2) {
-        let name2: PostNameI = {
+        let name2: RequestNameI = {
           name: this.nameChoices.name2 + ' ' + this.nameChoices.designation2,
           choice: 2,
           designation: this.nameChoices.designation2,
@@ -620,7 +620,7 @@ export class NewRequestModule extends VuexModule {
         names.push(name2)
       }
       if (this.nameChoices.name3) {
-        let name3: PostNameI = {
+        let name3: RequestNameI = {
           name: this.nameChoices.name3 + ' ' + this.nameChoices.designation3,
           choice: 3,
           designation: this.nameChoices.designation3,
@@ -647,9 +647,9 @@ export class NewRequestModule extends VuexModule {
     return caseData
   }
 
-  get conditionalNameReservation () {
-    const applicant: PostApplicantI = this.applicant
-    const name: PostNameI = {
+  get conditionalNameReservation (): ConditionalReqI {
+    const applicant: ApplicantI = this.applicant
+    const name: RequestNameI = {
       name: this.name,
       choice: 1,
       designation: this.splitNameDesignation.designation,
@@ -673,9 +673,9 @@ export class NewRequestModule extends VuexModule {
     return caseData
   }
 
-  get reservedNameReservation () {
-    const applicant: PostApplicantI = this.applicant
-    const name: PostNameI = {
+  get reservedNameReservation (): ReservedReqI {
+    const applicant: ApplicantI = this.applicant
+    const name: RequestNameI = {
       name: this.name,
       choice: 1,
       designation: this.splitNameDesignation.designation,
@@ -843,6 +843,7 @@ export class NewRequestModule extends VuexModule {
         }
       })
       this.setNrResponseObject(response.data)
+      this.resetApplicantDetails()
     } catch (error) {
       // eslint-disable-next-line
       console.log(error)
@@ -852,10 +853,6 @@ export class NewRequestModule extends VuexModule {
   async postNameReservation (type) {
     let response
     try {
-      // eslint-disable-next-line no-console
-      console.log('postNameReservation action dispatched')
-      // eslint-disable-next-line no-console
-      // console.trace()
       let requestData: any
       switch (type) {
         case 'draft':
@@ -874,7 +871,17 @@ export class NewRequestModule extends VuexModule {
           'Content-Type': 'application/json'
         }
       })
+
       this.setNrResponseObject(response.data)
+
+      const { nrResponseObject } = this
+      const { applicants = [] } = nrResponseObject
+
+      if (applicants instanceof Array) {
+        this.setApplicantDetails(applicants[0])
+      } else if (applicants) {
+        this.setApplicantDetails(applicants)
+      }
     } catch (error) {
       // eslint-disable-next-line
       console.log(error)
@@ -886,7 +893,6 @@ export class NewRequestModule extends VuexModule {
     let response
     try {
       let requestData: any
-      // TODO: We need a mapper for these states...
       switch (nrState) {
         case 'DRAFT':
           requestData = this.draftNameReservation
@@ -904,7 +910,17 @@ export class NewRequestModule extends VuexModule {
           'Content-Type': 'application/json'
         }
       })
+
       this.setNrResponseObject(response.data)
+
+      const { nrResponseObject } = this
+      const { applicants = [] } = nrResponseObject
+
+      if (applicants instanceof Array) {
+        this.setApplicantDetails(applicants[0])
+      } else if (applicants) {
+        this.setApplicantDetails(applicants)
+      }
     } catch (error) {
       // eslint-disable-next-line
       console.log(error)
@@ -1186,8 +1202,15 @@ export class NewRequestModule extends VuexModule {
     this.tabNumber = tab
   }
   @Mutation
-  mutateWaitingAddressSearch (appKV: ApplicantI) {
+  mutateWaitingAddressSearch (appKV: WaitingAddressSearchI) {
     this.waitingAddressSearch = appKV
+  }
+  @Mutation
+  setApplicantDetails (applicant) {
+    const data = Object.assign({}, applicant) as ApplicantI
+    Object.keys(data as ApplicantI).forEach(key => {
+      this.applicant[key] = data[key]
+    })
   }
   @Mutation
   resetApplicantDetails () {

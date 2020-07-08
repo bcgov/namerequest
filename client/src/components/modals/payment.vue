@@ -79,7 +79,7 @@ import * as corpTypes from '@/modules/payment/corp-types'
 import * as jurisdictions from '@/modules/payment/jurisdictions'
 
 import {
-  PostApplicantI
+  ApplicantI
 } from "@/models"
 
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
@@ -202,7 +202,7 @@ export default class PaymentModal extends Vue {
 
   get applicant () {
     const nameRequest: NewRequestModule = newRequestModule
-    const applicantInfo: Partial<PostApplicantI> = nameRequest.applicant || {}
+    const applicantInfo: Partial<ApplicantI> = nameRequest.applicant || {}
     return applicantInfo
   }
 
