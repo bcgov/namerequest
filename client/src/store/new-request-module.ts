@@ -666,8 +666,8 @@ export class NewRequestModule extends VuexModule {
             designation: nameChoices[`designation${choiceIdx}`],
             choice: nameChoices[choiceIdx]
           })
-          choiceIdx++
         }
+        choiceIdx++
       }
     } else {
       // Just use the 'name' property to fill in the requestName
