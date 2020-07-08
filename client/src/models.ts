@@ -113,25 +113,6 @@ export interface ApplicantI {
   postalCd: string
   stateProvinceCd: string
 }
-export interface ConditionalReqI {
-  id?: number
-  additionalInfo: string
-  applicants: [ ApplicantI ]
-  corpNum?: string
-  english: boolean
-  entity_type: string
-  homeJurisNum?: string
-  nameFlag: boolean
-  names: RequestNameI[]
-  natureBusinessInfo: string
-  previousRequestId?: string
-  priorityCd: string
-  request_action: string
-  stateCd: 'COND-RESERVE'
-  submit_count: number
-  tradeMark: string
-  xproJurisdiction?: string
-}
 
 export interface DraftReqI {
   id?: number
@@ -148,6 +129,26 @@ export interface DraftReqI {
   priorityCd: string
   request_action: string
   stateCd: 'DRAFT'
+  submit_count: number
+  tradeMark: string
+  xproJurisdiction?: string
+}
+
+export interface ConditionalReqI {
+  id?: number
+  additionalInfo: string
+  applicants: [ ApplicantI ]
+  corpNum?: string
+  english: boolean
+  entity_type: string
+  homeJurisNum?: string
+  nameFlag: boolean
+  names: RequestNameI[]
+  natureBusinessInfo: string
+  previousRequestId?: string
+  priorityCd: string
+  request_action: string
+  stateCd: 'COND-RESERVE'
   submit_count: number
   tradeMark: string
   xproJurisdiction?: string

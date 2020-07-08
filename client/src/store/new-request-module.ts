@@ -31,6 +31,40 @@ import Vue from 'vue'
 const qs: any = querystring
 let source: any
 
+/** Test
+ {
+    name1: 'ACME Construction',
+    name2: 'ACME Home Construction',
+    name3: 'ACME Commercial Construction',
+    designation1: 'Ltd.',
+    designation2: 'Ltd.',
+    designation3: 'Ltd.'
+ }
+ */
+const parseNameChoices = (nameChoices) => {
+  return Object.keys(nameChoices)
+    .reduce((names, key, idx) => {
+      // Key will be either 'name' or 'designation'
+      const nameIdx = key.match(/[\d]+$/)[0]
+      const typeKey = key.substring(0, key.lastIndexOf(nameIdx))
+      names[nameIdx] = names[nameIdx] || { name: undefined, designation: undefined }
+      names[nameIdx][typeKey] = nameChoices[key]
+      return names
+    }, [])
+    .map((choice) => {
+      return (choice.name && choice.designation)
+        ? `${choice.name} ${choice.designation}`
+        : (choice.name && !choice.designation)
+          ? `${choice.name}`
+          : undefined
+    })
+    .filter((name) => !!name)
+}
+
+interface RequestNameMapI extends RequestNameI {
+
+}
+
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
 export class NewRequestModule extends VuexModule {
   actingOnOwnBehalf: boolean = true
@@ -310,6 +344,7 @@ export class NewRequestModule extends VuexModule {
     name3: '',
     designation3: ''
   }
+  nrRequestNameMap: RequestNameMapI[] = []
   nrResponseObject: Partial<any> | null = null
   isPersonsName: boolean = false
   nameIsEnglish: boolean = true
@@ -583,59 +618,85 @@ export class NewRequestModule extends VuexModule {
 
   get nrNum () {
     const { nrResponseObject } = this
-    const { nrNum } = nrResponseObject
-    return nrNum || undefined
+    let nrNum
+    if (nrResponseObject) nrNum = nrResponseObject.nrNum
+    return nrNum
   }
 
   get nrState () {
     const { nrResponseObject } = this
-    const { state } = nrResponseObject
-    return state || undefined
+    let state
+    if (nrResponseObject) state = nrResponseObject.state
+    return state
+  }
+
+  get nrNames () {
+    const { nrResponseObject } = this
+    let names = []
+    if (nrResponseObject) names = nrResponseObject.names
+    return names
+  }
+
+  /**
+   * This getter combines the NR response data objects names against nameChoices,
+   * which contains the actual form values, building the request object required for a Name.
+   * nameChoices are identified by the 'choice' index, which is what we use to map values.
+   */
+  get nrRequestNames (): RequestNameI[] {
+    const { nameChoices, nrNames } = this
+    const defaultValues = {
+      name_type_cd: 'CO',
+      consent_words: '',
+      conflict1: '',
+      conflict1_num: ''
+    }
+
+    // Check to make sure there are nameChoices that have been set
+    const nameChoicesAreSet = (parseNameChoices(nameChoices).length > 0)
+
+    let requestNames = []
+    if (nameChoicesAreSet) {
+      // We only allow three choices
+      let choiceIdx = 1
+      while (choiceIdx <= 3) {
+        if (nameChoices[`name${choiceIdx}`] as boolean) {
+          // Create the requestName
+          requestNames.push({
+            name: nameChoices[`name${choiceIdx}`],
+            designation: nameChoices[`designation${choiceIdx}`],
+            choice: nameChoices[choiceIdx]
+          })
+          choiceIdx++
+        }
+      }
+    } else {
+      // Just use the 'name' property to fill in the requestName
+      requestNames.push({
+        name: this.name,
+        designation: this.splitNameDesignation.designation,
+        choice: 1
+      })
+    }
+
+    requestNames = requestNames.map((requestName, idx) => {
+      if (nrNames) {
+        const existingName = nrNames.find(nrName => nrName.choice === requestName.choice)
+        if (existingName) return { ...existingName, ...requestName } as RequestNameI
+      }
+
+      return { ...requestName, ...defaultValues } as RequestNameI
+    })
+
+    return requestNames
   }
 
   get draftNameReservation (): DraftReqI {
-    const applicant: ApplicantI = this.applicant
-    const names = []
-    if (this.nameChoices.name1) {
-      let name1: RequestNameI = {
-        name: this.nameChoices.name1 + ' ' + this.nameChoices.designation1,
-        choice: 1,
-        designation: this.nameChoices.designation1,
-        name_type_cd: 'CO',
-        consent_words: '',
-        conflict1: '',
-        conflict1_num: ''
-      }
-      names.push(name1)
-      if (this.nameChoices.name2) {
-        let name2: RequestNameI = {
-          name: this.nameChoices.name2 + ' ' + this.nameChoices.designation2,
-          choice: 2,
-          designation: this.nameChoices.designation2,
-          name_type_cd: 'CO',
-          consent_words: '',
-          conflict1: '',
-          conflict1_num: ''
-        }
-        names.push(name2)
-      }
-      if (this.nameChoices.name3) {
-        let name3: RequestNameI = {
-          name: this.nameChoices.name3 + ' ' + this.nameChoices.designation3,
-          choice: 3,
-          designation: this.nameChoices.designation3,
-          name_type_cd: 'CO',
-          consent_words: '',
-          conflict1: '',
-          conflict1_num: ''
-        }
-        names.push(name3)
-      }
-    }
+    const { applicant, nrData, nrRequestNames } = this
+
     const caseData: DraftReqI = {
       applicants: [applicant],
-      names,
-      ...this.nrData,
+      names: nrRequestNames,
+      ...nrData,
       priorityCd: this.priorityRequest ? 'Y' : 'N',
       entity_type: this.entityType,
       request_action: this.requestAction,
@@ -648,20 +709,41 @@ export class NewRequestModule extends VuexModule {
   }
 
   get conditionalNameReservation (): ConditionalReqI {
-    const applicant: ApplicantI = this.applicant
-    const name: RequestNameI = {
-      name: this.name,
-      choice: 1,
-      designation: this.splitNameDesignation.designation,
-      name_type_cd: 'CO',
-      consent_words: this.consentWords.length > 0 ? this.consentWords : '',
-      conflict1: this.consentConflicts.name,
-      conflict1_num: this.consentConflicts.name ? '464666' : ''
+    const { applicant, nrData, nrNames } = this
+    let names
+    if (nrNames && nrNames.length > 0) {
+      // If we're updating use these mapped names -> nrRequestNames
+      const { nrRequestNames } = this
+      names = nrRequestNames
+
+      // Map the conflicts? Not sure I have to do these, these fields should already be set... todo: confirm!
+      /* names = names.map((name) => {
+        return {
+          ...name,
+          consent_words: this.consentWords.length > 0 ? this.consentWords : '',
+          conflict1: this.consentConflicts.name,
+          conflict1_num: this.consentConflicts.name ? '464666' : ''
+        }
+      }) */
+    } else {
+      // Otherwise we're creating a new conditional, there won't be a multiple name inputs, build as follows...
+      const name: RequestNameI = {
+        name: this.name,
+        choice: 1,
+        designation: this.splitNameDesignation.designation,
+        name_type_cd: 'CO',
+        consent_words: this.consentWords.length > 0 ? this.consentWords : '',
+        conflict1: this.consentConflicts.name,
+        conflict1_num: this.consentConflicts.name ? '464666' : ''
+      }
+
+      names = [name]
     }
+
     const caseData: ConditionalReqI = {
-      names: [name],
       applicants: [applicant],
-      ...this.nrData,
+      names: names,
+      ...nrData,
       priorityCd: 'N',
       entity_type: this.entityType,
       request_action: this.requestAction,
@@ -674,20 +756,20 @@ export class NewRequestModule extends VuexModule {
   }
 
   get reservedNameReservation (): ReservedReqI {
-    const applicant: ApplicantI = this.applicant
-    const name: RequestNameI = {
+    const { applicant, nrData, nrRequestNames } = this
+
+    // TODO: Not sure if this is needed anymore!
+    /* const name: RequestNameI = {
       name: this.name,
       choice: 1,
       designation: this.splitNameDesignation.designation,
-      name_type_cd: 'CO',
-      consent_words: '',
-      conflict1: '',
-      conflict1_num: ''
-    }
+      name_type_cd: 'CO'
+    } */
+
     const caseData: ReservedReqI = {
-      names: [name],
       applicants: [applicant],
-      ...this.nrData,
+      names: nrRequestNames,
+      ...nrData,
       priorityCd: 'N',
       entity_type: this.entityType,
       request_action: this.requestAction,
@@ -842,7 +924,12 @@ export class NewRequestModule extends VuexModule {
           'Content-Type': 'application/json'
         }
       })
-      this.setNrResponseObject(response.data)
+
+      const { data } = response
+      const { names } = data
+
+      this.setNrResponseObject(data)
+      this.updateReservationNames(names)
       this.resetApplicantDetails()
     } catch (error) {
       // eslint-disable-next-line
@@ -1229,6 +1316,14 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   setNrResponseObject (value) {
     this.nrResponseObject = value
+  }
+  @Mutation
+  updateReservationNames (nrName: [] = []) {
+    const { nameChoices } = this
+    nrName.forEach(({ choice, name = '', designation = '' }) => {
+      nameChoices[`name${choice}`] = name
+      nameChoices[`name${choice}`] = designation
+    })
   }
 
   getEntities (category) {
