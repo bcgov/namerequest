@@ -2,17 +2,17 @@
   <v-dialog v-model="showModal" :max-width="width" hide-overlay>
     <v-card class="pa-0" style="border-radius: 0" v-if="!showSocietiesInfo">
       <v-card-text style="display: flex; justify-items: center; width: 100%" class="py-4">
-        <v-simple-table v-for="(catagory, i) in tableData" :key="'cat'+i">
+        <v-simple-table v-for="(category, i) in tableData" :key="'cat'+i">
           <tr>
             <th>
-              <span class="h5" v-if="location === 'BC'">{{ catagory.text }}</span>
+              <span class="h5" v-if="location === 'BC'">{{ category.text }}</span>
               <span class="h5" v-else>
                 {{ location === 'CA' ? 'Canadian' : 'Foreign' }}
-                <br>{{ catagory.text }}
+                <br>{{ category.text }}
               </span>
             </th>
           </tr>
-          <tr v-for="(entity, n) in catagory.entities" :key="'ent'+n">
+          <tr v-for="(entity, n) in category.entities" :key="'ent'+n">
             <td class="clickable-cell" :id="entity.value" @click="chooseType(entity)">
               <v-tooltip bottom max-width="500" open-delay="500">
               <template v-slot:activator="scope">

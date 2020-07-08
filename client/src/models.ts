@@ -100,9 +100,9 @@ export interface PostApplicantI {
   postalCd: string
   stateProvinceCd: string
 }
-export interface PostConditionalReqI {
+export interface ConditionalReqI {
   additionalInfo: string
-  applicants: []
+  applicants: [ PostApplicantI ]
   corpNum?: string
   english: boolean
   entity_type: string
@@ -119,7 +119,7 @@ export interface PostConditionalReqI {
   xproJurisdiction?: string
 }
 
-export interface PostDraftReqI {
+export interface DraftReqI {
   additionalInfo: string
   applicants: [ PostApplicantI ]
   corpNum?: string
@@ -147,9 +147,9 @@ export interface PostNameI {
   conflict1: string
   conflict1_num: string
 }
-export interface PostReservedReqI {
+export interface ReservedReqI {
   additionalInfo: string
-  applicants: []
+  applicants: [ PostApplicantI ]
   corpNum?: string
   english: boolean
   entity_type: string
@@ -204,3 +204,5 @@ export interface StatsI {
     unit: string
   }
 }
+
+export type NameReqT = DraftReqI | ConditionalReqI | ReservedReqI

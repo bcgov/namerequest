@@ -185,8 +185,7 @@ export default class ApplicantInfo2 extends Vue {
     if (!nrNum) {
       await newReqModule.postNameReservation('draft')
     } else {
-      // TODO: Do we ever do this or is that another screen?
-      // await newReqModule.putNameReservation('conditional')
+      await newReqModule.putNameReservation(nrNum)
     }
 
     await paymentModule.togglePaymentModal(true)

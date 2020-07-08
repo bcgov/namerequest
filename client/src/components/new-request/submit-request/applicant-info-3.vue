@@ -223,10 +223,10 @@ export default class ApplicantInfo3 extends Vue {
   }
   async submit () {
     const { nrNum } = this
-    if (nrNum) {
+    if (!nrNum) {
       await newReqModule.postNameReservation('draft')
     } else {
-      await newReqModule.postNameReservation('draft')
+      await newReqModule.putNameReservation(nrNum)
     }
 
     await paymentModule.togglePaymentModal(true)
