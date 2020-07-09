@@ -16,6 +16,8 @@
     "lodash": "^4.17.15",
     "material-design-icons-iconfont": "^5.0.1",
     "remove-accents": "^0.4.2",
+    "sbc-common-components": "latest",
+    "style-loader": "^1.2.1",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
     "vue-contenteditable": "^1.0.2",

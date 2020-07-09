@@ -3,7 +3,7 @@ node_modules
 /client/dist
 
 /.quokka
-/.quokka/*		
+/.quokka/*
 
 /tests/e2e/reports/
 selenium-debug.log
@@ -88,3 +88,7 @@ package-lock.json*
 client/package-lock.json
 /build
 .vscode
+/client/src/modules/auth/
+
+#Temp ignore auth module
+client/src/modules/auth

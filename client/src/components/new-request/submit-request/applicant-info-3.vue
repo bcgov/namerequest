@@ -156,7 +156,9 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/new-request-module'
+import newReqModule, { NewRequestModule } from '@/store/new-request-module'
+import paymentModule from '@/modules/payment'
+
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
 @Component({})
@@ -182,6 +184,16 @@ export default class ApplicantInfo3 extends Vue {
   }
   get nrData () {
     return newReqModule.nrData
+  }
+  get nrResponseObject () {
+    const nameRequest: NewRequestModule = newReqModule
+    const nrResponseObject: Partial<any> = nameRequest.nrResponseObject || {}
+    return nrResponseObject
+  }
+  get nrNum () {
+    const { nrResponseObject } = this
+    const { nrNum } = nrResponseObject
+    return nrNum || undefined
   }
   get priorityRequest () {
     return newReqModule.priorityRequest
@@ -209,8 +221,15 @@ export default class ApplicantInfo3 extends Vue {
   showPreviousTab () {
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
   }
-  submit () {
-    newReqModule.postNameReservation('draft')
+  async submit () {
+    const { nrNum } = this
+    if (!nrNum) {
+      await newReqModule.postNameReservation('draft')
+    } else {
+      await newReqModule.putNameReservation(nrNum)
+    }
+
+    await paymentModule.togglePaymentModal(true)
   }
   validate () {
     if (this.$refs.step2 as any) {

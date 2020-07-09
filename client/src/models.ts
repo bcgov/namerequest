@@ -22,7 +22,7 @@ export interface AnalysisJSONI {
   issues: IssueI[] | null
   status: 'fa' | 'rc' | 'ar'
 }
-export interface ApplicantI {
+export interface WaitingAddressSearchI {
   text: string
   value: string
 }
@@ -83,7 +83,20 @@ export interface OptionI {
   line2?: string
   type: string
 }
-export interface PostApplicantI {
+
+export interface RequestNameI {
+  id?: number
+  choice: number
+  name: string
+  name_type_cd: string
+  designation: string
+  consent_words: "" | string[]
+  conflict1: string
+  conflict1_num: string
+}
+
+export interface ApplicantI {
+  partyId?: number
   addrLine1: string
   addrLine2?: string
   city: string
@@ -100,34 +113,17 @@ export interface PostApplicantI {
   postalCd: string
   stateProvinceCd: string
 }
-export interface PostConditionalReqI {
-  additionalInfo: string
-  applicants: []
-  corpNum?: string
-  english: boolean
-  entity_type: string
-  homeJurisNum?: string
-  nameFlag: boolean
-  names: PostNameI[]
-  natureBusinessInfo: string
-  previousRequestId?: string
-  priorityCd: string
-  request_action: string
-  stateCd: 'COND-RESERVE'
-  submit_count: number
-  tradeMark: string
-  xproJurisdiction?: string
-}
 
-export interface PostDraftReqI {
+export interface DraftReqI {
+  id?: number
   additionalInfo: string
-  applicants: [ PostApplicantI ]
+  applicants: [ ApplicantI ]
   corpNum?: string
   english: boolean
   entity_type: string
   homeJurisNum?: string
   nameFlag: boolean
-  names: PostNameI[]
+  names: RequestNameI[]
   natureBusinessInfo: string
   previousRequestId?: string
   priorityCd: string
@@ -138,24 +134,36 @@ export interface PostDraftReqI {
   xproJurisdiction?: string
 }
 
-export interface PostNameI {
-  choice: number
-  name: string
-  name_type_cd: string
-  designation: string
-  consent_words: "" | string[]
-  conflict1: string
-  conflict1_num: string
-}
-export interface PostReservedReqI {
+export interface ConditionalReqI {
+  id?: number
   additionalInfo: string
-  applicants: []
+  applicants: [ ApplicantI ]
   corpNum?: string
   english: boolean
   entity_type: string
   homeJurisNum?: string
   nameFlag: boolean
-  names: PostNameI[]
+  names: RequestNameI[]
+  natureBusinessInfo: string
+  previousRequestId?: string
+  priorityCd: string
+  request_action: string
+  stateCd: 'COND-RESERVE'
+  submit_count: number
+  tradeMark: string
+  xproJurisdiction?: string
+}
+
+export interface ReservedReqI {
+  id?: number
+  additionalInfo: string
+  applicants: [ ApplicantI ]
+  corpNum?: string
+  english: boolean
+  entity_type: string
+  homeJurisNum?: string
+  nameFlag: boolean
+  names: RequestNameI[]
   natureBusinessInfo: string
   previousRequestId?: string
   priorityCd: string
@@ -167,6 +175,7 @@ export interface PostReservedReqI {
 }
 
 export interface RequestDataI {
+  id?: number
   nrNumber: number
   name: string
   conditions?: string
@@ -204,3 +213,5 @@ export interface StatsI {
     unit: string
   }
 }
+
+export type NameReqT = DraftReqI | ConditionalReqI | ReservedReqI

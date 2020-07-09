@@ -7,7 +7,15 @@ module.exports = {
       hot: true
     },
     resolve: {
-      extensions: ['.ts', '.js', '.json', '.vue']
+      extensions: ['.ts', '.tsx', '.js', '.json', '.vue', '.jsx']
+    },
+    module: {
+      rules: [
+        {
+          test: /\.scss$/,
+          use: ['postcss-loader']
+        }
+      ]
     }
   },
   pluginOptions: {
