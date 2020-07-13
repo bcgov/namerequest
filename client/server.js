@@ -23,6 +23,61 @@ server.get('/api/v1/stats', (req, res) => {
   setTimeout(() => { res.jsonp(resp) }, 150)
 })
 
+server.get('/api/v1/namerequests', (req, res) => {
+  // eslint-disable-next-line
+  console.log(req)
+  let resp = {
+    "additionalInfo": "More info",
+    "applicants": {
+      "addrLine1": "940 Blanshard Street",
+      "city": "Victoria",
+      "contact": "John Test",
+      "countryTypeCd": "CA",
+      "emailAddress": "testoutputs@gov.bc.ca",
+      "firstName": "John",
+      "lastName": "Test",
+      "partyId": 1657463,
+      "phoneNumber": "2505555555",
+      "postalCd": "V8V4K8",
+      "stateProvinceCd": "BC"
+    },
+    "comments": [],
+    "furnished": "N",
+    "hasBeenReset": false,
+    "id": 2257917,
+    "expirationDate": "Fri, 17 Jul 2020 21:30:11 GMT",
+    "lastUpdate": "Wed, 15 Jul 2020 21:30:11 GMT",
+    "names": [
+      {
+        "choice": 1,
+        "conflict1": "",
+        "conflict1_num": "",
+        "conflict2": "",
+        "conflict2_num": "",
+        "conflict3": "",
+        "conflict3_num": "",
+        "decision_text": "",
+        "designation": "LIMITED",
+        "name": "ABC DRYWALL LIMITED",
+        "state": "NE"
+      }
+    ],
+    "natureBusinessInfo": "Putty and plaster and sheetrock and walls and such.",
+    "nrNum": "NR 7825212",
+    "nwpta": [],
+    "priorityCd": "Y",
+    "priorityDate": "Wed, 15 Jul 2020 21:30:11 GMT",
+    "requestTypeCd": "CR",
+    "state": "DRAFT",
+    "submitCount": 1,
+    "submittedDate": "Thu, 23 May 2019 21:30:11 GMT",
+    "submitter_userid": "",
+    "userId": "github/scottrumsby"
+  }
+
+  setTimeout(() => { res.jsonp(resp) }, 150)
+})
+
 server.get('/api/v1/name-analysis', (req, res) => {
   let { query } = req
   let split = query.name.split(' ')

@@ -159,6 +159,7 @@ export default class SendForExamination extends Vue {
   destroyed () {
     this.$el.removeEventListener('keydown', this.handleKeydown)
   }
+
   get autofocusField () {
     let output = 'name2'
     if (this.designationAtEnd) {
@@ -197,11 +198,16 @@ export default class SendForExamination extends Vue {
     return ''
   }
   get designationAtEnd () {
-    return designations[this.entityType].end
+    if (this.location === 'BC') {
+      return designations[this.entityType].end
+    }
+    return false
   }
   get entityPhraseChoices () {
     let basePhrases = designations[this.entityType].words
-    // filter the CR type designations from the list since they are not required inner phrases
+    // these are the inner phrases for the CCC and CP types.  Filtering out CR designations from CPs has no effect
+    // and CCC designations are a mix of CR-type ending designations and CCC specific inner phrases so filter out
+    // the CR designations for the purposes of this getter
     return basePhrases.filter(phrase => !designations['CR'].words.includes(phrase))
   }
   get entityPhraseRequired () {

@@ -134,8 +134,12 @@ export default class GreyBox extends Vue {
   @Prop(Number) issueIndex: number
   @Prop(Object) option: OptionI
   @Prop(String) originalName: string
+  @Watch('changesInBaseName')
+  updateChangesInBaseName (newVal) {
+    newReqModule.mutateChangesInBaseName(newVal)
+  }
   @Watch('designationIsFixed')
-  updateStore (newVal) {
+  updateDesignationIsFixed (newVal) {
     newReqModule.mutateDesignationIsFixed(newVal)
   }
 

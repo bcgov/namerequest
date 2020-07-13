@@ -69,7 +69,7 @@
                       rows="3" />
         </v-col>
       </v-row>
-      <v-row v-if="submissionType === 'examination' || isPersonsName">
+      <v-row>
         <v-col cols="2" class="h5">
           Additional Services
         </v-col>
@@ -81,7 +81,7 @@
           </v-checkbox>
         </v-col>
         <v-col cols="5" v-else />
-        <v-col cols="5" v-if="isPersonsName">
+        <v-col cols="5">
           <v-text-field :messages="messages['tradeMark']"
                         :value="nrData.tradeMark"
                         @blur="messages = {}"
@@ -91,7 +91,6 @@
                         hide-details="auto"
                         placeholder="Registered Trademark (Optional)" />
         </v-col>
-        <v-col cols="5" v-else />
       </v-row>
       <v-row>
         <v-col cols="12" class="text-right">
@@ -114,10 +113,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-
 import newReqModule, { NewRequestModule } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
+import { Component, Vue } from 'vue-property-decorator'
 
 @Component({})
 export default class ApplicantInfo2 extends Vue {
@@ -183,7 +181,7 @@ export default class ApplicantInfo2 extends Vue {
   async submit () {
     const { nrNum } = this
     if (!nrNum) {
-      await newReqModule.postNameReservation('draft')
+      await newReqModule.postNameRequests('draft')
     } else {
       await newReqModule.putNameReservation(nrNum)
     }
