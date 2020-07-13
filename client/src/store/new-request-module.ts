@@ -664,7 +664,8 @@ export class NewRequestModule extends VuexModule {
           requestNames.push({
             name: nameChoices[`name${choiceIdx}`],
             designation: nameChoices[`designation${choiceIdx}`],
-            choice: nameChoices[choiceIdx]
+            choice: choiceIdx,
+            ...defaultValues
           })
         }
         choiceIdx++
@@ -674,7 +675,8 @@ export class NewRequestModule extends VuexModule {
       requestNames.push({
         name: this.name,
         designation: this.splitNameDesignation.designation,
-        choice: 1
+        choice: 1,
+        ...defaultValues
       })
     }
 
@@ -684,7 +686,7 @@ export class NewRequestModule extends VuexModule {
         if (existingName) return { ...existingName, ...requestName } as RequestNameI
       }
 
-      return { ...requestName, ...defaultValues } as RequestNameI
+      return { ...requestName } as RequestNameI
     })
 
     return requestNames
@@ -1322,7 +1324,7 @@ export class NewRequestModule extends VuexModule {
     const { nameChoices } = this
     nrName.forEach(({ choice, name = '', designation = '' }) => {
       nameChoices[`name${choice}`] = name
-      nameChoices[`name${choice}`] = designation
+      nameChoices[`designation${choice}`] = designation
     })
   }
 
