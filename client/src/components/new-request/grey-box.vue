@@ -74,22 +74,21 @@
           </v-col>
         </template>
         <!-- ASSUMED NAME OPTION BOX -->
-        <template v-else-if="option.type === 'assumed name'">
+        <template v-else-if="option.type === 'assumed_name'">
           <v-col :id="option.type + '-button-checkbox-col'"
-                 v-if="i !== 0"
                  class="pa-0 grey-box-checkbox-button text-center">
             <transition name="fade" mode="out-in" >
               <v-checkbox :key="option.type+'-checkbox'"
-                          label="I acknowledge I cannot use my company's original name and I will adopt an assumed name"
+                          :label="checkBoxLabel"
                           class="ma-0 pa-0"
                           id="assumed-name-checkbox"
-                          v-if="!isLastIndex && !assumedName"
+                          v-if="!assumedName"
                           v-model="assumedName" />
               <ReserveSubmit :key="option.type+'-reserve-submit'"
                              :setup="reserveSubmitConfig"
                              id="reserve-submit-button"
                              style="display: inline"
-                             v-if="showCheckBoxOrButton === 'button'" />
+                             v-if="assumedName" />
             </transition>
           </v-col>
         </template>
@@ -175,9 +174,10 @@ export default class GreyBox extends Vue {
   showLastStepButtons = {
     conflict_self_consent: false,
     obtain_consent: false,
-    send_to_examiner: false
+    send_to_examiner: false,
+    assumed_name: false
   }
-  types = ['send_to_examiner', 'obtain_consent', 'conflict_self_consent']
+  types = ['send_to_examiner', 'obtain_consent', 'conflict_self_consent', 'assumed_name']
 
   get assumedName () {
     return newReqModule.assumedName
@@ -237,6 +237,8 @@ export default class GreyBox extends Vue {
         return 'I will obtain and submit consent'
       case 'conflict_self_consent':
         return 'I have authority over the conflicting name; I will submit written consent'
+      case 'assumed_name':
+        return 'I want to send my name to be examined as an Assumed Name'
       default:
         return ''
     }
@@ -459,6 +461,11 @@ export default class GreyBox extends Vue {
           return 'checkbox'
         case 'conflict_self_consent':
           if (this.showLastStepButtons.conflict_self_consent) {
+            return 'button'
+          }
+          return 'checkbox'
+        case 'assumed_name':
+          if (this.showLastStepButtons.assumed_name) {
             return 'button'
           }
           return 'checkbox'
