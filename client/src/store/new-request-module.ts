@@ -664,7 +664,8 @@ export class NewRequestModule extends VuexModule {
           requestNames.push({
             name: nameChoices[`name${choiceIdx}`],
             designation: nameChoices[`designation${choiceIdx}`],
-            choice: nameChoices[choiceIdx]
+            choice: choiceIdx,
+            ...defaultValues
           })
         }
         choiceIdx++
@@ -674,17 +675,34 @@ export class NewRequestModule extends VuexModule {
       requestNames.push({
         name: this.name,
         designation: this.splitNameDesignation.designation,
-        choice: 1
+        choice: 1,
+        ...defaultValues
       })
     }
 
     requestNames = requestNames.map((requestName, idx) => {
       if (nrNames) {
         const existingName = nrNames.find(nrName => nrName.choice === requestName.choice)
-        if (existingName) return { ...existingName, ...requestName } as RequestNameI
+        if (existingName) {
+          return {
+            ...existingName,
+            // Merge in requestName form values
+            ...requestName,
+            // Merge conflicts and consent words
+            consent_words: !existingName.consent_words
+              ? this.consentWords.length > 0 ? this.consentWords : ''
+              : existingName.consent_words,
+            conflict1: !existingName.conflict1
+              ? this.consentConflicts.name
+              : existingName.conflict1,
+            conflict1_num: !existingName.conflict1_num
+              ? this.consentConflicts.name ? '464666' : ''
+              : existingName.conflict1_num
+          } as RequestNameI
+        }
       }
 
-      return { ...requestName, ...defaultValues } as RequestNameI
+      return { ...requestName } as RequestNameI
     })
 
     return requestNames
@@ -715,16 +733,6 @@ export class NewRequestModule extends VuexModule {
       // If we're updating use these mapped names -> nrRequestNames
       const { nrRequestNames } = this
       names = nrRequestNames
-
-      // Map the conflicts? Not sure I have to do these, these fields should already be set... todo: confirm!
-      /* names = names.map((name) => {
-        return {
-          ...name,
-          consent_words: this.consentWords.length > 0 ? this.consentWords : '',
-          conflict1: this.consentConflicts.name,
-          conflict1_num: this.consentConflicts.name ? '464666' : ''
-        }
-      }) */
     } else {
       // Otherwise we're creating a new conditional, there won't be a multiple name inputs, build as follows...
       const name: RequestNameI = {
@@ -1322,7 +1330,7 @@ export class NewRequestModule extends VuexModule {
     const { nameChoices } = this
     nrName.forEach(({ choice, name = '', designation = '' }) => {
       nameChoices[`name${choice}`] = name
-      nameChoices[`name${choice}`] = designation
+      nameChoices[`designation${choice}`] = designation
     })
   }
 
