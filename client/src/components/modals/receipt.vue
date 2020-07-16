@@ -72,7 +72,9 @@ export default class ReceiptModal extends Vue {
 
   async downloadReceipt () {
     const { sessionPaymentId, paymentInvoiceId, paymentRequest } = this
-    const { businessInfo = { businessName: null, businessIdentifier: null }, filingInfo = { date: null } } = paymentRequest
+    const {
+      businessInfo = { businessName: null, businessIdentifier: null }, filingInfo = { date: null }
+    } = paymentRequest
     await this.fetchData(true)
 
     const data = {

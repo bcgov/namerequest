@@ -10,21 +10,21 @@
     <template v-slot:content>
       <v-row>
         <v-col cols="12" class="mt-3" @click="clickNameField">
-          <quill-editor ref="quill"
-                        id="name-search-bar"
-                        :contents="contents"
+          <quill-editor :contents="contents"
                         :options="config"
                         @change="handleChange($event)"
-                        @keydown.native.capture="handleEnterKey" />
+                        @keydown.native.capture="handleEnterKey"
+                        id="name-search-bar"
+                        ref="quill" />
           <div style="position: relative; left: 865px; top: -45px; z-index: 1000">
-            <v-icon class="name-search-icon"
-                    id="name-input-icon"
-                    @click.capture.stop="handleSubmit">search</v-icon>
+            <v-icon @click.capture.stop="handleSubmit"
+                    class="name-search-icon"
+                    id="name-input-icon">search</v-icon>
           </div>
         </v-col>
       </v-row>
       <transition name="fade" mode="out-in" >
-        <v-row no-gutters  :key="issueIndex+'vcol'">
+        <v-row no-gutters :key="issueIndex+'vcol'">
           <v-col>
             <!--"FURTHER ACTION REQUIRED" OR "APPROVABLE" TEXT + ICON-->
             <v-row no-gutters justify="center" class="mt-n4">
@@ -51,10 +51,16 @@
               </v-row>
 
               <!--CORP CONFLICT TABLE-->
-              <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n7 py-5">
+              <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n5 py-5 text-center">
                 <v-col cols="auto" >
                   <div v-for="(corp, n) in conflicts" :key="'conflict-' + n">
-                      {{ corp.name }}
+                      {{ corp.name }}<br>
+                    <span v-if="conflictDate && conflictId.startsWith('NR ')">
+                      Submitted Date: {{ conflictDate }}</span>
+                    <span v-if="conflictDate && !conflictId.startsWith('NR ')">
+                      Incorporation Date: {{ conflictDate }}</span><br>
+                    <span v-if="conflictId && !conflictId.startsWith('NR ')">
+                      Corporation No.: {{ conflictId }}</span>
                   </div>
                 </v-col>
               </v-row>
@@ -64,7 +70,10 @@
               <v-col :key="issue.issue_type + '-' + option.header + '-' + optionIndex"
                      cols="auto"
                      v-for="(option, optionIndex) of issue.setup">
-                <GreyBox :issueIndex="issueIndex" :i="optionIndex" :option="option" :originalName="originalName" />
+                <GreyBox :i="optionIndex"
+                         :issueIndex="issueIndex"
+                         :option="option"
+                         :originalName="originalName" />
               </v-col>
             </v-row>
 
@@ -137,15 +146,16 @@
 <script lang="ts">
 import GreyBox from '@/components/new-request/grey-box.vue'
 import MainContainer from '@/components/new-request/main-container.vue'
-import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
+import Moment from 'moment'
 import newReqModule from '@/store/new-request-module'
+import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { IssueI, QuillOpsI, SelectionI } from '@/models'
-import { removeExcessSpaces } from '@/plugins/utilities'
 import { quillEditor } from 'vue-quill-editor'
+import { removeExcessSpaces } from '@/plugins/utilities'
 
 @Component({
-  components: { GreyBox, MainContainer, ReserveSubmit, quillEditor }
+  components: { GreyBox, MainContainer, quillEditor, ReserveSubmit }
 })
 export default class AnalyzeResults extends Vue {
   config = {
@@ -155,9 +165,9 @@ export default class AnalyzeResults extends Vue {
     placeholder: '',
     scrollingContainer: false
   }
+  contents: string = ''
   highlightCheckboxes: boolean = false
   issueIndex: number = 0
-  contents: string = ''
   originalName: string | null = null
   originalOps = []
 
@@ -218,6 +228,18 @@ export default class AnalyzeResults extends Vue {
       return (this.issue as IssueI).conflicts
     }
     return []
+  }
+  get conflictDate () {
+    if (this.issue.conflicts[0] && this.issue.conflicts[0].start_date) {
+      return Moment(this.issue.conflicts[0].start_date).format('MMMM do YYYY')
+    }
+    return null
+  }
+  get conflictId () {
+    if (this.issue.conflicts[0] && this.issue.conflicts[0].id) {
+      return this.issue.conflicts[0].id
+    }
+    return null
   }
   get entityText () {
     return newReqModule.entityTextFromValue
@@ -323,10 +345,10 @@ export default class AnalyzeResults extends Vue {
       }
       inserts.forEach(insert => {
         let { length } = insert
-        // matching insert phrases which are not surrounded with [ ] (ie. that are not 'brackets' type name_actions)
-        // 'brackets' type name_actions disappear when the user clicks the field so to map the length of the unclicked
-        // field to the clicked field we need to account for the presence of these.  if there are none all the indexes
-        // map 1 : 1 directly.
+        // checking for brackets-type name_actions in the displayed name.  brackets-type name_actions disappear when
+        // the user clicks the text-field so if the text field is clicked somewhere after the message, the carat will
+        // be inserted at that index but the length of the text-field contents will change.  if there are such messages,
+        // map the clicked carat index to the final carat index and insert the carat at the final index
         if (!insert.match(/\[.+\]/)) {
           for (let n = 0; n < length; n++) {
             indexMap[unmappedIndex + n] = mappedIndex + n
@@ -370,6 +392,7 @@ export default class AnalyzeResults extends Vue {
     ))
   }
   handleChange ({ html, text }) {
+    // prevents quill from adding a newline to what is supposed to be a single-line input field
     text = text.replace('\n', '')
     this.name = text
     if (html.includes('</p><p>')) {
@@ -411,30 +434,26 @@ export default class AnalyzeResults extends Vue {
 </script>
 
 <style scoped lang="sass">
+#name-search-bar
+  margin: -20px 0 20px 0
+  max-height: 40px
+  min-height: 40px
 .action
   color: $error !important
-
 .approved
   color: $approved !important
-
 .error-message
   color: red
   margin-left: 20px
   margin-top: 15px
-
 .modal-activator
+  background-color: unset !important
   color: $link !important
+  cursor: pointer !important
   letter-spacing: unset !important
   text-decoration: underline
-  cursor: pointer !important
-  background-color: unset !important
   text-transform: none !important
-
 .strike
   text-decoration-line: line-through
-#name-search-bar
-  min-height: 40px
-  max-height: 40px
-  margin: -20px 0 20px 0
 
 </style>

@@ -18,8 +18,8 @@ export function sanitizeName (name: string): string {
 
 export function matchWord (name: string, word: string): string[] | string {
   // matches all occurrences of a word or phrase <word> in a longer string <name> where <word> appears in one of the
-  // following three ways: "word ", " word ", or " word" [ RegExp: /(\\s|^)word(\\s|$)/ ] with awareness to the special
-  // cases of designations where a short designation may comprise part of a longer designation and then only returning
+  // following three ways: "word ", " word ", or " word" [ RegExp: /(\\s|^)word(\\s|$)/ ] with awareness of the special
+  // cases for LIMITED and LIMITEE which are both designations on their own and part of others so as to only return
   // one match for the longer designation in such cases.  Return value is an array of <word> of length equal to the
   // number of matches or null if there were none.
   name = name.toUpperCase()
