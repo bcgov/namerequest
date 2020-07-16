@@ -1105,12 +1105,11 @@ export class NewRequestModule extends VuexModule {
       this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
       this.mutateDisplayedComponent('SubmissionTabs')
       return
+    } else {
+      if (['NEW', 'DBA', 'CHG', 'MVE', 'CNV', 'REH', 'REN', 'REST'].includes(this.requestAction)) {
+        this.getNameRequestXPRO()
+      }
     }
-    if (this.requestAction === 'MVE') {
-      this.getNameRequest()
-      return
-    }
-    this.getNameRequestXPRO()
   }
   @Action
   updateApplicantDetails (appKV) {
