@@ -1,35 +1,78 @@
 export type DisplayedComponentT = 'Tabs' | 'AnalyzePending' | 'AnalyzeResults' | 'SubmissionTabs' | 'AnalyzeCharacters'
-export type LocationT = 'BC' | 'CA' | 'IN' | 'INFO'
+export type LocationT = 'BC' | 'CA' | 'FD' | 'IN' | 'INFO'
+export type NameReqT = DraftReqI | ConditionalReqI | ReservedReqI
 export type NrDataResponseT = RequestDataI | null
 export type NrDataT = string | null
 export type SubmissionTypeT = 'examination' | 'consent' | 'normal'
-
-export interface SelectionI {
-  index?: number
-  length?: number
-}
-interface QuillAttributesI {
-  color: string
-  strike?: boolean
-}
-export interface QuillOpsI {
-  insert: string
-  attributes?: QuillAttributesI
-}
 
 export interface AnalysisJSONI {
   header?: string
   issues: IssueI[] | null
   status: 'fa' | 'rc' | 'ar'
 }
-export interface WaitingAddressSearchI {
-  text: string
-  value: string
+export interface ApplicantI {
+  partyId?: number
+  addrLine1: string
+  addrLine2?: string
+  city: string
+  clientFirstName?: string
+  clientLastName?: string
+  contact: string
+  countryTypeCd: string
+  emailAddress: string
+  faxNumber?: string
+  firstName: string
+  lastName: string
+  middleName?: string
+  phoneNumber?: string
+  postalCd: string
+  stateProvinceCd: string
 }
+
+export interface ConditionalReqI {
+  id?: number
+  additionalInfo: string
+  applicants: [ ApplicantI ]
+  corpNum?: string
+  english: boolean
+  entity_type: string
+  homeJurisNum?: string
+  nameFlag: boolean
+  names: RequestNameI[]
+  natureBusinessInfo: string
+  previousRequestId?: string
+  priorityCd: string
+  request_action: string
+  stateCd: 'COND-RESERVE'
+  submit_count: number
+  tradeMark: string
+  xproJurisdiction?: string
+}
+
 export interface ConsentConflictI {
   name: string
   [propName: string]: any
 }
+export interface DraftReqI {
+  id?: number
+  additionalInfo: string
+  applicants: [ ApplicantI ]
+  corpNum?: string
+  english: boolean
+  entity_type: string
+  homeJurisNum?: string
+  nameFlag: boolean
+  names: RequestNameI[]
+  natureBusinessInfo: string
+  previousRequestId?: string
+  priorityCd: string
+  request_action: string
+  stateCd: 'DRAFT'
+  submit_count: number
+  tradeMark: string
+  xproJurisdiction?: string
+}
+
 export interface EntityI {
   text: string
   value: string
@@ -84,6 +127,21 @@ export interface OptionI {
   type: string
 }
 
+export interface QuillOpsI {
+  insert: string
+  attributes?: QuillAttributesI
+}
+
+export interface RequestDataI {
+  id?: number
+  nrNumber: number
+  name: string
+  conditions?: string
+  applicantName: string
+  address: string
+  status: string
+  expiry: string
+}
 export interface RequestNameI {
   id?: number
   choice: number
@@ -93,65 +151,6 @@ export interface RequestNameI {
   consent_words: "" | string[]
   conflict1: string
   conflict1_num: string
-}
-
-export interface ApplicantI {
-  partyId?: number
-  addrLine1: string
-  addrLine2?: string
-  city: string
-  clientFirstName?: string
-  clientLastName?: string
-  contact: string
-  countryTypeCd: string
-  emailAddress: string
-  faxNumber?: string
-  firstName: string
-  lastName: string
-  middleName?: string
-  phoneNumber?: string
-  postalCd: string
-  stateProvinceCd: string
-}
-
-export interface DraftReqI {
-  id?: number
-  additionalInfo: string
-  applicants: [ ApplicantI ]
-  corpNum?: string
-  english: boolean
-  entity_type: string
-  homeJurisNum?: string
-  nameFlag: boolean
-  names: RequestNameI[]
-  natureBusinessInfo: string
-  previousRequestId?: string
-  priorityCd: string
-  request_action: string
-  stateCd: 'DRAFT'
-  submit_count: number
-  tradeMark: string
-  xproJurisdiction?: string
-}
-
-export interface ConditionalReqI {
-  id?: number
-  additionalInfo: string
-  applicants: [ ApplicantI ]
-  corpNum?: string
-  english: boolean
-  entity_type: string
-  homeJurisNum?: string
-  nameFlag: boolean
-  names: RequestNameI[]
-  natureBusinessInfo: string
-  previousRequestId?: string
-  priorityCd: string
-  request_action: string
-  stateCd: 'COND-RESERVE'
-  submit_count: number
-  tradeMark: string
-  xproJurisdiction?: string
 }
 
 export interface ReservedReqI {
@@ -174,21 +173,15 @@ export interface ReservedReqI {
   xproJurisdiction?: string
 }
 
-export interface RequestDataI {
-  id?: number
-  nrNumber: number
-  name: string
-  conditions?: string
-  applicantName: string
-  address: string
-  status: string
-  expiry: string
-}
 export interface SearchDataI {
   nrNumber?: string
   name?: string
   emailAddress?: string
   phoneNumber?: string
+}
+export interface SelectionI {
+  index?: number
+  length?: number
 }
 export interface SelectOptionsI {
   text: string
@@ -213,5 +206,11 @@ export interface StatsI {
     unit: string
   }
 }
-
-export type NameReqT = DraftReqI | ConditionalReqI | ReservedReqI
+export interface WaitingAddressSearchI {
+  text: string
+  value: string
+}
+interface QuillAttributesI {
+  color: string
+  strike?: boolean
+}

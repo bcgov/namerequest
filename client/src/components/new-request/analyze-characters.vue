@@ -17,10 +17,13 @@
               <v-col class="h5 py-0"><v-icon class="pr-2 pale-blue-text">info</v-icon>
                 Helpful Hint</v-col>
               <v-col cols="12">
-                <p>Your name contained unsupported characters, which we have automatically removed.  Please review your
+                <p v-if="!nameStartsWithSymbol">
+                  Your name contained unsupported characters, which we have automatically removed.  Please review your
                 name as it appears above and make any necessary changes before clicking the magnifying glass to try
                   your search again.</p>
-                <p class="text-lg-center">Only the following special characters may be used in your name:</p>
+                <p class="text-lg-center">
+                  Your name must not begin with a special character.   The first character must be alphanumeric.
+                  Only the following special characters may be used in your name::</p>
                 <p class="my-3 text-center large-copy bold-copy">/ [ ] ^ * + - = & ( ) . , " ' # @ ! ? ; :</p>
               </v-col>
             </v-row>
@@ -49,6 +52,12 @@ export default class AnalyzeCharacters extends Vue {
   }
   get entityType () {
     return newReqModule.entityType
+  }
+  get nameStartsWithSymbol () {
+    return !!this.name.match(/^[\[\]\^*\+-\/\=&\(\)\.,"'#@\!\?;:]/)
+  }
+  get name () {
+    return newReqModule.name
   }
   get location () {
     let value = newReqModule.location

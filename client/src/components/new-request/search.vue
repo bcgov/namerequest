@@ -154,7 +154,7 @@ export default class Search extends Vue {
     return newReqModule.isPersonsName
   }
   set isPersonsName (value) {
-    newReqModule.mutateisPersonsName(value)
+    newReqModule.mutateIsPersonsName(value)
   }
   get nameIsEnglish () {
     return newReqModule.nameIsEnglish

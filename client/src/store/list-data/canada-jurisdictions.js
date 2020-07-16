@@ -63,6 +63,11 @@ const jurisdictions = [
     "value": "YT",
     "SHORT_DESC": "YT",
     "text": "YUKON"
+  },
+  {
+    "value": "FD",
+    "SHORT_DESC": "FED",
+    "text": "FEDERAL"
   }
 ]
 

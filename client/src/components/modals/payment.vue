@@ -10,8 +10,10 @@
                 <h4>Requested Name Choices</h4>
                 <ul style="list-style: none; padding-left: 0">
                   <li><span class="choice-indicator" v-if="nameChoices && nameChoices.length > 0">1</span>{{name}}</li>
-                  <li v-if="nameChoices[1]"><span class="choice-indicator" v-if="nameChoices && nameChoices.length > 0">2</span>{{nameChoices[1]}}</li>
-                  <li v-if="nameChoices[2]"><span class="choice-indicator" v-if="nameChoices && nameChoices.length > 1">3</span>{{nameChoices[2]}}</li>
+                  <li v-if="nameChoices[1]"><span class="choice-indicator" v-if="nameChoices && nameChoices.length > 0">
+                    2</span>{{nameChoices[1]}}</li>
+                  <li v-if="nameChoices[2]"><span class="choice-indicator" v-if="nameChoices && nameChoices.length > 1">
+                    3</span>{{nameChoices[2]}}</li>
                 </ul>
               </li>
               <li v-if="client">
