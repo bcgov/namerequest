@@ -2,8 +2,8 @@
   <MainContainer id="analyze-pending-container">
     <template v-slot:container-header>
       <v-col cols="auto h4">
-        You are searching for a name for {{ requestAction }}
-        {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }} {{ entityText }}
+        You are searching for a name for a
+        {{ entityText === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }} {{ entityText }}
       </v-col>
     </template>
     <template v-slot:content>

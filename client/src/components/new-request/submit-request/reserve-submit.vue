@@ -38,11 +38,11 @@ export default class ReserveSubmitButton extends Vue {
     }
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
     if (this.setup === 'consent') {
-      newReqModule.postNameReservation('conditional')
+      newReqModule.postNameRequests('conditional')
       newReqModule.mutateSubmissionType('consent')
       return
     }
-    newReqModule.postNameReservation('reserved')
+    newReqModule.postNameRequests('reserved')
     newReqModule.mutateSubmissionType('normal')
   }
 }

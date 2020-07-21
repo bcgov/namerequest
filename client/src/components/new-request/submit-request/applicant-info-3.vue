@@ -111,9 +111,9 @@
                       rows="3" />
         </v-col>
       </v-row>
-      <v-row v-if="submissionType === 'examination' || isPersonsName">
+      <v-row>
         <v-col cols="2" />
-        <v-col cols="5" v-if="isPersonsName">
+        <v-col cols="5">
           <v-text-field :messages="messages['tradeMark']"
                         :value="nrData.tradeMark"
                         @blur="messages = {}"
@@ -123,7 +123,6 @@
                         hide-details="auto"
                         placeholder="Registered Trademark (Optional)" />
         </v-col>
-        <v-col cols="5" v-else />
         <v-col cols="5" align-self="end" v-if="submissionType === 'examination'">
           <v-checkbox v-model="priorityRequest" class="ma-0 pa-0">
             <template v-slot:label>
@@ -158,7 +157,6 @@
 <script lang="ts">
 import newReqModule, { NewRequestModule } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
-
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
 @Component({})

@@ -21,6 +21,7 @@
 import AnalyzeCharacters from '@/components/new-request/analyze-characters.vue'
 import AnalyzePending from '@/components/new-request/analyze-pending.vue'
 import AnalyzeResults from '@/components/new-request/analyze-results.vue'
+import ExistingRequestDisplay from '@/components/existing-request/existing-request-display.vue'
 import LowerContainer from '@/components/lower-info-area/lower-container.vue'
 import newReqModule from '@/store/new-request-module'
 import Stats from '@/components/new-request/stats.vue'
@@ -33,6 +34,7 @@ import { Component, Vue } from 'vue-property-decorator'
     AnalyzeCharacters,
     AnalyzePending,
     AnalyzeResults,
+    ExistingRequestDisplay,
     LowerContainer,
     Stats,
     SubmissionTabs,

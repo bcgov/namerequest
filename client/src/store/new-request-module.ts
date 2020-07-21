@@ -5,28 +5,29 @@ import querystring from 'qs'
 import store from '@/store'
 import {
   AnalysisJSONI,
-  WaitingAddressSearchI,
-  ConsentConflictI,
-  DisplayedComponentT,
-  EntityI,
-  LocationT, NameDesignationI,
-  NameReqT,
-  NewRequestNameSearchI,
   ApplicantI,
   ConditionalReqI,
+  ConsentConflictI,
+  DisplayedComponentT,
   DraftReqI,
+  EntityI,
+  ExistingRequestSearchI,
+  LocationT,
+  NameDesignationI,
+  NameReqT,
+  NewRequestNameSearchI,
   RequestNameI,
   ReservedReqI,
   SelectOptionsI,
   StatsI,
-  SubmissionTypeT
+  SubmissionTypeT,
+  WaitingAddressSearchI
 } from '@/models'
 
 import canadaPostAPIKey from './config'
 import { Action, config, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
 import Vue from 'vue'
-// config.rawError = true
 
 const qs: any = querystring
 let source: any
@@ -98,6 +99,7 @@ export class NewRequestModule extends VuexModule {
     xproJurisdiction: ''
   }
   conflictId: string | null = null
+  changesInBaseName: boolean = false
   designationIsFixed: boolean = false
   disableSuggestions: boolean = false
   displayedComponent: DisplayedComponentT = 'Tabs'
@@ -330,6 +332,11 @@ export class NewRequestModule extends VuexModule {
     1: false,
     2: false
   }
+  existingRequestSearch: ExistingRequestSearchI = {
+    emailAddress: '',
+    nrNum: '',
+    phoneNumber: ''
+  }
   extendedEntitySelection: SelectOptionsI | null = null
   extendedRequestType: SelectOptionsI | null = null
   helpMeChooseModalVisible: boolean = false
@@ -376,6 +383,7 @@ export class NewRequestModule extends VuexModule {
       conflict_self_consent: false
     }
   }
+  requestData = {}
   requestTypes: EntityI[] = [
     {
       text: 'Start a New',
@@ -457,9 +465,7 @@ export class NewRequestModule extends VuexModule {
       if (this.requestExaminationOrProvideConsent[key].conflict_self_consent) {
         output.name = this.analysisJSON.issues[key].conflicts[0].name
         if (this.analysisJSON.issues[key].conflicts[0].id) {
-          if (!this.analysisJSON.issues[key].conflicts[0].id.startsWith('NR')) {
-            output.corpNum = this.analysisJSON.issues[key].conflicts[0].id
-          }
+          output.corpNum = this.analysisJSON.issues[key].conflicts[0].id
         }
       }
     }
@@ -621,28 +627,24 @@ export class NewRequestModule extends VuexModule {
       designation: ''
     })
   }
-
   get nrNum () {
     const { nrResponseObject } = this
     let nrNum
     if (nrResponseObject) nrNum = nrResponseObject.nrNum
     return nrNum
   }
-
   get nrState () {
     const { nrResponseObject } = this
     let state
     if (nrResponseObject) state = nrResponseObject.state
     return state
   }
-
   get nrNames () {
     const { nrResponseObject } = this
     let names = []
     if (nrResponseObject) names = nrResponseObject.names
     return names
   }
-
   /**
    * This getter combines the NR response data objects names against nameChoices,
    * which contains the actual form values, building the request object required for a Name.
@@ -711,7 +713,6 @@ export class NewRequestModule extends VuexModule {
 
     return requestNames
   }
-
   get draftNameReservation (): DraftReqI {
     const { applicant, nrData, nrRequestNames } = this
 
@@ -729,7 +730,6 @@ export class NewRequestModule extends VuexModule {
     }
     return caseData
   }
-
   get conditionalNameReservation (): ConditionalReqI {
     const { applicant, nrData, nrNames } = this
     let names
@@ -766,7 +766,6 @@ export class NewRequestModule extends VuexModule {
     }
     return caseData
   }
-
   get reservedNameReservation (): ReservedReqI {
     const { applicant, nrData, nrRequestNames } = this
 
@@ -859,7 +858,7 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
-  async getNameRequest () {
+  async getNameAnalysis () {
     this.mutateDisplayedComponent('AnalyzePending')
     this.resetRequestExaminationOrProvideConsent()
 
@@ -896,7 +895,7 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
-  async getNameRequestXPRO () {
+  async getNameAnalysisXPRO () {
     this.mutateDisplayedComponent('AnalyzePending')
     this.resetRequestExaminationOrProvideConsent()
 
@@ -933,6 +932,31 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
+  async getNameRequests () {
+    this.mutateDisplayedComponent('AnalyzePending')
+
+    let params = {
+      nrNum: this.existingRequestSearch.nrNum,
+      phoneNumber: this.existingRequestSearch.phoneNumber,
+      emailAddress: this.existingRequestSearch.emailAddress
+    }
+    try {
+      let { CancelToken } = axios
+      source = CancelToken.source()
+
+      let resp = await axios.get('/namerequests', {
+        params,
+        cancelToken: source.token
+      })
+      // eslint-disable-next-line
+      this.mutateRequestData(resp.data)
+      this.mutateDisplayedComponent('ExistingRequestDisplay')
+    } catch (error) {
+      this.mutateDisplayedComponent('Tabs')
+      return
+    }
+  }
+  @Action
   async getStats () {
     try {
       let resp = await axios.get('/stats')
@@ -942,7 +966,6 @@ export class NewRequestModule extends VuexModule {
       return Promise.resolve()
     }
   }
-
   @Action
   async getNameReservation (nrNum) {
     let response
@@ -969,7 +992,7 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
-  async postNameReservation (type) {
+  async postNameRequests (type) {
     let response
     try {
       let requestData: any
@@ -1098,7 +1121,7 @@ export class NewRequestModule extends VuexModule {
     if (this.location === 'BC') {
       if (this.nameIsEnglish && !this.isPersonsName && !this.doNotAnalyzeEntities.includes(this.entityType)) {
         if (['NEW', 'DBA', 'CHG'].includes(this.requestAction)) {
-          this.getNameRequest()
+          this.getNameAnalysis()
           return
         }
       }
@@ -1107,10 +1130,10 @@ export class NewRequestModule extends VuexModule {
       return
     }
     if (this.requestAction === 'MVE') {
-      this.getNameRequest()
+      this.getNameAnalysis()
       return
     }
-    this.getNameRequestXPRO()
+    this.getNameAnalysisXPRO()
   }
   @Action
   updateApplicantDetails (appKV) {
@@ -1253,6 +1276,10 @@ export class NewRequestModule extends VuexModule {
     this.conflictId = id
   }
   @Mutation
+  mutateExistingRequestSearch ({ key, value }) {
+    this.existingRequestSearch[key] = value
+  }
+  @Mutation
   mutateIsPersonsName (value) {
     this.isPersonsName = value
   }
@@ -1360,6 +1387,22 @@ export class NewRequestModule extends VuexModule {
       nameChoices[`name${choice}`] = name
       nameChoices[`designation${choice}`] = designation
     })
+  }
+  @Mutation
+  mutateRequestData (value) {
+    this.requestData = value
+  }
+  @Mutation
+  mutateExistingRequestSearchToInitialState () {
+    this.existingRequestSearch = {
+      emailAddress: '',
+      nrNum: '',
+      phoneNumber: ''
+    }
+  }
+  @Mutation
+  mutateChangesInBaseName (newVal) {
+    this.changesInBaseName = newVal
   }
 
   getEntities (category) {
