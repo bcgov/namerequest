@@ -1,7 +1,8 @@
 <template>
-  <v-col cols="12" @keydown.enter="handleSubmit">
+  <v-col cols="12">
     <v-text-field :error-messages="message"
                   @input="clearErrors()"
+                  @keydown.enter="handleSubmit"
                   autocomplete="off"
                   filled
                   id="name-input-text-field"
@@ -10,7 +11,7 @@
       <template v-slot:append>
         <v-icon class="name-search-icon"
                 id="name-input-icon"
-                @click="handleSubmit">search</v-icon>
+                @click="startAnalyzeName">search</v-icon>
       </template>
     </v-text-field>
   </v-col>
@@ -44,8 +45,15 @@ export default class NameInput extends Vue {
   clearErrors () {
     newReqModule.clearErrors()
   }
-  handleSubmit (event: Event) {
-    event.preventDefault()
+  handleSubmit (event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      this.startAnalyzeName()
+      return
+    }
+    return event
+  }
+  startAnalyzeName () {
     newReqModule.startAnalyzeName()
   }
 }

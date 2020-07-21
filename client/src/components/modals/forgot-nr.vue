@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/existing-request-module'
+import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({})

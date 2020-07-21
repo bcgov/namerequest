@@ -2,9 +2,8 @@
   <MainContainer id="analyze-results-container">
     <template v-slot:container-header>
       <v-col cols="auto" class="h4">
-        You are searching for a name for {{ requestAction }}
-        {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }}
-        {{ entityText }}
+        You are searching for a name for a
+        {{ entityText === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }} {{ entityText }}
       </v-col>
     </template>
     <template v-slot:content>
@@ -27,40 +26,54 @@
         <v-row no-gutters :key="issueIndex+'vcol'">
           <v-col>
             <!--"FURTHER ACTION REQUIRED" OR "APPROVABLE" TEXT + ICON-->
-            <v-row no-gutters justify="center" class="mt-n4">
-              <v-col cols="auto" :class="json.status === 'Available' ? 'approved' : 'action' " class="h4">
-                <v-icon :class="json.status === 'Available' ? 'approved' : 'action' ">
-                  {{ json.status === 'Available' ? 'check_circle' : 'stars' }}
-                </v-icon>
-                {{ json.header }}
-              </v-col>
-            </v-row>
+            <transition name="fade" mode="out-in" >
+              <v-row no-gutters justify="center"
+                     class="mt-n4"
+                     :key="headerProps.text">
+                <v-col cols="auto" :class="headerProps.class" class="h4">
+                  <v-icon :class="headerProps.class">
+                    {{ headerProps.icon }}
+                  </v-icon>
+                  {{ headerProps.text }}
+                </v-col>
+              </v-row>
+            </transition>
 
             <!--ISSUE_TYPE: FURTHER ACTION REQUIRED-->
             <template v-if="issue && issue.issue_type">
               <!--MAIN HEADINGS / INFO: LINE 1 & LINE 2-->
-              <v-row no-gutters justify="center">
-                <v-col class="pt-2 pb-4 mt-n1 text-center"
-                       cols="12"
-                       v-html="issue.line1"
-                       v-if="issue.line1" />
-                <v-col class="mt-n3 pb-4 text-center"
-                       cols="12"
-                       v-html="issue.line2"
-                       v-if="issue.line2" />
-              </v-row>
+              <transition name="fade" mode="out-in">
+                <v-row no-gutters justify="center"
+                       v-if="headerProps.showNextLines"
+                       :key="headerProps.text">
+                  <v-col class="pt-2 pb-4 mt-n1 text-center"
+                         cols="12"
+                         v-html="issue.line1"
+                         v-if="issue.line1" />
+                  <v-col class="mt-n3 pb-4 text-center"
+                         cols="12"
+                         v-html="issue.line2"
+                         v-if="issue.line2" />
+                </v-row>
+                <v-row v-else>
+                  <v-col class="pt-2 pb-4 mt-n1 text-center"
+                         cols="12">
+                    You have fixed all the issues.
+                  </v-col>
+                </v-row>
+              </transition>
 
               <!--CORP CONFLICT TABLE-->
-              <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n5 py-5 text-center">
+              <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n3 pb-5 text-center">
                 <v-col cols="auto" >
                   <div v-for="(corp, n) in conflicts" :key="'conflict-' + n">
-                      {{ corp.name }}<br>
+                    <b>{{ corp.name }}</b><br>
                     <span v-if="conflictDate && conflictId.startsWith('NR ')">
-                      Submitted Date: {{ conflictDate }}</span>
+                      <b>Submitted Date:</b> {{ conflictDate + ', ' }}</span>
                     <span v-if="conflictDate && !conflictId.startsWith('NR ')">
-                      Incorporation Date: {{ conflictDate }}</span><br>
+                      <b>Incorporation Date:</b> {{ conflictDate + ', ' }}</span>
                     <span v-if="conflictId && !conflictId.startsWith('NR ')">
-                      Corporation No.: {{ conflictId }}</span>
+                      <b>Corporation No.:</b> {{ conflictId }}</span>
                   </div>
                 </v-col>
               </v-row>
@@ -122,7 +135,7 @@
                 <v-col cols="12" class="normal-copy pt-2 pb-4">
                   <v-row justify="center">
                     <v-col cols="auto">
-                      Name is available for {{ requestAction }}
+                      Name is available for a
                       {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }}
                       {{ ' ' + entityText }}
                     </v-col>
@@ -220,18 +233,15 @@ export default class AnalyzeResults extends Vue {
     document.removeEventListener('keydown', this.handleEnterKey)
   }
 
+  get changesInBaseName () {
+    return newReqModule.changesInBaseName
+  }
   get chunkedName () {
     return this.name.split(' ')
   }
-  get conflicts () {
-    if (Array.isArray((this.issue as IssueI).conflicts)) {
-      return (this.issue as IssueI).conflicts
-    }
-    return []
-  }
   get conflictDate () {
     if (this.issue.conflicts[0] && this.issue.conflicts[0].start_date) {
-      return Moment(this.issue.conflicts[0].start_date).format('MMMM do YYYY')
+      return Moment(this.issue.conflicts[0].start_date).utc().format('MMMM Do YYYY')
     }
     return null
   }
@@ -240,6 +250,15 @@ export default class AnalyzeResults extends Vue {
       return this.issue.conflicts[0].id
     }
     return null
+  }
+  get conflicts () {
+    if (Array.isArray((this.issue as IssueI).conflicts)) {
+      return (this.issue as IssueI).conflicts
+    }
+    return []
+  }
+  get designationIsFixed () {
+    return newReqModule.designationIsFixed
   }
   get entityText () {
     return newReqModule.entityTextFromValue
@@ -275,9 +294,6 @@ export default class AnalyzeResults extends Vue {
   get name () {
     return newReqModule.name
   }
-  set name (name: string) {
-    newReqModule.mutateName(name)
-  }
   get nameActions () {
     if ((this.issue as IssueI) && (this.issue as IssueI).name_actions) {
       return (this.issue as IssueI).name_actions
@@ -297,7 +313,7 @@ export default class AnalyzeResults extends Vue {
     }
     return true
   }
-  get quill (): quillEditor {
+  get quill (): any {
     return (this.$refs as any).quill.quill
   }
   get requestAction () {
@@ -316,14 +332,44 @@ export default class AnalyzeResults extends Vue {
   get showActualInput () {
     return newReqModule.showActualInput
   }
-  set showActualInput (value) {
-    newReqModule.mutateShowActualInput(value)
+  get headerProps () {
+    if (this.json.status === 'Available') {
+      return {
+        class: 'approved',
+        icon: 'check_circle',
+        text: 'Name Available',
+        showNextLines: true
+      }
+    }
+    let { length } = newReqModule.analysisJSON.issues
+    if (this.issueIndex === length - 1) {
+      if (!this.changesInBaseName && this.designationIsFixed) {
+        return {
+          class: 'approved',
+          icon: 'check_circle',
+          text: 'You May Proceed',
+          showNextLines: false
+        }
+      }
+    }
+    return {
+      class: 'action',
+      icon: 'stars',
+      text: 'Further Action Required',
+      showNextLines: true
+    }
   }
   get word () {
     if (Array.isArray(this.issue.name_actions) && this.issue.name_actions[0]) {
       return this.issue.name_actions[0].word.toUpperCase()
     }
     return ''
+  }
+  set name (name: string) {
+    newReqModule.mutateName(name)
+  }
+  set showActualInput (value) {
+    newReqModule.mutateShowActualInput(value)
   }
 
   cancelAnalyzeName () {
@@ -332,43 +378,45 @@ export default class AnalyzeResults extends Vue {
   clickNameField () {
     if (!this.showActualInput) {
       this.showActualInput = true
-      let selection: SelectionI = this.quill.getSelection()
-      let inserts = this.originalOps.map(op => op.insert)
-      let indexMap = {}
-      let unmappedIndex = 0
-      let mappedIndex = 0
-      if (!inserts.some(insert => insert.match(/\[.+\]/))) {
+      if (this.issue && this.issue.issue_type) {
+        let selection: SelectionI = this.quill.getSelection()
+        let inserts = this.originalOps.map(op => op.insert)
+        let indexMap = {}
+        let unmappedIndex = 0
+        let mappedIndex = 0
+        if (!inserts.some(insert => insert.match(/\[.+\]/))) {
+          let ops = this.getBaseNameOps()
+          this.quill.setContents(ops)
+          this.quill.setSelection(selection)
+          return
+        }
+        inserts.forEach(insert => {
+          let { length } = insert
+          // checking for brackets-type name_actions in the displayed name.  brackets-type name_actions disappear when
+          // the user clicks the text-field so if the text field is clicked somewhere after the message, the carat will
+          // be inserted at that index but the length of the text-field contents will change.  if there are such
+          // messages, map the clicked carat index to the final carat index and insert the carat at the final index
+          if (!insert.match(/\[.+\]/)) {
+            for (let n = 0; n < length; n++) {
+              indexMap[unmappedIndex + n] = mappedIndex + n
+            }
+            mappedIndex = mappedIndex + length
+            unmappedIndex = unmappedIndex + length
+          } else {
+            for (let n = 0; n < length; n++) {
+              indexMap[unmappedIndex + n] = mappedIndex
+            }
+            unmappedIndex = unmappedIndex + length
+          }
+        })
+        let lastIndex = Object.keys(indexMap).length
+        indexMap[lastIndex] = indexMap[lastIndex - 1] + 1
         let ops = this.getBaseNameOps()
         this.quill.setContents(ops)
+        let { index } = selection
+        selection.index = indexMap[index]
         this.quill.setSelection(selection)
-        return
       }
-      inserts.forEach(insert => {
-        let { length } = insert
-        // checking for brackets-type name_actions in the displayed name.  brackets-type name_actions disappear when
-        // the user clicks the text-field so if the text field is clicked somewhere after the message, the carat will
-        // be inserted at that index but the length of the text-field contents will change.  if there are such messages,
-        // map the clicked carat index to the final carat index and insert the carat at the final index
-        if (!insert.match(/\[.+\]/)) {
-          for (let n = 0; n < length; n++) {
-            indexMap[unmappedIndex + n] = mappedIndex + n
-          }
-          mappedIndex = mappedIndex + length
-          unmappedIndex = unmappedIndex + length
-        } else {
-          for (let n = 0; n < length; n++) {
-            indexMap[unmappedIndex + n] = mappedIndex
-          }
-          unmappedIndex = unmappedIndex + length
-        }
-      })
-      let lastIndex = Object.keys(indexMap).length
-      indexMap[lastIndex] = indexMap[lastIndex - 1] + 1
-      let ops = this.getBaseNameOps()
-      this.quill.setContents(ops)
-      let { index } = selection
-      selection.index = indexMap[index]
-      this.quill.setSelection(selection)
     }
   }
   clickNext () {
@@ -424,7 +472,7 @@ export default class AnalyzeResults extends Vue {
     this.name = this.quill.getText()
     newReqModule.startAnalyzeName()
   }
-  updateContents (text) {
+  updateContents (text: any) {
     this.quill.setContents([
       { insert: text }
     ])

@@ -1,4 +1,5 @@
-export type DisplayedComponentT = 'Tabs' | 'AnalyzePending' | 'AnalyzeResults' | 'SubmissionTabs' | 'AnalyzeCharacters'
+export type DisplayedComponentT =
+  'Tabs' | 'AnalyzePending' | 'AnalyzeResults' | 'SubmissionTabs' | 'AnalyzeCharacters' | 'ExistingRequestDisplay'
 export type LocationT = 'BC' | 'CA' | 'FD' | 'IN' | 'INFO'
 export type NameReqT = DraftReqI | ConditionalReqI | ReservedReqI
 export type NrDataResponseT = RequestDataI | null
@@ -11,7 +12,6 @@ export interface AnalysisJSONI {
   status: 'fa' | 'rc' | 'ar'
 }
 export interface ApplicantI {
-  partyId?: number
   addrLine1: string
   addrLine2?: string
   city: string
@@ -24,19 +24,19 @@ export interface ApplicantI {
   firstName: string
   lastName: string
   middleName?: string
+  partyId?: number
   phoneNumber?: string
   postalCd: string
   stateProvinceCd: string
 }
-
 export interface ConditionalReqI {
-  id?: number
   additionalInfo: string
   applicants: [ ApplicantI ]
   corpNum?: string
   english: boolean
   entity_type: string
   homeJurisNum?: string
+  id?: number
   nameFlag: boolean
   names: RequestNameI[]
   natureBusinessInfo: string
@@ -48,19 +48,18 @@ export interface ConditionalReqI {
   tradeMark: string
   xproJurisdiction?: string
 }
-
 export interface ConsentConflictI {
   name: string
   [propName: string]: any
 }
 export interface DraftReqI {
-  id?: number
   additionalInfo: string
   applicants: [ ApplicantI ]
   corpNum?: string
   english: boolean
   entity_type: string
   homeJurisNum?: string
+  id?: number
   nameFlag: boolean
   names: RequestNameI[]
   natureBusinessInfo: string
@@ -72,23 +71,27 @@ export interface DraftReqI {
   tradeMark: string
   xproJurisdiction?: string
 }
-
 export interface EntityI {
+  blurb?: string[] | string
+  cat?: string
+  rank?: number
+  shortlist?: boolean
   text: string
   value: string
-  cat?: string
-  blurb?: string[] | string
-  shortlist?: boolean
-  rank?: number
+}
+export interface ExistingRequestSearchI {
+  emailAddress?: string
+  nrNum: string
+  phoneNumber?: string
 }
 export interface IssueI {
-  consenting_body?: {
-    name: string
-    contact: string
-  }
   conflicts?: {
     name: string
     date: string
+  }
+  consenting_body?: {
+    name: string
+    contact: string
   }
   designations?: string[]
   issue_type: string
@@ -96,11 +99,11 @@ export interface IssueI {
   line2?: string
   name_actions?: [
     {
-      type: 'brackets' | 'highlight' | 'spelling' | 'strike'
       index: number
-      word: string
-      position ?: 'start' | 'end'
       message ?: string
+      position ?: 'start' | 'end'
+      type: 'brackets' | 'highlight' | 'spelling' | 'strike'
+      word: string
     }
   ]
   setup: SetupI[]
@@ -108,14 +111,14 @@ export interface IssueI {
   show_reservxe_button: boolean
 }
 export interface NameDesignationI {
-  name: string
   designation: string
+  name: string
 }
 export interface NewRequestNameSearchI {
-  name: string
-  request_action: string
   entity_type: string
   location: LocationT
+  name: string
+  request_action: string
 }
 export interface OptionI {
   button?: string
@@ -126,12 +129,10 @@ export interface OptionI {
   line2?: string
   type: string
 }
-
 export interface QuillOpsI {
   insert: string
   attributes?: QuillAttributesI
 }
-
 export interface RequestDataI {
   id?: number
   nrNumber: number
@@ -152,7 +153,6 @@ export interface RequestNameI {
   conflict1: string
   conflict1_num: string
 }
-
 export interface ReservedReqI {
   id?: number
   additionalInfo: string
@@ -172,11 +172,10 @@ export interface ReservedReqI {
   tradeMark: string
   xproJurisdiction?: string
 }
-
 export interface SearchDataI {
-  nrNumber?: string
-  name?: string
   emailAddress?: string
+  name?: string
+  nrNumber?: string
   phoneNumber?: string
 }
 export interface SelectionI {
@@ -198,12 +197,12 @@ export interface SetupI {
 export interface StatsI {
   auto: number,
   priority: {
-    value: number,
     unit: string
+    value: number,
   },
   standard: {
-    value: number,
     unit: string
+    value: number,
   }
 }
 export interface WaitingAddressSearchI {
