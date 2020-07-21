@@ -248,86 +248,96 @@ export default class GreyBox extends Vue {
     }
   }
   get designationIsFixed () {
-    if (!this.changesInBaseName) {
-      let AllDesignationsList = allDesignationsList
-      // below condition is entity types PAR, FI, PA, and the proprietorships - don't use a designation
-      if (allDesignations[this.entityType].words.length === 0) {
+    try {
+      if (!this.changesInBaseName) {
+        let AllDesignationsList = allDesignationsList
+        const designationEntityTypes = allDesignations[this.entityType]
+        // below condition is entity types PAR, FI, PA, and the proprietorships - don't use a designation
+        if (designationEntityTypes && designationEntityTypes.words.length === 0) {
+          if (this.nameActionWords.length > 0) {
+            for (let word of this.nameActionWords) {
+              // in addition to checking the name for the inclusion of designations from the list-data, check for any
+              // designation-like words that the back-end is providing in the name_actions (eg. INC, CORP)
+              if (!AllDesignationsList.includes(word)) {
+                AllDesignationsList = AllDesignationsList.concat(word)
+              }
+            }
+          }
+          // these entity types do not use designations, so they should not have one in their text
+          // fail the test (return false) if any are found
+          for (let designation of AllDesignationsList) {
+            if (matchWord(this.name, designation)) {
+              return false
+            }
+          }
+          return true
+        }
+        let end: string
+        AllDesignationsList.forEach(designation => {
+          if (this.name.endsWith(' ' + designation)) {
+            end = designation
+          }
+        })
+        // entities which don't use ending designations have either been dealt with above or are not covered by
+        // the name-request app so by this point, any name still being considered by this getter use one
+        if (!end) {
+          // so fail the test if there is no ending designation
+          return false
+        }
         if (this.nameActionWords.length > 0) {
           for (let word of this.nameActionWords) {
-            // in addition to checking the name for the inclusion of designations from the list-data, check for any
-            // designation-like words that the back-end is providing in the name_actions (eg. INC, CORP)
             if (!AllDesignationsList.includes(word)) {
               AllDesignationsList = AllDesignationsList.concat(word)
             }
           }
         }
-        // these entity types do not use designations, so they should not have one in their text
-        // fail the test (return false) if any are found
+        let matches = []
         for (let designation of AllDesignationsList) {
-          if (matchWord(this.name, designation)) {
-            return false
+          if (matches.includes(designation)) {
+            continue
+          }
+          let matchedWords = matchWord(this.name, designation)
+          if (matchedWords) {
+            if (matchedWords.length > 1) {
+              return false
+            }
+            if (matchedWords.length === 1) {
+              matches.push(designation)
+            }
           }
         }
-        return true
-      }
-      let end: string
-      AllDesignationsList.forEach(designation => {
-        if (this.name.endsWith(' ' + designation)) {
-          end = designation
-        }
-      })
-      // entities which don't use ending designations have either been dealt with above or are not covered by
-      // the name-request app so by this point, any name still being considered by this getter use one
-      if (!end) {
-        // so fail the test if there is no ending designation
-        return false
-      }
-      if (this.nameActionWords.length > 0) {
-        for (let word of this.nameActionWords) {
-          if (!AllDesignationsList.includes(word)) {
-            AllDesignationsList = AllDesignationsList.concat(word)
+        if (this.isMisplacedPrecedingMismatch) {
+          let nextWords = []
+          if (Array.isArray(newReqModule.analysisJSON.issues[this.issueIndex + 1].name_actions)) {
+            nextWords = newReqModule.analysisJSON.issues[this.issueIndex + 1].name_actions.map(
+              action => action.word.toUpperCase()
+            )
+            nextWords = nextWords.filter(word => word !== end)
+            matches = matches.filter(match => !nextWords.includes(match))
           }
         }
-      }
-      let matches = []
-      for (let designation of AllDesignationsList) {
-        if (matches.includes(designation)) {
-          continue
+        if (matches.length > 1) {
+          return false
         }
-        let matchedWords = matchWord(this.name, designation)
-        if (matchedWords) {
-          if (matchedWords.length > 1) {
-            return false
+        if (Array.isArray(this.designations) && this.designations.length > 0) {
+          if (this.designations.some(designation => this.name.endsWith(designation))) {
+            return true
           }
-          if (matchedWords.length === 1) {
-            matches.push(designation)
+        } else {
+          if (designationEntityTypes && designationEntityTypes.words.some(word => this.name.endsWith(word))) {
+            return true
           }
         }
       }
-      if (this.isMisplacedPrecedingMismatch) {
-        let nextWords = []
-        if (Array.isArray(newReqModule.analysisJSON.issues[this.issueIndex + 1].name_actions)) {
-          nextWords = newReqModule.analysisJSON.issues[this.issueIndex + 1].name_actions.map(
-            action => action.word.toUpperCase()
-          )
-          nextWords = nextWords.filter(word => word !== end)
-          matches = matches.filter(match => !nextWords.includes(match))
-        }
-      }
-      if (matches.length > 1) {
-        return false
-      }
-      if (Array.isArray(this.designations) && this.designations.length > 0) {
-        if (this.designations.some(designation => this.name.endsWith(designation))) {
-          return true
-        }
-      } else {
-        if (allDesignations[this.entityType].words.some(word => this.name.endsWith(word))) {
-          return true
-        }
-      }
+      return false
+    } catch (err) {
+      // Catch designation errors and log to console, as it will prevent this component from rendering properly
+      // eslint-disable-next-line no-console
+      console.warn(err)
+      // If something fails in this method, return false, as getters are expected to return a value
+      // We don't want to prevent the component from rendering, log the error and continue
+      return false
     }
-    return false
   }
   get designations () {
     if (this.issue && this.issue.designations) {

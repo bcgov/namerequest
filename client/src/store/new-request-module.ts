@@ -627,24 +627,28 @@ export class NewRequestModule extends VuexModule {
       designation: ''
     })
   }
+
   get nrNum () {
     const { nrResponseObject } = this
     let nrNum
     if (nrResponseObject) nrNum = nrResponseObject.nrNum
     return nrNum
   }
+
   get nrState () {
     const { nrResponseObject } = this
     let state
     if (nrResponseObject) state = nrResponseObject.state
     return state
   }
+
   get nrNames () {
     const { nrResponseObject } = this
     let names = []
     if (nrResponseObject) names = nrResponseObject.names
     return names
   }
+
   /**
    * This getter combines the NR response data objects names against nameChoices,
    * which contains the actual form values, building the request object required for a Name.
@@ -713,6 +717,7 @@ export class NewRequestModule extends VuexModule {
 
     return requestNames
   }
+
   get draftNameReservation (): DraftReqI {
     const { applicant, nrData, nrRequestNames } = this
 
@@ -730,6 +735,7 @@ export class NewRequestModule extends VuexModule {
     }
     return caseData
   }
+
   get conditionalNameReservation (): ConditionalReqI {
     const { applicant, nrData, nrNames } = this
     let names
@@ -766,6 +772,7 @@ export class NewRequestModule extends VuexModule {
     }
     return caseData
   }
+
   get reservedNameReservation (): ReservedReqI {
     const { applicant, nrData, nrRequestNames } = this
 
@@ -966,6 +973,7 @@ export class NewRequestModule extends VuexModule {
       return Promise.resolve()
     }
   }
+
   @Action
   async getNameReservation (nrNum) {
     let response
@@ -1128,12 +1136,11 @@ export class NewRequestModule extends VuexModule {
       this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
       this.mutateDisplayedComponent('SubmissionTabs')
       return
+    } else {
+      if (['NEW', 'DBA', 'CHG', 'MVE', 'CNV', 'REH', 'REN', 'REST'].includes(this.requestAction)) {
+        this.getNameAnalysisXPRO()
+      }
     }
-    if (this.requestAction === 'MVE') {
-      this.getNameAnalysis()
-      return
-    }
-    this.getNameAnalysisXPRO()
   }
   @Action
   updateApplicantDetails (appKV) {
