@@ -15,7 +15,7 @@ import {
   LocationT,
   NameDesignationI,
   NameReqT,
-  NewRequestNameSearchI,
+  NewRequestNameSearchI, RequestDataI,
   RequestNameI,
   ReservedReqI,
   SelectOptionsI,
@@ -23,7 +23,6 @@ import {
   SubmissionTypeT,
   WaitingAddressSearchI
 } from '@/models'
-
 import canadaPostAPIKey from './config'
 import { Action, config, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
@@ -63,7 +62,6 @@ const parseNameChoices = (nameChoices) => {
 }
 
 interface RequestNameMapI extends RequestNameI {
-
 }
 
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
@@ -102,8 +100,9 @@ export class NewRequestModule extends VuexModule {
   changesInBaseName: boolean = false
   designationIsFixed: boolean = false
   disableSuggestions: boolean = false
-  displayedComponent: DisplayedComponentT = 'Tabs'
+  displayedComponent: string = 'Tabs'
   doNotAnalyzeEntities: string[] = ['PAR', 'CC', 'CP', 'PA', 'FI', 'XCP']
+  editMode: boolean = false
   entityType: string = 'CR'
   entityTypesBC: EntityI[] = [
     {
@@ -339,6 +338,7 @@ export class NewRequestModule extends VuexModule {
   }
   extendedEntitySelection: SelectOptionsI | null = null
   extendedRequestType: SelectOptionsI | null = null
+  getNameReservationFailed: boolean = false
   helpMeChooseModalVisible: boolean = false
   isPersonsName: boolean = false
   issueIndex: number = 0
@@ -383,7 +383,7 @@ export class NewRequestModule extends VuexModule {
       conflict_self_consent: false
     }
   }
-  requestData = {}
+  requestData: any = {}
   requestTypes: EntityI[] = [
     {
       text: 'Start a New',
@@ -735,7 +735,20 @@ export class NewRequestModule extends VuexModule {
     }
     return caseData
   }
-
+  get editNameReservation () {
+    let data = {
+      applicants: [this.applicant],
+      names: this.nrRequestNames,
+      requestAction: this.requestAction,
+      entity_type: this.entityType
+    }
+    for (let key in this.nrData) {
+      if (this.nrData[key]) {
+        data[key] = this.nrData[key]
+      }
+    }
+    return data
+  }
   get conditionalNameReservation (): ConditionalReqI {
     const { applicant, nrData, nrNames } = this
     let names
@@ -956,11 +969,51 @@ export class NewRequestModule extends VuexModule {
         cancelToken: source.token
       })
       // eslint-disable-next-line
+      if (!resp.data || resp.data.length === 0) {
+        this.mutateRequestData(
+          {
+            text: 'There were no records found that match the information you have entered.  Please verify the NR  ' +
+              'Number and the phone / email and try again.',
+            failed: true
+          }
+        )
+        this.mutateDisplayedComponent('Tabs')
+        return
+      }
       this.mutateRequestData(resp.data)
       this.mutateDisplayedComponent('ExistingRequestDisplay')
     } catch (error) {
+      if (error.response.status === 400) {
+        this.mutateRequestData(
+          {
+            text: 'Please verify that you are entering a valid NR number.',
+            failed: true
+          }
+        )
+      }
       this.mutateDisplayedComponent('Tabs')
       return
+    }
+  }
+  @Action
+  async getNameReservation (nrNum) {
+    let response
+    try {
+      response = await axios.get(`/namerequests/${nrNum}`, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+
+      const { data } = response
+      const { names } = data
+
+      this.setNrResponseObject(data)
+      this.updateReservationNames(names)
+      this.resetApplicantDetails()
+    } catch (error) {
+      // eslint-disable-next-line
+      console.log(error)
     }
   }
   @Action
@@ -975,25 +1028,19 @@ export class NewRequestModule extends VuexModule {
   }
 
   @Action
-  async getNameReservation (nrNum) {
-    let response
+  async patchNameRequests () {
     try {
-      // eslint-disable-next-line no-console
-      console.log('getNameReservation action dispatched')
-      // eslint-disable-next-line no-console
-      // console.trace()
-      response = await axios.get(`/namerequests/${nrNum}`, {
+      let requestData = this.editNameReservation
+      // eslint-disable-next-line
+      console.log(requestData)
+      /*
+      let response = await axios.patch(`/namerequests/${this.requestData.nrNum}`, requestData, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
-
-      const { data } = response
-      const { names } = data
-
-      this.setNrResponseObject(data)
-      this.updateReservationNames(names)
-      this.resetApplicantDetails()
+      this.mutateRequestData(response.data)
+      this.cancelEditExistingRequest() */
     } catch (error) {
       // eslint-disable-next-line
       console.log(error)
@@ -1090,7 +1137,42 @@ export class NewRequestModule extends VuexModule {
     this.mutateAnalysisJSON(null)
   }
   @Action
+  cancelEditExistingRequest () {
+    this.mutateDisplayedComponent('ExistingRequestDisplay')
+    this.resetApplicantDetails()
+    this.mutateNameChoicesToInitialState()
+    this.mutateName('')
+    this.resetNrData()
+    this.mutateEditMode(false)
+  }
+  @Action
+  editExistingRequest () {
+    this.mutateEditMode(true)
+    this.populateApplicantData()
+    this.populateNrData()
+    for (let field of ['clientFirstName', 'clientLastName', 'contact']) {
+      if (this.requestData.applicants[field]) {
+        this.mutateActingOnOwnBehalf(false)
+        break
+      }
+    }
+    let { entity_type_cd } = this.requestData
+    if (!this.entityTypeOptions.some(option => option.value === entity_type_cd)) {
+      let obj = this.entityTypesBC.find(entity => entity.value === entity_type_cd)
+        ? this.entityTypesBC.find(entity => entity.value === entity_type_cd)
+        : this.entityTypesXPRO.find(entity => entity.value === entity_type_cd)
+      this.mutateExtendedEntitySelectOption(obj)
+    }
+    if (this.requestData.state === 'DRAFT') {
+      this.mutateSubmissionTabComponent('NamesCapture')
+    } else {
+      this.mutateSubmissionTabComponent('ApplicantInfo1')
+    }
+    this.mutateDisplayedComponent('ExistingRequestEdit')
+  }
+  @Action
   startAnalyzeName () {
+    this.mutateEditMode(false)
     this.mutateShowActualInput(false)
     let name
     if (this.name) {
@@ -1196,9 +1278,18 @@ export class NewRequestModule extends VuexModule {
     }
     this.applicant[appKV.key] = appKV.value
   }
+
   @Mutation
   mutateAssumedName (value) {
     this.assumedName = value
+  }
+  @Mutation
+  mutateChangesInBaseName (newVal) {
+    this.changesInBaseName = newVal
+  }
+  @Mutation
+  mutateConflictId (id) {
+    this.conflictId = id
   }
   @Mutation
   mutateDesignationIsFixed (value) {
@@ -1209,7 +1300,7 @@ export class NewRequestModule extends VuexModule {
     this.disableSuggestions = value
   }
   @Mutation
-  mutateDisplayedComponent (comp: DisplayedComponentT) {
+  mutateDisplayedComponent (comp: string) {
     this.displayedComponent = comp
   }
   @Mutation
@@ -1219,6 +1310,18 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateExaminationRequestedIndex (value: boolean) {
     this.examinationRequestedIndex[this.issueIndex] = value
+  }
+  @Mutation
+  mutateExistingRequestSearch ({ key, value }) {
+    this.existingRequestSearch[key] = value
+  }
+  @Mutation
+  mutateExistingRequestSearchToInitialState () {
+    this.existingRequestSearch = {
+      emailAddress: '',
+      nrNum: '',
+      phoneNumber: ''
+    }
   }
   @Mutation
   mutateExtendedEntitySelectOption (option: SelectOptionsI) {
@@ -1231,6 +1334,10 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateHelpMeChooseModalVisible (value: boolean) {
     this.helpMeChooseModalVisible = value
+  }
+  @Mutation
+  mutateIsPersonsName (value) {
+    this.isPersonsName = value
   }
   @Mutation
   mutateLocation (location: LocationT) {
@@ -1264,6 +1371,10 @@ export class NewRequestModule extends VuexModule {
     this.name = name
   }
   @Mutation
+  mutateNameChoices (choiceObj) {
+    this.nameChoices[choiceObj.key] = choiceObj.value
+  }
+  @Mutation
   mutateNameChoicesToInitialState () {
     Vue.set(this, 'nameChoices', {
       name1: '',
@@ -1273,22 +1384,6 @@ export class NewRequestModule extends VuexModule {
       name3: '',
       designation3: ''
     })
-  }
-  @Mutation
-  mutateNameChoices (choiceObj) {
-    this.nameChoices[choiceObj.key] = choiceObj.value
-  }
-  @Mutation
-  mutateConflictId (id) {
-    this.conflictId = id
-  }
-  @Mutation
-  mutateExistingRequestSearch ({ key, value }) {
-    this.existingRequestSearch[key] = value
-  }
-  @Mutation
-  mutateIsPersonsName (value) {
-    this.isPersonsName = value
   }
   @Mutation
   mutateNameIsEnglish (value) {
@@ -1323,6 +1418,10 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Mutation
+  mutateRequestData (value) {
+    this.requestData = value
+  }
+  @Mutation
   mutateRequestExaminationOrProvideConsent ({ index, type, value }) {
     this.requestExaminationOrProvideConsent[index][type] = value
   }
@@ -1338,11 +1437,10 @@ export class NewRequestModule extends VuexModule {
   mutateSubmissionTabComponent (comp) {
     enum Components {
       EntityNotAutoAnalyzed,
-      SendForExamination,
+      NamesCapture,
       ApplicantInfo1,
       ApplicantInfo2
     }
-
     let tab = parseInt(Components[comp])
     this.submissionTabNumber = tab
   }
@@ -1363,11 +1461,36 @@ export class NewRequestModule extends VuexModule {
     this.waitingAddressSearch = appKV
   }
   @Mutation
-  setApplicantDetails (applicant) {
-    const data = Object.assign({}, applicant) as ApplicantI
-    Object.keys(data as ApplicantI).forEach(key => {
-      this.applicant[key] = data[key]
-    })
+  populateApplicantData () {
+    for (let key in this.requestData.applicants) {
+      Vue.set(
+        this.applicant,
+        key,
+        this.requestData.applicants[key]
+      )
+    }
+  }
+  @Mutation
+  populateNrData () {
+    for (let key in this.nrData) {
+      if (this.requestData[key]) {
+        Vue.set(
+          this.nrData,
+          key,
+          this.requestData[key]
+        )
+      }
+    }
+    this.entityType = this.requestData.entity_type_cd
+    if (this.requestData.entity_type_cd.startsWith('X')) {
+      if (this.requestData.applicants.countryTypeCd === 'CA') {
+        this.location = 'CA'
+      } else {
+        this.location = 'IN'
+      }
+    } else {
+      this.location = 'BC'
+    }
   }
   @Mutation
   resetApplicantDetails () {
@@ -1384,6 +1507,13 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Mutation
+  setApplicantDetails (applicant) {
+    const data = Object.assign({}, applicant) as ApplicantI
+    Object.keys(data as ApplicantI).forEach(key => {
+      this.applicant[key] = data[key]
+    })
+  }
+  @Mutation
   setNrResponseObject (value) {
     this.nrResponseObject = value
   }
@@ -1396,20 +1526,38 @@ export class NewRequestModule extends VuexModule {
     })
   }
   @Mutation
-  mutateRequestData (value) {
-    this.requestData = value
+  mutateEditMode (value) {
+    this.editMode = value
   }
   @Mutation
-  mutateExistingRequestSearchToInitialState () {
-    this.existingRequestSearch = {
-      emailAddress: '',
-      nrNum: '',
-      phoneNumber: ''
+  resetNrData () {
+    for (let key in this.nrData) {
+      Vue.set(
+        this.nrData,
+        key,
+        ''
+      )
     }
   }
   @Mutation
-  mutateChangesInBaseName (newVal) {
-    this.changesInBaseName = newVal
+  mutateGetNameReservationFailed (value) {
+    this.getNameReservationFailed = value
+  }
+  @Mutation
+  mutateRequestDataByKey (kv) {
+    Vue.set(
+      this.requestData,
+      kv.key,
+      kv.value
+    )
+  }
+  @Mutation
+  mutateNRDataByKey (kv) {
+    Vue.set(
+      this.nrData,
+      kv.key,
+      kv.value
+    )
   }
 
   getEntities (category) {

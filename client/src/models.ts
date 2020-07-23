@@ -1,5 +1,3 @@
-export type DisplayedComponentT =
-  'Tabs' | 'AnalyzePending' | 'AnalyzeResults' | 'SubmissionTabs' | 'AnalyzeCharacters' | 'ExistingRequestDisplay'
 export type LocationT = 'BC' | 'CA' | 'FD' | 'IN' | 'INFO'
 export type NameReqT = DraftReqI | ConditionalReqI | ReservedReqI
 export type NrDataResponseT = RequestDataI | null
@@ -208,6 +206,9 @@ export interface StatsI {
 export interface WaitingAddressSearchI {
   text: string
   value: string
+}
+export interface RequestDataI {
+  [propname: string]: any
 }
 interface QuillAttributesI {
   color: string

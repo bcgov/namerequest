@@ -60,6 +60,19 @@ server.get('/api/v1/namerequests', (req, res) => {
         "designation": "LIMITED",
         "name": "ABC DRYWALL LIMITED",
         "state": "NE"
+      },
+      {
+        "choice": 2,
+        "conflict1": "",
+        "conflict1_num": "",
+        "conflict2": "",
+        "conflict2_num": "",
+        "conflict3": "",
+        "conflict3_num": "",
+        "decision_text": "",
+        "designation": "LIMITED",
+        "name": "ABC PLUMBING LIMITED",
+        "state": "NE"
       }
     ],
     "natureBusinessInfo": "Putty and plaster and sheetrock and walls and such.",

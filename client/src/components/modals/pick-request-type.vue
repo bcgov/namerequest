@@ -53,6 +53,9 @@ import { SelectOptionsI } from '@/models'
 
 @Component({})
 export default class PickRequestType extends Vue {
+  get editMode () {
+    return newReqModule.editMode
+  }
   get showModal () {
     return newReqModule.pickRequestTypeModalVisible
   }
