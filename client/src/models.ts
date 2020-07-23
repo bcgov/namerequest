@@ -1,8 +1,6 @@
-export type DisplayedComponentT =
-  'Tabs' | 'AnalyzePending' | 'AnalyzeResults' | 'SubmissionTabs' | 'AnalyzeCharacters' | 'ExistingRequestDisplay'
 export type LocationT = 'BC' | 'CA' | 'FD' | 'IN' | 'INFO'
 export type NameReqT = DraftReqI | ConditionalReqI | ReservedReqI
-export type NrDataResponseT = RequestDataI | null
+export type NrDataResponseT = NameRequestI | null
 export type NrDataT = string | null
 export type SubmissionTypeT = 'examination' | 'consent' | 'normal'
 
@@ -133,15 +131,8 @@ export interface QuillOpsI {
   insert: string
   attributes?: QuillAttributesI
 }
-export interface RequestDataI {
-  id?: number
-  nrNumber: number
-  name: string
-  conditions?: string
-  applicantName: string
-  address: string
-  status: string
-  expiry: string
+export interface NameRequestI {
+  [propname: string]: any
 }
 export interface RequestNameI {
   id?: number
@@ -212,4 +203,8 @@ export interface WaitingAddressSearchI {
 interface QuillAttributesI {
   color: string
   strike?: boolean
+}
+
+export interface EditButtonsI {
+  edit
 }

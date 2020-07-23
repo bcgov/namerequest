@@ -83,6 +83,10 @@ const designations = {
     ],
     end: true
   },
+  SO: {
+    words: [],
+    end: false
+  },
   UL: {
     words: [
       'ULC',

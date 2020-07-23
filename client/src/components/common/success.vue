@@ -1,0 +1,36 @@
+<template>
+  <MainContainer id="analyze-pending-container">
+    <template v-slot:content>
+      <v-row class="my-9 py-9">
+        <v-col cols="12" class="text-center h4">
+          Update Successful
+        </v-col>
+        <v-col cols="12" class="text-center approved fs-58">
+          <v-icon class="approved fs-58">check_circle</v-icon>
+        </v-col>
+      </v-row>
+    </template>
+  </MainContainer>
+</template>
+
+<script lang="ts">
+import newReqModule from '@/store/new-request-module'
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import MainContainer from '@/components/new-request/main-container.vue'
+
+@Component({
+  components: { MainContainer }
+})
+export default class Success extends Vue {
+  mounted () {
+    setTimeout(() => {
+      newReqModule.mutateDisplayedComponent('ExistingRequestDisplay')
+    }, 1200)
+  }
+}
+</script>
+
+<style lang="sass">
+  .approved
+    color: $approved !important
+</style>

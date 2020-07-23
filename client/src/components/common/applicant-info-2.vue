@@ -41,7 +41,7 @@
                         placeholder="Fax Number (Optional)" />
         </v-col>
       </v-row>
-      <v-row>
+      <v-row v-if="showAllFields">
         <v-col cols="2" class="h5" align-self="start">
           About Your Business
         </v-col>
@@ -69,18 +69,18 @@
                       rows="3" />
         </v-col>
       </v-row>
-      <v-row>
+      <v-row v-if="showAllFields">
         <v-col cols="2" class="h5">
-          Additional Services
+          {{ editMode ? '' : 'Additional Services' }}
         </v-col>
-        <v-col cols="5" align-self="center" v-if="submissionType === 'examination'">
+        <v-col cols="5" align-self="center" v-if="submissionType === 'examination' && !editMode">
           <v-checkbox v-model="priorityRequest">
             <template v-slot:label>
               Priority Request - <b>$100 Fee</b>
             </template>
           </v-checkbox>
         </v-col>
-        <v-col cols="5" v-else />
+        <v-col cols="5" v-else-if="!editMode" />
         <v-col cols="5">
           <v-text-field :messages="messages['tradeMark']"
                         :value="nrData.tradeMark"
@@ -97,15 +97,16 @@
           <v-btn x-large
                  id="submit-back-btn"
                  class="mr-3"
-                 @click="showPreviousTab()">Back</v-btn>
+                 v-if="showAllFields"
+                 @click="showPreviousTab()">{{ editMode ? 'Previous' : 'Back' }}</v-btn>
           <v-btn x-large
                  v-if="!isValid"
                  id="submit-continue-btn-disabled"
-                 @click="validate()">Continue to Payment</v-btn>
+                 @click="validate()"> {{ editMode ? 'Submit Changes' : 'Continue to Payment' }}</v-btn>
           <v-btn x-large
                  v-else
                  @click="submit"
-                 id="submit-continue-btn">Continue to Payment</v-btn>
+                 id="submit-continue-btn"> {{ editMode ? 'Submit Changes' : 'Continue to Payment' }}</v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -119,51 +120,75 @@ import { Component, Vue } from 'vue-property-decorator'
 
 @Component({})
 export default class ApplicantInfo2 extends Vue {
-  messages = {}
-  requiredRule = [
-    v => !!v || 'Required field'
-  ]
   emailRules = [
     v => !!v || 'Required field',
     v => /.+@.+/.test(v) || 'Not a valid email'
   ]
   isValid: boolean = false
+  messages = {}
+  requiredRule = [
+    v => !!v || 'Required field'
+  ]
 
   get applicant () {
     return newReqModule.applicant
   }
-  get nrData () {
-    return newReqModule.nrData
-  }
-  get nrResponseObject () {
-    const nameRequest: NewRequestModule = newReqModule
-    const nrResponseObject: Partial<any> = nameRequest.nrResponseObject || {}
-    return nrResponseObject
-  }
-  get nrNum () {
-    const { nrResponseObject } = this
-    const { nrNum } = nrResponseObject
-    return nrNum || undefined
+  get editMode () {
+    return newReqModule.editMode
   }
   get isPersonsName () {
     return newReqModule.isPersonsName
   }
+  get nr () {
+    const nameRequest: NewRequestModule = newReqModule
+    const nr: Partial<any> = nameRequest.nr || {}
+    return nr
+  }
+  get nrData () {
+    return newReqModule.nrData
+  }
+  get nrNum () {
+    const { nr } = this
+    const { nrNum } = nr
+    return nrNum || undefined
+  }
+  get nrState () {
+    return newReqModule.nrState
+  }
   get priorityRequest () {
     return newReqModule.priorityRequest
   }
-  set priorityRequest (value) {
-    newReqModule.mutatePriorityRequest(value)
+  get showAllFields () {
+    return (!this.editMode || this.nrState === 'DRAFT')
   }
   get submissionTabNumber () {
     return newReqModule.submissionTabNumber
   }
-  set submissionTabNumber (value) {
-    newReqModule.mutateSubmissionTabNumber(value)
-  }
   get submissionType () {
     return newReqModule.submissionType
   }
+  set priorityRequest (value) {
+    newReqModule.mutatePriorityRequest(value)
+  }
+  set submissionTabNumber (value) {
+    newReqModule.mutateSubmissionTabNumber(value)
+  }
 
+  async submit () {
+    if (this.editMode) {
+      newReqModule.patchNameRequests()
+      return
+    } else {
+      const { nrNum } = this
+      if (!nrNum) {
+        await newReqModule.postNameRequests('draft')
+      } else {
+        await newReqModule.putNameReservation(nrNum)
+      }
+
+      await paymentModule.togglePaymentModal(true)
+    }
+  }
   clearValidation () {
     if (this.$refs.step2 as Vue) {
       (this.$refs.step2 as any).resetValidation()
@@ -177,16 +202,6 @@ export default class ApplicantInfo2 extends Vue {
   }
   showPreviousTab () {
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
-  }
-  async submit () {
-    const { nrNum } = this
-    if (!nrNum) {
-      await newReqModule.postNameRequests('draft')
-    } else {
-      await newReqModule.putNameReservation(nrNum)
-    }
-
-    await paymentModule.togglePaymentModal(true)
   }
   validate () {
     if (this.$refs.step2 as Vue) {

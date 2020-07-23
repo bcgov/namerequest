@@ -1,13 +1,9 @@
 <template>
   <MainContainer>
     <template v-slot:container-header>
-      <v-col cols="auto" class="h4" v-if="submissionTabNumber === 1">
-        Submit Name Request for Examination
+      <v-col cols="auto" class="h4 mb-n9">
+       {{ editModeHeader }}
       </v-col>
-      <v-col cols="auto" class="h4" v-else-if="submissionTabNumber > 1">
-        Submission Details
-      </v-col>
-      <v-col cols="auto" v-else />
     </template>
     <template v-slot:content>
       <v-tabs v-model="submissionTabNumber" id="applicant-info-slider">
@@ -34,38 +30,45 @@
 </template>
 
 <script lang="ts">
-import MainContainer from '../main-container.vue'
-import ApplicantInfo1 from '../../common/applicant-info-1.vue'
-import ApplicantInfo2 from '../../common/applicant-info-2.vue'
-import ApplicantInfo3 from '../../common/applicant-info-3.vue'
-import EntityCannotBeAutoAnalyzed from './entity-cannot-be-auto-analyzed.vue'
-import NamesCapture from '../../common/names-capture.vue'
+import ApplicantInfo1 from '@/components/common/applicant-info-1.vue'
+import ApplicantInfo2 from '@/components/common/applicant-info-2.vue'
+import ApplicantInfo3 from '@/components/common/applicant-info-3.vue'
+import MainContainer from '@/components/new-request/main-container.vue'
+import NamesCapture from '@/components/common/names-capture.vue'
 import newReqModule from '@/store/new-request-module'
+import Success from '@/components/common/success.vue'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
   components: {
-    EntityCannotBeAutoAnalyzed,
-    ApplicantInfo3,
-    NamesCapture,
     ApplicantInfo1,
     ApplicantInfo2,
-    MainContainer
+    ApplicantInfo3,
+    MainContainer,
+    NamesCapture,
+    Success
   }
 })
-export default class SubmissionTabs extends Vue {
-  mounted () {
-    let link = document.createElement('link')
-    link.setAttribute('href', 'https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic.min.css')
-    link.setAttribute('rel', 'stylesheet')
-    document.head.appendChild(link)
-  }
+export default class ExistingRequestEdit extends Vue {
   get actingOnOwnBehalf () {
     return newReqModule.actingOnOwnBehalf
   }
+  get editMode () {
+    return newReqModule.editMode
+  }
+  get editModeHeader () {
+    if (this.editMode) {
+      if (this.submissionTabNumber === 1) {
+        return 'Request Type'
+      } else {
+        return 'Application Details'
+      }
+    }
+    return ''
+  }
   get submissionTabNumber () {
     return newReqModule.submissionTabNumber
-  }2
+  }
   set submissionTabNumber (value) {
     newReqModule.mutateSubmissionTabNumber(value)
   }
