@@ -28,9 +28,11 @@ import Stats from '@/components/new-request/stats.vue'
 import SubmissionTabs from '@/components/new-request/submit-request/submission-tabs.vue'
 import Tabs from '@/components/tabs.vue'
 import { Component, Vue } from 'vue-property-decorator'
+import ExistingRequestEdit from '@/components/existing-request/existing-request-edit.vue'
 
 @Component({
   components: {
+    ExistingRequestEdit,
     AnalyzeCharacters,
     AnalyzePending,
     AnalyzeResults,

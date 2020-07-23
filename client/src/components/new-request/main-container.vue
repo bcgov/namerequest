@@ -8,7 +8,7 @@
                 @click="cancelAnalyzeName">
           <span class="normal-link-sans-ul">
             <v-icon class="ma-0 pa-0 mr-n1 mini-back-arrow">arrow_back_ios</v-icon>
-            Start Search Over
+            {{ editMode ? 'Return' : 'Start Search Over' }}
           </span>
         </button>
       </v-col>
@@ -23,7 +23,14 @@ import { Component, Vue } from 'vue-property-decorator'
 
 @Component({})
 export default class MainContainer extends Vue {
+  get editMode () {
+    return newReqModule.editMode
+  }
   cancelAnalyzeName () {
+    if (this.editMode) {
+      newReqModule.cancelEditExistingRequest()
+      return
+    }
     newReqModule.cancelAnalyzeName()
   }
 }

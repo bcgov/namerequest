@@ -32,7 +32,7 @@ export default class ReserveSubmitButton extends Vue {
   showNextStep () {
     newReqModule.mutateDisplayedComponent('SubmissionTabs')
     if (this.setup === 'examine' || this.location !== 'BC') {
-      newReqModule.mutateSubmissionTabComponent('SendForExamination')
+      newReqModule.mutateSubmissionTabComponent('NamesCapture')
       newReqModule.mutateSubmissionType('examination')
       return
     }

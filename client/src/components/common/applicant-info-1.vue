@@ -263,15 +263,15 @@
                      class="mr-3"
                      id="submit-back-btn"
                      v-if="submissionType === 'examination'"
-                     x-large>Back</v-btn>
+                     x-large>{{ editMode ? 'Previous' : 'Back' }}</v-btn>
               <v-btn @click="showNextTab()"
                      id="submit-continue-btn"
                      v-if="step1Valid"
-                     x-large>Continue</v-btn>
+                     x-large>{{ editMode ? 'Next' : 'Continue' }}</v-btn>
               <v-btn @click="validate()"
                      id="submit-continue-btn-disabled"
                      v-else
-                     x-large>Continue</v-btn>
+                     x-large>{{ editMode ? 'Next' : 'Continue' }}</v-btn>
             </v-col>
           </v-row>
         </v-col>
@@ -324,20 +324,17 @@ export default class ApplicantInfo1 extends Vue {
   get actingOnOwnBehalf () {
     return newReqModule.actingOnOwnBehalf
   }
-  set actingOnOwnBehalf (value) {
-    newReqModule.mutateActingOnOwnBehalf(value)
-  }
   get addressSuggestions () {
     return newReqModule.addressSuggestions
   }
   get applicant () {
     return newReqModule.applicant
   }
-  get nrData () {
-    return newReqModule.nrData
-  }
   get countryOptions () {
     return jurisdictionsIN
+  }
+  get editMode () {
+    return newReqModule.editMode
   }
   get jurisdictionOptions () {
     if (this.location === 'IN') {
@@ -348,21 +345,31 @@ export default class ApplicantInfo1 extends Vue {
   get location () {
     return newReqModule.location
   }
+  get nrData () {
+    return newReqModule.nrData
+  }
   get provinceStateOptions () {
     if (this.location === 'IN') {
       return null
     }
     return jurisdictionsCA
   }
+  get state () {
+    if (newReqModule.requestData && newReqModule.requestData.state) {
+      return newReqModule.requestData.state
+    }
+    return null
+  }
   get submissionType () {
     return newReqModule.submissionType
   }
+  set actingOnOwnBehalf (value) {
+    newReqModule.mutateActingOnOwnBehalf(value)
+  }
+
   blurAddress1 () {
     this.messages = {}
     document.removeEventListener('keydown', this.handleKeydown)
-  }
-  focusAddress1 () {
-    document.addEventListener('keydown', this.handleKeydown)
   }
   clearValidation () {
     if (this.$refs.step1 as any) {
@@ -374,6 +381,9 @@ export default class ApplicantInfo1 extends Vue {
       debounced = (_ as any).debounce(this.getAddressSuggestions, 400)
     }
     debounced(key, value)
+  }
+  focusAddress1 () {
+    document.addEventListener('keydown', this.handleKeydown)
   }
   getAddressSuggestions (key, value) {
     newReqModule.getAddressSuggestions({ key, value })
@@ -435,7 +445,7 @@ export default class ApplicantInfo1 extends Vue {
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo2')
   }
   showPreviousTab () {
-    newReqModule.mutateSubmissionTabComponent('SendForExamination')
+    newReqModule.mutateSubmissionTabComponent('NamesCapture')
   }
   updateApplicant (key, value) {
     this.clearValidation()
