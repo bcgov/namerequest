@@ -446,8 +446,8 @@ export default class NamesCapture extends Vue {
       newReqModule.mutatePickRequestTypeModalVisible(true)
     }
   }
-  get requestData () {
-    return newReqModule.requestData
+  get nr () {
+    return newReqModule.nr
   }
   get requestTypeOptions () {
     return newReqModule.requestTypeOptions
@@ -491,11 +491,11 @@ export default class NamesCapture extends Vue {
     }
   }
   populateNames () {
-    let { requestData, nameChoices, items } = this
-    if (requestData && requestData.names && Array.isArray(requestData.names)) {
+    let { nr, nameChoices, items } = this
+    if (nr && nr.names && Array.isArray(nr.names)) {
       for (let choice of [1, 2, 3]) {
-        if (requestData.names.find(name => name.choice === choice)) {
-          let { name } = requestData.names.find(name => name.choice === choice)
+        if (nr.names.find(name => name.choice === choice)) {
+          let { name } = nr.names.find(name => name.choice === choice)
           if (this.designationAtEnd) {
             for (let item of items) {
               if ([' LTD', ' INC', ' CORP'].some(des => name.endsWith(des))) {

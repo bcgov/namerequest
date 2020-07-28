@@ -88,15 +88,15 @@ export default class ReceiptModal extends Vue {
     await this.fetchReceiptPdf(sessionPaymentId, paymentInvoiceId, data)
   }
 
-  get nrResponseObject () {
+  get nr () {
     const nameRequest: NewRequestModule = newRequestModule
-    const nrResponseObject: Partial<any> = nameRequest.nrResponseObject || {}
-    return nrResponseObject
+    const nr: Partial<any> = nameRequest.nr || {}
+    return nr
   }
 
   get nrNum () {
-    const { nrResponseObject } = this
-    const { nrNum } = nrResponseObject
+    const { nr } = this
+    const { nrNum } = nr
     return nrNum || undefined
   }
 

@@ -1,6 +1,6 @@
 export type LocationT = 'BC' | 'CA' | 'FD' | 'IN' | 'INFO'
 export type NameReqT = DraftReqI | ConditionalReqI | ReservedReqI
-export type NrDataResponseT = RequestDataI | null
+export type NrDataResponseT = NameRequestI | null
 export type NrDataT = string | null
 export type SubmissionTypeT = 'examination' | 'consent' | 'normal'
 
@@ -131,7 +131,7 @@ export interface QuillOpsI {
   insert: string
   attributes?: QuillAttributesI
 }
-export interface RequestDataI {
+export interface NameRequestI {
   [propname: string]: any
 }
 export interface RequestNameI {

@@ -355,8 +355,8 @@ export default class ApplicantInfo1 extends Vue {
     return jurisdictionsCA
   }
   get state () {
-    if (newReqModule.requestData && newReqModule.requestData.state) {
-      return newReqModule.requestData.state
+    if (newReqModule.nr && newReqModule.nr.state) {
+      return newReqModule.nr.state
     }
     return null
   }
