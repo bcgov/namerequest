@@ -64,7 +64,7 @@
 import ForgotNrModal from '@/components/modals/forgot-nr.vue'
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { RequestDataI, SearchDataI, NrDataResponseT, NrDataT } from '@/models'
+import { NameRequestI, SearchDataI, NrDataResponseT, NrDataT } from '@/models'
 
 @Component({
   components: { ForgotNrModal }
@@ -77,17 +77,17 @@ export default class ExistingRequstSearch extends Vue {
   isValid: boolean = false
 
   mounted () {
-    if (this.requestData && this.requestData.failed) {
-      this.errorMessage = this.requestData.text
-      newReqModule.mutateRequestData({})
+    if (this.nr && this.nr.failed) {
+      this.errorMessage = this.nr.text
+      newReqModule.mutateNameRequest({})
       return
     }
   }
   get validatePhoneOnBlur () {
-    return /^[\d ()-]+$/.test(this.requestData.phoneNumber)
+    return /^[\d ()-]+$/.test(this.nr.phoneNumber)
   }
-  get requestData () {
-    return newReqModule.requestData
+  get nr () {
+    return newReqModule.nr
   }
   get existingRequestSearch () {
     return newReqModule.existingRequestSearch

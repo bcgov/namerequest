@@ -135,15 +135,15 @@ export default class PaymentModal extends Vue {
     const corpType = 'NRO' // We may need to handle more than one type at some point?
     const methodOfPayment = 'CC' // We may need to handle more than one type at some point?
 
-    const { applicant, name, filingType, priorityRequest, nrData, nrResponseObject } = this
+    const { applicant, name, filingType, priorityRequest, nrData, nr } = this
 
     const { addrLine1, addrLine2, city, stateProvinceCd, countryTypeCd, postalCd } = applicant
     const { corpNum } = nrData
-    const { nrNum } = nrResponseObject
+    const { nrNum } = nr
 
     if (!nrNum) {
       // eslint-disable-next-line no-console
-      console.warn('NR number is not present in nrResponseObject, cannot continue!')
+      console.warn('NR number is not present in NR, cannot continue!')
       return
     }
 
@@ -292,10 +292,10 @@ export default class PaymentModal extends Vue {
     return nrData
   }
 
-  get nrResponseObject () {
+  get nr () {
     const nameRequest: NewRequestModule = newRequestModule
-    const nrResponseObject: Partial<any> = nameRequest.nrResponseObject || {}
-    return nrResponseObject
+    const nr: Partial<any> = nameRequest.nr || {}
+    return nr
   }
 
   get priorityRequest () {
