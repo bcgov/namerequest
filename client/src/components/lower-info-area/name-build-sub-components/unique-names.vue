@@ -11,13 +11,13 @@
       <h5>Similar name examples</h5>
     </v-row>
     <v-row class="ml-1">
-        <p><v-icon color="red" left>close</v-icon>
+        <p><v-icon color="red" left>cancel</v-icon>
           <strong>Sarah's Contracting Ltd.</strong> is too similar to
           <strong>Sarah's Renovation Ltd.</strong>
         </p>
     </v-row>
     <v-row class="ml-1">
-        <p><v-icon color="red" left>close</v-icon>
+        <p><v-icon color="red" left>cancel</v-icon>
           <strong>Westcoast Hair Salon Inc.</strong> is too similar to
           <strong>Westcoast Barbers Inc.</strong>
         </p>
