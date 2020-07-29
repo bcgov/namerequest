@@ -41,11 +41,12 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 // Components
-import { ConsentWords, ExampleName, UnavailableWords, UniqueNames, UnknownWords }
+import { BusinessDesignation, ConsentWords, ExampleName, UnavailableWords, UniqueNames, UnknownWords }
   from '@/components/lower-info-area/name-build-sub-components'
 
 @Component({
   components: {
+    BusinessDesignation,
     ConsentWords,
     ExampleName,
     UnavailableWords,
@@ -78,7 +79,7 @@ export default class NameBuildInfo extends Vue {
     },
     {
       title: 'Check for appropriate designation',
-      component: ''
+      component: BusinessDesignation
     }
   ]
 
@@ -98,9 +99,10 @@ export default class NameBuildInfo extends Vue {
 <style lang="sass" scoped>
 #name-build-info
   max-width: none
+  min-height: 36rem
 
   .divider
-    max-height: 26rem
+    max-height: 24rem
 
   .name-build-list
     background-color: #F1F3F5
