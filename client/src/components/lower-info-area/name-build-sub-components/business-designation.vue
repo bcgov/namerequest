@@ -12,8 +12,6 @@
                     :ripple="false"
                     @mouseover="itemIndex = i"
             >
-<!--              <v-icon v-if="isActiveTab(i)" color="primary" left>check_circle</v-icon>-->
-<!--              <v-icon v-else color="primary" left>check</v-icon>-->
               <v-list-item-content class="py-2">
                 <v-list-item-title
                         class="business-designation-list-item-title py-0"
@@ -48,11 +46,12 @@ export default class BusinessDesignation extends Vue {
     },
     {
       title: 'Extra provincial Companies',
-      content: `Extraprovincial companies may have "Limited Liability Company" or "LLC" as the last word in their name.`
+      content: `Extra provincial companies may have "Limited Liability Company" or "LLC" as the last word in their
+      name.`
     },
     {
       title: 'Partnerships and Sole Proprietorship',
-      content: `Business names for partnerships and proprietorships cannot use "Ltd.", "Inc." or "Corp." at the end of
+      content: `Business names for partnerships and proprietorship cannot use "Ltd.", "Inc." or "Corp." at the end of
       their names, but they may use "Company" or "Co.".`
     },
     {

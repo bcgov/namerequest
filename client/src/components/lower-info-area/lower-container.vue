@@ -4,7 +4,7 @@
     <!--- Build a Name Info Container -->
     <name-build-info />
 
-    <v-row no-gutters class="bg-grey-1 pa-9">
+    <v-row no-gutters class="bg-grey-1 pa-9 words-section">
       <v-col cols="6" class="pr-9 pl-3">
         <v-card class="ma-9 py-6 px-9">
           <v-card-title class="h3">Top 10 Words Approved This Week</v-card-title>
@@ -154,10 +154,7 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component({
   components: { Footer, NameBuildInfo }
 })
-export default class LowerContainer extends Vue {
-  nameGeneratorWord1: string = 'Lorem'
-  nameGeneratorWord2: string = 'Ipsum'
-}
+export default class LowerContainer extends Vue {}
 
 </script>
 
@@ -171,6 +168,9 @@ li
   font-size: 16px
   color: $text
   background-color: #F1F3F5
+
+  .words-section
+    background-color: white
 
 .info-underline
   border-bottom: 1px solid lightgray
