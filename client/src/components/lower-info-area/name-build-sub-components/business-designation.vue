@@ -115,4 +115,6 @@ export default class BusinessDesignation extends Vue {
 
       .business-designation-list-item-title-active
         font-weight: bolder
+        text-decoration: none
+
 </style>
