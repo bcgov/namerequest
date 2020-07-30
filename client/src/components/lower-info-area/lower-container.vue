@@ -116,7 +116,8 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-row no-gutters class="px-9">
+
+    <v-row no-gutters class="px-9 contact-section">
       <v-col cols="6" class="pr-9 pl-3 mt-3">
         <v-container class="pa-9">
           <v-row>
@@ -169,7 +170,7 @@ li
   color: $text
   background-color: #F1F3F5
 
-  .words-section
+  .words-section, .contact-section
     background-color: white
 
 .info-underline
