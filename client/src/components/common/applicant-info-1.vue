@@ -26,7 +26,7 @@
               <v-text-field :messages="messages['firstName']"
                             :rules="requiredRules"
                             :value="applicant.firstName"
-                            @blur="messages = {}"
+                            @blur="message21s = {}"
                             @focus="handleFocus('firstName', 'First Name')"
                             @input="updateApplicant('firstName', $event)"
                             dense
@@ -236,7 +236,7 @@
                             :value="applicant.postalCd" />
             </v-col>
           </v-row>
-          <v-row class="mt-2" v-if="location !== 'BC'">
+          <v-row class="mt-2" v-if="location !== 'BC' && showAllFields">
             <v-col cols="6" class="py-0 my-0">
               <v-select :messages="messages['xproJurisdiction']"
                         :rules="requiredRules"
@@ -250,7 +250,7 @@
                         hide-details="auto"
                         placeholder="Business xproJurisdiction"
                         @input="updateBusinessInfo('xproJurisdiction', $event)"
-                        :value="applicant.xproJurisdiction" />
+                        :value="nrData.xproJurisdiction" />
             </v-col>
             <v-col cols="6" class="py-0 my-0" />
           </v-row>
@@ -262,16 +262,16 @@
               <v-btn @click="showPreviousTab()"
                      class="mr-3"
                      id="submit-back-btn"
-                     v-if="submissionType === 'examination'"
-                     x-large>Back</v-btn>
+                     v-if="submissionType === 'examination' || nrState === 'DRAFT' "
+                     x-large>{{ editMode ? 'Previous' : 'Back' }}</v-btn>
               <v-btn @click="showNextTab()"
                      id="submit-continue-btn"
                      v-if="step1Valid"
-                     x-large>Continue</v-btn>
+                     x-large>{{ editMode ? 'Next' : 'Continue' }}</v-btn>
               <v-btn @click="validate()"
                      id="submit-continue-btn-disabled"
                      v-else
-                     x-large>Continue</v-btn>
+                     x-large>{{ editMode ? 'Next' : 'Continue' }}</v-btn>
             </v-col>
           </v-row>
         </v-col>
@@ -281,33 +281,33 @@
 </template>
 
 <script lang="ts">
+import _ from 'lodash'
 import jurisdictionsCA from '@/store/list-data/canada-jurisdictions'
 import jurisdictionsIN from '@/store/list-data/intl-jurisdictions'
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import _ from 'lodash'
 
 let debounced: any = null
 
 @Component({})
 export default class ApplicantInfo1 extends Vue {
-  show = true
-  messages = {}
+  highlightedSuggestion: string | null = null
   listener: any = null
+  messages = {}
   requiredRules = [
     v => !!v || 'Required field'
   ]
-  step1Valid: boolean = false
-  highlightedSuggestion: string | null = null
+  show = true
   showAddressMenu: boolean = false
+  step1Valid: boolean = false
 
+  beforeDestoy () {
+    document.removeEventListener('keydown', this.handleKeydown)
+  }
   mounted () {
     this.updateApplicant('stateProvinceCd', 'BC')
     this.updateApplicant('countryTypeCd', 'CA')
     debounced = null
-  }
-  beforeDestoy () {
-    document.removeEventListener('keydown', this.handleKeydown)
   }
 
   @Watch('showAddressMenu')
@@ -324,29 +324,32 @@ export default class ApplicantInfo1 extends Vue {
   get actingOnOwnBehalf () {
     return newReqModule.actingOnOwnBehalf
   }
-  set actingOnOwnBehalf (value) {
-    newReqModule.mutateActingOnOwnBehalf(value)
-  }
   get addressSuggestions () {
     return newReqModule.addressSuggestions
   }
   get applicant () {
     return newReqModule.applicant
   }
-  get nrData () {
-    return newReqModule.nrData
-  }
   get countryOptions () {
     return jurisdictionsIN
   }
+  get editMode () {
+    return newReqModule.editMode
+  }
   get jurisdictionOptions () {
     if (this.location === 'IN') {
-      return jurisdictionsIN
+      return jurisdictionsIN.map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
     }
-    return jurisdictionsCA
+    return jurisdictionsCA.map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
   }
   get location () {
     return newReqModule.location
+  }
+  get nrData () {
+    return newReqModule.nrData
+  }
+  get nrState () {
+    return newReqModule.nrState
   }
   get provinceStateOptions () {
     if (this.location === 'IN') {
@@ -354,15 +357,25 @@ export default class ApplicantInfo1 extends Vue {
     }
     return jurisdictionsCA
   }
+  get showAllFields () {
+    return (!this.editMode || this.nrState === 'DRAFT')
+  }
+  get state () {
+    if (newReqModule.nr && newReqModule.nr.state) {
+      return newReqModule.nr.state
+    }
+    return null
+  }
   get submissionType () {
     return newReqModule.submissionType
   }
+  set actingOnOwnBehalf (value) {
+    newReqModule.mutateActingOnOwnBehalf(value)
+  }
+
   blurAddress1 () {
     this.messages = {}
     document.removeEventListener('keydown', this.handleKeydown)
-  }
-  focusAddress1 () {
-    document.addEventListener('keydown', this.handleKeydown)
   }
   clearValidation () {
     if (this.$refs.step1 as any) {
@@ -374,6 +387,9 @@ export default class ApplicantInfo1 extends Vue {
       debounced = (_ as any).debounce(this.getAddressSuggestions, 400)
     }
     debounced(key, value)
+  }
+  focusAddress1 () {
+    document.addEventListener('keydown', this.handleKeydown)
   }
   getAddressSuggestions (key, value) {
     newReqModule.getAddressSuggestions({ key, value })
@@ -435,7 +451,7 @@ export default class ApplicantInfo1 extends Vue {
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo2')
   }
   showPreviousTab () {
-    newReqModule.mutateSubmissionTabComponent('SendForExamination')
+    newReqModule.mutateSubmissionTabComponent('NamesCapture')
   }
   updateApplicant (key, value) {
     this.clearValidation()

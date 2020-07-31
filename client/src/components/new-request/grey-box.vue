@@ -78,17 +78,10 @@
           <v-col :id="option.type + '-button-checkbox-col'"
                  class="pa-0 grey-box-checkbox-button text-center">
             <transition name="fade" mode="out-in" >
-              <v-checkbox :key="option.type+'-checkbox'"
-                          :label="checkBoxLabel"
-                          class="ma-0 pa-0"
-                          id="assumed-name-checkbox"
-                          v-if="!assumedName"
-                          v-model="assumedName" />
               <ReserveSubmit :key="option.type+'-reserve-submit'"
-                             :setup="reserveSubmitConfig"
+                             setup="assumed"
                              id="reserve-submit-button"
-                             style="display: inline"
-                             v-if="assumedName" />
+                             style="display: inline" />
             </transition>
           </v-col>
         </template>
@@ -390,6 +383,9 @@ export default class GreyBox extends Vue {
   }
   get issue () {
     return newReqModule.analysisJSON.issues[this.issueIndex]
+  }
+  get isAssumedName () {
+    return this.issue.setup.some(box => box.type === 'assumed_name')
   }
   get isLastIndex () {
     return (this.issueIndex === this.issueLength - 1)

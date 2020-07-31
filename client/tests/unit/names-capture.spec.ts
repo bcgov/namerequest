@@ -1,4 +1,4 @@
-import SendForExamination from '@/components/new-request/submit-request/send-for-examination.vue'
+import NamesCapture from '@/components/common/names-capture.vue'
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import store from '@/store/new-request-module'
 import Vuetify from 'vuetify'
@@ -14,7 +14,7 @@ describe('send-for-examination.vue', () => {
 
     beforeAll(async (done) => {
       store.mutateName('Test Name')
-      wrapper = mount(SendForExamination, {
+      wrapper = mount(NamesCapture, {
         localVue,
         vuetify
       })
