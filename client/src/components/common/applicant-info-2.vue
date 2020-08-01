@@ -93,11 +93,10 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12" class="text-right">
+        <v-col cols="12" class="text-right" :class="showAllFields ? 'mt-3' : ''">
           <v-btn x-large
                  id="submit-back-btn"
                  class="mr-3"
-                 v-if="showAllFields"
                  @click="showPreviousTab()">{{ editMode ? 'Previous' : 'Back' }}</v-btn>
           <v-btn x-large
                  v-if="!isValid"

@@ -137,7 +137,6 @@
           <v-btn x-large
                  id="submit-back-btn"
                  class="mr-3"
-                 v-if="showAllFields"
                  @click="showPreviousTab()">{{ editMode ? 'Previous' : 'Back' }}</v-btn>
           <v-btn x-large
                  v-if="!isValid"
