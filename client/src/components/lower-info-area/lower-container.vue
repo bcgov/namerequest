@@ -1,6 +1,10 @@
 <template>
   <v-container fluid id="lower-container">
-    <v-row no-gutters class="bg-grey-1 pa-9">
+
+    <!--- Build a Name Info Container -->
+    <name-build-info />
+
+    <v-row no-gutters class="bg-grey-1 pa-9 words-section">
       <v-col cols="6" class="pr-9 pl-3">
         <v-card class="ma-9 py-6 px-9">
           <v-card-title class="h3">Top 10 Words Approved This Week</v-card-title>
@@ -42,22 +46,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-row no-gutters class="px-9 py-3">
-      <v-col cols="6" class="pr-9">
-        <v-card flat class="ma-9">
-          <v-card-title class="h3">How to Build Your Name</v-card-title>
-          <v-card-text class="normal-text">
-            Content to come from Lorna will go here. Your name must contain 3 important components. First, it must have
-            a Distinctive element  lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua.
-            <p class="mt-4">See the examples here to learn more about creating a unique name for your new business.</p>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="6" class="pl-9">
-        <ExampleNameGenerator />
-      </v-col>
-    </v-row>
+
     <v-row no-gutters class="bg-grey-1 px-9 py-6" justify="center">
       <v-col cols="auto" class="h3 mt-9 mb-6">Helpful Tips</v-col>
       <v-col cols="12">
@@ -127,7 +116,8 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-row no-gutters class="px-9">
+
+    <v-row no-gutters class="px-9 contact-section">
       <v-col cols="6" class="pr-9 pl-3 mt-3">
         <v-container class="pa-9">
           <v-row>
@@ -158,17 +148,14 @@
 </template>
 
 <script lang="ts">
-import ExampleNameGenerator from './example-name-generator.vue'
 import Footer from '@/components/lower-info-area/footer.vue'
+import NameBuildInfo from '@/components/lower-info-area/name-build-info.vue'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
-  components: { ExampleNameGenerator, Footer }
+  components: { Footer, NameBuildInfo }
 })
-export default class LowerContainer extends Vue {
-  nameGeneratorWord1: string = 'Lorem'
-  nameGeneratorWord2: string = 'Ipsum'
-}
+export default class LowerContainer extends Vue {}
 
 </script>
 
@@ -181,7 +168,10 @@ li
   margin: 0
   font-size: 16px
   color: $text
-  background-color: white
+  background-color: #F1F3F5
+
+  .words-section, .contact-section
+    background-color: white
 
 .info-underline
   border-bottom: 1px solid lightgray
