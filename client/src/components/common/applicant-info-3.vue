@@ -109,7 +109,7 @@
                       rows="3" />
         </v-col>
       </v-row>
-      <v-row v-if="showAllFields">
+      <v-row>
         <v-col cols="2" />
         <v-col cols="5">
           <v-text-field :messages="messages['tradeMark']"

@@ -8,6 +8,7 @@
               @change="activateHMCModal()">Help Me Choose</button>
       </v-col>
       <v-col cols="5">
+        <!--requestAction-->
         <v-select :error-messages="errors.includes('requestAction') ? 'Please select a type' : ''"
                   :hide-details="!errors.includes('requestAction')"
                   :items="requestTypeOptions"
@@ -17,6 +18,7 @@
                   v-model="requestAction" />
       </v-col>
       <v-col cols="2">
+        <!--location-->
         <v-select :error-messages="errors.includes('location') ? 'Please select a location' : ''"
                   :hide-details="!errors.includes('location')"
                   :items="locationOptions"
@@ -25,11 +27,13 @@
                   v-model="location" />
       </v-col>
       <v-col cols="5">
+        <!--entityConversionType-->
         <v-select :error-messages="errors.includes('entityType') ? 'Please select a type' : ''"
                   :hide-details="!errors.includes('entityType')"
-                  :items="entityTypeOptions"
+                  :items="entityConversionTypeOptions"
                   @change="clearErrors()"
                   filled
+                  :placeholder="isConversion ? 'Please choose a conversion type' : ''"
                   id="entity-type-options-select"
                   v-model="entityType" />
       </v-col>
@@ -104,6 +108,12 @@ export default class Search extends Vue {
   toolTipX: number = 0
   toolTipY: number = 0
 
+  @Watch('requestAction')
+  handleRequestAction (newVal) {
+    if (newVal === 'CNV') {
+      this.location = 'BC'
+    }
+  }
   @Watch('location')
   handleLocation (newVal, oldVal) {
     if (newVal === 'INFO') {
@@ -120,15 +130,35 @@ export default class Search extends Vue {
     return newReqModule.displayedComponent
   }
   get entityType () {
+    if (this.isConversion) {
+      return newReqModule.conversionType
+    }
     return newReqModule.entityType
   }
   set entityType (type: string) {
-    newReqModule.mutateEntityType(type)
     if (type === 'INFO') {
       newReqModule.mutatePickEntityModalVisible(true)
     }
+    if (this.isConversion) {
+      if (type !== 'INFO') {
+        let { entityType } = newReqModule.conversionTypes.find(conv => conv.value === type)
+        newReqModule.mutateEntityType(entityType)
+      }
+      newReqModule.mutateConversionType(type)
+      return
+    }
+    newReqModule.mutateEntityType(type)
+  }
+  get isConversion () {
+    return newReqModule.requestAction === 'CNV'
   }
   get entityTypeOptions () {
+    return newReqModule.entityTypeOptions
+  }
+  get entityConversionTypeOptions () {
+    if (this.isConversion) {
+      return newReqModule.conversionTypeOptions
+    }
     return newReqModule.entityTypeOptions
   }
   get errors () {
@@ -148,6 +178,9 @@ export default class Search extends Vue {
     newReqModule.mutateLocation(location)
   }
   get locationOptions () {
+    if (this.isConversion) {
+      return newReqModule.locationOptions.filter(location => location.value === 'BC' || location.value === 'INFO')
+    }
     return newReqModule.locationOptions
   }
   get isPersonsName () {

@@ -103,7 +103,7 @@ export default class ExistingRequstSearch extends Vue {
     this.$nextTick(function () {
       if (this.existingRequestSearch.nrNum) {
         let number = this.existingRequestSearch.nrNum.replace(
-          /(?:\s+|\s|)(\D|\D+|)(?:\s+|\s|)(\d+)(?:\s+|\s|)/, 'NR ' + '$2'
+          /(?:\s+|\s|)(\D|\D+|)(?:\s+|\s|)(\d+)(?:\s+|\s|)/, 'NR' + '$2'
         )
         if (number) {
           this.setExistingRequestSearch('nrNum', number)

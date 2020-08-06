@@ -8,7 +8,7 @@
     <LocationInfoModal />
     <HelpMeChoose />
     <NrNotRequired />
-    <PickEntity />
+    <PickEntityOrConversion />
     <PickRequestType />
     <PaymentModal />
     <ReceiptModal />
@@ -19,7 +19,7 @@
 import HelpMeChoose from '@/components/modals/help-me-choose.vue'
 import LocationInfoModal from '@/components/modals/location-info.vue'
 import NrNotRequired from '@/components/modals/nr-not-required.vue'
-import PickEntity from '@/components/modals/pick-entity.vue'
+import PickEntityOrConversion from '@/components/modals/pick-entity-or-conversion.vue'
 import PickRequestType from '@/components/modals/pick-request-type.vue'
 import PaymentModal from '@/components/modals/payment.vue'
 import ReceiptModal from '@/components/modals/receipt.vue'
@@ -34,7 +34,7 @@ import Header from '@/components/header.vue'
     LocationInfoModal,
     NrNotRequired,
     HelpMeChoose,
-    PickEntity,
+    PickEntityOrConversion,
     PickRequestType,
     PaymentModal,
     ReceiptModal

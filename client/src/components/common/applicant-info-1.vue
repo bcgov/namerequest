@@ -178,7 +178,7 @@
               />
             </v-col>
             <v-col cols="6" class="py-0 my-0">
-              <v-select :items="jurisdictionOptions"
+              <v-select :items="provinceOptions"
                         :rules="requiredRules"
                         :value="applicant.stateProvinceCd"
                         @input="updateApplicant('stateProvinceCd', $event)"
@@ -335,6 +335,9 @@ export default class ApplicantInfo1 extends Vue {
   }
   get editMode () {
     return newReqModule.editMode
+  }
+  get provinceOptions () {
+    return jurisdictionsCA.map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
   }
   get jurisdictionOptions () {
     if (this.location === 'IN') {

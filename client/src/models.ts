@@ -50,6 +50,16 @@ export interface ConsentConflictI {
   name: string
   [propName: string]: any
 }
+export interface ConversionTypesI {
+  blurb?: string
+  desc?: string
+  entityType?: string
+  rank?: number
+  short?: string
+  shortlist?: boolean
+  text: string
+  value: string
+}
 export interface DraftReqI {
   additionalInfo: string
   applicants: [ ApplicantI ]
