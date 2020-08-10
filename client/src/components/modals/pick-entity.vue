@@ -132,22 +132,19 @@ export default class PickEntity extends Vue {
     this.showModal = false
   }
 }
-
 </script>
-th
-  border-bottom: 1px solid grey
 
 <style lang="sass" scoped>
+th
+  border-bottom: 1px solid grey
 .no-bullet
   list-style-type: none
   margin-bottom: 8px
   line-height: 18px
-
 .yes-bullet
   list-style-position: inside
   margin-left: 30px
   line-height: 18px
-
 .clickable-cell:hover
   background-color: $grey-2
   cursor: pointer

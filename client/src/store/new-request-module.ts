@@ -947,7 +947,7 @@ export class NewRequestModule extends VuexModule {
   @Action
   async getNameRequests () {
     this.mutateDisplayedComponent('AnalyzePending')
-
+    this.mutateSubmissionType('normal')
     let params = {
       nrNum: this.existingRequestSearch.nrNum,
       phoneNumber: this.existingRequestSearch.phoneNumber,

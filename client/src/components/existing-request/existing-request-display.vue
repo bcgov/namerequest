@@ -40,8 +40,8 @@
                 <v-col cols="12">
                   <span class="bold-text">Submit Count: </span>{{ nr.submitCount }}
                 </v-col>
-                <v-col cols="12" v-if="nr.conditions">
-                  <span class="bold-text">Condition/Consent: </span>
+                <v-col cols="12" v-if="nr.consentFlag && nr.consentFlag !== 'N'">
+                  <span class="bold-text">Consent Rec'd: </span> {{ consentDate }}
                 </v-col>
                 <v-col cols="12">
                   <span class="bold-text">Submitting Party: </span> {{ nr.applicants.lastName }},
@@ -101,6 +101,19 @@ export default class ExistingRequestDisplay extends Vue {
   get cityProvPostal () {
     let { applicants } = this.nr
     return applicants.city + ', ' + applicants.stateProvinceCd + ', ' + applicants.postalCd
+  }
+  get condition () {
+    if (this.nr.names.some(name => name.state === 'CONDITION' && name.decision_text)) {
+      let found = this.nr.names.find(name => name.state === 'CONDITION' && name.decision_text)
+      return found.decision_text
+    }
+    return ''
+  }
+  get consentDate () {
+    if (this.nr.consent_dt) {
+      return Moment(this.nr.consent_dt).utc().format('MMM Do[,] YYYY')
+    }
+    return 'Not Yet Received'
   }
   get expiryDate () {
     if (this.nr.expirationDate) {
