@@ -8,7 +8,7 @@ import {
   AnalysisJSONI,
   ApplicantI,
   ConditionalReqI,
-  ConsentConflictI,
+  ConsentConflictI, ConversionTypesI,
   DraftReqI,
   EntityI,
   ExistingRequestSearchI,
@@ -97,12 +97,51 @@ export class NewRequestModule extends VuexModule {
   }
   conflictId: string | null = null
   changesInBaseName: boolean = false
+  conversionType: string = ''
+  conversionTypeAddToSelect: ConversionTypesI | null = null
+  conversionTypes: ConversionTypesI[] = [
+    {
+      desc: 'BC Corporation ⇨ Unlimited Liability Company',
+      text: 'BC Corp. ⇨ U.L.C.',
+      entityType: 'UL',
+      blurb: 'Convert from a <b>BC Corporation</b> to an <b>Unlimited Liability Company</b>',
+      value: 'UC',
+      rank: 1,
+      shortlist: true
+    },
+    {
+      desc: 'BC Corporation ⇨ Community Contribution Company',
+      text: 'BC Corp. ⇨ Comunity Contribution Co.',
+      entityType: 'CC',
+      blurb: 'blah',
+      value: 'CCV',
+      rank: 2,
+      shortlist: true
+    },
+    {
+      desc: 'BC Corporation ⇨ BC Benefit Company',
+      text: 'BC Corp. ⇨ Benefit Company',
+      entityType: 'BC',
+      blurb: 'blah',
+      value: 'BECV',
+      shortlist: false
+    },
+    {
+      desc: 'BC Benefit Company ⇨ BC Corporation',
+      text: 'Benefit Company ⇨ BC Corp.',
+      entityType: 'CR',
+      blurb: 'blah',
+      value: 'BECR',
+      shortlist: false
+    }
+  ]
   designationIsFixed: boolean = false
   disableSuggestions: boolean = false
   displayedComponent: string = 'Tabs'
   doNotAnalyzeEntities: string[] = ['PAR', 'CC', 'CP', 'PA', 'FI', 'XCP']
   editMode: boolean = false
   entityType: string = 'CR'
+  entityTypeAddToSelect: SelectOptionsI | null = null
   entityTypesBC: EntityI[] = [
     {
       text: 'Sole Proprietorship',
@@ -335,7 +374,6 @@ export class NewRequestModule extends VuexModule {
     nrNum: '',
     phoneNumber: ''
   }
-  extendedEntitySelection: SelectOptionsI | null = null
   extendedRequestType: SelectOptionsI | null = null
   getNameReservationFailed: boolean = false
   helpMeChooseModalVisible: boolean = false
@@ -497,17 +535,39 @@ export class NewRequestModule extends VuexModule {
     let type = list.find(t => t.value === this.entityType)
     return type.text
   }
+  get conversionTypeOptions () {
+    let options = [...this.conversionTypes].filter(type => type.shortlist)
+    let n = 3
+
+    if (this.conversionTypeAddToSelect) {
+      this.conversionTypeAddToSelect.rank = 4
+      options = options.concat(this.conversionTypeAddToSelect)
+      n = 4
+    }
+    options = options.concat({ text: 'View All Conversions', value: 'INFO', rank: n })
+    return options.sort((a, b) => {
+      if (a.rank < b.rank) {
+        return -1
+      }
+      if (a.rank > b.rank) {
+        return 1
+      }
+      return 0
+    })
+  }
   get entityTypeOptions () {
     let bcOptions: SelectOptionsI[] = this.entityTypesBC.filter(type => type.shortlist)
     let xproOptions: SelectOptionsI[] = this.entityTypesXPRO.filter(type => type.shortlist)
     let options: SelectOptionsI[] = this.location === 'BC' ? [...bcOptions] : [...xproOptions]
     let n = 4
-    if (this.extendedEntitySelection) {
-      this.extendedEntitySelection.rank = 4
-      options = options.concat(this.extendedEntitySelection)
+
+    if (this.entityTypeAddToSelect) {
+      this.entityTypeAddToSelect.rank = 4
+      options = options.concat(this.entityTypeAddToSelect)
       n = 5
     }
     options = options.concat({ text: 'View All Entity Types', value: 'INFO', rank: n })
+
     return options.sort((a, b) => {
       if (a.rank < b.rank) {
         return -1
@@ -734,7 +794,8 @@ export class NewRequestModule extends VuexModule {
       applicants: [this.applicant],
       names: this.nrRequestNames,
       requestAction: this.requestAction,
-      entity_type: this.entityType
+      entity_type: this.entityType,
+      ...this.nrData
     }
     for (let key in this.nrData) {
       if (this.nrData[key]) {
@@ -1023,14 +1084,14 @@ export class NewRequestModule extends VuexModule {
   async patchNameRequests () {
     try {
       let nr = this.editNameReservation
+      let { nrNum } = this.nr
+      nrNum = nrNum.replace(/(?:\s+|\s|)(\D|\D+|)(?:\s+|\s|)(\d+)(?:\s+|\s|)/, 'NR' + '$2')
 
-      let response = await axios.patch(`/namerequests/${this.nr.nrNum}`, nr, {
+      let response = await axios.patch(`/namerequests/${nrNum}/edit`, nr, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
-      // eslint-disable-next-line
-      console.log('called')
       this.mutateNameRequest(response.data)
       this.mutateDisplayedComponent('Success')
     } catch (error) {
@@ -1168,7 +1229,7 @@ export class NewRequestModule extends VuexModule {
       let obj = this.entityTypesBC.find(entity => entity.value === entity_type_cd)
         ? this.entityTypesBC.find(entity => entity.value === entity_type_cd)
         : this.entityTypesXPRO.find(entity => entity.value === entity_type_cd)
-      this.mutateExtendedEntitySelectOption(obj)
+      this.mutateEntityTypeAddToSelect(obj)
     }
     if (this.nr.xproJurisdiction) {
       let { xproJurisdiction } = this.nr
@@ -1243,7 +1304,7 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('SubmissionTabs')
       return
     } else {
-      if (['NEW', 'DBA', 'CHG', 'MVE', 'CNV', 'REH', 'REN', 'REST'].includes(this.requestAction)) {
+      if (['NEW', 'DBA', 'CHG', 'MVE', 'REH', 'REN', 'REST'].includes(this.requestAction)) {
         this.getNameAnalysisXPRO()
       }
     }
@@ -1352,8 +1413,8 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Mutation
-  mutateExtendedEntitySelectOption (option: SelectOptionsI) {
-    this.extendedEntitySelection = option
+  mutateEntityTypeAddToSelect (option: SelectOptionsI) {
+    this.entityTypeAddToSelect = option
   }
   @Mutation
   mutateExtendedRequestType (option: SelectOptionsI) {
@@ -1382,7 +1443,7 @@ export class NewRequestModule extends VuexModule {
         return
       }
     }
-    this.extendedEntitySelection = null
+    this.entityTypeAddToSelect = null
     if (location === 'BC') {
       this.entityType = 'CR'
     } else {
@@ -1577,6 +1638,14 @@ export class NewRequestModule extends VuexModule {
       kv.key,
       kv.value
     )
+  }
+  @Mutation
+  mutateConversionType (value) {
+    this.conversionType = value
+  }
+  @Mutation
+  mutateConversionTypeAddToSelect (value) {
+    this.conversionTypeAddToSelect = value
   }
 
   getEntities (category) {

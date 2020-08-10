@@ -1,4 +1,4 @@
-import Modal from '@/components/modals/pick-entity.vue'
+import Modal from '@/components/modals/pick-entity-or-conversion.vue'
 import newReqModule from '@/store/new-request-module'
 import { mount, createLocalVue } from '@vue/test-utils'
 import Vuetify from 'vuetify'
