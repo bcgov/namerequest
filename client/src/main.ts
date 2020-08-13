@@ -15,7 +15,7 @@ Vue.config.productionTip = true
 Vue.config.devtools = true
 
 async function startVue () {
-  await getConfig()
+  Vue.prototype.$PAYMENT_PORTAL_URL = await getConfig()
 
   new Vue({
     router,

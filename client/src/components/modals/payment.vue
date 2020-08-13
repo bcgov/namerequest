@@ -198,7 +198,7 @@ export default class PaymentModal extends Vue {
       `${document.baseURI}/?paymentSuccess=true&paymentId=${paymentId}`
     )
 
-    const paymentPortalUrl = `https://dev.bcregistry.ca/business/auth/makepayment/${paymentId}/${redirectUrl}`
+    const paymentPortalUrl = `${this.$PAYMENT_PORTAL_URL}/${paymentId}/${redirectUrl}`
     window.location.href = paymentPortalUrl
   }
 
