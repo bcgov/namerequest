@@ -33,14 +33,14 @@ describe('pick-request-type.vue', (): void => {
     expect(wrapper.find('#pick-request-type-modal-card').element).toBeTruthy()
     expect(wrapper.vm.showModal).toBe(true)
   })
-  it('clicking an entity sets the entityType and closes the modal', async () => {
+  it('clicking an entity sets the entity_type_cd and closes the modal', async () => {
     wrapper.vm.showModal = true
     await wrapper.vm.$nextTick()
     let convertType = wrapper.find('#CNV')
     convertType.trigger('click')
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.showModal).toBe(false)
-    expect(newReqModule.requestAction).toBe('CNV')
+    expect(newReqModule.request_action_cd).toBe('CNV')
     return
   })
 })

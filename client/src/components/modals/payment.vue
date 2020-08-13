@@ -280,10 +280,10 @@ export default class PaymentModal extends Vue {
     return parseNameChoices(nameRequestChoices)
   }
 
-  get entityType () {
+  get entity_type_cd () {
     const nameRequest: NewRequestModule = newRequestModule
-    const entityType: string = nameRequest.entityType
-    return entityType
+    const entity_type_cd: string = nameRequest.entity_type_cd
+    return entity_type_cd
   }
 
   get nrData () {

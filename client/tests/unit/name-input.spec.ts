@@ -39,8 +39,8 @@ describe('name-input.vue', () => {
     expect(newReqModule.displayedComponent).toBe('Tabs')
   })
   it('Resists submission when the request type is set to "all" and detects the correct error type', async () => {
-    newReqModule.store.state.newRequestModule.entityType = 'CR'
-    newReqModule.store.state.newRequestModule.requestAction = 'INFO'
+    newReqModule.store.state.newRequestModule.entity_type_cd = 'CR'
+    newReqModule.store.state.newRequestModule.request_action_cd = 'INFO'
     wrapper.vm.nameSearch = 'test'
     await wrapper.vm.$nextTick()
 
@@ -48,7 +48,7 @@ describe('name-input.vue', () => {
     button.trigger('click')
     await wrapper.vm.$nextTick()
     expect(newReqModule.displayedComponent).toBe('Tabs')
-    expect(wrapper.vm.errors).toStrictEqual(['requestAction'])
+    expect(wrapper.vm.errors).toStrictEqual(['request_action_cd'])
   })
   it('Resists submission when there is no name entered and detects the correct error type', async () => {
     newReqModule.mutateEntityType('CR')

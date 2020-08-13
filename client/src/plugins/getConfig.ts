@@ -14,7 +14,9 @@ export function getConfig (): Promise<void> {
       }
     })
     const baseURL = response.data[0]['URL'] + '/api/v1'
+    const paymentURL = response.data[0]['PAYMENT_URL']
     axios.defaults.baseURL = baseURL
+    sessionStorage.setItem('PAYMENT_API_URL', paymentURL)
     resolve()
   })
 }

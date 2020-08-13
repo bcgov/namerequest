@@ -43,11 +43,11 @@ describe('search.vue', () => {
   it(
     'Initially renders with the BC Corporation entity type pre-selected and the PickEntityOrConversion modal invisible',
     () => {
-      expect(wrapper.vm.entityType).toBe('CR')
+      expect(wrapper.vm.entity_type_cd).toBe('CR')
       expect(newReqModule.pickEntityModalVisible).toBe(false)
     })
   it('Sets PickEntityModal visibility state to true when View All Entity Types is selected', async () => {
-    wrapper.vm.entityType = 'INFO'
+    wrapper.vm.entity_type_cd = 'INFO'
     await wrapper.vm.$nextTick()
     expect(newReqModule.pickEntityModalVisible).toBe(true)
   })

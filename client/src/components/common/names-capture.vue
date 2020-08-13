@@ -12,13 +12,13 @@
         </v-row>
         <v-row>
           <v-col cols="5">
-            <v-select :error-messages="errors.includes('requestAction') ? 'Please select a type' : ''"
-                      :hide-details="!errors.includes('requestAction')"
+            <v-select :error-messages="errors.includes('request_action_cd') ? 'Please select a type' : ''"
+                      :hide-details="!errors.includes('request_action_cd')"
                       :items="requestTypeOptions"
                       @change="clearErrors()"
                       filled
                       id="search-type-options-select"
-                      v-model="requestAction" />
+                      v-model="request_action_cd" />
           </v-col>
           <v-col cols="2">
             <v-select :error-messages="errors.includes('location') ? 'Please select a location' : ''"
@@ -29,13 +29,13 @@
                       v-model="location" />
           </v-col>
           <v-col cols="5">
-            <v-select :error-messages="errors.includes('entityType') ? 'Please select a type' : ''"
-                      :hide-details="!errors.includes('entityType')"
+            <v-select :error-messages="errors.includes('entity_type_cd') ? 'Please select a type' : ''"
+                      :hide-details="!errors.includes('entity_type_cd')"
                       :items="entityTypeOptions"
                       @change="clearErrors()"
                       filled
                       id="entity-type-options-select"
-                      v-model="entityType" />
+                      v-model="entity_type_cd" />
           </v-col>
         </v-row>
       </template>
@@ -76,7 +76,7 @@
       </transition>
       <v-row class="grey-text">
         <v-col cols="10" v-if="entityPhraseRequired && !editMode" class="mt-n2">
-          A {{ entityType === 'CC' ? 'Community Contribution Company' : 'Cooperative'}} name must
+          A {{ entity_type_cd === 'CC' ? 'Community Contribution Company' : 'Cooperative'}} name must
           include (but not start with) one of the following phrases: <b>{{ entityPhraseText }}</b></v-col>
         <v-col cols="2" v-if="isAssumedName"></v-col>
         <v-col cols="10" class="my-1" v-if="!editMode" :class="isAssumedName ? 'bold-copy' : ''">
@@ -222,21 +222,21 @@ export default class NamesCapture extends Vue {
     this.$el.removeEventListener('keydown', this.handleKeydown)
   }
 
-  @Watch('entityType')
+  @Watch('entity_type_cd')
   handleEntityType (newVal, oldVal) {
     if (newVal === 'INFO') {
       newReqModule.mutatePickEntityModalVisible(true)
-      this.entityType = oldVal
+      this.entity_type_cd = oldVal
     }
   }
   @Watch('location')
   handleLocation (newVal, oldVal) {
     if (newVal === 'INFO') {
-      let type = this.entityType
+      let type = this.entity_type_cd
       newReqModule.mutateLocationInfoModalVisible(true)
       this.$nextTick(function () {
         this.location = oldVal
-        this.entityType = type
+        this.entity_type_cd = type
       })
     } else {
       this.$nextTick(function () {
@@ -289,7 +289,7 @@ export default class NamesCapture extends Vue {
   }
   get designationAtEnd () {
     if (this.location === 'BC') {
-      return designations[this.entityType].end
+      return designations[this.entity_type_cd].end
     }
     return false
   }
@@ -297,20 +297,20 @@ export default class NamesCapture extends Vue {
     return newReqModule.editMode
   }
   get entityPhraseChoices () {
-    let basePhrases = designations[this.entityType].words
+    let basePhrases = designations[this.entity_type_cd].words
     // these are the inner phrases for the CCC and CP types.  Filtering out CR designations from CPs has no effect
     // and CCC designations are a mix of CR-type ending designations and CCC specific inner phrases so filter out
     // the CR designations for the purposes of this getter
     return basePhrases.filter(phrase => !designations['CR'].words.includes(phrase))
   }
   get entityPhraseRequired () {
-    return ['CC', 'CP'].includes(this.entityType)
+    return ['CC', 'CP'].includes(this.entity_type_cd)
   }
   get entityPhraseText () {
     return this.entityPhraseChoices.join(', ')
   }
-  get entityType () {
-    return newReqModule.entityType
+  get entity_type_cd () {
+    return newReqModule.entity_type_cd
   }
   get entityTypeOptions () {
     return newReqModule.entityTypeOptions
@@ -437,8 +437,8 @@ export default class NamesCapture extends Vue {
     return (step1 && step2 && step3)
   }
   get items () {
-    let output: string[] = designations[this.entityType].words
-    if (this.entityType === 'CC') {
+    let output: string[] = designations[this.entity_type_cd].words
+    if (this.entity_type_cd === 'CC') {
       output = designations['CR'].words
     }
     output.unshift('')
@@ -467,19 +467,19 @@ export default class NamesCapture extends Vue {
   get nr () {
     return newReqModule.nr
   }
-  get requestAction () {
-    return newReqModule.requestAction
+  get request_action_cd () {
+    return newReqModule.request_action_cd
   }
   get requestTypeOptions () {
     return newReqModule.requestTypeOptions
   }
-  set entityType (type: string) {
+  set entity_type_cd (type: string) {
     newReqModule.mutateEntityType(type)
   }
   set location (location: LocationT) {
     newReqModule.mutateLocation(location)
   }
-  set requestAction (value: string) {
+  set request_action_cd (value: string) {
     newReqModule.mutateRequestAction(value)
     if (value === 'INFO') {
       newReqModule.mutatePickRequestTypeModalVisible(true)
@@ -555,7 +555,7 @@ export default class NamesCapture extends Vue {
             }
           }
         } else {
-          if (designations[this.entityType].end && nameChoices[`designation${choice}`]) {
+          if (designations[this.entity_type_cd].end && nameChoices[`designation${choice}`]) {
             if (!nameChoices[`name${choice}`].endsWith(nameChoices[`designation${choice}`])) {
               let newName = nameChoices[`name${choice}`] + ' ' + nameChoices[`designation${choice}`]
               newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })

@@ -101,14 +101,14 @@ export default class PickEntityOrConversion extends Vue {
   get conversionTypes () {
     return newReqModule.conversionTypes
   }
-  get entityType () {
-    return newReqModule.entityType
+  get entity_type_cd () {
+    return newReqModule.entity_type_cd
   }
-  set entityType (value) {
+  set entity_type_cd (value) {
     newReqModule.mutateEntityType(value)
   }
   get isConversion () {
-    return (newReqModule.requestAction === 'CNV')
+    return (newReqModule.request_action_cd === 'CNV')
   }
   get location () {
     return newReqModule.location
@@ -143,7 +143,7 @@ export default class PickEntityOrConversion extends Vue {
   }
 
   clearEntitySelection () {
-    this.entityType = 'INFO'
+    this.entity_type_cd = 'INFO'
   }
   chooseConversion (conversion) {
     let index = newReqModule.conversionTypeOptions.findIndex((conv: any) => conv.value === conversion.value)
@@ -151,7 +151,7 @@ export default class PickEntityOrConversion extends Vue {
       newReqModule.mutateConversionTypeAddToSelect(conversion)
     }
     if (conversion.value !== 'INFO') {
-      newReqModule.mutateEntityType(conversion.entityType)
+      newReqModule.mutateEntityType(conversion.entity_type_cd)
     }
     newReqModule.mutateConversionType(conversion.value)
     this.showModal = false

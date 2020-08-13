@@ -1,6 +1,7 @@
 import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
+import store from '@/store/new-request-module'
 
-const PAYMENT_API_URL = 'payments'
+const PAYMENT_API_URL = sessionStorage.getItem('PAYMENT_API_URL')
 
 export async function createPaymentRequest (nrNumber, data): Promise<AxiosResponse<any>> {
   const url = `${PAYMENT_API_URL}/${nrNumber}`

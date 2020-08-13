@@ -32,7 +32,7 @@ export interface ConditionalReqI {
   applicants: [ ApplicantI ]
   corpNum?: string
   english: boolean
-  entity_type: string
+  entity_type_cd: string
   homeJurisNum?: string
   id?: number
   nameFlag: boolean
@@ -40,7 +40,8 @@ export interface ConditionalReqI {
   natureBusinessInfo: string
   previousRequestId?: string
   priorityCd: string
-  request_action: string
+  request_action_cd: string
+  request_type_cd?: string
   stateCd: 'COND-RESERVE'
   submit_count: number
   tradeMark: string
@@ -53,7 +54,7 @@ export interface ConsentConflictI {
 export interface ConversionTypesI {
   blurb?: string
   desc?: string
-  entityType?: string
+  entity_type_cd?: string
   rank?: number
   short?: string
   shortlist?: boolean
@@ -65,7 +66,7 @@ export interface DraftReqI {
   applicants: [ ApplicantI ]
   corpNum?: string
   english: boolean
-  entity_type: string
+  entity_type_cd: string
   homeJurisNum?: string
   id?: number
   nameFlag: boolean
@@ -73,11 +74,12 @@ export interface DraftReqI {
   natureBusinessInfo: string
   previousRequestId?: string
   priorityCd: string
-  request_action: string
+  request_action_cd: string
   stateCd: 'DRAFT'
   submit_count: number
   tradeMark: string
   xproJurisdiction?: string
+  request_type_cd?: string
 }
 export interface EntityI {
   blurb?: string[] | string
@@ -153,6 +155,7 @@ export interface RequestNameI {
   consent_words: "" | string[]
   conflict1: string
   conflict1_num: string
+  request_type_cd?: string
 }
 export interface ReservedReqI {
   id?: number
@@ -160,14 +163,14 @@ export interface ReservedReqI {
   applicants: [ ApplicantI ]
   corpNum?: string
   english: boolean
-  entity_type: string
+  entity_type_cd: string
   homeJurisNum?: string
   nameFlag: boolean
   names: RequestNameI[]
   natureBusinessInfo: string
   previousRequestId?: string
   priorityCd: string
-  request_action: string
+  request_action_cd: string
   stateCd: 'RESERVED'
   submit_count: number
   tradeMark: string

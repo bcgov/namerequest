@@ -12,7 +12,7 @@ export default {
   [types.GET_PAYMENT_DETAILS]: state => {
     const {
       filingTypeCode,
-      entityType,
+      entity_type_cd,
       filingDescription,
       waiveFees,
       priority,
@@ -21,7 +21,7 @@ export default {
 
     return {
       filingTypeCode,
-      entityType,
+      entity_type_cd,
       filingDescription,
       waiveFees,
       priority,
