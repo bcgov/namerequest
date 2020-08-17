@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showModal" max-width="60%">
+  <v-dialog v-model="showModal">
     <v-card class="pa-4">
       <sbc-authentication-options></sbc-authentication-options>
     </v-card>
@@ -16,7 +16,7 @@ import newReqModule from '@/store/new-request-module'
     SbcAuthenticationOptions
   }
 })
-export default class IncorporateLogin extends Vue {
+export default class IncorporateLoginModal extends Vue {
   get showModal () {
     return newReqModule.incorporateLoginModalVisible
   }

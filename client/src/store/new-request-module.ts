@@ -367,6 +367,7 @@ export class NewRequestModule extends VuexModule {
   getNameReservationFailed: boolean = false
   helpMeChooseModalVisible: boolean = false
   incorporateLoginModalVisible: boolean = false
+  affiliationErrorModalVisible: boolean = false
   isAssumedName: boolean = false
   isPersonsName: boolean = false
   issueIndex: number = 0
@@ -1581,6 +1582,10 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateIncorporateLoginModalVisible (value: boolean) {
     this.incorporateLoginModalVisible = value
+  }
+  @Mutation
+  mutateAffiliationErrorModalVisible (value: boolean) {
+    this.affiliationErrorModalVisible = value
   }
   @Mutation
   mutateIsPersonsName (value) {

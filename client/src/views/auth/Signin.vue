@@ -4,12 +4,20 @@
 
 <script lang="ts">
 // Libraries
+import Axios from 'axios'
 import { Component, Vue } from 'vue-property-decorator'
 import { addAxiosInterceptors } from 'sbc-common-components/src/util/interceptors'
-import Axios, { AxiosResponse } from 'axios'
+import newReqModule from '@/store/new-request-module'
+
+// Services
+import AuthServices from '@/services/auth.services'
+import BusinessServices from '@/services/business.services'
 
 // Components
 import SbcSignin from 'sbc-common-components/src/components/SbcSignin.vue'
+
+// Models
+import { BusinessRequest, CreateNRAffiliationRequestBody } from '@/models/business'
 
 const axios = addAxiosInterceptors(Axios.create())
 
@@ -19,100 +27,65 @@ const axios = addAxiosInterceptors(Axios.create())
   }
 })
 export default class Signin extends Vue {
-  private BusinessRequest = {
-    filing: {
-      header: {
-        name: 'incorporationApplication',
-        accountId: 1520
-      },
-      business: {
-        legalType: 'BC'
-      },
-      incorporationApplication: {
-        nameRequest: {
-          legalType: 'BC',
-          nrNumber: 'NR1234567'
-        }
-      }
-    }
-  }
-
   /** Called when Keycloak session is ready. */
   private async onReady () {
-    // navigate to landing
-    await this.$router.push('/')
+    const currentOrganizationId = JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT')).id
+    const requestBody: CreateNRAffiliationRequestBody = {
+      businessIdentifier: this.nr?.nrNum,
+      phone: this.nr?.applicants?.phoneNumber || '',
+      email: this.nr?.applicants?.emailAddress || ''
+    }
 
     try {
-      const nrResponse = await this.addNameRequest()
-
-      // eslint-disable-next-line no-console
-      console.log(nrResponse)
+      // Request to affiliate NR to current account
+      const nrResponse = await AuthServices.createNRAffiliation(currentOrganizationId, requestBody)
 
       if (nrResponse?.status === 201) {
         // update the legal api if the status is success
-        const filingBody: any = {
+        const filingBody: BusinessRequest = {
           filing: {
             header: {
               name: 'incorporationApplication',
-              accountId: 1520
+              accountId: currentOrganizationId
             },
             business: {
-              legalType: 'BC'
+              legalType: this.nr?.legalType
             },
             incorporationApplication: {
               nameRequest: {
-                legalType: 'BC',
-                nrNumber: 'NR 6597972'
+                legalType: this.nr?.legalType,
+                nrNumber: this.nr?.nrNum
               }
             }
           }
         }
-        const filingResponse = await this.createNamedBusiness(filingBody)
-        // eslint-disable-next-line no-console
-        console.log(filingResponse)
+
+        const filingResponse = await BusinessServices.createBusiness(filingBody)
+
+        // navigate to manage business dashboard
+        if (filingResponse?.status === 201) {
+          window.location.assign(
+            `${sessionStorage.getItem('BUSINESSES_URL')}account/${currentOrganizationId}/business`
+          )
+        }
       }
     } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log(e)
-    }
-  }
+      // navigate to landing and show error dialog
+      await this.$router.push('/')
+      newReqModule.mutateAffiliationErrorModalVisible(true)
 
-  public async addNameRequest () {
-    const requestBody = {
-      businessIdentifier: 'NR 6597972',
-      phone: '',
-      email: 'testoutputs@gov.bc.ca'
-    }
-    const currentOrganizationId = 1520 // Get ID from Session storage Current Account
+      // clear NR Data
+      sessionStorage.removeItem('NR_DATA')
 
-    // Create an affiliation between implicit org and requested business
-    return this.createNRAffiliation(currentOrganizationId, requestBody)
-    // return this.removeAffiliation(currentOrganizationId, 'NR 6597972')
-  }
-
-  private async createNRAffiliation (orgIdentifier: number, affiliation: any): Promise<any> {
-    return axios.post(`${sessionStorage.getItem('AUTH_API_URL')}/orgs/${orgIdentifier}/affiliations?newBusiness=true`, affiliation)
-  }
-
-  private async removeAffiliation (orgIdentifier: number, incorporationNumber: string): Promise<any> {
-    return axios.delete(`${sessionStorage.getItem('AUTH_API_URL')}/orgs/${orgIdentifier}/affiliations/${incorporationNumber}`)
-  }
-
-  public async createNamedBusiness (filingBody: any) {
-    // Create an affiliation between implicit org and requested business
-    const updateResponse = await axios.post(`${sessionStorage.getItem('LEGAL_API_URL')}/businesses?draft=true`, filingBody)
-    if (updateResponse?.status >= 200 && updateResponse?.status < 300) {
-      return updateResponse
-    } else {
       // delete the created affiliation if the update failed for avoiding orphan records
-      // unable to do these from backend, since it causes a circular dependency
-      const orgId = filingBody?.filing?.header?.accountId
-      const nrNumber = filingBody?.filing?.incorporationApplication?.nameRequest?.nrNumber
-      await this.removeAffiliation(orgId, nrNumber)
-      return {
-        errorMsg: 'Cannot add business due to some technical reasons'
-      }
+      await AuthServices.removeAffiliation(currentOrganizationId, requestBody.businessIdentifier)
     }
+  }
+
+  /** Get NR from Session */
+  get nr () {
+    // eslint-disable-next-line no-console
+    return JSON.parse(sessionStorage.getItem('NR_DATA'))
   }
 }
 </script>

@@ -12,7 +12,8 @@
     <PickRequestType />
     <PaymentModal />
     <ReceiptModal />
-    <IncorporateLogin />
+    <IncorporateLoginModal />
+    <AffiliationErrorModal />
   </v-app>
 </template>
 
@@ -24,7 +25,8 @@ import PickEntityOrConversion from '@/components/modals/pick-entity-or-conversio
 import PickRequestType from '@/components/modals/pick-request-type.vue'
 import PaymentModal from '@/components/modals/payment.vue'
 import ReceiptModal from '@/components/modals/receipt.vue'
-import IncorporateLogin from '@/components/modals/incorporate-login.vue'
+import IncorporateLoginModal from '@/components/modals/incorporate-login.vue'
+import AffiliationErrorModal from '@/components/modals/affiliation-error.vue'
 
 import { Component, Vue, Ref } from 'vue-property-decorator'
 
@@ -40,7 +42,8 @@ import Header from '@/components/header.vue'
     PickRequestType,
     PaymentModal,
     ReceiptModal,
-    IncorporateLogin
+    IncorporateLoginModal,
+    AffiliationErrorModal
   }
 })
 export default class App extends Vue {}

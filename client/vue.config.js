@@ -28,7 +28,7 @@ module.exports = {
     'vuetify',
     'vuex-module-decorators'
   ],
-  publicPath: `/${process.env.VUE_APP_PATH}`,
+  publicPath: '/namerequest',
   devServer: {
     proxy: {
       // this is needed to prevent a CORS error when running locally

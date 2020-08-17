@@ -4,7 +4,6 @@
       <Stats class="py-0 mt-3 mb-n8 mr-3" />
       <v-col align-self="end" cols="12" class="h2 mb-1 white-text">
         Name Request
-        <v-btn @click="activateILModal">incorporate now</v-btn>
       </v-col>
       <v-col>
         <transition name="flip" mode="out-in">
@@ -49,10 +48,6 @@ import ExistingRequestEdit from '@/components/existing-request/existing-request-
 export default class Landing extends Vue {
   get displayedComponent () {
     return newReqModule.displayedComponent
-  }
-
-  activateILModal () {
-    newReqModule.mutateIncorporateLoginModalVisible(true)
   }
 }
 

@@ -21,6 +21,11 @@ export function getConfig (): Promise<void> {
     // eslint-disable-next-line no-console
     console.info('Set KeyCloak Config Path to: ' + keycloakConfigPath)
 
+    const businessUrl = response.data[0]['BUSINESSES_URL']
+    sessionStorage.setItem('BUSINESSES_URL', businessUrl)
+    // eslint-disable-next-line no-console
+    console.log('Set Business URL to: ' + businessUrl)
+
     const authApiUrl = response.data[0]['VUE_APP_AUTH_ROOT_API']
     sessionStorage.setItem('AUTH_API_URL', authApiUrl)
     // eslint-disable-next-line no-console
