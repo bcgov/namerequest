@@ -960,8 +960,8 @@ export class NewRequestModule extends VuexModule {
     let params: NewRequestNameSearchI = {
       name: this.name,
       location: this.location,
-      entity_type: this.entity_type_cd,
-      request_action: this.request_action_cd
+      entity_type_cd: this.entity_type_cd,
+      request_action_cd: this.request_action_cd
     }
 
     try {
@@ -997,8 +997,8 @@ export class NewRequestModule extends VuexModule {
     let params: NewRequestNameSearchI = {
       name: this.name,
       location: this.location,
-      entity_type: this.entity_type_cd,
-      request_action: this.request_action_cd
+      entity_type_cd: this.entity_type_cd,
+      request_action_cd: this.request_action_cd
     }
 
     try {

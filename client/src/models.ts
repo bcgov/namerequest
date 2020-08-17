@@ -125,10 +125,10 @@ export interface NameDesignationI {
   name: string
 }
 export interface NewRequestNameSearchI {
-  entity_type: string
+  entity_type_cd: string
   location: LocationT
   name: string
-  request_action: string
+  request_action_cd: string
 }
 export interface OptionI {
   button?: string
