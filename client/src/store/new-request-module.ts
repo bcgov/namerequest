@@ -366,6 +366,8 @@ export class NewRequestModule extends VuexModule {
   extendedRequestType: SelectOptionsI | null = null
   getNameReservationFailed: boolean = false
   helpMeChooseModalVisible: boolean = false
+  incorporateLoginModalVisible: boolean = false
+  isAssumedName: boolean = false
   isPersonsName: boolean = false
   issueIndex: number = 0
   location: LocationT = 'BC'
@@ -1575,6 +1577,10 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateHelpMeChooseModalVisible (value: boolean) {
     this.helpMeChooseModalVisible = value
+  }
+  @Mutation
+  mutateIncorporateLoginModalVisible (value: boolean) {
+    this.incorporateLoginModalVisible = value
   }
   @Mutation
   mutateIsPersonsName (value) {

@@ -10,6 +10,7 @@ import 'quill/dist/quill.snow.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import '@/sass/main.sass'
 import '@/sass/overrides.sass'
+import KeyCloakService from 'sbc-common-components/src/services/keycloak.services'
 
 import designations from '@/store/list-data/designations.js'
 import canadaJurisdictions from '@/store/list-data/canada-jurisdictions.js'
@@ -24,6 +25,15 @@ async function startVue () {
   Vue.prototype.$canadaJurisdictions = canadaJurisdictions
   Vue.prototype.$internationalJurisdictions = internationalJurisdictions
 
+  // configure Keycloak Service
+  await KeyCloakService.setKeycloakConfigUrl(sessionStorage.getItem('KEYCLOAK_CONFIG_PATH'))
+  if (!window.location.pathname.includes('/signin')) {
+    await KeyCloakService.initializeToken(null).then(() => {}).catch(err => {
+      if (err?.message !== 'NOT_AUTHENTICATED') {
+        throw err
+      }
+    })
+  }
   new Vue({
     router,
     store,

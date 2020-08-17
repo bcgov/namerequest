@@ -1,6 +1,9 @@
 [
   {
     "URL":"https://namex-dev.pathfinder.gov.bc.ca",
-    "PAYMENT_PORTAL_URL": "https://dev.bcregistry.ca/business/auth/makepayment"
+    "PAYMENT_PORTAL_URL": "https://dev.bcregistry.ca/business/auth/makepayment",
+    "KEYCLOAK_CONFIG_PATH": "/local-keycloak-config-url/keycloak.json",
+    "VUE_APP_AUTH_ROOT_API": "https://auth-api-dev.pathfinder.gov.bc.ca/api/v1",
+    "VUE_APP_LEGAL_ROOT_API": "https://legal-api-dev.pathfinder.gov.bc.ca/api/v1"
   }
 ]
