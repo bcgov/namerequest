@@ -11,10 +11,17 @@
     </v-col>
     <!-- NR NUMBER -->
       <v-col cols="11" class="max-height">
-        <v-text-field  :value="existingRequestSearch.nrNum"
+        <!--<v-text-field  :value="existingRequestSearch.nrNum"
                        @change="setExistingRequestSearch('nrNum', $event)"
                        @blur="reformatNR()"
                        filled
+                       :rules="nrRules"
+                       placeholder="Business Name or NR Number"
+                       id="nr-num-text-field" />-->
+        <v-text-field  :value="existingRequestSearch.nrNum"
+                       @input="setExistingRequestSearch('nrNum', $event)"
+                       filled
+                       validate-on-blur
                        :rules="nrRules"
                        placeholder="Business Name or NR Number"
                        id="nr-num-text-field" />
@@ -65,12 +72,14 @@ import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { NameRequestI, SearchDataI, NrDataResponseT, NrDataT } from '@/models'
 
+const NR_REGEX = /^(NR\ ?L?|L?)?([\d]{6,8})$/
 @Component({
   components: { ForgotNrModal }
 })
 export default class ExistingRequstSearch extends Vue {
   emailRules = [ v => v === '' || /.+@.+\..+/.test(v) || 'Please be sure to enter a valid email' ]
-  nrRules = [ v => /(^([a-zA-Z]{2}((\d{7})|((\s)(\d{7}))))|\d{7})$/.test(v) || 'Please enter a valid NR number' ]
+  // nrRules = [ v => /(^([a-zA-Z]{2}((\d{6,8})|((\s)(\d{6,8}))))|\d{6,8})$/.test(v) || 'Please enter a valid NR number' ]
+  nrRules = [ v => NR_REGEX.test(v) || 'Please enter a valid NR number' ]
   errorMessage: string = ''
   phoneRules = [ v => v === '' || /^[\d ()\+-]+$/.test(v) || 'Please enter a numeric value' ]
   isValid: boolean = false
@@ -102,7 +111,9 @@ export default class ExistingRequstSearch extends Vue {
   reformatNR () {
     this.$nextTick(function () {
       if (this.existingRequestSearch.nrNum) {
-        let number = this.existingRequestSearch.nrNum.trim().replace(/((([Nn][Rr])(\s*))|^(\d+))/, 'NR' + '$5')
+        // let number = this.existingRequestSearch.nrNum.trim().replace(/((([Nn][Rr])(\s*))|^(\d+))/, 'NR' + '$5')
+        // TODO: Reformat number if necessary, API will accept whatever format
+        let number = this.existingRequestSearch.nrNum
         if (number) {
           this.setExistingRequestSearch('nrNum', number)
         }

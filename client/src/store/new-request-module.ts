@@ -851,6 +851,7 @@ export class NewRequestModule extends VuexModule {
       names: names,
       ...nrData,
       priorityCd: 'N',
+      // @ts-ignore TODO: This is not typed correctly!
       entity_type_cd: this.entity_type_cd,
       request_action_cd: this.request_action_cd,
       request_type_cd: this.xproRequestTypeCd ? this.xproRequestTypeCd : '',
@@ -877,6 +878,7 @@ export class NewRequestModule extends VuexModule {
       names: nrRequestNames,
       ...nrData,
       priorityCd: 'N',
+      // @ts-ignore TODO: This is not typed correctly!
       entity_type_cd: this.entity_type_cd,
       request_action_cd: this.request_action_cd,
       stateCd: 'RESERVED',
@@ -960,6 +962,7 @@ export class NewRequestModule extends VuexModule {
     let params: NewRequestNameSearchI = {
       name: this.name,
       location: this.location,
+      // @ts-ignore TODO: This is not typed correctly!
       entity_type_cd: this.entity_type_cd,
       request_action_cd: this.request_action_cd
     }
@@ -997,6 +1000,7 @@ export class NewRequestModule extends VuexModule {
     let params: NewRequestNameSearchI = {
       name: this.name,
       location: this.location,
+      // @ts-ignore TODO: This is not typed correctly!
       entity_type_cd: this.entity_type_cd,
       request_action_cd: this.request_action_cd
     }
@@ -1106,7 +1110,8 @@ export class NewRequestModule extends VuexModule {
     try {
       let nr = this.editNameReservation
       let { nrNum } = this.nr
-      nrNum = nrNum.replace(/(?:\s+|\s|)(\D|\D+|)(?:\s+|\s|)(\d+)(?:\s+|\s|)/, 'NR' + '$2')
+      // Use the NR_REGEX const in existing-request-search if you really want to do this
+      // nrNum = nrNum.replace(/(?:\s+|\s|)(\D|\D+|)(?:\s+|\s|)(\d+)(?:\s+|\s|)/, 'NR' + '$2')
 
       let response = await axios.patch(`/namerequests/${nrNum}/edit`, nr, {
         headers: {
