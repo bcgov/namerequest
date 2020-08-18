@@ -200,6 +200,10 @@ export default class PaymentModal extends Vue {
 
     const paymentPortalUrl = `${this.$PAYMENT_PORTAL_URL}/${paymentId}/${redirectUrl}`
     window.location.href = paymentPortalUrl
+    // eslint-disable-next-line
+    console.log('SEE HERE!')
+    // eslint-disable-next-line
+    console.log(countryTypeCd)
   }
 
   get applicant () {

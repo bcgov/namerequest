@@ -436,6 +436,12 @@ export class NewRequestModule extends VuexModule {
               business to BC.`
     },
     {
+      text: 'Assume a new name in BC',
+      value: 'ASSUMED',
+      blurb: 'You have an existing business in another province/country and you wish to move it to BC ' +
+      'however, an existing business with name protection already exists in BC'
+    },
+    {
       text: 'Change your Name',
       value: 'CHG',
       blurb: `You have an existing business that is registered in BC and you want to change your name. You will need 
@@ -807,6 +813,9 @@ export class NewRequestModule extends VuexModule {
       nameFlag: this.isPersonsName,
       submit_count: 0
     }
+    if (this.isAssumedName) {
+      caseData.request_action_cd = 'ASSUMED'
+    }
     return caseData
   }
   get editNameReservation () {
@@ -837,7 +846,7 @@ export class NewRequestModule extends VuexModule {
         name: this.name,
         choice: 1,
         designation: this.splitNameDesignation.designation,
-        name_type_cd: 'CO',
+        name_type_cd: this.isAssumedName ? 'AS' : 'CO',
         consent_words: this.consentWords.length > 0 ? this.consentWords : '',
         conflict1: this.consentConflicts.name,
         conflict1_num: this.consentConflicts.corpNum ? this.consentConflicts.corpNum : ''
@@ -991,7 +1000,7 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('Tabs')
       return
     }
-  }
+  }s
   @Action
   async getNameAnalysisXPRO () {
     this.mutateDisplayedComponent('AnalyzePending')
@@ -1001,7 +1010,7 @@ export class NewRequestModule extends VuexModule {
       name: this.name,
       location: this.location,
       // @ts-ignore TODO: This is not typed correctly!
-      entity_type_cd: this.entity_type_cd,
+      entity_typ_cd: this.entity_type_cd,
       request_action_cd: this.request_action_cd
     }
 

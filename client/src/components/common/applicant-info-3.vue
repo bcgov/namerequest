@@ -252,7 +252,3 @@ export default class ApplicantInfo3 extends Vue {
   }
 }
 </script>
-
-<style lang="sass">
-
-</style>
