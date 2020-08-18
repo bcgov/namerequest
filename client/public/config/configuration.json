@@ -1,6 +1,6 @@
 [
   {
     "URL":"https://namex-dev.pathfinder.gov.bc.ca",
-    "PAYMENT_URL": "https://dev.bcregistry.ca/business/auth/makepayment"
+    "PAYMENT_PORTAL_URL": "https://dev.bcregistry.ca/business/auth/makepayment"
   }
 ]
