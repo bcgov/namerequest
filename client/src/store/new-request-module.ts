@@ -438,8 +438,8 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Assume a new name in BC',
       value: 'ASSUMED',
-      blurb: 'You have an existing business in another province/country and you wish to move it to BC ' +
-      'however, an existing business with name protection already exists in BC'
+      blurb: `You have an existing business in another province. You are closing your business there and moving your 
+              business to BC, however, the name of your business is already in use in BC`
     },
     {
       text: 'Change your Name',
@@ -476,11 +476,6 @@ export class NewRequestModule extends VuexModule {
       value: 'REN',
       blurb: 'You have a business that has been dissolved or cancelled. You want to start up again with a new name.' +
         ' You will need your incorporation or firm number assigned to you by Registries.'
-    },
-    {
-      text: 'Change Registration to Sole Prop, GP or DBA.',
-      value: 'CRG',
-      blurb: 'blah blah'
     }
   ]
   showActualInput: boolean = false

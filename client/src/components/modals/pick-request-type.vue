@@ -63,9 +63,6 @@ export default class PickRequestType extends Vue {
     return newReqModule.location
   }
   get requestTypes () {
-    if (this.location === 'BC') {
-      return newReqModule.requestTypes.filter(type => !['ASSUMED', 'MVE'].includes(type.value))
-    }
     return newReqModule.requestTypes
   }
   set showModal (value: boolean) {
@@ -73,16 +70,11 @@ export default class PickRequestType extends Vue {
   }
   get tableData () {
     let { length } = this.requestTypes
-    let a = 0
-    let b = length / 2
-    if (length % 2) {
-      b = b + 1
-    }
-    let c = b
-    let d = length
+    let midIndex = length % 2 ? (length + 1) / 2 : (length / 2)
+
     return {
-      col1: this.requestTypes.slice(a, b),
-      col2: this.requestTypes.slice(c, d)
+      col1: this.requestTypes.slice(0, midIndex),
+      col2: this.requestTypes.slice(midIndex, length)
     }
   }
 

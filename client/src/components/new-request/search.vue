@@ -112,6 +112,12 @@ export default class Search extends Vue {
   handleRequestAction (newVal) {
     if (newVal === 'CNV') {
       this.location = 'BC'
+      return
+    }
+    if (['ASSUMED', 'MVE'].includes(newVal)) {
+      if (this.location === 'BC') {
+        this.location = 'CA'
+      }
     }
   }
   @Watch('location')
@@ -180,6 +186,9 @@ export default class Search extends Vue {
   get locationOptions () {
     if (this.isConversion) {
       return newReqModule.locationOptions.filter(location => location.value === 'BC' || location.value === 'INFO')
+    }
+    if (['MVE', 'ASSUMED'].includes(this.request_action_cd)) {
+      return newReqModule.locationOptions.filter(location => location.value !== 'BC')
     }
     return newReqModule.locationOptions
   }
