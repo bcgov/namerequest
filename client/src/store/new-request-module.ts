@@ -1005,7 +1005,7 @@ export class NewRequestModule extends VuexModule {
       name: this.name,
       location: this.location,
       // @ts-ignore TODO: This is not typed correctly!
-      entity_typ_cd: this.entity_type_cd,
+      entity_type_cd: this.entity_type_cd,
       request_action_cd: this.request_action_cd
     }
 
