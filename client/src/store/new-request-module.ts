@@ -436,7 +436,7 @@ export class NewRequestModule extends VuexModule {
               business to BC.`
     },
     {
-      text: 'Assume a new name in BC',
+      text: 'Assume a New Name in BC',
       value: 'ASSUMED',
       blurb: `You have an existing business in another province. You are closing your business there and moving your 
               business to BC, however, the name of your business is already in use in BC`
