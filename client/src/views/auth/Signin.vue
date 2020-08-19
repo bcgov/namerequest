@@ -1,5 +1,5 @@
 <template>
-<sbc-signin @sync-user-profile-ready="onReady()" />
+  <sbc-signin @sync-user-profile-ready="onReady()" />
 </template>
 
 <script lang="ts">
@@ -14,7 +14,8 @@ import AuthServices from '@/services/auth.services'
 import BusinessServices from '@/services/business.services'
 
 // Components
-import SbcSignin from 'sbc-common-components/src/components/SbcSignin.vue'
+// @ts-ignore
+import SbcSignin from 'sbc-common-components/src/components/SbcSignin'
 
 // Models
 import { BusinessRequest, CreateNRAffiliationRequestBody } from '@/models/business'
@@ -27,6 +28,11 @@ const axios = addAxiosInterceptors(Axios.create())
   }
 })
 export default class Signin extends Vue {
+  /** get nr data from Session */
+  get nr () {
+    return JSON.parse(sessionStorage.getItem('NR_DATA'))
+  }
+
   /** called when keycloak session is ready. */
   private async onReady () {
     const currentOrganizationId = JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT')).id
@@ -71,13 +77,7 @@ export default class Signin extends Vue {
       await this.$router.push('/')
       sessionStorage.removeItem('NR_DATA')
       newReqModule.mutateAffiliationErrorModalVisible(true)
-      throw e
     }
-  }
-
-  /** get nr data from Session */
-  get nr () {
-    return JSON.parse(sessionStorage.getItem('NR_DATA'))
   }
 }
 </script>
