@@ -27,7 +27,7 @@ const axios = addAxiosInterceptors(Axios.create())
   }
 })
 export default class Signin extends Vue {
-  /** Called when Keycloak session is ready. */
+  /** called when keycloak session is ready. */
   private async onReady () {
     const currentOrganizationId = JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT')).id
     const requestBody: CreateNRAffiliationRequestBody = {
@@ -39,7 +39,6 @@ export default class Signin extends Vue {
     try {
       // Request to affiliate NR to current account
       const nrResponse = await AuthServices.createNRAffiliation(currentOrganizationId, requestBody)
-
       if (nrResponse?.status === 201) {
         // update the legal api if the status is success
         const filingBody: BusinessRequest = {
@@ -49,19 +48,17 @@ export default class Signin extends Vue {
               accountId: currentOrganizationId
             },
             business: {
-              legalType: this.nr?.legalType
+              legalType: this.nr?.entity_type_cd
             },
             incorporationApplication: {
               nameRequest: {
-                legalType: this.nr?.legalType,
+                legalType: this.nr?.entity_type_cd,
                 nrNumber: this.nr?.nrNum
               }
             }
           }
         }
-
         const filingResponse = await BusinessServices.createBusiness(filingBody)
-
         // navigate to manage business dashboard
         if (filingResponse?.status === 201) {
           window.location.assign(
@@ -70,21 +67,16 @@ export default class Signin extends Vue {
         }
       }
     } catch (e) {
-      // navigate to landing and show error dialog
+      // navigate to landing, show error dialog and clear NR Data
       await this.$router.push('/')
-      newReqModule.mutateAffiliationErrorModalVisible(true)
-
-      // clear NR Data
       sessionStorage.removeItem('NR_DATA')
-
-      // delete the created affiliation if the update failed for avoiding orphan records
-      await AuthServices.removeAffiliation(currentOrganizationId, requestBody.businessIdentifier)
+      newReqModule.mutateAffiliationErrorModalVisible(true)
+      throw e
     }
   }
 
-  /** Get NR from Session */
+  /** get nr data from Session */
   get nr () {
-    // eslint-disable-next-line no-console
     return JSON.parse(sessionStorage.getItem('NR_DATA'))
   }
 }

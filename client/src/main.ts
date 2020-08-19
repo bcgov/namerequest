@@ -34,6 +34,7 @@ async function startVue () {
       }
     })
   }
+
   new Vue({
     router,
     store,
