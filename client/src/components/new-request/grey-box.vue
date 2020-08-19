@@ -81,6 +81,7 @@
               <ReserveSubmit :key="option.type+'-reserve-submit'"
                              setup="assumed"
                              id="reserve-submit-button"
+                             v-if="isLastIndex"
                              style="display: inline" />
             </transition>
           </v-col>
@@ -244,7 +245,7 @@ export default class GreyBox extends Vue {
     try {
       if (!this.changesInBaseName) {
         let AllDesignationsList = allDesignationsList
-        const designationEntityTypes = allDesignations[this.entityType]
+        const designationEntityTypes = allDesignations[this.entity_type_cd]
         // below condition is entity types PAR, FI, PA, and the proprietorships - don't use a designation
         if (designationEntityTypes && designationEntityTypes.words.length === 0) {
           if (this.nameActionWords.length > 0) {
@@ -338,8 +339,8 @@ export default class GreyBox extends Vue {
     }
     return null
   }
-  get entityType () {
-    return newReqModule.entityType
+  get entity_type_cd () {
+    return newReqModule.entity_type_cd
   }
   get examinationRequested () {
     if (this.issueLength > 1) {
@@ -528,7 +529,7 @@ export default class GreyBox extends Vue {
     }
   }
   extractInnerDesignation (name, designation = null) {
-    let { words } = allDesignations[this.entityType]
+    let { words } = allDesignations[this.entity_type_cd]
     let index, length
     if (!designation) {
       for (let word of words) {

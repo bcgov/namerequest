@@ -1,39 +1,38 @@
 import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
-
-const PAYMENT_API_URL = 'payments'
+import store from '@/store/new-request-module'
 
 export async function createPaymentRequest (nrNumber, data): Promise<AxiosResponse<any>> {
-  const url = `${PAYMENT_API_URL}/${nrNumber}`
+  const url = `/payments/${nrNumber}`
   return axios.post(url, data)
 }
 
 /* export async function completePaymentRequest (nrNumber, data): Promise<AxiosResponse<any>> {
-  const url = `${PAYMENT_API_URL}/${nrNumber}`
+  const url = `/payments/${nrNumber}`
   return axios.put(url, data)
 } */
 
 export async function getPayment (paymentId, params): Promise<AxiosResponse<any>> {
-  const url = `${PAYMENT_API_URL}/${paymentId}`
+  const url = `/payments/${paymentId}`
   return axios.get(url, params)
 }
 
 export async function getPaymentFees (params): Promise<AxiosResponse<any>> {
-  const url = `${PAYMENT_API_URL}/fees`
+  const url = `/payments/fees`
   return axios.post(url, params)
 }
 
 export async function getInvoiceRequest (paymentId, params): Promise<AxiosResponse<any>> {
-  const url = `${PAYMENT_API_URL}/${paymentId}/invoice`
+  const url = `/payments/${paymentId}/invoice`
   return axios.get(url, params)
 }
 
 export async function getInvoicesRequest (paymentId, params): Promise<AxiosResponse<any>> {
-  const url = `${PAYMENT_API_URL}/${paymentId}/invoices`
+  const url = `/payments/${paymentId}/invoices`
   return axios.get(url, params)
 }
 
 export async function getReceiptRequest (paymentId, invoiceId, data): Promise<AxiosResponse<any>> {
   const params = { responseType: 'blob' } as AxiosRequestConfig
-  const url = `${PAYMENT_API_URL}/${paymentId}/receipt`
+  const url = `/payments/${paymentId}/receipt`
   return axios.post(url, data, params)
 }

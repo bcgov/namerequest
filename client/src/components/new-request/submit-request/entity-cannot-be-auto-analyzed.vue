@@ -111,11 +111,11 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   get entityText () {
     return newReqModule.entityTextFromValue
   }
-  get entityType () {
-    return newReqModule.entityType
+  get entity_type_cd () {
+    return newReqModule.entity_type_cd
   }
   get entityTypeNotAnalyzed () {
-    if (this.doNotAnalyzeEntities.includes(this.entityType)) {
+    if (this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
       return true
     }
     return false
@@ -136,7 +136,7 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
     return newReqModule.nameIsSlashed
   }
   get requestActionNotSupported () {
-    return !(['NEW', 'DBA', 'CHG'].includes(newReqModule.requestAction))
+    return !(['NEW', 'DBA', 'CHG'].includes(newReqModule.request_action_cd))
   }
   get requestActionText () {
     return newReqModule.requestTextFromValue

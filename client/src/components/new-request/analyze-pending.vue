@@ -48,21 +48,21 @@ import { Component, Vue } from 'vue-property-decorator'
 })
 export default class AnalyzePending extends Vue {
   get entityObject () {
-    return newReqModule.entityTypeOptions.find((ent: any) => ent.value === this.entityType)
+    return newReqModule.entityTypeOptions.find((ent: any) => ent.value === this.entity_type_cd)
   }
   get entityText () {
     return newReqModule.entityTextFromValue
   }
-  get entityType () {
-    return newReqModule.entityType
+  get entity_type_cd () {
+    return newReqModule.entity_type_cd
   }
   get location () {
     let value = newReqModule.location
     let options = newReqModule.locationOptions
     return options.find((opt: any) => opt.value === value)
   }
-  get requestAction () {
-    switch (newReqModule.requestAction) {
+  get request_action_cd () {
+    switch (newReqModule.request_action_cd) {
       case 'new':
         return 'a new'
       case 'existing':

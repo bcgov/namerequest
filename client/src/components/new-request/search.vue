@@ -8,14 +8,14 @@
               @change="activateHMCModal()">Help Me Choose</button>
       </v-col>
       <v-col cols="5">
-        <!--requestAction-->
-        <v-select :error-messages="errors.includes('requestAction') ? 'Please select a type' : ''"
-                  :hide-details="!errors.includes('requestAction')"
+        <!--request_action_cd-->
+        <v-select :error-messages="errors.includes('request_action_cd') ? 'Please select a type' : ''"
+                  :hide-details="!errors.includes('request_action_cd')"
                   :items="requestTypeOptions"
                   @change="clearErrors()"
                   filled
                   id="search-type-options-select"
-                  v-model="requestAction" />
+                  v-model="request_action_cd" />
       </v-col>
       <v-col cols="2">
         <!--location-->
@@ -28,14 +28,14 @@
       </v-col>
       <v-col cols="5">
         <!--entityConversionType-->
-        <v-select :error-messages="errors.includes('entityType') ? 'Please select a type' : ''"
-                  :hide-details="!errors.includes('entityType')"
+        <v-select :error-messages="errors.includes('entity_type_cd') ? 'Please select a type' : ''"
+                  :hide-details="!errors.includes('entity_type_cd')"
                   :items="entityConversionTypeOptions"
                   @change="clearErrors()"
                   filled
                   :placeholder="isConversion ? 'Please choose a conversion type' : ''"
                   id="entity-type-options-select"
-                  v-model="entityType" />
+                  v-model="entity_type_cd" />
       </v-col>
       <NameInput :class="inputCompClass"
                  id="name-input-component"
@@ -108,20 +108,26 @@ export default class Search extends Vue {
   toolTipX: number = 0
   toolTipY: number = 0
 
-  @Watch('requestAction')
+  @Watch('request_action_cd')
   handleRequestAction (newVal) {
     if (newVal === 'CNV') {
       this.location = 'BC'
+      return
+    }
+    if (['ASSUMED', 'MVE'].includes(newVal)) {
+      if (this.location === 'BC') {
+        this.location = 'CA'
+      }
     }
   }
   @Watch('location')
   handleLocation (newVal, oldVal) {
     if (newVal === 'INFO') {
-      let type = this.entityType
+      let type = this.entity_type_cd
       newReqModule.mutateLocationInfoModalVisible(true)
       this.$nextTick(function () {
         this.location = oldVal
-        this.entityType = type
+        this.entity_type_cd = type
       })
     }
   }
@@ -129,20 +135,20 @@ export default class Search extends Vue {
   get displayedComponent () {
     return newReqModule.displayedComponent
   }
-  get entityType () {
+  get entity_type_cd () {
     if (this.isConversion) {
       return newReqModule.conversionType
     }
-    return newReqModule.entityType
+    return newReqModule.entity_type_cd
   }
-  set entityType (type: string) {
+  set entity_type_cd (type: string) {
     if (type === 'INFO') {
       newReqModule.mutatePickEntityModalVisible(true)
     }
     if (this.isConversion) {
       if (type !== 'INFO') {
-        let { entityType } = newReqModule.conversionTypes.find(conv => conv.value === type)
-        newReqModule.mutateEntityType(entityType)
+        let { entity_type_cd } = newReqModule.conversionTypes.find(conv => conv.value === type)
+        newReqModule.mutateEntityType(entity_type_cd)
       }
       newReqModule.mutateConversionType(type)
       return
@@ -150,7 +156,7 @@ export default class Search extends Vue {
     newReqModule.mutateEntityType(type)
   }
   get isConversion () {
-    return newReqModule.requestAction === 'CNV'
+    return newReqModule.request_action_cd === 'CNV'
   }
   get entityTypeOptions () {
     return newReqModule.entityTypeOptions
@@ -165,7 +171,7 @@ export default class Search extends Vue {
     return newReqModule.errors
   }
   get inputCompClass () {
-    let errorTypes = ['entityType', 'requestAction', 'location']
+    let errorTypes = ['entity_type_cd', 'request_action_cd', 'location']
     if (errorTypes.some(type => this.errors.includes(type))) {
       return 'mt-n5'
     }
@@ -181,6 +187,9 @@ export default class Search extends Vue {
     if (this.isConversion) {
       return newReqModule.locationOptions.filter(location => location.value === 'BC' || location.value === 'INFO')
     }
+    if (['MVE', 'ASSUMED'].includes(this.request_action_cd)) {
+      return newReqModule.locationOptions.filter(location => location.value !== 'BC')
+    }
     return newReqModule.locationOptions
   }
   get isPersonsName () {
@@ -195,10 +204,10 @@ export default class Search extends Vue {
   set nameIsEnglish (value) {
     newReqModule.mutateNameIsEnglish(value)
   }
-  get requestAction () {
-    return newReqModule.requestAction
+  get request_action_cd () {
+    return newReqModule.request_action_cd
   }
-  set requestAction (value: string) {
+  set request_action_cd (value: string) {
     newReqModule.mutateRequestAction(value)
     if (value === 'INFO') {
       newReqModule.mutatePickRequestTypeModalVisible(true)
@@ -208,7 +217,7 @@ export default class Search extends Vue {
     return newReqModule.requestTypeOptions
   }
   get showNameCheckBox () {
-    if (this.location === 'BC' && this.entityType === 'CR') {
+    if (this.location === 'BC' && this.entity_type_cd === 'CR') {
       return true
     }
     return false

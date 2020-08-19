@@ -198,7 +198,7 @@ export default class PaymentModal extends Vue {
       `${document.baseURI}/?paymentSuccess=true&paymentId=${paymentId}`
     )
 
-    const paymentPortalUrl = `https://dev.bcregistry.ca/business/auth/makepayment/${paymentId}/${redirectUrl}`
+    const paymentPortalUrl = `${this.$PAYMENT_PORTAL_URL}/${paymentId}/${redirectUrl}`
     window.location.href = paymentPortalUrl
   }
 
@@ -280,10 +280,10 @@ export default class PaymentModal extends Vue {
     return parseNameChoices(nameRequestChoices)
   }
 
-  get entityType () {
+  get entity_type_cd () {
     const nameRequest: NewRequestModule = newRequestModule
-    const entityType: string = nameRequest.entityType
-    return entityType
+    const entity_type_cd: string = nameRequest.entity_type_cd
+    return entity_type_cd
   }
 
   get nrData () {

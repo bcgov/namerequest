@@ -27,13 +27,13 @@ describe('name-input.vue', () => {
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.tableData).toStrictEqual(wrapper.vm.tableDataXPRO)
   })
-  it('clicking an entity sets the entityType and closes the modal', async (): Promise<void> => {
+  it('clicking an entity sets the entity_type_cd and closes the modal', async (): Promise<void> => {
     wrapper.vm.showModal = true
     await wrapper.vm.$nextTick()
     let foreignCorp = wrapper.find('#XCR')
     foreignCorp.trigger('click')
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.showModal).toBe(false)
-    expect(newReqModule.entityType).toBe('XCR')
+    expect(newReqModule.entity_type_cd).toBe('XCR')
   })
 })

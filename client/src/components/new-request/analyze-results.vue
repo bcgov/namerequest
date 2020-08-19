@@ -263,8 +263,8 @@ export default class AnalyzeResults extends Vue {
   get entityText () {
     return newReqModule.entityTextFromValue
   }
-  get entityType () {
-    return newReqModule.entityType
+  get entity_type_cd () {
+    return newReqModule.entity_type_cd
   }
   get hasNameActions () {
     if (this.issue && this.issue.name_actions && Array.isArray(this.issue.name_actions)) {
@@ -283,6 +283,15 @@ export default class AnalyzeResults extends Vue {
     }
     return {}
   }
+  get isLastIndex () {
+    return (this.issueIndex === this.issueLength - 1)
+  }
+  get issueLength () {
+    if (Array.isArray(newReqModule.analysisJSON.issues)) {
+      return newReqModule.analysisJSON.issues.length
+    }
+    return 1
+  }
   get json () {
     return newReqModule.analysisJSON
   }
@@ -300,7 +309,16 @@ export default class AnalyzeResults extends Vue {
     }
     return null
   }
+  get enableNextForAssumedName () {
+    if (this.issue && ['corp_conflict', 'queue_conflict'].includes(this.issue.issue_type)) {
+      return (this.issue.setup[0].type === 'assumed_name' && !this.isLastIndex)
+    }
+    return false
+  }
   get nextButtonDisabled () {
+    if (this.enableNextForAssumedName) {
+      return false
+    }
     if (['designation_misplaced', 'end_designation_more_than_once'].includes(this.issue.issue_type)) {
       if (newReqModule.designationIsFixed && this.issueIndex < this.json.issues.length) {
         return false
@@ -316,8 +334,8 @@ export default class AnalyzeResults extends Vue {
   get quill (): any {
     return (this.$refs as any).quill.quill
   }
-  get requestAction () {
-    switch (newReqModule.requestAction) {
+  get request_action_cd () {
+    switch (newReqModule.request_action_cd) {
       case 'NEW':
         return 'a new'
       case 'existing':

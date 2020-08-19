@@ -9,7 +9,7 @@
         <v-row>
           <v-col cols="6">
             <v-simple-table class="text-left">
-          <tr v-for="type in tableDataCol1" :key="type.value+'-tr'">
+          <tr v-for="type in tableData.col1" :key="type.value+'-tr'">
             <td class="clickable-cell" :id="type.value" @click="chooseType(type)">
               <v-tooltip bottom max-width="500" open-delay="500">
               <template v-slot:activator="scope">
@@ -23,7 +23,7 @@
           </v-col>
           <v-col cols="6">
             <v-simple-table class="text-left">
-          <tr v-for="type in tableDataCol2" :key="type.value+'-tr'">
+          <tr v-for="type in tableData.col2" :key="type.value+'-tr'">
             <td class="clickable-cell" :id="type.value" @click="chooseType(type)">
               <v-tooltip bottom max-width="500" open-delay="500">
               <template v-slot:activator="scope">
@@ -59,16 +59,23 @@ export default class PickRequestType extends Vue {
   get showModal () {
     return newReqModule.pickRequestTypeModalVisible
   }
+  get location () {
+    return newReqModule.location
+  }
+  get requestTypes () {
+    return newReqModule.requestTypes
+  }
   set showModal (value: boolean) {
     newReqModule.mutatePickRequestTypeModalVisible(value)
   }
-  get tableDataCol1 () {
-    let data = [...newReqModule.requestTypes]
-    return data.slice(0, 4)
-  }
-  get tableDataCol2 () {
-    let data = [...newReqModule.requestTypes]
-    return data.slice(4, 8)
+  get tableData () {
+    let { length } = this.requestTypes
+    let midIndex = length % 2 ? (length + 1) / 2 : (length / 2)
+
+    return {
+      col1: this.requestTypes.slice(0, midIndex),
+      col2: this.requestTypes.slice(midIndex, length)
+    }
   }
 
   chooseType (request: SelectOptionsI) {

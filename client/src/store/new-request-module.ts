@@ -65,6 +65,7 @@ interface RequestNameMapI extends RequestNameI {}
 
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
 export class NewRequestModule extends VuexModule {
+  paymentURL: string = ''
   actingOnOwnBehalf: boolean = true
   addressSuggestions: object | null = null
   analysisJSON: AnalysisJSONI | null = null
@@ -103,7 +104,7 @@ export class NewRequestModule extends VuexModule {
     {
       desc: 'BC Corporation ⇨ Unlimited Liability Company',
       text: 'BC Corp. ⇨ U.L.C.',
-      entityType: 'UL',
+      entity_type_cd: 'UL',
       blurb: 'Convert from a <b>BC Corporation</b> to an <b>Unlimited Liability Company</b>',
       value: 'UC',
       rank: 1,
@@ -112,7 +113,7 @@ export class NewRequestModule extends VuexModule {
     {
       desc: 'BC Corporation ⇨ Community Contribution Company',
       text: 'BC Corp. ⇨ Comunity Contribution Co.',
-      entityType: 'CC',
+      entity_type_cd: 'CC',
       blurb: 'blah',
       value: 'CCV',
       rank: 2,
@@ -121,7 +122,7 @@ export class NewRequestModule extends VuexModule {
     {
       desc: 'BC Corporation ⇨ BC Benefit Company',
       text: 'BC Corp. ⇨ Benefit Company',
-      entityType: 'BC',
+      entity_type_cd: 'BC',
       blurb: 'blah',
       value: 'BECV',
       shortlist: false
@@ -129,7 +130,7 @@ export class NewRequestModule extends VuexModule {
     {
       desc: 'BC Benefit Company ⇨ BC Corporation',
       text: 'Benefit Company ⇨ BC Corp.',
-      entityType: 'CR',
+      entity_type_cd: 'CR',
       blurb: 'blah',
       value: 'BECR',
       shortlist: false
@@ -140,7 +141,7 @@ export class NewRequestModule extends VuexModule {
   displayedComponent: string = 'Tabs'
   doNotAnalyzeEntities: string[] = ['PAR', 'CC', 'CP', 'PA', 'FI', 'XCP']
   editMode: boolean = false
-  entityType: string = 'CR'
+  entity_type_cd: string = 'CR'
   entityTypeAddToSelect: SelectOptionsI | null = null
   entityTypesBC: EntityI[] = [
     {
@@ -398,7 +399,7 @@ export class NewRequestModule extends VuexModule {
   pickEntityModalVisible: boolean = false
   pickRequestTypeModalVisible: boolean = false
   priorityRequest: boolean = false
-  requestAction: string = 'NEW'
+  request_action_cd: string = 'NEW'
   requestExaminationOrProvideConsent = {
     0: {
       send_to_examiner: false,
@@ -435,6 +436,12 @@ export class NewRequestModule extends VuexModule {
               business to BC.`
     },
     {
+      text: 'Assume a New Name in BC',
+      value: 'ASSUMED',
+      blurb: `You have an existing business in another province. You are closing your business there and moving your 
+              business to BC, however, the name of your business is already in use in BC`
+    },
+    {
       text: 'Change your Name',
       value: 'CHG',
       blurb: `You have an existing business that is registered in BC and you want to change your name. You will need 
@@ -469,11 +476,6 @@ export class NewRequestModule extends VuexModule {
       value: 'REN',
       blurb: 'You have a business that has been dissolved or cancelled. You want to start up again with a new name.' +
         ' You will need your incorporation or firm number assigned to you by Registries.'
-    },
-    {
-      text: 'Change Registration to Sole Prop, GP or DBA.',
-      value: 'CRG',
-      blurb: 'blah blah'
     }
   ]
   showActualInput: boolean = false
@@ -483,6 +485,9 @@ export class NewRequestModule extends VuexModule {
   tabNumber: number = 0
   waitingAddressSearch: WaitingAddressSearchI | null = null
 
+  get payment_url () {
+    return this.paymentURL
+  }
   get allDesignationWords () {
     let output = []
     for (let des in designations) {
@@ -518,21 +523,21 @@ export class NewRequestModule extends VuexModule {
     return consentWords
   }
   get designationItems () {
-    if (this.entityType && designations[this.entityType]) {
-      let { words } = designations[this.entityType]
+    if (this.entity_type_cd && designations[this.entity_type_cd]) {
+      let { words } = designations[this.entity_type_cd]
       return words.map(des => ({ value: des, text: des }))
     }
     return []
   }
   get designationObject () {
-    if (this.entityType && designations[this.entityType]) {
-      return designations[this.entityType]
+    if (this.entity_type_cd && designations[this.entity_type_cd]) {
+      return designations[this.entity_type_cd]
     }
     return ''
   }
   get entityTextFromValue () {
     let list = [...this.entityTypesBC, ...this.entityTypesXPRO]
-    let type = list.find(t => t.value === this.entityType)
+    let type = list.find(t => t.value === this.entity_type_cd)
     return type.text
   }
   get conversionTypeOptions () {
@@ -585,7 +590,7 @@ export class NewRequestModule extends VuexModule {
       { text: 'Foreign', value: 'IN' },
       { text: 'Help', value: 'INFO' }
     ]
-    if (this.requestAction === 'MVE') {
+    if (this.request_action_cd === 'MVE') {
       return options.filter(option => option.text !== 'BC')
     }
     return options
@@ -643,8 +648,8 @@ export class NewRequestModule extends VuexModule {
     return output
   }
   get requestTextFromValue () {
-    if (this.requestAction) {
-      return this.requestTypeOptions.find(req => req.value === this.requestAction).text
+    if (this.request_action_cd) {
+      return this.requestTypeOptions.find(req => req.value === this.request_action_cd).text
     }
     return null
   }
@@ -685,6 +690,21 @@ export class NewRequestModule extends VuexModule {
       name: '',
       designation: ''
     })
+  }
+  get xproRequestTypeCd () {
+    if (this.isAssumedName) {
+      switch (this.entity_type_cd) {
+        case 'RLC':
+          return 'AL'
+        case 'XCR':
+          return 'AS'
+        case 'XUL':
+          return 'UA'
+        default:
+          return ''
+      }
+    }
+    return ''
   }
   get nrNum () {
     const { nr } = this
@@ -780,12 +800,16 @@ export class NewRequestModule extends VuexModule {
       names: nrRequestNames,
       ...nrData,
       priorityCd: this.priorityRequest ? 'Y' : 'N',
-      entity_type: this.entityType,
-      request_action: this.requestAction,
+      entity_type_cd: this.entity_type_cd,
+      request_action_cd: this.request_action_cd,
+      request_type_cd: this.xproRequestTypeCd ? this.xproRequestTypeCd : '',
       stateCd: 'DRAFT',
       english: this.nameIsEnglish,
       nameFlag: this.isPersonsName,
       submit_count: 0
+    }
+    if (this.isAssumedName) {
+      caseData.request_action_cd = 'ASSUMED'
     }
     return caseData
   }
@@ -793,8 +817,8 @@ export class NewRequestModule extends VuexModule {
     let data = {
       applicants: [this.applicant],
       names: this.nrRequestNames,
-      requestAction: this.requestAction,
-      entity_type: this.entityType,
+      request_action_cd: this.request_action_cd,
+      entity_type_cd: this.entity_type_cd,
       ...this.nrData
     }
     for (let key in this.nrData) {
@@ -817,7 +841,7 @@ export class NewRequestModule extends VuexModule {
         name: this.name,
         choice: 1,
         designation: this.splitNameDesignation.designation,
-        name_type_cd: 'CO',
+        name_type_cd: this.isAssumedName ? 'AS' : 'CO',
         consent_words: this.consentWords.length > 0 ? this.consentWords : '',
         conflict1: this.consentConflicts.name,
         conflict1_num: this.consentConflicts.corpNum ? this.consentConflicts.corpNum : ''
@@ -831,8 +855,10 @@ export class NewRequestModule extends VuexModule {
       names: names,
       ...nrData,
       priorityCd: 'N',
-      entity_type: this.entityType,
-      request_action: this.requestAction,
+      // @ts-ignore TODO: This is not typed correctly!
+      entity_type_cd: this.entity_type_cd,
+      request_action_cd: this.request_action_cd,
+      request_type_cd: this.xproRequestTypeCd ? this.xproRequestTypeCd : '',
       stateCd: 'COND-RESERVE',
       english: this.nameIsEnglish,
       nameFlag: this.isPersonsName,
@@ -856,8 +882,9 @@ export class NewRequestModule extends VuexModule {
       names: nrRequestNames,
       ...nrData,
       priorityCd: 'N',
-      entity_type: this.entityType,
-      request_action: this.requestAction,
+      // @ts-ignore TODO: This is not typed correctly!
+      entity_type_cd: this.entity_type_cd,
+      request_action_cd: this.request_action_cd,
       stateCd: 'RESERVED',
       english: this.nameIsEnglish,
       nameFlag: this.isPersonsName,
@@ -939,8 +966,9 @@ export class NewRequestModule extends VuexModule {
     let params: NewRequestNameSearchI = {
       name: this.name,
       location: this.location,
-      entity_type: this.entityType,
-      request_action: this.requestAction
+      // @ts-ignore TODO: This is not typed correctly!
+      entity_type_cd: this.entity_type_cd,
+      request_action_cd: this.request_action_cd
     }
 
     try {
@@ -967,7 +995,7 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('Tabs')
       return
     }
-  }
+  }s
   @Action
   async getNameAnalysisXPRO () {
     this.mutateDisplayedComponent('AnalyzePending')
@@ -976,8 +1004,9 @@ export class NewRequestModule extends VuexModule {
     let params: NewRequestNameSearchI = {
       name: this.name,
       location: this.location,
-      entity_type: this.entityType,
-      request_action: this.requestAction
+      // @ts-ignore TODO: This is not typed correctly!
+      entity_type_cd: this.entity_type_cd,
+      request_action_cd: this.request_action_cd
     }
 
     try {
@@ -1085,7 +1114,8 @@ export class NewRequestModule extends VuexModule {
     try {
       let nr = this.editNameReservation
       let { nrNum } = this.nr
-      nrNum = nrNum.replace(/(?:\s+|\s|)(\D|\D+|)(?:\s+|\s|)(\d+)(?:\s+|\s|)/, 'NR' + '$2')
+      // Use the NR_REGEX const in existing-request-search if you really want to do this
+      // nrNum = nrNum.replace(/(?:\s+|\s|)(\D|\D+|)(?:\s+|\s|)(\d+)(?:\s+|\s|)/, 'NR' + '$2')
 
       let response = await axios.patch(`/namerequests/${nrNum}/edit`, nr, {
         headers: {
@@ -1263,7 +1293,7 @@ export class NewRequestModule extends VuexModule {
     if (this.name) {
       name = sanitizeName(this.name)
     }
-    ['entityType', 'requestAction', 'location'].forEach(field => {
+    ['entity_type_cd', 'request_action_cd', 'location'].forEach(field => {
       if (this[field] === 'INFO') {
         this.setErrors(field)
       }
@@ -1294,8 +1324,8 @@ export class NewRequestModule extends VuexModule {
     }
     this.mutateName(name)
     if (this.location === 'BC') {
-      if (this.nameIsEnglish && !this.isPersonsName && !this.doNotAnalyzeEntities.includes(this.entityType)) {
-        if (['NEW', 'DBA', 'CHG'].includes(this.requestAction)) {
+      if (this.nameIsEnglish && !this.isPersonsName && !this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
+        if (['NEW', 'DBA', 'CHG'].includes(this.request_action_cd)) {
           this.getNameAnalysis()
           return
         }
@@ -1304,7 +1334,7 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('SubmissionTabs')
       return
     } else {
-      if (['NEW', 'DBA', 'CHG', 'MVE', 'REH', 'REN', 'REST'].includes(this.requestAction)) {
+      if (['NEW', 'DBA', 'CHG', 'MVE', 'REH', 'REN', 'REST'].includes(this.request_action_cd)) {
         this.getNameAnalysisXPRO()
       }
     }
@@ -1394,7 +1424,7 @@ export class NewRequestModule extends VuexModule {
   }
   @Mutation
   mutateEntityType (type: string) {
-    this.entityType = type
+    this.entity_type_cd = type
   }
   @Mutation
   mutateExaminationRequestedIndex (value: boolean) {
@@ -1445,9 +1475,9 @@ export class NewRequestModule extends VuexModule {
     }
     this.entityTypeAddToSelect = null
     if (location === 'BC') {
-      this.entityType = 'CR'
+      this.entity_type_cd = 'CR'
     } else {
-      this.entityType = 'XCR'
+      this.entity_type_cd = 'XCR'
     }
     this.location = location
   }
@@ -1500,10 +1530,10 @@ export class NewRequestModule extends VuexModule {
   }
   @Mutation
   mutateRequestAction (action: string) {
-    this.requestAction = action
+    this.request_action_cd = action
     if (action === 'MVE' && this.location === 'BC') {
       this.location = 'CA'
-      this.entityType = 'XCR'
+      this.entity_type_cd = 'XCR'
     }
   }
   @Mutation
@@ -1570,7 +1600,7 @@ export class NewRequestModule extends VuexModule {
         )
       }
     }
-    this.entityType = this.nr.entity_type_cd
+    this.entity_type_cd = this.nr.entity_type_cd
   }
   @Mutation
   resetApplicantDetails () {
@@ -1646,6 +1676,10 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateConversionTypeAddToSelect (value) {
     this.conversionTypeAddToSelect = value
+  }
+  @Mutation
+  mutatePaymentURL (url: string) {
+    this.paymentURL = url
   }
 
   getEntities (category) {

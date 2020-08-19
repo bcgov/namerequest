@@ -23,7 +23,6 @@ import PickEntityOrConversion from '@/components/modals/pick-entity-or-conversio
 import PickRequestType from '@/components/modals/pick-request-type.vue'
 import PaymentModal from '@/components/modals/payment.vue'
 import ReceiptModal from '@/components/modals/receipt.vue'
-
 import { Component, Vue, Ref } from 'vue-property-decorator'
 
 import Header from '@/components/header.vue'

@@ -20,7 +20,6 @@
                        id="nr-num-text-field" />
       </v-col>
       <v-col cols="12" class="mr-auto mb-n3">
-
       </v-col>
       <v-col cols="1" class="max-height mt-4">
         <v-img src="../../assets/images/two-icon.png"
@@ -65,12 +64,13 @@ import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { NameRequestI, SearchDataI, NrDataResponseT, NrDataT } from '@/models'
 
+const NR_REGEX = /^(NR\ ?L?|L?)?([\d]{6,8})$/
 @Component({
   components: { ForgotNrModal }
 })
 export default class ExistingRequstSearch extends Vue {
   emailRules = [ v => v === '' || /.+@.+\..+/.test(v) || 'Please be sure to enter a valid email' ]
-  nrRules = [ v => /^[a-zA-Z]{2}((\d{7})|((\s)(\d{7})))$/.test(v) || 'Please enter a valid NR number' ]
+  nrRules = [ v => NR_REGEX.test(v) || 'Please enter a valid NR number' ]
   errorMessage: string = ''
   phoneRules = [ v => v === '' || /^[\d ()\+-]+$/.test(v) || 'Please enter a numeric value' ]
   isValid: boolean = false
@@ -102,9 +102,9 @@ export default class ExistingRequstSearch extends Vue {
   reformatNR () {
     this.$nextTick(function () {
       if (this.existingRequestSearch.nrNum) {
-        let number = this.existingRequestSearch.nrNum.replace(
-          /(?:\s+|\s|)(\D|\D+|)(?:\s+|\s|)(\d+)(?:\s+|\s|)/, 'NR' + '$2'
-        )
+        // let number = this.existingRequestSearch.nrNum.trim().replace(/((([Nn][Rr])(\s*))|^(\d+))/, 'NR' + '$5')
+        // TODO: Reformat number if necessary, API will accept whatever format
+        let number = this.existingRequestSearch.nrNum
         if (number) {
           this.setExistingRequestSearch('nrNum', number)
         }
