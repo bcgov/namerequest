@@ -190,6 +190,7 @@ export default class ExistingRequestDisplay extends Vue {
   /** Open Incorporate Now Login Modal and apply NR Data to Session */
   activateILModal () {
     newReqModule.mutateIncorporateLoginModalVisible(true)
+    // nr persisted in the session to be used for affiliation/creation upon authentication in Signin.vue.
     sessionStorage.setItem('NR_DATA', JSON.stringify(this.nr))
   }
 }
