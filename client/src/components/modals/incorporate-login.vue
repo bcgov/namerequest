@@ -1,8 +1,6 @@
 <template>
   <v-dialog v-model="showModal" max-width="60%">
-    <v-card class="pa-4">
-      <sbc-authentication-options></sbc-authentication-options>
-    </v-card>
+    <sbc-authentication-options></sbc-authentication-options>
   </v-dialog>
 </template>
 

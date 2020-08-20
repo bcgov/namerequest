@@ -26,12 +26,12 @@ export function getConfig (): Promise<void> {
     // eslint-disable-next-line no-console
     console.log('Set Business URL to: ' + businessUrl)
 
-    const authApiUrl = response.data[0]['VUE_APP_AUTH_ROOT_API']
+    const authApiUrl = response.data[0]['AUTH_API_URL']
     sessionStorage.setItem('AUTH_API_URL', authApiUrl)
     // eslint-disable-next-line no-console
     console.log('Set Auth URL to: ' + authApiUrl)
 
-    const legalApiUrl = response.data[0]['VUE_APP_LEGAL_ROOT_API']
+    const legalApiUrl = response.data[0]['LEGAL_API_URL']
     sessionStorage.setItem('LEGAL_API_URL', legalApiUrl)
     // eslint-disable-next-line no-console
     console.log('Set Legal URL to: ' + legalApiUrl)

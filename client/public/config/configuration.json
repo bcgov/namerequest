@@ -4,7 +4,7 @@
     "PAYMENT_PORTAL_URL": "https://dev.bcregistry.ca/business/auth/makepayment",
     "BUSINESSES_URL": "https://dev.bcregistry.ca/business/auth/",
     "KEYCLOAK_CONFIG_PATH": "/local-keycloak-config-url/keycloak.json",
-    "VUE_APP_AUTH_ROOT_API": "https://auth-api-dev.pathfinder.gov.bc.ca/api/v1",
-    "VUE_APP_LEGAL_ROOT_API": "https://legal-api-dev.pathfinder.gov.bc.ca/api/v1"
+    "AUTH_API_URL": "https://auth-api-dev.pathfinder.gov.bc.ca/api/v1",
+    "LEGAL_API_URL": "https://legal-api-dev.pathfinder.gov.bc.ca/api/v1"
   }
 ]

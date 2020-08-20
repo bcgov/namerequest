@@ -28,7 +28,7 @@ async function startVue () {
   // configure Keycloak Service
   await KeyCloakService.setKeycloakConfigUrl(sessionStorage.getItem('KEYCLOAK_CONFIG_PATH'))
   if (!window.location.pathname.includes('/signin')) {
-    await KeyCloakService.initializeToken(null).then(() => {}).catch(err => {
+    await KeyCloakService.initializeToken(null).catch(err => {
       if (err?.message !== 'NOT_AUTHENTICATED') {
         throw err
       }
