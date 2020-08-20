@@ -893,7 +893,7 @@ export class NewRequestModule extends VuexModule {
     return caseData
   }
 
-  @Action
+  @Action({ rawError: true })
   async getAddressDetails (id) {
     const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Retrieve/v2.11/json3.ws'
     let params = {
@@ -926,10 +926,11 @@ export class NewRequestModule extends VuexModule {
       }
       return
     } catch (error) {
-      return error
+      // eslint-disable-next-line
+      console.log(error)
     }
   }
-  @Action
+  @Action({ rawError: true })
   async getAddressSuggestions (appKV) {
     if (!appKV.value) {
       return
@@ -955,7 +956,8 @@ export class NewRequestModule extends VuexModule {
       this.mutateAddressSuggestions(null)
       return
     } catch (error) {
-      return error
+      // eslint-disable-next-line
+      console.log(error)
     }
   }
   @Action
