@@ -129,6 +129,7 @@ export interface NewRequestNameSearchI {
   location: LocationT
   name: string
   request_action_cd: string
+  request_type_cd?: string
 }
 export interface OptionI {
   button?: string

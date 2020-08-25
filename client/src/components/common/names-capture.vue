@@ -7,7 +7,8 @@
           <v-col cols="6" style="display: flex; justify-content: flex-end">
             <button class="normal-link"
                     id="help-me-choose-activator"
-                    @change="activateHMCModal()">Help Me Choose</button>
+                    @change="activateHMCModal()">Help Me Choose
+            </button>
           </v-col>
         </v-row>
         <v-row>
@@ -42,7 +43,8 @@
       <v-row :class="editMode ? '' : 'mt-3' ">
         <v-col cols="12"
                class="h4 mb-3 ml-n1"
-               v-if="editMode">Name Choices</v-col>
+               v-if="editMode">Name Choices
+        </v-col>
       </v-row>
       <transition name="fade" mode="out-in">
         <v-row :class="editMode ? '' : 'mt-3' " :key="transitionKey(1)">
@@ -97,7 +99,7 @@
                           @input="editChoices('name2', $event, true)"
                           filled
                           id="choice-2-text-field"
-                          placeholder="Second Alternate Name (Optional)"/>
+                          placeholder="Second Alternate Name (Optional)" />
           </v-col>
           <v-col cols="3" class="py-0" v-if="designationAtEnd">
             <v-select :error-messages="des2Message"
@@ -109,7 +111,7 @@
                       @input="editChoices('designation2', $event, true)"
                       filled
                       id="designation-2-select"
-                      placeholder="Designation"/>
+                      placeholder="Designation" />
           </v-col>
         </v-row>
       </transition>
@@ -126,7 +128,7 @@
                           @input="editChoices('name3', $event)"
                           filled
                           id="choice-3-text-field"
-                          placeholder="Third Alternate Name (Optional)"/>
+                          placeholder="Third Alternate Name (Optional)" />
           </v-col>
           <v-col cols="3" class="py-0" style="height: 60px" v-if="designationAtEnd">
             <v-select :error-messages="des3Message"
@@ -137,7 +139,7 @@
                       @input="editChoices('designation3', $event, true)"
                       filled
                       id="designation-3-select"
-                      placeholder="Designation"/>
+                      placeholder="Designation" />
           </v-col>
         </v-row>
       </transition>
@@ -152,7 +154,8 @@
           <v-btn x-large
                  v-else
                  id="submit-continue-btn-disabled"
-                 @click="validateButton"> {{ editMode ? 'Next' : 'Continue' }}</v-btn>
+                 @click="validateButton"> {{ editMode ? 'Next' : 'Continue' }}
+          </v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -160,11 +163,10 @@
 </template>
 
 <script lang="ts">
-import designations from '@/store/list-data/designations'
-import newReqModule from '@/store/new-request-module'
-import { Component, Vue, Watch } from 'vue-property-decorator'
 import { LocationT } from '@/models'
 import { sanitizeName } from '@/plugins/utilities'
+import newReqModule from '@/store/new-request-module'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 
 @Component({})
 export default class NamesCapture extends Vue {
@@ -189,7 +191,7 @@ export default class NamesCapture extends Vue {
   mounted () {
     this.$el.addEventListener('keydown', this.handleKeydown)
     newReqModule.mutateNameChoicesToInitialState()
-    if (this.isAssumedName) {
+    if (this.isAssumedName && !this.editMode) {
       this.$nextTick(function () { this.hide = true })
       return
     }
@@ -246,6 +248,7 @@ export default class NamesCapture extends Vue {
       })
     }
   }
+  @Watch('')
 
   get autofocusField () {
     if (this.isAssumedName) {
@@ -289,7 +292,7 @@ export default class NamesCapture extends Vue {
   }
   get designationAtEnd () {
     if (this.location === 'BC') {
-      return designations[this.entity_type_cd].end
+      return this.$designations[this.entity_type_cd].end
     }
     return false
   }
@@ -297,11 +300,11 @@ export default class NamesCapture extends Vue {
     return newReqModule.editMode
   }
   get entityPhraseChoices () {
-    let basePhrases = designations[this.entity_type_cd].words
+    let basePhrases = this.$designations[this.entity_type_cd].words
     // these are the inner phrases for the CCC and CP types.  Filtering out CR designations from CPs has no effect
     // and CCC designations are a mix of CR-type ending designations and CCC specific inner phrases so filter out
     // the CR designations for the purposes of this getter
-    return basePhrases.filter(phrase => !designations['CR'].words.includes(phrase))
+    return basePhrases.filter(phrase => !this.$designations['CR'].words.includes(phrase))
   }
   get entityPhraseRequired () {
     return ['CC', 'CP'].includes(this.entity_type_cd)
@@ -323,6 +326,14 @@ export default class NamesCapture extends Vue {
   }
   get isValid () {
     let { nameChoices, messages, designationAtEnd, validatePhrases } = this
+    if (this.isAssumedName && this.editMode) {
+      if (!nameChoices['name1']) {
+        messages['name1'] = 'Please enter at least one name'
+        return false
+      }
+      messages['name1'] = ''
+      return true
+    }
     if (this.isAssumedName) {
       if (!nameChoices['name1']) {
         if (!nameChoices['name2'] && !nameChoices['name3']) {
@@ -352,6 +363,8 @@ export default class NamesCapture extends Vue {
               messages[`des${choice}`] = 'Please choose a designation'
               this.showDesignationErrors[`des${choice}`] = true
               outcome = false
+            } else {
+              this.messages[`des${choice}`] = ''
             }
           }
         }
@@ -437,9 +450,9 @@ export default class NamesCapture extends Vue {
     return (step1 && step2 && step3)
   }
   get items () {
-    let output: string[] = designations[this.entity_type_cd].words
+    let output: string[] = this.$designations[this.entity_type_cd].words
     if (this.entity_type_cd === 'CC') {
-      output = designations['CR'].words
+      output = this.$designations['CR'].words
     }
     output.unshift('')
     return output
@@ -453,10 +466,10 @@ export default class NamesCapture extends Vue {
   get mainMessage () {
     if (this.isAssumedName) {
       return `${this.name}  is  too similar to a name already in use.  Please enter a new name such as your corporation
-    number`
+  number`
     }
     return `You may provide up to two additional names which will be considered at no further cost, in the
-          order provided, only if your First Choice cannot be approved.`
+        order provided, only if your First Choice cannot be approved.`
   }
   get name () {
     return newReqModule.name
@@ -522,44 +535,69 @@ export default class NamesCapture extends Vue {
     }
   }
   populateNames () {
-    let { nr, nameChoices, items } = this
-    if (nr && nr.names && Array.isArray(nr.names)) {
+    let { nr } = this
+    for (let name of nr.names) {
+      let { choice } = name
+      if (name.designation) {
+        newReqModule.mutateNameChoices({ key: `designation${choice}`, value: name.designation })
+      }
+      newReqModule.mutateNameChoices({ key: `name${choice}`, value: name.name })
+    }
+    if (this.location === 'BC') {
+      const { nameChoices } = this
+      if (nr && nr.names && Array.isArray(nr.names)) {
+        for (let choice of [1, 2, 3]) {
+          if (nr.names.find(name => name.choice === choice)) {
+            let { name } = nr.names.find(name => name.choice === choice)
+            if (name.designation && name.name) {
+              newReqModule.mutateNameChoices({ key: `name${choice}`, value: name.name })
+              newReqModule.mutateNameChoices({ key: `designation${choice}`, value: name.designation })
+              continue
+            }
+            if (this.designationAtEnd) {
+              for (let item of this.items) {
+                if ([' LTD', ' INC', ' CORP'].some(des => name.endsWith(des))) {
+                  name = name + '.'
+                }
+                if (item) {
+                  if (name.endsWith(item)) {
+                    newReqModule.mutateNameChoices({ key: `designation${choice}`, value: item })
+                    let value = name.replace(item, '').trim()
+                    newReqModule.mutateNameChoices({ key: `name${choice}`, value })
+                  }
+                }
+              }
+              if (!nameChoices[`name${choice}`]) {
+                newReqModule.mutateNameChoices({ key: `name${choice}`, value: name })
+              }
+            } else {
+              newReqModule.mutateNameChoices({ key: `name${choice}`, value: name })
+            }
+          }
+          if (this.designationAtEnd) {
+            if (nameChoices[`name${choice}`] && nameChoices[`designation${choice}`]) {
+              if (nameChoices[`name${choice}`].endsWith(' ' + nameChoices[`designation${choice}`])) {
+                let newName = nameChoices[`name${choice}`].replace(nameChoices[`designation${choice}`], '').trim()
+                newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })
+              }
+            }
+          } else {
+            if (this.$designations[this.entity_type_cd].end && nameChoices[`designation${choice}`]) {
+              if (!nameChoices[`name${choice}`].endsWith(nameChoices[`designation${choice}`])) {
+                let newName = nameChoices[`name${choice}`] + ' ' + nameChoices[`designation${choice}`]
+                newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })
+              }
+            }
+          }
+        }
+      }
+    } else {
       for (let choice of [1, 2, 3]) {
         if (nr.names.find(name => name.choice === choice)) {
           let { name } = nr.names.find(name => name.choice === choice)
-          if (this.designationAtEnd) {
-            for (let item of items) {
-              if ([' LTD', ' INC', ' CORP'].some(des => name.endsWith(des))) {
-                name = name + '.'
-              }
-              if (item) {
-                if (name.endsWith(item)) {
-                  newReqModule.mutateNameChoices({ key: `designation${choice}`, value: item })
-                  let value = name.replace(item, '').trim()
-                  newReqModule.mutateNameChoices({ key: `name${choice}`, value })
-                }
-              }
-            }
-            if (!nameChoices[`name${choice}`]) {
-              newReqModule.mutateNameChoices({ key: `name${choice}`, value: name })
-            }
-          } else {
-            newReqModule.mutateNameChoices({ key: `name${choice}`, value: name })
-          }
-        }
-        if (this.designationAtEnd) {
-          if (nameChoices[`name${choice}`] && nameChoices[`designation${choice}`]) {
-            if (nameChoices[`name${choice}`].endsWith(' ' + nameChoices[`designation${choice}`])) {
-              let newName = nameChoices[`name${choice}`].replace(nameChoices[`designation${choice}`], '').trim()
-              newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })
-            }
-          }
-        } else {
-          if (designations[this.entity_type_cd].end && nameChoices[`designation${choice}`]) {
-            if (!nameChoices[`name${choice}`].endsWith(nameChoices[`designation${choice}`])) {
-              let newName = nameChoices[`name${choice}`] + ' ' + nameChoices[`designation${choice}`]
-              newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })
-            }
+          if (name.designation && !name.name.endsWith(name.designation)) {
+            name.name = name.name.trim() + ' ' + name.designation
+            newReqModule.mutateNameChoices({ key: `name${choice}`, value: name.name })
           }
         }
       }

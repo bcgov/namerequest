@@ -177,12 +177,6 @@ export default class GreyBox extends Vue {
   }
   types = ['send_to_examiner', 'obtain_consent', 'conflict_self_consent', 'assumed_name']
 
-  get assumedName () {
-    return newReqModule.assumedName
-  }
-  set assumedName (value) {
-    newReqModule.mutateAssumedName(value)
-  }
   get allDesignationsStripped () {
     return this.stripAllDesignations(this.originalName)
   }

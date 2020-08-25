@@ -8,7 +8,8 @@ import {
   AnalysisJSONI,
   ApplicantI,
   ConditionalReqI,
-  ConsentConflictI, ConversionTypesI,
+  ConsentConflictI,
+  ConversionTypesI,
   DraftReqI,
   EntityI,
   ExistingRequestSearchI,
@@ -24,9 +25,9 @@ import {
   WaitingAddressSearchI
 } from '@/models'
 import canadaPostAPIKey from './config'
+import Vue from 'vue'
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
-import Vue from 'vue'
 
 const qs: any = querystring
 let source: any
@@ -65,7 +66,6 @@ interface RequestNameMapI extends RequestNameI {}
 
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
 export class NewRequestModule extends VuexModule {
-  paymentURL: string = ''
   actingOnOwnBehalf: boolean = true
   addressSuggestions: object | null = null
   analysisJSON: AnalysisJSONI | null = null
@@ -86,18 +86,8 @@ export class NewRequestModule extends VuexModule {
     postalCd: '',
     stateProvinceCd: ''
   }
-  assumedName: boolean = false
-  nrData = {
-    additionalInfo: '',
-    corpNum: '',
-    homeJurisNum: '',
-    natureBusinessInfo: '',
-    previousRequestId: '',
-    tradeMark: '',
-    xproJurisdiction: ''
-  }
-  conflictId: string | null = null
   changesInBaseName: boolean = false
+  conflictId: string | null = null
   conversionType: string = ''
   conversionTypeAddToSelect: ConversionTypesI | null = null
   conversionTypes: ConversionTypesI[] = [
@@ -137,7 +127,6 @@ export class NewRequestModule extends VuexModule {
     }
   ]
   designationIsFixed: boolean = false
-  disableSuggestions: boolean = false
   displayedComponent: string = 'Tabs'
   doNotAnalyzeEntities: string[] = ['PAR', 'CC', 'CP', 'PA', 'FI', 'XCP']
   editMode: boolean = false
@@ -365,11 +354,6 @@ export class NewRequestModule extends VuexModule {
     }
   ]
   errors: string[] = []
-  examinationRequestedIndex = {
-    0: false,
-    1: false,
-    2: false
-  }
   existingRequestSearch: ExistingRequestSearchI = {
     emailAddress: '',
     nrNum: '',
@@ -378,7 +362,6 @@ export class NewRequestModule extends VuexModule {
   extendedRequestType: SelectOptionsI | null = null
   getNameReservationFailed: boolean = false
   helpMeChooseModalVisible: boolean = false
-  isAssumedName: boolean = false
   isPersonsName: boolean = false
   issueIndex: number = 0
   location: LocationT = 'BC'
@@ -392,9 +375,19 @@ export class NewRequestModule extends VuexModule {
     name3: '',
     designation3: ''
   }
-  nrRequestNameMap: RequestNameMapI[] = []
-  nr: Partial<NameRequestI> = {} as NameRequestI
   nameIsEnglish: boolean = true
+  nr: Partial<NameRequestI> = {} as NameRequestI
+  nrData = {
+    additionalInfo: '',
+    corpNum: '',
+    homeJurisNum: '',
+    natureBusinessInfo: '',
+    previousRequestId: '',
+    tradeMark: '',
+    xproJurisdiction: ''
+  }
+  nrOriginal: Partial<NameRequestI> = {} as NameRequestI
+  nrRequestNameMap: RequestNameMapI[] = []
   nrRequiredModalVisible: boolean = false
   pickEntityModalVisible: boolean = false
   pickRequestTypeModalVisible: boolean = false
@@ -485,9 +478,6 @@ export class NewRequestModule extends VuexModule {
   tabNumber: number = 0
   waitingAddressSearch: WaitingAddressSearchI | null = null
 
-  get payment_url () {
-    return this.paymentURL
-  }
   get allDesignationWords () {
     let output = []
     for (let des in designations) {
@@ -522,24 +512,6 @@ export class NewRequestModule extends VuexModule {
     }
     return consentWords
   }
-  get designationItems () {
-    if (this.entity_type_cd && designations[this.entity_type_cd]) {
-      let { words } = designations[this.entity_type_cd]
-      return words.map(des => ({ value: des, text: des }))
-    }
-    return []
-  }
-  get designationObject () {
-    if (this.entity_type_cd && designations[this.entity_type_cd]) {
-      return designations[this.entity_type_cd]
-    }
-    return ''
-  }
-  get entityTextFromValue () {
-    let list = [...this.entityTypesBC, ...this.entityTypesXPRO]
-    let type = list.find(t => t.value === this.entity_type_cd)
-    return type.text
-  }
   get conversionTypeOptions () {
     let options = [...this.conversionTypes].filter(type => type.shortlist)
     let n = 3
@@ -559,6 +531,24 @@ export class NewRequestModule extends VuexModule {
       }
       return 0
     })
+  }
+  get designationItems () {
+    if (this.entity_type_cd && designations[this.entity_type_cd]) {
+      let { words } = designations[this.entity_type_cd]
+      return words.map(des => ({ value: des, text: des }))
+    }
+    return []
+  }
+  get designationObject () {
+    if (this.entity_type_cd && designations[this.entity_type_cd]) {
+      return designations[this.entity_type_cd]
+    }
+    return ''
+  }
+  get entityTextFromValue () {
+    let list = [...this.entityTypesBC, ...this.entityTypesXPRO]
+    let type = list.find(t => t.value === this.entity_type_cd)
+    return type.text
   }
   get entityTypeOptions () {
     let bcOptions: SelectOptionsI[] = this.entityTypesBC.filter(type => type.shortlist)
@@ -582,6 +572,9 @@ export class NewRequestModule extends VuexModule {
       }
       return 0
     })
+  }
+  get isAssumedName () {
+    return this.request_action_cd === 'ASSUMED'
   }
   get locationOptions () {
     let options = [
@@ -608,6 +601,18 @@ export class NewRequestModule extends VuexModule {
       }
     }
     return false
+  }
+  get nrNum () {
+    const { nr } = this
+    let nrNum
+    if (nr) nrNum = nr.nrNum
+    return nrNum
+  }
+  get nrState () {
+    const { nr } = this
+    let state
+    if (nr) state = nr.state
+    return state
   }
   get pickEntityTableBC () {
     let categories = []
@@ -706,17 +711,44 @@ export class NewRequestModule extends VuexModule {
     }
     return ''
   }
-  get nrNum () {
-    const { nr } = this
-    let nrNum
-    if (nr) nrNum = nr.nrNum
-    return nrNum
+  /**
+   * This getter combines the NR response data objects names against nameChoices,
+   * which contains the actual form values, building the request object required for a Name.
+   * nameChoices are identified by the 'choice' index, which is what we use to map values.
+   */
+  get draftNameReservation (): DraftReqI {
+    const { applicant, nrData, nrRequestNames } = this
+
+    const caseData: DraftReqI = {
+      applicants: [applicant],
+      names: nrRequestNames,
+      ...nrData,
+      priorityCd: this.priorityRequest ? 'Y' : 'N',
+      entity_type_cd: this.entity_type_cd,
+      request_action_cd: this.request_action_cd,
+      request_type_cd: this.xproRequestTypeCd ? this.xproRequestTypeCd : '',
+      stateCd: 'DRAFT',
+      english: this.nameIsEnglish,
+      nameFlag: this.isPersonsName,
+      submit_count: 0
+    }
+    return caseData
   }
-  get nrState () {
-    const { nr } = this
-    let state
-    if (nr) state = nr.state
-    return state
+  get editNameReservation () {
+    let data = {
+      applicants: [this.applicant],
+      names: this.nrRequestNames,
+      request_action_cd: this.request_action_cd,
+      request_type_cd: this.xproRequestTypeCd ? this.xproRequestTypeCd : '',
+      entity_type_cd: this.entity_type_cd,
+      ...this.nrData
+    }
+    for (let key in this.nrData) {
+      if (this.nrData[key]) {
+        data[key] = this.nrData[key]
+      }
+    }
+    return data
   }
   get nrNames () {
     const { nr } = this
@@ -724,11 +756,6 @@ export class NewRequestModule extends VuexModule {
     if (nr) names = nr.names
     return names
   }
-  /**
-   * This getter combines the NR response data objects names against nameChoices,
-   * which contains the actual form values, building the request object required for a Name.
-   * nameChoices are identified by the 'choice' index, which is what we use to map values.
-   */
   get nrRequestNames (): RequestNameI[] {
     const { nameChoices, nrNames } = this
     const defaultValues = {
@@ -747,9 +774,14 @@ export class NewRequestModule extends VuexModule {
       let choiceIdx = 1
       while (choiceIdx <= 3) {
         if (nameChoices[`name${choiceIdx}`] as boolean) {
+          let combinedName = nameChoices[`name${choiceIdx}`]
+          let des = nameChoices[`designation${choiceIdx}`]
+          if (des && !combinedName.endsWith(des)) {
+            combinedName = combinedName + ' ' + des
+          }
           // Create the requestName
           requestNames.push({
-            name: nameChoices[`name${choiceIdx}`],
+            name: combinedName,
             designation: nameChoices[`designation${choiceIdx}`],
             choice: choiceIdx,
             ...defaultValues
@@ -791,42 +823,6 @@ export class NewRequestModule extends VuexModule {
     })
 
     return requestNames
-  }
-  get draftNameReservation (): DraftReqI {
-    const { applicant, nrData, nrRequestNames } = this
-
-    const caseData: DraftReqI = {
-      applicants: [applicant],
-      names: nrRequestNames,
-      ...nrData,
-      priorityCd: this.priorityRequest ? 'Y' : 'N',
-      entity_type_cd: this.entity_type_cd,
-      request_action_cd: this.request_action_cd,
-      request_type_cd: this.xproRequestTypeCd ? this.xproRequestTypeCd : '',
-      stateCd: 'DRAFT',
-      english: this.nameIsEnglish,
-      nameFlag: this.isPersonsName,
-      submit_count: 0
-    }
-    if (this.isAssumedName) {
-      caseData.request_action_cd = 'ASSUMED'
-    }
-    return caseData
-  }
-  get editNameReservation () {
-    let data = {
-      applicants: [this.applicant],
-      names: this.nrRequestNames,
-      request_action_cd: this.request_action_cd,
-      entity_type_cd: this.entity_type_cd,
-      ...this.nrData
-    }
-    for (let key in this.nrData) {
-      if (this.nrData[key]) {
-        data[key] = this.nrData[key]
-      }
-    }
-    return data
   }
   get conditionalNameReservation (): ConditionalReqI {
     const { applicant, nrData, nrNames } = this
@@ -895,6 +891,7 @@ export class NewRequestModule extends VuexModule {
 
   @Action({ rawError: true })
   async getAddressDetails (id) {
+    id = `CAN|${id.split('|')[3]}`
     const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Retrieve/v2.11/json3.ws'
     let params = {
       Key: canadaPostAPIKey,
@@ -982,6 +979,8 @@ export class NewRequestModule extends VuexModule {
         cancelToken: source.token
       })
       let json = resp.data
+      // eslint-disable-next-line
+      console.log(json)
       this.mutateAnalysisJSON(json)
       if (Array.isArray(json.issues) && json.issues.length > 0) {
         let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
@@ -997,7 +996,7 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('Tabs')
       return
     }
-  }s
+  }
   @Action
   async getNameAnalysisXPRO () {
     this.mutateDisplayedComponent('AnalyzePending')
@@ -1053,7 +1052,6 @@ export class NewRequestModule extends VuexModule {
         params,
         cancelToken: source.token
       })
-      // eslint-disable-next-line
       if (!resp.data || resp.data.length === 0) {
         this.mutateNameRequest(
           {
@@ -1147,11 +1145,13 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
-  async postNameRequests (type) {
+  async postNameRequests (type: string) {
     let response
+    if (this.isAssumedName) type = 'assumed'
     try {
       let data: any
       switch (type) {
+        case 'assumed':
         case 'draft':
           data = this.draftNameReservation
           break
@@ -1186,7 +1186,8 @@ export class NewRequestModule extends VuexModule {
   }
   @Action
   async putNameReservation (nrNum) {
-    const { nrState } = this
+    let { nrState } = this
+    if (this.isAssumedName) nrState = 'ASSUMED'
     let response
     try {
       let data: any
@@ -1200,7 +1201,11 @@ export class NewRequestModule extends VuexModule {
         case 'RESERVED':
           data = this.reservedNameReservation
           break
+        case 'ASSUMED':
+          data = this.editNameReservation
+          break
       }
+      data.myFakeKey = 'SEE MY VEST'
 
       response = await axios.put(`/namerequests/${nrNum}`, data, {
         headers: {
@@ -1262,6 +1267,11 @@ export class NewRequestModule extends VuexModule {
         ? this.entityTypesBC.find(entity => entity.value === entity_type_cd)
         : this.entityTypesXPRO.find(entity => entity.value === entity_type_cd)
       this.mutateEntityTypeAddToSelect(obj)
+    }
+    if (this.nr.request_action_cd === 'ASSUMED') {
+      this.mutateRequestAction('ASSUMED')
+      let assumedObj = this.requestTypes.find(type => type.value === 'ASSUMED')
+      this.mutateExtendedRequestType(assumedObj)
     }
     if (this.nr.xproJurisdiction) {
       let { xproJurisdiction } = this.nr
@@ -1344,7 +1354,7 @@ export class NewRequestModule extends VuexModule {
   @Action
   updateApplicantDetails (appKV) {
     this.mutateApplicant(appKV)
-    if (!appKV.value || appKV.key !== 'addrLine1' || this.disableSuggestions) {
+    if (!appKV.value || appKV.key !== 'addrLine1') {
       this.mutateAddressSuggestions(null)
       return
     }
@@ -1353,14 +1363,6 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   clearErrors () {
     this.errors = []
-  }
-  @Mutation
-  setErrors (value: string) {
-    if (Array.isArray(this.errors) && this.errors.length > 0) {
-      this.errors = this.errors.concat(value)
-      return
-    }
-    this.errors = [value]
   }
   @Mutation
   mutateActingOnOwnBehalf (value) {
@@ -1395,15 +1397,6 @@ export class NewRequestModule extends VuexModule {
     }
     this.applicant[appKV.key] = appKV.value
   }
-
-  @Mutation
-  mutateAssumedName (value) {
-    this.assumedName = value
-  }
-  @Mutation
-  mutateIsAssumedName (value) {
-    this.isAssumedName = value
-  }
   @Mutation
   mutateChangesInBaseName (newVal) {
     this.changesInBaseName = newVal
@@ -1413,24 +1406,32 @@ export class NewRequestModule extends VuexModule {
     this.conflictId = id
   }
   @Mutation
-  mutateDesignationIsFixed (value) {
-    this.designationIsFixed = value
+  mutateConversionType (value) {
+    this.conversionType = value
   }
   @Mutation
-  mutateDisableSuggestions (value) {
-    this.disableSuggestions = value
+  mutateConversionTypeAddToSelect (value) {
+    this.conversionTypeAddToSelect = value
+  }
+  @Mutation
+  mutateDesignationIsFixed (value) {
+    this.designationIsFixed = value
   }
   @Mutation
   mutateDisplayedComponent (comp: string) {
     this.displayedComponent = comp
   }
   @Mutation
+  mutateEditMode (value) {
+    this.editMode = value
+  }
+  @Mutation
   mutateEntityType (type: string) {
     this.entity_type_cd = type
   }
   @Mutation
-  mutateExaminationRequestedIndex (value: boolean) {
-    this.examinationRequestedIndex[this.issueIndex] = value
+  mutateEntityTypeAddToSelect (option: SelectOptionsI) {
+    this.entityTypeAddToSelect = option
   }
   @Mutation
   mutateExistingRequestSearch ({ key, value }) {
@@ -1445,12 +1446,12 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Mutation
-  mutateEntityTypeAddToSelect (option: SelectOptionsI) {
-    this.entityTypeAddToSelect = option
-  }
-  @Mutation
   mutateExtendedRequestType (option: SelectOptionsI) {
     this.extendedRequestType = option
+  }
+  @Mutation
+  mutateGetNameReservationFailed (value) {
+    this.getNameReservationFailed = value
   }
   @Mutation
   mutateHelpMeChooseModalVisible (value: boolean) {
@@ -1492,6 +1493,10 @@ export class NewRequestModule extends VuexModule {
     this.name = name
   }
   @Mutation
+  mutateNROriginal (nr) {
+    this.nrOriginal = nr
+  }
+  @Mutation
   mutateNameChoices (choiceObj) {
     this.nameChoices[choiceObj.key] = choiceObj.value
   }
@@ -1511,8 +1516,28 @@ export class NewRequestModule extends VuexModule {
     this.nameIsEnglish = value
   }
   @Mutation
+  mutateNameRequest (nr) {
+    this.nr = nr
+  }
+  @Mutation
+  mutateNameRequestByKey (kv) {
+    Vue.set(
+      this.nr,
+      kv.key,
+      kv.value
+    )
+  }
+  @Mutation
   mutateNRData ({ key, value }) {
     this.nrData[key] = value
+  }
+  @Mutation
+  mutateNRDataByKey (kv) {
+    Vue.set(
+      this.nrData,
+      kv.key,
+      kv.value
+    )
   }
   @Mutation
   mutateNrRequiredModalVisible (value: boolean) {
@@ -1537,10 +1562,6 @@ export class NewRequestModule extends VuexModule {
       this.location = 'CA'
       this.entity_type_cd = 'XCR'
     }
-  }
-  @Mutation
-  mutateNameRequest (value) {
-    this.nr = value
   }
   @Mutation
   mutateRequestExaminationOrProvideConsent ({ index, type, value }) {
@@ -1605,10 +1626,24 @@ export class NewRequestModule extends VuexModule {
     this.entity_type_cd = this.nr.entity_type_cd
   }
   @Mutation
+  resetEditFormValues () {
+    this.nr = this.nrOriginal
+  }
+  @Mutation
   resetApplicantDetails () {
     Object.keys(this.applicant).forEach(key => {
       this.applicant[key] = ''
     })
+  }
+  @Mutation
+  resetNrData () {
+    for (let key in this.nrData) {
+      Vue.set(
+        this.nrData,
+        key,
+        ''
+      )
+    }
   }
   @Mutation
   resetRequestExaminationOrProvideConsent () {
@@ -1626,6 +1661,14 @@ export class NewRequestModule extends VuexModule {
     })
   }
   @Mutation
+  setErrors (value: string) {
+    if (Array.isArray(this.errors) && this.errors.length > 0) {
+      this.errors = this.errors.concat(value)
+      return
+    }
+    this.errors = [value]
+  }
+  @Mutation
   setNrResponse (value) {
     this.nr = value
   }
@@ -1636,52 +1679,6 @@ export class NewRequestModule extends VuexModule {
       nameChoices[`name${choice}`] = name
       nameChoices[`designation${choice}`] = designation
     })
-  }
-  @Mutation
-  mutateEditMode (value) {
-    this.editMode = value
-  }
-  @Mutation
-  resetNrData () {
-    for (let key in this.nrData) {
-      Vue.set(
-        this.nrData,
-        key,
-        ''
-      )
-    }
-  }
-  @Mutation
-  mutateGetNameReservationFailed (value) {
-    this.getNameReservationFailed = value
-  }
-  @Mutation
-  mutateNameRequestByKey (kv) {
-    Vue.set(
-      this.nr,
-      kv.key,
-      kv.value
-    )
-  }
-  @Mutation
-  mutateNRDataByKey (kv) {
-    Vue.set(
-      this.nrData,
-      kv.key,
-      kv.value
-    )
-  }
-  @Mutation
-  mutateConversionType (value) {
-    this.conversionType = value
-  }
-  @Mutation
-  mutateConversionTypeAddToSelect (value) {
-    this.conversionTypeAddToSelect = value
-  }
-  @Mutation
-  mutatePaymentURL (url: string) {
-    this.paymentURL = url
   }
 
   getEntities (category) {
