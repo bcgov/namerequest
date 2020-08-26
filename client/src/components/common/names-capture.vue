@@ -233,6 +233,9 @@ export default class NamesCapture extends Vue {
   }
   @Watch('location')
   handleLocation (newVal, oldVal) {
+    if (newVal !== oldVal) {
+      newReqModule.mutateNRData({ key: 'xproJurisdiction', value: '' })
+    }
     if (newVal === 'INFO') {
       let type = this.entity_type_cd
       newReqModule.mutateLocationInfoModalVisible(true)

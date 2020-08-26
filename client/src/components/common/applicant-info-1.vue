@@ -305,9 +305,12 @@ export default class ApplicantInfo1 extends Vue {
     document.removeEventListener('keydown', this.handleKeydown)
   }
   mounted () {
-    this.updateApplicant('stateProvinceCd', 'BC')
-    this.updateApplicant('countryTypeCd', 'CA')
     debounced = null
+    if (!this.editMode) {
+      this.updateApplicant('stateProvinceCd', 'BC')
+      this.updateApplicant('countryTypeCd', 'CA')
+      return
+    }
   }
 
   @Watch('showAddressMenu')
@@ -374,6 +377,9 @@ export default class ApplicantInfo1 extends Vue {
   }
   set actingOnOwnBehalf (value) {
     newReqModule.mutateActingOnOwnBehalf(value)
+  }
+  get xproJurisdiction () {
+    return newReqModule.nrData.xproJurisdiction
   }
 
   blurAddress1 () {

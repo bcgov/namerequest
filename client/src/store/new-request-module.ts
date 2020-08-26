@@ -1205,7 +1205,6 @@ export class NewRequestModule extends VuexModule {
           data = this.editNameReservation
           break
       }
-      data.myFakeKey = 'SEE MY VEST'
 
       response = await axios.put(`/namerequests/${nrNum}`, data, {
         headers: {
@@ -1255,25 +1254,13 @@ export class NewRequestModule extends VuexModule {
     this.mutateEditMode(true)
     this.populateApplicantData()
     this.populateNrData()
-    for (let field of ['clientFirstName', 'clientLastName', 'contact']) {
-      if (this.nr.applicants[field]) {
-        this.mutateActingOnOwnBehalf(false)
-        break
-      }
+    if (['clientFirstName', 'clientLastName', 'contact'].some(field => !!this.nr.applicants[field])) {
+      this.mutateActingOnOwnBehalf(false)
     }
     let { entity_type_cd } = this.nr
-    if (!this.entityTypeOptions.some(option => option.value === entity_type_cd)) {
-      let obj = this.entityTypesBC.find(entity => entity.value === entity_type_cd)
-        ? this.entityTypesBC.find(entity => entity.value === entity_type_cd)
-        : this.entityTypesXPRO.find(entity => entity.value === entity_type_cd)
-      this.mutateEntityTypeAddToSelect(obj)
-    }
-    if (this.nr.request_action_cd === 'ASSUMED') {
-      this.mutateRequestAction('ASSUMED')
-      let assumedObj = this.requestTypes.find(type => type.value === 'ASSUMED')
-      this.mutateExtendedRequestType(assumedObj)
-    }
-    if (this.nr.xproJurisdiction) {
+    if (this.entityTypesBC.some(type => type.value === entity_type_cd)) {
+      this.mutateLocation('BC')
+    } else if (this.nr.xproJurisdiction) {
       let { xproJurisdiction } = this.nr
       let location: LocationT
       for (let key of ['value', 'text']) {
@@ -1287,9 +1274,21 @@ export class NewRequestModule extends VuexModule {
         }
       }
       this.mutateLocation(location)
-    } else {
-      this.mutateLocation('BC')
     }
+    this.mutateEntityType(entity_type_cd)
+    if (!this.entityTypeOptions.some(option => option.value === entity_type_cd)) {
+      let obj = this.entityTypesBC.find(entity => entity.value === entity_type_cd)
+        ? this.entityTypesBC.find(entity => entity.value === entity_type_cd)
+        : this.entityTypesXPRO.find(entity => entity.value === entity_type_cd)
+      this.mutateEntityTypeAddToSelect(obj)
+    }
+    let { request_action_cd } = this.nr
+    if (request_action_cd !== 'NEW') {
+      this.mutateRequestAction(request_action_cd)
+      let reqObj = this.requestTypes.find(type => type.value === request_action_cd)
+      this.mutateExtendedRequestType(reqObj)
+    }
+
     if (this.nr.state === 'DRAFT') {
       this.mutateSubmissionTabComponent('NamesCapture')
     } else {
