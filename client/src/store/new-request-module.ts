@@ -86,6 +86,7 @@ export class NewRequestModule extends VuexModule {
     postalCd: '',
     stateProvinceCd: ''
   }
+  assumedNameOriginal: string = ''
   changesInBaseName: boolean = false
   conflictId: string | null = null
   conversionType: string = ''
@@ -546,9 +547,12 @@ export class NewRequestModule extends VuexModule {
     return ''
   }
   get entityTextFromValue () {
-    let list = [...this.entityTypesBC, ...this.entityTypesXPRO]
-    let type = list.find(t => t.value === this.entity_type_cd)
-    return type.text
+    if (this.entity_type_cd) {
+      let list = [...this.entityTypesBC, ...this.entityTypesXPRO]
+      let type = list.find(t => t.value === this.entity_type_cd)
+      return type.text
+    }
+    return ''
   }
   get entityTypeOptions () {
     let bcOptions: SelectOptionsI[] = this.entityTypesBC.filter(type => type.shortlist)
@@ -732,20 +736,34 @@ export class NewRequestModule extends VuexModule {
       nameFlag: this.isPersonsName,
       submit_count: 0
     }
+    if (this.isAssumedName) {
+      if (!caseData.additionalInfo.endsWith('***')) {
+        let notice = `*** Registered Name: ${this.assumedNameOriginal} ***`
+        caseData.additionalInfo = caseData.additionalInfo + ' ' + notice
+      }
+    }
     return caseData
   }
   get editNameReservation () {
     let data = {
       applicants: [this.applicant],
-      names: this.nrRequestNames,
       request_action_cd: this.request_action_cd,
       request_type_cd: this.xproRequestTypeCd ? this.xproRequestTypeCd : '',
       entity_type_cd: this.entity_type_cd,
       ...this.nrData
     }
+    if (this.nr.state === 'DRAFT') {
+      data.names = this.nrRequestNames
+    }
     for (let key in this.nrData) {
       if (this.nrData[key]) {
         data[key] = this.nrData[key]
+      }
+    }
+    if (this.isAssumedName) {
+      if (!data.additionalInfo.endsWith('***')) {
+        let notice = `*** Registered Name: ${this.assumedNameOriginal} ***`
+        data.additionalInfo = data.additionalInfo + ' ' + notice
       }
     }
     return data
@@ -1678,6 +1696,10 @@ export class NewRequestModule extends VuexModule {
       nameChoices[`name${choice}`] = name
       nameChoices[`designation${choice}`] = designation
     })
+  }
+  @Mutation
+  mutateAssumedNameOriginal () {
+    this.assumedNameOriginal = this.name
   }
 
   getEntities (category) {
