@@ -753,7 +753,7 @@ export class NewRequestModule extends VuexModule {
       ...this.nrData
     }
     if (this.nr.state === 'DRAFT') {
-      data.names = this.nrRequestNames
+      data['names'] = this.nrRequestNames
     }
     for (let key in this.nrData) {
       if (this.nrData[key]) {
