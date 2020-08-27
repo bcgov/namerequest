@@ -46,7 +46,7 @@
                       placeholder="Applicant's Notification Email"
                       id="email-address-text-field" />
       </v-col>
-      <v-col cols="12" class="mt-4">
+      <v-col cols="12" class="mt-4 mb-n3">
         <div style="display: flex; width: 100%;">
           <div style="margin-left: auto" class="link-text">
             <v-btn @click="handleSubmit"

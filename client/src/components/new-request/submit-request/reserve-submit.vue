@@ -34,12 +34,13 @@ export default class ReserveSubmitButton extends Vue {
   showNextStep () {
     newReqModule.mutateDisplayedComponent('SubmissionTabs')
     if ((this.setup === 'examine' || this.location !== 'BC') || this.setup === 'assumed') {
-      newReqModule.mutateSubmissionTabComponent('NamesCapture')
       newReqModule.mutateSubmissionType('examination')
+      newReqModule.mutateSubmissionTabComponent('NamesCapture')
       if (this.setup === 'assumed') {
-        newReqModule.mutateIsAssumedName(true)
+        newReqModule.mutateRequestAction('ASSUMED')
+        newReqModule.mutateAssumedNameOriginal()
+        return
       }
-      return
     }
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
     if (this.setup === 'consent') {

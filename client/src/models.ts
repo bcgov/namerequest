@@ -62,7 +62,7 @@ export interface ConversionTypesI {
   value: string
 }
 export interface DraftReqI {
-  additionalInfo: string
+  additionalInfo?: string
   applicants: [ ApplicantI ]
   corpNum?: string
   english: boolean
@@ -71,13 +71,13 @@ export interface DraftReqI {
   id?: number
   nameFlag: boolean
   names: RequestNameI[]
-  natureBusinessInfo: string
+  natureBusinessInfo?: string
   previousRequestId?: string
   priorityCd: string
   request_action_cd: string
   stateCd: 'DRAFT'
   submit_count: number
-  tradeMark: string
+  tradeMark?: string
   xproJurisdiction?: string
   request_type_cd?: string
 }
@@ -129,6 +129,7 @@ export interface NewRequestNameSearchI {
   location: LocationT
   name: string
   request_action_cd: string
+  request_type_cd?: string
 }
 export interface OptionI {
   button?: string
