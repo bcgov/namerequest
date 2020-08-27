@@ -46,12 +46,14 @@
                v-if="editMode">Name Choices
         </v-col>
       </v-row>
-      <transition name="fade" mode="out-in">
-        <v-row :class="editMode ? '' : 'mt-3' " :key="transitionKey(1)">
-          <v-col cols="2" class="py-0 h5" align-self="start">
-            First Choices
+
+        <v-row>
+          <v-col cols="2" class="py-0 h5" align-self="start" key="static-1">
+            First Choice
           </v-col>
-          <v-col :cols="designationAtEnd ? 7 : 10" class="py-0">
+          <transition name="fade" mode="out-in">
+            <v-col :key="transitionKey(1)" class="ma-0 pa-0" cols="10"><v-row class="ma-0 pa-0">
+          <v-col :cols="designationAtEnd ? 8 : 12" class="py-0" >
             <v-text-field :autofocus="autofocusField === 'name1'"
                           :error-messages="messages.name1"
                           :hide-details="hide"
@@ -61,7 +63,7 @@
                           filled
                           id="choice-1-text-field" />
           </v-col>
-          <v-col cols="3" class="py-0" v-if="designationAtEnd">
+          <v-col cols="4" class="py-0" v-if="designationAtEnd">
             <v-select :autofocus="autofocusField === 'des1'"
                       :error-messages="des1Message"
                       :hide-details="hide"
@@ -74,75 +76,87 @@
                       id="designation-1-select"
                       placeholder="Designation" />
           </v-col>
+            </v-row></v-col>
+          </transition>
         </v-row>
-      </transition>
-      <v-row class="grey-text">
-        <v-col cols="10" v-if="entityPhraseRequired && !editMode" class="mt-n2">
-          A {{ entity_type_cd === 'CC' ? 'Community Contribution Company' : 'Cooperative'}} name must
-          include (but not start with) one of the following phrases: <b>{{ entityPhraseText }}</b></v-col>
-        <v-col cols="2" v-if="isAssumedName"></v-col>
-        <v-col cols="10" class="my-1" v-if="!editMode" :class="isAssumedName ? 'bold-copy' : ''">
+      <v-row v-if="!editMode" class="my-1 py-0 grey-text">
+        <v-col cols="2" v-if="isAssumedName" class="py-0"></v-col>
+        <v-col cols="10" class="py-0" :class="isAssumedName ? 'bold-copy' : ''">
           {{ mainMessage}}
         </v-col>
       </v-row>
-      <transition name="fade" mode="out-in">
-        <v-row class="mt-2" :key="transitionKey(2)">
-          <v-col cols="2" class="py-0 h5" align-self="start">
-            Second Choice
-          </v-col>
-          <v-col :cols="designationAtEnd ? 7 : 10" class="py-0">
-            <v-text-field :autofocus="autofocusField === 'name2'"
-                          :error-messages="messages.name2"
+      <v-row v-if="entityPhraseRequired" class="my-1 py-0 grey-text">
+        <v-col cols="10" class="py-0">
+          A {{ entity_type_cd === 'CC' ? 'Community Contribution Company' : 'Cooperative'}} name must
+          include (but not start with) one of the following phrases: <b>{{ entityPhraseText }}</b>
+        </v-col>
+      </v-row>
+      <v-row class="mt-2">
+        <v-col cols="2" class="py-0 h5" align-self="start" key="static-2">
+          Second Choice
+        </v-col>
+        <transition name="fade" mode="out-in">
+          <v-col :key="transitionKey(2)" class="ma-0 pa-0" cols="10">
+            <v-row class="ma-0 pa-0">
+              <v-col :cols="designationAtEnd ? 8: 12" class="py-0">
+                <v-text-field :autofocus="autofocusField === 'name2'"
+                              :error-messages="messages.name2"
+                              :hide-details="hide"
+                              :value="nameChoices.name2"
+                              @blur="handleBlur()"
+                              @input="editChoices('name2', $event, true)"
+                              filled
+                              id="choice-2-text-field"
+                              placeholder="Second Alternate Name (Optional)" />
+              </v-col>
+              <v-col cols="4" class="py-0" v-if="designationAtEnd">
+                <v-select :error-messages="des2Message"
                           :hide-details="hide"
-                          :value="nameChoices.name2"
-                          @blur="handleBlur()"
-                          @input="editChoices('name2', $event, true)"
+                          :items="items"
+                          :menu-props="props"
+                          :value="nameChoices.designation2"
+                          @blur="handleBlur(); showDesignationErrors.des2 = true"
+                          @input="editChoices('designation2', $event, true)"
                           filled
-                          id="choice-2-text-field"
-                          placeholder="Second Alternate Name (Optional)" />
+                          id="designation-2-select"
+                          placeholder="Designation" />
+              </v-col>
+            </v-row>
           </v-col>
-          <v-col cols="3" class="py-0" v-if="designationAtEnd">
-            <v-select :error-messages="des2Message"
-                      :hide-details="hide"
-                      :items="items"
-                      :menu-props="props"
-                      :value="nameChoices.designation2"
-                      @blur="handleBlur(); showDesignationErrors.des2 = true"
-                      @input="editChoices('designation2', $event, true)"
-                      filled
-                      id="designation-2-select"
-                      placeholder="Designation" />
-          </v-col>
-        </v-row>
-      </transition>
-      <transition name="fade" mode="out-in">
-        <v-row no gutters class="mt-2" :key="transitionKey(3)">
-          <v-col cols="2" class="py-0 h5" align-self="start">
-            Third Choice
-          </v-col>
-          <v-col :cols="designationAtEnd ? 7 : 10" class="py-0" style="height:60px">
-            <v-text-field :error-messages="messages.name3"
+        </transition>
+      </v-row>
+      <v-row no gutters class="mt-2" key="static-3">
+        <v-col cols="2" class="py-0 h5" align-self="start">
+          Third Choice
+        </v-col>
+        <transition name="fade" mode="out-in">
+          <v-col :key="transitionKey(3)" class="ma-0 pa-0" cols="10">
+            <v-row class="ma-0 pa-0">
+              <v-col :cols="designationAtEnd ? 8: 12" class="py-0" style="height:60px">
+                <v-text-field :error-messages="messages.name3"
+                              :hide-details="hide"
+                              :value="nameChoices.name3"
+                              @blur="handleBlur()"
+                              @input="editChoices('name3', $event)"
+                              filled
+                              id="choice-3-text-field"
+                              placeholder="Third Alternate Name (Optional)" />
+              </v-col>
+              <v-col cols="4" class="py-0" style="height: 60px" v-if="designationAtEnd">
+                <v-select :error-messages="des3Message"
                           :hide-details="hide"
-                          :value="nameChoices.name3"
-                          @blur="handleBlur()"
-                          @input="editChoices('name3', $event)"
+                          :items="items"
+                          :value="nameChoices.designation3"
+                          @blur="handleBlur(); showDesignationErrors.des3 = true"
+                          @input="editChoices('designation3', $event, true)"
                           filled
-                          id="choice-3-text-field"
-                          placeholder="Third Alternate Name (Optional)" />
+                          id="designation-3-select"
+                          placeholder="Designation" />
+              </v-col>
+            </v-row>
           </v-col>
-          <v-col cols="3" class="py-0" style="height: 60px" v-if="designationAtEnd">
-            <v-select :error-messages="des3Message"
-                      :hide-details="hide"
-                      :items="items"
-                      :value="nameChoices.designation3"
-                      @blur="handleBlur(); showDesignationErrors.des3 = true"
-                      @input="editChoices('designation3', $event, true)"
-                      filled
-                      id="designation-3-select"
-                      placeholder="Designation" />
-          </v-col>
-        </v-row>
-      </transition>
+        </transition>
+      </v-row>
       <v-row class="mt-3">
         <v-col cols="12" class="text-right">
           <v-btn x-large
@@ -224,6 +238,12 @@ export default class NamesCapture extends Vue {
     this.$el.removeEventListener('keydown', this.handleKeydown)
   }
 
+  @Watch('request_action_cd')
+  updateLocationOnAssumedName (newVal, oldVal) {
+    if (newVal === 'ASSUMED') {
+      if (this.location === 'BC') this.location = 'CA'
+    }
+  }
   @Watch('entity_type_cd')
   handleEntityType (newVal, oldVal) {
     if (newVal === 'INFO') {
@@ -251,7 +271,6 @@ export default class NamesCapture extends Vue {
       })
     }
   }
-  @Watch('')
 
   get autofocusField () {
     if (this.isAssumedName) {
