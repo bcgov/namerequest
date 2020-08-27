@@ -720,51 +720,100 @@ export class NewRequestModule extends VuexModule {
    * which contains the actual form values, building the request object required for a Name.
    * nameChoices are identified by the 'choice' index, which is what we use to map values.
    */
-  get draftNameReservation (): DraftReqI {
-    const { applicant, nrData, nrRequestNames } = this
+  get conditionalNameReservation (): ConditionalReqI {
+    const { applicant, nrData, nrNames } = this
+    let names
+    if (nrNames && nrNames.length > 0) {
+      // If we're updating use these mapped names -> nrRequestNames
+      const { nrRequestNames } = this
+      names = nrRequestNames
+    } else {
+      // Otherwise we're creating a new conditional, there won't be a multiple name inputs, build as follows...
+      const name: RequestNameI = {
+        name: this.name,
+        choice: 1,
+        designation: this.splitNameDesignation.designation,
+        name_type_cd: this.isAssumedName ? 'AS' : 'CO',
+        consent_words: this.consentWords.length > 0 ? this.consentWords : '',
+        conflict1: this.consentConflicts.name,
+        conflict1_num: this.consentConflicts.corpNum ? this.consentConflicts.corpNum : ''
+      }
 
-    const caseData: DraftReqI = {
+      names = [name]
+    }
+
+    const caseData: ConditionalReqI = {
+      applicants: [applicant],
+      names: names,
+      ...nrData,
+      priorityCd: 'N',
+      // @ts-ignore TODO: This is not typed correctly!
+      entity_type_cd: this.entity_type_cd,
+      request_action_cd: this.request_action_cd,
+      request_type_cd: this.xproRequestTypeCd ? this.xproRequestTypeCd : '',
+      stateCd: 'COND-RESERVE',
+      english: this.nameIsEnglish,
+      nameFlag: this.isPersonsName,
+      submit_count: 0
+    }
+    return caseData
+  }
+  get draftNameReservation (): DraftReqI {
+    const { nrRequestNames, applicant } = this
+
+    let nrData = {}
+    for (let key in this.nrData) {
+      if (this.nrData[key]) {
+        nrData[key] = this.nrData[key]
+      }
+    }
+
+    const data: DraftReqI = {
       applicants: [applicant],
       names: nrRequestNames,
       ...nrData,
       priorityCd: this.priorityRequest ? 'Y' : 'N',
       entity_type_cd: this.entity_type_cd,
       request_action_cd: this.request_action_cd,
-      request_type_cd: this.xproRequestTypeCd ? this.xproRequestTypeCd : '',
       stateCd: 'DRAFT',
       english: this.nameIsEnglish,
       nameFlag: this.isPersonsName,
       submit_count: 0
     }
-    if (this.isAssumedName) {
-      if (!caseData.additionalInfo.endsWith('***')) {
-        let notice = `*** Registered Name: ${this.assumedNameOriginal} ***`
-        caseData.additionalInfo = caseData.additionalInfo + ' ' + notice
-      }
-    }
-    return caseData
-  }
-  get editNameReservation () {
-    let data = {
-      applicants: [this.applicant],
-      request_action_cd: this.request_action_cd,
-      request_type_cd: this.xproRequestTypeCd ? this.xproRequestTypeCd : '',
-      entity_type_cd: this.entity_type_cd,
-      ...this.nrData
-    }
-    if (this.nr.state === 'DRAFT') {
-      data['names'] = this.nrRequestNames
-    }
-    for (let key in this.nrData) {
-      if (this.nrData[key]) {
-        data[key] = this.nrData[key]
-      }
+    if (this.xproRequestTypeCd) {
+      data['request_type_cd'] = this.xproRequestTypeCd
     }
     if (this.isAssumedName) {
-      if (!data.additionalInfo.endsWith('***')) {
+      if (!data.additionalInfo) {
+        data.additionalInfo = ''
+      }
+      if (!data.additionalInfo.includes('*** Registered Name:')) {
         let notice = `*** Registered Name: ${this.assumedNameOriginal} ***`
         data.additionalInfo = data.additionalInfo + ' ' + notice
       }
+    }
+    return data
+  }
+  get editNameReservation () {
+    let { applicant } = this
+
+    let nrData = {}
+    for (let key in this.nrData) {
+      if (this.nrData[key]) {
+        nrData[key] = this.nrData[key]
+      }
+    }
+    let data = {
+      applicants: [applicant],
+      request_action_cd: this.request_action_cd,
+      entity_type_cd: this.entity_type_cd,
+      ...nrData
+    }
+    if (this.xproRequestTypeCd) {
+      data['request_type_cd'] = this.xproRequestTypeCd
+    }
+    if (this.nr.state === 'DRAFT') {
+      data['names'] = this.nrRequestNames
     }
     return data
   }
@@ -841,44 +890,6 @@ export class NewRequestModule extends VuexModule {
     })
 
     return requestNames
-  }
-  get conditionalNameReservation (): ConditionalReqI {
-    const { applicant, nrData, nrNames } = this
-    let names
-    if (nrNames && nrNames.length > 0) {
-      // If we're updating use these mapped names -> nrRequestNames
-      const { nrRequestNames } = this
-      names = nrRequestNames
-    } else {
-      // Otherwise we're creating a new conditional, there won't be a multiple name inputs, build as follows...
-      const name: RequestNameI = {
-        name: this.name,
-        choice: 1,
-        designation: this.splitNameDesignation.designation,
-        name_type_cd: this.isAssumedName ? 'AS' : 'CO',
-        consent_words: this.consentWords.length > 0 ? this.consentWords : '',
-        conflict1: this.consentConflicts.name,
-        conflict1_num: this.consentConflicts.corpNum ? this.consentConflicts.corpNum : ''
-      }
-
-      names = [name]
-    }
-
-    const caseData: ConditionalReqI = {
-      applicants: [applicant],
-      names: names,
-      ...nrData,
-      priorityCd: 'N',
-      // @ts-ignore TODO: This is not typed correctly!
-      entity_type_cd: this.entity_type_cd,
-      request_action_cd: this.request_action_cd,
-      request_type_cd: this.xproRequestTypeCd ? this.xproRequestTypeCd : '',
-      stateCd: 'COND-RESERVE',
-      english: this.nameIsEnglish,
-      nameFlag: this.isPersonsName,
-      submit_count: 0
-    }
-    return caseData
   }
   get reservedNameReservation (): ReservedReqI {
     const { applicant, nrData, nrRequestNames } = this
