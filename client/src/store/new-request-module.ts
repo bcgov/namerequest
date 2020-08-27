@@ -583,11 +583,15 @@ export class NewRequestModule extends VuexModule {
     }
   }
   get entityTypesXPRO (): Array<EntityI> {
+    let { entityTypesXPROData } = this
+    if (this.location === 'CA') {
+      entityTypesXPROData = entityTypesXPROData.filter(ent => ent.value !== 'RLC')
+    }
     try {
       let generateEntities = (entities) => {
         let output = []
         for (let entity of entities) {
-          let obj = this.entityTypesXPROData.find(ent => ent.value === entity)
+          let obj = entityTypesXPROData.find(ent => ent.value === entity)
           // "CR" type is shortlisted. if XCR exists in filtered entity_types, preserve its rank and shortlist keys
           if (entity === 'XCR') {
             output.push(obj)
@@ -611,14 +615,15 @@ export class NewRequestModule extends VuexModule {
       // see 'src/store/list-data/request-action-mapping.ts'
       let mapping: RequestActionMappingI = xproMapping
       let cds = Object.keys(mapping)
+
       if (cds.includes(this.request_action_cd)) {
         return generateEntities(mapping[this.request_action_cd])
       }
-      return this.entityTypesXPROData
+      return entityTypesXPROData
     } catch (error) {
       // eslint-disable-next-line
       console.log(error)
-      return this.entityTypesBCData
+      return entityTypesXPROData
     }
   }
   get entityTextFromValue () {
