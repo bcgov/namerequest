@@ -136,10 +136,9 @@ export default class PickEntityOrConversion extends Vue {
     if (this.showSocietiesInfo || this.isConversion) {
       return '550px'
     }
-    if (this.location === 'BC') {
-      return '900px'
-    }
-    return '620px'
+    let cols = this.tableData.length
+    // 210 per column with a max of 900px
+    return `${210 * cols > 900 ? 900 : 210 * cols}px`
   }
 
   clearEntitySelection () {

@@ -124,6 +124,9 @@ export interface NameDesignationI {
   designation: string
   name: string
 }
+export interface NameRequestI {
+  [propname: string]: any
+}
 export interface NewRequestNameSearchI {
   entity_type_cd: string
   location: LocationT
@@ -144,8 +147,14 @@ export interface QuillOpsI {
   insert: string
   attributes?: QuillAttributesI
 }
-export interface NameRequestI {
-  [propname: string]: any
+export interface RequestActionMappingI {
+  [propName: string]: string[]
+}
+export interface RequestActionsI {
+  text: string
+  value: string
+  blurb?: string
+  rank?: number
 }
 export interface RequestNameI {
   id?: number
