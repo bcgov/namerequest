@@ -31,9 +31,9 @@
         <v-select :error-messages="errors.includes('entity_type_cd') ? 'Please select a type' : ''"
                   :hide-details="!errors.includes('entity_type_cd')"
                   :items="entityConversionTypeOptions"
+                  :placeholder="isConversion ? 'Please choose a conversion type' : ''"
                   @change="clearErrors()"
                   filled
-                  :placeholder="isConversion ? 'Please choose a conversion type' : ''"
                   id="entity-type-options-select"
                   v-model="entity_type_cd" />
       </v-col>
@@ -92,9 +92,9 @@
 </template>
 
 <script lang="ts">
-import { bcMapping, xproMapping } from '@/store/list-data/request-action-mapping'
 import NameInput from './name-input.vue'
 import newReqModule from '../../store/new-request-module'
+import { bcMapping, xproMapping } from '@/store/list-data/request-action-mapping'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { LocationT } from '@/models'
 
@@ -102,13 +102,17 @@ import { LocationT } from '@/models'
   components: { NameInput }
 })
 export default class Search extends Vue {
-  hoveringNow: boolean = false
-  nudgeY: number = 0
-  showToolTip: boolean = false
-  toolTipActivator: string | null = null
-  toolTipX: number = 0
-  toolTipY: number = 0
-
+  @Watch('location')
+  handleLocation (newVal, oldVal) {
+    if (newVal === 'INFO') {
+      let type = this.entity_type_cd
+      newReqModule.mutateLocationInfoModalVisible(true)
+      this.$nextTick(function () {
+        this.location = oldVal
+        this.entity_type_cd = type
+      })
+    }
+  }
   @Watch('request_action_cd')
   handleRequestAction (newVal) {
     if (Object.keys(bcMapping).includes(newVal)) {
@@ -131,17 +135,6 @@ export default class Search extends Vue {
       if (this.location === 'BC') {
         this.location = 'CA'
       }
-    }
-  }
-  @Watch('location')
-  handleLocation (newVal, oldVal) {
-    if (newVal === 'INFO') {
-      let type = this.entity_type_cd
-      newReqModule.mutateLocationInfoModalVisible(true)
-      this.$nextTick(function () {
-        this.location = oldVal
-        this.entity_type_cd = type
-      })
     }
   }
 
@@ -168,16 +161,13 @@ export default class Search extends Vue {
     }
     newReqModule.mutateEntityType(type)
   }
-  get isConversion () {
-    return newReqModule.request_action_cd === 'CNV'
-  }
-  get entityTypeOptions () {
-    return newReqModule.entityTypeOptions
-  }
   get entityConversionTypeOptions () {
     if (this.isConversion) {
       return newReqModule.conversionTypeOptions
     }
+    return newReqModule.entityTypeOptions
+  }
+  get entityTypeOptions () {
     return newReqModule.entityTypeOptions
   }
   get errors () {
@@ -190,6 +180,15 @@ export default class Search extends Vue {
     }
     return 'mt-n2'
   }
+  get isConversion () {
+    return newReqModule.request_action_cd === 'CNV'
+  }
+  get isPersonsName () {
+    return newReqModule.isPersonsName
+  }
+  set isPersonsName (value) {
+    newReqModule.mutateIsPersonsName(value)
+  }
   get location () {
     return newReqModule.location
   }
@@ -198,12 +197,6 @@ export default class Search extends Vue {
   }
   get locationOptions () {
     return newReqModule.locationOptions
-  }
-  get isPersonsName () {
-    return newReqModule.isPersonsName
-  }
-  set isPersonsName (value) {
-    newReqModule.mutateIsPersonsName(value)
   }
   get nameIsEnglish () {
     return newReqModule.nameIsEnglish
