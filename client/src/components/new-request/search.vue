@@ -116,16 +116,12 @@ export default class Search extends Vue {
   @Watch('request_action_cd')
   handleRequestAction (newVal) {
     if (Object.keys(bcMapping).includes(newVal)) {
-      if (!bcMapping[newVal].includes(this.entity_type_cd)) {
-        let { value } = newReqModule.entityTypesBCData.find(ent => ent.rank === 1)
-        newReqModule.mutateEntityType(value)
-      }
+      let { value } = newReqModule.entityTypesBCData.find(ent => ent.rank === 1)
+      newReqModule.mutateEntityType(value)
     }
     if (Object.keys(xproMapping).includes(newVal)) {
-      if (!xproMapping[newVal].includes(this.entity_type_cd)) {
-        let { value } = newReqModule.entityTypesXPROData.find(ent => ent.rank === 1)
-        newReqModule.mutateEntityType(value)
-      }
+      let { value } = newReqModule.entityTypesXPROData.find(ent => ent.rank === 1)
+      newReqModule.mutateEntityType(value)
     }
     if (['AML', 'CNV'].includes(newVal)) {
       this.location = 'BC'
