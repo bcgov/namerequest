@@ -17,6 +17,8 @@ import {
   NameDesignationI,
   NameRequestI,
   NewRequestNameSearchI,
+  RequestActionsI,
+  RequestActionMappingI,
   RequestNameI,
   ReservedReqI,
   SelectOptionsI,
@@ -28,6 +30,7 @@ import canadaPostAPIKey from './config'
 import Vue from 'vue'
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
+import { bcMapping, xproMapping } from '@/store/list-data/request-action-mapping'
 
 const qs: any = querystring
 let source: any
@@ -133,7 +136,7 @@ export class NewRequestModule extends VuexModule {
   editMode: boolean = false
   entity_type_cd: string = 'CR'
   entityTypeAddToSelect: SelectOptionsI | null = null
-  entityTypesBC: EntityI[] = [
+  entityTypesBCData: EntityI[] = [
     {
       text: 'Sole Proprietorship',
       value: 'FR',
@@ -286,7 +289,7 @@ export class NewRequestModule extends VuexModule {
       value: 'PAR'
     }
   ]
-  entityTypesXPRO: EntityI[] = [
+  entityTypesXPROData: EntityI[] = [
     {
       text: 'Corporation',
       cat: 'Corporations',
@@ -416,7 +419,7 @@ export class NewRequestModule extends VuexModule {
       conflict_self_consent: false
     }
   }
-  requestTypes: EntityI[] = [
+  requestActions: RequestActionsI[] = [
     {
       text: 'Start a New',
       value: 'NEW',
@@ -439,12 +442,6 @@ export class NewRequestModule extends VuexModule {
       text: 'Change your Name',
       value: 'CHG',
       blurb: `You have an existing business that is registered in BC and you want to change your name. You will need 
-              your incorporation or firm number assigned to you by Registries.`
-    },
-    {
-      text: 'Get a New Tradename',
-      value: 'DBA',
-      blurb: `You have an existing business. You want to request a name to use as a trade name. You will need 
               your incorporation or firm number assigned to you by Registries.`
     },
     {
@@ -546,6 +543,84 @@ export class NewRequestModule extends VuexModule {
     }
     return ''
   }
+  get entityTypesBC (): Array<EntityI> {
+    try {
+      let generateEntities = (entities) => {
+        let output = []
+        for (let entity of entities) {
+          let obj = this.entityTypesBCData.find(ent => ent.value === entity)
+          // "CR" type is shortlisted. if CR exists in filtered entity_types, preserve its rank and shortlist keys
+          if (entity === 'CR') {
+            output.push(obj)
+            continue
+          }
+          let objSansRankAndShortlist = {}
+          for (let key in obj) {
+            if (!['shortlist', 'rank'].includes(key)) {
+              objSansRankAndShortlist[key] = obj[key]
+            }
+          }
+          output.push(objSansRankAndShortlist)
+        }
+        // but we must have at least one shortlist item.  this will kick in when CR is not one of the filtered entities
+        if (!output.some(ent => ent.rank === 1)) {
+          output[0]['rank'] = 1
+          output[0]['shortlist'] = true
+        }
+        return output
+      }
+      // see 'src/store/list-data/request-action-mapping.ts'
+      let mapping: RequestActionMappingI = bcMapping
+      let cds = Object.keys(mapping)
+      if (cds.includes(this.request_action_cd)) {
+        return generateEntities(mapping[this.request_action_cd])
+      }
+      return this.entityTypesBCData
+    } catch (error) {
+      // eslint-disable-next-line
+      console.log(error)
+      return this.entityTypesBCData
+    }
+  }
+  get entityTypesXPRO (): Array<EntityI> {
+    try {
+      let generateEntities = (entities) => {
+        let output = []
+        for (let entity of entities) {
+          let obj = this.entityTypesXPROData.find(ent => ent.value === entity)
+          // "CR" type is shortlisted. if XCR exists in filtered entity_types, preserve its rank and shortlist keys
+          if (entity === 'XCR') {
+            output.push(obj)
+            continue
+          }
+          let objSansRankAndShortlist = {}
+          for (let key in obj) {
+            if (!['shortlist', 'rank'].includes(key)) {
+              objSansRankAndShortlist[key] = obj[key]
+            }
+          }
+          output.push(objSansRankAndShortlist)
+        }
+        // but we must have at least one shortlist item.  this will kick in when XCR is not one of the filtered entities
+        if (!output.some(ent => ent.rank === 1)) {
+          output[0]['rank'] = 1
+          output[0]['shortlist'] = true
+        }
+        return output
+      }
+      // see 'src/store/list-data/request-action-mapping.ts'
+      let mapping: RequestActionMappingI = xproMapping
+      let cds = Object.keys(mapping)
+      if (cds.includes(this.request_action_cd)) {
+        return generateEntities(mapping[this.request_action_cd])
+      }
+      return this.entityTypesXPROData
+    } catch (error) {
+      // eslint-disable-next-line
+      console.log(error)
+      return this.entityTypesBCData
+    }
+  }
   get entityTextFromValue () {
     if (this.entity_type_cd) {
       let list = [...this.entityTypesBC, ...this.entityTypesXPRO]
@@ -587,8 +662,11 @@ export class NewRequestModule extends VuexModule {
       { text: 'Foreign', value: 'IN' },
       { text: 'Help', value: 'INFO' }
     ]
-    if (this.request_action_cd === 'MVE') {
-      return options.filter(option => option.text !== 'BC')
+    if (['CNV', 'AML'].includes(this.request_action_cd)) {
+      return options.filter(location => location.value === 'BC' || location.value === 'INFO')
+    }
+    if (['MVE', 'ASSUMED'].includes(this.request_action_cd)) {
+      return options.filter(location => location.value !== 'BC')
     }
     return options
   }
@@ -663,7 +741,7 @@ export class NewRequestModule extends VuexModule {
     return null
   }
   get requestTypeOptions () {
-    let option = this.requestTypes.find(type => type.value === 'NEW')
+    let option = this.requestActions.find(type => type.value === 'NEW')
     option.rank = 1
     let options = [option]
     let n = 2
@@ -1314,7 +1392,7 @@ export class NewRequestModule extends VuexModule {
     let { request_action_cd } = this.nr
     if (request_action_cd !== 'NEW') {
       this.mutateRequestAction(request_action_cd)
-      let reqObj = this.requestTypes.find(type => type.value === request_action_cd)
+      let reqObj = this.requestActions.find(type => type.value === request_action_cd)
       this.mutateExtendedRequestType(reqObj)
     }
 
@@ -1460,6 +1538,10 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateEntityTypeAddToSelect (option: SelectOptionsI) {
     this.entityTypeAddToSelect = option
+  }
+  @Mutation
+  resetEntityTypeAddToSelect () {
+    this.entityTypeAddToSelect = null
   }
   @Mutation
   mutateExistingRequestSearch ({ key, value }) {

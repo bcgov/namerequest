@@ -62,19 +62,19 @@ export default class PickRequestType extends Vue {
   get location () {
     return newReqModule.location
   }
-  get requestTypes () {
-    return newReqModule.requestTypes
+  get requestActions () {
+    return newReqModule.requestActions
   }
   set showModal (value: boolean) {
     newReqModule.mutatePickRequestTypeModalVisible(value)
   }
   get tableData () {
-    let { length } = this.requestTypes
+    let { length } = this.requestActions
     let midIndex = length % 2 ? (length + 1) / 2 : (length / 2)
 
     return {
-      col1: this.requestTypes.slice(0, midIndex),
-      col2: this.requestTypes.slice(midIndex, length)
+      col1: this.requestActions.slice(0, midIndex),
+      col2: this.requestActions.slice(midIndex, length)
     }
   }
 

@@ -92,6 +92,7 @@
 </template>
 
 <script lang="ts">
+import { bcMapping, xproMapping } from '@/store/list-data/request-action-mapping'
 import NameInput from './name-input.vue'
 import newReqModule from '../../store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
@@ -110,7 +111,19 @@ export default class Search extends Vue {
 
   @Watch('request_action_cd')
   handleRequestAction (newVal) {
-    if (newVal === 'CNV') {
+    if (Object.keys(bcMapping).includes(newVal)) {
+      if (!bcMapping[newVal].includes(this.entity_type_cd)) {
+        let { value } = newReqModule.entityTypesBCData.find(ent => ent.rank === 1)
+        newReqModule.mutateEntityType(value)
+      }
+    }
+    if (Object.keys(xproMapping).includes(newVal)) {
+      if (!xproMapping[newVal].includes(this.entity_type_cd)) {
+        let { value } = newReqModule.entityTypesXPROData.find(ent => ent.rank === 1)
+        newReqModule.mutateEntityType(value)
+      }
+    }
+    if (['AML', 'CNV'].includes(newVal)) {
       this.location = 'BC'
       return
     }
@@ -184,12 +197,6 @@ export default class Search extends Vue {
     newReqModule.mutateLocation(location)
   }
   get locationOptions () {
-    if (this.isConversion) {
-      return newReqModule.locationOptions.filter(location => location.value === 'BC' || location.value === 'INFO')
-    }
-    if (['MVE', 'ASSUMED'].includes(this.request_action_cd)) {
-      return newReqModule.locationOptions.filter(location => location.value !== 'BC')
-    }
     return newReqModule.locationOptions
   }
   get isPersonsName () {
