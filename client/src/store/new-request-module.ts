@@ -1452,7 +1452,7 @@ export class NewRequestModule extends VuexModule {
     this.mutateName(name)
     if (this.location === 'BC') {
       if (this.nameIsEnglish && !this.isPersonsName && !this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
-        if (['NEW', 'DBA', 'CHG'].includes(this.request_action_cd)) {
+        if (['NEW', 'DBA', 'CHG', 'MVE'].includes(this.request_action_cd)) {
           this.getNameAnalysis()
           return
         }
