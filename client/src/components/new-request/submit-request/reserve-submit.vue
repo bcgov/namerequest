@@ -6,6 +6,7 @@
 </template>
 
 <script lang="ts">
+import { xproMapping } from '@/store/list-data/request-action-mapping'
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
@@ -30,6 +31,9 @@ export default class ReserveSubmitButton extends Vue {
   get location () {
     return newReqModule.location
   }
+  get entity_type_cd () {
+    return newReqModule.entity_type_cd
+  }
 
   showNextStep () {
     newReqModule.mutateDisplayedComponent('SubmissionTabs')
@@ -37,7 +41,9 @@ export default class ReserveSubmitButton extends Vue {
       newReqModule.mutateSubmissionType('examination')
       newReqModule.mutateSubmissionTabComponent('NamesCapture')
       if (this.setup === 'assumed') {
-        newReqModule.mutateRequestAction('ASSUMED')
+        if (xproMapping['ASSUMED'].includes(this.entity_type_cd)) {
+          newReqModule.mutateRequestAction('ASSUMED')
+        }
         newReqModule.mutateAssumedNameOriginal()
         return
       }

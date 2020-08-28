@@ -591,10 +591,14 @@ export class NewRequestModule extends VuexModule {
       let generateEntities = (entities) => {
         let output = []
         for (let entity of entities) {
-          let obj = entityTypesXPROData.find(ent => ent.value === entity)
+          // using this.entityTypesXPROData instead of scoped entityTypesXPROData here so that RLC can be included
+          let obj = this.entityTypesXPROData.find(ent => ent.value === entity)
           // "CR" type is shortlisted. if XCR exists in filtered entity_types, preserve its rank and shortlist keys
           if (entity === 'XCR') {
             output.push(obj)
+            continue
+          }
+          if (this.location === 'CA' && entity === 'RLC') {
             continue
           }
           let objSansRankAndShortlist = {}
@@ -658,7 +662,7 @@ export class NewRequestModule extends VuexModule {
     })
   }
   get isAssumedName () {
-    return this.request_action_cd === 'ASSUMED'
+    return !!this.assumedNameOriginal
   }
   get locationOptions () {
     let options = [
@@ -667,10 +671,10 @@ export class NewRequestModule extends VuexModule {
       { text: 'Foreign', value: 'IN' },
       { text: 'Help', value: 'INFO' }
     ]
-    if (['CNV', 'AML'].includes(this.request_action_cd)) {
+    if (['CNV', 'AML', 'MVE'].includes(this.request_action_cd)) {
       return options.filter(location => location.value === 'BC' || location.value === 'INFO')
     }
-    if (['MVE', 'ASSUMED'].includes(this.request_action_cd)) {
+    if (['ASSUMED'].includes(this.request_action_cd)) {
       return options.filter(location => location.value !== 'BC')
     }
     return options
@@ -1448,7 +1452,7 @@ export class NewRequestModule extends VuexModule {
     this.mutateName(name)
     if (this.location === 'BC') {
       if (this.nameIsEnglish && !this.isPersonsName && !this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
-        if (['NEW', 'DBA', 'CHG'].includes(this.request_action_cd)) {
+        if (['NEW', 'DBA', 'CHG', 'MVE'].includes(this.request_action_cd)) {
           this.getNameAnalysis()
           return
         }

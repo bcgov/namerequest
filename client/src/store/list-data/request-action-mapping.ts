@@ -8,7 +8,8 @@ export const bcMapping: RequestActionMappingI = {
   AML: ['UL', 'CR', 'CC', 'CP', 'BC'],
   REN: ['CR', 'CP', 'CC', 'UL', 'FI', 'BC'],
   REH: ['CR', 'CP', 'CC', 'UL', 'FI', 'BC'],
-  CHG: entityTypesBC.filter(ent => ent !== 'PAR' && ent !== 'PA')
+  CHG: entityTypesBC.filter(ent => ent !== 'PAR' && ent !== 'PA'),
+  MVE: ['CR', 'CC', 'CP', 'UL', 'SO', 'BC']
 }
 
 export const xproMapping: RequestActionMappingI = {
