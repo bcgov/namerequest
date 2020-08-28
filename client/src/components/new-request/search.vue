@@ -123,7 +123,7 @@ export default class Search extends Vue {
       let { value } = newReqModule.entityTypesXPROData.find(ent => ent.rank === 1)
       newReqModule.mutateEntityType(value)
     }
-    if (['AML', 'CNV'].includes(newVal)) {
+    if (['AML', 'CNV', 'MVE'].includes(newVal)) {
       this.location = 'BC'
       return
     }
