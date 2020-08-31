@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import { getConfig } from '@/plugins/getConfig'
 import vuetify from './plugins/vuetify'
+import KeyCloakService from 'sbc-common-components/src/services/keycloak.services'
 
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
@@ -23,6 +24,16 @@ async function startVue () {
   Vue.prototype.$designations = designations
   Vue.prototype.$canadaJurisdictions = canadaJurisdictions
   Vue.prototype.$internationalJurisdictions = internationalJurisdictions
+
+  // configure Keycloak Service
+  await KeyCloakService.setKeycloakConfigUrl(sessionStorage.getItem('KEYCLOAK_CONFIG_PATH'))
+  if (!window.location.pathname.includes('/signin')) {
+    await KeyCloakService.initializeToken(null).catch(err => {
+      if (err?.message !== 'NOT_AUTHENTICATED') {
+        throw err
+      }
+    })
+  }
 
   new Vue({
     router,

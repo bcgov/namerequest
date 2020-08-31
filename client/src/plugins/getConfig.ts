@@ -15,6 +15,19 @@ export function getConfig (): Promise<void> {
     })
     const baseURL = response.data[0]['URL'] + '/api/v1'
     const paymentURL = response.data[0]['PAYMENT_PORTAL_URL']
+
+    const keycloakConfigPath = response.data[0]['KEYCLOAK_CONFIG_PATH']
+    sessionStorage.setItem('KEYCLOAK_CONFIG_PATH', keycloakConfigPath)
+
+    const businessUrl = response.data[0]['BUSINESSES_URL']
+    sessionStorage.setItem('BUSINESSES_URL', businessUrl)
+
+    const authApiUrl = response.data[0]['AUTH_API_URL']
+    sessionStorage.setItem('AUTH_API_URL', authApiUrl)
+
+    const legalApiUrl = response.data[0]['LEGAL_API_URL']
+    sessionStorage.setItem('LEGAL_API_URL', legalApiUrl)
+
     axios.defaults.baseURL = baseURL
     resolve(paymentURL)
   })
