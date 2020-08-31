@@ -368,7 +368,6 @@ export class NewRequestModule extends VuexModule {
   helpMeChooseModalVisible: boolean = false
   incorporateLoginModalVisible: boolean = false
   affiliationErrorModalVisible: boolean = false
-  isAssumedName: boolean = false
   isPersonsName: boolean = false
   issueIndex: number = 0
   location: LocationT = 'BC'
