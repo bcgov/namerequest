@@ -3,7 +3,7 @@
     <v-row class="float-right stats-v-row">
         <div class="stats-content-outer py-0">
           <div class="stats-content-inner-1 text-center">
-            <div class="stats-value h3-lt">{{ auto }}</div>
+            <div class="stats-value h3-lt">{{ autoApprovedCount }}</div>
             <div class="stats-unit">NAMES</div>
           </div>
           <div class="stats-content-inner-2">
@@ -13,8 +13,8 @@
         </div>
         <div class="stats-content-outer py-0">
           <div class="stats-content-inner-1 text-center">
-            <div class="stats-value h3-lt">{{ priority.value }}</div>
-            <div class="stats-unit">{{ priority.unit}}</div>
+            <div class="stats-value h3-lt">{{ priorityWaitTime }}</div>
+            <div class="stats-unit">Hours</div>
           </div>
           <div class="stats-content-inner-2">
             Priority Request<br>
@@ -23,8 +23,8 @@
         </div>
         <div id="stats-content-outer-3" class="stats-content-outer py-0">
           <div class="stats-content-inner-1 text-center">
-            <div class="stats-value h3-lt">{{ standard.value }}</div>
-            <div class="stats-unit">{{ standard.unit }}</div>
+            <div class="stats-value h3-lt">{{ regularWaitTime }}</div>
+            <div class="stats-unit">Days</div>
           </div>
           <div class="stats-content-inner-2">
             Standard Request<br>
@@ -37,46 +37,35 @@
 
 <script lang="ts">
 import newReqModule from '@/store/new-request-module'
+import { StatsI } from '@/models'
 import { Vue, Component } from 'vue-property-decorator'
 
 @Component({})
 export default class Stats extends Vue {
-  get auto () {
-    if (this.stats && this.stats.auto) {
-      return this.stats.auto
-    }
-    return '—'
-  }
-  get priority () {
-    if (this.stats && this.stats.priority) {
-      return {
-        value: this.stats.priority.value,
-        unit: this.stats.priority.unit.toUpperCase()
-      }
-    }
-    return {
-      value: '—',
-      unit: 'DAYS'
-    }
-  }
-  get stats () {
-    return newReqModule.stats
-  }
-  get standard () {
-    if (this.stats && this.stats.standard) {
-      return {
-        value: this.stats.standard.value,
-        unit: this.stats.standard.unit.toUpperCase()
-      }
-    }
-    return {
-      value: '—',
-      unit: 'DAYS'
-    }
+  created () {
+    newReqModule.getStats()
   }
 
-  mounted () {
-    // newReqModule.getStats()
+  get stats (): StatsI {
+    return newReqModule.stats
+  }
+  get autoApprovedCount () {
+    if (this.stats && this.stats.auto_approved_count) {
+      return this.stats.auto_approved_count
+    }
+    return '-'
+  }
+  get regularWaitTime () {
+    if (this.stats && this.stats.regular_wait_time) {
+      return Math.ceil(this.stats.regular_wait_time / 3600 / 24)
+    }
+    return '-'
+  }
+  get priorityWaitTime () {
+    if (this.stats && this.stats.priority_wait_time) {
+      return Math.ceil(this.stats.priority_wait_time / 3600)
+    }
+    return '-'
   }
 }
 
