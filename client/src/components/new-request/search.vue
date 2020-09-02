@@ -3,9 +3,14 @@
     <v-row justify="end">
       <v-col cols="6" class="normal-copy">I need a name to:</v-col>
       <v-col cols="6" style="display: flex; justify-content: flex-end">
-        <button class="normal-link"
-              id="help-me-choose-activator"
-              @change="activateHMCModal()">Help Me Choose</button>
+        <business-structures-tool>
+          <template #start="{ homeModal }">
+             <div id="#help-me-choose-activator"
+                  class="normal-link"
+                  style="background-color: white"
+                  @click="homeModal()">Help Me Choose</div>
+          </template>
+        </business-structures-tool>
       </v-col>
       <v-col cols="5">
         <!--request_action_cd-->
@@ -88,6 +93,7 @@
               @click="activateNRRModal()">Check to see if you need to file a a name request</span>
       </v-col>
     </v-row>
+
   </v-container>
 </template>
 
@@ -97,6 +103,7 @@ import newReqModule from '../../store/new-request-module'
 import { bcMapping, xproMapping } from '@/store/list-data/request-action-mapping'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { LocationT } from '@/models'
+require('@bizpal/open-services-bst/')
 
 @Component({
   components: { NameInput }

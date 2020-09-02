@@ -1,4 +1,4 @@
-import { createLocalVue, mount } from '@vue/test-utils'
+import { createLocalVue, shallowMount } from '@vue/test-utils'
 import newReqModule from '@/store/new-request-module'
 import Search from '@/components/new-request/search.vue'
 import Vuetify from 'vuetify'
@@ -12,7 +12,7 @@ describe('search.vue', () => {
   let wrapper: any
 
   beforeEach(async (done) => {
-    wrapper = mount(Search, {
+    wrapper = shallowMount(Search, {
       localVue,
       vuetify
     })
@@ -27,7 +27,6 @@ describe('search.vue', () => {
     expect(wrapper.find('#name-input-component').element).toBeTruthy()
   })
   it('Displays the two modal activators', () => {
-    expect(wrapper.find('#help-me-choose-activator').element).toBeTruthy()
     expect(wrapper.find('#nr-required-activator').element).toBeTruthy()
   })
   it('Initially sets the state for controlling both info modals visibility to false', () => {
