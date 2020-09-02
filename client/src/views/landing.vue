@@ -57,6 +57,7 @@ export default class Landing extends Vue {
 #landing-container
   margin: 0
   padding: 0
+  min-width: !important 1380px
 
 #name-container, .box-style
   background-color: white
