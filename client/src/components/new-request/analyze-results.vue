@@ -240,8 +240,8 @@ export default class AnalyzeResults extends Vue {
     return this.name.split(' ')
   }
   get conflictDate () {
-    if (this.issue.conflicts[0] && this.issue.conflicts[0].start_date) {
-      return Moment(this.issue.conflicts[0].start_date).utc().format('MMMM Do YYYY')
+    if (this.issue.conflicts[0] && this.issue.conflicts[0].start_date && this.issue.conflicts[0].source === 'corp') {
+      return Moment(this.issue.conflicts[0].start_date).utc().local().format('MMMM Do YYYY')
     }
     return null
   }
