@@ -1,12 +1,12 @@
 <template>
-  <v-container class="main-container-style px-9 normal-copy">
+  <v-container class="main-container-style px-9 copy-normal">
     <v-row justify="space-between" class="submission-tabs-top">
       <slot name="container-header" />
       <v-col cols="auto" v-if="displayedComponent !== 'Success'">
         <button id="back-to-search-btn"
-                class="modal-activator pa-0 normal-link-sans-ul"
+                class="modal-activator pa-0 link-std-sans-ul"
                 @click="cancelAnalyzeName">
-          <span class="normal-link-sans-ul">
+          <span class="link-std-sans-ul">
             <v-icon class="ma-0 pa-0 mr-n1 mini-back-arrow">arrow_back_ios</v-icon>
             {{ editMode ? 'Return' : 'Start Search Over' }}
           </span>

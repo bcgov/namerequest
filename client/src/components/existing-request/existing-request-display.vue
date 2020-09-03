@@ -10,7 +10,7 @@
         <v-col cols="auto" class="fs-24">
           <span class="h3 mr-2">{{ nr.nrNum }}</span>
         </v-col>
-        <v-col class="bold-copy">
+        <v-col class="copy-bold">
           <div style="display: inline-block" class="">
             <div v-for="name of names"
                  :class="getNameFormating(name).class"
@@ -26,29 +26,29 @@
             <v-col cols="9">
               <v-row dense class="mt-n5">
                 <v-col cols="12">
-                  <span class="bold-text">Last Update: </span> {{ lastUpdate }}
+                  <span class="fw-700">Last Update: </span> {{ lastUpdate }}
                 </v-col>
                 <v-col cols="12">
-                  <span class="bold-text">Status: </span> {{ nr.state }}
+                  <span class="fw-700">Status: </span> {{ nr.state }}
                 </v-col>
                 <v-col cols="12">
-                  <span class="bold-text">Priority Request: </span> {{ priorityReq ? 'Yes' : 'No' }}
+                  <span class="fw-700">Priority Request: </span> {{ priorityReq ? 'Yes' : 'No' }}
                 </v-col>
                 <v-col cols="12">
-                  <span class="bold-text">Expiry Date: </span> {{ expiryDate }}
+                  <span class="fw-700">Expiry Date: </span> {{ expiryDate }}
                 </v-col>
                 <v-col cols="12">
-                  <span class="bold-text">Submit Count: </span>{{ nr.submitCount }}
+                  <span class="fw-700">Submit Count: </span>{{ nr.submitCount }}
                 </v-col>
                 <v-col cols="12" v-if="nr.consentFlag && nr.consentFlag !== 'N'">
-                  <span class="bold-text">Consent Rec'd: </span> {{ consentDate }}
+                  <span class="fw-700">Consent Rec'd: </span> {{ consentDate }}
                 </v-col>
                 <v-col cols="12">
-                  <span class="bold-text">Submitting Party: </span> {{ nr.applicants.lastName }},
+                  <span class="fw-700">Submitting Party: </span> {{ nr.applicants.lastName }},
                   {{ nr.applicants.firstName }}
                 </v-col>
                 <v-col cols="12">
-                  <span class="bold-text">Address: </span> {{ address }}
+                  <span class="fw-700">Address: </span> {{ address }}
                 </v-col>
               </v-row>
             </v-col>

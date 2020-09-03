@@ -2,33 +2,33 @@
   <v-container :class="optionClasses(i)"
                class="grey-box-class py-2 px-3"
                :key="option.type + '-' + i  + '-container'">
-    <v-col class="bold-text mt-n3" cols="12">
+    <v-col class="fw-700 mt-n3" cols="12">
       <div style="display: flex; width: 100%; justify-content: flex-start">
         <div class="h5">
-          <v-icon class="pr-2 pale-blue-text">info</v-icon>
+          <v-icon class="pr-2 colour-p-blue-text">info</v-icon>
           {{ option.header }}
         </div>
       </div>
     </v-col>
     <transition :name="i === 0 ? 'fade' : '' " mode="out-in">
-      <v-row class="small-copy pale-blue-text"
+      <v-row class="copy-small colour-p-blue-text"
              align-content="start"
              :key="changesInBaseName+designationIsFixed+'key'+i">
         <!-- Header, Line 1 and Line 2-->
 
-        <v-col class="small-copy pale-blue-text pt-0"
+        <v-col class="copy-small colour-p-blue-text pt-0"
                v-if="designationIsFixed && isDesignationIssueType && i === 0"
                cols="12">
           {{ isLastIndex ? 'No additional issues were identified with your name.  You may proceed.' :
                            'Please click the "Next Issue" button to continue' }}
         </v-col>
-        <v-col class="small-copy pale-blue-text pt-0"
+        <v-col class="copy-small colour-p-blue-text pt-0"
                v-else-if="changesInBaseName && isDesignationIssueType && i === 0"
                cols="12">
           You have altered the base text of your name.  You must
           either change it back or click the magnifying glass to run a new search for your edited name.
         </v-col>
-        <v-col class="small-copy pale-blue-text pt-0"
+        <v-col class="copy-small colour-p-blue-text pt-0"
                v-else
                cols="12">
           <p v-if="option.line1" class="ma-0 pa-0" v-html="option.line1" />
@@ -48,7 +48,7 @@
                           :key="'designation-'+d"
                           :id="'designation-'+d"
                           @click.once.prevent="changeDesignation(des)"
-                          class="small-link ma-0 pa-0 px-1"
+                          class="link-sm ma-0 pa-0 px-1"
                           v-for="(des, d) in designations">
                     {{ des }}{{ (d !== issue.designations.length - 1) ? ',' : '' }}
                   </button>

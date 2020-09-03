@@ -65,7 +65,6 @@
                                 :rules="requiredRules"
                                 :value="applicant.addrLine1"
                                 @blur="blurAddress1"
-                                @focus="focusAddress1"
                                 @input="updateApplicant('addrLine1', $event)"
                                 class="pa-0"
                                 dense
@@ -96,13 +95,14 @@
                                style="cursor: pointer"
                                v-for="(address, i) of addressSuggestions">
                     <a :ref="address.Id"
+                       href="#"
                        @focus="highlightedSuggestion = address.Id"
                        @click.prevent="queryAddress(address.Id)"
-                       class="link-small-copy">{{ address.Text + ', ' + address.Description }}</a>
+                       class="link-sm-dk-text">{{ address.Text + ', ' + address.Description }}</a>
                   </v-list-item>
                   <v-divider class="mb-2"/>
                   <v-list-item>
-                    <v-container class="ma-0 pa-0 small-copy">
+                    <v-container class="ma-0 pa-0 copy-small">
                       <v-row>
                         <v-col class="ma-0 px-6 pb-4 text-right"
                                align-self="center"><h5>Country</h5></v-col>
@@ -111,7 +111,7 @@
                                                                     :value="applicant.countryTypeCd"
                                                                     @click.capture.stop
                                                                     @input="updateApplicant('countryTypeCd', $event)"
-                                                                    class="mb-1 small-copy mr-2"
+                                                                    class="mb-1 copy-small mr-2"
                                                                     dense
                                                                     eager
                                                                     filled
@@ -280,37 +280,21 @@
 </template>
 
 <script lang="ts">
-import _ from 'lodash'
-import jurisdictionsCA from '@/store/list-data/canada-jurisdictions'
-import jurisdictionsIN from '@/store/list-data/intl-jurisdictions'
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
-let debounced: any = null
+const _debounce = require('lodash/debounce')
 
 @Component({})
 export default class ApplicantInfo1 extends Vue {
   highlightedSuggestion: string | null = null
-  listener: any = null
   messages = {}
   requiredRules = [
     v => !!v || 'Required field'
   ]
-  show = true
   showAddressMenu: boolean = false
   step1Valid: boolean = false
-
-  beforeDestoy () {
-    document.removeEventListener('keydown', this.handleKeydown)
-  }
-  mounted () {
-    debounced = null
-    if (!this.editMode) {
-      this.updateApplicant('stateProvinceCd', 'BC')
-      this.updateApplicant('countryTypeCd', 'CA')
-      return
-    }
-  }
+  debouncedGetAddressSuggestions = _debounce(this.getAddressSuggestions, 400)
 
   @Watch('showAddressMenu')
   supressMenu (newVal, oldVal) {
@@ -323,6 +307,18 @@ export default class ApplicantInfo1 extends Vue {
     ref.focus()
   }
 
+  beforeDestoy () {
+    this.$el.removeEventListener('keydown', this.handleKeydown)
+  }
+  mounted () {
+    this.$el.addEventListener('keydown', this.handleKeydown)
+    // CanadaPost Address Complete needs a country to begin working right away, assume Canada
+    if (!this.editMode) {
+      this.updateApplicant('countryTypeCd', 'CA')
+      return
+    }
+  }
+
   get actingOnOwnBehalf () {
     return newReqModule.actingOnOwnBehalf
   }
@@ -333,19 +329,19 @@ export default class ApplicantInfo1 extends Vue {
     return newReqModule.applicant
   }
   get countryOptions () {
-    return jurisdictionsIN
+    return this.$intJurisdictions
   }
   get editMode () {
     return newReqModule.editMode
   }
   get provinceOptions () {
-    return jurisdictionsCA.map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
+    return this.$canJurisdictions.map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
   }
   get jurisdictionOptions () {
     if (this.location === 'IN') {
-      return jurisdictionsIN.map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
+      return this.$intJurisdictions.map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
     }
-    return jurisdictionsCA.map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
+    return this.$canJurisdictions.map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
   }
   get location () {
     return newReqModule.location
@@ -360,7 +356,7 @@ export default class ApplicantInfo1 extends Vue {
     if (this.location === 'IN') {
       return null
     }
-    return jurisdictionsCA
+    return this.$canJurisdictions
   }
   get showAllFields () {
     return (!this.editMode || this.nrState === 'DRAFT')
@@ -383,21 +379,11 @@ export default class ApplicantInfo1 extends Vue {
 
   blurAddress1 () {
     this.messages = {}
-    document.removeEventListener('keydown', this.handleKeydown)
   }
   clearValidation () {
     if (this.$refs.step1 as any) {
       (this.$refs.step1 as any).resetValidation()
     }
-  }
-  debouncedGetAddressSuggestions (key, value) {
-    if (!debounced) {
-      debounced = (_ as any).debounce(this.getAddressSuggestions, 400)
-    }
-    debounced(key, value)
-  }
-  focusAddress1 () {
-    document.addEventListener('keydown', this.handleKeydown)
   }
   getAddressSuggestions (key, value) {
     newReqModule.getAddressSuggestions({ key, value })
@@ -409,9 +395,6 @@ export default class ApplicantInfo1 extends Vue {
       }
     }
     return ''
-  }
-  handleClick (id) {
-    newReqModule.getAddressDetails(id)
   }
   handleFocus (id, message) {
     this.messages[id] = message
@@ -428,6 +411,7 @@ export default class ApplicantInfo1 extends Vue {
         event.preventDefault()
         if (!this.highlightedSuggestion) {
           let { Id } = this.addressSuggestions[0]
+          this.highlightedSuggestion = Id
           let ref: any = this.$refs[Id][0]
           ref.focus()
           return
@@ -449,6 +433,11 @@ export default class ApplicantInfo1 extends Vue {
         let ref: any = this.$refs[Id][0]
         ref.focus()
         return
+      }
+      if (event.key === 'Enter' && this.highlightedSuggestion && this.highlightedSuggestion !== 'Country2') {
+        event.preventDefault()
+        this.queryAddress(this.highlightedSuggestion)
+        this.showAddressMenu = false
       }
     }
   }

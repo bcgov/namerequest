@@ -29,7 +29,7 @@
         <div class="block-box">
           <v-icon class="icon-class" @click="handleClick">refresh</v-icon>
         </div>
-        <div class="block-box x-small-link" style="max-width: 50%">
+        <div class="block-box link-xsm" style="max-width: 50%">
           See another name example
         </div>
       </v-col>

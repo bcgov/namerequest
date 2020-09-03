@@ -79,7 +79,7 @@
               </v-row>
 
             <!--GREY BOXES-->
-            <v-row class="row pale-blue-text no-gutters justify-center">
+            <v-row class="row colour-p-blue-text no-gutters justify-center">
               <v-col :key="issue.issue_type + '-' + option.header + '-' + optionIndex"
                      cols="auto"
                      v-for="(option, optionIndex) of issue.setup">
@@ -103,7 +103,7 @@
               <!--ERROR MESSAGE / NEXT - PREVIOUS BUTTONS-->
               <v-row v-if="json.issues.length > 1" justify="end" no-gutters>
                 <v-col v-if="highlightCheckboxes"
-                       class="small-copy text-center">
+                       class="copy-small text-center">
                   <div class="error-message">
                     You must either tick whichever box applies or take the action prescribed in Option 1.
                   </div>
@@ -132,7 +132,7 @@
             <template v-else>
               <!--APPROVED TEXT-->
               <v-row no-gutters justify="center">
-                <v-col cols="12" class="normal-copy pt-2 pb-4">
+                <v-col cols="12" class="copy-normal pt-2 pb-4">
                   <v-row justify="center">
                     <v-col cols="auto">
                       Name is available for a

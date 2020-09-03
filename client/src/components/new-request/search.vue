@@ -1,12 +1,12 @@
 <template>
-  <v-container fluid id="new-request-container" class="normal-copy">
+  <v-container fluid id="new-request-container" class="copy-normal">
     <v-row justify="end">
-      <v-col cols="6" class="normal-copy">I need a name to:</v-col>
+      <v-col cols="6" class="copy-normal">I need a name to:</v-col>
       <v-col cols="6" style="display: flex; justify-content: flex-end">
         <business-structures-tool>
           <template #start="{ homeModal }">
              <div id="#help-me-choose-activator"
-                  class="normal-link"
+                  class="link-std"
                   style="background-color: white"
                   @click="homeModal()">Help Me Choose</div>
           </template>
@@ -53,7 +53,7 @@
             <v-checkbox v-model="isPersonsName"
                         v-on="on"
                         id="name-checkbox"
-                        class="small-copy px-0 mx-0"
+                        class="copy-small px-0 mx-0"
                         label="The name is a person's name" />
         </template>
         <p class="py-0 my-0">Check this box if you are...</p>
@@ -71,7 +71,7 @@
             <v-checkbox v-model="nameIsEnglish"
                         v-on="on"
                         id="name-checkbox"
-                        class="small-copy ml-n6"
+                        class="copy-small ml-n6"
                         label="The name is English" />
 
         </template>
@@ -88,7 +88,7 @@
       </v-col>
       <v-col cols="5">
         <span id="nr-required-activator"
-              class="normal-link"
+              class="link-std"
               style="margin-left: auto"
               @click="activateNRRModal()">Check to see if you need to file a a name request</span>
       </v-col>
@@ -103,14 +103,14 @@ import newReqModule from '../../store/new-request-module'
 import { bcMapping, xproMapping } from '@/store/list-data/request-action-mapping'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { LocationT } from '@/models'
-require('@bizpal/open-services-bst/')
+import '@bizpal/open-services-bst/'
 
 @Component({
   components: { NameInput }
 })
 export default class Search extends Vue {
   @Watch('location')
-  handleLocation (newVal, oldVal) {
+  watchLocation (newVal, oldVal) {
     if (newVal === 'INFO') {
       let type = this.entity_type_cd
       newReqModule.mutateLocationInfoModalVisible(true)
@@ -121,7 +121,7 @@ export default class Search extends Vue {
     }
   }
   @Watch('request_action_cd')
-  handleRequestAction (newVal) {
+  watchRequestActionCd (newVal) {
     if (Object.keys(bcMapping).includes(newVal) && ['BC'].includes(this.location)) {
       let { value } = newReqModule.entityTypesBCData.find(ent => ent.rank === 1)
       newReqModule.mutateEntityType(value)

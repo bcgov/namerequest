@@ -8,7 +8,7 @@
       <v-col cols="6" class="pr-9 pl-3">
         <v-card class="ma-9 py-6 px-9">
           <v-card-title class="h3">Top 10 Words Approved This Week</v-card-title>
-          <v-card-subtitle class="pt-3 normal-copy">
+          <v-card-subtitle class="pt-3 copy-normal">
             Try to stand out, choose a name that isn't widely used
           </v-card-subtitle>
           <v-card-text class="mt-n6 mb-n5">
@@ -17,14 +17,14 @@
                 <v-col cols="6">
                   <ol>
                     <li v-for="(n,  key) in 5" :key="`li+${key}`">
-                      <span class="bold-text">Name {{ key + 1 }}</span>
+                      <span class="fw-700">Name {{ key + 1 }}</span>
                     </li>
                   </ol>
                 </v-col>
                 <v-col cols="6">
                   <ol start="6">
                     <li v-for="(n,  key) in 5" :key="`li+${key}`">
-                      <span class="bold-text">Name {{ key + 6 }}</span>
+                      <span class="fw-700">Name {{ key + 6 }}</span>
                     </li>
                   </ol>
                 </v-col>
@@ -65,7 +65,7 @@
                 </v-col>
               </v-row>
               <v-row justify="end">
-                <v-col class="text-center small-copy"> Stay away from protected names and trade marks.
+                <v-col class="text-center copy-small"> Stay away from protected names and trade marks.
                   <br><a href="https://www.ic.gc.ca/app/opic-cipo/trdmrks/srch/home?lang=eng">
                     Search Canadian trade marked names</a>
                   <v-icon class="launch-icon">launch</v-icon>
@@ -87,7 +87,7 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col class="text-center small-copy">
+                <v-col class="text-center copy-small">
                   Before selecting your business name, considering checking available website domain names.
                 </v-col>
               </v-row>
@@ -107,7 +107,7 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col class="text-center small-copy">
+                <v-col class="text-center copy-small">
                   Search social media sites to see which usernames may be available for your business.
                 </v-col>
               </v-row>
@@ -122,7 +122,7 @@
         <v-container class="pa-9">
           <v-row>
             <v-col cols="12" class="h3 info-underline">Need More Information?</v-col>
-            <v-col cols="12" class="normal-text">To learn more about BC Names Request Online, please visit
+            <v-col cols="12" class="copy-normal">To learn more about BC Names Request Online, please visit
               the BC Government Homepage</v-col>
           </v-row>
         </v-container>
@@ -131,13 +131,13 @@
         <v-container class="pa-9">
           <v-row alinn="start" align-content="start" align-items="start">
             <v-col cols="11" class="h3 info-underline">Contact Us</v-col>
-            <v-col cols="12" class="normal-text">
+            <v-col cols="12" class="copy-normal">
               For support or questions about this application contact us at:
             </v-col>
             <v-col cols="12" class="pb-0">Toll Free: 1-877-526-1526</v-col>
             <v-col cols="12" class="py-0">Phone: 250 952-0568</v-col>
             <v-col cols="12" class="pt-0">Email: SBC_ITOperationsSupport@gov.bc.ca</v-col>
-            <v-col cols="12" class="pb-0 bold-text">Hours of Operation</v-col>
+            <v-col cols="12" class="pb-0 fw-700">Hours of Operation</v-col>
             <v-col cols="12" class="pt-0">Monday to Friday, 8:30am - 4:30pm PST</v-col>
           </v-row>
         </v-container>

@@ -1,6 +1,6 @@
 <template>
   <v-form v-model="isValid" lazy-validation @submit="handleSubmit">
-  <v-row align="center" class="pa-6 pl-8 pr-9 normal-copy">
+  <v-row align="center" class="pa-6 pl-8 pr-9 copy-normal">
     <v-col cols="12" class="pa-4">
       Enter the NR Number or Business Name and either the Applicant's Phone or Email</v-col>
     <v-col cols="12" class="px-4 mt-n4 red--text" v-if="errorMessage">{{ errorMessage }}</v-col>
@@ -48,7 +48,7 @@
       </v-col>
       <v-col cols="12" class="mt-4 mb-n3">
         <div style="display: flex; width: 100%;">
-          <div style="margin-left: auto" class="link-text">
+          <div style="margin-left: auto" class="colour-link">
             <v-btn @click="handleSubmit"
                    :disabled="!allowSubmit || !isValid">Submit</v-btn></div>
         </div>

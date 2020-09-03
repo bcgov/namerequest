@@ -4,10 +4,10 @@
         <div class="stats-content-outer py-0">
           <div class="stats-content-inner-1 text-center">
             <div class="stats-value h3-lt">{{ autoApprovedCount }}</div>
-            <div class="stats-unit">NAMES</div>
+            <div class="stats-unit">Names</div>
           </div>
           <div class="stats-content-inner-2">
-            <u>Auto-Approved</u> Today<br>
+            <u>Auto-Approved</u> Today.<br>
             No Wait Time
           </div>
         </div>
@@ -53,7 +53,7 @@ export default class Stats extends Vue {
     if (this.stats && this.stats.auto_approved_count) {
       return this.stats.auto_approved_count
     }
-    return '-'
+    return 0
   }
   get regularWaitTime () {
     if (this.stats && this.stats.regular_wait_time) {

@@ -13,7 +13,7 @@
                      @click="chooseConversion(conversion)">
                 <v-tooltip bottom max-width="500" open-delay="500">
                   <template v-slot:activator="scope">
-                    <button v-on="scope.on" class="small-link-sans-ul text-left">{{ conversion.desc }}</button>
+                    <button v-on="scope.on" class="link-sm-sans-ul text-left">{{ conversion.desc }}</button>
                   </template>
                   <ul class="ma-0 pa-0">
                     <li class="no-bullet"
@@ -42,7 +42,7 @@
               <td class="clickable-cell" :id="entity.value" @click="chooseType(entity)">
                 <v-tooltip bottom max-width="500" open-delay="500">
                   <template v-slot:activator="scope">
-                    <button v-on="scope.on" class="small-link-sans-ul text-left">{{ entity.text }}</button>
+                    <button v-on="scope.on" class="link-sm-sans-ul text-left">{{ entity.text }}</button>
                   </template>
                   <template v-if="entity.blurb.length > 1">
                     <ul class="ma-0 pa-0">
