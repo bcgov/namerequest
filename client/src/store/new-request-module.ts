@@ -1302,9 +1302,7 @@ export class NewRequestModule extends VuexModule {
   }
   @Action
   async putNameReservation (nrNum) {
-    let { nrState } = this
-    if (this.isAssumedName) nrState = 'ASSUMED'
-    let response
+    const nrState = this.isAssumedName ? 'ASSUMED' : this.nrState
     try {
       let data: any
       switch (nrState) {
@@ -1322,7 +1320,31 @@ export class NewRequestModule extends VuexModule {
           break
       }
 
-      response = await axios.put(`/namerequests/${nrNum}`, data, {
+      const response = await axios.put(`/namerequests/${nrNum}`, data, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+
+      this.setNrResponse(response.data)
+
+      const { nr } = this
+      const { applicants = [] } = nr
+
+      if (applicants instanceof Array) {
+        this.setApplicantDetails(applicants[0])
+      } else if (applicants) {
+        this.setApplicantDetails(applicants)
+      }
+    } catch (error) {
+      // eslint-disable-next-line
+      console.log(error)
+    }
+  }
+  @Action
+  async completePayment (nrNum) {
+    try {
+      const response = await axios.put(`/namerequests/${nrNum}/complete-payment`, {}, {
         headers: {
           'Content-Type': 'application/json'
         }
