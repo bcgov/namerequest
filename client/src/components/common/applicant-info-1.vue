@@ -92,14 +92,13 @@
                   <v-list-item :class="getClass(address.Id)"
                                :id="address.Id"
                                :key="address.Text + '-' + i"
-                               @click.once="queryAddress(address.Id)"
                                dense
                                style="cursor: pointer"
                                v-for="(address, i) of addressSuggestions">
                     <a :ref="address.Id"
                        @focus="highlightedSuggestion = address.Id"
-                       class="link-small-copy"
-                       href="#">{{ address.Text + ', ' + address.Description }}</a>
+                       @click.prevent="queryAddress(address.Id)"
+                       class="link-small-copy">{{ address.Text + ', ' + address.Description }}</a>
                   </v-list-item>
                   <v-divider class="mb-2"/>
                   <v-list-item>
