@@ -25,15 +25,15 @@ async function startVue () {
   Vue.prototype.$canadaJurisdictions = canadaJurisdictions
   Vue.prototype.$internationalJurisdictions = internationalJurisdictions
 
-  // configure Keycloak Service
-  await KeyCloakService.setKeycloakConfigUrl(sessionStorage.getItem('KEYCLOAK_CONFIG_PATH'))
-  if (!window.location.pathname.includes('/signin')) {
-    await KeyCloakService.initializeToken(null).catch(err => {
-      if (err?.message !== 'NOT_AUTHENTICATED') {
-        throw err
-      }
-    })
-  }
+  // // configure Keycloak Service
+  // await KeyCloakService.setKeycloakConfigUrl(sessionStorage.getItem('KEYCLOAK_CONFIG_PATH'))
+  // if (!window.location.pathname.includes('/signin')) {
+  //   await KeyCloakService.initializeToken(null).catch(err => {
+  //     if (err?.message !== 'NOT_AUTHENTICATED') {
+  //       throw err
+  //     }
+  //   })
+  // }
 
   new Vue({
     router,
