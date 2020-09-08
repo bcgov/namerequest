@@ -57,7 +57,7 @@
                 <v-col cols="12" v-for="action of actions" :key="action+'-button'">
                   <v-btn block @click="handleButtonClick(action)">{{ action }}</v-btn>
                 </v-col>
-                <v-btn @click="activateILModal">incorporate now</v-btn>
+<!--                <v-btn @click="activateILModal">incorporate now</v-btn>-->
               </v-row>
             </v-col>
           </v-row>
