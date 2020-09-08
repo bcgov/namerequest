@@ -1,12 +1,10 @@
 const path = require("path")
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const webpack = require("webpack")
 
 module.exports = {
   configureWebpack: {
     devtool: 'eval-source-map',
     plugins: [
-      new BundleAnalyzerPlugin(),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
     ],
     devServer: {
