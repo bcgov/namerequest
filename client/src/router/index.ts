@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Signin from '@/views/auth/Signin.vue'
+import Landing from '@/views/landing.vue'
 
 Vue.use(VueRouter)
 
@@ -8,7 +9,7 @@ const routes = [
   {
     path: '/',
     name: 'Landing',
-    component: () => import('@/views/landing.vue')
+    component: Landing
   },
   { path: '/signin/:idpHint', name: 'signin', component: Signin, props: true, meta: { requiresAuth: false } },
   {

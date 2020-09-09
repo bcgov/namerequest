@@ -24,15 +24,8 @@ async function startVue () {
   Vue.prototype.$intJurisdictions = intJurisdictions
   Vue.prototype.$PAYMENT_PORTAL_URL = await getConfig()
 
-  // // configure Keycloak Service
-  // await KeyCloakService.setKeycloakConfigUrl(sessionStorage.getItem('KEYCLOAK_CONFIG_PATH'))
-  // if (!window.location.pathname.includes('/signin')) {
-  //   await KeyCloakService.initializeToken(null).catch(err => {
-  //     if (err?.message !== 'NOT_AUTHENTICATED') {
-  //       throw err
-  //     }
-  //   })
-  // }
+  // configure Keycloak Service
+  await KeyCloakService.setKeycloakConfigUrl(sessionStorage.getItem('KEYCLOAK_CONFIG_PATH'))
 
   new Vue({
     router,
