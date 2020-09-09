@@ -2,7 +2,7 @@
   <v-dialog v-model="showModal" width="550" hide-overlay>
     <v-card class="pa-0">
       <v-card-text class="h4 px-3 pt-2">Choose Location</v-card-text>
-      <v-card-text class="small-copy">
+      <v-card-text class="copy-small">
         <ul>
           <li>
             <b>BC</b><br>

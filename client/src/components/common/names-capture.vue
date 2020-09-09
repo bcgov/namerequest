@@ -3,9 +3,9 @@
     <v-container fluid class="pa-0" id="send-to-examination-container">
       <template v-if="editMode">
         <v-row justify="end" class="mt-n3 mb-n5">
-          <v-col cols="6" class="normal-copy">I need a name to:</v-col>
+          <v-col cols="6" class="copy-normal">I need a name to:</v-col>
           <v-col cols="6" style="display: flex; justify-content: flex-end">
-            <button class="normal-link"
+            <button class="link-std"
                     id="help-me-choose-activator"
                     @change="activateHMCModal()">Help Me Choose
             </button>
@@ -79,13 +79,13 @@
             </v-row></v-col>
           </transition>
         </v-row>
-      <v-row v-if="!editMode" class="my-1 py-0 grey-text">
+      <v-row v-if="!editMode" class="my-1 py-0 colour-text">
         <v-col cols="2" v-if="isAssumedName" class="py-0"></v-col>
-        <v-col cols="10" class="py-0" :class="isAssumedName ? 'bold-copy' : ''">
+        <v-col cols="10" class="py-0" :class="isAssumedName ? 'copy-bold' : ''">
           {{ mainMessage}}
         </v-col>
       </v-row>
-      <v-row v-if="entityPhraseRequired" class="my-1 py-0 grey-text">
+      <v-row v-if="entityPhraseRequired" class="my-1 py-0 colour-text">
         <v-col cols="10" class="py-0">
           A {{ entity_type_cd === 'CC' ? 'Community Contribution Company' : 'Cooperative'}} name must
           include (but not start with) one of the following phrases: <b>{{ entityPhraseText }}</b>

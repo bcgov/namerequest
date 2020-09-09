@@ -24,7 +24,7 @@
       </v-col>
     </v-row>
     <v-row justify="center" class="mt-n3">
-      <v-col cols="auto" class="small-copy">
+      <v-col cols="auto" class="copy-small">
         Search Status: Analyzing
       </v-col>
     </v-row>

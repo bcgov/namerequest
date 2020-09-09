@@ -1,13 +1,21 @@
 import Vue from 'vue-property-decorator'
 
-interface Designation {
+export interface DesignationI {
   words: string[]
   end: boolean
+}
+
+export interface JurisdictionI {
+  value: string
+  text: string
+  SHORT_DESC: string
 }
 
 declare module 'vue/types/vue' {
   interface Vue {
     $PAYMENT_PORTAL_URL?: string
-    $designations: Designation[]
+    $designations: DesignationI[]
+    $canJurisdictions: JurisdictionI[]
+    $intJurisdictions: JurisdictionI[]
   }
 }

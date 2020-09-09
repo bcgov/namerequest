@@ -209,15 +209,9 @@ export interface SetupI {
   text2?: string
 }
 export interface StatsI {
-  auto: number,
-  priority: {
-    unit: string
-    value: number,
-  },
-  standard: {
-    unit: string
-    value: number,
-  }
+  auto_approved_count: number
+  priority_wait_time: number
+  regular_wait_time: number
 }
 export interface WaitingAddressSearchI {
   text: string

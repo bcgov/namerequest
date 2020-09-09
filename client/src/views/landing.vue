@@ -1,8 +1,8 @@
 <template>
   <v-container id="landing-container" fluid>
     <v-row id="upper-row" no-gutters align-content="start">
-      <Stats class="py-0 mt-3 mb-n8 mr-3" />
-      <v-col align-self="end" cols="12" class="h2 mb-1 white-text">
+      <Stats class="py-0 mt-3 mb-n8 mr-4" />
+      <v-col align-self="end" cols="12" class="h2 mb-1 ml-3 colour-white">
         Name Request
       </v-col>
       <v-col>
@@ -74,29 +74,5 @@ export default class Landing extends Vue {
   color: white
   height: 700px
   padding: 0 200px 0 200px
-
-.flip-class
-  backface-visibility: visible
-  perspective-origin: center
-  perspective: 1000px
-  transform-style: preserve-3d
-
-.flip-enter
-  transform: rotateX(90deg)
-
-.flip-enter-active, .flip-leave-active
-  transition: all .2s ease-in
-
-.flip-enter-to
-  transform: rotateX(0deg)
-
-.flip-leave
-  transform: rotateX(0deg)
-
-.flip-leave-to
-  transform: rotateX(90deg)
-
-.white-text
-  color: white
 
 </style>

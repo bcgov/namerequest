@@ -13,7 +13,7 @@
             <td class="clickable-cell" :id="type.value" @click="chooseType(type)">
               <v-tooltip bottom max-width="500" open-delay="500">
               <template v-slot:activator="scope">
-                <button class="small-link-sans-ul" v-on="scope.on">{{ type.text }}</button>
+                <button class="link-sm-sans-ul" v-on="scope.on">{{ type.text }}</button>
               </template>
               <span>{{ type.blurb }}</span>
             </v-tooltip>
@@ -27,7 +27,7 @@
             <td class="clickable-cell" :id="type.value" @click="chooseType(type)">
               <v-tooltip bottom max-width="500" open-delay="500">
               <template v-slot:activator="scope">
-                <button class="small-link-sans-ul" v-on="scope.on">{{ type.text }}</button>
+                <button class="link-sm-sans-ul" v-on="scope.on">{{ type.text }}</button>
               </template>
               <span>{{ type.blurb }}</span>
             </v-tooltip>

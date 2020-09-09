@@ -1,8 +1,12 @@
 const path = require("path")
+const webpack = require("webpack")
 
 module.exports = {
   configureWebpack: {
     devtool: 'eval-source-map',
+    plugins: [
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+    ],
     devServer: {
       hot: true
     },

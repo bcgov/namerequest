@@ -11,9 +11,9 @@
                class="text-center mt-n4"
                v-html="title" />
         <v-col v-for="(box, i) in boxes" :key="'box-'+i">
-          <v-container class="small-copy text-left" :class="box.class">
+          <v-container class="copy-small text-left" :class="box.class">
             <v-row align-content="space-between" style="height: 100%">
-              <v-col class="h5 py-0"><v-icon class="pr-2 pale-blue-text">info</v-icon>
+              <v-col class="h5 py-0"><v-icon class="pr-2 colour-p-blue-text">info</v-icon>
                 {{ box.title }}</v-col>
               <v-col cols="12" v-html="box.text" />
                <v-col class="text-center">

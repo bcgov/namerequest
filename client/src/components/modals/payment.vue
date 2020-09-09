@@ -2,7 +2,7 @@
   <v-dialog max-width="40%" :value="isVisible" persistent>
     <v-card class="pa-9">
       <v-card-text class="h3">Confirm Name Request</v-card-text>
-      <v-card-text class="normal-copy">
+      <v-card-text class="copy-normal">
         <div style="display: flex; justify-content: space-between; margin-bottom: 15px">
           <div>
             <ul style="list-style: none; padding-left: 0">

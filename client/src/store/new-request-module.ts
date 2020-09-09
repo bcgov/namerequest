@@ -1220,11 +1220,13 @@ export class NewRequestModule extends VuexModule {
   @Action
   async getStats () {
     try {
-      let resp = await axios.get('/stats')
+      let resp = await axios.get('/statistics')
+      // eslint-disable-next-line
+      console.log(resp.data)
       this.mutateStats(resp.data)
-      return Promise.resolve(resp.data)
-    } catch {
-      return Promise.resolve()
+    } catch (error) {
+      // eslint-disable-next-line
+      console.log(error)
     }
   }
   @Action

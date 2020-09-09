@@ -12,9 +12,9 @@
       </v-row>
       <v-row>
         <v-col>
-          <v-container class="small-copy text-left helpful-hint">
+          <v-container class="copy-small text-left helpful-hint">
             <v-row align-content="space-between" style="height: 100%">
-              <v-col class="h5 py-0"><v-icon class="pr-2 pale-blue-text">info</v-icon>
+              <v-col class="h5 py-0"><v-icon class="pr-2 colour-p-blue-text">info</v-icon>
                 Helpful Hint</v-col>
               <v-col cols="12">
                 <p v-if="!nameStartsWithSymbol">
@@ -24,7 +24,7 @@
                 <p class="text-lg-center">
                   Your name must not begin with a special character.   The first character must be alphanumeric.
                   Only the following special characters may be used in your name::</p>
-                <p class="my-3 text-center large-copy bold-copy">/ [ ] ^ * + - = & ( ) . , " ' # @ ! ? ; :</p>
+                <p class="my-3 text-center copy-large copy-bold">/ [ ] ^ * + - = & ( ) . , " ' # @ ! ? ; :</p>
               </v-col>
             </v-row>
           </v-container>
