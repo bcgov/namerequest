@@ -34,19 +34,20 @@ export default class ReserveSubmitButton extends Vue {
         return 'Reserve and Continue'
     }
   }
+  get location () {
+    return newReqModule.location
+  }
 
   showNextStep () {
     newReqModule.mutateDisplayedComponent('SubmissionTabs')
-    if (this.setup === 'assumed') {
-      newReqModule.mutateRequestAction('ASSUMED')
-      newReqModule.mutateAssumedNameOriginal()
+    if ((this.setup === 'examine' || this.location !== 'BC') || this.setup === 'assumed') {
       newReqModule.mutateSubmissionType('examination')
       newReqModule.mutateSubmissionTabComponent('NamesCapture')
-      return
-    }
-    if ((this.setup === 'examine' || this.location !== 'BC')) {
-      newReqModule.mutateSubmissionType('examination')
-      newReqModule.mutateSubmissionTabComponent('NamesCapture')
+      if (this.setup === 'assumed') {
+        newReqModule.mutateRequestAction('ASSUMED')
+        newReqModule.mutateAssumedNameOriginal()
+        return
+      }
     }
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
     if (this.setup === 'consent') {
@@ -55,7 +56,7 @@ export default class ReserveSubmitButton extends Vue {
       return
     }
     newReqModule.postNameRequests('reserved')
-    newReqModule.mutateSubmissionType('examine')
+    newReqModule.mutateSubmissionType('normal')
   }
 }
 </script>
