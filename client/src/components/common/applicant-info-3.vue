@@ -128,7 +128,7 @@
       </v-row>
       <v-row>
         <v-col cols="2" />
-        <v-col cols="5" align-self="end" class="mt-1" v-if="submissionType === 'examination' && !editMode">
+        <v-col cols="5" align-self="end" class="mt-1" v-if="showPriorityRequest">
           <v-checkbox v-model="priorityRequest" class="ma-0 pa-0">
             <template v-slot:label>
               Priority Request - <b>$100 Fee</b>
@@ -221,6 +221,9 @@ export default class ApplicantInfo3 extends Vue {
   }
   get showAllFields () {
     return (!this.editMode || this.nrState === 'DRAFT')
+  }
+  get showPriorityRequest () {
+    return newReqModule.showPriorityRequest
   }
   get showCorpNum () {
     if (this.showAllFields) {

@@ -483,7 +483,7 @@ export class NewRequestModule extends VuexModule {
   waitingAddressSearch: WaitingAddressSearchI | null = null
 
   get showPriorityRequest () {
-    return !this.editMode && this.nrState === 'DRAFT'
+    return (!this.editMode && this.nrState === 'DRAFT') || (!this.editMode && this.submissionType === 'examination')
   }
   get showCorpNum () {
     let types = ['CHG', 'AML', 'CNV', 'REH', 'REN']
