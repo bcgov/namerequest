@@ -69,7 +69,7 @@
                       rows="3" />
         </v-col>
         <v-col cols="2" />
-        <v-col cols="5" v-if="1===1">
+        <v-col cols="5" v-if="showCorpNum">
           <v-text-field :messages="messages['corpNum']"
                         :rules="requiredRule"
                         @blur="messages = {}"

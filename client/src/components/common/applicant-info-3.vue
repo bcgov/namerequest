@@ -105,7 +105,7 @@
       </v-row>
       <v-row>
         <v-col cols="2" />
-        <v-col cols="5" v-if="location !== 'BC' && showAllFields">
+        <v-col cols="5" v-if="showCorpNum && showAllFields">
           <v-text-field :messages="messages['corpNum']"
                         :rules="requiredRule"
                         v-model="corpNum"
@@ -226,11 +226,7 @@ export default class ApplicantInfo3 extends Vue {
     return newReqModule.showPriorityRequest
   }
   get showCorpNum () {
-    if (this.showAllFields) {
-      const types = ['ASSUMED', 'CHG', 'AML', 'CNV', 'RES', 'REH']
-      return this.location !== 'BC' || types.includes(this.request_action_cd)
-    }
-    return false
+    return newReqModule.showCorpNum
   }
   get request_action_cd () {
     return newReqModule.request_action_cd

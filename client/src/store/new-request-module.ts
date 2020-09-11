@@ -22,13 +22,13 @@ import {
 } from '@/models'
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
 import store from '@/store'
-import { bcMapping, xproMapping } from '@/store/list-data/request-action-mapping'
+import { bcMapping, xproMapping, $colinRequestActions } from '@/store/list-data/request-action-mapping'
 import axios from 'axios'
 import querystring from 'qs'
 import Vue from 'vue'
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import canadaPostAPIKey from './config'
-import $canJurisdictions from './list-data/canada-jurisdictions'
+import $canJurisdictions, { $mrasJurisdictions } from './list-data/canada-jurisdictions'
 import $designations from './list-data/designations'
 import $intJurisdictions from './list-data/intl-jurisdictions'
 
@@ -486,8 +486,21 @@ export class NewRequestModule extends VuexModule {
     return (!this.editMode && this.nrState === 'DRAFT') || (!this.editMode && this.submissionType === 'examination')
   }
   get showCorpNum () {
-    let types = ['CHG', 'AML', 'CNV', 'REH', 'REN']
-    return this.location !== 'BC' || types.includes(this.request_action_cd)
+    if (this.location === 'CA') {
+      if (this.nrData && this.nrData.xproJurisdiction && $mrasJurisdictions.includes(this.nrData.xproJurisdiction)) {
+        return true
+      }
+      return false
+    }
+    if (this.location === 'BC') {
+      if ($colinRequestActions.includes(this.request_action_cd)) {
+        return true
+      }
+      if (this.entity_type_cd === 'DBA') {
+        return true
+      }
+    }
+    return false
   }
   get allDesignationWords () {
     let output = []
