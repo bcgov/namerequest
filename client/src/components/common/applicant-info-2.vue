@@ -68,19 +68,17 @@
                       placeholder="Additional Business Info (Optional)"
                       rows="3" />
         </v-col>
-      </v-row>
-      <v-row v-if="showAllFields">
-        <v-col cols="2" class="h5">
-          {{ editMode ? '' : 'Additional Services' }}
+        <v-col cols="2" />
+        <v-col cols="5" v-if="1===1">
+          <v-text-field :messages="messages['corpNum']"
+                        :rules="requiredRule"
+                        @blur="messages = {}"
+                        @focus="messages['corpNum'] = 'Incorporation Number (required)'"
+                        filled
+                        hide-details="auto"
+                        placeholder="Incorporation Number (required)"
+                        v-model="corpNum" />
         </v-col>
-        <v-col cols="5" align-self="center" v-if="submissionType === 'examination' && !editMode">
-          <v-checkbox v-model="priorityRequest">
-            <template v-slot:label>
-              Priority Request - <b>$100 Fee</b>
-            </template>
-          </v-checkbox>
-        </v-col>
-        <v-col cols="5" v-else-if="!editMode" />
         <v-col cols="5">
           <v-text-field :messages="messages['tradeMark']"
                         :value="nrData.tradeMark"
@@ -92,16 +90,29 @@
                         placeholder="Registered Trademark (Optional)" />
         </v-col>
       </v-row>
+      <v-row v-if="showAllFields">
+        <v-col cols="2" class="h5">
+          {{ editMode ? '' : 'Additional Services' }}
+        </v-col>
+        <v-col cols="5" align-self="center" v-if="showPriorityRequest">
+          <v-checkbox v-model="priorityRequest">
+            <template v-slot:label>
+              Priority Request - <b>$100 Fee</b>
+            </template>
+          </v-checkbox>
+        </v-col>
+        <v-col cols="5" v-else-if="!editMode" />
+      </v-row>
       <v-row>
-        <v-col cols="12" class="text-right" :class="showAllFields ? 'mt-3' : ''">
+        <v-col cols="12" class="text-right" :class="showPriorityRequest ? 'mt-n4' : ''">
           <v-btn x-large
                  id="submit-back-btn"
                  class="mr-3"
-                 @click="showPreviousTab()">{{ editMode ? 'Previous' : 'Back' }}</v-btn>
+                 @click="showPreviousTab">{{ editMode ? 'Previous' : 'Back' }}</v-btn>
           <v-btn x-large
                  v-if="!isValid"
                  id="submit-continue-btn-disabled"
-                 @click="validate()"> {{ editMode ? 'Submit Changes' : 'Continue to Payment' }}</v-btn>
+                 @click="validate"> {{ editMode ? 'Submit Changes' : 'Continue to Payment' }}</v-btn>
           <v-btn x-large
                  v-else
                  @click="submit"
@@ -116,6 +127,7 @@
 import newReqModule, { NewRequestModule } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 import { Component, Vue } from 'vue-property-decorator'
+const _debounce = require('lodash/debounce')
 
 @Component({})
 export default class ApplicantInfo2 extends Vue {
@@ -125,18 +137,30 @@ export default class ApplicantInfo2 extends Vue {
   ]
   isValid: boolean = false
   messages = {}
+  resp: any
   requiredRule = [
     v => !!v || 'Required field'
   ]
+  debouncedGetCorpNum = _debounce(this.getCorpNum, 400)
 
   get applicant () {
     return newReqModule.applicant
+  }
+  get corpNum () {
+    return newReqModule.corpNum
+  }
+  set corpNum (num) {
+    newReqModule.mutateCorpNum(num)
+    this.debouncedGetCorpNum(num)
   }
   get editMode () {
     return newReqModule.editMode
   }
   get isPersonsName () {
     return newReqModule.isPersonsName
+  }
+  get location () {
+    return newReqModule.location
   }
   get nr () {
     const nameRequest: NewRequestModule = newReqModule
@@ -157,17 +181,26 @@ export default class ApplicantInfo2 extends Vue {
   get priorityRequest () {
     return newReqModule.priorityRequest
   }
+  set priorityRequest (value) {
+    newReqModule.mutatePriorityRequest(value)
+  }
+  get request_action_cd () {
+    return newReqModule.request_action_cd
+  }
   get showAllFields () {
     return (!this.editMode || this.nrState === 'DRAFT')
+  }
+  get showCorpNum () {
+    return newReqModule.showCorpNum
+  }
+  get showPriorityRequest () {
+    return newReqModule.showPriorityRequest
   }
   get submissionTabNumber () {
     return newReqModule.submissionTabNumber
   }
   get submissionType () {
     return newReqModule.submissionType
-  }
-  set priorityRequest (value) {
-    newReqModule.mutatePriorityRequest(value)
   }
   set submissionTabNumber (value) {
     newReqModule.mutateSubmissionTabNumber(value)
@@ -180,17 +213,30 @@ export default class ApplicantInfo2 extends Vue {
     } else {
       const { nrNum } = this
       if (!nrNum) {
+        // eslint-disable-next-line
+        console.log('!nrNum 216 applicant-info-2')
         await newReqModule.postNameRequests('draft')
       } else {
+        // eslint-disable-next-line
+        console.log('inner else 216 applicant-info-2')
         await newReqModule.putNameReservation(nrNum)
       }
-
+      // eslint-disable-next-line
+      console.log('outer else 224 appliocant-info-2')
       await paymentModule.togglePaymentModal(true)
     }
   }
   clearValidation () {
     if (this.$refs.step2 as Vue) {
       (this.$refs.step2 as any).resetValidation()
+    }
+  }
+  async getCorpNum (num) {
+    try {
+      let resp = await newReqModule.getCorpNum(num)
+      this.resp = resp
+    } catch (error) {
+      this.resp = null
     }
   }
   mutateApplicant (key, value) {

@@ -11,9 +11,9 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import '@/sass/main.sass'
 import '@/sass/overrides.sass'
 
-import designations from '@/store/list-data/designations.js'
-import canJurisdictions from '@/store/list-data/canada-jurisdictions.js'
-import intJurisdictions from '@/store/list-data/intl-jurisdictions.js'
+import designations from '@/store/list-data/designations'
+import canJurisdictions from '@/store/list-data/canada-jurisdictions'
+import intJurisdictions from '@/store/list-data/intl-jurisdictions'
 
 Vue.config.productionTip = true
 Vue.config.devtools = true

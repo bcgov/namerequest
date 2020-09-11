@@ -1,9 +1,3 @@
-import axios from 'axios'
-import designations from './list-data/designations'
-import CanJurisdictions from './list-data/canada-jurisdictions.js'
-import IntJurisdictions from './list-data/intl-jurisdictions.js'
-import querystring from 'qs'
-import store from '@/store'
 import {
   AnalysisJSONI,
   ApplicantI,
@@ -17,8 +11,8 @@ import {
   NameDesignationI,
   NameRequestI,
   NewRequestNameSearchI,
-  RequestActionsI,
   RequestActionMappingI,
+  RequestActionsI,
   RequestNameI,
   ReservedReqI,
   SelectOptionsI,
@@ -26,13 +20,20 @@ import {
   SubmissionTypeT,
   WaitingAddressSearchI
 } from '@/models'
-import canadaPostAPIKey from './config'
+import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
+import store from '@/store'
+import { bcMapping, xproMapping } from '@/store/list-data/request-action-mapping'
+import axios from 'axios'
+import querystring from 'qs'
 import Vue from 'vue'
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
-import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
-import { bcMapping, xproMapping } from '@/store/list-data/request-action-mapping'
+import canadaPostAPIKey from './config'
+import $canJurisdictions from './list-data/canada-jurisdictions'
+import $designations from './list-data/designations'
+import $intJurisdictions from './list-data/intl-jurisdictions'
 
 const qs: any = querystring
+const debounce = require('lodash/debounce')
 let source: any
 
 /** Test
@@ -64,6 +65,9 @@ const parseNameChoices = (nameChoices) => {
     })
     .filter((name) => !!name)
 }
+
+let debouncedCheckMRAS: any
+let debouncedCheckCOLIN: any
 
 interface RequestNameMapI extends RequestNameI {}
 
@@ -130,6 +134,7 @@ export class NewRequestModule extends VuexModule {
       shortlist: false
     }
   ]
+  corpNum: string = ''
   designationIsFixed: boolean = false
   displayedComponent: string = 'Tabs'
   doNotAnalyzeEntities: string[] = ['PAR', 'CC', 'CP', 'PA', 'FI', 'XCP']
@@ -390,7 +395,7 @@ export class NewRequestModule extends VuexModule {
     natureBusinessInfo: '',
     previousRequestId: '',
     tradeMark: '',
-    xproJurisdiction: ''
+    xproJurisdiction: 'AB'
   }
   nrOriginal: Partial<NameRequestI> = {} as NameRequestI
   nrRequestNameMap: RequestNameMapI[] = []
@@ -455,8 +460,7 @@ export class NewRequestModule extends VuexModule {
       text: 'Convert to Another Structure',
       value: 'CNV',
       blurb: `Convert from one business structure to another. Such as converting from a ULC to a BC Corp. You will need 
-              to identify your business with your Corp. #/Firm # (assigned by 
-              Registries).`
+              to identify your business with your Corp. #/Firm # (assigned by Registries).`
     },
     {
       text: 'Restore Using a Historical Name',
@@ -478,10 +482,17 @@ export class NewRequestModule extends VuexModule {
   tabNumber: number = 0
   waitingAddressSearch: WaitingAddressSearchI | null = null
 
+  get showPriorityRequest () {
+    return !this.editMode || this.nrState === 'DRAFT'
+  }
+  get showCorpNum () {
+    let types = ['CHG', 'AML', 'CNV', 'REH', 'REN']
+    return this.location !== 'BC' || types.includes(this.request_action_cd)
+  }
   get allDesignationWords () {
     let output = []
-    for (let des in designations) {
-      designations[des].words.forEach(word => {
+    for (let des in $designations) {
+      $designations[des].words.forEach(word => {
         if (!output.includes(word)) {
           output.push(word)
         }
@@ -533,15 +544,15 @@ export class NewRequestModule extends VuexModule {
     })
   }
   get designationItems () {
-    if (this.entity_type_cd && designations[this.entity_type_cd]) {
-      let { words } = designations[this.entity_type_cd]
+    if (this.entity_type_cd && $designations[this.entity_type_cd]) {
+      let { words } = $designations[this.entity_type_cd]
       return words.map(des => ({ value: des, text: des }))
     }
     return []
   }
   get designationObject () {
-    if (this.entity_type_cd && designations[this.entity_type_cd]) {
-      return designations[this.entity_type_cd]
+    if (this.entity_type_cd && $designations[this.entity_type_cd]) {
+      return $designations[this.entity_type_cd]
     }
     return ''
   }
@@ -698,13 +709,17 @@ export class NewRequestModule extends VuexModule {
   get nrNum () {
     const { nr } = this
     let nrNum
-    if (nr) nrNum = nr.nrNum
+    if (nr) {
+      nrNum = nr.nrNum
+    }
     return nrNum
   }
   get nrState () {
     const { nr } = this
     let state
-    if (nr) state = nr.state
+    if (nr) {
+      state = nr.state
+    }
     return state
   }
   get pickEntityTableBC () {
@@ -909,7 +924,9 @@ export class NewRequestModule extends VuexModule {
   get nrNames () {
     const { nr } = this
     let names = []
-    if (nr) names = nr.names
+    if (nr) {
+      names = nr.names
+    }
     return names
   }
   get nrRequestNames (): RequestNameI[] {
@@ -964,12 +981,9 @@ export class NewRequestModule extends VuexModule {
             // Merge in requestName form values
             ...requestName,
             // Merge conflicts and consent words
-            consent_words: !existingName.consent_words
-              ? this.consentWords.length > 0 ? this.consentWords : ''
+            consent_words: !existingName.consent_words ? this.consentWords.length > 0 ? this.consentWords : ''
               : existingName.consent_words,
-            conflict1: !existingName.conflict1
-              ? this.consentConflicts.name
-              : existingName.conflict1,
+            conflict1: !existingName.conflict1 ? this.consentConflicts.name : existingName.conflict1,
             conflict1_num: existingName.conflict1_num ? existingName.conflict1_num : ''
           } as RequestNameI
         }
@@ -985,11 +999,11 @@ export class NewRequestModule extends VuexModule {
 
     // TODO: Not sure if this is needed anymore!
     /* const name: RequestNameI = {
-      name: this.name,
-      choice: 1,
-      designation: this.splitNameDesignation.designation,
-      name_type_cd: 'CO'
-    } */
+     name: this.name,
+     choice: 1,
+     designation: this.splitNameDesignation.designation,
+     name_type_cd: 'CO'
+     } */
 
     const caseData: ReservedReqI = {
       applicants: [applicant],
@@ -1221,8 +1235,6 @@ export class NewRequestModule extends VuexModule {
   async getStats () {
     try {
       let resp = await axios.get('/statistics')
-      // eslint-disable-next-line
-      console.log(resp.data)
       this.mutateStats(resp.data)
     } catch (error) {
       // eslint-disable-next-line
@@ -1384,11 +1396,11 @@ export class NewRequestModule extends VuexModule {
       let { xproJurisdiction } = this.nr
       let location: LocationT
       for (let key of ['value', 'text']) {
-        if (CanJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
+        if ($canJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
           location = 'CA'
           break
         }
-        if (IntJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
+        if ($intJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
           location = 'IN'
           break
         }
@@ -1478,6 +1490,36 @@ export class NewRequestModule extends VuexModule {
       return
     }
   }
+  @Action
+  getCorpNum (corpNum: string) {
+    if (this.location === 'BC') {
+      return this.checkCOLIN(corpNum)
+    } else {
+      return this.checkMRAS(corpNum)
+    }
+  }
+  @Action
+  async checkCOLIN (corpNum: string) {
+    let url = `colin/${corpNum}`
+    try {
+      let resp = await axios.get(url)
+      return resp
+    } catch (error) {
+      // eslint-disable-next-line
+      console.log(error)
+    }
+  }
+  @Action
+  async checkMRAS (corpNum: string) {
+    let url = `mras-profile/${this.nrData.xproJurisdiction}/${this.corpNum}`
+    try {
+      let resp = await axios.get(url)
+      return resp
+    } catch (error) {
+      // eslint-disable-next-line
+      console.log(error)
+    }
+  }
 
   @Mutation
   clearErrors () {
@@ -1531,6 +1573,10 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateConversionTypeAddToSelect (value) {
     this.conversionTypeAddToSelect = value
+  }
+  @Mutation
+  mutateCorpNum (corpNum: string) {
+    this.corpNum = corpNum
   }
   @Mutation
   mutateDesignationIsFixed (value) {
