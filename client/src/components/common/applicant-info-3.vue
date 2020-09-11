@@ -3,22 +3,17 @@
     <v-container fluid class="pa-0">
       <v-row>
         <v-col cols="2" class="h5" align-self="start">
-          Contact Person
+        Contact Info
         </v-col>
-        <v-col cols="10">
+        <v-col cols="5">
           <v-text-field :messages="messages['contact']"
                         :value="applicant.contact"
                         @blur="messages = {}"
-                        @focus="messages['contact'] = 'Contact Person (if other than applicant. optional)'"
+                        @focus="messages['contact'] = 'Contact Name (if other than applicant. optional)'"
                         @input="mutateApplicant('contact', $event)"
                         filled
                         hide-details="auto"
-                        placeholder="Contact Person (if other than applicant. optional)" />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="2" class="h5" align-self="start">
-        Contact Info
+                        placeholder="Contact Name (if is not applicant, optional)" />
         </v-col>
         <v-col cols="5">
           <v-text-field :messages="messages['email']"
@@ -31,7 +26,6 @@
                         hide-details="auto"
                         placeholder="Email Address (for notifications)" />
         </v-col>
-        <v-col cols="5" />
       </v-row>
       <v-row>
         <v-col cols="2" />
@@ -111,6 +105,16 @@
       </v-row>
       <v-row>
         <v-col cols="2" />
+        <v-col cols="5" v-if="location !== 'BC' && showAllFields">
+          <v-text-field :messages="messages['corpNum']"
+                        :rules="requiredRule"
+                        v-model="corpNum"
+                        @blur="messages = {}"
+                        @focus="messages['corpNum'] = 'Incorporation Number (required)'"
+                        filled
+                        hide-details="auto"
+                        placeholder="Incorporation Number (required)" />
+        </v-col>
         <v-col cols="5">
           <v-text-field :messages="messages['tradeMark']"
                         :value="nrData.tradeMark"
@@ -121,19 +125,20 @@
                         hide-details="auto"
                         placeholder="Registered Trademark (Optional)" />
         </v-col>
-        <v-col cols="5" align-self="end" v-if="submissionType === 'examination' && !editMode">
+      </v-row>
+      <v-row>
+        <v-col cols="2" />
+        <v-col cols="5" align-self="end" class="mt-1" v-if="submissionType === 'examination' && !editMode">
           <v-checkbox v-model="priorityRequest" class="ma-0 pa-0">
             <template v-slot:label>
               Priority Request - <b>$100 Fee</b>
             </template>
           </v-checkbox>
         </v-col>
-        <v-col cols="5" v-else />
-      </v-row>
-      <v-row>
-        <v-col cols="12"
+        <v-col v-else cols="5" />
+        <v-col cols="5"
                class="text-right"
-               :class="submissionType === 'examination' || isPersonsName ? 'mt-n4' : 'mt-4'">
+               :class="submissionType === 'examination' ? '' : 'mt-4'">
           <v-btn x-large
                  id="submit-back-btn"
                  class="mr-3"
@@ -179,6 +184,16 @@ export default class ApplicantInfo3 extends Vue {
   get applicant () {
     return newReqModule.applicant
   }
+  get corpNum () {
+    return newReqModule.corpNum
+  }
+  set corpNum (val) {
+    newReqModule.getCorpNum(val)
+    this.clearValidation()
+  }
+  get location () {
+    return newReqModule.location
+  }
   get editMode () {
     return newReqModule.editMode
   }
@@ -206,6 +221,16 @@ export default class ApplicantInfo3 extends Vue {
   }
   get showAllFields () {
     return (!this.editMode || this.nrState === 'DRAFT')
+  }
+  get showCorpNum () {
+    if (this.showAllFields) {
+      const types = ['ASSUMED', 'CHG', 'AML', 'CNV', 'RES', 'REH']
+      return this.location !== 'BC' || types.includes(this.request_action_cd)
+    }
+    return false
+  }
+  get request_action_cd () {
+    return newReqModule.request_action_cd
   }
   get submissionType () {
     return newReqModule.submissionType

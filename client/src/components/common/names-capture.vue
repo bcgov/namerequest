@@ -314,7 +314,9 @@ export default class NamesCapture extends Vue {
   }
   get designationAtEnd () {
     if (this.location === 'BC') {
-      return this.$designations[this.entity_type_cd].end
+      if (this.entity_type_cd && this.$designations[this.entity_type_cd]) {
+        return this.$designations[this.entity_type_cd].end
+      }
     }
     return false
   }
@@ -322,6 +324,9 @@ export default class NamesCapture extends Vue {
     return newReqModule.editMode
   }
   get entityPhraseChoices () {
+    if (!this.entity_type_cd || !this.$designations[this.entity_type_cd]) {
+      return []
+    }
     let basePhrases = this.$designations[this.entity_type_cd].words
     // these are the inner phrases for the CCC and CP types.  Filtering out CR designations from CPs has no effect
     // and CCC designations are a mix of CR-type ending designations and CCC specific inner phrases so filter out
@@ -329,6 +334,7 @@ export default class NamesCapture extends Vue {
     return basePhrases.filter(phrase => !this.$designations['CR'].words.includes(phrase))
   }
   get entityPhraseRequired () {
+    if (!this.entity_type_cd) return false
     return ['CC', 'CP'].includes(this.entity_type_cd)
   }
   get entityPhraseText () {

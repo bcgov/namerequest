@@ -295,6 +295,7 @@ export default class ApplicantInfo1 extends Vue {
   showAddressMenu: boolean = false
   step1Valid: boolean = false
   debouncedGetAddressSuggestions = _debounce(this.getAddressSuggestions, 400)
+  debouncedGetCorpNum = _debounce(this.getCorpNum, 400)
 
   @Watch('showAddressMenu')
   supressMenu (newVal, oldVal) {
@@ -330,6 +331,13 @@ export default class ApplicantInfo1 extends Vue {
   }
   get countryOptions () {
     return this.$intJurisdictions
+  }
+  get corpNum () {
+    return newReqModule.corpNum
+  }
+  set corpNum (num) {
+    this.mutateCorpNum(num)
+    this.debouncedGetCorpNum(num)
   }
   get editMode () {
     return newReqModule.editMode
@@ -470,6 +478,12 @@ export default class ApplicantInfo1 extends Vue {
       return
     }
     this.showAddressMenu = false
+  }
+  mutateCorpNum (num) {
+    newReqModule.mutateCorpNum(num)
+  }
+  getCorpNum (num) {
+    newReqModule.getCorpNum(num)
   }
   updateBusinessInfo (key, value) {
     newReqModule.mutateNRData({ key, value })
