@@ -1313,7 +1313,7 @@ export class NewRequestModule extends VuexModule {
       if (this.showCorpNum && this.corpNum) {
         data['corpNum'] = this.corpNum
       }
-      
+
       response = await axios.post(`/namerequests`, data, {
         headers: {
           'Content-Type': 'application/json'
