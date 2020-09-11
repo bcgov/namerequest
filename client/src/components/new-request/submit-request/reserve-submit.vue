@@ -52,6 +52,11 @@ export default class ReserveSubmitButton extends Vue {
       newReqModule.mutateSubmissionType('consent')
       return
     }
+    if (this.setup === 'examine') {
+      newReqModule.postNameRequests('draft')
+      newReqModule.mutateSubmissionType('examination')
+      return
+    }
     newReqModule.postNameRequests('reserved')
     newReqModule.mutateSubmissionType('normal')
   }
