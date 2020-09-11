@@ -34,7 +34,7 @@
                 <h4>Primary Contact</h4>
                 <ul style="list-style: none; padding-left: 0">
                   <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
-                  <li>{{`${applicant.firstName} ${applicant.middleName} ${applicant.lastName}`}}</li>
+                  <li>{{`${applicantName}`}}</li>
                   <li>{{applicant.emailAddress}}</li>
                   <li>{{applicant.phoneNumber}}</li>
                 </ul>
@@ -45,7 +45,7 @@
             <h4>Applicant Info</h4>
             <ul style="list-style: none; padding-left: 0">
               <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
-              <li >{{`${applicant.firstName} ${applicant.middleName} ${applicant.lastName}`}}</li>
+              <li >{{`${applicantName}`}}</li>
               <li>{{`${applicant.addrLine1} ${applicant.addrLine2}`}}</li>
               <li>{{`${applicant.city}, ${applicant.stateProvinceCd}`}}</li>
               <li>
@@ -202,10 +202,17 @@ export default class PaymentModal extends Vue {
     window.location.href = paymentPortalUrl
   }
 
-  get applicant () {
+  get applicant (): Partial<ApplicantI> | undefined {
     const nameRequest: NewRequestModule = newRequestModule
-    const applicantInfo: Partial<ApplicantI> = nameRequest.applicant || {}
+    const applicantInfo: Partial<ApplicantI> = nameRequest.applicant || undefined
     return applicantInfo
+  }
+
+  get applicantName (): string {
+    const applicant = this.applicant
+    if (!applicant) return ''
+    return [applicant.firstName, applicant.middleName, applicant.lastName]
+      .filter(str => !!str).join(' ')
   }
 
   get contactPerson () {
@@ -280,6 +287,7 @@ export default class PaymentModal extends Vue {
     return parseNameChoices(nameRequestChoices)
   }
 
+  // TODO: Where is this used?
   get entity_type_cd () {
     const nameRequest: NewRequestModule = newRequestModule
     const entity_type_cd: string = nameRequest.entity_type_cd
