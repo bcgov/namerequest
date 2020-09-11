@@ -34,9 +34,6 @@ export default class ReserveSubmitButton extends Vue {
         return 'Reserve and Continue'
     }
   }
-  get location () {
-    return newReqModule.location
-  }
 
   showNextStep () {
     newReqModule.mutateDisplayedComponent('SubmissionTabs')
