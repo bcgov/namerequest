@@ -395,7 +395,7 @@ export class NewRequestModule extends VuexModule {
     natureBusinessInfo: '',
     previousRequestId: '',
     tradeMark: '',
-    xproJurisdiction: 'AB'
+    xproJurisdiction: ''
   }
   nrOriginal: Partial<NameRequestI> = {} as NameRequestI
   nrRequestNameMap: RequestNameMapI[] = []
@@ -981,9 +981,12 @@ export class NewRequestModule extends VuexModule {
             // Merge in requestName form values
             ...requestName,
             // Merge conflicts and consent words
-            consent_words: !existingName.consent_words ? this.consentWords.length > 0 ? this.consentWords : ''
+            consent_words: !existingName.consent_words
+              ? this.consentWords.length > 0 ? this.consentWords : ''
               : existingName.consent_words,
-            conflict1: !existingName.conflict1 ? this.consentConflicts.name : existingName.conflict1,
+            conflict1: !existingName.conflict1
+              ? this.consentConflicts.name
+              : existingName.conflict1,
             conflict1_num: existingName.conflict1_num ? existingName.conflict1_num : ''
           } as RequestNameI
         }
