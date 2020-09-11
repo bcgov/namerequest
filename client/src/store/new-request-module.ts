@@ -1310,7 +1310,10 @@ export class NewRequestModule extends VuexModule {
           data = this.reservedNameReservation
           break
       }
-
+      if (this.showCorpNum && this.corpNum) {
+        data['corpNum'] = this.corpNum
+      }
+      
       response = await axios.post(`/namerequests`, data, {
         headers: {
           'Content-Type': 'application/json'
@@ -1353,7 +1356,9 @@ export class NewRequestModule extends VuexModule {
           data = this.editNameReservation
           break
       }
-
+      if (this.showCorpNum && this.corpNum) {
+        data['corpNum'] = this.corpNum
+      }
       response = await axios.put(`/namerequests/${nrNum}`, data, {
         headers: {
           'Content-Type': 'application/json'
@@ -1527,7 +1532,10 @@ export class NewRequestModule extends VuexModule {
   }
   @Action
   async checkMRAS (corpNum: string) {
-    let url = `mras-profile/${this.nrData.xproJurisdiction}/${this.corpNum}`
+    let { xproJurisdiction } = this.nrData
+    let { SHORT_DESC } = $canJurisdictions.find(jur => jur.text === xproJurisdiction)
+
+    let url = `mras-profile/${SHORT_DESC}/${this.corpNum}`
     try {
       let resp = await axios.get(url)
       return resp
