@@ -1518,7 +1518,7 @@ export class NewRequestModule extends VuexModule {
   async checkCOLIN (corpNum: string) {
     let url = `colin/${corpNum}`
     try {
-      let resp = await axios.get(url)
+      let resp = await axios.post(url, {})
       return resp
     } catch (error) {
       // eslint-disable-next-line
