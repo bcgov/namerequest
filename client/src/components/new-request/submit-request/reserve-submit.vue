@@ -13,6 +13,12 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 @Component({})
 export default class ReserveSubmitButton extends Vue {
   @Prop(String) setup: string
+  get entity_type_cd () {
+    return newReqModule.entity_type_cd
+  }
+  get location () {
+    return newReqModule.location
+  }
   get text () {
     if (this.location !== 'BC' && this.setup !== 'assumed') {
       return 'Send For Examination'
@@ -28,12 +34,6 @@ export default class ReserveSubmitButton extends Vue {
         return 'Reserve and Continue'
     }
   }
-  get location () {
-    return newReqModule.location
-  }
-  get entity_type_cd () {
-    return newReqModule.entity_type_cd
-  }
 
   showNextStep () {
     newReqModule.mutateDisplayedComponent('SubmissionTabs')
@@ -41,9 +41,7 @@ export default class ReserveSubmitButton extends Vue {
       newReqModule.mutateSubmissionType('examination')
       newReqModule.mutateSubmissionTabComponent('NamesCapture')
       if (this.setup === 'assumed') {
-        if (xproMapping['ASSUMED'].includes(this.entity_type_cd)) {
-          newReqModule.mutateRequestAction('ASSUMED')
-        }
+        newReqModule.mutateRequestAction('ASSUMED')
         newReqModule.mutateAssumedNameOriginal()
         return
       }
@@ -54,8 +52,18 @@ export default class ReserveSubmitButton extends Vue {
       newReqModule.mutateSubmissionType('consent')
       return
     }
-    newReqModule.postNameRequests('reserved')
-    newReqModule.mutateSubmissionType('normal')
+    if (this.setup === 'examine') {
+      newReqModule.postNameRequests('draft')
+      newReqModule.mutateSubmissionType('examination')
+      return
+    } else {
+      newReqModule.mutateSubmissionType('normal')
+      if (this.location !== 'BC') {
+        newReqModule.mutateSubmissionTabComponent('NamesCapture')
+        return
+      }
+      newReqModule.postNameRequests('reserved')
+    }
   }
 }
 </script>

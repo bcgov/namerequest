@@ -27,10 +27,4 @@ describe('It initially renders correctly', () => {
     expect(wrapper.find('#submit-continue-btn-disabled').element).toBeTruthy()
     expect(wrapper.find('#submit-continue-btn').element).toBeFalsy()
   })
-  it('calls validate when Continue button is pressed', async () => {
-    wrapper.vm.validate = jest.fn()
-    let btn = wrapper.find('#submit-continue-btn-disabled')
-    btn.trigger('click')
-    expect(wrapper.vm.validate).toHaveBeenCalled()
-  })
 })

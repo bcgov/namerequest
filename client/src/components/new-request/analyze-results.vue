@@ -490,10 +490,14 @@ export default class AnalyzeResults extends Vue {
     this.name = this.quill.getText()
     newReqModule.startAnalyzeName()
   }
-  updateContents (text: any) {
-    this.quill.setContents([
-      { insert: text }
-    ])
+  updateContents (text: string) {
+    try {
+      (this.quill as any).setContents([
+        { insert: text }
+      ])
+    } catch {
+      return
+    }
   }
 }
 
