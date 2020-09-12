@@ -722,13 +722,17 @@ export class NewRequestModule extends VuexModule {
   get nrNum () {
     const { nr } = this
     let nrNum
-    if (nr) nrNum = nr.nrNum
+    if (nr) {
+      nrNum = nr.nrNum
+    }
     return nrNum
   }
   get nrState () {
     const { nr } = this
     let state
-    if (nr) state = nr.state
+    if (nr) {
+      state = nr.state
+    }
     return state
   }
   get pickEntityTableBC () {
@@ -933,7 +937,9 @@ export class NewRequestModule extends VuexModule {
   get nrNames () {
     const { nr } = this
     let names = []
-    if (nr) names = nr.names
+    if (nr) {
+      names = nr.names
+    }
     return names
   }
   get nrRequestNames (): RequestNameI[] {
@@ -1009,11 +1015,11 @@ export class NewRequestModule extends VuexModule {
 
     // TODO: Not sure if this is needed anymore!
     /* const name: RequestNameI = {
-      name: this.name,
-      choice: 1,
-      designation: this.splitNameDesignation.designation,
-      name_type_cd: 'CO'
-    } */
+     name: this.name,
+     choice: 1,
+     designation: this.splitNameDesignation.designation,
+     name_type_cd: 'CO'
+     } */
 
     const caseData: ReservedReqI = {
       applicants: [applicant],
@@ -1331,7 +1337,9 @@ export class NewRequestModule extends VuexModule {
   }
   @Action
   async putNameReservation (nrNum) {
-    const nrState = this.isAssumedName ? 'ASSUMED' : this.nrState
+    let { nrState } = this
+    if (this.isAssumedName) nrState = 'ASSUMED'
+    let response
     try {
       let data: any
       switch (nrState) {
@@ -1348,13 +1356,10 @@ export class NewRequestModule extends VuexModule {
           data = this.editNameReservation
           break
       }
-
-      // TODO: Should be able to remove this...
-      /* if (this.showCorpNum && this.corpNum) {
+      if (this.showCorpNum && this.corpNum) {
         data['corpNum'] = this.corpNum
-      } */
-
-      const response = await axios.put(`/namerequests/${nrNum}`, data, {
+      }
+      response = await axios.put(`/namerequests/${nrNum}`, data, {
         headers: {
           'Content-Type': 'application/json'
         }
