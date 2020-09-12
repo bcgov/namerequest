@@ -12,24 +12,12 @@
         </v-col>
         <v-col class="copy-bold">
           <div style="display: inline-block" class="">
-            <!-- TODO: Edited because this isn't working names don't have a class or icon when returned from the backend...
             <div v-for="name of names"
                  :class="getNameFormating(name).class"
                  :key="name.choice+'-name'">{{ `${name.choice}) ${name.name}` }}
               <v-icon v-if="getNameFormating(name).icon" :class="getNameFormating(name).class"
                       style="font-size: 20px; position: relative; top: -3px;">
                 {{ getNameFormating(name).icon }}</v-icon>
-            </div>
-            -->
-            <div v-for="name of names"
-                 :key="name.choice+'-name'">
-              {{ `${name.choice}) ${name.name}` }}
-              <div v-if="getNameFormatting(name)" :class="getNameFormatting(name).class">
-
-              <v-icon v-if="getNameFormatting(name).icon" :class="getNameFormatting(name).class"
-                      style="font-size: 20px; position: relative; top: -3px;">
-                {{ getNameFormatting(name).icon }}</v-icon>
-              </div>
             </div>
           </div>
         </v-col>
@@ -165,7 +153,7 @@ export default class ExistingRequestDisplay extends Vue {
   edit () {
     newReqModule.editExistingRequest()
   }
-  getNameFormatting (name) {
+  getNameFormating (name) {
     if (name.state === 'NE') {
       return {
         icon: false,
