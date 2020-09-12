@@ -1381,6 +1381,30 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
+  async completePayment (nrNum) {
+    try {
+      const response = await axios.put(`/namerequests/${nrNum}/complete-payment`, {}, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+
+      this.setNrResponse(response.data)
+
+      const { nr } = this
+      const { applicants = [] } = nr
+
+      if (applicants instanceof Array) {
+        this.setApplicantDetails(applicants[0])
+      } else if (applicants) {
+        this.setApplicantDetails(applicants)
+      }
+    } catch (error) {
+      // eslint-disable-next-line
+      console.log(error)
+    }
+  }
+  @Action
   cancelAnalyzeName () {
     if (source && source.cancel) {
       source.cancel()

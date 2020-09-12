@@ -165,7 +165,7 @@ export default class ReceiptModal extends Vue {
 
   async completePayment (paymentId) {
     const { nrNum } = this
-    await newRequestModule.putNameReservation(nrNum, paymentId, {})
+    await newRequestModule.completePayment(nrNum, paymentId, {})
     paymentModule.toggleReceiptModal(true)
   }
 
