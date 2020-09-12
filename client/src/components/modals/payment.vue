@@ -46,10 +46,10 @@
             <ul style="list-style: none; padding-left: 0">
               <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
               <li >{{`${applicantName}`}}</li>
-              <li>{{`${applicant.addrLine1} ${applicant.addrLine2}`}}</li>
-              <li>{{`${applicant.city}, ${applicant.stateProvinceCd}`}}</li>
+              <li>{{`${applicant.addrLine1 ? applicant.addrLine1 : ''} ${applicant.addrLine2 ? applicant.addrLine2 : ''}`}}</li>
+              <li>{{`${applicant.city ? applicant.city : ''}, ${applicant.stateProvinceCd ? applicant.stateProvinceCd : ''}`}}</li>
               <li>
-                {{`${applicant.countryTypeCd === 'CA' ? 'Canada' : applicant.countryTypeCd}, ${applicant.postalCd}`}}
+                {{`${applicant.countryTypeCd === 'CA' ? 'Canada' : applicant.countryTypeCd}, ${applicant.postalCd ? applicant.postalCd : ''}`}}
               </li>
             </ul>
           </div>
