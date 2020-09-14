@@ -213,16 +213,10 @@ export default class ApplicantInfo2 extends Vue {
     } else {
       const { nrNum } = this
       if (!nrNum) {
-        // eslint-disable-next-line
-        console.log('!nrNum 216 applicant-info-2')
         await newReqModule.postNameRequests('draft')
       } else {
-        // eslint-disable-next-line
-        console.log('inner else 216 applicant-info-2')
         await newReqModule.putNameReservation(nrNum)
       }
-      // eslint-disable-next-line
-      console.log('outer else 224 appliocant-info-2')
       await paymentModule.togglePaymentModal(true)
     }
   }

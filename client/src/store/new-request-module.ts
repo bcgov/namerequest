@@ -1127,8 +1127,6 @@ export class NewRequestModule extends VuexModule {
         cancelToken: source.token
       })
       let json = resp.data
-      // eslint-disable-next-line
-      console.log(json)
       this.mutateAnalysisJSON(json)
       if (Array.isArray(json.issues) && json.issues.length > 0) {
         let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
