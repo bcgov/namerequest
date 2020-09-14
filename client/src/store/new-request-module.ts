@@ -697,7 +697,7 @@ export class NewRequestModule extends VuexModule {
       { text: 'Foreign', value: 'IN' },
       { text: 'Help', value: 'INFO' }
     ]
-    if (['CNV', 'AML', 'MVE'].includes(this.request_action_cd)) {
+    if (['CNV', 'MVE'].includes(this.request_action_cd)) {
       return options.filter(location => location.value === 'BC' || location.value === 'INFO')
     }
     if (['ASSUMED'].includes(this.request_action_cd)) {
@@ -1127,8 +1127,6 @@ export class NewRequestModule extends VuexModule {
         cancelToken: source.token
       })
       let json = resp.data
-      // eslint-disable-next-line
-      console.log(json)
       this.mutateAnalysisJSON(json)
       if (Array.isArray(json.issues) && json.issues.length > 0) {
         let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
