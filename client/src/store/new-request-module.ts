@@ -697,7 +697,7 @@ export class NewRequestModule extends VuexModule {
       { text: 'Foreign', value: 'IN' },
       { text: 'Help', value: 'INFO' }
     ]
-    if (['CNV', 'AML', 'MVE'].includes(this.request_action_cd)) {
+    if (['CNV', 'MVE'].includes(this.request_action_cd)) {
       return options.filter(location => location.value === 'BC' || location.value === 'INFO')
     }
     if (['ASSUMED'].includes(this.request_action_cd)) {
