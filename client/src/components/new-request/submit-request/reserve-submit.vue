@@ -41,7 +41,9 @@ export default class ReserveSubmitButton extends Vue {
       newReqModule.mutateSubmissionType('examination')
       newReqModule.mutateSubmissionTabComponent('NamesCapture')
       if (this.setup === 'assumed') {
-        newReqModule.mutateRequestAction('ASSUMED')
+        if (xproMapping['ASSUMED'].includes(this.entity_type_cd)) {
+          newReqModule.mutateRequestAction('ASSUMED')
+        }
         newReqModule.mutateAssumedNameOriginal()
         return
       }
