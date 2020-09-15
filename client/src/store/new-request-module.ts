@@ -1520,7 +1520,7 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('SubmissionTabs')
       return
     } else {
-      if (['AML', 'NEW', 'DBA', 'CHG', 'MVE', 'REH', 'REN', 'REST'].includes(this.request_action_cd)) {
+      if (['AML', 'NEW', 'DBA', 'CHG', 'REH', 'REN', 'REST'].includes(this.request_action_cd)) {
         this.getNameAnalysisXPRO()
       }
     }
