@@ -442,52 +442,61 @@ export class NewRequestModule extends VuexModule {
   requestActions: RequestActionsI[] = [
     {
       text: 'Start a New',
+      shortDesc: 'New Request',
       value: 'NEW',
       blurb: `Start a new business in BC. This applies to starting fresh from here or having a business in another 
               province or country that you want to operate in BC as well.`
     },
     {
       text: 'Move your Business to BC',
+      shortDesc: 'Move Request',
       value: 'MVE',
       blurb: `You have an existing business in another province. You are closing your business there and moving your 
               business to BC.`
     },
     {
       text: 'Assume a New Name in BC',
+      shortDesc: 'Assumed Name Request',
       value: 'ASSUMED',
       blurb: `You have an existing business in another province. You are closing your business there and moving your 
               business to BC, however, the name of your business is already in use in BC`
     },
     {
       text: 'Change your Name',
+      shortDesc: 'Change of Name Request',
       value: 'CHG',
       blurb: `You have an existing business that is registered in BC and you want to change your name. You will need 
               your incorporation or firm number assigned to you by Registries.`
     },
     {
       text: 'Amalgamate',
+      shortDesc: 'Amalgamation Request',
       value: 'AML',
       blurb: 'You are merging with another company and you want a new name.'
     },
     {
       text: 'Convert to Another Structure',
+      shortDesc: 'Conversion Request',
       value: 'CNV',
       blurb: `Convert from one business structure to another. Such as converting from a ULC to a BC Corp. You will need 
               to identify your business with your Corp. #/Firm # (assigned by Registries).`
     },
     {
       text: 'Restore Using a Historical Name',
+      shortDesc: 'Restore-Historical Request',
       value: 'REH',
       blurb: 'You have a business that has been dissolved or cancelled. You want to start up again and use the same' +
         ' name. You will need your incorporation or firm number assigned to you by Registries.'
     },
     {
       text: 'Restore with a New Name',
+      shortDesc: 'Restore-New Request',
       value: 'REN',
       blurb: 'You have a business that has been dissolved or cancelled. You want to start up again with a new name.' +
         ' You will need your incorporation or firm number assigned to you by Registries.'
     }
   ]
+  requestActionOriginal: string = ''
   showActualInput: boolean = false
   stats: StatsI | null = null
   submissionTabNumber: number = 0
@@ -959,14 +968,21 @@ export class NewRequestModule extends VuexModule {
     if (this.xproRequestTypeCd) {
       data['request_type_cd'] = this.xproRequestTypeCd
     }
+    if (!data.additionalInfo) {
+      data.additionalInfo = ''
+    }
     if (this.isAssumedName) {
-      if (!data.additionalInfo) {
-        data.additionalInfo = ''
-      }
       if (!data.additionalInfo.includes('*** Registered Name:')) {
         let notice = `*** Registered Name: ${this.assumedNameOriginal} ***`
         data.additionalInfo = data.additionalInfo + ' ' + notice
       }
+    }
+    if (this.request_action_cd === 'ASSUMED' && this.requestActionOriginal) {
+      if (!data.additionalInfo) {
+        data['additionalInfo'] = ''
+      }
+      let { shortDesc } = this.requestActions.find(request => request.value === this.requestActionOriginal)
+      data.additionalInfo += ` *** ${shortDesc} ***`
     }
     return data
   }
@@ -1523,6 +1539,7 @@ export class NewRequestModule extends VuexModule {
     this.mutateAnalysisJSON(null)
     this.mutateCorpNum('')
     this.mutateEditMode(false)
+    this.mutateRequestActionOriginal('')
     this.mutateShowActualInput(false)
     this.resetApplicantDetails()
     this.resetNrData()
@@ -2029,6 +2046,10 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateAssumedNameOriginal () {
     this.assumedNameOriginal = this.name
+  }
+  @Mutation
+  mutateRequestActionOriginal (action: string) {
+    this.requestActionOriginal = action
   }
 
   getEntities (category) {
