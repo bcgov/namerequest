@@ -71,13 +71,23 @@
         <v-col cols="2" />
         <v-col cols="5" v-if="showCorpNum">
           <v-text-field :messages="messages['corpNum']"
-                        :rules="requiredRule"
+                        :rules="corpNumRules"
+                        :error-messages="corpNumError"
+                        validate-on-blur
                         @blur="messages = {}"
+                        :loading="loading"
                         @focus="messages['corpNum'] = 'Incorporation Number (required)'"
                         filled
-                        hide-details="auto"
+                        v-on:update:error="setError"
+                        :hide-details="hideCorpNum"
                         placeholder="Incorporation Number (required)"
-                        v-model="corpNum" />
+                        v-model="corpNum">
+            <template v-slot:append>
+              <v-icon :class="showCorpNumErrorState ? 'red--text' : 'green--text'"
+                      v-if="hideCorpNum === 'auto'">
+                {{ error || loading || corpNumDirty ? 'close' : 'check' }}</v-icon>
+            </template>
+          </v-text-field>
         </v-col>
         <v-col cols="5">
           <v-text-field :messages="messages['tradeMark']"
@@ -90,18 +100,18 @@
                         placeholder="Registered Trademark (Optional)" />
         </v-col>
       </v-row>
-      <v-row v-if="showAllFields">
+      <v-row v-if="showPriorityRequest">
         <v-col cols="2" class="h5">
-          {{ editMode ? '' : 'Additional Services' }}
+         Additional Services
         </v-col>
-        <v-col cols="5" align-self="center" v-if="showPriorityRequest">
+        <v-col cols="5" align-self="center">
           <v-checkbox v-model="priorityRequest">
             <template v-slot:label>
               Priority Request - <b>$100 Fee</b>
             </template>
           </v-checkbox>
         </v-col>
-        <v-col cols="5" v-else-if="!editMode" />
+        <v-col cols="5" />
       </v-row>
       <v-row>
         <v-col cols="12" class="text-right" :class="showPriorityRequest ? 'mt-n4' : ''">
@@ -126,22 +136,28 @@
 <script lang="ts">
 import newReqModule, { NewRequestModule } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
-import { Component, Vue } from 'vue-property-decorator'
-const _debounce = require('lodash/debounce')
+import { Component, Vue, Watch } from 'vue-property-decorator'
 
 @Component({})
 export default class ApplicantInfo2 extends Vue {
+  corpNumDirty: boolean = false
+  corpNumError: string = ''
+  corpNumRules = [
+    v => !!v || 'Required field',
+    v => !!this.getCorpNum(v) || 'Cannot validate number.  Please try again'
+  ]
   emailRules = [
     v => !!v || 'Required field',
     v => /.+@.+/.test(v) || 'Not a valid email'
   ]
+  error: boolean = false
   isValid: boolean = false
+  hideCorpNum: boolean | 'auto' = true
+  loading: boolean = false
   messages = {}
-  resp: any
   requiredRule = [
     v => !!v || 'Required field'
   ]
-  debouncedGetCorpNum = _debounce(this.getCorpNum, 400)
 
   get applicant () {
     return newReqModule.applicant
@@ -150,8 +166,16 @@ export default class ApplicantInfo2 extends Vue {
     return newReqModule.corpNum
   }
   set corpNum (num) {
+    if (!this.corpNumDirty) {
+      this.corpNumDirty = true
+    }
+    if (this.isValid) {
+      this.isValid = false
+    }
+    if (this.hideCorpNum !== 'auto') {
+      this.hideCorpNum = 'auto'
+    }
     newReqModule.mutateCorpNum(num)
-    this.debouncedGetCorpNum(num)
   }
   get editMode () {
     return newReqModule.editMode
@@ -193,6 +217,12 @@ export default class ApplicantInfo2 extends Vue {
   get showCorpNum () {
     return newReqModule.showCorpNum
   }
+  get showCorpNumErrorState () {
+    if (this.loading || this.corpNumDirty) {
+      return true
+    }
+    return !!this.corpNumError
+  }
   get showPriorityRequest () {
     return newReqModule.showPriorityRequest
   }
@@ -224,13 +254,28 @@ export default class ApplicantInfo2 extends Vue {
     if (this.$refs.step2 as Vue) {
       (this.$refs.step2 as any).resetValidation()
     }
+    this.corpNumError = ''
   }
   async getCorpNum (num) {
+    if (!num) {
+      return
+    }
+    if (num.length < 4) {
+      this.corpNumError = 'Too short.  Please confirm number.'
+      return
+    }
+    this.loading = true
     try {
       let resp = await newReqModule.getCorpNum(num)
-      this.resp = resp
+      this.corpNumError = ''
+      this.loading = false
+      this.corpNumDirty = false
+      return true
     } catch (error) {
-      this.resp = null
+      this.corpNumError = 'Error validating number. Please try again'
+      this.loading = false
+      this.corpNumDirty = false
+      return false
     }
   }
   mutateApplicant (key, value) {
@@ -239,10 +284,16 @@ export default class ApplicantInfo2 extends Vue {
   mutateNRData (key, value) {
     newReqModule.mutateNRData({ key, value })
   }
+  setError (error) {
+    this.error = error
+  }
   showPreviousTab () {
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
   }
   validate () {
+    if (this.hideCorpNum !== 'auto') {
+      this.hideCorpNum = 'auto'
+    }
     if (this.$refs.step2 as Vue) {
       (this.$refs.step2 as any).validate()
     }

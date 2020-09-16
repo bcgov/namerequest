@@ -485,20 +485,56 @@ export class NewRequestModule extends VuexModule {
   get showPriorityRequest () {
     return (!this.editMode && this.nrState === 'DRAFT') || (!this.editMode && this.submissionType === 'examination')
   }
-  get showCorpNum () {
-    if (this.location === 'CA') {
-      if (this.nrData && this.nrData.xproJurisdiction && $mrasJurisdictions.includes(this.nrData.xproJurisdiction)) {
-        return true
-      }
-      return false
+  get showCorpNum (): 'colin' | 'mras' | false {
+    if ($colinRequestActions.includes(this.request_action_cd) || this.entity_type_cd === 'DBA') {
+      return 'colin'
     }
-    if (this.location === 'BC') {
-      if ($colinRequestActions.includes(this.request_action_cd)) {
-        return true
+    if (this.location === 'BC' && this.request_action_cd === 'CNV') {
+      return 'colin'
+    }
+    let mrasEntities = ['XUL', 'XCR', 'XCP', 'UL', 'CR', 'CP', 'BC', 'CC']
+    let { xproJurisdiction } = this.nrData
+
+    if ($mrasJurisdictions.includes(xproJurisdiction) && mrasEntities.includes(this.entity_type_cd)) {
+      if (this.location === 'CA' && ['NEW', 'ASSUMED'].includes(this.request_action_cd)) {
+        return 'mras'
       }
-      if (this.entity_type_cd === 'DBA') {
-        return true
+      if (this.location === 'BC' && ['MVE'].includes(this.request_action_cd)) {
+        return 'mras'
       }
+    }
+    return false
+  }
+  get corpNumForEdit () {
+    return this.corpNumForReservation
+  }
+  get corpNumForReservation () {
+    // this differs from getCorpNumForEdit by not supplying the empty keys for corpNum and homeJurisNum
+    // which are necessary to denote deletion during the PATCH operation that is for editing but which
+    // are not supported in the POST/PUT operation
+    if (!this.showCorpNum) {
+      return {
+        corpNum: '',
+        homeJurisNum: ''
+      }
+    }
+    if (this.showCorpNum === 'colin') {
+      return {
+        corpNum: this.corpNum,
+        homeJurisNum: ''
+      }
+    }
+    return {
+      corpNum: this.corpNum,
+      homeJurisNum: this.corpNum
+    }
+  }
+  get showXproJurisdiction () {
+    if (this.location !== 'BC') {
+      return true
+    }
+    if (this.request_action_cd === 'MVE') {
+      return true
     }
     return false
   }
@@ -871,7 +907,8 @@ export class NewRequestModule extends VuexModule {
       stateCd: 'COND-RESERVE',
       english: this.nameIsEnglish,
       nameFlag: this.isPersonsName,
-      submit_count: 0
+      submit_count: 0,
+      ...this.corpNumForReservation
     }
     return caseData
   }
@@ -895,7 +932,8 @@ export class NewRequestModule extends VuexModule {
       stateCd: 'DRAFT',
       english: this.nameIsEnglish,
       nameFlag: this.isPersonsName,
-      submit_count: 0
+      submit_count: 0,
+      ...this.corpNumForReservation
     }
     if (this.xproRequestTypeCd) {
       data['request_type_cd'] = this.xproRequestTypeCd
@@ -924,7 +962,8 @@ export class NewRequestModule extends VuexModule {
       applicants: [applicant],
       request_action_cd: this.request_action_cd,
       entity_type_cd: this.entity_type_cd,
-      ...nrData
+      ...nrData,
+      ...this.corpNumForEdit
     }
     if (this.xproRequestTypeCd) {
       data['request_type_cd'] = this.xproRequestTypeCd
@@ -1032,12 +1071,13 @@ export class NewRequestModule extends VuexModule {
       stateCd: 'RESERVED',
       english: this.nameIsEnglish,
       nameFlag: this.isPersonsName,
-      submit_count: 0
+      submit_count: 0,
+      ...this.corpNumForReservation
     }
     return caseData
   }
 
-  @Action({ rawError: true })
+  @Action
   async getAddressDetails (id) {
     id = `CAN|${id.split('|')[3]}`
     const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Retrieve/v2.11/json3.ws'
@@ -1075,7 +1115,7 @@ export class NewRequestModule extends VuexModule {
       console.log(error)
     }
   }
-  @Action({ rawError: true })
+  @Action
   async getAddressSuggestions (appKV) {
     if (!appKV.value) {
       return
@@ -1308,9 +1348,6 @@ export class NewRequestModule extends VuexModule {
           data = this.reservedNameReservation
           break
       }
-      if (this.showCorpNum && this.corpNum) {
-        data['corpNum'] = this.corpNum
-      }
 
       response = await axios.post(`/namerequests`, data, {
         headers: {
@@ -1403,17 +1440,24 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
+  resetAnalyzeName () {
+    this.mutateAnalysisJSON(null)
+    this.mutateCorpNum('')
+    this.mutateEditMode(false)
+    this.mutateShowActualInput(false)
+    this.resetApplicantDetails()
+    this.resetNrData()
+    this.resetRequestExaminationOrProvideConsent()
+  }
+  @Action
   cancelAnalyzeName () {
     if (source && source.cancel) {
       source.cancel()
       source = null
     }
     this.mutateDisplayedComponent('Tabs')
-    this.mutateShowActualInput(false)
-    this.resetApplicantDetails()
-    this.resetRequestExaminationOrProvideConsent()
+    this.resetAnalyzeName()
     this.mutateName('')
-    this.mutateAnalysisJSON(null)
   }
   @Action
   cancelEditExistingRequest () {
@@ -1463,7 +1507,9 @@ export class NewRequestModule extends VuexModule {
       let reqObj = this.requestActions.find(type => type.value === request_action_cd)
       this.mutateExtendedRequestType(reqObj)
     }
-
+    if (this.nr.corpNum) {
+      this.mutateCorpNum(this.nr.corpNum)
+    }
     if (this.nr.state === 'DRAFT') {
       this.mutateSubmissionTabComponent('NamesCapture')
     } else {
@@ -1473,8 +1519,7 @@ export class NewRequestModule extends VuexModule {
   }
   @Action
   startAnalyzeName () {
-    this.mutateEditMode(false)
-    this.mutateShowActualInput(false)
+    this.resetAnalyzeName()
     let name
     if (this.name) {
       name = sanitizeName(this.name)
@@ -1520,7 +1565,7 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('SubmissionTabs')
       return
     } else {
-      if (['AML', 'NEW', 'DBA', 'CHG', 'REH', 'REN', 'REST'].includes(this.request_action_cd)) {
+      if (['AML', 'CHG', 'DBA', 'NEW', 'REH', 'REN', 'REST'].includes(this.request_action_cd)) {
         this.getNameAnalysisXPRO()
       }
     }
@@ -1535,36 +1580,26 @@ export class NewRequestModule extends VuexModule {
   }
   @Action
   getCorpNum (corpNum: string) {
-    if (this.location === 'BC') {
-      return this.checkCOLIN(corpNum)
-    } else {
-      return this.checkMRAS(corpNum)
+    if (this.showCorpNum) {
+      if (this.showCorpNum === 'mras') {
+        return this.checkMRAS(corpNum)
+      } else {
+        return this.checkCOLIN(corpNum)
+      }
     }
   }
   @Action
-  async checkCOLIN (corpNum: string) {
+  checkCOLIN (corpNum: string) {
     let url = `colin/${corpNum}`
-    try {
-      let resp = await axios.post(url, {})
-      return resp
-    } catch (error) {
-      // eslint-disable-next-line
-      console.log(error)
-    }
+    return axios.post(url, {})
   }
   @Action
-  async checkMRAS (corpNum: string) {
+  checkMRAS (corpNum: string) {
     let { xproJurisdiction } = this.nrData
     let { SHORT_DESC } = $canJurisdictions.find(jur => jur.text === xproJurisdiction)
 
     let url = `mras-profile/${SHORT_DESC}/${this.corpNum}`
-    try {
-      let resp = await axios.get(url)
-      return resp
-    } catch (error) {
-      // eslint-disable-next-line
-      console.log(error)
-    }
+    return axios.get(url)
   }
 
   @Mutation

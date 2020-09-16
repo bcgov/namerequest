@@ -105,15 +105,25 @@
       </v-row>
       <v-row>
         <v-col cols="2" />
-        <v-col cols="5" v-if="showCorpNum && showAllFields">
+        <v-col cols="5" v-if="showCorpNum">
           <v-text-field :messages="messages['corpNum']"
-                        :rules="requiredRule"
-                        v-model="corpNum"
+                        :rules="corpNumRules"
+                        :error-messages="corpNumError"
+                        validate-on-blur
                         @blur="messages = {}"
+                        :loading="loading"
                         @focus="messages['corpNum'] = 'Incorporation Number (required)'"
                         filled
-                        hide-details="auto"
-                        placeholder="Incorporation Number (required)" />
+                        v-on:update:error="setError"
+                        :hide-details="hideCorpNum"
+                        placeholder="Incorporation Number (required)"
+                        v-model="corpNum">
+            <template v-slot:append>
+              <v-icon :class="showCorpNumErrorState ? 'red--text' : 'green--text'"
+                      v-if="hideCorpNum === 'auto'">
+                {{ error || loading || corpNumDirty ? 'close' : 'check' }}</v-icon>
+            </template>
+          </v-text-field>
         </v-col>
         <v-col cols="5">
           <v-text-field :messages="messages['tradeMark']"
@@ -168,15 +178,21 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 
 @Component({})
 export default class ApplicantInfo3 extends Vue {
+  corpNumDirty: boolean = false
+  corpNumError: string = ''
+  corpNumRules = [
+    v => !!v || 'Required field',
+    v => !!this.getCorpNum(v) || 'Cannot validate number.  Please try again'
+  ]
   emailRules = [
     v => !!v || 'Required field',
     v => /.+@.+/.test(v) || 'Not a valid email'
   ]
+  error: boolean = false
   isValid: boolean = false
+  hideCorpNum: boolean | 'auto' = true
+  loading: boolean = false
   messages = {}
-  notRequired = [
-    v => !!v || ''
-  ]
   requiredRule = [
     v => !!v || 'Required field'
   ]
@@ -187,9 +203,17 @@ export default class ApplicantInfo3 extends Vue {
   get corpNum () {
     return newReqModule.corpNum
   }
-  set corpNum (val) {
-    newReqModule.getCorpNum(val)
-    this.clearValidation()
+  set corpNum (num) {
+    if (!this.corpNumDirty) {
+      this.corpNumDirty = true
+    }
+    if (this.isValid) {
+      this.isValid = false
+    }
+    if (this.hideCorpNum !== 'auto') {
+      this.hideCorpNum = 'auto'
+    }
+    newReqModule.mutateCorpNum(num)
   }
   get location () {
     return newReqModule.location
@@ -228,6 +252,12 @@ export default class ApplicantInfo3 extends Vue {
   get showCorpNum () {
     return newReqModule.showCorpNum
   }
+  get showCorpNumErrorState () {
+    if (this.loading || this.corpNumDirty) {
+      return true
+    }
+    return !!this.corpNumError
+  }
   get request_action_cd () {
     return newReqModule.request_action_cd
   }
@@ -254,8 +284,31 @@ export default class ApplicantInfo3 extends Vue {
     }
   }
   clearValidation () {
-    if (this.$refs.step2 as any) {
+    if (this.$refs.step2 as Vue) {
       (this.$refs.step2 as any).resetValidation()
+    }
+    this.corpNumError = ''
+  }
+  async getCorpNum (num) {
+    if (!num) {
+      return
+    }
+    if (num.length < 4) {
+      this.corpNumError = 'Too short.  Please confirm number.'
+      return
+    }
+    this.loading = true
+    try {
+      let resp = await newReqModule.getCorpNum(num)
+      this.corpNumError = ''
+      this.loading = false
+      this.corpNumDirty = false
+      return true
+    } catch (error) {
+      this.corpNumError = 'Error validating number. Please try again'
+      this.loading = false
+      this.corpNumDirty = false
+      return false
     }
   }
   mutateApplicant (key, value) {
@@ -266,10 +319,16 @@ export default class ApplicantInfo3 extends Vue {
     this.clearValidation()
     newReqModule.mutateNRData({ key, value })
   }
+  setError (error) {
+    this.error = error
+  }
   showPreviousTab () {
     newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
   }
   validate () {
+    if (this.hideCorpNum !== 'auto') {
+      this.hideCorpNum = 'auto'
+    }
     if (this.$refs.step2 as any) {
       (this.$refs.step2 as any).validate()
     }
