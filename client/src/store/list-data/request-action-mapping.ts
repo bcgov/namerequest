@@ -18,4 +18,5 @@ export const xproMapping: RequestActionMappingI = {
   REH: ['XCR', 'XCP', 'RLC', 'XUL']
 }
 
-export const $colinRequestActions = ['CHG', 'CNV', 'MVE', 'REH']
+export const $colinRequestActions = ['AML', 'CHG', 'CNV', 'REH', 'REN']
+export const $mrasRequestActions = ['XCR', 'XUL', 'XCP']
