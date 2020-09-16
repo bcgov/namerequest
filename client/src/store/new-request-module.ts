@@ -489,6 +489,9 @@ export class NewRequestModule extends VuexModule {
     if ($colinRequestActions.includes(this.request_action_cd) || this.entity_type_cd === 'DBA') {
       return 'colin'
     }
+    if (location === 'BC' && this.request_action_cd === 'CNV') {
+      return 'colin'
+    }
     let mrasEntities = ['XUL', 'XCR', 'XCP', 'UL', 'CR', 'CP']
     let { xproJurisdiction } = this.nrData
 
