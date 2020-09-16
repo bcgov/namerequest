@@ -6,12 +6,15 @@
           Contact Info
         </v-col>
         <v-col cols="5">
+          <label for="emailAddress" class="hidden">Email Address (for notifications)</label>
           <v-text-field :messages="messages['email']"
                         :rules="emailRules"
                         :value="applicant.emailAddress"
                         @blur="messages = {}"
                         @focus="messages['email'] = 'Notification Email'"
                         @input="mutateApplicant('emailAddress', $event)"
+                        id="emailAddress"
+                        name="emailAddress"
                         filled
                         hide-details="auto"
                         placeholder="Email Address (for notifications)" />
@@ -21,21 +24,27 @@
       <v-row>
         <v-col cols="2" />
         <v-col cols="5">
+          <label for="faxNumber" class="hidden">Phone Number (Optional)</label>
           <v-text-field :messages="messages['phone']"
                         :value="applicant.phoneNumber"
                         @blur="messages = {}"
                         @focus="messages['phone'] = 'Phone Number (Optional)'"
                         @input="mutateApplicant('phoneNumber', $event)"
+                        id="phoneNumber"
+                        name="phoneNumber"
                         filled
                         hide-details="auto"
                         placeholder="Phone Number (Optional)" />
         </v-col>
         <v-col cols="5">
+          <label for="faxNumber" class="hidden">Fax Number (Optional)</label>
           <v-text-field :messages="messages['fax']"
                         :value="applicant.faxNumber"
                         @blur="messages = {}"
                         @focus="messages['fax'] = 'Fax Number (Optional)'"
                         @input="mutateApplicant('faxNumber', $event)"
+                        id="faxNumber"
+                        name="faxNumber"
                         filled
                         hide-details="auto"
                         placeholder="Fax Number (Optional)" />
@@ -46,23 +55,29 @@
           About Your Business
         </v-col>
         <v-col cols="5" align-self="start">
+          <label for="natureBusinessInfo" class="hidden">Nature of Business</label>
           <v-textarea :messages="messages['nature']"
                       :rules="requiredRule"
                       :value="nrData.natureBusinessInfo"
                       @blur="messages = {}"
                       @focus="messages['nature'] = 'Nature of Business'"
                       @input="mutateNRData('natureBusinessInfo', $event)"
+                      id="natureBusinessInfo"
+                      name="natureBusinessInfo"
                       filled
                       hide-details="auto"
                       placeholder="Nature of Business"
                       rows="3" />
         </v-col>
         <v-col cols="5" align-self="start">
+          <label for="additionalInfo" class="hidden">Additional Business Info (Optional)</label>
           <v-textarea :messages="messages['additional']"
                       :value="nrData.additionalInfo"
                       @blur="messages = {}"
                       @focus="messages['additional'] = 'Additional Info'"
                       @input="mutateNRData('additionalInfo', $event)"
+                      id="additionalInfo"
+                      name="additionalInfo"
                       filled
                       hide-details="auto"
                       placeholder="Additional Business Info (Optional)"
@@ -70,31 +85,37 @@
         </v-col>
         <v-col cols="2" />
         <v-col cols="5" v-if="showCorpNum">
-          <v-text-field :messages="messages['corpNum']"
-                        :rules="corpNumRules"
-                        :error-messages="corpNumError"
-                        validate-on-blur
-                        @blur="messages = {}"
-                        :loading="loading"
-                        @focus="messages['corpNum'] = 'Incorporation Number (required)'"
-                        filled
-                        v-on:update:error="setError"
+          <label for="corpNum" class="hidden">Incorporation Number (required)</label>
+          <v-text-field :error-messages="corpNumError"
                         :hide-details="hideCorpNum"
+                        :loading="loading"
+                        :messages="messages['corpNum']"
+                        :rules="corpNumRules"
+                        @blur="messages = {}; isEditingCorpNum = false"
+                        @focus="messages['corpNum'] = 'Incorporation Number (required)'; isEditingCorpNum = true"
+                        id="corpNum"
+                        name="corpNum"
+                        filled
                         placeholder="Incorporation Number (required)"
-                        v-model="corpNum">
+                        v-model="corpNum"
+                        v-on:update:error="setError"
+                        validate-on-blur>
             <template v-slot:append>
-              <v-icon :class="showCorpNumErrorState ? 'red--text' : 'green--text'"
-                      v-if="hideCorpNum === 'auto'">
-                {{ error || loading || corpNumDirty ? 'close' : 'check' }}</v-icon>
+              <v-icon :class="error || corpNumError || corpNumDirty ? 'red--text' : 'green--text'"
+                      v-if="hideCorpNum === 'auto' && !isEditingCorpNum && !loading">
+                {{ error || corpNumError || corpNumDirty ? 'close' : 'check' }}</v-icon>
             </template>
           </v-text-field>
         </v-col>
         <v-col cols="5">
+          <label for="tradeMark" class="hidden">Registered Trademark (Optional)</label>
           <v-text-field :messages="messages['tradeMark']"
                         :value="nrData.tradeMark"
                         @blur="messages = {}"
                         @focus="messages['tradeMark'] = 'Registered Trademark (Optional)'"
                         @input="mutateNRData('tradeMark', $event)"
+                        id="tradeMark"
+                        name="tradeMark"
                         filled
                         hide-details="auto"
                         placeholder="Registered Trademark (Optional)" />
@@ -151,6 +172,7 @@ export default class ApplicantInfo2 extends Vue {
     v => /.+@.+/.test(v) || 'Not a valid email'
   ]
   error: boolean = false
+  isEditingCorpNum: boolean = false
   isValid: boolean = false
   hideCorpNum: boolean | 'auto' = true
   loading: boolean = false
@@ -158,6 +180,14 @@ export default class ApplicantInfo2 extends Vue {
   requiredRule = [
     v => !!v || 'Required field'
   ]
+
+  @Watch('xproJurisdiction')
+  async hanldeJurisdiction (newVal, oldVal) {
+    if (newVal !== oldVal) {
+      await this.$nextTick()
+      this.validate()
+    }
+  }
 
   get applicant () {
     return newReqModule.applicant
@@ -218,12 +248,6 @@ export default class ApplicantInfo2 extends Vue {
   get showCorpNum () {
     return newReqModule.showCorpNum
   }
-  get showCorpNumErrorState () {
-    if (this.loading || this.corpNumDirty) {
-      return true
-    }
-    return !!this.corpNumError
-  }
   get showPriorityRequest () {
     return newReqModule.showPriorityRequest
   }
@@ -235,6 +259,9 @@ export default class ApplicantInfo2 extends Vue {
   }
   set submissionTabNumber (value) {
     newReqModule.mutateSubmissionTabNumber(value)
+  }
+  get xproJurisdiction () {
+    return (newReqModule.nrData || {}).xproJurisdiction
   }
 
   async submit () {
@@ -258,6 +285,7 @@ export default class ApplicantInfo2 extends Vue {
     this.corpNumError = ''
   }
   async getCorpNum (num) {
+    this.isEditingCorpNum = false
     if (!num) {
       return
     }

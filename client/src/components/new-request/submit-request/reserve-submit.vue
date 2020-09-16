@@ -19,6 +19,9 @@ export default class ReserveSubmitButton extends Vue {
   get location () {
     return newReqModule.location
   }
+  get request_action_cd () {
+    return newReqModule.request_action_cd
+  }
   get text () {
     if (this.location !== 'BC' && this.setup !== 'assumed') {
       return 'Send For Examination'
@@ -42,6 +45,7 @@ export default class ReserveSubmitButton extends Vue {
       newReqModule.mutateSubmissionTabComponent('NamesCapture')
       if (this.setup === 'assumed') {
         if (xproMapping['ASSUMED'].includes(this.entity_type_cd)) {
+          newReqModule.mutateRequestActionOriginal(this.request_action_cd)
           newReqModule.mutateRequestAction('ASSUMED')
         }
         newReqModule.mutateAssumedNameOriginal()

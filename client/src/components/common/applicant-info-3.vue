@@ -197,6 +197,14 @@ export default class ApplicantInfo3 extends Vue {
     v => !!v || 'Required field'
   ]
 
+  @Watch('xproJurisdiction')
+  async hanldeJurisdiction (newVal, oldVal) {
+    if (newVal !== oldVal) {
+      await this.$nextTick()
+      this.validate()
+    }
+  }
+
   get applicant () {
     return newReqModule.applicant
   }
@@ -253,12 +261,6 @@ export default class ApplicantInfo3 extends Vue {
   get showCorpNum () {
     return newReqModule.showCorpNum
   }
-  get showCorpNumErrorState () {
-    if (this.loading || this.corpNumDirty) {
-      return true
-    }
-    return !!this.corpNumError
-  }
   get request_action_cd () {
     return newReqModule.request_action_cd
   }
@@ -267,6 +269,9 @@ export default class ApplicantInfo3 extends Vue {
   }
   set priorityRequest (value) {
     newReqModule.mutatePriorityRequest(value)
+  }
+  get xproJurisdiction () {
+    return (newReqModule.nrData || {}).xproJurisdiction
   }
 
   async submit () {

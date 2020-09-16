@@ -307,6 +307,17 @@ export default class ApplicantInfo1 extends Vue {
     ref.focus()
   }
 
+  @Watch('xproJurisdiction')
+  watchXproJurisdiction (newVal, oldVal) {
+    if (newVal !== oldVal) {
+      if (this.editMode && newVal === this.nr.xproJurisdiction) {
+        newReqModule.mutateCorpNum(this.nr.corpNum)
+        return
+      }
+      newReqModule.mutateCorpNum('')
+    }
+  }
+
   beforeDestoy () {
     this.$el.removeEventListener('keydown', this.handleKeydown)
   }
@@ -345,6 +356,9 @@ export default class ApplicantInfo1 extends Vue {
   }
   get location () {
     return newReqModule.location
+  }
+  get nr () {
+    return newReqModule.nr
   }
   get nrData () {
     return newReqModule.nrData
