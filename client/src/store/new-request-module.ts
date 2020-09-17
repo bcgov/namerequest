@@ -2057,9 +2057,9 @@ export class NewRequestModule extends VuexModule {
   resetNameChoices () {
     for (let key in this.nameChoices) {
       Vue.set(
-      this.nameChoices,
-      key,
-      ''
+        this.nameChoices,
+        key,
+        ''
       )
     }
   }
