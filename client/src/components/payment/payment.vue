@@ -72,6 +72,7 @@
 import FeeSummary from '@/components/fee-summary.vue'
 
 import paymentModule from '@/modules/payment'
+import { NameRequestPaymentResponse } from '@/modules/payment/models'
 import newRequestModule, { NewRequestModule } from '@/store/new-request-module'
 
 import * as paymentService from '@/modules/payment/services'
@@ -82,9 +83,12 @@ import * as jurisdictions from '@/modules/payment/jurisdictions'
 
 import {
   ApplicantI
-} from "@/models"
+} from '@/models'
 
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { PaymentApiError } from '@/modules/payment/services'
+import errorModule from '@/modules/error'
+import { ErrorI } from '@/modules/error/store/actions'
 
 @Component({
   components: {
@@ -118,88 +122,96 @@ export default class PaymentModal extends Vue {
    * This uses snake_case GET params
    */
   async fetchFees () {
-    const corpType = 'NRO' // We may need to handle more than one type at some point?
+    try {
+      const corpType = 'NRO' // We may need to handle more than one type at some point?
 
-    const response = await paymentService.getPaymentFees({
-      'corp_type': corpType,
-      'filing_type_code': this.filingType,
-      'jurisdiction': jurisdictions.BC,
-      'date': new Date().toISOString(),
-      'priority': this.priorityRequest || false
-    })
-    await paymentModule.setPaymentFees(response.data)
+      const response = await paymentService.getPaymentFees({
+        'corp_type': corpType,
+        'filing_type_code': this.filingType,
+        'jurisdiction': jurisdictions.BC,
+        'date': new Date().toISOString(),
+        'priority': this.priorityRequest || false
+      })
+      await paymentModule.setPaymentFees(response)
+    } catch (error) {
+      if (error instanceof PaymentApiError) {
+        await errorModule.setAppError({ id: 'payment-api-error', error: error.message } as ErrorI)
+      } else {
+        await errorModule.setAppError({ id: 'fetch-fees-error', error: error.message } as ErrorI)
+      }
+    }
   }
 
   async createPayment () {
     // Grab the applicant info from state
-    const corpType = 'NRO' // We may need to handle more than one type at some point?
     const methodOfPayment = 'CC' // We may need to handle more than one type at some point?
 
-    const { applicant, name, filingType, priorityRequest, nrData, nr } = this
+    const { filingType, priorityRequest, nrId } = this
 
-    const { addrLine1, addrLine2, city, stateProvinceCd, countryTypeCd, postalCd } = applicant
-    const { corpNum } = nrData
-    const { nrNum } = nr
-
-    if (!nrNum) {
+    if (!nrId) {
       // eslint-disable-next-line no-console
-      console.warn('NR number is not present in NR, cannot continue!')
+      console.warn('NR ID is not present in NR, cannot continue!')
       return
     }
 
+    // This is the minimum required to make a payment!
+    // Any additional data supplied here, eg. supplying
+    // a businessInfo object, will override values found
+    // in the corresponding Name Request
     const req = {
       paymentInfo: {
         methodOfPayment: methodOfPayment
       },
-      businessInfo: {
-        corpType: corpType,
-        // TODO: Replace this with the NR Number? Or is this the actual business number?
-        // TODO: Do they even have a business number at this point?
-        businessIdentifier: corpNum || nrNum,
-        businessName: name,
-        contactInfo: {
-          addressLine1: `${addrLine1} ${addrLine2}`,
-          city: city,
-          province: stateProvinceCd,
-          country: countryTypeCd,
-          postalCode: postalCd
-        }
-      },
-      // This info comes from the frontend
       filingInfo: {
-        date: new Date().toJSON().slice(0, 10), // Today's date
         filingTypes: [
           {
             filingTypeCode: filingType,
-            priority: priorityRequest || false,
-            filingDescription: `${filingType}: ${name} (${corpNum})`
+            priority: priorityRequest || false
           }
         ]
       }
     }
 
-    const response = await paymentService.createPaymentRequest(nrNum, req)
+    try {
+      const paymentResponse: NameRequestPaymentResponse = await paymentService.createPaymentRequest(nrId, req)
+      const { payment, sbcPayment = { invoices: [] }, token, statusCode, completionDate } = paymentResponse
 
-    const { invoices = [] } = response.data
+      await paymentModule.setPayment(payment)
+      await paymentModule.setPaymentInvoice(sbcPayment.invoices[0])
+      await paymentModule.setPaymentRequest(req)
 
-    await paymentModule.setPayment(response.data)
-    await paymentModule.setPaymentInvoice(invoices[0])
-    await paymentModule.setPaymentRequest(req)
+      // Grab the new payment ID
+      const { paymentId } = this
 
-    // Grab the new payment ID
-    const { paymentId } = this
-    // Store the payment ID to sessionStorage, that way we can start the user back where we left off
-    sessionStorage.setItem('paymentInProgress', 'true')
-    sessionStorage.setItem('paymentId', `${paymentId}`)
-    sessionStorage.setItem('nrNum', `${nrNum}`)
+      // TODO: Remove this one, we don't want to set the payment to session once we're done!
+      // TODO: Or... we could add a debug payments mode?
+      sessionStorage.setItem('payment', `${JSON.stringify(payment)}`)
+      // Store the payment ID to sessionStorage, that way we can start the user back where we left off
+      sessionStorage.setItem('paymentInProgress', 'true')
+      sessionStorage.setItem('paymentId', `${paymentId}`)
+      sessionStorage.setItem('paymentToken', `${token}`)
+      sessionStorage.setItem('nrId', `${nrId}`)
 
-    // Redirect user to Service BC Pay Portal
-    const redirectUrl = encodeURIComponent(
-      `${document.baseURI}/?paymentSuccess=true&paymentId=${paymentId}`
-    )
+      // Redirect user to Service BC Pay Portal
+      // Set the redirect URL to specify OUR payment ID so we can
+      // grab the payment when we're directed back to our application
+      const redirectUrl = encodeURIComponent(
+        `${document.baseURI}/?paymentId=${paymentId}`
+      )
 
-    const paymentPortalUrl = `${this.$PAYMENT_PORTAL_URL}/${paymentId}/${redirectUrl}`
-    window.location.href = paymentPortalUrl
+      // eslint-disable-next-line no-console
+      console.log(`Forwarding to SBC Payment Portal -> Payment redirect URL: ${redirectUrl}`)
+
+      // TODO: We could make this string configurable too... not necessary at this time
+      const paymentPortalUrl = `${this.$PAYMENT_PORTAL_URL}/${token}/${redirectUrl}`
+      window.location.href = paymentPortalUrl
+    } catch (error) {
+      if (error instanceof PaymentApiError) {
+        await errorModule.setAppError({ id: 'payment-api-error', error: error.message } as ErrorI)
+      } else {
+        await errorModule.setAppError({ id: 'create-payment-error', error: error.message } as ErrorI)
+      }
+    }
   }
 
   get applicant (): Partial<ApplicantI> | undefined {
@@ -304,6 +316,10 @@ export default class PaymentModal extends Vue {
     const nameRequest: NewRequestModule = newRequestModule
     const nr: Partial<any> = nameRequest.nr || {}
     return nr
+  }
+
+  get nrId () {
+    return newRequestModule.nrId
   }
 
   get priorityRequest () {
