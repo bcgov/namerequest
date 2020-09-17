@@ -1544,6 +1544,8 @@ export class NewRequestModule extends VuexModule {
     this.resetApplicantDetails()
     this.resetNrData()
     this.resetRequestExaminationOrProvideConsent()
+    this.resetNameChoices()
+    this.mutateNameRequest({})
   }
   @Action
   cancelAnalyzeName () {
@@ -2050,6 +2052,16 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateRequestActionOriginal (action: string) {
     this.requestActionOriginal = action
+  }
+  @Mutation
+  resetNameChoices () {
+    for (let key in this.nameChoices) {
+      Vue.set(
+      this.nameChoices,
+      key,
+      ''
+      )
+    }
   }
 
   getEntities (category) {
