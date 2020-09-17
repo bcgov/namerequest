@@ -14,6 +14,7 @@
     <ReceiptModal />
     <IncorporateLoginModal />
     <AffiliationErrorModal />
+    <ApiErrorModal />
   </v-app>
 </template>
 
@@ -23,10 +24,12 @@ import LocationInfoModal from '@/components/modals/location-info.vue'
 import NrNotRequired from '@/components/modals/nr-not-required.vue'
 import PickEntityOrConversion from '@/components/modals/pick-entity-or-conversion.vue'
 import PickRequestType from '@/components/modals/pick-request-type.vue'
-import PaymentModal from '@/components/modals/payment.vue'
-import ReceiptModal from '@/components/modals/receipt.vue'
+import PaymentModal from '@/components/payment/payment.vue'
+import ReceiptModal from '@/components/payment/receipt.vue'
 import IncorporateLoginModal from '@/components/modals/incorporate-login.vue'
 import AffiliationErrorModal from '@/components/modals/affiliation-error.vue'
+import ApiErrorModal from '@/components/common/error/modal.vue'
+// import ErrorMessage from '@/components/common/error/message.vue'
 
 import { Component, Vue, Ref } from 'vue-property-decorator'
 
@@ -43,7 +46,8 @@ import Header from '@/components/header.vue'
     PaymentModal,
     ReceiptModal,
     IncorporateLoginModal,
-    AffiliationErrorModal
+    AffiliationErrorModal,
+    ApiErrorModal
   }
 })
 export default class App extends Vue {}

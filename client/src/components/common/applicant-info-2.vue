@@ -191,13 +191,14 @@ export default class ApplicantInfo2 extends Vue {
     const nr: Partial<any> = nameRequest.nr || {}
     return nr
   }
-  get nrData () {
-    return newReqModule.nrData
+  get nrId () {
+    return newReqModule.nrId
   }
   get nrNum () {
-    const { nr } = this
-    const { nrNum } = nr
-    return nrNum || undefined
+    return newReqModule.nrNum
+  }
+  get nrData () {
+    return newReqModule.nrData
   }
   get nrState () {
     return newReqModule.nrState
@@ -238,15 +239,15 @@ export default class ApplicantInfo2 extends Vue {
 
   async submit () {
     if (this.editMode) {
-      newReqModule.patchNameRequests()
-      return
+      await newReqModule.patchNameRequests()
     } else {
-      const { nrNum } = this
-      if (!nrNum) {
+      const { nrId } = this
+      if (!nrId) {
         await newReqModule.postNameRequests('draft')
       } else {
-        await newReqModule.putNameReservation(nrNum)
+        await newReqModule.putNameReservation(nrId)
       }
+
       await paymentModule.togglePaymentModal(true)
     }
   }

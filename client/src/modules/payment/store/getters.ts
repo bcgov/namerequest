@@ -8,6 +8,7 @@ export default {
   [types.PAYMENT_IS_IN_PROGRESS]: state => state[STATE_KEY].isProcessing,
   [types.GET_PAYMENT]: state => state[STATE_KEY].payment,
   [types.GET_PAYMENT_ID]: state => state[STATE_KEY].payment.id,
+  [types.GET_PAYMENT_TOKEN]: state => state[STATE_KEY].payment.payment_token,
   [types.GET_PAYMENT_FEES]: state => state[STATE_KEY].fees,
   [types.GET_PAYMENT_DETAILS]: state => {
     const {

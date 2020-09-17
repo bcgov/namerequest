@@ -30,7 +30,7 @@ const state = {
       processing_fees: 0.0,
       service_fees: 0.0,
       tax: [],
-      total: 131.5
+      total: 0.0
     },
     request: {},
     payment: {},

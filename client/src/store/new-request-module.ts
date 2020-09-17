@@ -1,3 +1,7 @@
+import axios from 'axios'
+import querystring from 'qs'
+import Vue from 'vue'
+import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import {
   AnalysisJSONI,
   ApplicantI,
@@ -20,17 +24,20 @@ import {
   SubmissionTypeT,
   WaitingAddressSearchI
 } from '@/models'
-import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
+
 import store from '@/store'
 import { bcMapping, xproMapping, $colinRequestActions } from '@/store/list-data/request-action-mapping'
-import axios from 'axios'
-import querystring from 'qs'
-import Vue from 'vue'
-import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
-import canadaPostAPIKey from './config'
 import $canJurisdictions, { $mrasJurisdictions } from './list-data/canada-jurisdictions'
 import $designations from './list-data/designations'
 import $intJurisdictions from './list-data/intl-jurisdictions'
+import canadaPostAPIKey from './config'
+
+import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
+import { NameRequestPayment } from '@/modules/payment/models'
+
+import errorModule from '@/modules/error'
+import { ErrorI } from '@/modules/error/store/actions'
+export class ApiError extends Error {}
 
 const qs: any = querystring
 const debounce = require('lodash/debounce')
@@ -70,6 +77,12 @@ let debouncedCheckMRAS: any
 let debouncedCheckCOLIN: any
 
 interface RequestNameMapI extends RequestNameI {}
+
+export const ROLLBACK_ACTIONS = {
+  CANCEL: 'cancel',
+  RESTORE: 'restore',
+  ROLLBACK_PAYMENT: 'rollback-payment'
+}
 
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
 export class NewRequestModule extends VuexModule {
@@ -755,6 +768,14 @@ export class NewRequestModule extends VuexModule {
     }
     return false
   }
+  get nrId () {
+    const { nr } = this
+    let nrId
+    if (nr) {
+      nrId = nr.id
+    }
+    return nrId
+  }
   get nrNum () {
     const { nr } = this
     let nrNum
@@ -1265,10 +1286,10 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
-  async getNameReservation (nrNum) {
+  async getNameReservation (nrId) {
     let response
     try {
-      response = await axios.get(`/namerequests/${nrNum}`, {
+      response = await axios.get(`/namerequests/${nrId}`, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1277,9 +1298,9 @@ export class NewRequestModule extends VuexModule {
       const { data } = response
       const { names } = data
 
+      this.resetApplicantDetails()
       this.setNrResponse(data)
       this.updateReservationNames(names)
-      this.resetApplicantDetails()
     } catch (error) {
       // eslint-disable-next-line
       console.log(error)
@@ -1299,18 +1320,28 @@ export class NewRequestModule extends VuexModule {
   async patchNameRequests () {
     try {
       let nr = this.editNameReservation
-      let { nrNum } = this.nr
+      let { nrId } = this
       // Use the NR_REGEX const in existing-request-search if you really want to do this
       // nrNum = nrNum.replace(/(?:\s+|\s|)(\D|\D+|)(?:\s+|\s|)(\d+)(?:\s+|\s|)/, 'NR' + '$2')
-
-      let response = await axios.patch(`/namerequests/${nrNum}/edit`, nr, {
+      const response = await axios.patch(`/namerequests/${nrId}/edit`, nr, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
+
+      if (response.status !== 200) {
+        throw new ApiError('Could not update the name request')
+      }
+
       this.mutateNameRequest(response.data)
       this.mutateDisplayedComponent('Success')
     } catch (error) {
+      if (error instanceof ApiError) {
+        await errorModule.setAppError({ id: 'patch-name-requests-api-error', error: error.message } as ErrorI)
+      } else {
+        await errorModule.setAppError({ id: 'patch-name-requests-error', error: error.message } as ErrorI)
+      }
+
       // eslint-disable-next-line
       console.log(error)
     }
@@ -1318,21 +1349,32 @@ export class NewRequestModule extends VuexModule {
   @Action
   async patchNameRequestsByAction (action) {
     try {
-      let response = await axios.patch(`/namerequests/${this.nr.nrNum}/${action}`, {}, {
+      const { nrId } = this
+      const response = await axios.patch(`/namerequests/${nrId}/${action}`, {}, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
+
+      if (response.status !== 200) {
+        throw new ApiError('Could not update the name request')
+      }
+
       this.mutateNameRequest(response.data)
       this.mutateDisplayedComponent('Success')
     } catch (error) {
+      if (error instanceof ApiError) {
+        await errorModule.setAppError({ id: 'patch-name-requests-by-action-api-error', error: error.message } as ErrorI)
+      } else {
+        await errorModule.setAppError({ id: 'patch-name-requests-by-action-error', error: error.message } as ErrorI)
+      }
+
       // eslint-disable-next-line
       console.log(error)
     }
   }
   @Action
   async postNameRequests (type: string) {
-    let response
     if (this.isAssumedName) type = 'assumed'
     try {
       let data: any
@@ -1349,29 +1391,30 @@ export class NewRequestModule extends VuexModule {
           break
       }
 
-      response = await axios.post(`/namerequests`, data, {
+      const response = await axios.post(`/namerequests`, data, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
 
-      this.setNrResponse(response.data)
-
-      const { nr } = this
-      const { applicants = [] } = nr
-
-      if (applicants instanceof Array) {
-        this.setApplicantDetails(applicants[0])
-      } else if (applicants) {
-        this.setApplicantDetails(applicants)
+      if (response.status !== 201) {
+        throw new ApiError('Could not create the name request')
       }
+
+      this.setNrResponse(response.data)
     } catch (error) {
+      if (error instanceof ApiError) {
+        await errorModule.setAppError({ id: 'post-name-requests-api-error', error: error.message } as ErrorI)
+      } else {
+        await errorModule.setAppError({ id: 'post-name-requests-error', error: error.message } as ErrorI)
+      }
+
       // eslint-disable-next-line
       console.log(error)
     }
   }
   @Action
-  async putNameReservation (nrNum) {
+  async putNameReservation (nrId) {
     let { nrState } = this
     if (this.isAssumedName) nrState = 'ASSUMED'
     let response
@@ -1394,47 +1437,83 @@ export class NewRequestModule extends VuexModule {
       if (this.showCorpNum && this.corpNum) {
         data['corpNum'] = this.corpNum
       }
-      response = await axios.put(`/namerequests/${nrNum}`, data, {
+
+      const response = await axios.put(`/namerequests/${nrId}`, data, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
 
-      this.setNrResponse(response.data)
-
-      const { nr } = this
-      const { applicants = [] } = nr
-
-      if (applicants instanceof Array) {
-        this.setApplicantDetails(applicants[0])
-      } else if (applicants) {
-        this.setApplicantDetails(applicants)
+      if (response.status !== 200) {
+        throw new ApiError('Could not update the name request')
       }
+
+      this.setNrResponse(response.data)
     } catch (error) {
+      if (error instanceof ApiError) {
+        await errorModule.setAppError({ id: 'put-name-requests-api-error', error: error.message } as ErrorI)
+      } else {
+        await errorModule.setAppError({ id: 'put-name-requests-error', error: error.message } as ErrorI)
+      }
+
       // eslint-disable-next-line
       console.log(error)
     }
   }
   @Action
-  async completePayment (nrNum) {
+  async completePayment (nrId): Promise<NameRequestPayment> {
+    // TODO: In completePayment, generate a temp UUID or nonce
+    //  that gets passed to the NR Payment API
+    const paymentResponse: NameRequestPayment = {
+      paymentSuccess: false
+    }
+
     try {
-      const response = await axios.put(`/namerequests/${nrNum}/complete-payment`, {}, {
+      const response = await axios.put(`/namerequests/${nrId}/complete-payment`, {}, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
 
-      this.setNrResponse(response.data)
+      if (response.status === 200) {
+        paymentResponse.payment = response.data
+        paymentResponse.httpStatusCode = response.status.toString()
+        paymentResponse.paymentSuccess = true
+      } else {
+        paymentResponse.httpStatusCode = response.status.toString()
+        paymentResponse.paymentSuccess = false
+      }
 
-      const { nr } = this
-      const { applicants = [] } = nr
+      return paymentResponse
+    } catch (error) {
+      // eslint-disable-next-line
+      throw new Error('Error completing payment')
+    }
+  }
+  @Action
+  async rollbackNameRequest ({ nrId, action }): Promise<any> {
+    try {
+      const validRollbackActions = [
+        ROLLBACK_ACTIONS.CANCEL
+      ]
 
-      if (applicants instanceof Array) {
-        this.setApplicantDetails(applicants[0])
-      } else if (applicants) {
-        this.setApplicantDetails(applicants)
+      if (validRollbackActions.indexOf(action) === -1) return
+      const response = await axios.patch(`/namerequests/${nrId}/rollback/${action}`, {}, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (response.status !== 200) {
+        throw new ApiError('Could not roll back / cancel the name request')
       }
     } catch (error) {
+      if (error instanceof ApiError) {
+        await errorModule.setAppError({ id: 'rollback-name-request-api-error', error: error.message } as ErrorI)
+      } else {
+        await errorModule.setAppError({ id: 'rollback-name-request-error', error: error.message } as ErrorI)
+      }
+
       // eslint-disable-next-line
       console.log(error)
     }
@@ -1912,13 +1991,6 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Mutation
-  setApplicantDetails (applicant) {
-    const data = Object.assign({}, applicant) as ApplicantI
-    Object.keys(data as ApplicantI).forEach(key => {
-      this.applicant[key] = data[key]
-    })
-  }
-  @Mutation
   setErrors (value: string) {
     if (Array.isArray(this.errors) && this.errors.length > 0) {
       this.errors = this.errors.concat(value)
@@ -1929,6 +2001,22 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   setNrResponse (value) {
     this.nr = value
+
+    const { nr } = this
+    const { applicants = [] } = nr
+
+    const setApplicantDetails = (applicant) => {
+      const data = Object.assign({}, applicant) as ApplicantI
+      Object.keys(data as ApplicantI).forEach(key => {
+        this.applicant[key] = data[key]
+      })
+    }
+
+    if (applicants instanceof Array) {
+      setApplicantDetails(applicants[0])
+    } else if (applicants) {
+      setApplicantDetails(applicants)
+    }
   }
   @Mutation
   updateReservationNames (nrName: [] = []) {

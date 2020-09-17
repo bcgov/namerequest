@@ -4,6 +4,7 @@ export const PAYMENT_IS_IN_PROGRESS = 'paymentIsInProgress'
 
 export const GET_PAYMENT = 'getPayment'
 export const GET_PAYMENT_ID = 'getPaymentId'
+export const GET_PAYMENT_TOKEN = 'getPaymentToken'
 export const GET_PAYMENT_DETAILS = 'getPaymentDetails'
 export const GET_PAYMENT_FEES = 'getPaymentFees'
 export const GET_PAYMENT_REQUEST = 'getPaymentRequest'
