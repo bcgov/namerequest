@@ -4,7 +4,7 @@
       <v-card-text class="h3">Error</v-card-text>
       <v-card-text class="copy-normal">
         <ul v-if="hasErrors" style="list-style-type: none; margin: 0; padding: 0">
-          <li :key="error.id" v-for="error in errors">{{ error.error }}</li>
+          <li :key="error.id" v-for="error in errors" v-html="error.error"></li>
         </ul>
       </v-card-text>
       <v-card-actions>
