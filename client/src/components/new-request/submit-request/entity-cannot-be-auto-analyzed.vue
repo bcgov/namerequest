@@ -54,7 +54,27 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
       this.englishOnlyName = this.name.split('/')[0]
     }
   }
+
+  get nameAnalysisTimedOut () {
+    return newReqModule.nameAnalysisTimedOut
+  }
   get boxes () {
+    let timeoutExplanation1 = {
+      title: 'Option 1',
+      class: 'square-card-x2',
+      button: 'examine',
+      text:
+      'This name cannot be auto-analyzed and will need to be reviewed by a name examiner.' +
+      ' Please check the wait times listed at the top of' +
+      ' the screen.  Rush services are also available.'
+    }
+    let timeoutExplanation2 = {
+      title: 'Option 2',
+      class: 'square-card-x2',
+      button: 'restart',
+      text: 'You can enter a different name and try your search again.  Click the button below to cancel this request' +
+      'and start again.'
+    }
     let entityExplanation = {
       title: 'Option 2',
       class: 'square-card-x2',
@@ -89,6 +109,9 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
       class: 'square-card-x2',
       button: 'examine',
       text: 'You can choose to submit this name to examination. Please check wait times at the top of the screen.'
+    }
+    if (this.nameAnalysisTimedOut) {
+      return [timeoutExplanation1, timeoutExplanation2]
     }
     if (this.requestActionNotSupported) {
       return [requestActionExplanation]
@@ -142,6 +165,9 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
     return newReqModule.requestTextFromValue
   }
   get title () {
+    if (this.nameAnalysisTimedOut) {
+      return 'Your name took too long to analyze'
+    }
     if (this.requestActionNotSupported) {
       return `Name requests to <b>${this.requestActionText}</b> cannot be auto-analyzed and must be sent<br> to
       examination for review`

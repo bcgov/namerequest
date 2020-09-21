@@ -155,6 +155,7 @@ export interface RequestActionsI {
   value: string
   blurb?: string
   rank?: number
+  shortDesc?: string
 }
 export interface RequestNameI {
   id?: number

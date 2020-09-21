@@ -42,30 +42,21 @@ import { Vue, Component } from 'vue-property-decorator'
 
 @Component({})
 export default class Stats extends Vue {
-  created () {
+  created (): void {
     newReqModule.getStats()
   }
 
   get stats (): StatsI {
     return newReqModule.stats
   }
-  get autoApprovedCount () {
-    if (this.stats && this.stats.auto_approved_count) {
-      return this.stats.auto_approved_count
-    }
-    return 0
+  get autoApprovedCount (): string | number {
+    return (this.stats || {}).auto_approved_count || '0'
   }
-  get regularWaitTime () {
-    if (this.stats && this.stats.regular_wait_time) {
-      return Math.ceil(this.stats.regular_wait_time / 3600 / 24)
-    }
-    return '-'
+  get regularWaitTime (): string | number {
+    return (this.stats || {}).regular_wait_time || '-'
   }
-  get priorityWaitTime () {
-    if (this.stats && this.stats.priority_wait_time) {
-      return Math.ceil(this.stats.priority_wait_time / 3600)
-    }
-    return '-'
+  get priorityWaitTime (): string | number {
+    return (this.stats || {}).priority_wait_time || '-'
   }
 }
 
