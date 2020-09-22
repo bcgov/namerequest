@@ -15,7 +15,8 @@ export const bcMapping: RequestActionMappingI = {
 export const xproMapping: RequestActionMappingI = {
   ASSUMED: ['XCR', 'RLC', 'XUL'],
   REN: ['XCR', 'XCP', 'RLC', 'XUL'],
-  REH: ['XCR', 'XCP', 'RLC', 'XUL']
+  REH: ['XCR', 'XCP', 'RLC', 'XUL'],
+  AML: ['XCR', 'XCP', 'XUL', 'XLP', 'XLL', 'XSO']
 }
 
 export const $colinRequestActions = ['AML', 'CHG', 'REH', 'REN']
