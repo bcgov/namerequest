@@ -144,6 +144,7 @@ export class NewRequestModule extends VuexModule {
   }
   assumedNameOriginal: string = ''
   changesInBaseName: boolean = false
+  conditionsModalVisible: boolean = false
   conflictId: string | null = null
   conversionType: string = ''
   conversionTypeAddToSelect: ConversionTypesI | null = null
@@ -2141,6 +2142,10 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateNameAnalysisTimedOut (value: boolean) {
     this.nameAnalysisTimedOut = value
+  }
+  @Mutation
+  mutateConditionsModalVisible (value: boolean) {
+    this.conditionsModalVisible = value
   }
 
   getEntities (category) {

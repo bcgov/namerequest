@@ -5,6 +5,7 @@
       <router-view />
     </div>
     <!--All v-dialogue (modal) components App-wide-->
+    <Conditions />
     <LocationInfoModal />
     <HelpMeChoose />
     <NrNotRequired />
@@ -19,6 +20,7 @@
 </template>
 
 <script lang="ts">
+import Conditions from '@/components/modals/conditions.vue'
 import HelpMeChoose from '@/components/modals/help-me-choose.vue'
 import LocationInfoModal from '@/components/modals/location-info.vue'
 import NrNotRequired from '@/components/modals/nr-not-required.vue'
@@ -37,6 +39,7 @@ import Header from '@/components/header.vue'
 
 @Component({
   components: {
+    Conditions,
     Header,
     LocationInfoModal,
     NrNotRequired,

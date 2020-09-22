@@ -1,5 +1,5 @@
 <template>
-  <MainContainer id="analyze-pending-container">
+  <MainContainer id="existing-request-display">
     <template v-slot:container-header>
       <v-col cols="auto">
         <b>Your search returned the following Name Request:</b>
@@ -18,6 +18,10 @@
               <v-icon v-if="getNameFormating(name).icon" :class="getNameFormating(name).class"
                       style="font-size: 20px; position: relative; top: -3px;">
                 {{ getNameFormating(name).icon }}</v-icon>
+              <a class="link-sm ml-3"
+                 @click.prevent="showConditionsModal"
+                 href="#"
+                 v-if="name.state === 'CONDITION'">Conditions</a>
             </div>
           </div>
         </v-col>
@@ -179,6 +183,9 @@ export default class ExistingRequestDisplay extends Vue {
       return
     }
     newReqModule.patchNameRequestsByAction(action)
+  }
+  showConditionsModal () {
+    newReqModule.mutateConditionsModalVisible(true)
   }
   upgrade () {
     if (!this.priorityReq) {
