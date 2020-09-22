@@ -627,7 +627,8 @@ export class NewRequestModule extends VuexModule {
     let consentWords = []
     for (let step in this.requestExaminationOrProvideConsent) {
       if (this.requestExaminationOrProvideConsent[step].obtain_consent) {
-        consentWords.push(this.analysisJSON.issues[step].name_actions[0].word)
+        let words = this.analysisJSON.issues[step].name_actions.map(action => action.word)
+        consentWords = consentWords.concat(words)
       }
     }
     return consentWords

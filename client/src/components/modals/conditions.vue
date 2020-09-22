@@ -23,7 +23,7 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component({})
 export default class ConditionsModal extends Vue {
   get nameObject () {
-    if (this.nrNames.some(name => name.state === 'CONDITION' && name.decision_text)) {
+    if ((this.nrNames || []).some(name => name.state === 'CONDITION' && name.decision_text)) {
       return this.nrNames.find(name => name.state === 'CONDITION' && name.decision_text)
     }
     return {}
