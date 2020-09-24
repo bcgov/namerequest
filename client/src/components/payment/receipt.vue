@@ -3,6 +3,11 @@
     <v-card class="pa-9">
       <v-card-text class="h3">Payment Successful</v-card-text>
       <v-card-text class="copy-normal">
+        <request-details
+          v-bind:applicant="applicant"
+          v-bind:nameChoices="nameChoices"
+          v-bind:name="name"
+        />
         <div>
           <invoice
             :key="paymentInvoice.id"
@@ -22,6 +27,9 @@
 
 <script lang="ts">
 import Invoice from '@/components/invoice.vue'
+import RequestDetails from '@/components/common/request-details.vue'
+
+import { ApplicantI } from '@/models'
 
 import { PaymentApiError } from '@/modules/payment/services/payment'
 import paymentModule from '@/modules/payment'
@@ -34,6 +42,7 @@ import * as paymentService from '@/modules/payment/services'
 import * as paymentTypes from '@/modules/payment/store/types'
 
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+
 // TODO: Finish the message component
 // import message from "@/components/common/error/message.vue"
 
@@ -46,10 +55,11 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
  *
  * Make sure this is set to false when you're done!
  */
-const DEBUG_RECEIPT = false
+const DEBUG_RECEIPT = true
 
 @Component({
   components: {
+    RequestDetails,
     Invoice
   },
   data: () => ({
@@ -122,6 +132,66 @@ export default class ReceiptModal extends Vue {
 
   get nrId () {
     return newRequestModule.nrId
+  }
+
+  get applicant (): Partial<ApplicantI> | undefined {
+    const nameRequest: NewRequestModule = newRequestModule
+    const applicantInfo: Partial<ApplicantI> = nameRequest.applicant || undefined
+    return applicantInfo
+  }
+
+  get name () {
+    const nameRequest: NewRequestModule = newRequestModule
+    const name: string = nameRequest.name
+    return name
+  }
+
+  /**
+   * eg:
+   * {
+   *     name1: 'ACME Construction',
+   *     name2: 'ACME Home Construction',
+   *     name3: 'ACME Commercial Construction',
+   *     designation1: 'Ltd.',
+   *     designation2: 'Ltd.',
+   *     designation3: 'Ltd.'
+   * }
+   */
+  get nameChoices () {
+    const nameRequest: NewRequestModule = newRequestModule
+    const nameRequestChoices: {} = nameRequest.nameChoices || {}
+
+    /** Test
+     {
+        name1: 'ACME Construction',
+        name2: 'ACME Home Construction',
+        name3: 'ACME Commercial Construction',
+        designation1: 'Ltd.',
+        designation2: 'Ltd.',
+        designation3: 'Ltd.'
+     }
+     */
+    const parseNameChoices = (nameChoices) => {
+      return Object.keys(nameChoices)
+        .reduce((names, key, idx) => {
+          // Key will be either 'name' or 'designation'
+          const nameIdx = key.match(/[\d]+$/)[0]
+          const typeKey = key.substring(0, key.lastIndexOf(nameIdx))
+          names[nameIdx] = names[nameIdx] || { name: undefined, designation: undefined }
+          names[nameIdx][typeKey] = nameChoices[key]
+          return names
+        }, [])
+        .map((choice) => {
+          return (choice.name && choice.designation)
+            ? `${choice.name} ${choice.designation}`
+            : (choice.name && !choice.designation)
+              ? `${choice.name}`
+              : undefined
+        })
+        .filter((name) => !!name)
+    }
+
+    return parseNameChoices(nameRequestChoices)
   }
 
   get paymentToken () {

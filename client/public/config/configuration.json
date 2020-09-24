@@ -1,6 +1,6 @@
 [
   {
-    "URL":"https://namex-dev.pathfinder.gov.bc.ca",
+    "URL": "http://localhost:5000",
     "PAYMENT_PORTAL_URL": "https://dev.bcregistry.ca/business/auth/makepayment",
     "BUSINESSES_URL": "https://dev.bcregistry.ca/business/auth/",
     "KEYCLOAK_CONFIG_PATH": "/local-keycloak-config-url/keycloak.json",

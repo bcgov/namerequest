@@ -3,57 +3,10 @@
     <v-card class="pa-9">
       <v-card-text class="h3">Confirm Name Request</v-card-text>
       <v-card-text class="copy-normal">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 15px">
-          <div>
-            <ul style="list-style: none; padding-left: 0">
-              <li>
-                <h4>Requested Name Choices</h4>
-                <ul style="list-style: none; padding-left: 0">
-                  <li><span class="choice-indicator" v-if="nameChoices && nameChoices.length > 0">1</span>{{name}}</li>
-                  <li v-if="nameChoices[1]"><span class="choice-indicator" v-if="nameChoices && nameChoices.length > 0">
-                    2</span>{{nameChoices[1]}}</li>
-                  <li v-if="nameChoices[2]"><span class="choice-indicator" v-if="nameChoices && nameChoices.length > 1">
-                    3</span>{{nameChoices[2]}}</li>
-                </ul>
-              </li>
-              <li v-if="client">
-                <h4>Client Name</h4>
-                <ul style="list-style: none; padding-left: 0">
-                  <li>{{`${client}`}}</li>
-                </ul>
-              </li>
-              <li v-if="contactPerson">
-                <h4>Primary Contact</h4>
-                <ul style="list-style: none; padding-left: 0">
-                  <li>{{`${contactPerson}`}}</li>
-                  <li>{{applicant.emailAddress}}</li>
-                  <li>{{applicant.phoneNumber}}</li>
-                </ul>
-              </li>
-              <li v-if="!contactPerson">
-                <h4>Primary Contact</h4>
-                <ul style="list-style: none; padding-left: 0">
-                  <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
-                  <li>{{`${applicantName}`}}</li>
-                  <li>{{applicant.emailAddress}}</li>
-                  <li>{{applicant.phoneNumber}}</li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4>Applicant Info</h4>
-            <ul style="list-style: none; padding-left: 0">
-              <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
-              <li >{{`${applicantName}`}}</li>
-              <li>{{`${applicant.addrLine1 ? applicant.addrLine1 : ''} ${applicant.addrLine2 ? applicant.addrLine2 : ''}`}}</li>
-              <li>{{`${applicant.city ? applicant.city : ''}, ${applicant.stateProvinceCd ? applicant.stateProvinceCd : ''}`}}</li>
-              <li>
-                {{`${applicant.countryTypeCd === 'CA' ? 'Canada' : applicant.countryTypeCd}, ${applicant.postalCd ? applicant.postalCd : ''}`}}
-              </li>
-            </ul>
-          </div>
-        </div>
+        <request-details
+          v-bind:applicant="applicant"
+          v-bind:nameChoices="nameChoices"
+        />
         <fee-summary
           v-bind:filingData="[...paymentDetails]"
           v-bind:fees="[...paymentFees]"
@@ -70,6 +23,7 @@
 
 <script lang="ts">
 import FeeSummary from '@/components/fee-summary.vue'
+import RequestDetails from '@/components/common/request-details.vue'
 
 import paymentModule from '@/modules/payment'
 import { NameRequestPaymentResponse } from '@/modules/payment/models'
@@ -92,6 +46,7 @@ import { ErrorI } from '@/modules/error/store/actions'
 
 @Component({
   components: {
+    RequestDetails,
     FeeSummary
   },
   data: () => ({
@@ -218,25 +173,6 @@ export default class PaymentModal extends Vue {
     const nameRequest: NewRequestModule = newRequestModule
     const applicantInfo: Partial<ApplicantI> = nameRequest.applicant || undefined
     return applicantInfo
-  }
-
-  get applicantName (): string {
-    const applicant = this.applicant
-    if (!applicant) return ''
-    return [applicant.firstName, applicant.middleName, applicant.lastName]
-      .filter(str => !!str).join(' ')
-  }
-
-  get contactPerson () {
-    const { applicant = { contact: '' } } = this
-    return (applicant.contact) ? `${applicant.contact}` : undefined
-  }
-
-  get client () {
-    const { applicant = { clientFirstName: '', clientLastName: '' } } = this
-    return (applicant.clientFirstName || applicant.clientLastName)
-      ? `${applicant.clientFirstName} ${applicant.clientLastName}`
-      : undefined
   }
 
   get isPersonsName () {
