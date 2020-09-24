@@ -14,6 +14,7 @@ import '@/sass/overrides.sass'
 import designations from '@/store/list-data/designations'
 import canJurisdictions from '@/store/list-data/canada-jurisdictions'
 import intJurisdictions from '@/store/list-data/intl-jurisdictions'
+import USAStateCodes from '@/store/list-data/us-states'
 
 Vue.config.productionTip = true
 Vue.config.devtools = true
@@ -23,6 +24,7 @@ async function startVue () {
   Vue.prototype.$canJurisdictions = canJurisdictions
   Vue.prototype.$intJurisdictions = intJurisdictions
   Vue.prototype.$PAYMENT_PORTAL_URL = await getConfig()
+  Vue.prototype.$USAStateCodes = USAStateCodes
 
   // // configure Keycloak Service
   // await KeyCloakService.setKeycloakConfigUrl(sessionStorage.getItem('KEYCLOAK_CONFIG_PATH'))

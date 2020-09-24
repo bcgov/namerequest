@@ -66,6 +66,7 @@
                                 :value="applicant.addrLine1"
                                 @blur="blurAddress1"
                                 @input="updateApplicant('addrLine1', $event)"
+                                autocomplete="off"
                                 class="pa-0"
                                 dense
                                 filled
@@ -142,7 +143,7 @@
                             ref="Line2" />
             </v-col>
           </v-row>
-          <v-row class="mt-2" v-if="applicant.addrLine2 && !showAddressMenu">
+          <v-row class="mt-2" v-if="(applicant.addrLine2 || applicant.addrLine3) && !showAddressMenu">
             <v-col cols="12" class="py-0 my-0">
               <v-text-field :messages="messages['Line3']"
                             :value="applicant.addrLine3"
@@ -176,7 +177,8 @@
                             ref="City"
               />
             </v-col>
-            <v-col cols="6" class="py-0 my-0">
+            <v-col cols="6" class="py-0 my-0" v-if="applicant.countryTypeCd === 'CA'">
+              <label for="province" class="hidden">Province</label>
               <v-select :items="provinceOptions"
                         :rules="requiredRules"
                         :value="applicant.stateProvinceCd"
@@ -185,23 +187,40 @@
                         filled
                         height="50"
                         hide-details="auto"
-                        id="Province"
+                        id="province"
+                        name="province"
                         placeholder="Province"
-                        ref="Province"
-                        v-if="applicant.countryTypeCd === 'CA'" />
-              <v-text-field :rules="requiredRules"
-                            :value="applicant.stateProvinceCd"
-                            @blur="messages = {}"
-                            @focus="handleFocus('Province', 'Province/State')"
-                            @input="updateApplicant('stateProvinceCd', $event)"
-                            dense
-                            filled
-                            height="50"
-                            hide-details="auto"
-                            id="Province"
-                            placeholder="Province/State"
-                            ref="Province"
-                            v-else />
+                        ref="Province" />
+            </v-col>
+            <v-col cols="6" class="py-0 my-0" v-else-if="applicant.countryTypeCd === 'US'">
+              <label for="state" class="hidden">State</label>
+              <v-select :items="$USAStateCodes"
+                        :rules="requiredRules"
+                        :value="applicant.stateProvinceCd"
+                        @input="updateApplicant('stateProvinceCd', $event)"
+                        dense
+                        filled
+                        height="50"
+                        hide-details="auto"
+                        id="state"
+                        name="state"
+                        placeholder="State"
+                        ref="state" />
+            </v-col>
+            <v-col cols="6" class="py-0 my-0" v-else>
+              <label for="state" class="hidden">Province/State (Optional, 2 letter code)</label>
+              <v-text-field
+                        :rules="provStateRules"
+                        :value="applicant.stateProvinceCd"
+                        @input="updateApplicant('stateProvinceCd', $event)"
+                        dense
+                        filled
+                        height="50"
+                        hide-details="auto"
+                        id="state"
+                        name="state"
+                        placeholder="Province/State (Optional, 2 letter code)"
+                        ref="state" />
             </v-col>
           </v-row>
           <v-row class="mt-2">
@@ -292,10 +311,20 @@ export default class ApplicantInfo1 extends Vue {
   requiredRules = [
     v => !!v || 'Required field'
   ]
+  provStateRules = [
+    v => typeof v === 'string' || 'Must be letters only',
+    v => v.length === 2 || 'Max 2 characters'
+  ]
   showAddressMenu: boolean = false
   step1Valid: boolean = false
   debouncedGetAddressSuggestions = _debounce(this.getAddressSuggestions, 400)
 
+  @Watch('countryTypeCd')
+  handleProvince (newVal, oldVal) {
+    if (newVal !== oldVal) {
+      newReqModule.updateApplicantDetails({ key: 'stateProvinceCd', value: '' })
+    }
+  }
   @Watch('showAddressMenu')
   supressMenu (newVal, oldVal) {
     if (newVal) {
@@ -306,7 +335,6 @@ export default class ApplicantInfo1 extends Vue {
     let ref: any = this.$refs.Line1
     ref.focus()
   }
-
   @Watch('xproJurisdiction')
   watchXproJurisdiction (newVal, oldVal) {
     if (newVal !== oldVal) {
@@ -383,6 +411,9 @@ export default class ApplicantInfo1 extends Vue {
       return newReqModule.nr.state
     }
     return null
+  }
+  get countryTypeCd () {
+    return (newReqModule.applicant || {}).countryTypeCd || ''
   }
   get submissionType () {
     return newReqModule.submissionType

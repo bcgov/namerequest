@@ -40,11 +40,6 @@ const jurisdictions = [
     "text": "UNITED STATES MINOR OUTLYING ISLANDS"
   },
   {
-    "value": "US",
-    "SHORT_DESC": "UNITED STATES",
-    "text": "UNITED STATES"
-  },
-  {
     "value": "UY",
     "SHORT_DESC": "URUGUAY",
     "text": "URUGUAY"
@@ -142,7 +137,7 @@ const jurisdictions = [
   {
     "value": "VG",
     "text": "VIRGIN ISLANDS",
-    "LONG_DESC": ""
+    "SHORT_DESC": "VIRGIN ISLANDS"
   },
   {
     "value": "WF",
@@ -358,11 +353,6 @@ const jurisdictions = [
     "value": "CM",
     "SHORT_DESC": "CAMEROON",
     "text": "CAMEROON"
-  },
-  {
-    "value": "CA",
-    "SHORT_DESC": "CANADA",
-    "text": "CANADA"
   },
   {
     "value": "CV",
@@ -1267,5 +1257,20 @@ let jurisdictionsSorted = jurisdictions.sort((a, b) => {
     return 0
   }
 })
+
+let canUSA = [
+  {
+    "value": "CA",
+    "SHORT_DESC": "CANADA",
+    "text": "CANADA"
+  },
+  {
+    "value": "US",
+    "SHORT_DESC": "UNITED STATES",
+    "text": "UNITED STATES"
+  }
+]
+
+jurisdictionsSorted = canUSA.concat(jurisdictionsSorted)
 
 export default jurisdictionsSorted

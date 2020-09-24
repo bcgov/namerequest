@@ -1158,7 +1158,6 @@ export class NewRequestModule extends VuexModule {
 
   @Action
   async getAddressDetails (id) {
-    id = `CAN|${id.split('|')[3]}`
     const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Retrieve/v2.11/json3.ws'
     let params = {
       Key: canadaPostAPIKey,
@@ -1179,7 +1178,29 @@ export class NewRequestModule extends VuexModule {
           Line1: 'addrLine1',
           Line2: 'addrLine2'
         }
-        let fields = ['Line1', 'Line2', 'City', 'PostalCode', 'ProvinceCode', 'CountryIso2']
+        for (let ln of ['2', '3']) {
+          if (!addressData[`Line${ln}`]) {
+            this.mutateApplicant({ key: `addrLine${ln}`, value: '' })
+          }
+        }
+        if (addressData['ProvinceCode']) {
+          if (addressData['ProvinceCode'].length > 2) {
+            this.mutateApplicant({ key: 'stateProvinceCd', value: '' })
+            if (!addressData['ProvinceName']) {
+              canadaPostFieldsMapping['ProvinceCode'] = 'addrLine3'
+            } else {
+              delete canadaPostFieldsMapping.ProvinceCode
+              canadaPostFieldsMapping['ProvinceName'] = 'addrLine3'
+            }
+          }
+        } else {
+          delete canadaPostFieldsMapping.ProvinceCode
+          this.mutateApplicant({ key: 'stateProvinceCd', value: '' })
+          if (addressData['ProvinceName']) {
+            canadaPostFieldsMapping['ProvinceName'] = 'addrLine3'
+          }
+        }
+        let fields = Object.keys(canadaPostFieldsMapping)
         for (let field of fields) {
           if (addressData[field]) {
             let value = addressData[field].toUpperCase()
