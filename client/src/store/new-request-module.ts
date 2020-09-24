@@ -144,6 +144,7 @@ export class NewRequestModule extends VuexModule {
   }
   assumedNameOriginal: string = ''
   changesInBaseName: boolean = false
+  conditionsModalVisible: boolean = false
   conflictId: string | null = null
   conversionType: string = ''
   conversionTypeAddToSelect: ConversionTypesI | null = null
@@ -626,7 +627,8 @@ export class NewRequestModule extends VuexModule {
     let consentWords = []
     for (let step in this.requestExaminationOrProvideConsent) {
       if (this.requestExaminationOrProvideConsent[step].obtain_consent) {
-        consentWords.push(this.analysisJSON.issues[step].name_actions[0].word)
+        let words = this.analysisJSON.issues[step].name_actions.map(action => action.word)
+        consentWords = consentWords.concat(words)
       }
     }
     return consentWords
@@ -2141,6 +2143,10 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateNameAnalysisTimedOut (value: boolean) {
     this.nameAnalysisTimedOut = value
+  }
+  @Mutation
+  mutateConditionsModalVisible (value: boolean) {
+    this.conditionsModalVisible = value
   }
 
   getEntities (category) {
