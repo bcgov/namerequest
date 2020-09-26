@@ -1,59 +1,68 @@
 <template>
-  <div style="display: flex; justify-content: space-between; margin-bottom: 15px">
-    <div>
-      <ul style="list-style: none; padding-left: 0">
-        <li>
-          <h4>Requested Name Choices</h4>
-          <ul style="list-style: none; padding-left: 0">
-            <li><span class="choice-indicator" v-if="nameChoices && nameChoices.length > 0">1</span>{{name}}</li>
-            <li v-if="nameChoices[1]"><span class="choice-indicator" v-if="nameChoices && nameChoices.length > 0">
-              2</span>{{nameChoices[1]}}</li>
-            <li v-if="nameChoices[2]"><span class="choice-indicator" v-if="nameChoices && nameChoices.length > 1">
-              3</span>{{nameChoices[2]}}</li>
-          </ul>
-        </li>
-        <li v-if="client">
-          <h4>Client Name</h4>
-          <ul style="list-style: none; padding-left: 0">
-            <li>{{`${client}`}}</li>
-          </ul>
-        </li>
-        <li v-if="contactPerson">
-          <h4>Primary Contact</h4>
-          <ul style="list-style: none; padding-left: 0">
-            <li>{{`${contactPerson}`}}</li>
-            <li>{{applicant.emailAddress}}</li>
-            <li>{{applicant.phoneNumber}}</li>
-          </ul>
-        </li>
-        <li v-if="!contactPerson">
-          <h4>Primary Contact</h4>
-          <ul style="list-style: none; padding-left: 0">
-            <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
-            <li>{{`${applicantName}`}}</li>
-            <li>{{applicant.emailAddress}}</li>
-            <li>{{applicant.phoneNumber}}</li>
-          </ul>
-        </li>
-      </ul>
+  <div>
+    <div style="display: flex; justify-content: space-between; margin-bottom: 15px">
+      <div style="margin: 30px 30px 0">
+        <h4>Requested Name <span v-if="nameChoices && nameChoices.length > 0">Choices</span></h4>
+        <ul style="list-style: none; padding-left: 0">
+          <li v-if="nameChoices && nameChoices.length === 0">{{name}}</li>
+          <li v-if="nameChoices[0]">
+            <span class="choice-indicator" v-if="nameChoices && nameChoices.length > 0">1</span>{{nameChoices[0]}}
+          </li>
+          <li v-if="nameChoices[1]">
+            <span class="choice-indicator" v-if="nameChoices && nameChoices.length > 1">2</span>{{nameChoices[1]}}
+          </li>
+          <li v-if="nameChoices[2]">
+            <span class="choice-indicator" v-if="nameChoices && nameChoices.length > 2">3</span>{{nameChoices[2]}}
+          </li>
+        </ul>
+      </div>
     </div>
-    <div>
-      <h4>Applicant Info</h4>
-      <ul style="list-style: none; padding-left: 0">
-        <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
-        <li >{{`${applicantName}`}}</li>
-        <li>{{`${applicant.addrLine1 ? applicant.addrLine1 : ''} ${applicant.addrLine2 ? applicant.addrLine2 : ''}`}}</li>
-        <li>{{`${applicant.city ? applicant.city : ''}, ${applicant.stateProvinceCd ? applicant.stateProvinceCd : ''}`}}</li>
-        <li>
-          {{`${applicant.countryTypeCd === 'CA' ? 'Canada' : applicant.countryTypeCd}, ${applicant.postalCd ? applicant.postalCd : ''}`}}
-        </li>
-      </ul>
+    <div style="display: flex; justify-content: space-between; margin-bottom: 15px">
+      <div style="margin: 15px 30px 15px">
+        <ul style="list-style: none; padding-left: 0">
+          <li v-if="client">
+            <h4>Client Name</h4>
+            <ul style="list-style: none; padding-left: 0">
+              <li>{{`${client}`}}</li>
+            </ul>
+          </li>
+          <li v-if="contactPerson">
+            <h4>Primary Contact</h4>
+            <ul style="list-style: none; padding-left: 0">
+              <li>{{`${contactPerson}`}}</li>
+              <li>{{applicant.emailAddress}}</li>
+              <li>{{applicant.phoneNumber}}</li>
+            </ul>
+          </li>
+          <li v-if="!contactPerson">
+            <h4>Primary Contact</h4>
+            <ul style="list-style: none; padding-left: 0">
+              <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
+              <li>{{`${applicantName}`}}</li>
+              <li>{{applicant.emailAddress}}</li>
+              <li>{{applicant.phoneNumber}}</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div style="margin: 15px 30px 15px">
+        <h4>Applicant Info</h4>
+        <ul style="list-style: none; padding-left: 0">
+          <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
+          <li >{{`${applicantName}`}}</li>
+          <li>{{`${applicant.addrLine1 ? applicant.addrLine1 : ''} ${applicant.addrLine2 ? applicant.addrLine2 : ''}`}}</li>
+          <li>{{`${applicant.city ? applicant.city : ''}, ${applicant.stateProvinceCd ? applicant.stateProvinceCd : ''}`}}</li>
+          <li>
+            {{`${applicant.countryTypeCd === 'CA' ? 'Canada' : applicant.countryTypeCd}, ${applicant.postalCd ? applicant.postalCd : ''}`}}
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import FeeSummary from '@/components/fee-summary.vue'
+import FeeSummary from '@/components/payment/fee-summary.vue'
 
 import {
   ApplicantI
@@ -68,8 +77,8 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 })
 export default class RequestDetails extends Vue {
   @Prop(Object) applicant: ApplicantI
-  @Prop(Object) nameChoices: {
-    type: any
+  @Prop(Array) nameChoices: {
+    type: any[]
     required: false
   }
   @Prop(String) name: string
@@ -112,5 +121,9 @@ export default class RequestDetails extends Vue {
     align-items: center;
     font-size: 0.8rem;
     font-weight: bold;
+  }
+
+  h4 {
+    font-weight: bold !important;
   }
 </style>

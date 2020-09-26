@@ -5,6 +5,7 @@
       <v-card-text class="copy-normal">
         <request-details
           v-bind:applicant="applicant"
+          v-bind:name="name"
           v-bind:nameChoices="nameChoices"
         />
         <fee-summary
@@ -22,12 +23,14 @@
 </template>
 
 <script lang="ts">
-import FeeSummary from '@/components/fee-summary.vue'
+import { Component, Mixins, Prop, Watch } from 'vue-property-decorator'
+
+import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 
+import newRequestModule, { NewRequestModule } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 import { NameRequestPaymentResponse } from '@/modules/payment/models'
-import newRequestModule, { NewRequestModule } from '@/store/new-request-module'
 
 import * as paymentService from '@/modules/payment/services'
 import * as paymentTypes from '@/modules/payment/store/types'
@@ -39,10 +42,12 @@ import {
   ApplicantI
 } from '@/models'
 
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { PaymentApiError } from '@/modules/payment/services'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
+
+import PaymentMixin from '@/components/payment/payment-mixin'
+import NameRequestMixin from '@/components/mixins/name-request-mixin'
 
 @Component({
   components: {
@@ -57,7 +62,21 @@ import { ErrorI } from '@/modules/error/store/actions'
     }
   }
 })
-export default class PaymentModal extends Vue {
+export default class PaymentModal extends Mixins(NameRequestMixin, PaymentMixin) {
+  @Prop(String) corpType: string
+  @Prop(String) filingType: string
+  @Prop(String) jurisdiction: string
+  // @Prop(String) date: string
+  // @Prop(String) priorityRequest: boolean
+  @Prop({
+    default: {
+      corpType: 'NRO',
+      filingType: filingTypes.NM620,
+      jurisdiction: jurisdictions.BC
+      // date: ''
+      // priorityRequest: 'NRO'
+    }
+  })
   @Watch('isVisible')
   onModalShow (val: boolean, oldVal: string): void {
     if (val) {
@@ -78,12 +97,12 @@ export default class PaymentModal extends Vue {
    */
   async fetchFees () {
     try {
-      const corpType = 'NRO' // We may need to handle more than one type at some point?
+      const { corpType, filingType, jurisdiction } = this
 
       const response = await paymentService.getPaymentFees({
         'corp_type': corpType,
-        'filing_type_code': this.filingType,
-        'jurisdiction': jurisdictions.BC,
+        'filing_type_code': filingType,
+        'jurisdiction': jurisdiction,
         'date': new Date().toISOString(),
         'priority': this.priorityRequest || false
       })
@@ -114,9 +133,10 @@ export default class PaymentModal extends Vue {
     // a businessInfo object, will override values found
     // in the corresponding Name Request
     const req = {
-      paymentInfo: {
+      // Comment this out to use direct pay
+      /* paymentInfo: {
         methodOfPayment: methodOfPayment
-      },
+      }, */
       filingInfo: {
         filingTypes: [
           {
@@ -148,10 +168,10 @@ export default class PaymentModal extends Vue {
       sessionStorage.setItem('nrId', `${nrId}`)
 
       // Redirect user to Service BC Pay Portal
-      // Set the redirect URL to specify OUR payment ID so we can
+      // Set the redirect URL to specify OUR payment ID so we can, something is
       // grab the payment when we're directed back to our application
       const redirectUrl = encodeURIComponent(
-        `${document.baseURI}/?paymentId=${paymentId}`
+        `${document.baseURI}?paymentId=${paymentId}`
       )
 
       // eslint-disable-next-line no-console
@@ -167,128 +187,6 @@ export default class PaymentModal extends Vue {
         await errorModule.setAppError({ id: 'create-payment-error', error: error.message } as ErrorI)
       }
     }
-  }
-
-  get applicant (): Partial<ApplicantI> | undefined {
-    const nameRequest: NewRequestModule = newRequestModule
-    const applicantInfo: Partial<ApplicantI> = nameRequest.applicant || undefined
-    return applicantInfo
-  }
-
-  get isPersonsName () {
-    const nameRequest: NewRequestModule = newRequestModule
-    const isPersonsName: boolean = nameRequest.isPersonsName
-    return isPersonsName
-  }
-
-  get name () {
-    const nameRequest: NewRequestModule = newRequestModule
-    const name: string = nameRequest.name
-    return name
-  }
-
-  /**
-   * eg:
-   * {
-   *     name1: 'ACME Construction',
-   *     name2: 'ACME Home Construction',
-   *     name3: 'ACME Commercial Construction',
-   *     designation1: 'Ltd.',
-   *     designation2: 'Ltd.',
-   *     designation3: 'Ltd.'
-   * }
-   */
-  get nameChoices () {
-    const nameRequest: NewRequestModule = newRequestModule
-    const nameRequestChoices: {} = nameRequest.nameChoices || {}
-
-    /** Test
-     {
-        name1: 'ACME Construction',
-        name2: 'ACME Home Construction',
-        name3: 'ACME Commercial Construction',
-        designation1: 'Ltd.',
-        designation2: 'Ltd.',
-        designation3: 'Ltd.'
-     }
-     */
-    const parseNameChoices = (nameChoices) => {
-      return Object.keys(nameChoices)
-        .reduce((names, key, idx) => {
-          // Key will be either 'name' or 'designation'
-          const nameIdx = key.match(/[\d]+$/)[0]
-          const typeKey = key.substring(0, key.lastIndexOf(nameIdx))
-          names[nameIdx] = names[nameIdx] || { name: undefined, designation: undefined }
-          names[nameIdx][typeKey] = nameChoices[key]
-          return names
-        }, [])
-        .map((choice) => {
-          return (choice.name && choice.designation)
-            ? `${choice.name} ${choice.designation}`
-            : (choice.name && !choice.designation)
-              ? `${choice.name}`
-              : undefined
-        })
-        .filter((name) => !!name)
-    }
-
-    return parseNameChoices(nameRequestChoices)
-  }
-
-  // TODO: Where is this used?
-  get entity_type_cd () {
-    const nameRequest: NewRequestModule = newRequestModule
-    const entity_type_cd: string = nameRequest.entity_type_cd
-    return entity_type_cd
-  }
-
-  get nrData () {
-    const nameRequest: NewRequestModule = newRequestModule
-    const nrData: Partial<any> = nameRequest.nrData || {}
-    return nrData
-  }
-
-  get nr () {
-    const nameRequest: NewRequestModule = newRequestModule
-    const nr: Partial<any> = nameRequest.nr || {}
-    return nr
-  }
-
-  get nrId () {
-    return newRequestModule.nrId
-  }
-
-  get priorityRequest () {
-    const nameRequest: NewRequestModule = newRequestModule
-    const priorityRequest: boolean = nameRequest.priorityRequest
-    return priorityRequest
-  }
-
-  get filingType () {
-    const { priorityRequest } = this
-    let filingType = filingTypes.NM620
-    if (priorityRequest) {
-      // TODO: NM521 isn't working for calculating fees...
-      filingType = filingTypes.NM620
-    }
-
-    return filingType
-  }
-
-  get payment () {
-    return this.$store.getters[paymentTypes.GET_PAYMENT]
-  }
-
-  get paymentId () {
-    return this.$store.getters[paymentTypes.GET_PAYMENT_ID]
-  }
-
-  get paymentDetails () {
-    return this.$store.getters[paymentTypes.GET_PAYMENT_DETAILS]
-  }
-
-  get paymentFees () {
-    return this.$store.getters[paymentTypes.GET_PAYMENT_FEES]
   }
 }
 </script>

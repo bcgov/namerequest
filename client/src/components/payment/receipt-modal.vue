@@ -3,17 +3,13 @@
     <v-card class="pa-9">
       <v-card-text class="h3">Payment Successful</v-card-text>
       <v-card-text class="copy-normal">
-        <request-details
+        <payment-confirm
+          v-bind:nrNum="nrNum"
           v-bind:applicant="applicant"
           v-bind:nameChoices="nameChoices"
           v-bind:name="name"
+          v-bind:invoice="paymentInvoice"
         />
-        <div>
-          <invoice
-            :key="paymentInvoice.id"
-            v-bind:invoice="paymentInvoice"
-          />
-        </div>
       </v-card-text>
       <v-card-actions>
         <!--<span>Time Remaining - 10:00</span>-->
@@ -26,22 +22,23 @@
 </template>
 
 <script lang="ts">
-import Invoice from '@/components/invoice.vue'
+import { Component, Mixins, Vue, Watch } from 'vue-property-decorator'
+
+import PaymentConfirm from '@/components/payment/payment-confirm.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 
-import { ApplicantI } from '@/models'
-
-import { PaymentApiError } from '@/modules/payment/services/payment'
 import paymentModule from '@/modules/payment'
+import { PaymentApiError } from '@/modules/payment/services/payment'
 import { NameRequestPayment, NameRequestPaymentResponse } from '@/modules/payment/models'
-import newRequestModule, { NewRequestModule, ROLLBACK_ACTIONS as rollbackActions } from '@/store/new-request-module'
+import newRequestModule, { ROLLBACK_ACTIONS as rollbackActions } from '@/store/new-request-module'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 
 import * as paymentService from '@/modules/payment/services'
 import * as paymentTypes from '@/modules/payment/store/types'
 
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import PaymentMixin from '@/components/payment/payment-mixin'
+import NameRequestMixin from '@/components/mixins/name-request-mixin'
 
 // TODO: Finish the message component
 // import message from "@/components/common/error/message.vue"
@@ -55,12 +52,12 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
  *
  * Make sure this is set to false when you're done!
  */
-const DEBUG_RECEIPT = true
+const DEBUG_RECEIPT = false
 
 @Component({
   components: {
     RequestDetails,
-    Invoice
+    PaymentConfirm
   },
   data: () => ({
   }),
@@ -68,7 +65,7 @@ const DEBUG_RECEIPT = true
     isVisible: () => paymentModule[paymentTypes.RECEIPT_MODAL_IS_VISIBLE]
   }
 })
-export default class ReceiptModal extends Vue {
+export default class ReceiptModal extends Mixins(NameRequestMixin, PaymentMixin) {
   mounted () {
     const { sessionPaymentId } = this
     // Check for a payment ID in sessionStorage, if it has been set, we've been redirected away from the application,
@@ -124,84 +121,6 @@ export default class ReceiptModal extends Vue {
     await this.fetchReceiptPdf(paymentToken, paymentInvoiceId, data)
   }
 
-  get nr () {
-    const nameRequest: NewRequestModule = newRequestModule
-    const nr: Partial<any> = nameRequest.nr || {}
-    return nr
-  }
-
-  get nrId () {
-    return newRequestModule.nrId
-  }
-
-  get applicant (): Partial<ApplicantI> | undefined {
-    const nameRequest: NewRequestModule = newRequestModule
-    const applicantInfo: Partial<ApplicantI> = nameRequest.applicant || undefined
-    return applicantInfo
-  }
-
-  get name () {
-    const nameRequest: NewRequestModule = newRequestModule
-    const name: string = nameRequest.name
-    return name
-  }
-
-  /**
-   * eg:
-   * {
-   *     name1: 'ACME Construction',
-   *     name2: 'ACME Home Construction',
-   *     name3: 'ACME Commercial Construction',
-   *     designation1: 'Ltd.',
-   *     designation2: 'Ltd.',
-   *     designation3: 'Ltd.'
-   * }
-   */
-  get nameChoices () {
-    const nameRequest: NewRequestModule = newRequestModule
-    const nameRequestChoices: {} = nameRequest.nameChoices || {}
-
-    /** Test
-     {
-        name1: 'ACME Construction',
-        name2: 'ACME Home Construction',
-        name3: 'ACME Commercial Construction',
-        designation1: 'Ltd.',
-        designation2: 'Ltd.',
-        designation3: 'Ltd.'
-     }
-     */
-    const parseNameChoices = (nameChoices) => {
-      return Object.keys(nameChoices)
-        .reduce((names, key, idx) => {
-          // Key will be either 'name' or 'designation'
-          const nameIdx = key.match(/[\d]+$/)[0]
-          const typeKey = key.substring(0, key.lastIndexOf(nameIdx))
-          names[nameIdx] = names[nameIdx] || { name: undefined, designation: undefined }
-          names[nameIdx][typeKey] = nameChoices[key]
-          return names
-        }, [])
-        .map((choice) => {
-          return (choice.name && choice.designation)
-            ? `${choice.name} ${choice.designation}`
-            : (choice.name && !choice.designation)
-              ? `${choice.name}`
-              : undefined
-        })
-        .filter((name) => !!name)
-    }
-
-    return parseNameChoices(nameRequestChoices)
-  }
-
-  get paymentToken () {
-    return paymentModule[paymentTypes.GET_PAYMENT_TOKEN]
-  }
-
-  get paymentRequest () {
-    return this.$store.getters[paymentTypes.GET_PAYMENT_REQUEST]
-  }
-
   get paymentInProgress (): boolean {
     return (sessionStorage.getItem('paymentInProgress') === 'true')
   }
@@ -224,16 +143,8 @@ export default class ReceiptModal extends Vue {
       : undefined
   }
 
-  get paymentInvoice () {
-    return this.$store.getters[paymentTypes.GET_PAYMENT_INVOICE]
-  }
-
   get paymentInvoiceId () {
     return this.paymentInvoice ? this.paymentInvoice.id : undefined
-  }
-
-  get paymentReceipt () {
-    return this.$store.getters[paymentTypes.GET_PAYMENT_RECEIPT]
   }
 
   async fetchData (clearSession: boolean = true) {
