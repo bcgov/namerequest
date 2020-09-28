@@ -99,20 +99,7 @@ export default class ExistingRequstSearch extends Vue {
     let data = this.existingRequestSearch
     return (data.nrNum && (data.emailAddress || data.phoneNumber))
   }
-  reformatNR () {
-    this.$nextTick(function () {
-      if (this.existingRequestSearch.nrNum) {
-        // let number = this.existingRequestSearch.nrNum.trim().replace(/((([Nn][Rr])(\s*))|^(\d+))/, 'NR' + '$5')
-        // TODO: Reformat number if necessary, API will accept whatever format
-        let number = this.existingRequestSearch.nrNum
-        if (number) {
-          this.setExistingRequestSearch('nrNum', number)
-        }
-      }
-    })
-  }
   handleSubmit () {
-    this.reformatNR()
     newReqModule.getNameRequests()
   }
   setExistingRequestSearch (key, value) {

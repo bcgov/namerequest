@@ -9,6 +9,7 @@
           <!--FIRST NAME, LAST NAME, MIDDLE NAME-->
           <v-row>
             <v-col cols="4">
+              <label for="lastname" class="hidden">Last Name</label>
               <v-text-field :messages="messages['lastName']"
                             :rules="requiredRules"
                             :value="applicant.lastName"
@@ -20,23 +21,27 @@
                             height="50"
                             hide-details="auto"
                             id="lastname"
+                            name="lastname"
                             placeholder="Last Name" />
             </v-col>
             <v-col cols="4" >
+              <label for="firstname" class="hidden">First Name</label>
               <v-text-field :messages="messages['firstName']"
                             :rules="requiredRules"
                             :value="applicant.firstName"
-                            @blur="message21s = {}"
+                            @blur="messages = {}"
                             @focus="handleFocus('firstName', 'First Name')"
                             @input="updateApplicant('firstName', $event)"
                             dense
                             filled
                             height="50"
                             hide-details="auto"
-                            id="firstName"
+                            id="firstname"
+                            name="firstname"
                             placeholder="First Name" />
             </v-col>
             <v-col cols="4">
+              <label for="middlename" class="hidden">Middle Name (Optional)</label>
               <v-text-field :messages="messages['middleName']"
                             :value="applicant.middleName"
                             @blur="messages = {}"
@@ -46,6 +51,8 @@
                             filled
                             height="50"
                             hide-details="auto"
+                            id="middlename"
+                            name="middlename"
                             placeholder="Middle Name (Optional)" />
             </v-col>
           </v-row>
@@ -66,12 +73,14 @@
                                 :value="applicant.addrLine1"
                                 @blur="blurAddress1"
                                 @input="updateApplicant('addrLine1', $event)"
+                                autocomplete="off"
                                 class="pa-0"
                                 dense
                                 filled
                                 height="50"
                                 hide-details="auto"
-                                id="Line1"
+                                id="line1"
+                                name="Street Address"
                                 placeholder="Start typing an address here..."
                                 ref="Line1"
                                 single-line />
@@ -95,17 +104,17 @@
                                style="cursor: pointer"
                                v-for="(address, i) of addressSuggestions">
                     <a :ref="address.Id"
-                       href="#"
-                       @focus="highlightedSuggestion = address.Id"
                        @click.prevent="queryAddress(address.Id)"
-                       class="link-sm-dk-text">{{ address.Text + ', ' + address.Description }}</a>
+                       @focus="highlightedSuggestion = address.Id"
+                       class="link-sm-dk-text"
+                       href="#">{{ address.Text + ', ' + address.Description }}</a>
                   </v-list-item>
                   <v-divider class="mb-2"/>
                   <v-list-item>
                     <v-container class="ma-0 pa-0 copy-small">
                       <v-row>
                         <v-col class="ma-0 px-6 pb-4 text-right"
-                               align-self="center"><h5>Country</h5></v-col>
+                               align-self="center"><label class="h5" for="country2">Country</label></v-col>
                         <v-col cols="5" class="ma-0 pa-0"><v-select :items="countryOptions"
                                                                     :menu-props="{ auto: true, eager: true }"
                                                                     :value="applicant.countryTypeCd"
@@ -116,7 +125,8 @@
                                                                     eager
                                                                     filled
                                                                     hide-details
-                                                                    id="Country2"
+                                                                    id="country2"
+                                                                    name="country2"
                                                                     ref="Country2" />
                         </v-col>
                       </v-row>
@@ -128,6 +138,7 @@
           </v-row>
           <v-row class="mt-2" v-if="applicant.addrLine1 && !showAddressMenu">
             <v-col cols="12" class="py-0 my-0">
+              <label for="line2" class="hidden">Additional Street Address (Optional)</label>
               <v-text-field :messages="messages['Line2']"
                             :value="applicant.addrLine2"
                             @blur="messages = {}"
@@ -137,13 +148,15 @@
                             filled
                             height="50"
                             hide-details="auto"
-                            id="Line2"
+                            id="1ine2"
+                            name="line2"
                             placeholder="Additional Street Address (Optional)"
                             ref="Line2" />
             </v-col>
           </v-row>
-          <v-row class="mt-2" v-if="applicant.addrLine2 && !showAddressMenu">
+          <v-row class="mt-2" v-if="(applicant.addrLine2 || applicant.addrLine3) && !showAddressMenu">
             <v-col cols="12" class="py-0 my-0">
+              <label for="line3" class="hidden">Additional Street Address (Optional)</label>
               <v-text-field :messages="messages['Line3']"
                             :value="applicant.addrLine3"
                             @blur="messages = {}"
@@ -153,15 +166,16 @@
                             filled
                             height="50"
                             hide-details="auto"
-                            id="Line3"
+                            id="line3"
+                            name="line3"
                             placeholder="Additional Street Address (Optional)"
                             ref="Line3" />
             </v-col>
           </v-row>
           <v-row class="mt-2">
             <v-col cols="6" class="py-0 my-0">
-              <v-text-field
-                            :messages="messages['City']"
+              <label for="city" class="hidden">City</label>
+              <v-text-field :messages="messages['City']"
                             :rules="requiredRules"
                             :value="applicant.city"
                             @blur="messages = {}"
@@ -171,85 +185,120 @@
                             filled
                             height="50"
                             hide-details="auto"
-                            id="City"
+                            id="city"
+                            name="city"
                             placeholder="City"
                             ref="City"
               />
             </v-col>
-            <v-col cols="6" class="py-0 my-0">
+            <v-col cols="6" class="py-0 my-0" v-if="applicant.countryTypeCd === 'CA'">
+              <label for="province" class="hidden">Province</label>
               <v-select :items="provinceOptions"
+                        :messages="messages['Province']"
                         :rules="requiredRules"
                         :value="applicant.stateProvinceCd"
                         @input="updateApplicant('stateProvinceCd', $event)"
+                        @blur="messages = {}"
+                        @focus="handleFocus('Province', 'Province')"
                         dense
                         filled
                         height="50"
                         hide-details="auto"
-                        id="Province"
+                        id="province"
+                        name="province"
                         placeholder="Province"
-                        ref="Province"
-                        v-if="applicant.countryTypeCd === 'CA'" />
-              <v-text-field :rules="requiredRules"
+                        ref="Province" />
+            </v-col>
+            <v-col cols="6" class="py-0 my-0" v-else-if="applicant.countryTypeCd === 'US'">
+              <label for="state" class="hidden">State</label>
+              <v-select :items="$USAStateCodes"
+                        :messages="messages['State']"
+                        :rules="requiredRules"
+                        :value="applicant.stateProvinceCd"
+                        @input="updateApplicant('stateProvinceCd', $event)"
+                        @blur="messages = {}"
+                        @focus="handleFocus('State', 'State')"
+                        dense
+                        filled
+                        height="50"
+                        hide-details="auto"
+                        id="state"
+                        name="state"
+                        placeholder="State"
+                        ref="state" />
+            </v-col>
+            <v-col cols="6" class="py-0 my-0" v-else>
+              <label for="state" class="hidden">Province/State (Optional, 2 letters max)</label>
+              <v-text-field :messages="messages['Province']"
+                            :rules="provStateRules"
                             :value="applicant.stateProvinceCd"
                             @blur="messages = {}"
-                            @focus="handleFocus('Province', 'Province/State')"
+                            @focus="handleFocus('Province', 'Province/State (Optional, 2 letters max)')"
                             @input="updateApplicant('stateProvinceCd', $event)"
                             dense
                             filled
                             height="50"
                             hide-details="auto"
-                            id="Province"
-                            placeholder="Province/State"
-                            ref="Province"
-                            v-else />
+                            id="state"
+                            name="state"
+                            placeholder="Province/State (Optional, 2 letters max)"
+                            ref="state" />
             </v-col>
           </v-row>
           <v-row class="mt-2">
             <v-col cols="6" class="py-0 my-0">
+              <label for="country" class="hidden">Country</label>
               <v-select :items="countryOptions"
-                        :rules="requiredRules"
-                        dense
                         :menu-props="{eager: true, auto: true}"
-                        filled
-                        eager
+                        :rules="requiredRules"
+                        :value="applicant.countryTypeCd"
+                        @input="updateApplicant('countryTypeCd', $event)"
                         cache-items
+                        dense
+                        eager
+                        filled
                         height="50"
                         hide-details="auto"
-                        id="Country"
+                        id="country"
+                        name="country"
                         placeholder="Country"
-                        ref="Country"
-                        @input="updateApplicant('countryTypeCd', $event)"
-                        :value="applicant.countryTypeCd" />
+                        ref="Country" />
             </v-col>
             <v-col cols="6" class="py-0 my-0">
+              <label for="postalcode" class="hidden">Postal/Zip Code</label>
               <v-text-field :messages="messages['PostalCode']"
                             :rules="requiredRules"
+                            :value="applicant.postalCd"
                             @blur="messages = {}"
                             @focus="handleFocus('PostalCode', 'Postal / Zip Code')"
+                            @input="updateApplicant('postalCd', $event)"
                             dense
                             filled
                             height="50"
                             hide-details="auto"
-                            placeholder="Postal/Zip Code"
-                            @input="updateApplicant('postalCd', $event)"
-                            :value="applicant.postalCd" />
+                            id="postalcode"
+                            name="postalcode"
+                            placeholder="Postal/Zip Code" />
             </v-col>
           </v-row>
           <v-row class="mt-2" v-if="showXproJurisdiction && showAllFields">
             <v-col cols="6" class="py-0 my-0">
+              <label for="xprojurisdiction" class="hidden">Business Jurisdiction</label>
               <v-select :messages="messages['xproJurisdiction']"
+                        :items="jurisdictionOptions"
                         :rules="requiredRules"
+                        :value="nrData.xproJurisdiction"
                         @blur="messages = {}"
                         @focus="handleFocus('xproJurisdiction', 'Business xproJurisdiction')"
+                        @input="updateBusinessInfo('xproJurisdiction', $event)"
                         dense
-                        filled
                         eager
-                        :items="jurisdictionOptions"
+                        filled
                         height="50"
                         hide-details="auto"
-                        placeholder="Business xproJurisdiction"
-                        @input="updateBusinessInfo('xproJurisdiction', $event)"
-                        :value="nrData.xproJurisdiction" />
+                        id="xprojurisdiction"
+                        name="xprojurisdiction"
+                        placeholder="Business Jurisdiction" />
             </v-col>
             <v-col cols="6" class="py-0 my-0" />
           </v-row>
@@ -292,10 +341,20 @@ export default class ApplicantInfo1 extends Vue {
   requiredRules = [
     v => !!v || 'Required field'
   ]
+  provStateRules = [
+    v => typeof v === 'string' || 'Must be letters only',
+    v => v.length <= 2 || 'Max 2 characters'
+  ]
   showAddressMenu: boolean = false
   step1Valid: boolean = false
   debouncedGetAddressSuggestions = _debounce(this.getAddressSuggestions, 400)
 
+  @Watch('countryTypeCd')
+  handleProvince (newVal, oldVal) {
+    if (newVal !== oldVal) {
+      newReqModule.updateApplicantDetails({ key: 'stateProvinceCd', value: '' })
+    }
+  }
   @Watch('showAddressMenu')
   supressMenu (newVal, oldVal) {
     if (newVal) {
@@ -306,7 +365,6 @@ export default class ApplicantInfo1 extends Vue {
     let ref: any = this.$refs.Line1
     ref.focus()
   }
-
   @Watch('xproJurisdiction')
   watchXproJurisdiction (newVal, oldVal) {
     if (newVal !== oldVal) {
@@ -384,6 +442,9 @@ export default class ApplicantInfo1 extends Vue {
     }
     return null
   }
+  get countryTypeCd () {
+    return (newReqModule.applicant || {}).countryTypeCd || ''
+  }
   get submissionType () {
     return newReqModule.submissionType
   }
@@ -423,6 +484,9 @@ export default class ApplicantInfo1 extends Vue {
     if (!this.showAddressMenu) {
       return event
     }
+    if (this.showAddressMenu && event.key === 'Escape') {
+      this.showAddressMenu = false
+    }
     if (this.addressSuggestions && this.showAddressMenu) {
       if (event.key === 'Tab') {
         event.preventDefault()
@@ -456,6 +520,7 @@ export default class ApplicantInfo1 extends Vue {
         this.queryAddress(this.highlightedSuggestion)
         this.showAddressMenu = false
       }
+      return event
     }
   }
   queryAddress (id) {

@@ -12,6 +12,7 @@ export interface AnalysisJSONI {
 export interface ApplicantI {
   addrLine1: string
   addrLine2?: string
+  addrLine3?: string
   city: string
   clientFirstName?: string
   clientLastName?: string
