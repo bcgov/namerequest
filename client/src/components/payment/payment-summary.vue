@@ -1,12 +1,12 @@
 <template>
-  <v-card>
+  <v-card class='mb-5' v-if="invoice">
     <header class='font-weight-bold px-3 py-3'>
       <slot name='header'>
         <span>
           <small>{{new Date(invoice.created_on).toLocaleDateString('en-US')}}</small>
         </span>
         <span style="float: right">
-          <small><small>Ref No.</small></small> 12344{{invoice.references[0].reference_number}}
+          <small><small>Invoice No.</small></small> {{invoice.references[0].invoice_number}}
         </span>
       </slot>
     </header>
@@ -22,7 +22,7 @@
       </li>
       <li class='container fee-list__item'>
         <div class='fee-list__item-name'>Status</div>
-        <div class='fee-list__item-value'>Success{{invoice.references[0].status_code}}</div>
+        <div class='fee-list__item-value'>{{invoice.references[0].status_code}}</div>
       </li>
       <li class='container fee-list__item'>
         <div class='fee-list__item-name'>Receipt</div>
@@ -39,7 +39,7 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import '../../plugins/vuetify'
 
-import { ApplicantI } from '@/models'
+import { NameRequestPaymentResponse } from '@/modules/payment/models'
 
 import RequestDetails from '@/components/common/request-details.vue'
 import PaymentMixin from '@/components/payment/payment-mixin'
@@ -50,18 +50,15 @@ import PaymentMixin from '@/components/payment/payment-mixin'
   }
 })
 export default class PaymentSummary extends Mixins(PaymentMixin) {
-  @Prop(String) nrNum: string
+  @Prop(Number) id: number
+  @Prop(Object) summary: any
   @Prop(Object) invoice: any
-  @Prop(Object) applicant: ApplicantI
-  @Prop(Array) nameChoices: {
-    type: any[]
-    required: false
-  }
-  @Prop(String) name: string
-  // @Prop(Boolean) priorityRequest: boolean
-  // @Prop(Object) payment: any
-
   protected fetchError: string = ''
+
+  async downloadReceipt () {
+    const { id } = this
+    await this.fetchReceiptPdf(id)
+  }
 }
 </script>
 

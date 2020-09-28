@@ -45,6 +45,21 @@ export default class PaymentMixin extends Vue {
     return this.$store.getters[paymentTypes.GET_PAYMENT_FEES]
   }
 
+  get payments () {
+    return this.$store.getters[paymentTypes.GET_PAYMENTS]
+  }
+
+  get paymentSummaries () {
+    const payments = this.$store.getters[paymentTypes.GET_PAYMENTS]
+    const summaries = payments.map(payment => ({
+      id: payment.id,
+      payment: payment,
+      // TODO: Just need to get this thing working, fix this later
+      invoice: payment.sbcPayment.invoices[0]
+    }))
+    return summaries
+  }
+
   /**
    * This uses snake_case GET params
    */
@@ -69,8 +84,8 @@ export default class PaymentMixin extends Vue {
   }
 
   async createPayment (nrId, filingType, priorityRequest) {
-    // Grab the applicant info from state
-    const methodOfPayment = 'CC' // We may need to handle more than one type at some point?
+    // Comment this out to use direct pay
+    // const methodOfPayment = 'CC' // We may need to handle more than one type at some point?
 
     if (!nrId) {
       // eslint-disable-next-line no-console

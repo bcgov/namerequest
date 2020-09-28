@@ -1,14 +1,13 @@
 <template>
-  <v-dialog max-width="40%" :value="isVisible" persistent>
+  <v-dialog max-width="40%" :value="isVisible" persistent v-if="payments">
     <v-card class="pa-9">
       <v-card-text class="h3">Payment History</v-card-text>
       <v-card-text class="copy-normal">
-        <payment-summary
-          v-bind:nrNum="nrNum"
-          v-bind:applicant="applicant"
-          v-bind:nameChoices="nameChoices"
-          v-bind:name="name"
-          v-bind:invoice="paymentInvoice"
+        <payment-summary v-for="summary in paymentSummaries"
+          v-bind:key="summary.id"
+          v-bind:id="summary.id"
+          v-bind:summary="summary.payment"
+          v-bind:invoice="summary.invoice"
         />
       </v-card-text>
       <v-card-actions>
@@ -33,17 +32,6 @@ import PaymentMixin from '@/components/payment/payment-mixin'
 import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
 
-/**
- * Makes debugging the receipt easier.
- * Usage:
- * Set to true and complete a name reservation.
- * The session information for the payment won't be cleared
- * which activates the receipt modal.
- *
- * Make sure this is set to false when you're done!
- */
-const DEBUG_RECEIPT = false
-
 @Component({
   components: {
     RequestDetails,
@@ -56,21 +44,11 @@ const DEBUG_RECEIPT = false
   }
 })
 export default class PaymentHistoryModal extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
-  mounted () {
-    const { sessionPaymentId } = this
-    // Check for a payment ID in sessionStorage, if it has been set, we've been redirected away from the application,
-    // and need to rehydrate the application using the payment ID (for now, it could be some other token too)!
-    // TODO: Set the timer here!
-    if (sessionPaymentId) {
-      // TODO: Remember to clear the session when we're done building this out
-      this.fetchData(!DEBUG_RECEIPT)
-        .then(() => {
-        })
-    }
-  }
-
   @Watch('isVisible')
   onModalShow (val: boolean, oldVal: string): void {
+    this.fetchData()
+      .then(() => {
+      })
   }
 
   async showModal () {
@@ -81,33 +59,14 @@ export default class PaymentHistoryModal extends Mixins(NameRequestMixin, Paymen
     await paymentModule.togglePaymentHistoryModal(false)
   }
 
-  async redirectToStart () {
-    window.location.href = document.baseURI
-  }
-
   /**
    * NOTE: This method makes use of the PaymentSectionMixin class!
    */
-  async fetchData (clearSession: boolean = true) {
-    const { sessionPaymentId, sessionNrId } = this
-
-    // TODO: We need to make sure we get the correct NR number here? Or somewhere soon...
-    if (clearSession) {
-      // TODO: Remove this one, we don't want to set the payment to session once we're done!
-      // TODO: Or... we could add a debug payments mode?
-      sessionStorage.removeItem('payment')
-      // Clear the sessionStorage variables
-      sessionStorage.removeItem('paymentInProgress')
-      sessionStorage.removeItem('paymentId')
-      sessionStorage.removeItem('paymentToken')
-      sessionStorage.removeItem('nrId')
-    }
-
-    if (sessionNrId && sessionPaymentId) {
-      // Get the payment
-      await this.fetchNr(sessionNrId)
-      // Get the payment
-      await this.fetchNrPayments(sessionNrId)
+  async fetchData () {
+    const { nrId } = this
+    if (nrId) {
+      // Get the payments if an NR ID has been set!
+      await this.fetchNrPayments(nrId)
     }
   }
 }
