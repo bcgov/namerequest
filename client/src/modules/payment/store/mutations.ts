@@ -6,6 +6,9 @@ export default {
   [types.TOGGLE_PAYMENT_MODAL]: (state, isVisible: boolean) => {
     state[STATE_KEY].isPaymentVisible = isVisible || false
   },
+  [types.TOGGLE_PAYMENT_HISTORY_MODAL]: (state, isVisible: boolean) => {
+    state[STATE_KEY].isPaymentHistoryVisible = isVisible || false
+  },
   [types.TOGGLE_UPGRADE_MODAL]: (state, isVisible: boolean) => {
     state[STATE_KEY].isUpgradeVisible = isVisible || false
   },
@@ -30,8 +33,8 @@ export default {
   [types.SET_PAYMENT]: (state, payment: any) => {
     state[STATE_KEY].payment = payment || {}
   },
-  [types.TOGGLE_RECEIPT_MODAL]: (state, isVisible: boolean) => {
-    state[STATE_KEY].isReceiptVisible = isVisible || false
+  [types.TOGGLE_PAYMENT_COMPLETE_MODAL]: (state, isVisible: boolean) => {
+    state[STATE_KEY].isPaymentCompleteVisible = isVisible || false
   },
   [types.SET_PAYMENT_INVOICE]: (state, invoice: any) => {
     state[STATE_KEY].invoice = invoice || {}

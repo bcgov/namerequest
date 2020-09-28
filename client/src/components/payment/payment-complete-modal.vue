@@ -38,6 +38,7 @@ import * as paymentService from '@/modules/payment/services'
 import * as paymentTypes from '@/modules/payment/store/types'
 
 import PaymentMixin from '@/components/payment/payment-mixin'
+import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
 
 // TODO: Finish the message component
@@ -62,10 +63,10 @@ const DEBUG_RECEIPT = false
   data: () => ({
   }),
   computed: {
-    isVisible: () => paymentModule[paymentTypes.RECEIPT_MODAL_IS_VISIBLE]
+    isVisible: () => paymentModule[paymentTypes.PAYMENT_COMPLETE_MODAL_IS_VISIBLE]
   }
 })
-export default class ReceiptModal extends Mixins(NameRequestMixin, PaymentMixin) {
+export default class PaymentCompleteModal extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
   mounted () {
     const { sessionPaymentId } = this
     // Check for a payment ID in sessionStorage, if it has been set, we've been redirected away from the application,
@@ -101,52 +102,8 @@ export default class ReceiptModal extends Mixins(NameRequestMixin, PaymentMixin)
   }
 
   /**
-   * TODO: We still need to switch the NR number for this to work with Oracle enabled
+   * NOTE: This method makes use of the PaymentSectionMixin class!
    */
-  async downloadReceipt () {
-    const { paymentToken, paymentInvoiceId, paymentRequest } = this
-    const {
-      businessInfo = { businessName: null, businessIdentifier: null }, filingInfo = { date: null }
-    } = paymentRequest
-    await this.fetchData(!DEBUG_RECEIPT)
-
-    const data = {
-      // 'corpType': businessInfo.corpType,
-      'corpName': businessInfo.businessName,
-      // 'businessNumber': businessInfo.businessIdentifier, // TODO: Is this the same as business identifier?
-      // 'filingIdentifier': businessInfo.businessIdentifier, // TODO: Is this the same as business identifier?
-      'filingDateTime': filingInfo.date // TODO: Is this a date or a datetime?
-    }
-
-    await this.fetchReceiptPdf(paymentToken, paymentInvoiceId, data)
-  }
-
-  get paymentInProgress (): boolean {
-    return (sessionStorage.getItem('paymentInProgress') === 'true')
-  }
-
-  get sessionPaymentId () {
-    return (this.paymentInProgress && sessionStorage.getItem('paymentId'))
-      ? parseInt(sessionStorage.getItem('paymentId'))
-      : undefined
-  }
-
-  get sessionPaymentToken () {
-    return (this.paymentInProgress && sessionStorage.getItem('paymentToken'))
-      ? sessionStorage.getItem('paymentToken')
-      : undefined
-  }
-
-  get sessionNrId () {
-    return (this.paymentInProgress && sessionStorage.getItem('nrId'))
-      ? sessionStorage.getItem('nrId')
-      : undefined
-  }
-
-  get paymentInvoiceId () {
-    return this.paymentInvoice ? this.paymentInvoice.id : undefined
-  }
-
   async fetchData (clearSession: boolean = true) {
     const { sessionPaymentId, sessionNrId } = this
 
@@ -170,27 +127,6 @@ export default class ReceiptModal extends Mixins(NameRequestMixin, PaymentMixin)
     }
   }
 
-  async fetchNrPayment (nrId, paymentId) {
-    try {
-      const paymentResponse: NameRequestPaymentResponse = await paymentService.getNameRequestPayment(nrId, paymentId, {})
-      const { payment, sbcPayment = { invoices: [] }, token, statusCode, completionDate } = paymentResponse
-
-      await paymentModule.setPayment(payment)
-      await paymentModule.setPaymentInvoice(sbcPayment.invoices[0])
-    } catch (error) {
-      if (error instanceof PaymentApiError) {
-        await errorModule.setAppError({ id: 'payment-api-error', error: error.message } as ErrorI)
-      } else {
-        await errorModule.setAppError({ id: 'fetch-nr-payment-error', error: error.message } as ErrorI)
-      }
-    }
-  }
-
-  async fetchNr (nrId) {
-    await newRequestModule.getNameReservation(nrId)
-    // TODO: Display an error modal HERE if no NR response!
-  }
-
   async completePayment (paymentId) {
     const { nrId } = this
 
@@ -210,53 +146,6 @@ export default class ReceiptModal extends Mixins(NameRequestMixin, PaymentMixin)
       await errorModule.setAppErrors(result.paymentErrors)
       // Cancel the NR using the rollback endpoint
       await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
-    }
-  }
-
-  /**
-   * Not currently in use... but might be useful later
-   * @param paymentIdentifier
-   * @param invoiceId
-   */
-  async fetchInvoice (paymentIdentifier, invoiceId) {
-    const response = await paymentService.getInvoiceRequest(paymentIdentifier, {
-      'invoice_id': invoiceId
-    })
-    await paymentModule.setPaymentInvoice(response)
-  }
-
-  /**
-   * Not currently in use... right now receipt data isn't exposed anywhere,
-   * there's just the PDF option in the Service BC Pay API
-   * @param paymentIdentifier
-   * @param invoiceId
-   */
-  async fetchReceipt (paymentIdentifier, invoiceId) {
-    const response = await paymentService.getReceiptRequest(paymentIdentifier, invoiceId, {})
-    await paymentModule.setPaymentReceipt(response)
-  }
-
-  /**
-   * Grab the receipt PDF and download / display it for the user...
-   * @param paymentIdentifier
-   * @param invoiceId
-   * @param data
-   */
-  async fetchReceiptPdf (paymentIdentifier, invoiceId, data) {
-    try {
-      const response = await paymentService.getReceiptRequest(paymentIdentifier, invoiceId, data)
-      const url = window.URL.createObjectURL(new Blob([response]))
-      const link = document.createElement('a')
-      link.href = url
-      link.setAttribute('download', `payment-invoice-${invoiceId}.pdf`)
-      document.body.appendChild(link)
-      link.click()
-    } catch (error) {
-      if (error instanceof PaymentApiError) {
-        await errorModule.setAppError({ id: 'fetch-receipt-pdf-api-error', error: error.message } as ErrorI)
-      } else {
-        await errorModule.setAppError({ id: 'fetch-receipt-pdf-error', error: error.message } as ErrorI)
-      }
     }
   }
 }

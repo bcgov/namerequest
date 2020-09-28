@@ -9,8 +9,9 @@ export const STATE_KEY = 'payment'
 const state = {
   [STATE_KEY]: {
     isPaymentVisible: false,
+    isPaymentHistoryVisible: false,
     isUpgradeVisible: false,
-    isReceiptVisible: false,
+    isPaymentCompleteVisible: false,
     isProcessing: false,
     paymentTimeoutTimer: undefined,
     filingTypeCode: filingTypes.NM606,

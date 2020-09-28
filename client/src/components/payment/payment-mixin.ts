@@ -9,6 +9,7 @@ import { NameRequestPaymentResponse } from '@/modules/payment/models'
 import { PaymentApiError } from '@/modules/payment/services'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
+import newRequestModule from "@/store/new-request-module"
 
 @Component
 export default class PaymentMixin extends Vue {
@@ -134,6 +135,54 @@ export default class PaymentMixin extends Vue {
         await errorModule.setAppError({ id: 'payment-api-error', error: error.message } as ErrorI)
       } else {
         await errorModule.setAppError({ id: 'create-payment-error', error: error.message } as ErrorI)
+      }
+    }
+  }
+
+  async downloadReceipt () {
+    const { paymentId } = this
+    await this.fetchReceiptPdf(paymentId)
+  }
+
+  /**
+   * Grab the receipt PDF and download / display it for the user...
+   * @param paymentId
+   */
+  async fetchReceiptPdf (paymentId) {
+    try {
+      const response = await paymentService.getReceiptRequest(paymentId)
+      const url = window.URL.createObjectURL(new Blob([response]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `payment-receipt-${paymentId}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+    } catch (error) {
+      if (error instanceof PaymentApiError) {
+        await errorModule.setAppError({ id: 'fetch-receipt-pdf-api-error', error: error.message } as ErrorI)
+      } else {
+        await errorModule.setAppError({ id: 'fetch-receipt-pdf-error', error: error.message } as ErrorI)
+      }
+    }
+  }
+
+  async fetchNr (nrId) {
+    await newRequestModule.getNameReservation(nrId)
+    // TODO: Display an error modal HERE if no NR response!
+  }
+
+  async fetchNrPayment (nrId, paymentId) {
+    try {
+      const paymentResponse: NameRequestPaymentResponse = await paymentService.getNameRequestPayment(nrId, paymentId, {})
+      const { payment, sbcPayment = { invoices: [] }, token, statusCode, completionDate } = paymentResponse
+
+      await paymentModule.setPayment(payment)
+      await paymentModule.setPaymentInvoice(sbcPayment.invoices[0])
+    } catch (error) {
+      if (error instanceof PaymentApiError) {
+        await errorModule.setAppError({ id: 'payment-api-error', error: error.message } as ErrorI)
+      } else {
+        await errorModule.setAppError({ id: 'fetch-nr-payment-error', error: error.message } as ErrorI)
       }
     }
   }

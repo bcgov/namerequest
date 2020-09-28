@@ -12,7 +12,7 @@
     <PickRequestType />
     <PaymentModal />
     <UpgradeModal />
-    <ReceiptModal />
+    <PaymentCompleteModal />
     <IncorporateLoginModal />
     <AffiliationErrorModal />
     <ApiErrorModal />
@@ -27,7 +27,7 @@ import PickEntityOrConversion from '@/components/modals/pick-entity-or-conversio
 import PickRequestType from '@/components/modals/pick-request-type.vue'
 import PaymentModal from '@/components/payment/payment-modal.vue'
 import UpgradeModal from '@/components/payment/upgrade-modal.vue'
-import ReceiptModal from '@/components/payment/receipt-modal.vue'
+import PaymentCompleteModal from '@/components/payment/payment-complete-modal.vue'
 import IncorporateLoginModal from '@/components/modals/incorporate-login.vue'
 import AffiliationErrorModal from '@/components/modals/affiliation-error.vue'
 import ApiErrorModal from '@/components/common/error/modal.vue'
@@ -47,7 +47,7 @@ import Header from '@/components/header.vue'
     PickRequestType,
     PaymentModal,
     UpgradeModal,
-    ReceiptModal,
+    PaymentCompleteModal,
     IncorporateLoginModal,
     AffiliationErrorModal,
     ApiErrorModal
