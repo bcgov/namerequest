@@ -128,6 +128,7 @@ export class NewRequestModule extends VuexModule {
   applicant: ApplicantI = {
     addrLine1: '',
     addrLine2: '',
+    addrLine3: '',
     city: '',
     clientFirstName: '',
     clientLastName: '',
