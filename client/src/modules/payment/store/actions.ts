@@ -4,6 +4,14 @@ export const togglePaymentModal = ({ commit }, isVisible: boolean) => {
   commit(types.TOGGLE_PAYMENT_MODAL, isVisible)
 }
 
+export const togglePaymentHistoryModal = ({ commit }, isVisible: boolean) => {
+  commit(types.TOGGLE_PAYMENT_HISTORY_MODAL, isVisible)
+}
+
+export const toggleUpgradeModal = ({ commit }, isVisible: boolean) => {
+  commit(types.TOGGLE_UPGRADE_MODAL, isVisible)
+}
+
 export const setPaymentFees = ({ commit }, fees: any) => {
   commit(types.SET_PAYMENT_FEES, fees)
 }
@@ -13,7 +21,7 @@ export const setPaymentIsProcessing = ({ commit }, isProcessing: boolean) => {
 }
 
 export const toggleReceiptModal = ({ commit }, isVisible: boolean) => {
-  commit(types.TOGGLE_RECEIPT_MODAL, isVisible)
+  commit(types.TOGGLE_PAYMENT_COMPLETE_MODAL, isVisible)
 }
 
 export const setPaymentRequest = ({ commit }, req: any) => {
@@ -30,6 +38,10 @@ export const setPaymentInvoice = ({ commit }, invoice: any) => {
 
 export const setPaymentReceipt = ({ commit }, receipt: any) => {
   commit(types.SET_PAYMENT_RECEIPT, receipt)
+}
+
+export const setPayments = ({ commit }, payments: any[]) => {
+  commit(types.SET_PAYMENTS, payments)
 }
 
 export const startPaymentTimeoutTimer = ({ commit }) => {
