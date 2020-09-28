@@ -6,6 +6,9 @@ export default {
   [types.TOGGLE_PAYMENT_MODAL]: (state, isVisible: boolean) => {
     state[STATE_KEY].isPaymentVisible = isVisible || false
   },
+  [types.TOGGLE_UPGRADE_MODAL]: (state, isVisible: boolean) => {
+    state[STATE_KEY].isUpgradeVisible = isVisible || false
+  },
   [types.START_PAYMENT_TIMEOUT_TIMER]: (state, timer: any) => {
     state[STATE_KEY].timer = timer
   },

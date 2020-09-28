@@ -180,7 +180,7 @@ export default class ExistingRequestDisplay extends Vue {
         newReqModule.editExistingRequest()
         break
       case 'UPGRADE':
-        paymentModule.togglePaymentModal(true)
+        paymentModule.toggleUpgradeModal(true)
         break
       default:
         newReqModule.patchNameRequestsByAction(action)

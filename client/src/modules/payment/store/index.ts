@@ -3,14 +3,13 @@ import getters from './getters'
 import mutations from './mutations'
 
 import * as filingTypes from '@/modules/payment/filing-types'
-// import * as corpTypes from '@/modules/payment/corp-types'
-import * as jurisdictions from '@/modules/payment/jurisdictions'
 
 export const STATE_KEY = 'payment'
 
 const state = {
   [STATE_KEY]: {
     isPaymentVisible: false,
+    isUpgradeVisible: false,
     isReceiptVisible: false,
     isProcessing: false,
     paymentTimeoutTimer: undefined,

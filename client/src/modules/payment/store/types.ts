@@ -1,5 +1,9 @@
 export const TOGGLE_PAYMENT_MODAL = 'togglePaymentModal'
 export const PAYMENT_MODAL_IS_VISIBLE = 'paymentModalIsVisible'
+
+export const TOGGLE_UPGRADE_MODAL = 'toggleUpgradeModal'
+export const UPGRADE_MODAL_IS_VISIBLE = 'upgradeModalIsVisible'
+
 export const PAYMENT_IS_IN_PROGRESS = 'paymentIsInProgress'
 
 export const GET_PAYMENT = 'getPayment'

@@ -1,13 +1,8 @@
 <template>
   <v-dialog max-width="40%" :value="isVisible" persistent>
     <v-card class="pa-9">
-      <v-card-text class="h3">Confirm Name Request</v-card-text>
+      <v-card-text class="h3">Upgrade Request to Priority</v-card-text>
       <v-card-text class="copy-normal">
-        <request-details
-          v-bind:applicant="applicant"
-          v-bind:name="name"
-          v-bind:nameChoices="nameChoices"
-        />
         <fee-summary
           v-bind:filingData="[...paymentDetails]"
           v-bind:fees="[...paymentFees]"
@@ -46,16 +41,16 @@ import NameRequestMixin from '@/components/mixins/name-request-mixin'
   }),
   computed: {
     isVisible: () => {
-      return paymentModule[paymentTypes.PAYMENT_MODAL_IS_VISIBLE]
+      return paymentModule[paymentTypes.UPGRADE_MODAL_IS_VISIBLE]
     }
   }
 })
-export default class PaymentModal extends Mixins(NameRequestMixin, PaymentMixin) {
+export default class UpgradeModal extends Mixins(NameRequestMixin, PaymentMixin) {
   @Watch('isVisible')
   onModalShow (val: boolean, oldVal: string): void {
     if (val) {
       const paymentConfig = {
-        filingType: filingTypes.NM620,
+        filingType: filingTypes.NM606,
         jurisdiction: jurisdictions.BC,
         priorityRequest: this.priorityRequest || false
       }
@@ -65,16 +60,16 @@ export default class PaymentModal extends Mixins(NameRequestMixin, PaymentMixin)
   }
 
   async showModal () {
-    await paymentModule.togglePaymentModal(true)
+    await paymentModule.toggleUpgradeModal(true)
   }
 
   async hideModal () {
-    await paymentModule.togglePaymentModal(false)
+    await paymentModule.toggleUpgradeModal(false)
   }
 
   async confirmPayment () {
     const { nrId, priorityRequest } = this
-    this.createPayment(nrId, filingTypes.NM620, priorityRequest)
+    this.createPayment(nrId, filingTypes.NM606, priorityRequest)
   }
 }
 </script>

@@ -11,6 +11,7 @@
     <PickEntityOrConversion />
     <PickRequestType />
     <PaymentModal />
+    <UpgradeModal />
     <ReceiptModal />
     <IncorporateLoginModal />
     <AffiliationErrorModal />
@@ -25,6 +26,7 @@ import NrNotRequired from '@/components/modals/nr-not-required.vue'
 import PickEntityOrConversion from '@/components/modals/pick-entity-or-conversion.vue'
 import PickRequestType from '@/components/modals/pick-request-type.vue'
 import PaymentModal from '@/components/payment/payment-modal.vue'
+import UpgradeModal from '@/components/payment/upgrade-modal.vue'
 import ReceiptModal from '@/components/payment/receipt-modal.vue'
 import IncorporateLoginModal from '@/components/modals/incorporate-login.vue'
 import AffiliationErrorModal from '@/components/modals/affiliation-error.vue'
@@ -44,6 +46,7 @@ import Header from '@/components/header.vue'
     PickEntityOrConversion,
     PickRequestType,
     PaymentModal,
+    UpgradeModal,
     ReceiptModal,
     IncorporateLoginModal,
     AffiliationErrorModal,

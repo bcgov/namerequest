@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="display: flex; justify-content: space-between; margin-bottom: 15px">
+    <div style="display: flex; justify-content: space-between; flex-flow: row wrap; margin-bottom: 15px">
       <div style="margin: 30px 30px 0">
         <h4>Requested Name <span v-if="nameChoices && nameChoices.length > 0">Choices</span></h4>
         <ul style="list-style: none; padding-left: 0">
@@ -17,7 +17,7 @@
         </ul>
       </div>
     </div>
-    <div style="display: flex; justify-content: space-between; margin-bottom: 15px">
+    <div style="display: flex; justify-content: space-between; flex-flow: row wrap; margin-bottom: 15px">
       <div style="margin: 15px 30px 15px">
         <ul style="list-style: none; padding-left: 0">
           <li v-if="client">

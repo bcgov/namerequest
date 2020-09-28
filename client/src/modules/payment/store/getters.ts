@@ -4,6 +4,7 @@ import { STATE_KEY } from '@/modules/payment/store'
 
 export default {
   [types.PAYMENT_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isPaymentVisible,
+  [types.UPGRADE_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isUpgradeVisible,
   [types.RECEIPT_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isReceiptVisible,
   [types.PAYMENT_IS_IN_PROGRESS]: state => state[STATE_KEY].isProcessing,
   [types.GET_PAYMENT]: state => state[STATE_KEY].payment,
