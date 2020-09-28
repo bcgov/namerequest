@@ -1452,12 +1452,13 @@ export class NewRequestModule extends VuexModule {
   @Action
   async patchNameRequests () {
     try {
-      let nr = this.editNameReservation
-      let data = await this.addRequestActionComment(nr)
-      let { nrId } = this
+      const { nrId } = this
+
+      const nr = this.editNameReservation
+      const requestData = await this.addRequestActionComment(nr)
 
       try {
-        const response = await axios.patch(`/namerequests/${nrId}/edit`, data, {
+        const response = await axios.patch(`/namerequests/${nrId}/edit`, requestData, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -1524,7 +1525,8 @@ export class NewRequestModule extends VuexModule {
           data = this.reservedNameReservation
           break
       }
-      let requestData: any = await this.addRequestActionComment(data)
+
+      const requestData: any = await this.addRequestActionComment(data)
 
       try {
         const response: AxiosResponse = await axios.post(`/namerequests`, requestData, {
@@ -1552,7 +1554,7 @@ export class NewRequestModule extends VuexModule {
   async putNameReservation (nrId) {
     let { nrState } = this
     if (this.isAssumedName) nrState = 'ASSUMED'
-    let response
+
     try {
       let data: any
       switch (nrState) {
@@ -1573,10 +1575,10 @@ export class NewRequestModule extends VuexModule {
         data['corpNum'] = this.corpNum
       }
 
-      let reqData: any = await this.addRequestActionComment(data)
+      const requestData: any = await this.addRequestActionComment(data)
 
       try {
-        const response = await axios.put(`/namerequests/${nrId}`, reqData, {
+        const response = await axios.put(`/namerequests/${nrId}`, requestData, {
           headers: {
             'Content-Type': 'application/json'
           }

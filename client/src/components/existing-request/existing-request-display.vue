@@ -61,7 +61,7 @@
                 <v-col cols="12" v-for="action of actions" :key="action+'-button'">
                   <v-btn block @click="handleButtonClick(action)">{{ action }}</v-btn>
                 </v-col>
-<!--                <v-btn @click="activateILModal">incorporate now</v-btn>-->
+                <!--<v-btn @click="activateILModal">incorporate now</v-btn>-->
               </v-row>
             </v-col>
           </v-row>
@@ -72,10 +72,12 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
-import MainContainer from '@/components/new-request/main-container.vue'
 import Moment from 'moment'
+
+import MainContainer from '@/components/new-request/main-container.vue'
+import newReqModule from '@/store/new-request-module'
+import paymentModule from '@/modules/payment'
 
 @Component({
   components: { MainContainer }
@@ -154,9 +156,7 @@ export default class ExistingRequestDisplay extends Vue {
   get priorityReq () {
     return (this.nr && this.nr.priorityCd && this.nr.priorityCd === 'Y')
   }
-  edit () {
-    newReqModule.editExistingRequest()
-  }
+
   getNameFormating (name) {
     if (name.state === 'NE') {
       return {
@@ -177,21 +177,26 @@ export default class ExistingRequestDisplay extends Vue {
       }
     }
   }
+
   handleButtonClick (action) {
-    if (action === 'EDIT') {
-      this.edit()
-      return
+    switch (action) {
+      case 'EDIT':
+        newReqModule.editExistingRequest()
+        break
+      case 'UPGRADE':
+        paymentModule.toggleUpgradeModal(true)
+        break
+      case 'RECEIPT':
+        paymentModule.togglePaymentHistoryModal(true)
+        break
+      default:
+        newReqModule.patchNameRequestsByAction(action)
+        break
     }
-    newReqModule.patchNameRequestsByAction(action)
   }
+
   showConditionsModal () {
     newReqModule.mutateConditionsModalVisible(true)
-  }
-  upgrade () {
-    if (!this.priorityReq) {
-      let payload = { priorityCd: 'Y' }
-      newReqModule.patchNameRequestsKV(payload)
-    }
   }
 
   /** Open Incorporate Now Login Modal and apply NR Data to Session */
