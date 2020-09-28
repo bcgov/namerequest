@@ -34,6 +34,7 @@ const state = {
     },
     request: {},
     payment: {},
+    payments: [],
     invoice: {
       reference_number: null,
       created_name: null,

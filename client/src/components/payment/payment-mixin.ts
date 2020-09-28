@@ -186,4 +186,17 @@ export default class PaymentMixin extends Vue {
       }
     }
   }
+
+  async fetchNrPayments (nrId) {
+    try {
+      const paymentsResponse: NameRequestPaymentResponse[] = await paymentService.getNameRequestPayments(nrId, {})
+      await paymentModule.setPayments(paymentsResponse)
+    } catch (error) {
+      if (error instanceof PaymentApiError) {
+        await errorModule.setAppError({ id: 'payment-api-error', error: error.message } as ErrorI)
+      } else {
+        await errorModule.setAppError({ id: 'fetch-nr-payments-error', error: error.message } as ErrorI)
+      }
+    }
+  }
 }

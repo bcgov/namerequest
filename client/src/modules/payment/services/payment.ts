@@ -60,6 +60,16 @@ export async function getNameRequestPayment (nrId, paymentId, params): Promise<N
   }
 }
 
+export async function getNameRequestPayments (nrId, params): Promise<NameRequestPaymentResponse[]> {
+  const url = `/payments/${nrId}/payments`
+  try {
+    const response: AxiosResponse = await axios.get(url, params)
+    return response.data
+  } catch (err) {
+    await handleApiError(err, 'Could not retrieve Name Request payments')
+  }
+}
+
 export async function getPayment (paymentId, params): Promise<any> {
   const url = `/payments/${paymentId}`
   try {

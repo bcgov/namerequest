@@ -40,6 +40,10 @@ export const setPaymentReceipt = ({ commit }, receipt: any) => {
   commit(types.SET_PAYMENT_RECEIPT, receipt)
 }
 
+export const setPayments = ({ commit }, payments: any[]) => {
+  commit(types.SET_PAYMENTS, payments)
+}
+
 export const startPaymentTimeoutTimer = ({ commit }) => {
   commit(types.START_PAYMENT_TIMEOUT_TIMER)
 }

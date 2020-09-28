@@ -107,7 +107,7 @@ export default class PaymentHistoryModal extends Mixins(NameRequestMixin, Paymen
       // Get the payment
       await this.fetchNr(sessionNrId)
       // Get the payment
-      await this.fetchNrPayment(sessionNrId, sessionPaymentId)
+      await this.fetchNrPayments(sessionNrId)
     }
   }
 }

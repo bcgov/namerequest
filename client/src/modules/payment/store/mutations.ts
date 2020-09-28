@@ -41,5 +41,8 @@ export default {
   },
   [types.SET_PAYMENT_RECEIPT]: (state, receipt: any) => {
     state[STATE_KEY].receipt = receipt || {}
+  },
+  [types.SET_PAYMENTS]: (state, payments: any[]) => {
+    state[STATE_KEY].payments = payments || []
   }
 }
