@@ -1,9 +1,9 @@
 <template>
   <v-dialog max-width="40%" :value="isVisible" persistent>
     <v-card class="pa-9">
-      <v-card-text class="h3">Payment Successful</v-card-text>
+      <v-card-text class="h3">Payment History</v-card-text>
       <v-card-text class="copy-normal">
-        <payment-confirm
+        <payment-summary
           v-bind:nrNum="nrNum"
           v-bind:applicant="applicant"
           v-bind:nameChoices="nameChoices"
@@ -12,37 +12,26 @@
         />
       </v-card-text>
       <v-card-actions>
-        <!--<span>Time Remaining - 10:00</span>-->
         <v-spacer></v-spacer>
-        <v-btn @click="redirectToStart" id="receipt-close-btn" class="normal" text>OK</v-btn>
-        <v-btn @click="downloadReceipt" id="download-receipt-btn" class="primary" text>Download Receipt</v-btn>
+        <v-btn @click="hideModal" id="history-close-btn" class="normal" text>Close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Vue, Watch } from 'vue-property-decorator'
+import { Component, Mixins, Watch } from 'vue-property-decorator'
 
-import PaymentConfirm from '@/components/payment/payment-confirm.vue'
 import RequestDetails from '@/components/common/request-details.vue'
+import PaymentSummary from '@/components/payment/payment-summary.vue'
 
 import paymentModule from '@/modules/payment'
-import { PaymentApiError } from '@/modules/payment/services/payment'
-import { NameRequestPaymentResponse } from '@/modules/payment/models'
-import newRequestModule from '@/store/new-request-module'
-import errorModule from '@/modules/error'
-import { ErrorI } from '@/modules/error/store/actions'
 
-import * as paymentService from '@/modules/payment/services'
 import * as paymentTypes from '@/modules/payment/store/types'
 
 import PaymentMixin from '@/components/payment/payment-mixin'
 import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
-
-// TODO: Finish the message component
-// import message from "@/components/common/error/message.vue"
 
 /**
  * Makes debugging the receipt easier.
@@ -58,7 +47,7 @@ const DEBUG_RECEIPT = false
 @Component({
   components: {
     RequestDetails,
-    PaymentConfirm
+    PaymentSummary
   },
   data: () => ({
   }),
@@ -95,7 +84,7 @@ export default class PaymentHistoryModal extends Mixins(NameRequestMixin, Paymen
   async redirectToStart () {
     window.location.href = document.baseURI
   }
-  
+
   /**
    * NOTE: This method makes use of the PaymentSectionMixin class!
    */
