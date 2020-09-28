@@ -964,7 +964,7 @@ export class NewRequestModule extends VuexModule {
       names = [name]
     }
 
-    const caseData: ConditionalReqI = {
+    const data: ConditionalReqI = {
       applicants: [applicant],
       names: names,
       ...nrData,
@@ -979,7 +979,7 @@ export class NewRequestModule extends VuexModule {
       submit_count: 0,
       ...this.corpNumForReservation
     }
-    return caseData
+    return data
   }
   get draftNameReservation (): DraftReqI {
     const { nrRequestNames, applicant } = this
@@ -1007,24 +1007,16 @@ export class NewRequestModule extends VuexModule {
     if (this.xproRequestTypeCd) {
       data['request_type_cd'] = this.xproRequestTypeCd
     }
-
     if (this.isAssumedName) {
-      if (!data.additionalInfo) {
-        data.additionalInfo = ''
-      } else {
-        data.additionalInfo += '\n\n'
-      }
-      if (!data.additionalInfo.includes('*** Registered Name:')) {
-        let notice = `*** Registered Name: ${this.assumedNameOriginal} ***`
-        data.additionalInfo += ' ' + notice
-      }
-    }
-    if (this.request_action_cd === 'ASSUMED' && this.requestActionOriginal) {
-      if (!data.additionalInfo) {
+      if (!data['additionalInfo']) {
         data['additionalInfo'] = ''
+      } else {
+        data['additionalInfo'] += '\n\n'
       }
-      let { shortDesc } = this.requestActions.find(request => request.value === this.requestActionOriginal)
-      data.additionalInfo += `\n\n *** ${shortDesc} ***`
+      if (!data['additionalInfo'].includes('*** Registered Name:')) {
+        let notice = `*** Registered Name: ${this.assumedNameOriginal} ***`
+        data['additionalInfo'] += ' ' + notice
+      }
     }
     return data
   }
@@ -1139,7 +1131,7 @@ export class NewRequestModule extends VuexModule {
      name_type_cd: 'CO'
      } */
 
-    const caseData: ReservedReqI = {
+    const data: ReservedReqI = {
       applicants: [applicant],
       names: nrRequestNames,
       ...nrData,
@@ -1153,7 +1145,7 @@ export class NewRequestModule extends VuexModule {
       submit_count: 0,
       ...this.corpNumForReservation
     }
-    return caseData
+    return data
   }
 
   @Action
@@ -1383,6 +1375,40 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
+  addRequestActionComment (data) {
+    try {
+      let requestAction = this.requestActionOriginal || this.request_action_cd
+      let { shortDesc } = this.requestActions.find(request => request.value === requestAction)
+      let msg = `*** ${shortDesc} ***`
+      if (!data['additionalInfo']) {
+        // if data.additionalInfo is empty, just assign it to message
+        data['additionalInfo'] = msg
+        return data
+      }
+      if (data['additionalInfo'].includes(msg)) {
+        // if message is already part of additionalInfo, do nothing, return
+        return data
+      }
+      // by here we know there is some text in additionalInfo but it does not contain the exact msg we must add
+      // so we check if there is a previous requet_action message which no longer matches msg because we are editing
+      let allShortDescs = this.requestActions.map(request => `*** ${request.shortDesc} ***`)
+      if (allShortDescs.some(desc => data['additionalInfo'].includes(desc))) {
+        let desc = allShortDescs.find(sd => data['additionalInfo'].includes(sd))
+        data['additionalInfo'] = data['additionalInfo'].replace(desc, msg)
+        return data
+      }
+      // if there is no previous request_action message then we just preserve whatever text there is and append msg
+      data['additionalInfo'] += ` \n\n ${msg}`
+      return data
+    } catch (err) {
+      // eslint-disable-next-line
+      console.log(err)
+      // eslint-disable-next-line
+      console.log('error')
+      return data
+    }
+  }
+  @Action
   async getNameReservation (nrId) {
     try {
       try {
@@ -1426,11 +1452,11 @@ export class NewRequestModule extends VuexModule {
   async patchNameRequests () {
     try {
       let nr = this.editNameReservation
+      let data = await this.addRequestActionComment(nr)
       let { nrId } = this
-      // Use the NR_REGEX const in existing-request-search if you really want to do this
-      // nrNum = nrNum.replace(/(?:\s+|\s|)(\D|\D+|)(?:\s+|\s|)(\d+)(?:\s+|\s|)/, 'NR' + '$2')
+
       try {
-        const response = await axios.patch(`/namerequests/${nrId}/edit`, nr, {
+        const response = await axios.patch(`/namerequests/${nrId}/edit`, data, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -1497,9 +1523,10 @@ export class NewRequestModule extends VuexModule {
           data = this.reservedNameReservation
           break
       }
+      let requestData: any = await this.addRequestActionComment(data)
 
       try {
-        const response: AxiosResponse = await axios.post(`/namerequests`, data, {
+        const response: AxiosResponse = await axios.post(`/namerequests`, requestData, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -1545,8 +1572,10 @@ export class NewRequestModule extends VuexModule {
         data['corpNum'] = this.corpNum
       }
 
+      let reqData: any = await this.addRequestActionComment(data)
+
       try {
-        const response = await axios.put(`/namerequests/${nrId}`, data, {
+        const response = await axios.put(`/namerequests/${nrId}`, reqData, {
           headers: {
             'Content-Type': 'application/json'
           }
