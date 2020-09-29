@@ -1333,7 +1333,7 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
-  async getNameRequests () {
+  async findNameRequest () {
     this.resetAnalyzeName()
     this.mutateDisplayedComponent('AnalyzePending')
     let params = {
@@ -1409,25 +1409,25 @@ export class NewRequestModule extends VuexModule {
       return data
     }
   }
+  /**
+   * Grabs an existing NR from the API. To load the returned NR into app state, use loadExistingNameRequest.
+   * @param nrId
+   */
   @Action
-  async getNameReservation (nrId) {
+  async getNameRequest (nrId) {
     try {
+      let response
       try {
-        const response = await axios.get(`/namerequests/${nrId}`, {
+        response = await axios.get(`/namerequests/${nrId}`, {
           headers: {
             'Content-Type': 'application/json'
           }
         })
-
-        const { data } = response
-        const { names } = data
-
-        this.resetApplicantDetails()
-        this.setNrResponse(data)
-        this.updateReservationNames(names)
       } catch (err) {
         await handleApiError(err, 'Could not retrieve the name request')
       }
+
+      return response.data
     } catch (error) {
       if (error instanceof ApiError) {
         await errorModule.setAppError({ id: 'get-name-requests-api-error', error: error.message } as ErrorI)
@@ -1437,6 +1437,40 @@ export class NewRequestModule extends VuexModule {
 
       // eslint-disable-next-line
       console.log(error)
+    }
+  }
+
+  /**
+   * Load an existing NR into app state, and display the ExistingRequestDisplay component.
+   * Use getNameRequest to grab the NR from the API.
+   * @param existingNr
+   */
+  @Action
+  async loadExistingNameRequest (existingNr) {
+    const handleEmptyResults = () => {
+      this.mutateNameRequest(
+        {
+          text: 'There were no records found that match the information you have entered. Please verify the NR Number and the phone / email and try again.',
+          failed: true
+        }
+      )
+      this.mutateDisplayedComponent('Tabs')
+    }
+
+    const handleResults = (data) => {
+      const { names } = data
+      this.resetApplicantDetails()
+      this.setNrResponse(data)
+      this.updateReservationNames(names)
+
+      // this.mutateNameRequest(data)
+      this.mutateDisplayedComponent('ExistingRequestDisplay')
+    }
+
+    if (!existingNr) {
+      handleEmptyResults()
+    } else {
+      handleResults(existingNr)
     }
   }
   @Action

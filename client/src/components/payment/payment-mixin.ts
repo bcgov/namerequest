@@ -5,7 +5,7 @@ import * as jurisdictions from '@/modules/payment/jurisdictions'
 import * as paymentTypes from '@/modules/payment/store/types'
 import * as paymentService from '@/modules/payment/services'
 import paymentModule from '@/modules/payment'
-import { NameRequestPaymentResponse } from '@/modules/payment/models'
+import { NameRequestPaymentResponse, CreatePaymentParams } from '@/modules/payment/models'
 import { PaymentApiError } from '@/modules/payment/services'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
@@ -83,7 +83,8 @@ export default class PaymentMixin extends Vue {
     }
   }
 
-  async createPayment (nrId, filingType, priorityRequest) {
+  async createPayment (params: CreatePaymentParams, onSuccess: (paymentResponse) => void) {
+    const { nrId, filingType, priorityRequest } = params
     // Comment this out to use direct pay
     // const methodOfPayment = 'CC' // We may need to handle more than one type at some point?
 
@@ -120,31 +121,10 @@ export default class PaymentMixin extends Vue {
       await paymentModule.setPaymentInvoice(sbcPayment.invoices[0])
       await paymentModule.setPaymentRequest(req)
 
-      // Grab the new payment ID
-      const { paymentId } = this
-
-      // TODO: Remove this one, we don't want to set the payment to session once we're done!
-      // TODO: Or... we could add a debug payments mode?
-      sessionStorage.setItem('payment', `${JSON.stringify(payment)}`)
-      // Store the payment ID to sessionStorage, that way we can start the user back where we left off
-      sessionStorage.setItem('paymentInProgress', 'true')
-      sessionStorage.setItem('paymentId', `${paymentId}`)
-      sessionStorage.setItem('paymentToken', `${token}`)
-      sessionStorage.setItem('nrId', `${nrId}`)
-
-      // Redirect user to Service BC Pay Portal
-      // Set the redirect URL to specify OUR payment ID so we can, something is
-      // grab the payment when we're directed back to our application
-      const redirectUrl = encodeURIComponent(
-        `${document.baseURI}?paymentId=${paymentId}`
-      )
-
-      // eslint-disable-next-line no-console
-      console.log(`Forwarding to SBC Payment Portal -> Payment redirect URL: ${redirectUrl}`)
-
-      // TODO: We could make this string configurable too... not necessary at this time
-      const paymentPortalUrl = `${this.$PAYMENT_PORTAL_URL}/${token}/${redirectUrl}`
-      window.location.href = paymentPortalUrl
+      if (onSuccess) {
+        // Execute callback
+        onSuccess(paymentResponse)
+      }
     } catch (error) {
       if (error instanceof PaymentApiError) {
         await errorModule.setAppError({ id: 'payment-api-error', error: error.message } as ErrorI)
@@ -152,6 +132,21 @@ export default class PaymentMixin extends Vue {
         await errorModule.setAppError({ id: 'create-payment-error', error: error.message } as ErrorI)
       }
     }
+  }
+
+  /**
+   * Redirect user to Service BC Pay Portal.
+   * Set the redirect URL to specify OUR payment ID so we can
+   * grab the payment when we're directed back to our application!
+   * @param paymentId
+   * @param paymentToken
+   */
+  redirectToPaymentPortal (paymentId, paymentToken, redirectUrl) {
+    // TODO: We could make this string configurable too... not necessary at this time
+    const paymentPortalUrl = `${this.$PAYMENT_PORTAL_URL}/${paymentToken}/${redirectUrl}`
+    // eslint-disable-next-line no-console
+    console.log(`Forwarding to SBC Payment Portal -> Payment redirect URL: ${redirectUrl}`)
+    window.location.href = paymentPortalUrl
   }
 
   async downloadReceipt () {
@@ -182,8 +177,8 @@ export default class PaymentMixin extends Vue {
   }
 
   async fetchNr (nrId) {
-    await newRequestModule.getNameReservation(nrId)
-    // TODO: Display an error modal HERE if no NR response!
+    const existingNr = await newRequestModule.getNameRequest(nrId)
+    await newRequestModule.loadExistingNameRequest(existingNr)
   }
 
   async fetchNrPayment (nrId, paymentId) {

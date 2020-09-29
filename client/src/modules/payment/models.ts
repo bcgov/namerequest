@@ -17,3 +17,9 @@ export interface NameRequestPayment {
   statusCode?: string
   httpStatusCode?: string
 }
+
+export interface CreatePaymentParams {
+  nrId: number
+  filingType: string
+  priorityRequest: boolean
+}

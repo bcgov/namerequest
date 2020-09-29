@@ -100,7 +100,7 @@ export default class ExistingRequstSearch extends Vue {
     return (data.nrNum && (data.emailAddress || data.phoneNumber))
   }
   handleSubmit () {
-    newReqModule.getNameRequests()
+    newReqModule.findNameRequest()
   }
   setExistingRequestSearch (key, value) {
     newReqModule.mutateExistingRequestSearch({ key, value })

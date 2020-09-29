@@ -24,13 +24,17 @@ import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 
 import paymentModule from '@/modules/payment'
+import { CreatePaymentParams } from '@/modules/payment/models'
 
 import * as paymentTypes from '@/modules/payment/store/types'
 import * as filingTypes from '@/modules/payment/filing-types'
 import * as jurisdictions from '@/modules/payment/jurisdictions'
 
 import PaymentMixin from '@/components/payment/payment-mixin'
+import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
+
+import { getBaseUrl } from './payment-utils'
 
 @Component({
   components: {
@@ -45,7 +49,7 @@ import NameRequestMixin from '@/components/mixins/name-request-mixin'
     }
   }
 })
-export default class UpgradeModal extends Mixins(NameRequestMixin, PaymentMixin) {
+export default class UpgradeModal extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
   @Watch('isVisible')
   onModalShow (val: boolean, oldVal: string): void {
     if (val) {
@@ -68,8 +72,22 @@ export default class UpgradeModal extends Mixins(NameRequestMixin, PaymentMixin)
   }
 
   async confirmPayment () {
-    const { nrId, priorityRequest } = this
-    this.createPayment(nrId, filingTypes.NM606, priorityRequest)
+    const { nrId, priorityRequest, paymentId } = this
+    const onSuccess = (paymentResponse) => {
+      const { token } = paymentResponse
+      // Save to session
+      this.savePaymentResponseToSession(paymentResponse)
+
+      const baseUrl = getBaseUrl()
+      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${paymentId}`)
+      this.redirectToPaymentPortal(paymentId, token, redirectUrl)
+    }
+
+    this.createPayment({
+      nrId: nrId,
+      filingType: filingTypes.NM606,
+      priorityRequest: priorityRequest
+    } as CreatePaymentParams, onSuccess)
   }
 }
 </script>
