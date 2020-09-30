@@ -1,13 +1,13 @@
 import ApplicantInfo2 from '@/components/common/applicant-info-2.vue'
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
-import newReqModule from '@/store/new-request-module'
+import module from '@/store/new-request-module'
 import Vuetify from 'vuetify'
+import Vuex from 'vuex'
 
-const store = newReqModule
 const localVue = createLocalVue()
 const vuetify = new Vuetify()
-
 localVue.use(Vuetify)
+
 describe('It initially renders correctly', () => {
   let wrapper: any
 
@@ -19,12 +19,12 @@ describe('It initially renders correctly', () => {
     await wrapper.vm.$nextTick()
     done()
   })
-
-  it('renders the form', () => {
-    expect(wrapper.find('#applicant-info-2-form').element).toBeTruthy()
-  })
-  it('Initially renders the disabled continue button', () => {
-    expect(wrapper.find('#submit-continue-btn-disabled').element).toBeTruthy()
-    expect(wrapper.find('#submit-continue-btn').element).toBeFalsy()
+  it('checks the corpNum against the appropriate database given the setup: BC location' async () => {
+    const mrasJurisdictions = ['Alberta', 'Saskatchewan', 'Manitoba']
+    const mrasActions = []
+    function setStore (jurisdiction, action) {
+      module.mutateNRData({ key: 'xproJurisdiction', value: 'Alberta'})
+    }
+    setStore()
   })
 })
