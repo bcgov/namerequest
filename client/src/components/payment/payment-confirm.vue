@@ -11,15 +11,14 @@
     <ul class="fee-list" v-show="!fetchError && invoice">
       <li class="container fee-list__item">
         <div class="fee-list__item-name">
-          Name Request Access Code
-          <br>
-          <small style="font-weight: normal;">
-            <small>
-              Use this code to check the status of your application
-            </small>
-          </small>
+          NR Number<sup>*</sup>
         </div>
         <div class="fee-list__item-value"><strong>{{nrNum}}</strong></div>
+      </li>
+      <li>
+        <small style="font-weight: normal; font-size: 0.7rem">
+          * Use this code to check the status of your application
+        </small>
       </li>
     </ul>
 

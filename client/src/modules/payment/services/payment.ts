@@ -61,7 +61,7 @@ export async function getNameRequestPayment (nrId, paymentId, params): Promise<N
 }
 
 export async function getNameRequestPayments (nrId, params): Promise<NameRequestPaymentResponse[]> {
-  const url = `/payments/${nrId}/payments`
+  const url = `/payments/${nrId}`
   try {
     const response: AxiosResponse = await axios.get(url, params)
     return response.data

@@ -76,11 +76,10 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
       // TODO: Remember to clear the session when we're done building this out
       this.fetchData(!DEBUG_RECEIPT)
         .then(() => {
-          const { nr } = this
-          const { payment, sbcPayment } = paymentModule
+          const { nrId } = this
 
           // Then complete the payment
-          this.completePayment(sessionPaymentId)
+          this.completePayment(nrId, sessionPaymentId)
         })
     }
   }
@@ -127,10 +126,8 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
     }
   }
 
-  async completePayment (paymentId) {
-    const { nrId } = this
-
-    const result: NameRequestPayment = await newRequestModule.completePayment(nrId, paymentId, {})
+  async completePayment (nrId, paymentId) {
+    const result: NameRequestPayment = await newRequestModule.completePayment({ nrId, paymentId })
     const paymentSuccess = result.paymentSuccess
 
     // TODO: Remove this when done implementing tests

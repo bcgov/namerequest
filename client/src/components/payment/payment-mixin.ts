@@ -140,6 +140,7 @@ export default class PaymentMixin extends Vue {
    * grab the payment when we're directed back to our application!
    * @param paymentId
    * @param paymentToken
+   * @param redirectUrl
    */
   redirectToPaymentPortal (paymentId, paymentToken, redirectUrl) {
     // TODO: We could make this string configurable too... not necessary at this time

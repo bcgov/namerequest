@@ -1634,15 +1634,17 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
-  async completePayment (nrId): Promise<NameRequestPayment> {
+  async completePayment ({ nrId, paymentId, data = {} }): Promise<NameRequestPayment> {
+    // TODO: Throw an error if params are missing
     // TODO: In completePayment, generate a temp UUID or nonce
     //  that gets passed to the NR Payment API
+
     const paymentResponse: NameRequestPayment = {
       paymentSuccess: false
     }
 
     try {
-      const response = await axios.put(`/namerequests/${nrId}/complete-payment`, {}, {
+      const response = await axios.patch(`/payments/${nrId}/complete/${paymentId}`, data, {
         headers: {
           'Content-Type': 'application/json'
         }
