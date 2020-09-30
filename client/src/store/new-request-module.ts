@@ -1702,6 +1702,7 @@ export class NewRequestModule extends VuexModule {
   }
   @Action
   resetAnalyzeName () {
+    this.clearAssumedNameOriginal()
     this.mutateAnalysisJSON(null)
     this.mutateCorpNum('')
     this.mutateEditMode(false)
@@ -2239,7 +2240,10 @@ export class NewRequestModule extends VuexModule {
   mutateConditionsModalVisible (value: boolean) {
     this.conditionsModalVisible = value
   }
-
+  @Mutation
+  clearAssumedNameOriginal () {
+    this.assumedNameOriginal = ''
+  }
   getEntities (category) {
     return this.entityTypesBC.filter(type => type.cat === category)
   }
