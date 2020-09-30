@@ -7,10 +7,21 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Landing',
+    name: 'landing',
     component: () => import('@/views/landing.vue')
   },
-  { path: '/signin/:idpHint', name: 'signin', component: Signin, props: true, meta: { requiresAuth: false } },
+  {
+    path: '/nr/:id',
+    name: 'existing-nr',
+    component: () => import('@/views/landing.vue'),
+    props: true
+  },
+  { path: '/signin/:idpHint',
+    name: 'signin',
+    component: Signin,
+    props: true,
+    meta: { requiresAuth: false }
+  },
   {
     path: '*',
     redirect: '/'

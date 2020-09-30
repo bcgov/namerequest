@@ -18,17 +18,19 @@
 </template>
 
 <script lang="ts">
+import { Vue, Component, Prop } from 'vue-property-decorator'
+
 import AnalyzeCharacters from '@/components/new-request/analyze-characters.vue'
 import AnalyzePending from '@/components/new-request/analyze-pending.vue'
 import AnalyzeResults from '@/components/new-request/analyze-results.vue'
 import ExistingRequestDisplay from '@/components/existing-request/existing-request-display.vue'
 import Success from '@/components/common/success.vue'
 import LowerContainer from '@/components/lower-info-area/lower-container.vue'
-import newReqModule from '@/store/new-request-module'
+import newRequestModule from '@/store/new-request-module'
 import Stats from '@/components/new-request/stats.vue'
 import SubmissionTabs from '@/components/new-request/submit-request/submission-tabs.vue'
 import Tabs from '@/components/tabs.vue'
-import { Component, Vue } from 'vue-property-decorator'
+
 import ExistingRequestEdit from '@/components/existing-request/existing-request-edit.vue'
 
 @Component({
@@ -46,8 +48,24 @@ import ExistingRequestEdit from '@/components/existing-request/existing-request-
   }
 })
 export default class Landing extends Vue {
+  @Prop(String) id: string
+
+  mounted () {
+    const { id } = this
+    // If the ID prop is set, load the existing NR
+    if (id) {
+      this.fetchNr(id)
+    }
+  }
+
+  async fetchNr (nrId) {
+    const existingNr = await newRequestModule.getNameRequest(nrId)
+    await newRequestModule.loadExistingNameRequest(existingNr)
+    await newRequestModule.mutateEditMode(true)
+  }
+
   get displayedComponent () {
-    return newReqModule.displayedComponent
+    return newRequestModule.displayedComponent
   }
 }
 
@@ -57,7 +75,7 @@ export default class Landing extends Vue {
 #landing-container
   margin: 0
   padding: 0
-  min-width: !important 1380px
+  min-width: 1380px !important
 
 #name-container, .box-style
   background-color: white

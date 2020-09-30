@@ -69,7 +69,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
-import '../plugins/vuetify'
+import '../../plugins/vuetify'
 import { Fee, FilingData } from 'sbc-common-components/src/models'
 
 @Component({})
@@ -126,7 +126,7 @@ export default class FeeSummary extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "../assets/scss/theme.scss";
+@import "../../assets/scss/theme";
 
 header {
   color: #fff;

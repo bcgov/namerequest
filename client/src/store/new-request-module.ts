@@ -1333,7 +1333,7 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
-  async getNameRequests () {
+  async findNameRequest () {
     this.resetAnalyzeName()
     this.mutateDisplayedComponent('AnalyzePending')
     let params = {
@@ -1409,25 +1409,25 @@ export class NewRequestModule extends VuexModule {
       return data
     }
   }
+  /**
+   * Grabs an existing NR from the API. To load the returned NR into app state, use loadExistingNameRequest.
+   * @param nrId
+   */
   @Action
-  async getNameReservation (nrId) {
+  async getNameRequest (nrId) {
     try {
+      let response
       try {
-        const response = await axios.get(`/namerequests/${nrId}`, {
+        response = await axios.get(`/namerequests/${nrId}`, {
           headers: {
             'Content-Type': 'application/json'
           }
         })
-
-        const { data } = response
-        const { names } = data
-
-        this.resetApplicantDetails()
-        this.setNrResponse(data)
-        this.updateReservationNames(names)
       } catch (err) {
         await handleApiError(err, 'Could not retrieve the name request')
       }
+
+      return response.data
     } catch (error) {
       if (error instanceof ApiError) {
         await errorModule.setAppError({ id: 'get-name-requests-api-error', error: error.message } as ErrorI)
@@ -1437,6 +1437,40 @@ export class NewRequestModule extends VuexModule {
 
       // eslint-disable-next-line
       console.log(error)
+    }
+  }
+
+  /**
+   * Load an existing NR into app state, and display the ExistingRequestDisplay component.
+   * Use getNameRequest to grab the NR from the API.
+   * @param existingNr
+   */
+  @Action
+  async loadExistingNameRequest (existingNr) {
+    const handleEmptyResults = () => {
+      this.mutateNameRequest(
+        {
+          text: 'There were no records found that match the information you have entered. Please verify the NR Number and the phone / email and try again.',
+          failed: true
+        }
+      )
+      this.mutateDisplayedComponent('Tabs')
+    }
+
+    const handleResults = (data) => {
+      const { names } = data
+      this.resetApplicantDetails()
+      this.setNrResponse(data)
+      this.updateReservationNames(names)
+
+      // this.mutateNameRequest(data)
+      this.mutateDisplayedComponent('ExistingRequestDisplay')
+    }
+
+    if (!existingNr) {
+      handleEmptyResults()
+    } else {
+      handleResults(existingNr)
     }
   }
   @Action
@@ -1452,12 +1486,13 @@ export class NewRequestModule extends VuexModule {
   @Action
   async patchNameRequests () {
     try {
-      let nr = this.editNameReservation
-      let data = await this.addRequestActionComment(nr)
-      let { nrId } = this
+      const { nrId } = this
+
+      const nr = this.editNameReservation
+      const requestData = await this.addRequestActionComment(nr)
 
       try {
-        const response = await axios.patch(`/namerequests/${nrId}/edit`, data, {
+        const response = await axios.patch(`/namerequests/${nrId}/edit`, requestData, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -1524,7 +1559,8 @@ export class NewRequestModule extends VuexModule {
           data = this.reservedNameReservation
           break
       }
-      let requestData: any = await this.addRequestActionComment(data)
+
+      const requestData: any = await this.addRequestActionComment(data)
 
       try {
         const response: AxiosResponse = await axios.post(`/namerequests`, requestData, {
@@ -1552,7 +1588,7 @@ export class NewRequestModule extends VuexModule {
   async putNameReservation (nrId) {
     let { nrState } = this
     if (this.isAssumedName) nrState = 'ASSUMED'
-    let response
+
     try {
       let data: any
       switch (nrState) {
@@ -1573,10 +1609,10 @@ export class NewRequestModule extends VuexModule {
         data['corpNum'] = this.corpNum
       }
 
-      let reqData: any = await this.addRequestActionComment(data)
+      const requestData: any = await this.addRequestActionComment(data)
 
       try {
-        const response = await axios.put(`/namerequests/${nrId}`, reqData, {
+        const response = await axios.put(`/namerequests/${nrId}`, requestData, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -1598,15 +1634,18 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
-  async completePayment (nrId): Promise<NameRequestPayment> {
+  async completePayment ({ nrId, paymentId, action }): Promise<NameRequestPayment> {
+    // TODO: Type the param!
+    // TODO: Throw an error if params are missing
     // TODO: In completePayment, generate a temp UUID or nonce
     //  that gets passed to the NR Payment API
+
     const paymentResponse: NameRequestPayment = {
       paymentSuccess: false
     }
 
     try {
-      const response = await axios.put(`/namerequests/${nrId}/complete-payment`, {}, {
+      const response = await axios.patch(`/payments/${nrId}/payment/${paymentId}/${action}`, {}, {
         headers: {
           'Content-Type': 'application/json'
         }

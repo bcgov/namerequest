@@ -4,7 +4,9 @@ import { STATE_KEY } from '@/modules/payment/store'
 
 export default {
   [types.PAYMENT_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isPaymentVisible,
-  [types.RECEIPT_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isReceiptVisible,
+  [types.PAYMENT_HISTORY_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isPaymentHistoryVisible,
+  [types.UPGRADE_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isUpgradeVisible,
+  [types.PAYMENT_COMPLETE_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isPaymentCompleteVisible,
   [types.PAYMENT_IS_IN_PROGRESS]: state => state[STATE_KEY].isProcessing,
   [types.GET_PAYMENT]: state => state[STATE_KEY].payment,
   [types.GET_PAYMENT_ID]: state => state[STATE_KEY].payment.id,
@@ -42,5 +44,6 @@ export default {
     return paymentRequestState
   },
   [types.GET_PAYMENT_INVOICE]: state => state[STATE_KEY].invoice,
-  [types.GET_PAYMENT_RECEIPT]: state => state[STATE_KEY].receipt
+  [types.GET_PAYMENT_RECEIPT]: state => state[STATE_KEY].receipt,
+  [types.GET_PAYMENTS]: state => state[STATE_KEY].payments
 }
