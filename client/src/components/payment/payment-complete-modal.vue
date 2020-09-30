@@ -14,7 +14,7 @@
       <v-card-actions>
         <!--<span>Time Remaining - 10:00</span>-->
         <v-spacer></v-spacer>
-        <v-btn @click="redirectToStart" id="receipt-close-btn" class="normal" text>OK</v-btn>
+        <v-btn @click="hideModal" id="receipt-close-btn" class="normal" text>Done</v-btn>
         <v-btn @click="downloadReceipt" id="download-receipt-btn" class="primary" text>Download Receipt</v-btn>
       </v-card-actions>
     </v-card>
@@ -93,7 +93,15 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
   }
 
   async hideModal () {
+    const { nrId } = this
+    await this.fetchNr(nrId)
     await paymentModule.toggleReceiptModal(false)
+  }
+
+  async fetchNr (nrId) {
+    const existingNr = await newRequestModule.getNameRequest(nrId)
+    await newRequestModule.loadExistingNameRequest(existingNr)
+    await newRequestModule.mutateEditMode(true)
   }
 
   async redirectToStart () {
@@ -127,7 +135,7 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
   }
 
   async completePayment (nrId, paymentId) {
-    const result: NameRequestPayment = await newRequestModule.completePayment({ nrId, paymentId })
+    const result: NameRequestPayment = await newRequestModule.completePayment({ nrId, paymentId, action: 'COMPLETE' })
     const paymentSuccess = result.paymentSuccess
 
     // TODO: Remove this when done implementing tests
