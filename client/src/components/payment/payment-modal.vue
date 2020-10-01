@@ -78,15 +78,15 @@ export default class PaymentModal extends Mixins(NameRequestMixin, PaymentMixin,
   }
 
   async confirmPayment () {
-    const { nrId, priorityRequest, paymentId } = this
+    const { nrId, priorityRequest } = this
     const onSuccess = (paymentResponse) => {
-      const { token } = paymentResponse
+      const { paymentId, paymentToken } = this
       // Save to session
       this.savePaymentResponseToSession(paymentActions.COMPLETE, paymentResponse)
 
       const baseUrl = getBaseUrl()
-      const redirectUrl = encodeURIComponent(`${baseUrl}/?paymentId=${paymentId}`)
-      this.redirectToPaymentPortal(paymentId, token, redirectUrl)
+      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${paymentId}`)
+      this.redirectToPaymentPortal(paymentId, paymentToken, redirectUrl)
     }
 
     this.createPayment({

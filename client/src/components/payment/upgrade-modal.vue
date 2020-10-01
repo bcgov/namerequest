@@ -73,15 +73,15 @@ export default class UpgradeModal extends Mixins(NameRequestMixin, PaymentMixin,
   }
 
   async confirmPayment () {
-    const { nrId, priorityRequest, paymentId } = this
+    const { nrId, priorityRequest } = this
     const onSuccess = (paymentResponse) => {
-      const { token } = paymentResponse
+      const { paymentId, paymentToken } = this
       // Save to session
       this.savePaymentResponseToSession(paymentActions.UPGRADE, paymentResponse)
 
       const baseUrl = getBaseUrl()
       const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${paymentId}`)
-      this.redirectToPaymentPortal(paymentId, token, redirectUrl)
+      this.redirectToPaymentPortal(paymentId, paymentToken, redirectUrl)
     }
 
     this.createPayment({

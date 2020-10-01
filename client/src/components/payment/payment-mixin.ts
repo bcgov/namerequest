@@ -114,8 +114,8 @@ export default class PaymentMixin extends Vue {
     }
 
     try {
-      const paymentResponse: NameRequestPaymentResponse = await paymentService.createPaymentRequest(nrId, req)
-      const { payment, sbcPayment = { invoices: [] }, token, statusCode, completionDate } = paymentResponse
+      const paymentResponse: NameRequestPaymentResponse = await paymentService.createPaymentRequest(nrId, action, req)
+      const { payment, sbcPayment = { invoices: [] } } = paymentResponse
 
       await paymentModule.setPayment(payment)
       await paymentModule.setPaymentInvoice(sbcPayment.invoices[0])
