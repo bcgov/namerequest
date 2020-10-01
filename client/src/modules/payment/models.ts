@@ -19,6 +19,8 @@ export interface NameRequestPayment {
 }
 
 export interface CreatePaymentParams {
+  // TODO: We could use a type or something for the action...
+  action: string
   nrId: number
   filingType: string
   priorityRequest: boolean

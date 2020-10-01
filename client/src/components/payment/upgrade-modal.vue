@@ -85,6 +85,7 @@ export default class UpgradeModal extends Mixins(NameRequestMixin, PaymentMixin,
     }
 
     this.createPayment({
+      action: paymentActions.UPGRADE,
       nrId: nrId,
       filingType: filingTypes.NM606,
       priorityRequest: priorityRequest

@@ -90,6 +90,7 @@ export default class PaymentModal extends Mixins(NameRequestMixin, PaymentMixin,
     }
 
     this.createPayment({
+      action: paymentActions.COMPLETE,
       nrId: nrId,
       filingType: filingTypes.NM620,
       priorityRequest: priorityRequest
