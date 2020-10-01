@@ -7,6 +7,9 @@ export const PAYMENT_HISTORY_MODAL_IS_VISIBLE = 'paymentHistoryModalIsVisible'
 export const TOGGLE_UPGRADE_MODAL = 'toggleUpgradeModal'
 export const UPGRADE_MODAL_IS_VISIBLE = 'upgradeModalIsVisible'
 
+export const TOGGLE_REAPPLY_MODAL = 'toggleReapplyModal'
+export const REAPPLY_MODAL_IS_VISIBLE = 'reapplyModalIsVisible'
+
 export const PAYMENT_IS_IN_PROGRESS = 'paymentIsInProgress'
 
 export const GET_PAYMENT = 'getPayment'

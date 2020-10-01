@@ -12,6 +12,10 @@ export const toggleUpgradeModal = ({ commit }, isVisible: boolean) => {
   commit(types.TOGGLE_UPGRADE_MODAL, isVisible)
 }
 
+export const toggleReapplyModal = ({ commit }, isVisible: boolean) => {
+  commit(types.TOGGLE_REAPPLY_MODAL, isVisible)
+}
+
 export const setPaymentFees = ({ commit }, fees: any) => {
   commit(types.SET_PAYMENT_FEES, fees)
 }
