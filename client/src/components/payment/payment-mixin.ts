@@ -84,7 +84,7 @@ export default class PaymentMixin extends Vue {
   }
 
   async createPayment (params: CreatePaymentParams, onSuccess: (paymentResponse) => void) {
-    const { nrId, filingType, priorityRequest } = params
+    const { nrId, filingType, priorityRequest, action } = params
     // Comment this out to use direct pay
     // const methodOfPayment = 'CC' // We may need to handle more than one type at some point?
 
@@ -114,8 +114,8 @@ export default class PaymentMixin extends Vue {
     }
 
     try {
-      const paymentResponse: NameRequestPaymentResponse = await paymentService.createPaymentRequest(nrId, req)
-      const { payment, sbcPayment = { invoices: [] }, token, statusCode, completionDate } = paymentResponse
+      const paymentResponse: NameRequestPaymentResponse = await paymentService.createPaymentRequest(nrId, action, req)
+      const { payment, sbcPayment = { invoices: [] } } = paymentResponse
 
       await paymentModule.setPayment(payment)
       await paymentModule.setPaymentInvoice(sbcPayment.invoices[0])

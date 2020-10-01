@@ -34,6 +34,7 @@ import { CreatePaymentParams } from '@/modules/payment/models'
 import * as paymentTypes from '@/modules/payment/store/types'
 import * as filingTypes from '@/modules/payment/filing-types'
 import * as jurisdictions from '@/modules/payment/jurisdictions'
+import * as paymentActions from './payment-actions'
 
 import PaymentMixin from '@/components/payment/payment-mixin'
 import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
@@ -77,18 +78,19 @@ export default class PaymentModal extends Mixins(NameRequestMixin, PaymentMixin,
   }
 
   async confirmPayment () {
-    const { nrId, priorityRequest, paymentId } = this
+    const { nrId, priorityRequest } = this
     const onSuccess = (paymentResponse) => {
-      const { token } = paymentResponse
+      const { paymentId, paymentToken } = this
       // Save to session
-      this.savePaymentResponseToSession(paymentResponse)
+      this.savePaymentResponseToSession(paymentActions.COMPLETE, paymentResponse)
 
       const baseUrl = getBaseUrl()
-      const redirectUrl = encodeURIComponent(`${baseUrl}/?paymentId=${paymentId}`)
-      this.redirectToPaymentPortal(paymentId, token, redirectUrl)
+      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${paymentId}`)
+      this.redirectToPaymentPortal(paymentId, paymentToken, redirectUrl)
     }
 
     this.createPayment({
+      action: paymentActions.COMPLETE,
       nrId: nrId,
       filingType: filingTypes.NM620,
       priorityRequest: priorityRequest

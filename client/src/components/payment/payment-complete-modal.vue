@@ -68,18 +68,18 @@ const DEBUG_RECEIPT = false
 })
 export default class PaymentCompleteModal extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
   mounted () {
-    const { sessionPaymentId } = this
+    const { sessionPaymentId, sessionPaymentAction } = this
     // Check for a payment ID in sessionStorage, if it has been set, we've been redirected away from the application,
     // and need to rehydrate the application using the payment ID (for now, it could be some other token too)!
     // TODO: Set the timer here!
-    if (sessionPaymentId) {
+    if (sessionPaymentId && sessionPaymentAction) {
       // TODO: Remember to clear the session when we're done building this out
       this.fetchData(!DEBUG_RECEIPT)
         .then(() => {
           const { nrId } = this
 
           // Then complete the payment
-          this.completePayment(nrId, sessionPaymentId)
+          this.completePayment(nrId, sessionPaymentId, sessionPaymentAction)
         })
     }
   }
@@ -134,8 +134,8 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
     }
   }
 
-  async completePayment (nrId, paymentId) {
-    const result: NameRequestPayment = await newRequestModule.completePayment({ nrId, paymentId, action: 'COMPLETE' })
+  async completePayment (nrId: number, paymentId: number, action: string) {
+    const result: NameRequestPayment = await newRequestModule.completePayment({ nrId, paymentId, action })
     const paymentSuccess = result.paymentSuccess
 
     // TODO: Remove this when done implementing tests

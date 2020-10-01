@@ -40,8 +40,8 @@ async function handleApiError (err, defaultMessage = '') {
   }
 }
 
-export async function createPaymentRequest (nrId, data): Promise<NameRequestPaymentResponse> {
-  const url = `/payments/${nrId}`
+export async function createPaymentRequest (nrId, action, data): Promise<NameRequestPaymentResponse> {
+  const url = `/payments/${nrId}/${action}`
   try {
     const response: AxiosResponse = await axios.post(url, data)
     return response.data

@@ -15,6 +15,12 @@ export default class PaymentMixin extends Vue {
       : undefined
   }
 
+  get sessionPaymentAction () {
+    return (this.paymentInProgress && sessionStorage.getItem('paymentAction'))
+      ? sessionStorage.getItem('paymentAction')
+      : undefined
+  }
+
   get sessionPaymentToken () {
     return (this.paymentInProgress && sessionStorage.getItem('paymentToken'))
       ? sessionStorage.getItem('paymentToken')
@@ -33,12 +39,17 @@ export default class PaymentMixin extends Vue {
       : undefined
   }
 
-  savePaymentResponseToSession (paymentResponse: NameRequestPaymentResponse) {
+  /**
+   * @param paymentAction A PaymentAction - one of [COMPLETE, UPGRADE, REAPPLY, REFUND]
+   * @param paymentResponse
+   */
+  savePaymentResponseToSession (paymentAction, paymentResponse: NameRequestPaymentResponse) {
     const { id, nrId, payment, sbcPayment = { invoices: [] }, token, statusCode, completionDate } = paymentResponse
 
     // TODO: Remove this one, we don't want to set the payment to session once we're done!
     // TODO: Or... we could add a debug payments mode?
     sessionStorage.setItem('payment', `${JSON.stringify(payment)}`)
+    sessionStorage.setItem('paymentAction', `${paymentAction}`)
     // Store the payment ID to sessionStorage, that way we can start the user back where we left off
     sessionStorage.setItem('paymentInProgress', 'true')
     sessionStorage.setItem('paymentId', `${id}`)
