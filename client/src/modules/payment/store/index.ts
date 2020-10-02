@@ -35,6 +35,7 @@ const state = {
     },
     request: {},
     payment: {},
+    sbcPayment: {},
     payments: [],
     invoice: {
       reference_number: null,

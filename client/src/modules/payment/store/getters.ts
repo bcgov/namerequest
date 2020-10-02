@@ -9,9 +9,11 @@ export default {
   [types.REAPPLY_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isReapplyVisible,
   [types.PAYMENT_COMPLETE_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isPaymentCompleteVisible,
   [types.PAYMENT_IS_IN_PROGRESS]: state => state[STATE_KEY].isProcessing,
+  [types.GET_SBC_PAYMENT]: state => state[STATE_KEY].sbcPayment,
   [types.GET_PAYMENT]: state => state[STATE_KEY].payment,
   [types.GET_PAYMENT_ID]: state => state[STATE_KEY].payment.id,
   [types.GET_PAYMENT_TOKEN]: state => state[STATE_KEY].payment.payment_token,
+  [types.GET_PAYMENT_STATUS]: state => state[STATE_KEY].payment.payment_status_code,
   [types.GET_PAYMENT_FEES]: state => state[STATE_KEY].fees,
   [types.GET_PAYMENT_DETAILS]: state => {
     const {

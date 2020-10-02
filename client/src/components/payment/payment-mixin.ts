@@ -13,6 +13,10 @@ import newRequestModule from "@/store/new-request-module"
 
 @Component
 export default class PaymentMixin extends Vue {
+  get sbcPayment () {
+    return this.$store.getters[paymentTypes.GET_SBC_PAYMENT]
+  }
+
   get payment () {
     return this.$store.getters[paymentTypes.GET_PAYMENT]
   }
@@ -23,6 +27,10 @@ export default class PaymentMixin extends Vue {
 
   get paymentToken () {
     return this.$store.getters[paymentTypes.GET_PAYMENT_TOKEN]
+  }
+
+  get paymentStatus () {
+    return this.$store.getters[paymentTypes.GET_PAYMENT_STATUS]
   }
 
   get paymentRequest () {
@@ -185,9 +193,10 @@ export default class PaymentMixin extends Vue {
   async fetchNrPayment (nrId, paymentId) {
     try {
       const paymentResponse: NameRequestPaymentResponse = await paymentService.getNameRequestPayment(nrId, paymentId, {})
-      const { payment, sbcPayment = { invoices: [] }, token, statusCode, completionDate } = paymentResponse
+      const { payment, sbcPayment = { invoices: [], status_code: '' }, token, statusCode, completionDate } = paymentResponse
 
       await paymentModule.setPayment(payment)
+      await paymentModule.setSbcPayment(sbcPayment)
       await paymentModule.setPaymentInvoice(sbcPayment.invoices[0])
     } catch (error) {
       if (error instanceof PaymentApiError) {
