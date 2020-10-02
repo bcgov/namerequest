@@ -186,6 +186,9 @@ export default class ExistingRequestDisplay extends Vue {
       case 'UPGRADE':
         paymentModule.toggleUpgradeModal(true)
         break
+      case 'REAPPLY':
+        paymentModule.toggleReapplyModal(true)
+        break
       case 'RECEIPT':
         paymentModule.togglePaymentHistoryModal(true)
         break
