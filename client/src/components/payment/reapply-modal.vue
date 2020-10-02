@@ -73,20 +73,21 @@ export default class ReapplyModal extends Mixins(NameRequestMixin, PaymentMixin,
   }
 
   async confirmPayment () {
-    const { nrId, priorityRequest, paymentId } = this
+    const { nrId, priorityRequest } = this
     const onSuccess = (paymentResponse) => {
-      const { token } = paymentResponse
+      const { paymentId, paymentToken } = this
       // Save to session
       this.savePaymentResponseToSession(paymentActions.REAPPLY, paymentResponse)
 
       const baseUrl = getBaseUrl()
       const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${paymentId}`)
-      this.redirectToPaymentPortal(paymentId, token, redirectUrl)
+      this.redirectToPaymentPortal(paymentId, paymentToken, redirectUrl)
     }
 
     this.createPayment({
+      action: paymentActions.REAPPLY,
       nrId: nrId,
-      filingType: filingTypes.NM620,
+      filingType: filingTypes.NM606,
       priorityRequest: priorityRequest
     } as CreatePaymentParams, onSuccess)
   }

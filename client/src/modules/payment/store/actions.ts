@@ -32,6 +32,10 @@ export const setPaymentRequest = ({ commit }, req: any) => {
   commit(types.SET_PAYMENT_REQUEST, req)
 }
 
+export const setSbcPayment = ({ commit }, payment: any) => {
+  commit(types.SET_SBC_PAYMENT, payment)
+}
+
 export const setPayment = ({ commit }, payment: any) => {
   commit(types.SET_PAYMENT, payment)
 }
