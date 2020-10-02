@@ -73,13 +73,24 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
     // and need to rehydrate the application using the payment ID (for now, it could be some other token too)!
     // TODO: Set the timer here!
     if (sessionPaymentId && sessionPaymentAction) {
-      // TODO: Remember to clear the session when we're done building this out
+      // Call fetchData to load the NR and the payment
       this.fetchData(!DEBUG_RECEIPT)
         .then(() => {
-          const { nrId } = this
+          const { nrId, paymentStatus, sbcPayment = { status_code: '' } } = this
+          const sbcPaymentStatusCode = sbcPayment.status_code
 
-          // Then complete the payment
-          this.completePayment(nrId, sessionPaymentId, sessionPaymentAction)
+          // If the payment is already complete for some reason, skip this
+          // TODO: Maybe set a constant instead somewhere...
+          if (paymentStatus === 'COMPLETED') return
+          if (sbcPaymentStatusCode === 'COMPLETED' && paymentStatus === 'CREATED') {
+            // Then complete the payment
+            this.completePayment(nrId, sessionPaymentId, sessionPaymentAction)
+          } else {
+            errorModule.setAppError({
+              id: 'payment-error',
+              error: 'Your payment could not be completed. Please try again at a later time.'
+            } as ErrorI)
+          }
         })
     }
   }

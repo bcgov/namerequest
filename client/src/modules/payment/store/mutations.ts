@@ -33,6 +33,9 @@ export default {
   [types.SET_PAYMENT]: (state, payment: any) => {
     state[STATE_KEY].payment = payment || {}
   },
+  [types.SET_SBC_PAYMENT]: (state, sbcPayment: any) => {
+    state[STATE_KEY].sbcPayment = sbcPayment || {}
+  },
   [types.TOGGLE_PAYMENT_COMPLETE_MODAL]: (state, isVisible: boolean) => {
     state[STATE_KEY].isPaymentCompleteVisible = isVisible || false
   },
