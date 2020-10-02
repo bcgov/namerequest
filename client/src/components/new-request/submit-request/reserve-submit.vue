@@ -1,6 +1,6 @@
 <template>
   <v-btn :color="setup === 'consent' ? 'red' : ''" class="mt-auto margin-top-auto"
-          @click="showNextStep()">
+          @click="handleSubmit" ref="reserve-submit-button">
     {{ text }}
   </v-btn>
 </template>
@@ -13,18 +13,25 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 @Component({})
 export default class ReserveSubmitButton extends Vue {
   @Prop(String) setup: string
+
   get entity_type_cd () {
     return newReqModule.entity_type_cd
   }
+  get isAssumedName () {
+    return newReqModule.isAssumedName
+  }
   get location () {
     return newReqModule.location
+  }
+  get name () {
+    return newReqModule.name
   }
   get request_action_cd () {
     return newReqModule.request_action_cd
   }
   get text () {
     if (this.location !== 'BC' && this.setup !== 'assumed') {
-      return 'Send For Examination'
+      return 'Send for Examination'
     }
     switch (this.setup) {
       case 'consent':
@@ -32,43 +39,49 @@ export default class ReserveSubmitButton extends Vue {
       case 'examine':
         return 'Send for Examination'
       case 'assumed':
-        return 'Continue'
+        if (this.$xproMapping['ASSUMED'].includes(this.entity_type_cd)) {
+          return 'Assume a name in BC'
+        }
+        return 'Pick a new Name'
       default:
         return 'Reserve and Continue'
     }
   }
 
-  showNextStep () {
-    newReqModule.mutateDisplayedComponent('SubmissionTabs')
-    if ((this.setup === 'examine' || this.location !== 'BC') || this.setup === 'assumed') {
+  handleSubmit () {
+    let { setup, location, entity_type_cd, request_action_cd } = this
+    let goToNames = () => {
       newReqModule.mutateSubmissionType('examination')
       newReqModule.mutateSubmissionTabComponent('NamesCapture')
-      if (this.setup === 'assumed') {
-        if (xproMapping['ASSUMED'].includes(this.entity_type_cd)) {
-          newReqModule.mutateRequestActionOriginal(this.request_action_cd)
+    }
+    newReqModule.mutateDisplayedComponent('SubmissionTabs')
+
+    if (location !== 'BC' && setup !== 'assumed') {
+      goToNames()
+      return
+    }
+    switch (setup) {
+      case 'assumed':
+        if (this.$xproMapping['ASSUMED'].includes(entity_type_cd)) {
+          newReqModule.mutateRequestActionOriginal(request_action_cd)
           newReqModule.mutateRequestAction('ASSUMED')
         }
         newReqModule.mutateAssumedNameOriginal()
+        goToNames()
         return
-      }
-    }
-    newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
-    if (this.setup === 'consent') {
-      newReqModule.postNameRequests('conditional')
-      newReqModule.mutateSubmissionType('consent')
-      return
-    }
-    if (this.setup === 'examine') {
-      newReqModule.postNameRequests('draft')
-      newReqModule.mutateSubmissionType('examination')
-      return
-    } else {
-      newReqModule.mutateSubmissionType('normal')
-      if (this.location !== 'BC') {
-        newReqModule.mutateSubmissionTabComponent('NamesCapture')
+      case 'examine':
+        goToNames()
         return
-      }
-      newReqModule.postNameRequests('reserved')
+      case 'consent':
+        newReqModule.postNameRequests('conditional')
+        newReqModule.mutateSubmissionType('consent')
+        newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
+        return
+      default:
+        newReqModule.mutateSubmissionType('normal')
+        newReqModule.postNameRequests('reserved')
+        newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
+        return
     }
   }
 }

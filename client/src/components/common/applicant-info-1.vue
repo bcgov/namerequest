@@ -383,7 +383,7 @@ export default class ApplicantInfo1 extends Vue {
     this.$el.addEventListener('keydown', this.handleKeydown)
     // CanadaPost Address Complete needs a country to begin working right away, assume Canada
     if (!this.editMode) {
-      this.updateApplicant('countryTypeCd', 'CA')
+      newReqModule.updateApplicantDetails({ key: 'countryTypeCd', value: 'CA' })
       return
     }
   }
