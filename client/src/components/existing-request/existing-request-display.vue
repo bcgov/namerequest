@@ -6,7 +6,14 @@
       </v-col>
     </template>
     <template v-slot:content>
-      <v-row align="start" v-if="nr.nrNum">
+      <v-row align="center" v-if="showUnfurnishedError" class="mt-5 mb-5">
+        <v-col cols="12" class="h4 text-center">We are currently updating the status of your NR</v-col>
+        <v-col cols="12" class="text-center mt-n2">Please allow 5 minutes before trying your search again.</v-col>
+        <v-col cols="12" class="text-center">
+          <v-btn @click="goBack">Go Back</v-btn>
+        </v-col>
+      </v-row>
+      <v-row align="start" v-if="nr.nrNum && !showUnfurnishedError">
         <v-col cols="auto" class="fs-24">
           <span class="h3 mr-2">{{ nr.nrNum }}</span>
         </v-col>
@@ -138,6 +145,9 @@ export default class ExistingRequestDisplay extends Vue {
     let nameObj = this.nr.names.find(name => name.choice === 1)
     return nameObj.name
   }
+  get showUnfurnishedError (): boolean {
+    return (['CONDITIONAL', 'REJECTED', 'APPROVED'].includes(this.nr.stateCd) && this.nr.furnished === 'N')
+  }
   get names () {
     return this.nr.names.sort((a, b) => {
       if (a.choice > b.choice) {
@@ -185,25 +195,36 @@ export default class ExistingRequestDisplay extends Vue {
   }
 
   async handleButtonClick (action) {
-    switch (action) {
-      case 'EDIT':
-        newReqModule.editExistingRequest()
-        break
-      case 'UPGRADE':
-        paymentModule.toggleUpgradeModal(true)
-        break
-      case 'REAPPLY':
-        paymentModule.toggleReapplyModal(true)
-        break
-      case 'RECEIPT':
-        paymentModule.togglePaymentHistoryModal(true)
-        break
-      default:
-        newReqModule.patchNameRequestsByAction(action)
-        break
+    if (this.showUnfurnishedError) {
+      return
+    }
+    let outcome = await newReqModule.confirmAction(action)
+    if (outcome) {
+      switch (action) {
+        case 'EDIT':
+          newReqModule.editExistingRequest()
+          break
+        case 'UPGRADE':
+          paymentModule.toggleUpgradeModal(true)
+          break
+        case 'REAPPLY':
+          paymentModule.toggleReapplyModal(true)
+          break
+        case 'RECEIPT':
+          paymentModule.togglePaymentHistoryModal(true)
+          break
+        default:
+          newReqModule.patchNameRequestsByAction(action)
+          break
+      }
+    } else {
+      newReqModule.setActiveComponent('InvalidActionMessage')
     }
   }
-
+  async goBack () {
+    await newReqModule.cancelEditExistingRequest()
+    newReqModule.cancelAnalyzeName()
+  }
   showConditionsModal () {
     newReqModule.mutateConditionsModalVisible(true)
   }
@@ -215,22 +236,18 @@ export default class ExistingRequestDisplay extends Vue {
     sessionStorage.setItem('NR_DATA', JSON.stringify(this.nr))
   }
 }
-
 </script>
 
 <style lang="sass" scoped>
 .whitesmoke-bg
   background-color: whitesmoke
-
 .max-height
   max-height: 60px
-
 .no-style-button
   background-color: unset !important
   border: 0 !important
   border-radius: 0 !important
   box-shadow: unset !important
-
 .forgot-nr-link
   text-decoration: underline
   cursor: pointer !important

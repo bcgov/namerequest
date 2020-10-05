@@ -27,6 +27,9 @@
             <ApplicantInfo2 v-if="actingOnOwnBehalf" />
             <ApplicantInfo3 v-else />
           </v-tab-item>
+          <v-tab-item>
+            <InvalidActionMessage />
+          </v-tab-item>
         </v-tabs-items>
       </v-tabs>
     </template>
@@ -40,6 +43,7 @@ import ApplicantInfo2 from '../../common/applicant-info-2.vue'
 import ApplicantInfo3 from '../../common/applicant-info-3.vue'
 import EntityCannotBeAutoAnalyzed from './entity-cannot-be-auto-analyzed.vue'
 import NamesCapture from '../../common/names-capture.vue'
+import InvalidActionMessage from '../../existing-request/invalid-action-message.vue'
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
 
@@ -50,7 +54,8 @@ import { Component, Vue } from 'vue-property-decorator'
     NamesCapture,
     ApplicantInfo1,
     ApplicantInfo2,
-    MainContainer
+    MainContainer,
+    InvalidActionMessage
   }
 })
 export default class SubmissionTabs extends Vue {

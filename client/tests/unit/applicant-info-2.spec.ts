@@ -19,12 +19,11 @@ describe('It initially renders correctly', () => {
     await wrapper.vm.$nextTick()
     done()
   })
-  it('checks the corpNum against the appropriate database given the setup: BC location' async () => {
+  it('checks the corpNum against the appropriate database given the setup: BC location', async () => {
     const mrasJurisdictions = ['Alberta', 'Saskatchewan', 'Manitoba']
     const mrasActions = []
     function setStore (jurisdiction, action) {
       module.mutateNRData({ key: 'xproJurisdiction', value: 'Alberta'})
     }
-    setStore()
   })
 })

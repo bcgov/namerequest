@@ -60,11 +60,15 @@ describe('Testing behavior of getters.showCorpNum: (state) => return value', () 
 
   let testData = []
   for (let row of spreadSheetData) {
-    let obj = { ...row }
-    obj['showCorpNum'] as any = obj['showCorpNum'].toLowerCase()
-    if (obj['showCorpNum'] as any === 'n/a') {
-      obj['showCorpNum'] as any = false
-      obj['xproJurisdiction'] as any = null
+    interface Obj {
+      showCorpNum: any,
+      xproJurisdiction: any
+    }
+    let obj: Partial<Obj> = { ...row }
+    obj['showCorpNum'] = obj['showCorpNum'].toLowerCase()
+    if (obj.showCorpNum === 'n/a') {
+      obj.showCorpNum = false
+      obj.xproJurisdiction = null
     } else {
       if (obj['showCorpNum'] === 'colin') {
         obj['xproJurisdiction'] = null

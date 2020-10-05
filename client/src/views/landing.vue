@@ -35,11 +35,11 @@ import ExistingRequestEdit from '@/components/existing-request/existing-request-
 
 @Component({
   components: {
-    ExistingRequestEdit,
     AnalyzeCharacters,
     AnalyzePending,
     AnalyzeResults,
     ExistingRequestDisplay,
+    ExistingRequestEdit,
     LowerContainer,
     Stats,
     SubmissionTabs,
