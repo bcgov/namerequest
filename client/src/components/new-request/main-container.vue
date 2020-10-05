@@ -26,12 +26,20 @@ export default class MainContainer extends Vue {
   get editMode () {
     return newReqModule.editMode
   }
-  cancelAnalyzeName () {
+  async cancelAnalyzeName () {
     if (this.editMode) {
-      newReqModule.cancelEditExistingRequest()
-      return
+      await newReqModule.cancelEditExistingRequest()
+      // Redirect to the start
+      // Catch any errors, so we don't get errors like:
+      // Avoided redundant navigation to current location: "/"
+      await this.$router.replace('/').catch(() => {})
+    } else {
+      await newReqModule.cancelAnalyzeName()
+      // Redirect to the start
+      // Catch any errors, so we don't get errors like:
+      // Avoided redundant navigation to current location: "/"
+      await this.$router.replace('/').catch(() => {})
     }
-    newReqModule.cancelAnalyzeName()
   }
   get displayedComponent () {
     return newReqModule.displayedComponent

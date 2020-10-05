@@ -68,31 +68,31 @@ const DEBUG_RECEIPT = false
   }
 })
 export default class PaymentCompleteModal extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
-  mounted () {
+  async mounted () {
     const { sessionPaymentId, sessionPaymentAction } = this
     // Check for a payment ID in sessionStorage, if it has been set, we've been redirected away from the application,
     // and need to rehydrate the application using the payment ID (for now, it could be some other token too)!
     // TODO: Set the timer here!
     if (sessionPaymentId && sessionPaymentAction) {
       // Call fetchData to load the NR and the payment
-      this.fetchData(!DEBUG_RECEIPT)
-        .then(() => {
-          const { nrId, paymentStatus, sbcPayment = { status_code: '' } } = this
-          const sbcPaymentStatusCode = sbcPayment.status_code
+      await this.fetchData(!DEBUG_RECEIPT)
+      // Make sure edit mode is disabled or it will screw up the back button
+      await newRequestModule.mutateEditMode(false)
+      const { nrId, paymentStatus, sbcPayment = { status_code: '' } } = this
+      const sbcPaymentStatusCode = sbcPayment.status_code
 
-          // If the payment is already complete for some reason, skip this
-          // TODO: Maybe set a constant instead somewhere...
-          if (paymentStatus === 'COMPLETED') return
-          if (sbcPaymentStatusCode === 'COMPLETED' && paymentStatus === 'CREATED') {
-            // Then complete the payment
-            this.completePayment(nrId, sessionPaymentId, sessionPaymentAction)
-          } else {
-            errorModule.setAppError({
-              id: 'payment-error',
-              error: 'Your payment could not be completed. Please try again at a later time.'
-            } as ErrorI)
-          }
-        })
+      // If the payment is already complete for some reason, skip this
+      // TODO: Maybe set a constant instead somewhere...
+      if (paymentStatus === 'COMPLETED') return
+      if (sbcPaymentStatusCode === 'COMPLETED' && paymentStatus === 'CREATED') {
+        // Then complete the payment
+        await this.completePayment(nrId, sessionPaymentId, sessionPaymentAction)
+      } else {
+        errorModule.setAppError({
+          id: 'payment-error',
+          error: 'Your payment could not be completed. Please try again at a later time.'
+        } as ErrorI)
+      }
     }
   }
 
@@ -113,11 +113,6 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
   async fetchNr (nrId) {
     const existingNr = await newRequestModule.getNameRequest(nrId)
     await newRequestModule.loadExistingNameRequest(existingNr)
-    await newRequestModule.mutateEditMode(true)
-  }
-
-  async redirectToStart () {
-    window.location.href = document.baseURI
   }
 
   /**

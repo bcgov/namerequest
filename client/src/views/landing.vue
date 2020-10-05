@@ -61,7 +61,6 @@ export default class Landing extends Vue {
   async fetchNr (nrId) {
     const existingNr = await newRequestModule.getNameRequest(nrId)
     await newRequestModule.loadExistingNameRequest(existingNr)
-    await newRequestModule.mutateEditMode(true)
   }
 
   get displayedComponent () {
