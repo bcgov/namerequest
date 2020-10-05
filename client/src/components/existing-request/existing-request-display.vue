@@ -13,11 +13,11 @@
         <v-col class="copy-bold">
           <div style="display: inline-block" class="">
             <div v-for="name of names"
-                 :class="getNameFormating(name).class"
+                 :class="getNameFormatting(name).class"
                  :key="name.choice+'-name'">{{ `${name.choice}) ${name.name}` }}
-              <v-icon v-if="getNameFormating(name).icon" :class="getNameFormating(name).class"
+              <v-icon v-if="getNameFormatting(name).icon" :class="getNameFormatting(name).class"
                       style="font-size: 20px; position: relative; top: -3px;">
-                {{ getNameFormating(name).icon }}</v-icon>
+                {{ getNameFormatting(name).icon }}</v-icon>
               <a class="link-sm ml-3"
                  @click.prevent="showConditionsModal"
                  href="#"
@@ -157,7 +157,7 @@ export default class ExistingRequestDisplay extends Vue {
     return (this.nr && this.nr.priorityCd && this.nr.priorityCd === 'Y')
   }
 
-  getNameFormating (name) {
+  getNameFormatting (name) {
     if (name.state === 'NE') {
       return {
         icon: false,
@@ -175,6 +175,12 @@ export default class ExistingRequestDisplay extends Vue {
         icon: 'close',
         class: 'action'
       }
+    }
+
+    // Rendering template looks for an icon and class, so make sure to set a default here!
+    return {
+      icon: false,
+      class: ''
     }
   }
 
