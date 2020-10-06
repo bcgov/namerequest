@@ -35,6 +35,7 @@ import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 
 import * as paymentTypes from '@/modules/payment/store/types'
+import * as paymentActions from './payment-actions'
 
 import PaymentMixin from '@/components/payment/payment-mixin'
 import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
@@ -92,10 +93,12 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
           error: 'Your payment could not be completed. Please try again at a later time.'
         } as ErrorI)
 
-        // Cancel the NR using the rollback endpoint
-        await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
-        // Call fetchData to load the NR and the payment
-        await this.fetchData(!DEBUG_RECEIPT)
+        if (sessionPaymentAction && sessionPaymentAction === paymentActions.COMPLETE) {
+          // Cancel the NR using the rollback endpoint if we were processing a NEW NR
+          await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
+          // Call fetchData to load the NR and the payment
+          await this.fetchData(!DEBUG_RECEIPT)
+        }
       }
     }
   }
@@ -160,8 +163,10 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
     } else if (!paymentSuccess && result.paymentErrors) {
       // Setting the errors to state will update any subscribing components, like the main ErrorModal
       await errorModule.setAppErrors(result.paymentErrors)
-      // Cancel the NR using the rollback endpoint
-      await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
+      if (action && action === paymentActions.COMPLETE) {
+        // Cancel the NR using the rollback endpoint if we were processing a NEW NR
+        await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
+      }
     }
   }
 
