@@ -76,7 +76,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import Moment from 'moment'
 
 import MainContainer from '@/components/new-request/main-container.vue'
-import newReqModule from '@/store/new-request-module'
+import newReqModule, {ROLLBACK_ACTIONS as rollbackActions} from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 
 @Component({
@@ -184,7 +184,7 @@ export default class ExistingRequestDisplay extends Vue {
     }
   }
 
-  handleButtonClick (action) {
+  async handleButtonClick (action) {
     switch (action) {
       case 'EDIT':
         newReqModule.editExistingRequest()

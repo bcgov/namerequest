@@ -29,13 +29,11 @@ import PaymentConfirm from '@/components/payment/payment-confirm.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 
 import paymentModule from '@/modules/payment'
-import { PaymentApiError } from '@/modules/payment/services/payment'
-import { NameRequestPayment, NameRequestPaymentResponse } from '@/modules/payment/models'
+import { NameRequestPayment, SbcPaymentStatus } from '@/modules/payment/models'
 import newRequestModule, { ROLLBACK_ACTIONS as rollbackActions } from '@/store/new-request-module'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 
-import * as paymentService from '@/modules/payment/services'
 import * as paymentTypes from '@/modules/payment/store/types'
 
 import PaymentMixin from '@/components/payment/payment-mixin'
@@ -83,8 +81,9 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
 
       // If the payment is already complete for some reason, skip this
       // TODO: Maybe set a constant instead somewhere...
-      if (paymentStatus === 'COMPLETED') return
-      if (sbcPaymentStatusCode === 'COMPLETED' && paymentStatus === 'CREATED') {
+      if (paymentStatus === SbcPaymentStatus.COMPLETED) return
+      if (sbcPaymentStatusCode === SbcPaymentStatus.COMPLETED &&
+              paymentStatus === SbcPaymentStatus.CREATED) {
         // Then complete the payment
         await this.completePayment(nrId, sessionPaymentId, sessionPaymentAction)
       } else {
@@ -92,6 +91,9 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
           id: 'payment-error',
           error: 'Your payment could not be completed. Please try again at a later time.'
         } as ErrorI)
+
+        // Cancel the NR using the rollback endpoint
+        await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
       }
     }
   }
