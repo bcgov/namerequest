@@ -94,6 +94,8 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
 
         // Cancel the NR using the rollback endpoint
         await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
+        // Call fetchData to load the NR and the payment
+        await this.fetchData(!DEBUG_RECEIPT)
       }
     }
   }
