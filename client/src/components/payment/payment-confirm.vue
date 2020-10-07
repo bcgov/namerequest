@@ -8,7 +8,7 @@
       <v-alert color="error" icon="warning" outlined>{{fetchError}}</v-alert>
     </div>
 
-    <ul class="fee-list" v-show="!fetchError && invoice">
+    <ul class="fee-list" v-show="!fetchError">
       <li class="container fee-list__item">
         <div class="fee-list__item-name">
           NR Number<sup>*</sup>
@@ -28,22 +28,22 @@
       v-bind:name="name"
     />
 
-    <ul class="fee-list" v-show="!fetchError && invoice">
-      <li class="container fee-list__item">
+    <ul class="fee-list" v-show="!fetchError">
+      <!-- <li class="container fee-list__item" v-if="invoice">
         <div class="fee-list__item-name">Payment Ref #</div>
         <div class="fee-list__item-value">{{invoice.references[0].reference_number}}</div>
-      </li>
-      <li class="container fee-list__item">
+      </li> -->
+      <li class="container fee-list__item" v-if="summary">
         <div class="fee-list__item-name">Payment Date</div>
-        <div class="fee-list__item-value">{{new Date(invoice.created_on).toLocaleDateString("en-US")}}</div>
+        <div class="fee-list__item-value">{{new Date(summary.completionDate).toLocaleDateString("en-US")}}</div>
       </li>
-      <li class="container fee-list__item">
+      <li class="container fee-list__item" v-if="invoice">
         <div class="fee-list__item-name">Amount</div>
         <div class="fee-list__item-value">${{invoice.total.toFixed(2)}} CAD</div>
       </li>
-      <li class="container fee-list__item">
-        <div class="fee-list__item-name">Status</div>
-        <div class="fee-list__item-value">{{invoice.references[0].status_code}}</div>
+      <li class="container fee-list__item" v-if="summary">
+        <div class='fee-list__item-name'>Status</div>
+        <div class='fee-list__item-value'>{{summary.statusCode}}</div>
       </li>
     </ul>
   </v-card>
@@ -63,6 +63,7 @@ import { ApplicantI } from '@/models'
 })
 export default class PaymentConfirm extends Vue {
   @Prop(String) nrNum: string
+  @Prop(Object) summary: any
   @Prop(Object) invoice: any
   @Prop(Object) applicant: ApplicantI
   @Prop(Array) nameChoices: {
@@ -72,6 +73,20 @@ export default class PaymentConfirm extends Vue {
   @Prop(String) name: string
   // @Prop(Boolean) priorityRequest: boolean
   // @Prop(Object) payment: any
+  @Prop({ default: {
+    invoice: {
+      created_on: '',
+      total: 0.00,
+      references: [{
+        invoice_number: '',
+        status_code: ''
+      }]
+    },
+    summary: {
+      completionDate: '',
+      statusCode: ''
+    }
+  } })
 
   protected fetchError: string = ''
 }

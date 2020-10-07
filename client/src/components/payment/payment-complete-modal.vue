@@ -8,6 +8,7 @@
           v-bind:applicant="applicant"
           v-bind:nameChoices="nameChoices"
           v-bind:name="name"
+          v-bind:summary="summary"
           v-bind:invoice="paymentInvoice"
         />
       </v-card-text>
@@ -162,6 +163,13 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
       await errorModule.setAppErrors(result.paymentErrors)
       // Cancel the NR using the rollback endpoint
       await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
+    }
+  }
+
+  get summary () {
+    return {
+      completionDate: '',
+      statusCode: ''
     }
   }
 }

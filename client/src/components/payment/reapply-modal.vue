@@ -87,7 +87,7 @@ export default class ReapplyModal extends Mixins(NameRequestMixin, PaymentMixin,
     this.createPayment({
       action: paymentActions.REAPPLY,
       nrId: nrId,
-      filingType: filingTypes.NM606,
+      filingType: filingTypes.NM620,
       priorityRequest: priorityRequest
     } as CreatePaymentParams, onSuccess)
   }

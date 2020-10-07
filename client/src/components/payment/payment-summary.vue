@@ -1,11 +1,11 @@
 <template>
-  <v-card class='mb-5' v-if="invoice">
+  <v-card class='mb-5' v-if="summary">
     <header class='font-weight-bold px-3 py-3'>
       <slot name='header'>
         <span>
-          <small>{{new Date(invoice.created_on).toLocaleDateString('en-US')}}</small>
+          <small>{{new Date(summary.completionDate).toLocaleDateString('en-US')}}</small>
         </span>
-        <span style="float: right">
+        <span style="float: right" v-if="invoice">
           <small><small>Invoice No.</small></small> {{invoice.references[0].invoice_number}}
         </span>
       </slot>
@@ -15,14 +15,14 @@
       <v-alert color='error' icon='warning' outlined>{{fetchError}}</v-alert>
     </div>
 
-    <ul class='fee-list' v-show='!fetchError && invoice'>
-      <li class='container fee-list__item'>
+    <ul class='fee-list' v-show='!fetchError'>
+      <li class='container fee-list__item' v-if="invoice">
         <div class='fee-list__item-name'>Amount</div>
         <div class='fee-list__item-value'>${{invoice.total.toFixed(2)}} CAD</div>
       </li>
-      <li class='container fee-list__item'>
+      <li class='container fee-list__item' v-if="summary">
         <div class='fee-list__item-name'>Status</div>
-        <div class='fee-list__item-value'>{{invoice.references[0].status_code}}</div>
+        <div class='fee-list__item-value'>{{summary.statusCode}}</div>
       </li>
       <li class='container fee-list__item'>
         <div class='fee-list__item-name'>Receipt</div>
@@ -53,6 +53,20 @@ export default class PaymentSummary extends Mixins(PaymentMixin) {
   @Prop(Number) id: number
   @Prop(Object) summary: any
   @Prop(Object) invoice: any
+  @Prop({ default: {
+    invoice: {
+      created_on: '',
+      total: 0.00,
+      references: [{
+        invoice_number: '',
+        status_code: ''
+      }]
+    },
+    summary: {
+      completionDate: '',
+      statusCode: ''
+    }
+  } })
   protected fetchError: string = ''
 
   async downloadReceipt () {
