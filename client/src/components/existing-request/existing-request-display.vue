@@ -6,14 +6,7 @@
       </v-col>
     </template>
     <template v-slot:content>
-      <v-row align="center" v-if="showUnfurnishedError" class="mt-5 mb-5">
-        <v-col cols="12" class="h4 text-center">We are currently updating the status of your NR</v-col>
-        <v-col cols="12" class="text-center mt-n2">Please allow 5 minutes before trying your search again.</v-col>
-        <v-col cols="12" class="text-center">
-          <v-btn @click="goBack">Go Back</v-btn>
-        </v-col>
-      </v-row>
-      <v-row align="start" v-if="nr.nrNum && !showUnfurnishedError">
+      <v-row align="start" v-if="nr.nrNum">
         <v-col cols="auto" class="fs-24">
           <span class="h3 mr-2">{{ nr.nrNum }}</span>
         </v-col>
@@ -32,6 +25,17 @@
             </div>
           </div>
         </v-col>
+      </v-row>
+      <v-row style="background-color: rgba(165,205,230,0.31)" class="mx-1">
+        <v-col cols="12"
+               class="copy-normal font-italic"
+               v-if="disableUnfurnished">
+          We are currently processing your request.
+          Please click <a class="link" href="#" @click.prevent="refresh">Refresh</a> after 5 mins to enable all the
+          buttons below.
+        </v-col>
+      </v-row>
+      <v-row>
         <v-col cols="12">
           <v-row class="pt-3">
             <v-col cols="9">
@@ -66,7 +70,9 @@
             <v-col cols="3" v-if="nr.state !== 'CANCELLED'">
               <v-row dense>
                 <v-col cols="12" v-for="action of actions" :key="action+'-button'">
-                  <v-btn block @click="handleButtonClick(action)">{{ action }}</v-btn>
+                  <v-btn @click="handleButtonClick(action)"
+                         block
+                         :disabled="disableUnfurnished && action !== 'RECEIPT'">{{ action }}</v-btn>
                 </v-col>
                 <!--<v-btn @click="activateILModal">incorporate now</v-btn>-->
               </v-row>
@@ -145,7 +151,7 @@ export default class ExistingRequestDisplay extends Vue {
     let nameObj = this.nr.names.find(name => name.choice === 1)
     return nameObj.name
   }
-  get showUnfurnishedError (): boolean {
+  get disableUnfurnished (): boolean {
     return (['CONDITIONAL', 'REJECTED', 'APPROVED'].includes(this.nr.stateCd) && this.nr.furnished === 'N')
   }
   get names () {
@@ -195,7 +201,7 @@ export default class ExistingRequestDisplay extends Vue {
   }
 
   async handleButtonClick (action) {
-    if (this.showUnfurnishedError) {
+    if (this.disableUnfurnished) {
       return
     }
     let outcome = await newReqModule.confirmAction(action)
@@ -224,6 +230,9 @@ export default class ExistingRequestDisplay extends Vue {
   async goBack () {
     await newReqModule.cancelEditExistingRequest()
     newReqModule.cancelAnalyzeName()
+  }
+  refresh (event) {
+    window.location.assign(this.$route.fullPath)
   }
   showConditionsModal () {
     newReqModule.mutateConditionsModalVisible(true)
