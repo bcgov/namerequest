@@ -59,12 +59,21 @@ export default class PaymentMixin extends Vue {
 
   get paymentSummaries () {
     const payments = this.$store.getters[paymentTypes.GET_PAYMENTS]
-    const summaries = payments.map(payment => ({
-      id: payment.id,
-      payment: payment,
-      // TODO: Just need to get this thing working, fix this later
-      invoice: payment.sbcPayment.invoices[0]
-    }))
+    const summaries = payments.map(payment => {
+      const { id, sbcPayment } = payment
+      let invoice
+      if (sbcPayment &&
+        sbcPayment.invoices instanceof Array &&
+        sbcPayment.invoices.length > 0) {
+        invoice = sbcPayment.invoices[0]
+      }
+
+      return {
+        id,
+        payment,
+        invoice
+      }
+    })
     return summaries
   }
 
@@ -126,7 +135,7 @@ export default class PaymentMixin extends Vue {
       const { payment, sbcPayment = { invoices: [] } } = paymentResponse
 
       await paymentModule.setPayment(payment)
-      await paymentModule.setPaymentInvoice(sbcPayment.invoices[0])
+      // await paymentModule.setPaymentInvoice(sbcPayment.invoices[0])
       await paymentModule.setPaymentRequest(req)
 
       if (onSuccess) {
@@ -197,7 +206,12 @@ export default class PaymentMixin extends Vue {
 
       await paymentModule.setPayment(payment)
       await paymentModule.setSbcPayment(sbcPayment)
-      await paymentModule.setPaymentInvoice(sbcPayment.invoices[0])
+      if (sbcPayment &&
+        sbcPayment.invoices instanceof Array &&
+        sbcPayment.invoices.length > 0) {
+        const invoice = sbcPayment.invoices[0]
+        await paymentModule.setPaymentInvoice(invoice)
+      }
     } catch (error) {
       if (error instanceof PaymentApiError) {
         await errorModule.setAppError({ id: 'payment-api-error', error: error.message } as ErrorI)
