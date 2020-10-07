@@ -201,9 +201,6 @@ export default class ExistingRequestDisplay extends Vue {
   }
 
   async handleButtonClick (action) {
-    if (this.disableUnfurnished) {
-      return
-    }
     let outcome = await newReqModule.confirmAction(action)
     if (outcome) {
       switch (action) {
