@@ -1,5 +1,10 @@
 import { ErrorI } from '@/modules/error/store/actions'
 
+export const SbcPaymentStatus = {
+  CREATED: 'CREATED',
+  COMPLETED: 'COMPLETED'
+}
+
 export interface NameRequestPaymentResponse {
   id: number
   nrId: string

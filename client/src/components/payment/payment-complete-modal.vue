@@ -29,14 +29,13 @@ import PaymentConfirm from '@/components/payment/payment-confirm.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 
 import paymentModule from '@/modules/payment'
-import { PaymentApiError } from '@/modules/payment/services/payment'
-import { NameRequestPayment, NameRequestPaymentResponse } from '@/modules/payment/models'
+import { NameRequestPayment, SbcPaymentStatus } from '@/modules/payment/models'
 import newRequestModule, { ROLLBACK_ACTIONS as rollbackActions } from '@/store/new-request-module'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 
-import * as paymentService from '@/modules/payment/services'
 import * as paymentTypes from '@/modules/payment/store/types'
+import * as paymentActions from './payment-actions'
 
 import PaymentMixin from '@/components/payment/payment-mixin'
 import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
@@ -68,31 +67,39 @@ const DEBUG_RECEIPT = false
   }
 })
 export default class PaymentCompleteModal extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
-  mounted () {
+  async mounted () {
     const { sessionPaymentId, sessionPaymentAction } = this
     // Check for a payment ID in sessionStorage, if it has been set, we've been redirected away from the application,
     // and need to rehydrate the application using the payment ID (for now, it could be some other token too)!
     // TODO: Set the timer here!
     if (sessionPaymentId && sessionPaymentAction) {
       // Call fetchData to load the NR and the payment
-      this.fetchData(!DEBUG_RECEIPT)
-        .then(() => {
-          const { nrId, paymentStatus, sbcPayment = { status_code: '' } } = this
-          const sbcPaymentStatusCode = sbcPayment.status_code
+      await this.fetchData(!DEBUG_RECEIPT)
+      // Make sure edit mode is disabled or it will screw up the back button
+      await newRequestModule.mutateEditMode(false)
+      const { nrId, paymentStatus, sbcPayment = { status_code: '' } } = this
+      const sbcPaymentStatusCode = sbcPayment.status_code
 
-          // If the payment is already complete for some reason, skip this
-          // TODO: Maybe set a constant instead somewhere...
-          if (paymentStatus === 'COMPLETED') return
-          if (sbcPaymentStatusCode === 'COMPLETED' && paymentStatus === 'CREATED') {
-            // Then complete the payment
-            this.completePayment(nrId, sessionPaymentId, sessionPaymentAction)
-          } else {
-            errorModule.setAppError({
-              id: 'payment-error',
-              error: 'Your payment could not be completed. Please try again at a later time.'
-            } as ErrorI)
-          }
-        })
+      // If the payment is already complete for some reason, skip this
+      // TODO: Maybe set a constant instead somewhere...
+      if (paymentStatus === SbcPaymentStatus.COMPLETED) return
+      if (sbcPaymentStatusCode === SbcPaymentStatus.COMPLETED &&
+              paymentStatus === SbcPaymentStatus.CREATED) {
+        // Then complete the payment
+        await this.completePayment(nrId, sessionPaymentId, sessionPaymentAction)
+      } else {
+        errorModule.setAppError({
+          id: 'payment-error',
+          error: 'Your payment could not be completed. Please try again at a later time.'
+        } as ErrorI)
+
+        if (sessionPaymentAction && sessionPaymentAction === paymentActions.COMPLETE) {
+          // Cancel the NR using the rollback endpoint if we were processing a NEW NR
+          await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
+          // Call fetchData to load the NR and the payment
+          await this.fetchData(!DEBUG_RECEIPT)
+        }
+      }
     }
   }
 
@@ -113,11 +120,6 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
   async fetchNr (nrId) {
     const existingNr = await newRequestModule.getNameRequest(nrId)
     await newRequestModule.loadExistingNameRequest(existingNr)
-    await newRequestModule.mutateEditMode(true)
-  }
-
-  async redirectToStart () {
-    window.location.href = document.baseURI
   }
 
   /**
@@ -161,8 +163,10 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
     } else if (!paymentSuccess && result.paymentErrors) {
       // Setting the errors to state will update any subscribing components, like the main ErrorModal
       await errorModule.setAppErrors(result.paymentErrors)
-      // Cancel the NR using the rollback endpoint
-      await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
+      if (action && action === paymentActions.COMPLETE) {
+        // Cancel the NR using the rollback endpoint if we were processing a NEW NR
+        await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
+      }
     }
   }
 
