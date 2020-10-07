@@ -1379,18 +1379,12 @@ export class NewRequestModule extends VuexModule {
   }
   @Action
   async confirmAction (action: string) {
-    // eslint-disable-next-line
-    console.log('confirm action called')
     try {
       let resp = await this.getNameRequest(this.nr.id)
       this.mutateNameRequest(resp)
       if (!resp.actions.includes(action)) {
-        // eslint-disable-next-line
-        console.log('no way jose')
         return false
       }
-      // eslint-disable-next-line
-      console.log('good 2 go')
       return true
     } catch (error) {
       if (error instanceof ApiError) {
@@ -1475,8 +1469,6 @@ export class NewRequestModule extends VuexModule {
     } catch (err) {
       // eslint-disable-next-line
       console.log(err)
-      // eslint-disable-next-line
-      console.log('error')
       return data
     }
   }
