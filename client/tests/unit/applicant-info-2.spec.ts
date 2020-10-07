@@ -23,7 +23,7 @@ describe('It initially renders correctly', () => {
     const mrasJurisdictions = ['Alberta', 'Saskatchewan', 'Manitoba']
     const mrasActions = []
     function setStore (jurisdiction, action) {
-      module.mutateNRData({ key: 'xproJurisdiction', value: 'Alberta'})
+      module.mutateNRData({ key: 'xproJurisdiction', value: 'Alberta' })
     }
   })
 })
