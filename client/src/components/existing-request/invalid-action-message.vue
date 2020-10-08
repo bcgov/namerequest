@@ -54,7 +54,6 @@ export default class InvalidActionMessage extends Vue {
   }
 
   async goBack () {
-    await newReqModule.editExistingRequest()
     newReqModule.setActiveComponent('ExistingRequestDisplay')
   }
 }

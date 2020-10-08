@@ -1381,7 +1381,7 @@ export class NewRequestModule extends VuexModule {
   async confirmAction (action: string) {
     try {
       let resp = await this.getNameRequest(this.nr.id)
-      this.mutateNameRequest(resp)
+      this.setNrResponse(resp)
       if (!resp.actions.includes(action)) {
         return false
       }
