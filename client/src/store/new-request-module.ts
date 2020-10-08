@@ -1,3 +1,4 @@
+import ExistingRequestEdit from '@/components/existing-request/existing-request-edit.vue'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import querystring from 'qs'
 import Vue from 'vue'
@@ -1150,6 +1151,50 @@ export class NewRequestModule extends VuexModule {
   }
 
   @Action
+  setActiveComponent (component: string) {
+    switch (component) {
+      case 'EntityNotAutoAnalyzed':
+        this.mutateSubmissionTabNumber(0)
+        this.mutateDisplayedComponent('SubmissionTabs')
+        return
+      case 'NamesCapture':
+        this.mutateSubmissionTabNumber(1)
+        this.mutateDisplayedComponent('SubmissionTabs')
+        return
+      case 'ApplicantInfo1':
+        this.mutateSubmissionTabNumber(2)
+        this.mutateDisplayedComponent('SubmissionTabs')
+        return
+      case 'ApplicantInfo2':
+      case 'ApplicantInfo3':
+        this.mutateSubmissionTabNumber(3)
+        this.mutateDisplayedComponent('SubmissionTabs')
+        return
+      case 'InvalidActionMessage':
+        this.mutateSubmissionTabNumber(4)
+        this.mutateDisplayedComponent('SubmissionTabs')
+        return
+      case 'NameAnalysis':
+      case 'Tabs':
+        this.mutateTabNumber(0)
+        this.mutateDisplayedComponent('Tabs')
+        return
+      case 'ExistingRequestSearch':
+        this.mutateTabNumber(1)
+        this.mutateDisplayedComponent('Tabs')
+        return
+      case 'AnalyzeCharacters':
+      case 'AnalyzePending':
+      case 'AnalyzeResults':
+      case 'ExistingRequestDisplay':
+      case 'ExistingRequestEdit':
+      case 'SubmissionTabs':
+      case 'Success':
+        this.mutateDisplayedComponent(component)
+        return
+    }
+  }
+  @Action
   async getAddressDetails (id) {
     const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Retrieve/v2.11/json3.ws'
     let params = {
@@ -1333,6 +1378,26 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
+  async confirmAction (action: string) {
+    try {
+      let resp = await this.getNameRequest(this.nr.id)
+      this.setNrResponse(resp)
+      if (!resp.actions.includes(action)) {
+        return false
+      }
+      return true
+    } catch (error) {
+      if (error instanceof ApiError) {
+        await errorModule.setAppError({ id: 'get-name-requests-api-error', error: error.message } as ErrorI)
+      } else {
+        await errorModule.setAppError({ id: 'get-name-requests-error', error: error.message } as ErrorI)
+      }
+      // eslint-disable-next-line
+      console.log(error)
+      return false
+    }
+  }
+  @Action
   async findNameRequest () {
     this.resetAnalyzeName()
     this.mutateDisplayedComponent('AnalyzePending')
@@ -1404,8 +1469,6 @@ export class NewRequestModule extends VuexModule {
     } catch (err) {
       // eslint-disable-next-line
       console.log(err)
-      // eslint-disable-next-line
-      console.log('error')
       return data
     }
   }
@@ -1450,7 +1513,8 @@ export class NewRequestModule extends VuexModule {
     const handleEmptyResults = () => {
       this.mutateNameRequest(
         {
-          text: 'There were no records found that match the information you have entered. Please verify the NR Number and the phone / email and try again.',
+          text: 'There were no records found that match the information you have entered. Please verify the NR' +
+            ' Number  and the phone / email and try again.',
           failed: true
         }
       )
