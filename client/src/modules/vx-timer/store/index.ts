@@ -2,12 +2,10 @@ import * as actions from './actions'
 import getters from './getters'
 import mutations from './mutations'
 
-export const STATE_KEY = 'vxtimers'
+export const STATE_KEY = 'timers'
 
 const state = {
-  [STATE_KEY]: {
-    currentTimers: new Map()
-  }
+  timers: {}
 }
 
 export default {
