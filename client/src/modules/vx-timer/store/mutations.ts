@@ -35,7 +35,7 @@ export default {
         timeoutMs: timeoutMs,
         expirationFn: () => {
           // eslint-disable-next-line no-debugger
-          alert('Promise expired')
+          // alert('Promise expired')
           resolve()
         },
         pollRate: 100 // Check every 100 milliseconds
