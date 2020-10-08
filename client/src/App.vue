@@ -19,6 +19,7 @@
     <IncorporateLoginModal />
     <AffiliationErrorModal />
     <ApiErrorModal />
+    <SessionTimer />
   </v-app>
 </template>
 
@@ -42,9 +43,11 @@ import ApiErrorModal from '@/components/common/error/modal.vue'
 import { Component, Vue, Ref } from 'vue-property-decorator'
 
 import Header from '@/components/header.vue'
+import SessionTimer from "@/components/session-timer/session-timer.vue"
 
 @Component({
   components: {
+    SessionTimer,
     Conditions,
     Header,
     LocationInfoModal,
