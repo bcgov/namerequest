@@ -30,6 +30,9 @@
           <v-tab-item>
             <InvalidActionMessage />
           </v-tab-item>
+          <v-tab-item>
+            <Timeout />
+          </v-tab-item>
         </v-tabs-items>
       </v-tabs>
     </template>
@@ -37,25 +40,27 @@
 </template>
 
 <script lang="ts">
-import MainContainer from '../main-container.vue'
 import ApplicantInfo1 from '../../common/applicant-info-1.vue'
 import ApplicantInfo2 from '../../common/applicant-info-2.vue'
 import ApplicantInfo3 from '../../common/applicant-info-3.vue'
 import EntityCannotBeAutoAnalyzed from './entity-cannot-be-auto-analyzed.vue'
-import NamesCapture from '../../common/names-capture.vue'
 import InvalidActionMessage from '../../existing-request/invalid-action-message.vue'
+import MainContainer from '../main-container.vue'
+import NamesCapture from '../../common/names-capture.vue'
 import newReqModule from '@/store/new-request-module'
+import Timeout from './timeout.vue'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
   components: {
-    EntityCannotBeAutoAnalyzed,
-    ApplicantInfo3,
-    NamesCapture,
     ApplicantInfo1,
     ApplicantInfo2,
+    ApplicantInfo3,
+    EntityCannotBeAutoAnalyzed,
+    InvalidActionMessage,
     MainContainer,
-    InvalidActionMessage
+    NamesCapture,
+    Timeout
   }
 })
 export default class SubmissionTabs extends Vue {

@@ -1174,6 +1174,10 @@ export class NewRequestModule extends VuexModule {
         this.mutateSubmissionTabNumber(4)
         this.mutateDisplayedComponent('SubmissionTabs')
         return
+      case 'Timeout':
+        this.mutateSubmissionTabNumber(5)
+        this.mutateDisplayedComponent('SubmissionTabs')
+        return
       case 'NameAnalysis':
       case 'Tabs':
         this.mutateTabNumber(0)
@@ -1617,6 +1621,7 @@ export class NewRequestModule extends VuexModule {
           data = this.draftNameReservation
           break
         case 'conditional':
+
           data = this.conditionalNameReservation
           break
         case 'reserved':
