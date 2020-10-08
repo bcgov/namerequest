@@ -25,48 +25,69 @@
             </div>
           </div>
         </v-col>
-        <v-col cols="12">
-          <v-row class="pt-3">
-            <v-col cols="9">
-              <v-row dense class="mt-n5">
-                <v-col cols="12">
-                  <span class="fw-700">Last Update: </span> {{ lastUpdate }}
-                </v-col>
-                <v-col cols="12">
-                  <span class="fw-700">Status: </span> {{ nr.state }}
-                </v-col>
-                <v-col cols="12">
-                  <span class="fw-700">Priority Request: </span> {{ priorityReq ? 'Yes' : 'No' }}
-                </v-col>
-                <v-col cols="12">
-                  <span class="fw-700">Expiry Date: </span> {{ expiryDate }}
-                </v-col>
-                <v-col cols="12">
-                  <span class="fw-700">Submit Count: </span>{{ nr.submitCount }}
-                </v-col>
-                <v-col cols="12" v-if="nr.consentFlag && nr.consentFlag !== 'N'">
-                  <span class="fw-700">Consent Rec'd: </span> {{ consentDate }}
-                </v-col>
-                <v-col cols="12">
-                  <span class="fw-700">Submitting Party: </span> {{ nr.applicants.lastName }},
-                  {{ nr.applicants.firstName }}
-                </v-col>
-                <v-col cols="12">
-                  <span class="fw-700">Address: </span> {{ address }}
-                </v-col>
-              </v-row>
-            </v-col>
-            <v-col cols="3" v-if="nr.state !== 'CANCELLED'">
-              <v-row dense>
-                <v-col cols="12" v-for="action of actions" :key="action+'-button'">
-                  <v-btn block @click="handleButtonClick(action)">{{ action }}</v-btn>
-                </v-col>
-                <!--<v-btn @click="activateILModal">incorporate now</v-btn>-->
-              </v-row>
-            </v-col>
-          </v-row>
-        </v-col>
       </v-row>
+      <transition mode="out-in" name="fade">
+        <v-row style="background-color: rgba(165,205,230,0.31)"
+               :key="furnished"
+               class="mx-1"
+               v-if="disableUnfurnished">
+          <v-col cols="12"
+                 key="initial-msg"
+                 class="copy-normal font-italic">
+            We are currently processing your request.
+            Click<a class="link" href="#" @click.prevent="refresh"> Refresh </a>
+            {{ $route.query && $route.query.paymentId ? '' : 'or retry your search ' }}
+            after 5 mins to enable all the buttons below.
+          </v-col>
+        </v-row>
+      </transition>
+      <transition mode="out-in" name="fade">
+        <v-row :key="refreshCount">
+          <v-col cols="12">
+            <v-row class="pt-3">
+              <v-col cols="9">
+                <v-row dense class="mt-n5">
+                  <v-col cols="12">
+                    <span class="fw-700">Last Update: </span> {{ lastUpdate }}
+                  </v-col>
+                  <v-col cols="12">
+                    <span class="fw-700">Status: </span> {{ nr.state }}
+                  </v-col>
+                  <v-col cols="12">
+                    <span class="fw-700">Priority Request: </span> {{ priorityReq ? 'Yes' : 'No' }}
+                  </v-col>
+                  <v-col cols="12">
+                    <span class="fw-700">Expiry Date: </span> {{ expiryDate }}
+                  </v-col>
+                  <v-col cols="12">
+                    <span class="fw-700">Submit Count: </span>{{ nr.submitCount }}
+                  </v-col>
+                  <v-col cols="12" v-if="nr.consentFlag && nr.consentFlag !== 'N'">
+                    <span class="fw-700">Consent Rec'd: </span> {{ consentDate }}
+                  </v-col>
+                  <v-col cols="12">
+                    <span class="fw-700">Submitting Party: </span> {{ nr.applicants.lastName }},
+                    {{ nr.applicants.firstName }}
+                  </v-col>
+                  <v-col cols="12">
+                    <span class="fw-700">Address: </span> {{ address }}
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="3" v-if="nr.state !== 'CANCELLED'">
+                <v-row dense>
+                  <v-col cols="12" v-for="action of actions" :key="action+'-button'">
+                    <v-btn @click="handleButtonClick(action)"
+                           block
+                           :disabled="disableUnfurnished && action !== 'RECEIPT'">{{ action }}</v-btn>
+                  </v-col>
+                  <!--<v-btn @click="activateILModal">incorporate now</v-btn>-->
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </transition>
     </template>
   </MainContainer>
 </template>
@@ -84,7 +105,13 @@ import paymentModule from '@/modules/payment'
 })
 export default class ExistingRequestDisplay extends Vue {
   daysBeforeExpiry: number = 5
-
+  checking: boolean = false
+  refreshCount: number = 0
+  furnished: string = 'notfurnished'
+  mounted () {
+    // eslint-disable-next-line
+    console.log(this.$route.query)
+  }
   get actions () {
     return this.nr.actions
   }
@@ -138,6 +165,9 @@ export default class ExistingRequestDisplay extends Vue {
     let nameObj = this.nr.names.find(name => name.choice === 1)
     return nameObj.name
   }
+  get disableUnfurnished (): boolean {
+    return (['CONDITIONAL', 'REJECTED', 'APPROVED'].includes(this.nr.stateCd) && this.nr.furnished === 'N')
+  }
   get names () {
     return this.nr.names.sort((a, b) => {
       if (a.choice > b.choice) {
@@ -185,25 +215,47 @@ export default class ExistingRequestDisplay extends Vue {
   }
 
   async handleButtonClick (action) {
-    switch (action) {
-      case 'EDIT':
-        newReqModule.editExistingRequest()
-        break
-      case 'UPGRADE':
-        paymentModule.toggleUpgradeModal(true)
-        break
-      case 'REAPPLY':
-        paymentModule.toggleReapplyModal(true)
-        break
-      case 'RECEIPT':
-        paymentModule.togglePaymentHistoryModal(true)
-        break
-      default:
-        newReqModule.patchNameRequestsByAction(action)
-        break
+    let outcome = await newReqModule.confirmAction(action)
+    if (outcome) {
+      switch (action) {
+        case 'EDIT':
+          newReqModule.editExistingRequest()
+          break
+        case 'UPGRADE':
+          paymentModule.toggleUpgradeModal(true)
+          break
+        case 'REAPPLY':
+          paymentModule.toggleReapplyModal(true)
+          break
+        case 'RECEIPT':
+          paymentModule.togglePaymentHistoryModal(true)
+          break
+        default:
+          newReqModule.patchNameRequestsByAction(action)
+          break
+      }
+    } else {
+      newReqModule.setActiveComponent('InvalidActionMessage')
     }
   }
-
+  async goBack () {
+    await newReqModule.cancelEditExistingRequest()
+    newReqModule.cancelAnalyzeName()
+  }
+  async refresh (event) {
+    this.refreshCount += 1
+    this.checking = true
+    try {
+      let resp = await newReqModule.getNameRequest(this.nr.id)
+      this.checking = false
+      if (resp.furnished === 'Y') {
+        this.furnished = 'furnished'
+        newReqModule.setNrResponse(resp)
+      }
+    } catch (error) {
+      this.checking = false
+    }
+  }
   showConditionsModal () {
     newReqModule.mutateConditionsModalVisible(true)
   }
@@ -215,22 +267,18 @@ export default class ExistingRequestDisplay extends Vue {
     sessionStorage.setItem('NR_DATA', JSON.stringify(this.nr))
   }
 }
-
 </script>
 
 <style lang="sass" scoped>
 .whitesmoke-bg
   background-color: whitesmoke
-
 .max-height
   max-height: 60px
-
 .no-style-button
   background-color: unset !important
   border: 0 !important
   border-radius: 0 !important
   box-shadow: unset !important
-
 .forgot-nr-link
   text-decoration: underline
   cursor: pointer !important

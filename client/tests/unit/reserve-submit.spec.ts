@@ -66,7 +66,7 @@ describe('reserve-submit', () => {
         expect(newReqModule.submissionTabNumber === 2).toBeTruthy()
       })
     })
-    describe('If location !== "BC", it sends to examination', async () => {
+    describe('If location !== "BC", it sends to examination', () => {
       test('postNameRequests is not called', async () => {
         newReqModule.mutateLocation('CA')
         wrapper.vm.handleSubmit()
