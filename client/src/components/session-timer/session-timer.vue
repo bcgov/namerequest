@@ -18,7 +18,8 @@ export default class SessionTimer extends Vue {
     // Start the user session timer
     timerModule.createAndStartTimer({
       id: SESSION_TIMER_NAME,
-      expirationFn: () => { alert('Timer expired') },
+      // eslint-disable-next-line no-console
+      expirationFn: () => { console.log('Timer expired') },
       timeoutMs: 7000
     })
     // Start the timeout modal timer
@@ -28,8 +29,6 @@ export default class SessionTimer extends Vue {
     timerModule.createPromiseTimer({
       id: 'promiseTimerOne',
       timeoutMs: 15000
-    }).then(() => {
-      alert('Promise resolved')
     })
   }
 }

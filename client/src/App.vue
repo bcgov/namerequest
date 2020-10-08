@@ -20,6 +20,7 @@
     <AffiliationErrorModal />
     <ApiErrorModal />
     <SessionTimer />
+    <TimeoutModal />
   </v-app>
 </template>
 
@@ -44,10 +45,12 @@ import { Component, Vue, Ref } from 'vue-property-decorator'
 
 import Header from '@/components/header.vue'
 import SessionTimer from "@/components/session-timer/session-timer.vue"
+import TimeoutModal from "@/components/session-timer/timeout-modal.vue"
 
 @Component({
   components: {
     SessionTimer,
+    TimeoutModal,
     Conditions,
     Header,
     LocationInfoModal,
