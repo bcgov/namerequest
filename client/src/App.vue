@@ -19,7 +19,7 @@
     <IncorporateLoginModal />
     <AffiliationErrorModal />
     <ApiErrorModal />
-    <TimeoutModal />
+    <TimeoutModal :show="showNrSessionExpiryModal" />
   </v-app>
 </template>
 
@@ -38,12 +38,11 @@ import PaymentCompleteModal from '@/components/payment/payment-complete-modal.vu
 import IncorporateLoginModal from '@/components/modals/incorporate-login.vue'
 import AffiliationErrorModal from '@/components/modals/affiliation-error.vue'
 import ApiErrorModal from '@/components/common/error/modal.vue'
-// import ErrorMessage from '@/components/common/error/message.vue'
 
 import { Component, Vue, Ref } from 'vue-property-decorator'
+import { mapState } from 'vuex'
 
 import Header from '@/components/header.vue'
-import SessionTimer from "@/components/session-timer/session-timer.vue"
 import TimeoutModal from "@/components/session-timer/timeout-modal.vue"
 
 @Component({
@@ -64,7 +63,10 @@ import TimeoutModal from "@/components/session-timer/timeout-modal.vue"
     IncorporateLoginModal,
     AffiliationErrorModal,
     ApiErrorModal
-  }
+  },
+  computed: mapState([
+    'showNrSessionExpiryModal'
+  ])
 })
 export default class App extends Vue {}
 
