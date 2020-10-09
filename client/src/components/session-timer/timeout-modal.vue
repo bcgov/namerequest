@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showNrSessionExpiryModal" max-width="40%">
+  <v-dialog v-model="show" max-width="40%">
     <v-card class="pa-6">
       <v-card-text class="h3">Are You There?</v-card-text>
       <v-card-text class="copy-normal">
@@ -19,21 +19,22 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-import Router from '@/router'
 
-import { mapState } from 'vuex'
+import store from '@/store'
+import * as rootTypes from '@/store/types'
+import newRequestModule, { ROLLBACK_ACTIONS as rollbackActions } from '@/store/new-request-module'
 
 @Component({
   data: () => ({
     timerInterval: null,
-    countdownTime: 0
-    // showModal: false
+    countdownTime: 0,
+    displayModal: false
   }),
-  computed: mapState([
-    // map this.count to store.state.count
-    'showNrSessionExpiryModal'
-  ]),
   props: {
+    show: {
+      type: Boolean,
+      default: false
+    },
     onTimerExpired: {
       type: Function,
       default: () => {
@@ -42,35 +43,40 @@ import { mapState } from 'vuex'
         // Avoided redundant navigation to current location: "/"
         // eslint-disable-next-line no-console
         console.log('Timer expired, redirecting to /')
-        Router.replace('/').catch(() => {})
+        // Router.replace('/').catch(() => {})
+        // TODO: We could do something a little less forceful here
+        // window.location.reload()
       }
     }
   }
 })
 export default class SessionTimeoutModal extends Vue {
-  @Watch('showNrSessionExpiryModal')
-  onShowModalChanged (val: boolean, oldVal: boolean) {
+  @Watch('show')
+  onDisplayModalChanged (val: boolean, oldVal: boolean) {
     if (val === true) this.startTimer(15)
   }
 
   async handleTimerExpiry () {
     // eslint-disable-next-line no-console
     console.log('Execute handleTimerExpiry')
-    this.hideTimeoutModal()
     if (typeof this.$props.onTimerExpired === 'function') {
       // eslint-disable-next-line no-console
       console.log('Execute onTimerExpired')
       this.$props.onTimerExpired()
     }
-  }
 
-  async showTimeoutModal () {
-    this.$set(this, 'showModal', true)
+    this.hideTimeoutModal()
   }
 
   async hideTimeoutModal () {
+    const { nrId } = newRequestModule
     this.$set(this, 'countdownTime', 0)
-    this.$set(this, 'showModal', false)
+    if (nrId) {
+      // Cancel the NR using the rollback endpoint if we were processing a NEW NR
+      await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
+    }
+
+    await this.$store.dispatch(rootTypes.HIDE_NR_SESSION_EXPIRY_MODAL)
   }
 
   async extendSession () {
