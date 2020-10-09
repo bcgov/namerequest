@@ -19,7 +19,11 @@
     <IncorporateLoginModal />
     <AffiliationErrorModal />
     <ApiErrorModal />
-    <TimeoutModal :show="showNrSessionExpiryModal" />
+    <TimeoutModal
+      :show="showNrSessionExpiryModal"
+      :onTimerExpired="this.onTimerExpired"
+      :onExtendSession="this.onExtendSession"
+    />
   </v-app>
 </template>
 
@@ -45,6 +49,9 @@ import { mapState } from 'vuex'
 import Header from '@/components/header.vue'
 import TimeoutModal from "@/components/session-timer/timeout-modal.vue"
 
+import newRequestModule, { NR_COMPLETION_TIMER_NAME, ROLLBACK_ACTIONS as rollbackActions } from '@/store/new-request-module'
+import timerModule from '@/modules/vx-timer'
+
 @Component({
   components: {
     TimeoutModal,
@@ -68,7 +75,36 @@ import TimeoutModal from "@/components/session-timer/timeout-modal.vue"
     'showNrSessionExpiryModal'
   ])
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+  async onTimerExpired () {
+    const { nrId } = newRequestModule
+    if (nrId) {
+      // Cancel the NR using the rollback endpoint if we were processing a NEW NR
+      await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
+    }
+    // Redirect to the start
+    // Catch any errors, so we don't get errors like:
+    // Avoided redundant navigation to current location: "/"
+    // eslint-disable-next-line no-console
+    console.log('Timer expired, redirecting to /')
+    this.$router.replace('/').catch(() => {})
+
+    // Display the tabs
+    await newRequestModule.resetAnalyzeName()
+    await newRequestModule.mutateName('')
+    await newRequestModule.mutateDisplayedComponent('Tabs')
+  }
+
+  async onExtendSession () {
+    const { nrId } = newRequestModule
+    if (nrId) {
+      timerModule.refreshTimer({
+        id: NR_COMPLETION_TIMER_NAME,
+        timeoutMs: 15000
+      })
+    }
+  }
+}
 
 </script>
 

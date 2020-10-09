@@ -10,7 +10,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" @click="extendSession">Continue</v-btn>
+        <v-btn color="primary" @click="handleExtendSession">Continue</v-btn>
         <v-btn color="grey" @click="hideTimeoutModal">Expire Now</v-btn>
       </v-card-actions>
     </v-card>
@@ -19,10 +19,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-
-import Router from '@/router'
 import * as rootTypes from '@/store/types'
-import newRequestModule, { ROLLBACK_ACTIONS as rollbackActions } from '@/store/new-request-module'
 
 @Component({
   data: () => ({
@@ -37,24 +34,11 @@ import newRequestModule, { ROLLBACK_ACTIONS as rollbackActions } from '@/store/n
     },
     onTimerExpired: {
       type: Function,
-      default: async () => {
-        const { nrId } = newRequestModule
-        if (nrId) {
-          // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-          await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
-        }
-        // Redirect to the start
-        // Catch any errors, so we don't get errors like:
-        // Avoided redundant navigation to current location: "/"
-        // eslint-disable-next-line no-console
-        console.log('Timer expired, redirecting to /')
-        Router.replace('/').catch(() => {})
-
-        // Display the tabs
-        await newRequestModule.resetAnalyzeName()
-        await newRequestModule.mutateName('')
-        await newRequestModule.mutateDisplayedComponent('Tabs')
-      }
+      default: async () => {}
+    },
+    onExtendSession: {
+      type: Function,
+      default: async () => {}
     }
   }
 })
@@ -81,7 +65,15 @@ export default class SessionTimeoutModal extends Vue {
     await this.$store.dispatch(rootTypes.HIDE_NR_SESSION_EXPIRY_MODAL)
   }
 
-  async extendSession () {
+  async handleExtendSession () {
+    // eslint-disable-next-line no-console
+    console.log('Execute handleExtendSession')
+    if (typeof this.$props.onExtendSession === 'function') {
+      // eslint-disable-next-line no-console
+      console.log('Execute onExtendSession')
+      this.$props.onExtendSession()
+    }
+
     this.hideTimeoutModal()
   }
 
@@ -115,6 +107,3 @@ export default class SessionTimeoutModal extends Vue {
   }
 }
 </script>
-
-<style lang="sass" scoped>
-</style>
