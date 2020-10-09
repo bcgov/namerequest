@@ -16,20 +16,20 @@ export default class SessionTimer extends Vue {
     // eslint-disable-next-line no-debugger
     // debugger
     // Start the user session timer
-    timerModule.createAndStartTimer({
+    /* timerModule.createAndStartTimer({
       id: SESSION_TIMER_NAME,
       // eslint-disable-next-line no-console
       expirationFn: () => { console.log('Timer expired') },
       timeoutMs: 7000
-    })
+    }) */
     // Start the timeout modal timer
-    timerModule.createAndStartTimer({ id: SESSION_TIMEOUT_MODAL_TIMER_NAME })
+    // timerModule.createAndStartTimer({ id: SESSION_TIMEOUT_MODAL_TIMER_NAME })
 
     // Start a promise timer
-    timerModule.createPromiseTimer({
+    /* timerModule.createPromiseTimer({
       id: 'promiseTimerOne',
       timeoutMs: 15000
-    })
+    }) */
   }
 }
 </script>

@@ -19,7 +19,6 @@
     <IncorporateLoginModal />
     <AffiliationErrorModal />
     <ApiErrorModal />
-    <SessionTimer />
     <TimeoutModal />
   </v-app>
 </template>
@@ -49,7 +48,6 @@ import TimeoutModal from "@/components/session-timer/timeout-modal.vue"
 
 @Component({
   components: {
-    SessionTimer,
     TimeoutModal,
     Conditions,
     Header,

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showModal" max-width="40%">
+  <v-dialog v-model="showNrSessionExpiryModal" max-width="40%">
     <v-card class="pa-6">
       <v-card-text class="h3">Are You There?</v-card-text>
       <v-card-text class="copy-normal">
@@ -21,12 +21,18 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import Router from '@/router'
 
+import { mapState } from 'vuex'
+
 @Component({
   data: () => ({
     timerInterval: null,
-    countdownTime: 0,
-    showModal: false
+    countdownTime: 0
+    // showModal: false
   }),
+  computed: mapState([
+    // map this.count to store.state.count
+    'showNrSessionExpiryModal'
+  ]),
   props: {
     onTimerExpired: {
       type: Function,
@@ -42,7 +48,7 @@ import Router from '@/router'
   }
 })
 export default class SessionTimeoutModal extends Vue {
-  @Watch('showModal')
+  @Watch('showNrSessionExpiryModal')
   onShowModalChanged (val: boolean, oldVal: boolean) {
     if (val === true) this.startTimer(15)
   }
@@ -69,10 +75,6 @@ export default class SessionTimeoutModal extends Vue {
 
   async extendSession () {
     this.hideTimeoutModal()
-  }
-
-  mounted () {
-    this.showTimeoutModal()
   }
 
   startTimer (duration) {

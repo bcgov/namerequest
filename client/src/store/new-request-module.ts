@@ -35,13 +35,18 @@ import canadaPostAPIKey from './config'
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
 import { NameRequestPayment } from '@/modules/payment/models'
 
+import * as rootActions from '@/store/actions'
+import timerModule from '@/modules/vx-timer'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
+import * as types from "@/store/types"
 
 const qs: any = querystring
 const debounce = require('lodash/debounce')
 const analysisTimeout: number = 180000
 let source: any
+
+export const NR_COMPLETION_TIMER_NAME = 'nrCompletionTimer'
 
 export class ApiError extends Error {}
 
@@ -542,6 +547,8 @@ export class NewRequestModule extends VuexModule {
   submissionType: SubmissionTypeT | null = null
   tabNumber: number = 0
   waitingAddressSearch: WaitingAddressSearchI | null = null
+
+  private store: any
 
   get showPriorityRequest () {
     return (!this.editMode && this.nrState === 'DRAFT') || (!this.editMode && this.submissionType === 'examination')
@@ -1542,7 +1549,7 @@ export class NewRequestModule extends VuexModule {
       console.log(error)
     }
   }
-  @Action
+  @Action({ root: true })
   async postNameRequests (type: string) {
     if (this.isAssumedName) type = 'assumed'
     try {
@@ -1570,6 +1577,24 @@ export class NewRequestModule extends VuexModule {
         })
 
         this.setNrResponse(response.data)
+        const createTimer: boolean = ['conditional', 'reserved'].includes(type)
+        if (createTimer) {
+          const store = this.store
+          // Start the user session timer
+          // eslint-disable-next-line no-console
+          console.log(`Starting NR timer [${NR_COMPLETION_TIMER_NAME}]`)
+          timerModule.createAndStartTimer({
+            id: NR_COMPLETION_TIMER_NAME,
+            expirationFn: () => {
+              // eslint-disable-next-line no-console
+              console.log('NR timer expired, display modal')
+              store.dispatch(types.SHOW_NR_SESSION_EXPIRY_MODAL)
+              // eslint-disable-next-line no-console
+              console.log('TODO: Cancel the NR if appropriate')
+            },
+            timeoutMs: 15000
+          })
+        }
       } catch (err) {
         await handleApiError(err, 'Could not create the name request')
       }
