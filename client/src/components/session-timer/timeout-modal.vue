@@ -20,7 +20,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 
-import store from '@/store'
+import Router from '@/router'
 import * as rootTypes from '@/store/types'
 import newRequestModule, { ROLLBACK_ACTIONS as rollbackActions } from '@/store/new-request-module'
 
@@ -37,15 +37,23 @@ import newRequestModule, { ROLLBACK_ACTIONS as rollbackActions } from '@/store/n
     },
     onTimerExpired: {
       type: Function,
-      default: () => {
+      default: async () => {
+        const { nrId } = newRequestModule
+        if (nrId) {
+          // Cancel the NR using the rollback endpoint if we were processing a NEW NR
+          await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
+        }
         // Redirect to the start
         // Catch any errors, so we don't get errors like:
         // Avoided redundant navigation to current location: "/"
         // eslint-disable-next-line no-console
         console.log('Timer expired, redirecting to /')
-        // Router.replace('/').catch(() => {})
-        // TODO: We could do something a little less forceful here
-        // window.location.reload()
+        Router.replace('/').catch(() => {})
+
+        // Display the tabs
+        await newRequestModule.resetAnalyzeName()
+        await newRequestModule.mutateName('')
+        await newRequestModule.mutateDisplayedComponent('Tabs')
       }
     }
   }
@@ -69,13 +77,7 @@ export default class SessionTimeoutModal extends Vue {
   }
 
   async hideTimeoutModal () {
-    const { nrId } = newRequestModule
     this.$set(this, 'countdownTime', 0)
-    if (nrId) {
-      // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-      await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
-    }
-
     await this.$store.dispatch(rootTypes.HIDE_NR_SESSION_EXPIRY_MODAL)
   }
 
