@@ -195,18 +195,6 @@ export default class ApplicantInfo2 extends Vue {
   get corpNum () {
     return newReqModule.corpNum
   }
-  set corpNum (num) {
-    if (!this.corpNumDirty) {
-      this.corpNumDirty = true
-    }
-    if (this.isValid) {
-      this.isValid = false
-    }
-    if (this.hideCorpNum !== 'auto') {
-      this.hideCorpNum = 'auto'
-    }
-    newReqModule.mutateCorpNum(num)
-  }
   get editMode () {
     return newReqModule.editMode
   }
@@ -221,23 +209,20 @@ export default class ApplicantInfo2 extends Vue {
     const nr: Partial<any> = nameRequest.nr || {}
     return nr
   }
+  get nrData () {
+    return newReqModule.nrData
+  }
   get nrId () {
     return newReqModule.nrId
   }
   get nrNum () {
     return newReqModule.nrNum
   }
-  get nrData () {
-    return newReqModule.nrData
-  }
   get nrState () {
     return newReqModule.nrState
   }
   get priorityRequest () {
     return newReqModule.priorityRequest
-  }
-  set priorityRequest (value) {
-    newReqModule.mutatePriorityRequest(value)
   }
   get request_action_cd () {
     return newReqModule.request_action_cd
@@ -257,11 +242,26 @@ export default class ApplicantInfo2 extends Vue {
   get submissionType () {
     return newReqModule.submissionType
   }
-  set submissionTabNumber (value) {
-    newReqModule.mutateSubmissionTabNumber(value)
-  }
   get xproJurisdiction () {
     return (newReqModule.nrData || {}).xproJurisdiction
+  }
+  set corpNum (num) {
+    if (!this.corpNumDirty) {
+      this.corpNumDirty = true
+    }
+    if (this.isValid) {
+      this.isValid = false
+    }
+    if (this.hideCorpNum !== 'auto') {
+      this.hideCorpNum = 'auto'
+    }
+    newReqModule.mutateCorpNum(num)
+  }
+  set priorityRequest (value) {
+    newReqModule.mutatePriorityRequest(value)
+  }
+  set submissionTabNumber (value) {
+    newReqModule.mutateSubmissionTabNumber(value)
   }
 
   async submit () {
@@ -272,9 +272,15 @@ export default class ApplicantInfo2 extends Vue {
       if (!nrId) {
         await newReqModule.postNameRequests('draft')
       } else {
+        if (!this.editMode && ['COND-RESERVE', 'RESERVED'].includes(this.nrState)) {
+          let request = await newReqModule.getNameRequest(nrId)
+          if (request.stateCd === 'CANCELLED') {
+            newReqModule.setActiveComponent('Timeout')
+            return
+          }
+        }
         await newReqModule.putNameReservation(nrId)
       }
-
       await paymentModule.togglePaymentModal(true)
     }
   }

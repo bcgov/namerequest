@@ -211,6 +211,53 @@ export default class ApplicantInfo3 extends Vue {
   get corpNum () {
     return newReqModule.corpNum
   }
+  get editMode () {
+    return newReqModule.editMode
+  }
+  get isPersonsName () {
+    return newReqModule.isPersonsName
+  }
+  get location () {
+    return newReqModule.location
+  }
+  get nr () {
+    const nameRequest: NewRequestModule = newReqModule
+    const nr: Partial<any> = nameRequest.nr || {}
+    return nr
+  }
+  get nrData () {
+    return newReqModule.nrData
+  }
+  get nrId () {
+    return newReqModule.nrId
+  }
+  get nrNum () {
+    return newReqModule.nrNum
+  }
+  get nrState () {
+    return newReqModule.nrState
+  }
+  get priorityRequest () {
+    return newReqModule.priorityRequest
+  }
+  get request_action_cd () {
+    return newReqModule.request_action_cd
+  }
+  get showAllFields () {
+    return (!this.editMode || this.nrState === 'DRAFT')
+  }
+  get showCorpNum () {
+    return newReqModule.showCorpNum
+  }
+  get showPriorityRequest () {
+    return newReqModule.showPriorityRequest
+  }
+  get submissionType () {
+    return newReqModule.submissionType
+  }
+  get xproJurisdiction () {
+    return (newReqModule.nrData || {}).xproJurisdiction
+  }
   set corpNum (num) {
     if (!this.corpNumDirty) {
       this.corpNumDirty = true
@@ -223,55 +270,8 @@ export default class ApplicantInfo3 extends Vue {
     }
     newReqModule.mutateCorpNum(num)
   }
-  get location () {
-    return newReqModule.location
-  }
-  get editMode () {
-    return newReqModule.editMode
-  }
-  get isPersonsName () {
-    return newReqModule.isPersonsName
-  }
-  get nr () {
-    const nameRequest: NewRequestModule = newReqModule
-    const nr: Partial<any> = nameRequest.nr || {}
-    return nr
-  }
-  get nrId () {
-    return newReqModule.nrId
-  }
-  get nrNum () {
-    return newReqModule.nrNum
-  }
-  get nrData () {
-    return newReqModule.nrData
-  }
-  get nrState () {
-    return newReqModule.nrState
-  }
-  get priorityRequest () {
-    return newReqModule.priorityRequest
-  }
-  get showAllFields () {
-    return (!this.editMode || this.nrState === 'DRAFT')
-  }
-  get showPriorityRequest () {
-    return newReqModule.showPriorityRequest
-  }
-  get showCorpNum () {
-    return newReqModule.showCorpNum
-  }
-  get request_action_cd () {
-    return newReqModule.request_action_cd
-  }
-  get submissionType () {
-    return newReqModule.submissionType
-  }
   set priorityRequest (value) {
     newReqModule.mutatePriorityRequest(value)
-  }
-  get xproJurisdiction () {
-    return (newReqModule.nrData || {}).xproJurisdiction
   }
 
   async submit () {
@@ -282,9 +282,15 @@ export default class ApplicantInfo3 extends Vue {
       if (!nrId) {
         await newReqModule.postNameRequests('draft')
       } else {
+        if (!this.editMode && ['COND-RESERVE', 'RESERVED'].includes(this.nrState)) {
+          let request = await newReqModule.getNameRequest(nrId)
+          if (request.stateCd === 'CANCELLED') {
+            newReqModule.setActiveComponent('Timeout')
+            return
+          }
+        }
         await newReqModule.putNameReservation(nrId)
       }
-
       await paymentModule.togglePaymentModal(true)
     }
   }
