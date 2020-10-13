@@ -108,7 +108,7 @@ import '@bizpal/open-services-bst/'
 @Component({
   components: { NameInput }
 })
-export default class Search extends Vue {
+export default class NewSearch extends Vue {
   @Watch('location')
   watchLocation (newVal, oldVal) {
     if (newVal === 'INFO') {

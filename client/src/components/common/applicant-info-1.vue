@@ -1,6 +1,6 @@
 <template>
-  <v-form v-model="step1Valid" ref="step1" id="applicant-info-1-form">
-    <v-container fluid class="mt-n3" id="applicant-info-1">
+  <v-form v-model="isValid" ref="step1" id="applicant-info-1-form">
+    <v-container fluid class="pa-0" id="applicant-info-1">
       <v-row>
         <v-col cols="2" align-self="start" class="h5 ml-n3 mr-3">
           Applicant
@@ -302,25 +302,11 @@
             </v-col>
             <v-col cols="6" class="py-0 my-0" />
           </v-row>
-          <v-row :class="location === 'BC' ? 'mt-n2 mb-n4' : 'mt-n5 mb-n4'">
-            <v-col cols="7" align-self="start">
+          <v-row>
+            <v-col cols="7" class="mt-n5">
               <v-checkbox label="I am completing this reservation on my own behalf" v-model="actingOnOwnBehalf" />
             </v-col>
-            <v-col cols="5" class="text-right" align-self="center">
-              <v-btn @click="showPreviousTab()"
-                     class="mr-3"
-                     id="submit-back-btn"
-                     v-if="submissionType === 'examination' || nrState === 'DRAFT' "
-                     x-large>{{ editMode ? 'Previous' : 'Back' }}</v-btn>
-              <v-btn @click="showNextTab()"
-                     id="submit-continue-btn"
-                     v-if="step1Valid"
-                     x-large>{{ editMode ? 'Next' : 'Continue' }}</v-btn>
-              <v-btn @click="validate()"
-                     id="submit-continue-btn-disabled"
-                     v-else
-                     x-large>{{ editMode ? 'Next' : 'Continue' }}</v-btn>
-            </v-col>
+            <ApplicantInfoNav :isValid="isValid" />
           </v-row>
         </v-col>
       </v-row>
@@ -331,23 +317,28 @@
 <script lang="ts">
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
+import ApplicantInfoNav from '@/components/common/ApplicantInfoNav.vue'
 
 const _debounce = require('lodash/debounce')
 
-@Component({})
+@Component({
+  components: {
+    ApplicantInfoNav
+  }
+})
 export default class ApplicantInfo1 extends Vue {
+  debouncedGetAddressSuggestions = _debounce(this.getAddressSuggestions, 400)
   highlightedSuggestion: string | null = null
+  isValid: boolean = false
   messages = {}
-  requiredRules = [
-    v => !!v || 'Required field'
-  ]
   provStateRules = [
     v => typeof v === 'string' || 'Must be letters only',
     v => v.length <= 2 || 'Max 2 characters'
   ]
+  requiredRules = [
+    v => !!v || 'Required field'
+  ]
   showAddressMenu: boolean = false
-  step1Valid: boolean = false
-  debouncedGetAddressSuggestions = _debounce(this.getAddressSuggestions, 400)
 
   @Watch('countryTypeCd')
   handleProvince (newVal, oldVal) {
@@ -381,11 +372,6 @@ export default class ApplicantInfo1 extends Vue {
   }
   mounted () {
     this.$el.addEventListener('keydown', this.handleKeydown)
-    // CanadaPost Address Complete needs a country to begin working right away, assume Canada
-    if (!this.editMode) {
-      newReqModule.updateApplicantDetails({ key: 'countryTypeCd', value: 'CA' })
-      return
-    }
   }
 
   get actingOnOwnBehalf () {
@@ -400,11 +386,11 @@ export default class ApplicantInfo1 extends Vue {
   get countryOptions () {
     return this.$intJurisdictions
   }
+  get countryTypeCd () {
+    return (newReqModule.applicant || {}).countryTypeCd || ''
+  }
   get editMode () {
     return newReqModule.editMode
-  }
-  get provinceOptions () {
-    return this.$canJurisdictions.map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
   }
   get jurisdictionOptions () {
     if (this.location === 'IN') {
@@ -424,6 +410,9 @@ export default class ApplicantInfo1 extends Vue {
   get nrState () {
     return newReqModule.nrState
   }
+  get provinceOptions () {
+    return this.$canJurisdictions.map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
+  }
   get provinceStateOptions () {
     if (this.location === 'IN') {
       return null
@@ -442,17 +431,14 @@ export default class ApplicantInfo1 extends Vue {
     }
     return null
   }
-  get countryTypeCd () {
-    return (newReqModule.applicant || {}).countryTypeCd || ''
-  }
   get submissionType () {
     return newReqModule.submissionType
   }
-  set actingOnOwnBehalf (value) {
-    newReqModule.mutateActingOnOwnBehalf(value)
-  }
   get xproJurisdiction () {
     return newReqModule.nrData.xproJurisdiction
+  }
+  set actingOnOwnBehalf (value) {
+    newReqModule.mutateActingOnOwnBehalf(value)
   }
 
   blurAddress1 () {
@@ -473,6 +459,9 @@ export default class ApplicantInfo1 extends Vue {
       }
     }
     return ''
+  }
+  getCorpNum (num) {
+    newReqModule.getCorpNum(num)
   }
   handleFocus (id, message) {
     this.messages[id] = message
@@ -523,6 +512,9 @@ export default class ApplicantInfo1 extends Vue {
       return event
     }
   }
+  mutateCorpNum (num) {
+    newReqModule.mutateCorpNum(num)
+  }
   queryAddress (id) {
     newReqModule.getAddressDetails(id)
   }
@@ -552,12 +544,6 @@ export default class ApplicantInfo1 extends Vue {
       return
     }
     this.showAddressMenu = false
-  }
-  mutateCorpNum (num) {
-    newReqModule.mutateCorpNum(num)
-  }
-  getCorpNum (num) {
-    newReqModule.getCorpNum(num)
   }
   updateBusinessInfo (key, value) {
     newReqModule.mutateNRData({ key, value })

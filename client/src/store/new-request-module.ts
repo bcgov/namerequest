@@ -134,7 +134,7 @@ export class NewRequestModule extends VuexModule {
     clientFirstName: '',
     clientLastName: '',
     contact: '',
-    countryTypeCd: '',
+    countryTypeCd: 'CA',
     emailAddress: '',
     faxNumber: '',
     firstName: '',
@@ -1152,51 +1152,31 @@ export class NewRequestModule extends VuexModule {
 
   @Action
   setActiveComponent (component: string) {
-    switch (component) {
-      case 'EntityNotAutoAnalyzed':
-        this.mutateSubmissionTabNumber(0)
-        this.mutateDisplayedComponent('SubmissionTabs')
-        return
-      case 'NamesCapture':
-        this.mutateSubmissionTabNumber(1)
-        this.mutateDisplayedComponent('SubmissionTabs')
-        return
-      case 'ApplicantInfo1':
-        this.mutateSubmissionTabNumber(2)
-        this.mutateDisplayedComponent('SubmissionTabs')
-        return
-      case 'ApplicantInfo2':
-      case 'ApplicantInfo3':
-        this.mutateSubmissionTabNumber(3)
-        this.mutateDisplayedComponent('SubmissionTabs')
-        return
-      case 'InvalidActionMessage':
-        this.mutateSubmissionTabNumber(4)
-        this.mutateDisplayedComponent('SubmissionTabs')
-        return
-      case 'Timeout':
-        this.mutateSubmissionTabNumber(5)
-        this.mutateDisplayedComponent('SubmissionTabs')
-        return
-      case 'NameAnalysis':
-      case 'Tabs':
-        this.mutateTabNumber(0)
-        this.mutateDisplayedComponent('Tabs')
-        return
-      case 'ExistingRequestSearch':
-        this.mutateTabNumber(1)
-        this.mutateDisplayedComponent('Tabs')
-        return
-      case 'AnalyzeCharacters':
-      case 'AnalyzePending':
-      case 'AnalyzeResults':
-      case 'ExistingRequestDisplay':
-      case 'ExistingRequestEdit':
-      case 'SubmissionTabs':
-      case 'Success':
-        this.mutateDisplayedComponent(component)
-        return
+    enum Tabs {
+      NewSearch,
+      ExistingRequestSearch
     }
+    if (typeof Tabs[component] === 'number') {
+      this.mutateTabNumber(Tabs[component])
+      this.mutateDisplayedComponent('Tabs')
+      return
+    }
+
+    enum SubmissionTabs {
+      EntityNotAutoAnalyzed,
+      NamesCapture,
+      ApplicantInfo1,
+      ApplicantInfo2,
+      ApplicantInfo3 = ApplicantInfo2,
+      InvalidActionMessage,
+      Timeout
+    }
+    if (typeof SubmissionTabs[component] === 'number') {
+      this.mutateSubmissionTabNumber(SubmissionTabs[component])
+      this.mutateDisplayedComponent('SubmissionTabs')
+      return
+    }
+    this.mutateDisplayedComponent(component)
   }
   @Action
   async getAddressDetails (id) {
@@ -2225,9 +2205,13 @@ export class NewRequestModule extends VuexModule {
   }
   @Mutation
   resetApplicantDetails () {
-    Object.keys(this.applicant).forEach(key => {
+    for (let key in this.applicant) {
+      if (key === 'countryTypeCd') {
+        this.applicant[key] = 'CA'
+        continue
+      }
       this.applicant[key] = ''
-    })
+    }
   }
   @Mutation
   resetNrData () {

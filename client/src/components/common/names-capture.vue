@@ -157,32 +157,26 @@
           </v-col>
         </transition>
       </v-row>
-      <v-row class="mt-3">
-        <v-col cols="12" class="text-right">
-          <v-btn x-large
-                 v-if="isValid"
-                 id="submit-continue-btn"
-                 @click="validate(true)">
-            {{ editMode ? 'Next' : 'Continue' }}
-          </v-btn>
-          <v-btn x-large
-                 v-else
-                 id="submit-continue-btn-disabled"
-                 @click="validateButton"> {{ editMode ? 'Next' : 'Continue' }}
-          </v-btn>
-        </v-col>
+      <v-row>
+        <v-col cols="7" />
+        <ApplicantInfoNav :isValid="isValid" />
       </v-row>
     </v-container>
   </v-form>
 </template>
 
 <script lang="ts">
+import ApplicantInfoNav from '@/components/common/ApplicantInfoNav.vue'
 import { LocationT } from '@/models'
 import { sanitizeName } from '@/plugins/utilities'
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
-@Component({})
+@Component({
+  components: {
+    ApplicantInfoNav
+  }
+})
 export default class NamesCapture extends Vue {
   hide: boolean | 'auto' = true
   messages = {

@@ -146,37 +146,23 @@
           </v-checkbox>
         </v-col>
         <v-col v-else cols="5" />
-        <v-col cols="5"
-               class="text-right"
-               :class="submissionType === 'examination' ? '' : 'mt-4'">
-          <v-btn x-large
-                 id="submit-back-btn"
-                 class="mr-3"
-                 @click="showPreviousTab()">{{ editMode ? 'Previous' : 'Back' }}</v-btn>
-          <v-btn x-large
-                 v-if="!isValid"
-                 id="submit-continue-btn-disabled"
-                 @click="validate()">
-            {{ editMode ? 'Submit Changes' : 'Continue to Payment' }}
-          </v-btn>
-          <v-btn x-large
-                 v-else
-                 @click="submit"
-                 id="submit-continue-btn">
-            {{ editMode ? 'Submit Changes' : 'Continue to Payment' }}
-          </v-btn>
-        </v-col>
+        <ApplicantInfoNav :isValid="isValid" />
       </v-row>
     </v-container>
   </v-form>
 </template>
 
 <script lang="ts">
+import ApplicantInfoNav from '@/components/common/ApplicantInfoNav.vue'
 import newReqModule, { NewRequestModule } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
-@Component({})
+@Component({
+  components: {
+    ApplicantInfoNav
+  }
+})
 export default class ApplicantInfo3 extends Vue {
   corpNumDirty: boolean = false
   corpNumError: string = ''
