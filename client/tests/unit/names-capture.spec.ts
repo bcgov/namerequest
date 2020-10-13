@@ -32,14 +32,7 @@ describe('send-for-examination.vue', () => {
     })
     it('Initially renders the disabled continue button', () => {
       expect(wrapper.vm.isValid).toBe(false)
-      expect(wrapper.find('#submit-continue-btn-disabled').element).toBeTruthy()
-      expect(wrapper.find('#submit-continue-btn').element).toBeFalsy()
-    })
-    it('calls validate when Continue button is pressed', async () => {
-      wrapper.vm.validate = jest.fn()
-      let btn = wrapper.find('#submit-continue-btn-disabled')
-      btn.trigger('click')
-      expect(wrapper.vm.validate).toHaveBeenCalled()
+      expect(wrapper.find('#submit-continue-btn').classes().includes('v-btn--disabled')).toBeTruthy()
     })
     it('demonstrates correct validation logic when designation-1 is entered', async () => {
       store.mutateNameChoices({ key: 'name1', value: 'A Really Nice Name' })
@@ -51,15 +44,14 @@ describe('send-for-examination.vue', () => {
     })
     it('calls showNextComponent() when continue button is clicked and form is valid', async () => {
       store.mutateNameChoicesToInitialState()
+      store.setActiveComponent('NamesCapture')
       store.mutateNameChoices({ key: 'name1', value: 'LALA NAME' })
       store.mutateNameChoices({ key: 'designation1', value: 'INC.' })
-      wrapper.vm.validate = jest.fn()
       await wrapper.vm.$nextTick()
       let btn = wrapper.find('#submit-continue-btn')
       btn.trigger('click')
       await wrapper.vm.$nextTick()
       expect(wrapper.vm.isValid).toBeTruthy()
-      expect(wrapper.vm.validate).toHaveBeenCalled()
     })
     it('detects when choice3 is made without choice2', async () => {
       store.mutateNameChoices({ key: 'name1', value: 'a great name' })

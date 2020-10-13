@@ -30,13 +30,6 @@ describe('applicant-info-1.vue', () => {
     expect(wrapper.find('#applicant-info-1-form').element).toBeTruthy()
   })
   it('Initially renders the disabled continue button', () => {
-    expect(wrapper.find('#submit-continue-btn-disabled').element).toBeTruthy()
-    expect(wrapper.find('#submit-continue-btn').element).toBeFalsy()
-  })
-  it('calls validate when Continue button is pressed', async () => {
-    wrapper.vm.validate = jest.fn()
-    let btn = wrapper.find('#submit-continue-btn-disabled')
-    btn.trigger('click')
-    expect(wrapper.vm.validate).toHaveBeenCalled()
+    expect(wrapper.find('#submit-continue-btn').classes().includes('v-btn--disabled')).toBeTruthy()
   })
 })
