@@ -74,6 +74,9 @@ export default class SessionTimeoutModal extends Vue {
       this.$props.onExtendSession()
     }
 
+    // Clear the interval so our onTimerExpired event handler isn't fired off
+    clearInterval(this.$data.timerInterval)
+    // Hide the timeout modal
     this.hideTimeoutModal()
   }
 

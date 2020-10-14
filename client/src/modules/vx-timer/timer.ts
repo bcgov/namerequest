@@ -58,6 +58,8 @@ export class Timer {
       this._stopPolling()
     }
     const currentTimestamp = new Date().getTime()
+    // eslint-disable-next-line no-console
+    console.log(currentTimestamp - this._lastActiveTimestamp > this.timeoutMs)
 
     // If not already in idle state, set idle and show warning when difference
     // between current time and last activity exceeds timeout period.
