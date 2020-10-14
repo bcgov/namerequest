@@ -1658,8 +1658,6 @@ export class NewRequestModule extends VuexModule {
               // eslint-disable-next-line no-console
               console.log('NR timer expired, display modal')
               store.dispatch(types.SHOW_NR_SESSION_EXPIRY_MODAL)
-              // eslint-disable-next-line no-console
-              console.log('TODO: Cancel the NR if appropriate')
             },
             timeoutMs: 15000
           })

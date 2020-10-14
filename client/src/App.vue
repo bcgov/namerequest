@@ -98,9 +98,8 @@ export default class App extends Vue {
   async onExtendSession () {
     const { nrId } = newRequestModule
     if (nrId) {
-      timerModule.refreshTimer({
-        id: NR_COMPLETION_TIMER_NAME,
-        timeoutMs: 15000
+      timerModule.startTimer({
+        id: NR_COMPLETION_TIMER_NAME
       })
     }
   }
