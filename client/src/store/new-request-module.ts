@@ -188,6 +188,12 @@ export class NewRequestModule extends VuexModule {
   ]
   corpNum: string = ''
   designationIsFixed: boolean = false
+  designationIssueTypes = [
+    'designation_non_existent',
+    'designation_mismatch',
+    'designation_misplaced',
+    'end_designation_more_than_once'
+  ]
   displayedComponent: string = 'Tabs'
   doNotAnalyzeEntities: string[] = ['PAR', 'CC', 'CP', 'PA', 'FI', 'XCP']
   editMode: boolean = false

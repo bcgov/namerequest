@@ -1,70 +1,102 @@
 import AnalyzeResults from '@/components/new-request/analyze-results.vue'
-import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
+import testData from './api/get-name-analysis'
+import { createLocalVue, mount } from '@vue/test-utils'
 import newReqModule from '@/store/new-request-module'
 import Vuetify from 'vuetify'
-import { quillEditor } from 'vue-quill-editor'
-import { SelectionI } from '@/models'
-import quill from './mocks/quill-editor'
 
 document['getSelection'] = jest.fn()
 
 const localVue = createLocalVue()
 localVue.use(Vuetify)
-localVue.use(quillEditor)
 const vuetify = new Vuetify()
-const stubs = {
-  ReserveSubmit: true,
-  NameWordRenderer: true,
-  NameInput: true,
-  GreyBox: true
+
+function setState (data) {
+  newReqModule.mutateName(data['name'])
+  newReqModule.mutateAnalysisJSON(data['analysisJSON'])
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve('resolved')
+    }, 100)
+  })
 }
 
-describe('analyze-results.vue', () => {
-  describe('Functionality of quill editor', () => {
-    let wrapper: any
+describe('AnalyzeResults', () => {
+  let lengthTestData = testData.length
+  let wrapper: any
 
-    beforeEach(async () => {
-      newReqModule.mutateName('ACTION PAWN BROKERS LTD.')
-      newReqModule.mutateAnalysisJSON({
-        "header": "Further Action Required",
-        "issues": [
-          {
-            "issue_type": "add_distinctive",
-            "line1": "Requires a word at the beggining of your name that sets it apart.",
-            "line2": "",
-            "name_actions": [
-              {
-                "index": 0,
-                "message": "Add a Word Here",
-                "position": "start",
-                "type": "brackets",
-                "word": "ACTION"
-              }
-            ],
-            "setup": [
-              {
-                "button": "",
-                "checkbox": "",
-                "header": "Helpful Hint",
-                "line1": "Some words that can set your name apart include an individual\u0027s name or intials; " +
-                  "ageographic location; a colour; a coined, made-up word; or an acronym.",
-                "line2": ""
-              }
-            ],
-            "show_examination_button": false,
-            "show_reserve_button": false
+  for (let iTestData = 0; iTestData < lengthTestData; iTestData++) {
+    let data = testData[iTestData]
+    let { name } = data
+    let lengthIssues = data.analysisJSON.issues.length
+
+    describe(`Test name-analysis: location=BC, request_action=NEW, entity_type=CR, name=${name}`, () => {
+      let iIssues: number
+      let issue: any
+      let issue_type: string
+      let issues = data.analysisJSON.issues.map(iss => iss.issue_type)
+
+      describe(`Issues: ${issues}  Verifying result of corrective actions`, () => {
+        beforeAll(async (done) => {
+          await setState(data)
+          wrapper = mount(AnalyzeResults, {
+            localVue,
+            vuetify
+          })
+          await wrapper.vm.$nextTick()
+          async function handleIssue () {
+            switch (wrapper.vm.issue.issue_type) {
+              case 'queue_conflict':
+              case 'corp_conflict':
+              case 'consent_required':
+                let checkbox = wrapper.find('#provide-consent-checkbox')
+                await checkbox.setChecked()
+                return new Promise(resolve => { resolve() })
+
+              case 'designation_non_existent':
+              case 'designation_mismatch':
+              case 'end_designation_more_than_once':
+                let designation = wrapper.find('#designation-0')
+                await designation.trigger('click')
+                return new Promise(resolve => { resolve() })
+
+              case 'designation_misplaced':
+                let move = wrapper.find('#move-designation-btn')
+                await move.trigger('click')
+                return new Promise(resolve => { resolve() })
+            }
           }
-        ],
-        "status": "fa"
-      })
-      wrapper = mount(AnalyzeResults, {
-        localVue,
-        vuetify
+
+          await handleIssue()
+          if (wrapper.find('#next-issue-btn').exists()) {
+            let btn = wrapper.find('#next-issue-btn')
+            await btn.trigger('click')
+            await handleIssue()
+          }
+          if (wrapper.find('#next-issue-btn').exists()) {
+            let btn = wrapper.find('#next-issue-btn')
+            await btn.trigger('click')
+            await handleIssue()
+          }
+          if (wrapper.find('#next-issue-btn').exists()) {
+            let btn = wrapper.find('#next-issue-btn')
+            await btn.trigger('click')
+            await handleIssue()
+          }
+          await wrapper.vm.$nextTick()
+          done()
+        })
+        test('You may proceed message is displayed', () => {
+          expect(wrapper.text()).toContain('You may proceed')
+        })
+        test('Corrected name generated by front-end is correct', () => {
+          expect(wrapper.vm.name).toBe(data.corrected)
+        })
+        test('Altering the name causes the component to resist submission', async () => {
+          wrapper.vm.name = 'ALTERED NAME'
+          await wrapper.vm.$nextTick()
+          expect(wrapper.text()).toContain('Further Action Required')
+        })
       })
     })
-    it('renders the nameActions properly', async () => {
-      await wrapper.vm.$nextTick()
-      expect(wrapper.html()).toContain('<span style=&quot;color: red;&quot;> [Add a Word Here]</span>')
-    })
-  })
+  }
 })

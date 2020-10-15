@@ -1,5 +1,6 @@
 <template>
   <v-btn :color="setup === 'consent' ? 'red' : ''" class="mt-auto margin-top-auto"
+         id="reserve-submit-button"
           @click="handleSubmit" ref="reserve-submit-button">
     {{ text }}
   </v-btn>
