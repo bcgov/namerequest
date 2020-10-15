@@ -48,6 +48,7 @@ describe('AnalyzeResults', () => {
               case 'queue_conflict':
               case 'corp_conflict':
               case 'consent_required':
+                // eslint-disable-next-line
                 let checkbox = wrapper.find('#provide-consent-checkbox')
                 await checkbox.setChecked()
                 return new Promise(resolve => { resolve() })
@@ -55,11 +56,13 @@ describe('AnalyzeResults', () => {
               case 'designation_non_existent':
               case 'designation_mismatch':
               case 'end_designation_more_than_once':
+                // eslint-disable-next-line
                 let designation = wrapper.find('#designation-0')
                 await designation.trigger('click')
                 return new Promise(resolve => { resolve() })
 
               case 'designation_misplaced':
+                // eslint-disable-next-line
                 let move = wrapper.find('#move-designation-btn')
                 await move.trigger('click')
                 return new Promise(resolve => { resolve() })

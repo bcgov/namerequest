@@ -37,8 +37,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 2",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -84,8 +84,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 3",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -162,8 +162,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 2",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -209,8 +209,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 3",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -282,8 +282,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 2",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -329,8 +329,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 3",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -425,8 +425,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 2",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -472,8 +472,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 3",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -562,8 +562,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 2",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -609,8 +609,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 3",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -618,8 +618,8 @@ const testData = [
           "name_actions": []
         },
         {
-          "line1": "The \u003cb\u003eCOOP, L.L.C.\u003c/b\u003e designation(s) cannot be used with selected entity type" +
-          " of Corporation \u003c/b\u003e.",
+          "line1": "The \u003cb\u003eCOOP, L.L.C.\u003c/b\u003e designation(s) cannot be used with selected entity" +
+          "  type of Corporation \u003c/b\u003e.",
           "designations": [
             "INCORPORATED",
             "CORPORATION",
@@ -705,8 +705,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 2",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -752,8 +752,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 3",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -848,8 +848,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 2",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -895,8 +895,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 3",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -991,8 +991,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 2",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -1038,8 +1038,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 3",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -1121,8 +1121,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 2",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -1168,8 +1168,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 3",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -1257,8 +1257,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 2",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -1304,8 +1304,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 3",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -1459,8 +1459,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 2",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -1506,8 +1506,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 3",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are" +
-              " required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -1594,7 +1594,7 @@ const testData = [
     "test": 14,
     "name": "INC. IDEAL L.L.C. ACCOUNTING SERVICES COMPANY LTD.",
     "corrected": "IDEAL ACCOUNTING SERVICES COMPANY INCORPORATED",
-    "analysisJSON":{
+    "analysisJSON": {
       "header": "Further Action Required",
       "status": "fa",
       "issues": [
@@ -1627,7 +1627,8 @@ const testData = [
               "checkbox": "",
               "type": "send_to_examiner",
               "header": "Option 2",
-              "line1": "You can choose to submit this name for examination. Please check wait times at the top of the screen.",
+              "line1": "You can choose to submit this name for examination. Please check wait times at the top of" +
+              " the screen.",
               "line2": "",
               "label": ""
             },
@@ -1636,7 +1637,8 @@ const testData = [
               "checkbox": "",
               "type": "conflict_self_consent",
               "header": "Option 3",
-              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you are required to send written consent to the BC Business Registry.",
+              "line1": "This name can be approved if you are the registered owner of the conflicting name, but you" +
+              " are required to send written consent to the BC Business Registry.",
               "line2": "",
               "label": ""
             }
@@ -1644,7 +1646,8 @@ const testData = [
           "name_actions": []
         },
         {
-          "line1": "There can be only one designation. You must choose either \u003cb\u003eINC.\u003c/b\u003e  or  \u003cb\u003eLTD.\u003c/b\u003e",
+          "line1": "There can be only one designation. You must choose either \u003cb\u003eINC.\u003c/b\u003e  or" +
+          " \u003cb\u003eLTD.\u003c/b\u003e",
           "designations": [
             "INC.",
             "LTD."
@@ -1678,7 +1681,8 @@ const testData = [
           ]
         },
         {
-          "line1": "The \u003cb\u003eL.L.C.\u003c/b\u003e designation(s) cannot be used with selected entity type of Corporation \u003c/b\u003e.",
+          "line1": "The \u003cb\u003eL.L.C.\u003c/b\u003e designation(s) cannot be used with selected entity type of" +
+          " Corporation \u003c/b\u003e.",
           "designations": [
             "INCORPORATED",
             "CORPORATION",
@@ -1709,9 +1713,11 @@ const testData = [
               "checkbox": "",
               "type": "change_entity_type",
               "header": "Option 2",
-              "line1": "The designation you have selected is not appropriate for this entity type. You can choose to select a different type by pressing the \u0027RESTART and CHANGE TYPE\u0027 button.",
+              "line1": "The designation you have selected is not appropriate for this entity type. You can choose to" +
+              " select a different type by pressing the \u0027RESTART and CHANGE TYPE\u0027 button.",
               "line2": "",
-              "label": "Change $entity_type to \u003cb\u003eINCORPORATED, CORPORATION, LIMITED, CORP., INC., LTD., INCORPOREE, LIMITEE, LTEE\u003c/b\u003e"
+              "label": "Change $entity_type to \u003cb\u003eINCORPORATED, CORPORATION, LIMITED, CORP., INC., LTD.," +
+              " INCORPOREE, LIMITEE, LTEE\u003c/b\u003e"
             }
           ],
           "name_actions": [
