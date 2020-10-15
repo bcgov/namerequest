@@ -86,6 +86,9 @@ export default class SessionTimeoutModal extends Vue {
     let minutes
     let seconds
 
+    // eslint-disable-next-line no-console
+    console.log('Starting the timeout modal timer')
+
     const timer = () => {
       // Get the number of seconds that have elapsed since startTimer() was called
       diff = duration - (((Date.now() - start) / 1000) | 0)

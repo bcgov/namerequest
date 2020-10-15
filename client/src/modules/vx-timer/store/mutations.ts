@@ -8,8 +8,7 @@ export default {
     if (!id) throw new Error(`[Error] Timer needs an ID, none provided`)
     if (timers.hasOwnProperty(id)) {
       // eslint-disable-next-line no-console
-      console.warn(`[Warning] Timer [${id}] already exists`)
-      return
+      console.log(`Timer [${id}] already exists, but may be expired, replace the timer`)
     }
 
     const timer = new Timer(opts)

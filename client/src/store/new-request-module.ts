@@ -36,11 +36,10 @@ import canadaPostAPIKey from './config'
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
 import { NameRequestPayment } from '@/modules/payment/models'
 
-import * as rootActions from '@/store/actions'
 import timerModule from '@/modules/vx-timer'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
-import * as types from "@/store/types"
+import * as types from '@/store/types'
 
 const qs: any = querystring
 const debounce = require('lodash/debounce')

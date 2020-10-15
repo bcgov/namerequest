@@ -21,11 +21,11 @@
     <ApiErrorModal />
     <TimeoutModal
       :show="showNrSessionExpiryModal"
-      :onTimerExpired="this.onTimerExpired"
-      :onExtendSession="this.onExtendSession"
+      :onTimerExpired="this.onTimerModalExpired"
+      :onExtendSession="this.onTimerModalSessionExtended"
     />
   </v-app>
-</template>
+</template>df
 
 <script lang="ts">
 import Conditions from '@/components/modals/conditions.vue'
@@ -47,10 +47,11 @@ import { Component, Vue, Ref } from 'vue-property-decorator'
 import { mapState } from 'vuex'
 
 import Header from '@/components/header.vue'
-import TimeoutModal from "@/components/session-timer/timeout-modal.vue"
+import TimeoutModal from '@/components/session-timer/timeout-modal.vue'
 
 import newRequestModule, { NR_COMPLETION_TIMER_NAME, ROLLBACK_ACTIONS as rollbackActions } from '@/store/new-request-module'
 import timerModule from '@/modules/vx-timer'
+import * as types from '@/store/types'
 
 @Component({
   components: {
@@ -76,7 +77,7 @@ import timerModule from '@/modules/vx-timer'
   ])
 })
 export default class App extends Vue {
-  async onTimerExpired () {
+  async onTimerModalExpired () {
     const { nrId } = newRequestModule
     if (nrId) {
       // Cancel the NR using the rollback endpoint if we were processing a NEW NR
@@ -86,7 +87,7 @@ export default class App extends Vue {
     // Catch any errors, so we don't get errors like:
     // Avoided redundant navigation to current location: "/"
     // eslint-disable-next-line no-console
-    console.log('Timer expired, redirecting to /')
+    console.log('Timer modal expired, redirecting to /')
     this.$router.replace('/').catch(() => {})
 
     // Display the tabs
@@ -95,11 +96,21 @@ export default class App extends Vue {
     await newRequestModule.mutateDisplayedComponent('Tabs')
   }
 
-  async onExtendSession () {
+  async onTimerModalSessionExtended () {
     const { nrId } = newRequestModule
     if (nrId) {
-      timerModule.startTimer({
-        id: NR_COMPLETION_TIMER_NAME
+      // eslint-disable-next-line no-console
+      console.log('Starting the session timer')
+      // eslint-disable-next-line no-console
+      console.log(`Starting NR timer [${NR_COMPLETION_TIMER_NAME}]`)
+      timerModule.createAndStartTimer({
+        id: NR_COMPLETION_TIMER_NAME,
+        expirationFn: () => {
+          // eslint-disable-next-line no-console
+          console.log('NR timer expired, display modal')
+          this.$store.dispatch(types.SHOW_NR_SESSION_EXPIRY_MODAL)
+        },
+        timeoutMs: 15000
       })
     }
   }
