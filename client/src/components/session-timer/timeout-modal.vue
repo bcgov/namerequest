@@ -21,7 +21,7 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import * as rootTypes from '@/store/types'
 
-export const TIMER_MODAL_TIMEOUT_MS = 15000
+export const TIMER_MODAL_TIMEOUT_MS = 45 * 1000 // Set to 45s
 
 @Component({
   data: () => ({
