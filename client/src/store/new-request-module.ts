@@ -47,6 +47,7 @@ const analysisTimeout: number = 180000
 let source: any
 
 export const NR_COMPLETION_TIMER_NAME = 'nrCompletionTimer'
+export const NR_COMPLETION_TIMEOUT_MS = 5 * (60 * 1000) // Set to 5 minutes
 
 export class ApiError extends Error {}
 
@@ -1658,7 +1659,7 @@ export class NewRequestModule extends VuexModule {
               console.log('NR timer expired, display modal')
               store.dispatch(types.SHOW_NR_SESSION_EXPIRY_MODAL)
             },
-            timeoutMs: 15000
+            timeoutMs: NR_COMPLETION_TIMEOUT_MS
           })
         }
       } catch (err) {

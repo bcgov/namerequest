@@ -21,6 +21,8 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import * as rootTypes from '@/store/types'
 
+export const TIMER_MODAL_TIMEOUT_MS = 15000
+
 @Component({
   data: () => ({
     timerInterval: null,
@@ -45,7 +47,8 @@ import * as rootTypes from '@/store/types'
 export default class SessionTimeoutModal extends Vue {
   @Watch('show')
   onDisplayModalChanged (val: boolean, oldVal: boolean) {
-    if (val === true) this.startTimer(15)
+    // Values are in ms convert to seconds
+    if (val === true) this.startTimer(TIMER_MODAL_TIMEOUT_MS / 1000)
   }
 
   async handleTimerExpiry () {

@@ -47,9 +47,15 @@ import { Component, Vue, Ref } from 'vue-property-decorator'
 import { mapState } from 'vuex'
 
 import Header from '@/components/header.vue'
-import TimeoutModal from '@/components/session-timer/timeout-modal.vue'
+import TimeoutModal, {
+  TIMER_MODAL_TIMEOUT_MS
+} from '@/components/session-timer/timeout-modal.vue'
 
-import newRequestModule, { NR_COMPLETION_TIMER_NAME, ROLLBACK_ACTIONS as rollbackActions } from '@/store/new-request-module'
+import newRequestModule, {
+  NR_COMPLETION_TIMER_NAME,
+  NR_COMPLETION_TIMEOUT_MS,
+  ROLLBACK_ACTIONS as rollbackActions
+} from '@/store/new-request-module'
 import timerModule from '@/modules/vx-timer'
 import * as types from '@/store/types'
 
@@ -110,7 +116,7 @@ export default class App extends Vue {
           console.log('NR timer expired, display modal')
           this.$store.dispatch(types.SHOW_NR_SESSION_EXPIRY_MODAL)
         },
-        timeoutMs: 15000
+        timeoutMs: NR_COMPLETION_TIMEOUT_MS
       })
     }
   }
