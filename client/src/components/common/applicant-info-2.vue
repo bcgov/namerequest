@@ -135,20 +135,8 @@
         <v-col cols="5" />
       </v-row>
       <v-row>
-        <v-col cols="12" class="text-right" :class="showPriorityRequest ? 'mt-n4' : ''">
-          <v-btn x-large
-                 id="submit-back-btn"
-                 class="mr-3"
-                 @click="showPreviousTab">{{ editMode ? 'Previous' : 'Back' }}</v-btn>
-          <v-btn x-large
-                 v-if="!isValid"
-                 id="submit-continue-btn-disabled"
-                 @click="validate"> {{ editMode ? 'Submit Changes' : 'Continue to Payment' }}</v-btn>
-          <v-btn x-large
-                 v-else
-                 @click="submit"
-                 id="submit-continue-btn"> {{ editMode ? 'Submit Changes' : 'Continue to Payment' }}</v-btn>
-        </v-col>
+        <v-col cols="7"/>
+        <ApplicantInfoNav :isValid="isValid" />
       </v-row>
     </v-container>
   </v-form>
@@ -158,8 +146,13 @@
 import newReqModule, { NewRequestModule } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 import { Component, Vue, Watch } from 'vue-property-decorator'
+import ApplicantInfoNav from '@/components/common/ApplicantInfoNav.vue'
 
-@Component({})
+@Component({
+  components: {
+    ApplicantInfoNav
+  }
+})
 export default class ApplicantInfo2 extends Vue {
   corpNumDirty: boolean = false
   corpNumError: string = ''

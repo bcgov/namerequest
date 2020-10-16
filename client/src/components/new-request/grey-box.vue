@@ -55,7 +55,7 @@
                 </div>
               </template>
               <template v-if="option.type === 'change designation at the end'">
-                <v-btn @click="moveDesignation">Move Designation</v-btn>
+                <v-btn @click="moveDesignation" id="move-designation-btn">Move Designation</v-btn>
               </template>
             </v-col>
             <v-col v-if="designationIsFixed && i === 0 && issueIndex + 1 === issueLength"
@@ -80,7 +80,7 @@
             <transition name="fade" mode="out-in" >
               <ReserveSubmit :key="option.type+'-reserve-submit'"
                              setup="assumed"
-                             id="reserve-submit-button"
+                             id="reserve-submit-comp"
                              v-if="isLastIndex"
                              style="display: inline" />
             </transition>
@@ -96,7 +96,7 @@
                           :key="option.type+'-checkbox'"
                           :label="checkBoxLabel"
                           class="ma-0 pa-0"
-                          id="conflict-self-consent-checkbox"
+                          id="provide-consent-checkbox"
                           v-if="showCheckBoxOrButton === 'checkbox'"
                           v-model="boxIsChecked" />
               <ReserveSubmit :key="option.type+'-reserve-submit'"
@@ -134,7 +134,15 @@ export default class GreyBox extends Vue {
   }
   @Watch('designationIsFixed')
   updateDesignationIsFixed (newVal) {
-    newReqModule.mutateDesignationIsFixed(newVal)
+    if (this.designationIsFixedStore !== newVal) {
+      newReqModule.mutateDesignationIsFixed(newVal)
+    }
+  }
+  @Watch('designationIsFixedStore', { immediate: true })
+  syncDesignationIsFixed () {
+    if (this.designationIsFixedStore !== this.designationIsFixed) {
+      newReqModule.mutateDesignationIsFixed(this.designationIsFixed)
+    }
   }
 
   mounted () {
@@ -327,6 +335,9 @@ export default class GreyBox extends Vue {
       return false
     }
   }
+  get designationIsFixedStore () {
+    return newReqModule.designationIsFixed
+  }
   get designations () {
     if (this.issue && this.issue.designations) {
       return this.issue.designations
@@ -347,13 +358,7 @@ export default class GreyBox extends Vue {
     return false
   }
   get isDesignationIssueType () {
-    let designationIssueTypes = [
-      'designation_non_existent',
-      'designation_mismatch',
-      'designation_misplaced',
-      'end_designation_more_than_once'
-    ]
-    if (designationIssueTypes.includes(this.issueType)) {
+    if (newReqModule.designationIssueTypes.includes(this.issueType)) {
       return true
     }
     return false

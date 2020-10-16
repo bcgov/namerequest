@@ -24,7 +24,7 @@
                :class="tabNumber === 1 ? 'h5' : 'h5-lt'">Existing Name Request</span></v-tab>
         <v-tabs-items v-model="tabNumber">
           <v-tab-item class="px-6">
-            <Search />
+            <NewSearch />
           </v-tab-item>
           <v-tab-item>
             <ExistingRequestSearch/>
@@ -36,14 +36,14 @@
 </template>
 
 <script lang="ts">
-import Search from '@/components/new-request/search.vue'
+import NewSearch from '@/components/new-request/search.vue'
 import ExistingRequestSearch from './existing-request/existing-request-search.vue'
 import newReqModule from '../store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
   components: {
-    Search,
+    NewSearch,
     ExistingRequestSearch
   }
 })
