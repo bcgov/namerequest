@@ -52,11 +52,7 @@ export default class SessionTimeoutModal extends Vue {
   }
 
   async handleTimerExpiry () {
-    // eslint-disable-next-line no-console
-    console.log('Execute handleTimerExpiry')
     if (typeof this.$props.onTimerExpired === 'function') {
-      // eslint-disable-next-line no-console
-      console.log('Execute onTimerExpired')
       this.$props.onTimerExpired()
     }
 
@@ -69,11 +65,7 @@ export default class SessionTimeoutModal extends Vue {
   }
 
   async handleExtendSession () {
-    // eslint-disable-next-line no-console
-    console.log('Execute handleExtendSession')
     if (typeof this.$props.onExtendSession === 'function') {
-      // eslint-disable-next-line no-console
-      console.log('Execute onExtendSession')
       this.$props.onExtendSession()
     }
 
@@ -88,10 +80,6 @@ export default class SessionTimeoutModal extends Vue {
     let diff
     let minutes
     let seconds
-
-    // eslint-disable-next-line no-console
-    console.log('Starting the timeout modal timer')
-
     const timer = () => {
       // Get the number of seconds that have elapsed since startTimer() was called
       diff = duration - (((Date.now() - start) / 1000) | 0)
