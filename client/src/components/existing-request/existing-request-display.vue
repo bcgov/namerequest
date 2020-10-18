@@ -108,13 +108,6 @@ export default class ExistingRequestDisplay extends Vue {
   checking: boolean = false
   refreshCount: number = 0
   furnished: string = 'notfurnished'
-
-  async mounted () {
-    // eslint-disable-next-line
-    console.log(this.$route.query)
-    // Check out the NR - this needs to be done before you can edit the Name Request
-    await newReqModule.checkoutNameRequest()
-  }
   get actions () {
     return this.nr.actions
   }
@@ -222,6 +215,8 @@ export default class ExistingRequestDisplay extends Vue {
     if (outcome) {
       switch (action) {
         case 'EDIT':
+          // Check out the NR - this needs to be done before you can edit the Name Request
+          await newReqModule.checkoutNameRequest()
           newReqModule.editExistingRequest()
           break
         case 'UPGRADE':
