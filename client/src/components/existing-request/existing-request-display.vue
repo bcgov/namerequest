@@ -108,9 +108,12 @@ export default class ExistingRequestDisplay extends Vue {
   checking: boolean = false
   refreshCount: number = 0
   furnished: string = 'notfurnished'
-  mounted () {
+
+  async mounted () {
     // eslint-disable-next-line
     console.log(this.$route.query)
+    // Check out the NR - this needs to be done before you can edit the Name Request
+    await newReqModule.checkoutNameRequest()
   }
   get actions () {
     return this.nr.actions

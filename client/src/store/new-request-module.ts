@@ -1545,6 +1545,54 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
+  async checkoutNameRequest () {
+    try {
+      const { nrId } = this
+      try {
+        const response = await axios.patch(`/namerequests/${nrId}/checkout`, {}, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+      } catch (err) {
+        await handleApiError(err, 'Could not check in the name request')
+      }
+    } catch (error) {
+      if (error instanceof ApiError) {
+        await errorModule.setAppError({ id: 'checkout-name-requests-api-error', error: error.message } as ErrorI)
+      } else {
+        await errorModule.setAppError({ id: 'checkout-name-requests-error', error: error.message } as ErrorI)
+      }
+
+      // eslint-disable-next-line
+      console.log(error)
+    }
+  }
+  @Action
+  async checkinNameRequest () {
+    try {
+      const { nrId } = this
+      try {
+        const response = await axios.patch(`/namerequests/${nrId}/checkin`, {}, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+      } catch (err) {
+        await handleApiError(err, 'Could not check in the name request')
+      }
+    } catch (error) {
+      if (error instanceof ApiError) {
+        await errorModule.setAppError({ id: 'checkin-name-requests-api-error', error: error.message } as ErrorI)
+      } else {
+        await errorModule.setAppError({ id: 'checkin-name-requests-error', error: error.message } as ErrorI)
+      }
+
+      // eslint-disable-next-line
+      console.log(error)
+    }
+  }
+  @Action
   async patchNameRequests () {
     try {
       const { nrId } = this
