@@ -112,8 +112,6 @@ export default class App extends Vue {
       timerModule.createAndStartTimer({
         id: NR_COMPLETION_TIMER_NAME,
         expirationFn: () => {
-          // eslint-disable-next-line no-console
-          console.log('NR timer expired, display modal')
           this.$store.dispatch(types.SHOW_NR_SESSION_EXPIRY_MODAL)
         },
         timeoutMs: NR_COMPLETION_TIMEOUT_MS
