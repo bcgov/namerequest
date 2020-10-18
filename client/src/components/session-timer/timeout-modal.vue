@@ -11,7 +11,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="primary" @click="handleExtendSession">Continue</v-btn>
-        <v-btn color="grey" @click="hideTimeoutModal">Expire Now</v-btn>
+        <v-btn color="grey" v-if="displayExpireNowButton" @click="handleTimerExpiry">Expire Now</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -31,6 +31,10 @@ export const TIMER_MODAL_TIMEOUT_MS = 45 * 1000 // Set to 45s
   }),
   props: {
     show: {
+      type: Boolean,
+      default: false
+    },
+    displayExpireNowButton: {
       type: Boolean,
       default: false
     },

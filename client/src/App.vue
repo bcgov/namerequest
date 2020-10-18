@@ -23,6 +23,7 @@
       :show="showNrSessionExpiryModal"
       :onTimerExpired="this.onTimerModalExpired"
       :onExtendSession="this.onTimerModalSessionExtended"
+      :displayExpireNowButton="true"
     />
   </v-app>
 </template>df
@@ -87,13 +88,14 @@ export default class App extends Vue {
     const { nrId } = newRequestModule
     if (nrId) {
       // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-      await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
+      // Don't await this request, that way there's no lag, fire it off async and don't block I/O
+      // The empty then clause just prevents a linting issue that warns when you don't
+      // await an async function which is not an issue, since we don't want to block I/O
+      newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL }).then(() => {})
     }
     // Redirect to the start
     // Catch any errors, so we don't get errors like:
     // Avoided redundant navigation to current location: "/"
-    // eslint-disable-next-line no-console
-    console.log('Timer modal expired, redirecting to /')
     this.$router.replace('/').catch(() => {})
 
     // Display the tabs
@@ -105,10 +107,6 @@ export default class App extends Vue {
   async onTimerModalSessionExtended () {
     const { nrId } = newRequestModule
     if (nrId) {
-      // eslint-disable-next-line no-console
-      console.log('Starting the session timer')
-      // eslint-disable-next-line no-console
-      console.log(`Starting NR timer [${NR_COMPLETION_TIMER_NAME}]`)
       timerModule.createAndStartTimer({
         id: NR_COMPLETION_TIMER_NAME,
         expirationFn: () => {
