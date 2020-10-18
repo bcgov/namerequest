@@ -1636,8 +1636,6 @@ export class NewRequestModule extends VuexModule {
         if (createTimer) {
           const store = this.store
           // Start the user session timer
-          // eslint-disable-next-line no-console
-          console.log(`Starting NR timer [${NR_COMPLETION_TIMER_NAME}]`)
           timerModule.createAndStartTimer({
             id: NR_COMPLETION_TIMER_NAME,
             expirationFn: () => {
