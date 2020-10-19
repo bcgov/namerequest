@@ -1545,7 +1545,7 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
-  async checkoutNameRequest () {
+  async checkoutNameRequest (): Promise<boolean> {
     try {
       const { nrId } = this
       try {
@@ -1573,8 +1573,10 @@ export class NewRequestModule extends VuexModule {
         const data = response.data || { checkedOutBy: null, checkedOutDt: null }
         sessionStorage.setItem('checkedOutBy', data.checkedOutBy)
         sessionStorage.setItem('checkedOutDt', data.checkedOutDt)
+        return true
       } catch (err) {
         await handleApiError(err, 'Could not check out the name request')
+        return false
       }
     } catch (error) {
       if (error instanceof ApiError) {
@@ -1588,7 +1590,7 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
-  async checkinNameRequest () {
+  async checkinNameRequest (): Promise<boolean> {
     try {
       const { nrId } = this
       try {
@@ -1607,9 +1609,12 @@ export class NewRequestModule extends VuexModule {
 
           sessionStorage.removeItem('checkedOutBy')
           sessionStorage.removeItem('checkedOutDt')
+
+          return true
         }
       } catch (err) {
         await handleApiError(err, 'Could not check in the name request')
+        return false
       }
     } catch (error) {
       if (error instanceof ApiError) {

@@ -217,8 +217,9 @@ export default class ExistingRequestDisplay extends Vue {
         case 'EDIT':
           // Check out the NR - this sets the INPROGESS lock on the NR
           // and needs to be done before you can edit the Name Request
-          await newReqModule.checkoutNameRequest()
-          await newReqModule.editExistingRequest()
+          // eslint-disable-next-line no-case-declarations
+          const success = await newReqModule.checkoutNameRequest()
+          if (success) await newReqModule.editExistingRequest()
           break
         case 'UPGRADE':
           paymentModule.toggleUpgradeModal(true)
