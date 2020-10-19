@@ -19,8 +19,14 @@
     <IncorporateLoginModal />
     <AffiliationErrorModal />
     <ApiErrorModal />
+    <TimeoutModal
+      :show="showNrSessionExpiryModal"
+      :onTimerExpired="this.onTimerModalExpired"
+      :onExtendSession="this.onTimerModalSessionExtended"
+      :displayExpireNowButton="true"
+    />
   </v-app>
-</template>
+</template>df
 
 <script lang="ts">
 import Conditions from '@/components/modals/conditions.vue'
@@ -37,14 +43,26 @@ import PaymentCompleteModal from '@/components/payment/payment-complete-modal.vu
 import IncorporateLoginModal from '@/components/modals/incorporate-login.vue'
 import AffiliationErrorModal from '@/components/modals/affiliation-error.vue'
 import ApiErrorModal from '@/components/common/error/modal.vue'
-// import ErrorMessage from '@/components/common/error/message.vue'
 
 import { Component, Vue, Ref } from 'vue-property-decorator'
+import { mapState } from 'vuex'
 
 import Header from '@/components/header.vue'
+import TimeoutModal, {
+  TIMER_MODAL_TIMEOUT_MS
+} from '@/components/session-timer/timeout-modal.vue'
+
+import newRequestModule, {
+  NR_COMPLETION_TIMER_NAME,
+  NR_COMPLETION_TIMEOUT_MS,
+  ROLLBACK_ACTIONS as rollbackActions
+} from '@/store/new-request-module'
+import timerModule from '@/modules/vx-timer'
+import * as types from '@/store/types'
 
 @Component({
   components: {
+    TimeoutModal,
     Conditions,
     Header,
     LocationInfoModal,
@@ -60,9 +78,45 @@ import Header from '@/components/header.vue'
     IncorporateLoginModal,
     AffiliationErrorModal,
     ApiErrorModal
-  }
+  },
+  computed: mapState([
+    'showNrSessionExpiryModal'
+  ])
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+  async onTimerModalExpired () {
+    const { nrId } = newRequestModule
+    if (nrId) {
+      // Cancel the NR using the rollback endpoint if we were processing a NEW NR
+      // Don't await this request, that way there's no lag, fire it off async and don't block I/O
+      // The empty then clause just prevents a linting issue that warns when you don't
+      // await an async function which is not an issue, since we don't want to block I/O
+      newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL }).then(() => {})
+    }
+    // Redirect to the start
+    // Catch any errors, so we don't get errors like:
+    // Avoided redundant navigation to current location: "/"
+    this.$router.replace('/').catch(() => {})
+
+    // Display the tabs
+    await newRequestModule.resetAnalyzeName()
+    await newRequestModule.mutateName('')
+    await newRequestModule.mutateDisplayedComponent('Tabs')
+  }
+
+  async onTimerModalSessionExtended () {
+    const { nrId } = newRequestModule
+    if (nrId) {
+      timerModule.createAndStartTimer({
+        id: NR_COMPLETION_TIMER_NAME,
+        expirationFn: () => {
+          this.$store.dispatch(types.SHOW_NR_SESSION_EXPIRY_MODAL)
+        },
+        timeoutMs: NR_COMPLETION_TIMEOUT_MS
+      })
+    }
+  }
+}
 
 </script>
 

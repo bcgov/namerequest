@@ -4,83 +4,100 @@
  */
 const DEFAULT_POLL_RATE_MS = 1000
 
-export function Timer (opts) {
-  opts = opts || {}
+export interface TimerOptions {
+  id: string | number
+  expirationFn?: Function
+  timeoutMs?: number
+  pollRate?: number
+}
 
+export class Timer {
   /**
-   * @param {string} opts.id The name of the timer.  Used as a unique ID.
-   * @param {function} opts.expiration_fn This function will be called when the timer expires.
-   * @param {number} opts.timeout_ms The time interval in milliseconds,
+   * The name of the timer.  Used as a unique ID.
+   * @param {function} opts.expirationFn This function will be called when the timer expires.
+   * @param {number} opts.timeoutMs The time interval in milliseconds,
    * before the timer will be considered to have expired.
-   * @memberof core.components.timers.Timer
    */
-  this.id = opts.id
-  this.expiration_fn = opts.expiration_fn
-  this.timeout_ms = opts.timeout_ms
-
+  id: string | number
   /**
-   * @param {number} [poll_rate] The time interval between checks of the Timer's timeout time.
-   * If not provided, a default poll rate is used.
-   * @memberof core.components.timers.Timer
+   * The name of the timer.  Used as a unique ID.
+   * @param {function} opts.expirationFn This function will be called when the timer expires.
+   * @param {number} opts.timeoutMs The time interval in milliseconds,
+   * before the timer will be considered to have expired.
    */
-  this.poll_rate = opts.poll_rate ? opts.poll_rate : DEFAULT_POLL_RATE_MS
+  expirationFn: Function
+  /**
+   * The time interval in milliseconds, before the timer will be considered to have expired.
+   */
+  timeoutMs: number
+  /**
+   * The time interval between checks of the Timer's timeout time.
+   * If not provided, a default poll rate is used.
+   */
+  pollRate: number
 
-  // Internal data
-  this._poll_interval = null
-  this._last_active_timestamp = null
+  private _pollInterval: any
+  private _lastActiveTimestamp: number
+
+  constructor (opts: TimerOptions) {
+    opts = opts || {} as TimerOptions
+
+    this.expirationFn = opts.expirationFn
+    this.timeoutMs = opts.timeoutMs
+    this.pollRate = opts.pollRate ? opts.pollRate : DEFAULT_POLL_RATE_MS
+
+    // Internal data
+    this._pollInterval = null
+    this._lastActiveTimestamp = null
+  }
 
   // The polling function checks that the action is done
-  this._pollFn = function () {
-    if (!this._last_active_timestamp) {
+  private _pollFn () {
+    if (!this._lastActiveTimestamp) {
       // If we have no last tracked activity, we should stop the timer
-      this._stop_polling()
+      this._stopPolling()
     }
-    const current_timestamp = new Date().getTime()
-
+    const currentTimestamp = new Date().getTime()
     // If not already in idle state, set idle and show warning when difference
     // between current time and last activity exceeds timeout period.
-    if (current_timestamp - this._last_active_timestamp > this.timeout_ms) {
+    if (currentTimestamp - this._lastActiveTimestamp > this.timeoutMs) {
       // Once we have expired, make sure to stop the interval from running
-      this._stop_polling()
-      this.expiration_fn()
-      // TODO: Should Timer clean itself up here?
+      this._stopPolling()
+      // eslint-disable-next-line no-debugger
+      this.expirationFn()
     }
   }
 
   /**
    * Restarts the timer's last active time and resets the polling interval
-   * @memberof core.components.timers.Timer
    */
-  this.refresh = function () {
+  refresh () {
     // Set a new last active time
-    this._last_active_timestamp = new Date().getTime()
-  }
-
-  this._stop_polling = function () {
-    if (this._poll_interval) {
-      clearInterval(this._poll_interval)
-      this._poll_interval = null
-    }
+    this._lastActiveTimestamp = new Date().getTime()
   }
 
   /**
    * Begins the timer polling
-   * @memberof core.components.timers.Timer
    */
-  this.start = function () {
-    this._stop_polling()
+  start () {
+    this._stopPolling()
     this.refresh()
     // Run one poll right away before starting the interval
     this._pollFn()
-    this._poll_interval = setInterval(this._pollFn.bind(this), this.poll_rate)
+    this._pollInterval = setInterval(this._pollFn.bind(this), this.pollRate)
   }
 
   /**
    * Stops the timer from polling
-   * @memberof core.components.timers.Timer
    */
-  this.stop = function () {
-    // TODO: Any other metadata type calls here?
-    this._stop_polling()
+  stop () {
+    this._stopPolling()
+  }
+
+  _stopPolling () {
+    if (this._pollInterval) {
+      clearInterval(this._pollInterval)
+      this._pollInterval = null
+    }
   }
 }

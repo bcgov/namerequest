@@ -1,83 +1,81 @@
 import * as types from './types'
-import { Timer } from '../timer'
-
-import { STATE_KEY } from '../store'
-
-function _startTimer (timers, timer) {
-  timers[timer.id] = timer
-  timer.start()
-}
-
+import { Timer, TimerOptions } from '../timer'
+// TODO: Do something to correct IDE param detection... maybe we can curry these or something.
 export default {
-  [types.CREATE_AND_START_TIMER]: (state, opts: any) => {
+  createAndStartTimer: (state, opts: TimerOptions): Timer | undefined => {
     const { id } = opts
+    const { timers } = state
+    if (!id) throw new Error(`[Error] Timer needs an ID, none provided`)
 
-    if (!id) {
-      // console.log(`[Error] Timer needs a name, none provided`, opts)
-      return false
-    }
-    // TODO: Should we validate all timer options here as well??
-    if (this.getTimer(id)) {
-      // If timer already exists, should we fail here? Or start again, or?
-      // console.log(`[Warning] Timer already exists, not creating a new one`, opts)
-      return false
-    }
-
-    // TODO: Catch any errors here in the the creation??
     const timer = new Timer(opts)
-    this._startTimer(timer)
-
-    // Return the timer instance
+    // Add the timer to state
+    timers[id] = timer
+    timer.start()
+    state.timers = timers
     return timer
   },
-  [types.CREATE_PROMISE_TIMER]: (state, opts: any) => {
-    const { milliseconds, name } = opts
+  createPromiseTimer: (state, opts: TimerOptions): Promise<Timer | any> => {
+    const { id, timeoutMs } = opts
+    const { timers } = state
+    if (!id) throw new Error(`[Error] Timer needs an ID, none provided`)
+    if (timers.hasOwnProperty(id)) {
+      // eslint-disable-next-line no-console
+      console.warn(`[Warning] Timer [${id}] already exists`)
+      return
+    }
 
-    return new Promise((resolve) => { // $.Deferred()
-      this.createAndStartNewTimer({
-        name: `promiseTimer:${name}`,
-        timeout_ms: milliseconds,
-        expiration_fn () {
+    const promiseTimer = new Promise((resolve) => {
+      const timer = new Timer({
+        id: `promiseTimer:${id}`,
+        timeoutMs: timeoutMs,
+        expirationFn: () => {
+          // eslint-disable-next-line no-debugger
+          // alert('Promise expired')
           resolve()
         },
-        poll_rate: 100 // Check every 100 milliseconds
+        pollRate: 100 // Check every 100 milliseconds
       })
+      // Add the timer to state
+      timers[id] = timer
+      timer.start()
+      state.timers = timers
     })
-  },
-  [types.RESTART_TIMER]: (state, opts: any) => {
-    const { id, config } = opts
 
-    const timer = this.getTimer(id)
-    if (!timer) {
-      if (!config.silent) {
-        // console.log(`[Warning] No timer found to restart for ${id}`)
-      }
-      return
-    }
-    this._startTimer(timer)
+    return promiseTimer
   },
-  [types.REFRESH_TIMER]: (state, opts: any) => {
-    const { id, newTimeoutMs } = opts
-
-    const timer = this.getTimer(id)
-    if (!timer) {
-      // console.log(`[Warning] No timer found to refresh for ${id}`)
-      return
-    }
-    timer.refresh()
-    if (newTimeoutMs) {
-      timer.timeout_ms = newTimeoutMs
-    }
-  },
-  [types.STOP_TIMER]: (state, opts: any) => {
+  restartTimer: (state, opts: TimerOptions): void => {
     const { id } = opts
+    const { timers } = state
+    if (!id) throw new Error(`[Error] Timer ID was not provided`)
+    if (!timers.hasOwnProperty(id)) throw new Error(`[Error] Timer with ID [${id}] does not exist`)
+    const timer = timers[id]
+    timers[id] = timer
+    state.timers = timers
+  },
+  refreshTimer: (state, opts: TimerOptions): void => {
+    const { id, timeoutMs } = opts
+    const { timers } = state
+    if (!id) throw new Error(`[Error] Timer ID was not provided`)
+    if (!timers.hasOwnProperty(id)) throw new Error(`[Error] Timer with ID [${id}] does not exist`)
+    const timer = timers[id]
 
-    const timer = this.getTimer(id)
-    if (!timer) {
-      // console.log(`[Warning] No timer found to stop for ${id}`)
-      return
+    timer.refresh()
+    if (timeoutMs) {
+      timer.timeoutMs = timeoutMs
     }
+
+    timers[id] = timer
+    state.timers = timers
+  },
+  stopTimer: (state, opts: TimerOptions): void => {
+    const { id } = opts
+    const { timers } = state
+    if (!id) throw new Error(`[Error] Timer ID was not provided`)
+    if (!timers.hasOwnProperty(id)) throw new Error(`[Error] Timer with ID [${id}] does not exist`)
+    const timer = timers[id]
+
     timer.stop()
-    delete this._currentTimers[id]
+    delete timers[id]
+    state.timers = timers
   }
 }
