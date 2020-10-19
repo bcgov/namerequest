@@ -103,7 +103,7 @@ import timerModule from '@/modules/vx-timer'
 import * as types from '@/store/types'
 
 export const EXISTING_NR_TIMER_NAME = 'existingNrTimer'
-export const EXISTING_NR_TIMEOUT_MS = 0.5 * (60 * 1000) // Set to 5 minutes
+export const EXISTING_NR_TIMEOUT_MS = 5 * (60 * 1000) // Set to 5 minutes
 
 @Component({
   components: { MainContainer }
