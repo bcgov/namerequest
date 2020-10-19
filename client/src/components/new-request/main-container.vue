@@ -28,7 +28,7 @@ export default class MainContainer extends Vue {
   }
   async cancelAnalyzeName () {
     if (this.editMode) {
-      // Check in the NR to release the INPROGESS lock on the NR
+      // Check in the NR to release the INPROGRESS lock on the NR
       await newReqModule.checkinNameRequest()
       await newReqModule.cancelEditExistingRequest()
       // Redirect to the start
