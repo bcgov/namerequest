@@ -215,9 +215,10 @@ export default class ExistingRequestDisplay extends Vue {
     if (outcome) {
       switch (action) {
         case 'EDIT':
-          // Check out the NR - this needs to be done before you can edit the Name Request
+          // Check out the NR - this sets the INPROGESS lock on the NR
+          // and needs to be done before you can edit the Name Request
           await newReqModule.checkoutNameRequest()
-          newReqModule.editExistingRequest()
+          await newReqModule.editExistingRequest()
           break
         case 'UPGRADE':
           paymentModule.toggleUpgradeModal(true)
@@ -229,7 +230,7 @@ export default class ExistingRequestDisplay extends Vue {
           paymentModule.togglePaymentHistoryModal(true)
           break
         default:
-          newReqModule.patchNameRequestsByAction(action)
+          await newReqModule.patchNameRequestsByAction(action)
           break
       }
     } else {

@@ -1849,7 +1849,7 @@ export class NewRequestModule extends VuexModule {
     this.mutateName('')
   }
   @Action
-  cancelEditExistingRequest () {
+  async cancelEditExistingRequest () {
     this.mutateDisplayedComponent('ExistingRequestDisplay')
     this.resetApplicantDetails()
     this.mutateNameChoicesToInitialState()
@@ -1858,7 +1858,7 @@ export class NewRequestModule extends VuexModule {
     this.mutateEditMode(false)
   }
   @Action
-  editExistingRequest () {
+  async editExistingRequest () {
     this.mutateEditMode(true)
     this.populateApplicantData()
     this.populateNrData()
