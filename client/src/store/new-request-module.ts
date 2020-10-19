@@ -1549,13 +1549,32 @@ export class NewRequestModule extends VuexModule {
     try {
       const { nrId } = this
       try {
-        const response = await axios.patch(`/namerequests/${nrId}/checkout`, {}, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
+        const checkedOutBy = sessionStorage.getItem('checkedOutBy')
+        const checkedOutDt = sessionStorage.getItem('checkedOutDt')
+
+        let response
+        if (checkedOutBy) {
+          response = await axios.patch(`/namerequests/${nrId}/checkout`, {
+            checkedOutBy: checkedOutBy,
+            checkedOutDt: checkedOutDt
+          }, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+        } else {
+          response = await axios.patch(`/namerequests/${nrId}/checkout`, {}, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+        }
+
+        const data = response.data || { checkedOutBy: null, checkedOutDt: null }
+        sessionStorage.setItem('checkedOutBy', data.checkedOutBy)
+        sessionStorage.setItem('checkedOutDt', data.checkedOutDt)
       } catch (err) {
-        await handleApiError(err, 'Could not check in the name request')
+        await handleApiError(err, 'Could not check out the name request')
       }
     } catch (error) {
       if (error instanceof ApiError) {
@@ -1573,11 +1592,22 @@ export class NewRequestModule extends VuexModule {
     try {
       const { nrId } = this
       try {
-        const response = await axios.patch(`/namerequests/${nrId}/checkin`, {}, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
+        const checkedOutBy = sessionStorage.getItem('checkedOutBy')
+        const checkedOutDt = sessionStorage.getItem('checkedOutDt')
+
+        if (checkedOutBy) {
+          await axios.patch(`/namerequests/${nrId}/checkin`, {
+            checkedOutBy: checkedOutBy,
+            checkedOutDt: checkedOutDt
+          }, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+
+          sessionStorage.removeItem('checkedOutBy')
+          sessionStorage.removeItem('checkedOutDt')
+        }
       } catch (err) {
         await handleApiError(err, 'Could not check in the name request')
       }
