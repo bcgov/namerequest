@@ -53,6 +53,8 @@ import TimeoutModal, {
 } from '@/components/session-timer/timeout-modal.vue'
 
 import newRequestModule, {
+  EXISTING_NR_TIMER_NAME,
+  EXISTING_NR_TIMEOUT_MS,
   NR_COMPLETION_TIMER_NAME,
   NR_COMPLETION_TIMEOUT_MS,
   ROLLBACK_ACTIONS as rollbackActions
@@ -115,13 +117,23 @@ export default class App extends Vue {
 
   async onTimerModalSessionExtended () {
     const { nrId } = newRequestModule
-    if (nrId) {
+    if (nrId && this.rollbackOnExpire) {
       timerModule.createAndStartTimer({
         id: NR_COMPLETION_TIMER_NAME,
         expirationFn: () => {
           this.$store.dispatch(types.SHOW_NR_SESSION_EXPIRY_MODAL)
         },
         timeoutMs: NR_COMPLETION_TIMEOUT_MS
+      })
+    }
+
+    if (nrId && this.checkInOnExpire) {
+      timerModule.createAndStartTimer({
+        id: EXISTING_NR_TIMER_NAME,
+        expirationFn: () => {
+          this.$store.dispatch(types.SHOW_NR_SESSION_EXPIRY_MODAL)
+        },
+        timeoutMs: EXISTING_NR_TIMEOUT_MS
       })
     }
   }

@@ -97,13 +97,10 @@ import { Component, Vue } from 'vue-property-decorator'
 import Moment from 'moment'
 
 import MainContainer from '@/components/new-request/main-container.vue'
-import newReqModule from '@/store/new-request-module'
+import newReqModule, { EXISTING_NR_TIMER_NAME, EXISTING_NR_TIMEOUT_MS } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 import timerModule from '@/modules/vx-timer'
 import * as types from '@/store/types'
-
-export const EXISTING_NR_TIMER_NAME = 'existingNrTimer'
-export const EXISTING_NR_TIMEOUT_MS = 5 * (60 * 1000) // Set to 5 minutes
 
 @Component({
   components: { MainContainer }

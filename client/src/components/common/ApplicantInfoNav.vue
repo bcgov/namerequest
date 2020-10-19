@@ -19,11 +19,9 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import newReqModule, { NR_COMPLETION_TIMER_NAME } from '@/store/new-request-module'
+import newReqModule, { EXISTING_NR_TIMER_NAME, NR_COMPLETION_TIMER_NAME } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 import timerModule from '@/modules/vx-timer'
-
-import { EXISTING_NR_TIMER_NAME } from '@/components/existing-request/existing-request-display'
 
 @Component({})
 export default class ApplicantInfoNav extends Vue {

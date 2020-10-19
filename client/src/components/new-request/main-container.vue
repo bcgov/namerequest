@@ -19,10 +19,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import newReqModule from '@/store/new-request-module'
+import newReqModule, { EXISTING_NR_TIMER_NAME } from '@/store/new-request-module'
 import timerModule from '@/modules/vx-timer'
-
-export const EXISTING_NR_TIMER_NAME = 'existingNrTimer'
 
 @Component({})
 export default class MainContainer extends Vue {
