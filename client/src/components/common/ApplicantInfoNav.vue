@@ -18,9 +18,10 @@
 </template>
 
 <script lang="ts">
-import paymentModule from '@/modules/payment'
-import newReqModule from '@/store/new-request-module'
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import newReqModule, { EXISTING_NR_TIMER_NAME, NR_COMPLETION_TIMER_NAME } from '@/store/new-request-module'
+import paymentModule from '@/modules/payment'
+import timerModule from '@/modules/vx-timer'
 
 @Component({})
 export default class ApplicantInfoNav extends Vue {
@@ -85,10 +86,13 @@ export default class ApplicantInfoNav extends Vue {
     newReqModule.mutateSubmissionTabNumber(this.tab + 1)
   }
   async submit () {
+    const { nrId } = this
     if (this.editMode) {
       await newReqModule.patchNameRequests()
+      await newReqModule.checkinNameRequest()
+      timerModule.stopTimer({ id: EXISTING_NR_TIMER_NAME })
+      this.fetchNr(nrId).then(() => {})
     } else {
-      const { nrId } = this
       if (!nrId) {
         await newReqModule.postNameRequests('draft')
       } else {
@@ -100,9 +104,14 @@ export default class ApplicantInfoNav extends Vue {
           }
         }
         await newReqModule.putNameReservation(nrId)
+        timerModule.stopTimer({ id: NR_COMPLETION_TIMER_NAME })
       }
       await paymentModule.togglePaymentModal(true)
     }
+  }
+  async fetchNr (nrId) {
+    const existingNr = await newReqModule.getNameRequest(nrId)
+    await newReqModule.loadExistingNameRequest(existingNr)
   }
 }
 

@@ -8,13 +8,17 @@ import rootMutations from './mutations'
 Vue.use(Vuex)
 
 export interface RootStateI {
-  analyzeName?: AnalyzeName,
+  analyzeName?: AnalyzeName
+  rollbackOnExpire?: boolean
+  checkInOnExpire?: boolean
   showNrSessionExpiryModal?: boolean
 }
 
 export default new Vuex.Store<RootStateI>({
   state: {
-    showNrSessionExpiryModal: false
+    showNrSessionExpiryModal: false,
+    rollbackOnExpire: true,
+    checkInOnExpire: false
   },
   actions: rootActions,
   mutations: rootMutations

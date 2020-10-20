@@ -97,8 +97,10 @@ import { Component, Vue } from 'vue-property-decorator'
 import Moment from 'moment'
 
 import MainContainer from '@/components/new-request/main-container.vue'
-import newReqModule, { ROLLBACK_ACTIONS as rollbackActions } from '@/store/new-request-module'
+import newReqModule, { EXISTING_NR_TIMER_NAME, EXISTING_NR_TIMEOUT_MS } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
+import timerModule from '@/modules/vx-timer'
+import * as types from '@/store/types'
 
 @Component({
   components: { MainContainer }
@@ -108,10 +110,7 @@ export default class ExistingRequestDisplay extends Vue {
   checking: boolean = false
   refreshCount: number = 0
   furnished: string = 'notfurnished'
-  mounted () {
-    // eslint-disable-next-line
-    console.log(this.$route.query)
-  }
+
   get actions () {
     return this.nr.actions
   }
@@ -219,7 +218,29 @@ export default class ExistingRequestDisplay extends Vue {
     if (outcome) {
       switch (action) {
         case 'EDIT':
-          newReqModule.editExistingRequest()
+          // eslint-disable-next-line no-case-declarations
+          const { dispatch } = this.$store
+          // Disable rollback on expire, it's only for new NRs
+          await dispatch(types.SET_ROLLBACK_ON_EXPIRE, false)
+          // Set check in on expire
+          await dispatch(types.SET_CHECK_IN_ON_EXPIRE, true)
+
+          // Check out the NR - this sets the INPROGRESS lock on the NR
+          // and needs to be done before you can edit the Name Request
+          // eslint-disable-next-line no-case-declarations
+          const success = await newReqModule.checkoutNameRequest()
+          // Only proceed with editing if the checkout was successful,
+          // the Name Request could be locked by another user session!
+          if (success) {
+            await newReqModule.editExistingRequest()
+            timerModule.createAndStartTimer({
+              id: EXISTING_NR_TIMER_NAME,
+              expirationFn: () => {
+                this.$store.dispatch(types.SHOW_NR_SESSION_EXPIRY_MODAL)
+              },
+              timeoutMs: EXISTING_NR_TIMEOUT_MS
+            })
+          }
           break
         case 'UPGRADE':
           paymentModule.toggleUpgradeModal(true)
@@ -231,7 +252,7 @@ export default class ExistingRequestDisplay extends Vue {
           paymentModule.togglePaymentHistoryModal(true)
           break
         default:
-          newReqModule.patchNameRequestsByAction(action)
+          await newReqModule.patchNameRequestsByAction(action)
           break
       }
     } else {

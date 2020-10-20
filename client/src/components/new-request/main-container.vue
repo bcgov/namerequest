@@ -18,8 +18,9 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
+import newReqModule, { EXISTING_NR_TIMER_NAME } from '@/store/new-request-module'
+import timerModule from '@/modules/vx-timer'
 
 @Component({})
 export default class MainContainer extends Vue {
@@ -28,7 +29,10 @@ export default class MainContainer extends Vue {
   }
   async cancelAnalyzeName () {
     if (this.editMode) {
+      // Check in the NR to release the INPROGRESS lock on the NR
       await newReqModule.cancelEditExistingRequest()
+      await newReqModule.checkinNameRequest()
+      timerModule.stopTimer({ id: EXISTING_NR_TIMER_NAME })
       // Redirect to the start
       // Catch any errors, so we don't get errors like:
       // Avoided redundant navigation to current location: "/"

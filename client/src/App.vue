@@ -53,6 +53,8 @@ import TimeoutModal, {
 } from '@/components/session-timer/timeout-modal.vue'
 
 import newRequestModule, {
+  EXISTING_NR_TIMER_NAME,
+  EXISTING_NR_TIMEOUT_MS,
   NR_COMPLETION_TIMER_NAME,
   NR_COMPLETION_TIMEOUT_MS,
   ROLLBACK_ACTIONS as rollbackActions
@@ -80,18 +82,27 @@ import * as types from '@/store/types'
     ApiErrorModal
   },
   computed: mapState([
-    'showNrSessionExpiryModal'
+    'showNrSessionExpiryModal',
+    'rollbackOnExpire',
+    'checkInOnExpire'
   ])
 })
 export default class App extends Vue {
+  rollbackOnExpire: boolean
+  checkInOnExpire: boolean
+
   async onTimerModalExpired () {
     const { nrId } = newRequestModule
-    if (nrId) {
+    if (nrId && this.rollbackOnExpire) {
       // Cancel the NR using the rollback endpoint if we were processing a NEW NR
       // Don't await this request, that way there's no lag, fire it off async and don't block I/O
       // The empty then clause just prevents a linting issue that warns when you don't
       // await an async function which is not an issue, since we don't want to block I/O
       newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL }).then(() => {})
+    }
+
+    if (nrId && this.checkInOnExpire) {
+      newRequestModule.checkinNameRequest().then(() => {})
     }
     // Redirect to the start
     // Catch any errors, so we don't get errors like:
@@ -106,13 +117,23 @@ export default class App extends Vue {
 
   async onTimerModalSessionExtended () {
     const { nrId } = newRequestModule
-    if (nrId) {
+    if (nrId && this.rollbackOnExpire) {
       timerModule.createAndStartTimer({
         id: NR_COMPLETION_TIMER_NAME,
         expirationFn: () => {
           this.$store.dispatch(types.SHOW_NR_SESSION_EXPIRY_MODAL)
         },
         timeoutMs: NR_COMPLETION_TIMEOUT_MS
+      })
+    }
+
+    if (nrId && this.checkInOnExpire) {
+      timerModule.createAndStartTimer({
+        id: EXISTING_NR_TIMER_NAME,
+        expirationFn: () => {
+          this.$store.dispatch(types.SHOW_NR_SESSION_EXPIRY_MODAL)
+        },
+        timeoutMs: EXISTING_NR_TIMEOUT_MS
       })
     }
   }
