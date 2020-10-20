@@ -38,7 +38,7 @@ export default class MainContainer extends Vue {
       // Avoided redundant navigation to current location: "/"
       await this.$router.replace('/').catch(() => {})
     } else {
-      await newReqModule.cancelAnalyzeName()
+      await newReqModule.cancelAnalyzeName('Tabs')
       // Redirect to the start
       // Catch any errors, so we don't get errors like:
       // Avoided redundant navigation to current location: "/"

@@ -133,6 +133,40 @@ export class NewRequestModule extends VuexModule {
   actingOnOwnBehalf: boolean = true
   addressSuggestions: object | null = null
   analysisJSON: AnalysisJSONI | null = null
+  analysisJSONCancelled = {
+    "header": "Name Analysis Cancelled",
+    "status": "fa",
+    "issues": [
+      {
+        "line1": "You have chosen to cancel name-analysis.",
+        "issue_type": "user_cancelled",
+        "show_next_button": false,
+        "show_examination_button": false,
+        "conflicts": [],
+        "name_actions": [],
+        "setup": [
+          {
+            "button": true,
+            "checkbox": "",
+            "type": "cancel_to_examiner",
+            "header": "Option 1",
+            "line1": "You can choose to submit this name for examination. Please check wait times at the top of the" +
+            " screen.",
+            "line2": "",
+            "label": "Send For Examination"
+          },
+          {
+            "checkbox": "",
+            "type": "cancel_to_start",
+            "header": "Option 2",
+            "line1": "You may click the button below to start over",
+            "line2": "",
+            "label": "Start Over"
+          }
+        ]
+      }
+    ]
+  }
   applicant: ApplicantI = {
     addrLine1: '',
     addrLine2: '',
@@ -555,6 +589,7 @@ export class NewRequestModule extends VuexModule {
   submissionTabNumber: number = 0
   submissionType: SubmissionTypeT | null = null
   tabNumber: number = 0
+  userCancelledAnalysis: boolean = false
   waitingAddressSearch: WaitingAddressSearchI | null = null
 
   private store: any
@@ -1191,6 +1226,17 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('SubmissionTabs')
       return
     }
+    /*
+     component can be:
+     "AnalyzeCharacters",
+     "AnalyzePending",
+     "AnalyzeResults",
+     "ExistingRequestDisplay",
+     "ExistingRequestEdit",
+     "LowerContainer",
+     "Stats",
+     "Success"
+     */
     this.mutateDisplayedComponent(component)
   }
   @Action
@@ -1325,8 +1371,11 @@ export class NewRequestModule extends VuexModule {
         this.mutateDisplayedComponent('SubmissionTabs')
         return
       }
+      if (this.userCancelledAnalysis) {
+        this.setActiveComponent('AnalyzeResults')
+        return
+      }
       this.mutateDisplayedComponent('Tabs')
-      return
     }
   }
   @Action
@@ -1372,8 +1421,11 @@ export class NewRequestModule extends VuexModule {
         this.mutateDisplayedComponent('SubmissionTabs')
         return
       }
+      if (this.userCancelledAnalysis) {
+        this.setActiveComponent('AnalyzeResults')
+        return
+      }
       this.mutateDisplayedComponent('Tabs')
-      return
     }
   }
   @Action
@@ -1865,9 +1917,16 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
+  userClickedStopAnalysis (payload) {
+    this.mutateUserCancelledAnalysis(true)
+    this.mutateAnalysisJSON(payload)
+  }
+  @Action
   resetAnalyzeName () {
     this.clearAssumedNameOriginal()
-    this.mutateAnalysisJSON(null)
+    if (!this.userCancelledAnalysis) {
+      this.mutateAnalysisJSON(null)
+    }
     this.mutateCorpNum('')
     this.mutateEditMode(false)
     this.mutateRequestActionOriginal('')
@@ -1881,14 +1940,16 @@ export class NewRequestModule extends VuexModule {
     this.mutateNameAnalysisTimedOut(false)
   }
   @Action
-  cancelAnalyzeName () {
+  cancelAnalyzeName (destination: string) {
     if (source && source.cancel) {
       source.cancel()
       source = null
     }
-    this.mutateDisplayedComponent('Tabs')
+    if (destination === 'Tabs') {
+      this.mutateUserCancelledAnalysis(false)
+    }
+    this.setActiveComponent(destination)
     this.resetAnalyzeName()
-    this.mutateName('')
   }
   @Action
   async cancelEditExistingRequest () {
@@ -1951,6 +2012,7 @@ export class NewRequestModule extends VuexModule {
   @Action
   startAnalyzeName () {
     this.resetAnalyzeName()
+    this.mutateUserCancelledAnalysis(false)
     let name
     if (this.name) {
       name = sanitizeName(this.name)
@@ -2414,6 +2476,10 @@ export class NewRequestModule extends VuexModule {
   }
   getEntities (category) {
     return this.entityTypesBC.filter(type => type.cat === category)
+  }
+  @Mutation
+  mutateUserCancelledAnalysis (value: boolean) {
+    this.userCancelledAnalysis = value
   }
 }
 

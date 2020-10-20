@@ -166,7 +166,7 @@
 </template>
 
 <script lang="ts">
-import ApplicantInfoNav from '@/components/common/ApplicantInfoNav.vue'
+import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { LocationT } from '@/models'
 import { sanitizeName } from '@/plugins/utilities'
 import newReqModule from '@/store/new-request-module'

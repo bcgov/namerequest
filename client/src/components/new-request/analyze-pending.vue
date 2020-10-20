@@ -72,8 +72,9 @@ export default class AnalyzePending extends Vue {
     }
   }
 
-  startOver () {
-    newReqModule.cancelAnalyzeName()
+  async startOver () {
+    await newReqModule.userClickedStopAnalysis(newReqModule.analysisJSONCancelled)
+    newReqModule.cancelAnalyzeName('AnalyzeResults')
   }
 }
 

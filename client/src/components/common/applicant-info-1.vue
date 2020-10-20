@@ -317,7 +317,7 @@
 <script lang="ts">
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import ApplicantInfoNav from '@/components/common/ApplicantInfoNav.vue'
+import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 
 const _debounce = require('lodash/debounce')
 

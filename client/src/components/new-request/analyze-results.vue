@@ -184,13 +184,6 @@ export default class AnalyzeResults extends Vue {
   originalName: string | null = null
   originalOps = []
 
-  @Watch('issueIndex')
-  resetShowActualInput (newVal, oldVal) {
-    if (newVal !== oldVal) {
-      this.showActualInput = false
-    }
-  }
-
   created () {
     this.originalName = newReqModule.name
   }
@@ -231,6 +224,25 @@ export default class AnalyzeResults extends Vue {
   }
   beforeDestroy () {
     document.removeEventListener('keydown', this.handleEnterKey)
+  }
+
+  @Watch('issueIndex')
+  resetShowActualInput (newVal, oldVal) {
+    if (newVal !== oldVal) {
+      this.showActualInput = false
+    }
+    if (newVal === this.issueLength - 1) {
+      // eslint-disable-next-line
+      console.log('conditions met')
+      let keys = Object.keys(this.requestExaminationOrProvideConsent[newVal])
+      keys.forEach(key => {
+        newReqModule.mutateRequestExaminationOrProvideConsent({
+          value: false,
+          type: key,
+          index: newVal
+        })
+      })
+    }
   }
 
   get changesInBaseName () {
@@ -287,8 +299,8 @@ export default class AnalyzeResults extends Vue {
     return (this.issueIndex === this.issueLength - 1)
   }
   get issueLength () {
-    if (Array.isArray(newReqModule.analysisJSON.issues)) {
-      return newReqModule.analysisJSON.issues.length
+    if (Array.isArray(this.json.issues)) {
+      return this.json.issues.length
     }
     return 1
   }
@@ -314,6 +326,26 @@ export default class AnalyzeResults extends Vue {
       return (this.issue.setup[0].type === 'assumed_name' && !this.isLastIndex)
     }
     return false
+  }
+  get examinationOrConsentCompleted () {
+    let types = ['send_to_examiner', 'obtain_consent', 'conflict_self_consent']
+
+    if (!this.json.issues.some(issue => issue.setup.some(set => types.includes(set.type)))) return true
+
+    let result = true
+    let index = 0
+
+    for (let issue of this.json.issues) {
+      for (let set of issue.setup) {
+        if (types.includes(set.type)) {
+          if (types.every(type => !this.requestExaminationOrProvideConsent[index][type])) {
+            result = false
+          }
+        }
+      }
+      index++
+    }
+    return result
   }
   get nextButtonDisabled () {
     if (this.enableNextForAssumedName) {
@@ -359,9 +391,9 @@ export default class AnalyzeResults extends Vue {
         showNextLines: true
       }
     }
-    let { length } = newReqModule.analysisJSON.issues
+    let { length } = this.json.issues
     if (this.issueIndex === length - 1) {
-      if (!this.changesInBaseName && this.designationIsFixed) {
+      if (!this.changesInBaseName && this.designationIsFixed && this.examinationOrConsentCompleted) {
         return {
           class: 'approved',
           icon: 'check_circle',
@@ -391,7 +423,7 @@ export default class AnalyzeResults extends Vue {
   }
 
   cancelAnalyzeName () {
-    newReqModule.cancelAnalyzeName()
+    newReqModule.cancelAnalyzeName('Tabs')
   }
   clickNameField () {
     if (!this.showActualInput) {

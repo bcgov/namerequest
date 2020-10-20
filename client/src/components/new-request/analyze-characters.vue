@@ -76,7 +76,7 @@ export default class AnalyzeCharacters extends Vue {
   }
 
   startOver () {
-    newReqModule.cancelAnalyzeName()
+    newReqModule.cancelAnalyzeName('Tabs')
   }
 }
 
