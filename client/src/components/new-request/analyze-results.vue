@@ -270,13 +270,44 @@ export default class AnalyzeResults extends Vue {
     return []
   }
   get designationIsFixed () {
+    if (this.json.issues.every(issue => !newReqModule.designationIssueTypes.includes(issue.issue_type))) {
+      if (this.isLastIndex) {
+        return true
+      }
+    }
     return newReqModule.designationIsFixed
+  }
+  get enableNextForAssumedName () {
+    if (this.issue && ['corp_conflict', 'queue_conflict'].includes(this.issue.issue_type)) {
+      return (this.issue.setup[0].type === 'assumed_name' && !this.isLastIndex)
+    }
+    return false
+  }
+  get entity_type_cd () {
+    return newReqModule.entity_type_cd
   }
   get entityText () {
     return newReqModule.entityTextFromValue
   }
-  get entity_type_cd () {
-    return newReqModule.entity_type_cd
+  get examinationOrConsentCompleted () {
+    let types = ['send_to_examiner', 'obtain_consent', 'conflict_self_consent']
+
+    if (!this.json.issues.some(issue => issue.setup.some(set => types.includes(set.type)))) return true
+
+    let result = true
+    let index = 0
+
+    for (let issue of this.json.issues) {
+      for (let set of issue.setup) {
+        if (types.includes(set.type)) {
+          if (types.every(type => !this.requestExaminationOrProvideConsent[index][type])) {
+            result = false
+          }
+        }
+      }
+      index++
+    }
+    return result
   }
   get hasNameActions () {
     if (this.issue && this.issue.name_actions && Array.isArray(this.issue.name_actions)) {
@@ -286,17 +317,44 @@ export default class AnalyzeResults extends Vue {
     }
     return false
   }
+  get headerProps () {
+    if (this.json.status === 'Available') {
+      return {
+        class: 'approved',
+        icon: 'check_circle',
+        text: 'Name Available',
+        showNextLines: true
+      }
+    }
+    let { length } = this.json.issues
+    if (this.isLastIndex) {
+      if (!this.changesInBaseName && this.designationIsFixed && this.examinationOrConsentCompleted) {
+        return {
+          class: 'approved',
+          icon: 'check_circle',
+          text: 'You May Proceed',
+          showNextLines: false
+        }
+      }
+    }
+    return {
+      class: 'action',
+      icon: 'stars',
+      text: 'Further Action Required',
+      showNextLines: true
+    }
+  }
   get isApproved () {
     return (this.json.status === 'Available')
+  }
+  get isLastIndex () {
+    return (this.issueIndex === this.issueLength - 1)
   }
   get issue () {
     if (Array.isArray(this.json.issues)) {
       return this.json.issues[this.issueIndex]
     }
     return {}
-  }
-  get isLastIndex () {
-    return (this.issueIndex === this.issueLength - 1)
   }
   get issueLength () {
     if (Array.isArray(this.json.issues)) {
@@ -320,32 +378,6 @@ export default class AnalyzeResults extends Vue {
       return (this.issue as IssueI).name_actions
     }
     return null
-  }
-  get enableNextForAssumedName () {
-    if (this.issue && ['corp_conflict', 'queue_conflict'].includes(this.issue.issue_type)) {
-      return (this.issue.setup[0].type === 'assumed_name' && !this.isLastIndex)
-    }
-    return false
-  }
-  get examinationOrConsentCompleted () {
-    let types = ['send_to_examiner', 'obtain_consent', 'conflict_self_consent']
-
-    if (!this.json.issues.some(issue => issue.setup.some(set => types.includes(set.type)))) return true
-
-    let result = true
-    let index = 0
-
-    for (let issue of this.json.issues) {
-      for (let set of issue.setup) {
-        if (types.includes(set.type)) {
-          if (types.every(type => !this.requestExaminationOrProvideConsent[index][type])) {
-            result = false
-          }
-        }
-      }
-      index++
-    }
-    return result
   }
   get nextButtonDisabled () {
     if (this.enableNextForAssumedName) {
@@ -381,33 +413,6 @@ export default class AnalyzeResults extends Vue {
   }
   get showActualInput () {
     return newReqModule.showActualInput
-  }
-  get headerProps () {
-    if (this.json.status === 'Available') {
-      return {
-        class: 'approved',
-        icon: 'check_circle',
-        text: 'Name Available',
-        showNextLines: true
-      }
-    }
-    let { length } = this.json.issues
-    if (this.issueIndex === length - 1) {
-      if (!this.changesInBaseName && this.designationIsFixed && this.examinationOrConsentCompleted) {
-        return {
-          class: 'approved',
-          icon: 'check_circle',
-          text: 'You May Proceed',
-          showNextLines: false
-        }
-      }
-    }
-    return {
-      class: 'action',
-      icon: 'stars',
-      text: 'Further Action Required',
-      showNextLines: true
-    }
   }
   get word () {
     if (Array.isArray(this.issue.name_actions) && this.issue.name_actions[0]) {

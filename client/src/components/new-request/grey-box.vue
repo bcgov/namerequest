@@ -144,15 +144,14 @@ export default class GreyBox extends Vue {
   @Prop(Number) issueIndex: number
   @Prop(Object) option: OptionI
   @Prop(String) originalName: string
-  @Watch('changesInBaseName')
+
+  @Watch('changesInBaseName', { immediate: true })
   updateChangesInBaseName (newVal) {
     newReqModule.mutateChangesInBaseName(newVal)
   }
-  @Watch('designationIsFixed')
+  @Watch('designationIsFixed', { immediate: true })
   updateDesignationIsFixed (newVal) {
-    if (this.designationIsFixedStore !== newVal) {
-      newReqModule.mutateDesignationIsFixed(newVal)
-    }
+    newReqModule.mutateDesignationIsFixed(newVal)
   }
   @Watch('designationIsFixedStore', { immediate: true })
   syncDesignationIsFixed () {
