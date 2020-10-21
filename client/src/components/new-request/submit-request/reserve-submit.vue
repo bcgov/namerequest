@@ -35,6 +35,8 @@ export default class ReserveSubmitButton extends Vue {
       return 'Send for Examination'
     }
     switch (this.setup) {
+      case 'cancel':
+        return 'Stop & Send To Examination'
       case 'consent':
         return 'Conditionally Reserve'
       case 'examine':
@@ -48,9 +50,19 @@ export default class ReserveSubmitButton extends Vue {
         return 'Reserve and Continue'
     }
   }
+  async sendToExamination () {
+    await newReqModule.userClickedStopAnalysis()
+    newReqModule.cancelAnalyzeName('NamesCapture')
+  }
 
   handleSubmit () {
     let { setup, location, entity_type_cd, request_action_cd } = this
+
+    if (setup === 'cancel') {
+      this.sendToExamination()
+      return
+    }
+
     let goToNames = () => {
       newReqModule.mutateSubmissionType('examination')
       newReqModule.mutateSubmissionTabComponent('NamesCapture')
@@ -72,6 +84,9 @@ export default class ReserveSubmitButton extends Vue {
         return
       case 'examine':
         goToNames()
+        return
+      case 'cancel':
+        this.sendToExamination()
         return
       case 'consent':
         newReqModule.postNameRequests('conditional')

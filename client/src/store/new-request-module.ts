@@ -555,6 +555,7 @@ export class NewRequestModule extends VuexModule {
   submissionTabNumber: number = 0
   submissionType: SubmissionTypeT | null = null
   tabNumber: number = 0
+  userCancelledAnalysis: boolean = false
   waitingAddressSearch: WaitingAddressSearchI | null = null
 
   private store: any
@@ -1191,6 +1192,17 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('SubmissionTabs')
       return
     }
+    /*
+     component can be:
+     "AnalyzeCharacters",
+     "AnalyzePending",
+     "AnalyzeResults",
+     "ExistingRequestDisplay",
+     "ExistingRequestEdit",
+     "LowerContainer",
+     "Stats",
+     "Success"
+     */
     this.mutateDisplayedComponent(component)
   }
   @Action
@@ -1325,8 +1337,11 @@ export class NewRequestModule extends VuexModule {
         this.mutateDisplayedComponent('SubmissionTabs')
         return
       }
+      if (this.userCancelledAnalysis) {
+        this.setActiveComponent('NamesCapture')
+        return
+      }
       this.mutateDisplayedComponent('Tabs')
-      return
     }
   }
   @Action
@@ -1372,8 +1387,11 @@ export class NewRequestModule extends VuexModule {
         this.mutateDisplayedComponent('SubmissionTabs')
         return
       }
+      if (this.userCancelledAnalysis) {
+        this.setActiveComponent('AnalyzeResults')
+        return
+      }
       this.mutateDisplayedComponent('Tabs')
-      return
     }
   }
   @Action
@@ -1865,9 +1883,16 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
+  userClickedStopAnalysis () {
+    this.mutateUserCancelledAnalysis(true)
+    this.mutateSubmissionType('examination')
+  }
+  @Action
   resetAnalyzeName () {
     this.clearAssumedNameOriginal()
-    this.mutateAnalysisJSON(null)
+    if (!this.userCancelledAnalysis) {
+      this.mutateAnalysisJSON(null)
+    }
     this.mutateCorpNum('')
     this.mutateEditMode(false)
     this.mutateRequestActionOriginal('')
@@ -1881,14 +1906,17 @@ export class NewRequestModule extends VuexModule {
     this.mutateNameAnalysisTimedOut(false)
   }
   @Action
-  cancelAnalyzeName () {
+  cancelAnalyzeName (destination: string) {
     if (source && source.cancel) {
       source.cancel()
       source = null
     }
-    this.mutateDisplayedComponent('Tabs')
+    if (destination === 'Tabs') {
+      this.mutateName('')
+      this.mutateUserCancelledAnalysis(false)
+    }
+    this.setActiveComponent(destination)
     this.resetAnalyzeName()
-    this.mutateName('')
   }
   @Action
   async cancelEditExistingRequest () {
@@ -1951,6 +1979,7 @@ export class NewRequestModule extends VuexModule {
   @Action
   startAnalyzeName () {
     this.resetAnalyzeName()
+    this.mutateUserCancelledAnalysis(false)
     let name
     if (this.name) {
       name = sanitizeName(this.name)
@@ -2414,6 +2443,10 @@ export class NewRequestModule extends VuexModule {
   }
   getEntities (category) {
     return this.entityTypesBC.filter(type => type.cat === category)
+  }
+  @Mutation
+  mutateUserCancelledAnalysis (value: boolean) {
+    this.userCancelledAnalysis = value
   }
 }
 

@@ -153,7 +153,7 @@
 </template>
 
 <script lang="ts">
-import ApplicantInfoNav from '@/components/common/ApplicantInfoNav.vue'
+import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import newReqModule, { NewRequestModule } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 import { Component, Vue, Watch } from 'vue-property-decorator'

@@ -261,7 +261,7 @@ export default class ExistingRequestDisplay extends Vue {
   }
   async goBack () {
     await newReqModule.cancelEditExistingRequest()
-    newReqModule.cancelAnalyzeName()
+    newReqModule.cancelAnalyzeName('Tabs')
   }
   async refresh (event) {
     this.refreshCount += 1

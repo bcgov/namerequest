@@ -10,7 +10,7 @@
     </v-btn>
     <v-btn x-large
            @click="next"
-           :disabled="!isValid || clicked"
+           :disabled="!isValid"
            id="submit-continue-btn">
       {{ nextText }}
     </v-btn>
@@ -25,8 +25,6 @@ import timerModule from '@/modules/vx-timer'
 
 @Component({})
 export default class ApplicantInfoNav extends Vue {
-  clicked: boolean = false
-
   @Prop(Boolean) isValid: boolean
 
   get backText () {
@@ -78,8 +76,7 @@ export default class ApplicantInfoNav extends Vue {
     newReqModule.mutateSubmissionTabNumber(this.tab - 1)
   }
   next () {
-    if (this.tab === 3 && !this.clicked) {
-      this.clicked = true
+    if (this.tab === 3) {
       this.submit()
       return
     }

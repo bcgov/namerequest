@@ -198,7 +198,7 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   }
   cancelAnalyzeName () {
     this.$root.$emit('start-search-again')
-    newReqModule.cancelAnalyzeName()
+    newReqModule.cancelAnalyzeName('Tabs')
   }
 }
 </script>

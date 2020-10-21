@@ -10,105 +10,121 @@
         </div>
       </div>
     </v-col>
-    <transition :name="i === 0 ? 'fade' : '' " mode="out-in">
-      <v-row class="copy-small colour-p-blue-text"
-             align-content="start"
-             :key="changesInBaseName+designationIsFixed+'key'+i">
-        <!-- Header, Line 1 and Line 2-->
+    <template v-if="issueType === 'user_cancelled'">
+      <v-col class="copy-small colour-p-blue-text pt-0" cols="12">
+        <p v-if="option.line1" class="ma-0 pa-0" v-html="option.line1" />
+        <p v-if="option.line2" class="ma-0 pa-0 pt-2" v-html="option.line2" />
+      </v-col>
+      <v-col cols="12" class="text-center" v-if="option.type === 'cancel_to_examiner'">
+        <ReserveSubmit setup="examine"
+                       id="reserve-submit-button"
+                       style="display: inline" />
+      </v-col>
+      <v-col cols="12" class="text-center" v-else>
+        <v-btn @click="cancelAnalyzeName('Tabs')">Start Over</v-btn>
+      </v-col>
+    </template>
+    <template v-else>
+      <transition :name="i === 0 ? 'fade' : '' " mode="out-in">
+        <v-row class="copy-small colour-p-blue-text"
+               align-content="start"
+               :key="changesInBaseName+designationIsFixed+'key'+i">
+          <!-- Header, Line 1 and Line 2-->
 
-        <v-col class="copy-small colour-p-blue-text pt-0"
-               v-if="designationIsFixed && isDesignationIssueType && i === 0"
-               cols="12">
-          {{ isLastIndex ? 'No additional issues were identified with your name.  You may proceed.' :
-                           'Please click the "Next Issue" button to continue' }}
-        </v-col>
-        <v-col class="copy-small colour-p-blue-text pt-0"
-               v-else-if="changesInBaseName && isDesignationIssueType && i === 0"
-               cols="12">
-          You have altered the base text of your name.  You must
-          either change it back or click the magnifying glass to run a new search for your edited name.
-        </v-col>
-        <v-col class="copy-small colour-p-blue-text pt-0"
-               v-else
-               cols="12">
-          <p v-if="option.line1" class="ma-0 pa-0" v-html="option.line1" />
-          <p v-if="option.line2" class="ma-0 pa-0 pt-2" v-html="option.line2" />
-        </v-col>
-
-        <!-- NAME/DESIGNATION-MANIPULATING OPTION BOXES -->
-        <template v-if="isDesignationIssueType">
-          <transition name="fade"
-                      mode="out-in">
-            <v-col v-if="!designationIsFixed && !changesInBaseName && i === 0"
-                   class="text-center"
-                   key="designation-error-col">
-              <template v-if="Array.isArray(designations) && designations.length > 0">
-                <div class="designation-buttons">
-                  <button tag="div"
-                          :key="'designation-'+d"
-                          :id="'designation-'+d"
-                          @click.once.prevent="changeDesignation(des)"
-                          class="link-sm ma-0 pa-0 px-1"
-                          v-for="(des, d) in designations">
-                    {{ des }}{{ (d !== issue.designations.length - 1) ? ',' : '' }}
-                  </button>
-                </div>
-              </template>
-              <template v-if="option.type === 'change designation at the end'">
-                <v-btn @click="moveDesignation" id="move-designation-btn">Move Designation</v-btn>
-              </template>
-            </v-col>
-            <v-col v-if="designationIsFixed && i === 0 && issueIndex + 1 === issueLength"
-                   key="designation-fixed-col" class="text-center">
-              <ReserveSubmit id="reserve-submit-button"
-                             style="display: inline"
-                             :setup="reserveSubmitConfig" />
-            </v-col>
-          </transition>
-        </template>
-
-        <!-- CHANGE_ENTITY_TYPE OPTION BOX -->
-        <template v-if="option.type === 'change_entity_type'">
-           <v-col class="text-center mt-4">
-            <v-btn @click="cancelAnalyzeName()">Restart and Change Type</v-btn>
+          <v-col class="copy-small colour-p-blue-text pt-0"
+                 v-if="designationIsFixed && isDesignationIssueType && i === 0"
+                 cols="12">
+            {{ isLastIndex ? 'No additional issues were identified with your name.  You may proceed.' :
+            'Please click the "Next Issue" button to continue' }}
           </v-col>
-        </template>
-        <!-- ASSUMED NAME OPTION BOX -->
-        <template v-else-if="option.type === 'assumed_name'">
-          <v-col :id="option.type + '-button-checkbox-col'"
-                 class="pa-0 grey-box-checkbox-button text-center">
-            <transition name="fade" mode="out-in" >
-              <ReserveSubmit :key="option.type+'-reserve-submit'"
-                             setup="assumed"
-                             id="reserve-submit-comp"
-                             v-if="isLastIndex"
-                             style="display: inline" />
+          <v-col class="copy-small colour-p-blue-text pt-0"
+                 v-else-if="changesInBaseName && isDesignationIssueType && i === 0"
+                 cols="12">
+            You have altered the base text of your name.  You must
+            either change it back or click the magnifying glass to run a new search for your edited name.
+          </v-col>
+          <v-col class="copy-small colour-p-blue-text pt-0"
+                 v-else
+                 cols="12">
+            <p v-if="option.line1" class="ma-0 pa-0" v-html="option.line1" />
+            <p v-if="option.line2" class="ma-0 pa-0 pt-2" v-html="option.line2" />
+          </v-col>
+
+          <!-- NAME/DESIGNATION-MANIPULATING OPTION BOXES -->
+          <template v-if="isDesignationIssueType">
+            <transition name="fade"
+                        mode="out-in">
+              <v-col v-if="!designationIsFixed && !changesInBaseName && i === 0"
+                     class="text-center"
+                     key="designation-error-col">
+                <template v-if="Array.isArray(designations) && designations.length > 0">
+                  <div class="designation-buttons">
+                    <button tag="div"
+                            :key="'designation-'+d"
+                            :id="'designation-'+d"
+                            @click.once.prevent="changeDesignation(des)"
+                            class="link-sm ma-0 pa-0 px-1"
+                            v-for="(des, d) in designations">
+                      {{ des }}{{ (d !== issue.designations.length - 1) ? ',' : '' }}
+                    </button>
+                  </div>
+                </template>
+                <template v-if="option.type === 'change designation at the end'">
+                  <v-btn @click="moveDesignation" id="move-designation-btn">Move Designation</v-btn>
+                </template>
+              </v-col>
+              <v-col v-if="designationIsFixed && i === 0 && issueIndex + 1 === issueLength"
+                     key="designation-fixed-col" class="text-center">
+                <ReserveSubmit id="reserve-submit-button"
+                               style="display: inline"
+                               :setup="reserveSubmitConfig" />
+              </v-col>
             </transition>
-          </v-col>
-        </template>
-        <!-- ALL OTHER TYPES OF OPTION BOXES -->
-        <template v-else>
-          <v-col :id="option.type + '-button-checkbox-col'"
-                 v-if="i !== 0"
-                 class="pa-0 grey-box-checkbox-button text-center">
-            <transition name="fade" mode="out-in" >
-              <v-checkbox :error="showError"
-                          :key="option.type+'-checkbox'"
-                          :label="checkBoxLabel"
-                          class="ma-0 pa-0"
-                          id="provide-consent-checkbox"
-                          v-if="showCheckBoxOrButton === 'checkbox'"
-                          v-model="boxIsChecked" />
-              <ReserveSubmit :key="option.type+'-reserve-submit'"
-                             :setup="reserveSubmitConfig"
-                             id="reserve-submit-button"
-                             style="display: inline"
-                             v-if="showCheckBoxOrButton === 'button'" />
-            </transition>
-          </v-col>
-        </template>
-      </v-row>
-    </transition>
+          </template>
+
+          <!-- CHANGE_ENTITY_TYPE OPTION BOX -->
+          <template v-if="option.type === 'change_entity_type'">
+            <v-col class="text-center mt-4">
+              <v-btn @click="cancelAnalyzeName('Tabs')">Restart and Change Type</v-btn>
+            </v-col>
+          </template>
+          <!-- ASSUMED NAME OPTION BOX -->
+          <template v-else-if="option.type === 'assumed_name'">
+            <v-col :id="option.type + '-button-checkbox-col'"
+                   class="pa-0 grey-box-checkbox-button text-center">
+              <transition name="fade" mode="out-in" >
+                <ReserveSubmit :key="option.type+'-reserve-submit'"
+                               setup="assumed"
+                               id="reserve-submit-comp"
+                               v-if="isLastIndex"
+                               style="display: inline" />
+              </transition>
+            </v-col>
+          </template>
+          <!-- ALL OTHER TYPES OF OPTION BOXES -->
+          <template v-else>
+            <v-col :id="option.type + '-button-checkbox-col'"
+                   v-if="i !== 0"
+                   class="pa-0 grey-box-checkbox-button text-center">
+              <transition name="fade" mode="out-in" >
+                <v-checkbox :error="showError"
+                            :key="option.type+'-checkbox'"
+                            :label="checkBoxLabel"
+                            class="ma-0 pa-0"
+                            id="provide-consent-checkbox"
+                            v-if="showCheckBoxOrButton === 'checkbox'"
+                            v-model="boxIsChecked" />
+                <ReserveSubmit :key="option.type+'-reserve-submit'"
+                               :setup="reserveSubmitConfig"
+                               id="reserve-submit-button"
+                               style="display: inline"
+                               v-if="showCheckBoxOrButton === 'button'" />
+              </transition>
+            </v-col>
+          </template>
+        </v-row>
+      </transition>
+    </template>
   </v-container>
 </template>
 
@@ -128,15 +144,14 @@ export default class GreyBox extends Vue {
   @Prop(Number) issueIndex: number
   @Prop(Object) option: OptionI
   @Prop(String) originalName: string
-  @Watch('changesInBaseName')
+
+  @Watch('changesInBaseName', { immediate: true })
   updateChangesInBaseName (newVal) {
     newReqModule.mutateChangesInBaseName(newVal)
   }
-  @Watch('designationIsFixed')
+  @Watch('designationIsFixed', { immediate: true })
   updateDesignationIsFixed (newVal) {
-    if (this.designationIsFixedStore !== newVal) {
-      newReqModule.mutateDesignationIsFixed(newVal)
-    }
+    newReqModule.mutateDesignationIsFixed(newVal)
   }
   @Watch('designationIsFixedStore', { immediate: true })
   syncDesignationIsFixed () {
@@ -245,6 +260,7 @@ export default class GreyBox extends Vue {
   }
   get designationIsFixed () {
     try {
+      if (this.userCancelled) return false
       if (!this.changesInBaseName) {
         let AllDesignationsList = allDesignationsList
         const designationEntityTypes = allDesignations[this.entity_type_cd]
@@ -387,8 +403,11 @@ export default class GreyBox extends Vue {
   get isAssumedName () {
     return this.issue.setup.some(box => box.type === 'assumed_name')
   }
+  get lastIndex () {
+    return this.issueLength - 1
+  }
   get isLastIndex () {
-    return (this.issueIndex === this.issueLength - 1)
+    return (this.issueIndex === this.lastIndex)
   }
   get issueLength () {
     if (Array.isArray(newReqModule.analysisJSON.issues)) {
@@ -444,12 +463,28 @@ export default class GreyBox extends Vue {
       }
       return ''
     }
-    if (this.examinationRequested) {
-      return 'examine'
-    }
-    for (let n of [0, 1, 2]) {
-      if (this.requestExaminationOrProvideConsent[n].obtain_consent ||
-        this.requestExaminationOrProvideConsent[n].conflict_self_consent) {
+    if (this.isLastIndex) {
+      let priorIndexes = () => {
+        let output = []
+        let i = this.issueIndex
+        while (i > 0) {
+          i--
+          output.push(i)
+        }
+        return output
+      }
+
+      if (priorIndexes().some(index => this.requestExaminationOrProvideConsent[index].send_to_examiner)) {
+        return 'examine'
+      }
+      if (this.option.type === 'send_to_examiner') {
+        return 'examine'
+      }
+      if (priorIndexes().some(index => this.requestExaminationOrProvideConsent[index].obtain_consent ||
+      this.requestExaminationOrProvideConsent[index].conflict_self_consent)) {
+        return 'consent'
+      }
+      if (['conflict_self_consent', 'obtain_consent'].includes(this.option.type)) {
         return 'consent'
       }
     }
@@ -459,6 +494,9 @@ export default class GreyBox extends Vue {
     let { type } = this.option
     if (this.issueIndex + 1 === this.issueLength) {
       switch (type) {
+        case 'cancel_to_examiner':
+        case 'cancel_to_start':
+          return 'button'
         case 'send_to_examiner':
           if (this.showLastStepButtons.send_to_examiner) {
             return 'button'
@@ -496,9 +534,12 @@ export default class GreyBox extends Vue {
     }
     return ''
   }
+  get userCancelled () {
+    return newReqModule.userCancelledAnalysis
+  }
 
-  cancelAnalyzeName () {
-    newReqModule.cancelAnalyzeName()
+  cancelAnalyzeName (destination) {
+    newReqModule.cancelAnalyzeName(destination)
   }
   changeDesignation (designation) {
     newReqModule.mutateShowActualInput(true)
