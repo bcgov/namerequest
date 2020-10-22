@@ -609,6 +609,12 @@ export class NewRequestModule extends VuexModule {
       homeJurisNum: this.corpNum
     }
   }
+  get currentIssue () {
+    if (this.analysisJSON && this.analysisJSON.issues && Array.isArray(this.analysisJSON.issues)) {
+      return this.analysisJSON.issues[this.issueIndex]
+    }
+    return {}
+  }
   get showXproJurisdiction () {
     if (this.location !== 'BC') {
       return true
@@ -1091,28 +1097,45 @@ export class NewRequestModule extends VuexModule {
       while (choiceIdx <= 3) {
         if (nameChoices[`name${choiceIdx}`] as boolean) {
           let combinedName = nameChoices[`name${choiceIdx}`]
-          let des = nameChoices[`designation${choiceIdx}`]
-          if (des && !combinedName.endsWith(des)) {
-            combinedName = combinedName + ' ' + des
+          if (this.location === 'BC' && $designations[this.entity_type_cd].end) {
+            let des = nameChoices[`designation${choiceIdx}`]
+            if (des && !combinedName.endsWith(des)) {
+              combinedName = combinedName + ' ' + des
+            }
+            requestNames.push({
+              name: combinedName,
+              designation: nameChoices[`designation${choiceIdx}`],
+              choice: choiceIdx,
+              ...defaultValues
+            })
+          } else {
+            requestNames.push({
+              name: combinedName,
+              designation: '',
+              choice: choiceIdx,
+              ...defaultValues
+            })
           }
-          // Create the requestName
-          requestNames.push({
-            name: combinedName,
-            designation: nameChoices[`designation${choiceIdx}`],
-            choice: choiceIdx,
-            ...defaultValues
-          })
         }
         choiceIdx++
       }
     } else {
       // Just use the 'name' property to fill in the requestName
-      requestNames.push({
-        name: this.name,
-        designation: this.splitNameDesignation.designation,
-        choice: 1,
-        ...defaultValues
-      })
+      if (this.location === 'BC' && $designations[this.entity_type_cd].end) {
+        requestNames.push({
+          name: this.name,
+          designation: this.splitNameDesignation.designation,
+          choice: 1,
+          ...defaultValues
+        })
+      } else {
+        requestNames.push({
+          name: this.name,
+          designation: '',
+          choice: 1,
+          ...defaultValues
+        })
+      }
     }
 
     requestNames = requestNames.map((requestName, idx) => {

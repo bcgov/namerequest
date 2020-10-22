@@ -190,6 +190,7 @@ export default class AnalyzeResults extends Vue {
   mounted () {
     newReqModule.mutateDesignationIsFixed(false)
     this.$root.$on('updatecontents', (name) => { this.updateContents(name) })
+    this.$root.$on('show-original-name', () => { this.name = this.originalName })
     document.addEventListener('keydown', this.handleEnterKey)
     this.$nextTick(function () {
       this.quill.setContents([])

@@ -268,6 +268,7 @@ export default class ExistingRequestDisplay extends Vue {
     newReqModule.cancelAnalyzeName('Tabs')
   }
   async refresh (event) {
+    // refreshCount is used in the template at the transition key for the affected template triggering a fade in/out
     this.refreshCount += 1
     this.checking = true
     try {
