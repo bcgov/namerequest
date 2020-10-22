@@ -147,6 +147,7 @@ export class NewRequestModule extends VuexModule {
     firstName: '',
     lastName: '',
     middleName: '',
+    partyId: '',
     phoneNumber: '',
     postalCd: '',
     stateProvinceCd: ''
@@ -1388,7 +1389,7 @@ export class NewRequestModule extends VuexModule {
         return
       }
       if (this.userCancelledAnalysis) {
-        this.setActiveComponent('AnalyzeResults')
+        this.setActiveComponent('NamesCapture')
         return
       }
       this.mutateDisplayedComponent('Tabs')
