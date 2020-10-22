@@ -219,19 +219,23 @@ export default class ExistingRequestDisplay extends Vue {
       switch (action) {
         case 'EDIT':
           // eslint-disable-next-line no-case-declarations
-          const { dispatch } = this.$store
-          // Disable rollback on expire, it's only for new NRs
-          await dispatch(types.SET_ROLLBACK_ON_EXPIRE, false)
-          // Set check in on expire
-          await dispatch(types.SET_CHECK_IN_ON_EXPIRE, true)
-
-          // Check out the NR - this sets the INPROGRESS lock on the NR
-          // and needs to be done before you can edit the Name Request
+          const doCheckout = (['DRAFT', 'INPROGESS'].indexOf(newReqModule.nrState) > -1)
           // eslint-disable-next-line no-case-declarations
-          const success = await newReqModule.checkoutNameRequest()
+          let success: boolean | undefined
+          if (doCheckout) {
+            const { dispatch } = this.$store
+            // Disable rollback on expire, it's only for new NRs
+            await dispatch(types.SET_ROLLBACK_ON_EXPIRE, false)
+            // Set check in on expire
+            await dispatch(types.SET_CHECK_IN_ON_EXPIRE, true)
+            // Check out the NR - this sets the INPROGRESS lock on the NR
+            // and needs to be done before you can edit the Name Request
+            success = await newReqModule.checkoutNameRequest()
+          }
+
           // Only proceed with editing if the checkout was successful,
           // the Name Request could be locked by another user session!
-          if (success) {
+          if (!doCheckout || (doCheckout && success)) {
             await newReqModule.editExistingRequest()
             timerModule.createAndStartTimer({
               id: EXISTING_NR_TIMER_NAME,
