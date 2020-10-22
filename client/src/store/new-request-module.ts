@@ -142,6 +142,7 @@ export class NewRequestModule extends VuexModule {
     clientLastName: '',
     contact: '',
     countryTypeCd: 'CA',
+    declineNotificationInd: null,
     emailAddress: '',
     faxNumber: '',
     firstName: '',

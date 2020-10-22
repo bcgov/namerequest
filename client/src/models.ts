@@ -18,6 +18,7 @@ export interface ApplicantI {
   clientLastName?: string
   contact: string
   countryTypeCd: string
+  declineNotificationInd?: null | string
   emailAddress: string
   faxNumber?: string
   firstName: string
