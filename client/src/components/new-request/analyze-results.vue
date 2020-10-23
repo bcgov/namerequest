@@ -232,8 +232,6 @@ export default class AnalyzeResults extends Vue {
       this.showActualInput = false
     }
     if (newVal === this.issueLength - 1) {
-      // eslint-disable-next-line
-      console.log('conditions met')
       let keys = Object.keys(this.requestExaminationOrProvideConsent[newVal])
       keys.forEach(key => {
         newReqModule.mutateRequestExaminationOrProvideConsent({
@@ -252,13 +250,15 @@ export default class AnalyzeResults extends Vue {
     return this.name.split(' ')
   }
   get conflictDate () {
-    if (this.issue.conflicts[0] && this.issue.conflicts[0].start_date && this.issue.conflicts[0].source === 'corp') {
-      return Moment(this.issue.conflicts[0].start_date).utc().local().format('MMMM Do YYYY')
+    if (Array.isArray(this.issue.conflicts) && this.issue.conflicts.length >= 1) {
+      if (this.issue.conflicts[0].source === 'corp') {
+        return Moment(this.issue.conflicts[0].start_date).utc().local().format('MMMM Do YYYY')
+      }
     }
     return null
   }
   get conflictId () {
-    if (this.issue.conflicts[0] && this.issue.conflicts[0].id) {
+    if (Array.isArray(this.issue.conflicts) && this.issue.conflicts.length >= 1) {
       return this.issue.conflicts[0].id
     }
     return null
@@ -327,7 +327,7 @@ export default class AnalyzeResults extends Vue {
       }
     }
     let { length } = this.json.issues
-    if (this.isLastIndex) {
+    if (this.isLastIndex && this.issue.issue_type !== 'word_to_avoid') {
       if (!this.changesInBaseName && this.designationIsFixed && this.examinationOrConsentCompleted) {
         return {
           class: 'approved',
@@ -397,16 +397,6 @@ export default class AnalyzeResults extends Vue {
   }
   get quill (): any {
     return (this.$refs as any).quill.quill
-  }
-  get request_action_cd () {
-    switch (newReqModule.request_action_cd) {
-      case 'NEW':
-        return 'a new'
-      case 'existing':
-        return 'an existing'
-      default:
-        return 'a new'
-    }
   }
   get requestExaminationOrProvideConsent () {
     return newReqModule.requestExaminationOrProvideConsent

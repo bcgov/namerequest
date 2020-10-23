@@ -18,12 +18,13 @@ export interface ApplicantI {
   clientLastName?: string
   contact: string
   countryTypeCd: string
+  declineNotificationInd?: null | string
   emailAddress: string
   faxNumber?: string
   firstName: string
   lastName: string
   middleName?: string
-  partyId?: number
+  partyId?: number | string
   phoneNumber?: string
   postalCd: string
   stateProvinceCd: string

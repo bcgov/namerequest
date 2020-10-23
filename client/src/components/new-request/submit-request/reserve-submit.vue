@@ -31,12 +31,13 @@ export default class ReserveSubmitButton extends Vue {
     return newReqModule.request_action_cd
   }
   get text () {
+    if (this.setup === 'cancel') {
+      return 'Stop & Send To Examination'
+    }
     if (this.location !== 'BC' && this.setup !== 'assumed') {
       return 'Send for Examination'
     }
     switch (this.setup) {
-      case 'cancel':
-        return 'Stop & Send To Examination'
       case 'consent':
         return 'Conditionally Reserve'
       case 'examine':
@@ -84,9 +85,6 @@ export default class ReserveSubmitButton extends Vue {
         return
       case 'examine':
         goToNames()
-        return
-      case 'cancel':
-        this.sendToExamination()
         return
       case 'consent':
         newReqModule.postNameRequests('conditional')
