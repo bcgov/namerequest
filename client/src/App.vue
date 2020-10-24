@@ -86,13 +86,13 @@ export default class App extends Mixins(SessionTimerMixin) {
     const { nrId } = newRequestModule
     const componentName = newRequestModule.displayedComponent
     if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
-      newRequestModule.checkinNameRequest().then(() => {})
-    } else if (nrId && ['ExistingRequestEdit'].indexOf(componentName) > -1) {
       // Cancel the NR using the rollback endpoint if we were processing a NEW NR
       // Don't await this request, that way there's no lag, fire it off async and don't block I/O
       // The empty then clause just prevents a linting issue that warns when you don't
       // await an async function which is not an issue, since we don't want to block I/O
       newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL }).then(() => {})
+    } else if (nrId && ['ExistingRequestEdit'].indexOf(componentName) > -1) {
+      newRequestModule.checkinNameRequest().then(() => {})
     }
 
     // Redirect to the start
