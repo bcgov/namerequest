@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" max-width="40%">
+  <v-dialog v-model="show" max-width="40%" persistent>
     <v-card class="pa-6">
       <v-card-text class="h3">Are You There?</v-card-text>
       <v-card-text class="copy-normal">
