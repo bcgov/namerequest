@@ -3,7 +3,7 @@
     <v-card class='pa-9'>
       <v-card-text class='h3'>
         Confirm Name Request
-        <countdown-timer colorString="#003366" bgColorString="#efefef" style="float: right"/>
+        <countdown-timer :timerName="timerName" colorString="#003366" bgColorString="#efefef" style="float: right"/>
       </v-card-text>
       <v-card-text class='copy-normal'>
         <request-details
@@ -66,7 +66,9 @@ export const PAYMENT_COMPLETION_TIMEOUT_MS = 2 * (60 * 1000) // Set to 2 minutes
   }
 })
 export default class PaymentModal extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
-  countdownMins = PAYMENT_COMPLETION_TIMEOUT_MS / 1000 / 60
+  get timerName () {
+    return PAYMENT_COMPLETION_TIMER_NAME
+  }
 
   @Watch('isVisible')
   async onModalShow (val: boolean, oldVal: string): Promise<void> {

@@ -1,6 +1,6 @@
 <template>
   <div class="countdown" :class="countdownClass">
-    <div class="countdown-number" :style="countdownSecondsStyle"><small>{{formattedCountdownNumber}}</small><small></small></div>
+    <div class="countdown-number" :style="countdownSecondsStyle"><small class="countdown-number-text">{{formattedCountdownNumber}}</small></div>
     <svg>
       <circle :style="countdownCircleStyle" style="stroke: #003366" r="18" cx="20" cy="20" />
     </svg>
@@ -76,6 +76,10 @@ svg circle {
     position: relative;
     font-weight: bold;
     font-size: 1rem;
+  }
+
+  .countdown-number-text {
+    font-size: 0.75rem;
   }
 
   &.expired {
