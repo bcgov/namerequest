@@ -48,7 +48,7 @@ let source: any
 export const NR_COMPLETION_TIMER_NAME = 'nrCompletionTimer'
 export const NR_COMPLETION_TIMEOUT_MS = 5 * (60 * 1000) // Set to 5 minutes
 export const EXISTING_NR_TIMER_NAME = 'existingNrTimer'
-export const EXISTING_NR_TIMEOUT_MS = 5 * (60 * 1000) // Set to 5 minutes
+export const EXISTING_NR_TIMEOUT_MS = 0.25 * (60 * 1000) // Set to 5 minutes
 
 export class ApiError extends Error {}
 
@@ -1753,32 +1753,19 @@ export class NewRequestModule extends VuexModule {
       }
 
       const requestData: any = await this.addRequestActionComment(data)
-
       try {
         const response: AxiosResponse = await axios.post(`/namerequests`, requestData, {
           headers: {
             'Content-Type': 'application/json'
           }
         })
-
         this.setNrResponse(response.data)
-        const createTimer: boolean = ['conditional', 'reserved'].includes(type)
-        if (createTimer) {
-          const store = this.store
-          const { dispatch } = this.context
-          // Set rollback on expire for new NRs
-          await dispatch(types.SET_ROLLBACK_ON_EXPIRE, true)
-          // Check in on expire is for existing NRs, make sure it isn't set!
-          await dispatch(types.SET_CHECK_IN_ON_EXPIRE, false)
-          // Start the user session timer
-          timerModule.createAndStartTimer({
-            id: NR_COMPLETION_TIMER_NAME,
-            expirationFn: () => {
-              store.dispatch(types.SHOW_NR_SESSION_EXPIRY_MODAL)
-            },
-            timeoutMs: NR_COMPLETION_TIMEOUT_MS
-          })
-        }
+
+        const { dispatch } = this.context
+        // Set rollback on expire for new NRs
+        await dispatch(types.SET_ROLLBACK_ON_EXPIRE, true)
+        // Check in on expire is for existing NRs, make sure it isn't set!
+        await dispatch(types.SET_CHECK_IN_ON_EXPIRE, false)
       } catch (err) {
         await handleApiError(err, 'Could not create the name request')
       }

@@ -237,13 +237,6 @@ export default class ExistingRequestDisplay extends Vue {
           // the Name Request could be locked by another user session!
           if (!doCheckout || (doCheckout && success)) {
             await newReqModule.editExistingRequest()
-            timerModule.createAndStartTimer({
-              id: EXISTING_NR_TIMER_NAME,
-              expirationFn: () => {
-                this.$store.dispatch(types.SHOW_NR_SESSION_EXPIRY_MODAL)
-              },
-              timeoutMs: EXISTING_NR_TIMEOUT_MS
-            })
           }
           break
         case 'UPGRADE':

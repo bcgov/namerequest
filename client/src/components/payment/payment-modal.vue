@@ -1,34 +1,39 @@
 <template>
-  <v-dialog max-width="40%" :value="isVisible" persistent>
-    <v-card class="pa-9">
-      <v-card-text class="h3">Confirm Name Request</v-card-text>
-      <v-card-text class="copy-normal">
+  <v-dialog max-width='40%' :value='isVisible' persistent>
+    <v-card class='pa-9'>
+      <v-card-text class='h3'>
+        Confirm Name Request
+        <countdown-timer :countdownMins="countdownMins" colorString="#003366" bgColorString="#efefef" style="float: right"/>
+      </v-card-text>
+      <v-card-text class='copy-normal'>
         <request-details
-          v-bind:applicant="applicant"
-          v-bind:name="name"
-          v-bind:nameChoices="nameChoices"
+          v-bind:applicant='applicant'
+          v-bind:name='name'
+          v-bind:nameChoices='nameChoices'
         />
         <fee-summary
-          v-bind:filingData="[...paymentDetails]"
-          v-bind:fees="[...paymentFees]"
+          v-bind:filingData='[...paymentDetails]'
+          v-bind:fees='[...paymentFees]'
         />
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="confirmPayment" id="payment-pay-btn" class="primary" text>Accept</v-btn>
-        <v-btn @click="hideModal" id="payment-close-btn" class="normal" text>Cancel</v-btn>
+        <v-btn @click='confirmPayment' id='payment-pay-btn' class='primary' text>Accept</v-btn>
+        <v-btn @click='hideModal' id='payment-close-btn' class='normal' text>Cancel</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
-<script lang="ts">
+<script lang='ts'>
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
+import CountdownTimer from '@/components/session-timer/countdown-timer.vue'
 
 import paymentModule from '@/modules/payment'
+import timerModule from '@/modules/vx-timer'
 import { CreatePaymentParams } from '@/modules/payment/models'
 
 import * as paymentTypes from '@/modules/payment/store/types'
@@ -41,11 +46,16 @@ import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
 
 import { getBaseUrl } from './payment-utils'
+import * as types from "@/store/types"
+
+export const PAYMENT_COMPLETION_TIMER_NAME = 'paymentCompletionTimer'
+export const PAYMENT_COMPLETION_TIMEOUT_MS = 2 * (60 * 1000) // Set to 2 minutes
 
 @Component({
   components: {
     RequestDetails,
-    FeeSummary
+    FeeSummary,
+    CountdownTimer
   },
   data: () => ({
   }),
@@ -56,8 +66,10 @@ import { getBaseUrl } from './payment-utils'
   }
 })
 export default class PaymentModal extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
+  countdownMins = PAYMENT_COMPLETION_TIMEOUT_MS / 1000 / 60
+
   @Watch('isVisible')
-  onModalShow (val: boolean, oldVal: string): void {
+  async onModalShow (val: boolean, oldVal: string): Promise<void> {
     if (val) {
       const paymentConfig = {
         filingType: filingTypes.NM620,
@@ -65,7 +77,16 @@ export default class PaymentModal extends Mixins(NameRequestMixin, PaymentMixin,
         priorityRequest: this.priorityRequest || false
       }
 
-      this.fetchFees(paymentConfig)
+      timerModule.createAndStartTimer({
+        id: PAYMENT_COMPLETION_TIMER_NAME,
+        expirationFn: () => {
+          // eslint-disable-next-line no-console
+          // console.info('Timer expired, closing payment modal')
+          this.hideModal()
+        },
+        timeoutMs: PAYMENT_COMPLETION_TIMEOUT_MS
+      })
+      await this.fetchFees(paymentConfig)
     }
   }
 
@@ -99,7 +120,7 @@ export default class PaymentModal extends Mixins(NameRequestMixin, PaymentMixin,
 }
 </script>
 
-<style lang="scss">
+<style lang='scss'>
   .choice-indicator {
     background-color: #002e5e;
     color: white;

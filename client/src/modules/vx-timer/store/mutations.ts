@@ -69,13 +69,13 @@ export default {
   },
   stopTimer: (state, opts: TimerOptions): void => {
     const { id } = opts
-    const { timers } = state
+    const { timers = {} } = state
     if (!id) throw new Error(`[Error] Timer ID was not provided`)
-    if (!timers.hasOwnProperty(id)) throw new Error(`[Error] Timer with ID [${id}] does not exist`)
     const timer = timers[id]
-
-    timer.stop()
-    delete timers[id]
-    state.timers = timers
+    if (timer) {
+      timer.stop()
+      delete timers[id]
+      state.timers = timers
+    }
   }
 }
