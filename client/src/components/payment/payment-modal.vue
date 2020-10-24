@@ -44,9 +44,9 @@ import * as paymentActions from './payment-actions'
 import PaymentMixin from '@/components/payment/payment-mixin'
 import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
+import DisplayedComponentMixin from '@/components/mixins/displayed-component-mixin'
 
 import { getBaseUrl } from './payment-utils'
-import * as types from "@/store/types"
 
 export const PAYMENT_COMPLETION_TIMER_NAME = 'paymentCompletionTimer'
 export const PAYMENT_COMPLETION_TIMEOUT_MS = 2 * (60 * 1000) // Set to 2 minutes
@@ -65,7 +65,12 @@ export const PAYMENT_COMPLETION_TIMEOUT_MS = 2 * (60 * 1000) // Set to 2 minutes
     }
   }
 })
-export default class PaymentModal extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
+export default class PaymentModal extends Mixins(
+  NameRequestMixin,
+  PaymentMixin,
+  PaymentSessionMixin,
+  DisplayedComponentMixin
+) {
   get timerName () {
     return PAYMENT_COMPLETION_TIMER_NAME
   }

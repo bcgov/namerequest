@@ -19,12 +19,11 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Mixins, Watch } from 'vue-property-decorator'
+import { Component, Mixins, Watch } from 'vue-property-decorator'
 
+import DisplayedComponentMixin from '@/components/mixins/displayed-component-mixin'
 import SessionTimerMixin from '@/components/session-timer/session-timer-mixin'
 import CountdownTimer from '@/components/session-timer/countdown-timer.vue'
-
-import timerModule from '@/modules/vx-timer'
 
 import newReqModule, {
   EXISTING_NR_TIMER_NAME, EXISTING_NR_TIMEOUT_MS,
@@ -36,7 +35,7 @@ import newReqModule, {
     CountdownTimer
   }
 })
-export default class MainContainer extends Mixins(SessionTimerMixin) {
+export default class MainContainer extends Mixins(SessionTimerMixin, DisplayedComponentMixin) {
   componentName: string = ''
   displayTimer: boolean = false
   timerName: string = ''
@@ -44,25 +43,6 @@ export default class MainContainer extends Mixins(SessionTimerMixin) {
 
   get editMode () {
     return newReqModule.editMode
-  }
-  async cancelAndResetState () {
-    const componentName = newReqModule.displayedComponent
-    // Are we cancelling a new NR?
-    if (['SubmissionTabs'].indexOf(componentName) > -1) {
-      await newReqModule.cancelAnalyzeName('Tabs')
-      timerModule.stopTimer({ id: NR_COMPLETION_TIMER_NAME })
-      this.redirectToStart()
-    } else if (['ExistingRequestDisplay'].indexOf(componentName) > -1) {
-      await newReqModule.cancelAnalyzeName('Tabs')
-      this.redirectToStart()
-    } else if (['ExistingRequestEdit'].indexOf(componentName) > -1) {
-      // We're editing
-      // Check in the NR to release the INPROGRESS lock on the NR
-      await newReqModule.cancelEditExistingRequest()
-      await newReqModule.checkinNameRequest()
-      timerModule.stopTimer({ id: EXISTING_NR_TIMER_NAME })
-      this.redirectToStart()
-    }
   }
 
   @Watch('componentName')
@@ -79,25 +59,6 @@ export default class MainContainer extends Mixins(SessionTimerMixin) {
       this.$set(this, 'timerName', EXISTING_NR_TIMER_NAME)
       this.$set(this, 'countdownMins', EXISTING_NR_TIMEOUT_MS / 1000 / 60)
     }
-  }
-
-  get displayedComponent () {
-    // We can't watch a computed property directly, and we don't want to inject displayedComponent as a prop
-    // so we're using an intermediate data property, which we CAN watch - set its value here
-    const componentName = newReqModule.displayedComponent
-    if (this.$data.componentName !== componentName) {
-      // Update the active component name
-      this.$set(this.$data, 'componentName', componentName)
-    }
-
-    return componentName
-  }
-
-  async redirectToStart () {
-    // Redirect to the start
-    // Catch any errors, so we don't get errors like:
-    // Avoided redundant navigation to current location: "/"
-    await this.$router.replace('/').catch(() => {})
   }
 }
 </script>
