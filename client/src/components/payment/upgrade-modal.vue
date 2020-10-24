@@ -1,7 +1,10 @@
 <template>
   <v-dialog max-width="40%" :value="isVisible" persistent>
     <v-card class="pa-9">
-      <v-card-text class="h3">Upgrade Request to Priority</v-card-text>
+      <v-card-text class='h3'>
+        Upgrade to Priority
+        <countdown-timer v-if="displayTimer" :timerName="timerName" colorString="#003366" bgColorString="#efefef" style="float: right"/>
+      </v-card-text>
       <v-card-text class="copy-normal">
         <fee-summary
           v-bind:filingData="[...paymentDetails]"
@@ -22,6 +25,8 @@ import { Component, Mixins, Watch } from 'vue-property-decorator'
 
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
+import CountdownTimer from '@/components/session-timer/countdown-timer.vue'
+import { PAYMENT_COMPLETION_TIMER_NAME } from '@/components/payment/payment-modal.vue'
 
 import paymentModule from '@/modules/payment'
 import { CreatePaymentParams } from '@/modules/payment/models'
@@ -34,13 +39,15 @@ import * as paymentActions from './payment-actions'
 import PaymentMixin from '@/components/payment/payment-mixin'
 import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
+import DisplayedComponentMixin from '@/components/mixins/displayed-component-mixin'
 
 import { getBaseUrl } from './payment-utils'
 
 @Component({
   components: {
     RequestDetails,
-    FeeSummary
+    FeeSummary,
+    CountdownTimer
   },
   data: () => ({
   }),
@@ -50,7 +57,24 @@ import { getBaseUrl } from './payment-utils'
     }
   }
 })
-export default class UpgradeModal extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
+export default class UpgradeModal extends Mixins(
+  NameRequestMixin,
+  PaymentMixin,
+  PaymentSessionMixin,
+  DisplayedComponentMixin
+) {
+  /**
+   * Optionally display the countdown timer.
+   * This could be turned into a prop for easier configuration.
+   */
+  get displayTimer () {
+    return false
+  }
+
+  get timerName () {
+    return PAYMENT_COMPLETION_TIMER_NAME
+  }
+
   @Watch('isVisible')
   onModalShow (val: boolean, oldVal: string): void {
     if (val) {
