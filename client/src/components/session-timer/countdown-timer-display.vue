@@ -1,6 +1,6 @@
 <template>
   <div class="countdown" :class="countdownClass">
-    <div class="countdown-number" :style="countdownTextStyle">{{countdownText}}<small><small>s</small></small></div>
+    <div class="countdown-number" :style="countdownSecondsStyle"><small>{{formattedCountdownNumber}}</small><small></small></div>
     <svg>
       <circle :style="countdownCircleStyle" style="stroke: #003366" r="18" cx="20" cy="20" />
     </svg>
@@ -16,10 +16,18 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 export default class CountdownTimerDisplay extends Vue {
   @Prop(String) bgColorString: string | undefined
   @Prop(String) colorString: string | undefined
-  @Prop(String) countdownText: string | undefined
+  @Prop(Number) countdownSeconds: number | undefined
   @Prop(String) countdownClass: string | undefined
-  @Prop(String) countdownTextStyle: string | undefined
+  @Prop(String) countdownSecondsStyle: string | undefined
   @Prop(String) countdownCircleStyle: string | undefined
+
+  get formattedCountdownNumber (): string {
+    const { countdownSeconds } = this
+    const minsRemaining = String(Math.floor(countdownSeconds / 60))
+    const seconds = countdownSeconds % 60
+    const secondsRemaining = ('00' + String(seconds)).slice(-2)
+    return `${minsRemaining}:${secondsRemaining}`
+  }
 }
 </script>
 

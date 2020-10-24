@@ -3,7 +3,7 @@
     <v-card class='pa-9'>
       <v-card-text class='h3'>
         Confirm Name Request
-        <countdown-timer :countdownMins="countdownMins" colorString="#003366" bgColorString="#efefef" style="float: right"/>
+        <countdown-timer colorString="#003366" bgColorString="#efefef" style="float: right"/>
       </v-card-text>
       <v-card-text class='copy-normal'>
         <request-details
