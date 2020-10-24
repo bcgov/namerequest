@@ -48,7 +48,7 @@ let source: any
 export const NR_COMPLETION_TIMER_NAME = 'nrCompletionTimer'
 export const NR_COMPLETION_TIMEOUT_MS = 5 * (60 * 1000) // Set to 5 minutes
 export const EXISTING_NR_TIMER_NAME = 'existingNrTimer'
-export const EXISTING_NR_TIMEOUT_MS = 0.25 * (60 * 1000) // Set to 5 minutes
+export const EXISTING_NR_TIMEOUT_MS = 5 * (60 * 1000) // Set to 5 minutes
 
 export class ApiError extends Error {}
 

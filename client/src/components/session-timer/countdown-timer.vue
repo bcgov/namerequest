@@ -3,7 +3,7 @@
     v-if="countdownActivated"
     :bgColorString="bgColorString"
     :colorString="colorString"
-    :countdownText="countdownNumber"
+    :countdownSeconds="countdownNumber"
     :countdownClass="countdownClass"
     :countdownTextStyle="countdownNumberStyle"
     :countdownCircleStyle="countdownCircleStyle"
@@ -27,7 +27,7 @@ export default class CountdownTimer extends Vue {
   @Prop(String) colorString: string
   @Prop(String) timerName: string | undefined
 
-  countdownNumber: string | number = ''
+  countdownNumber: number = 0
   countdownClass: string = ''
   countdownNumberStyle: string = ''
   countdownCircleStyle: string = ''
@@ -67,13 +67,13 @@ export default class CountdownTimer extends Vue {
     return setInterval(() => {
       const timerInstance = this.getTimerInstance()
       if (timerInstance && timerInstance.isExpired) {
-        this.countdownNumber = String(0)
+        this.countdownNumber = 0
         if (oldExpiredValue !== true) {
           oldExpiredValue = true
           this.setExpiredStyles()
         }
       } else if (timerInstance && !timerInstance.isExpired) {
-        this.$set(this, 'countdownNumber', String(timerInstance.timeRemaining / 1000))
+        this.countdownNumber = timerInstance.timeRemaining / 1000
         if (oldExpiredValue === true) {
           oldExpiredValue = false
           this.setActiveStyles()
