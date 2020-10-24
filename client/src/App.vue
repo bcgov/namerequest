@@ -44,23 +44,14 @@ import IncorporateLoginModal from '@/components/modals/incorporate-login.vue'
 import AffiliationErrorModal from '@/components/modals/affiliation-error.vue'
 import ApiErrorModal from '@/components/common/error/modal.vue'
 
-import { Component, Vue, Ref } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 import { mapState } from 'vuex'
 
 import Header from '@/components/header.vue'
-import TimeoutModal, {
-  TIMER_MODAL_TIMEOUT_MS
-} from '@/components/session-timer/timeout-modal.vue'
+import TimeoutModal from '@/components/session-timer/timeout-modal.vue'
+import SessionTimerMixin from '@/components/session-timer/session-timer-mixin'
 
-import newRequestModule, {
-  EXISTING_NR_TIMER_NAME,
-  EXISTING_NR_TIMEOUT_MS,
-  NR_COMPLETION_TIMER_NAME,
-  NR_COMPLETION_TIMEOUT_MS,
-  ROLLBACK_ACTIONS as rollbackActions
-} from '@/store/new-request-module'
-import timerModule from '@/modules/vx-timer'
-import * as types from '@/store/types'
+import newRequestModule, { ROLLBACK_ACTIONS as rollbackActions } from '@/store/new-request-module'
 
 @Component({
   components: {
@@ -87,7 +78,7 @@ import * as types from '@/store/types'
     'checkInOnExpire'
   ])
 })
-export default class App extends Vue {
+export default class App extends Mixins(SessionTimerMixin) {
   rollbackOnExpire: boolean
   checkInOnExpire: boolean
 
@@ -117,24 +108,11 @@ export default class App extends Vue {
 
   async onTimerModalSessionExtended () {
     const { nrId } = newRequestModule
-    if (nrId && this.rollbackOnExpire) {
-      timerModule.createAndStartTimer({
-        id: NR_COMPLETION_TIMER_NAME,
-        expirationFn: () => {
-          this.$store.dispatch(types.SHOW_NR_SESSION_EXPIRY_MODAL)
-        },
-        timeoutMs: NR_COMPLETION_TIMEOUT_MS
-      })
-    }
-
-    if (nrId && this.checkInOnExpire) {
-      timerModule.createAndStartTimer({
-        id: EXISTING_NR_TIMER_NAME,
-        expirationFn: () => {
-          this.$store.dispatch(types.SHOW_NR_SESSION_EXPIRY_MODAL)
-        },
-        timeoutMs: EXISTING_NR_TIMEOUT_MS
-      })
+    const componentName = newRequestModule.displayedComponent
+    if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
+      this.startNewNrTimer()
+    } else if (nrId && ['ExistingRequestEdit'].indexOf(componentName) > -1) {
+      this.startExistingNrTimer()
     }
   }
 }
