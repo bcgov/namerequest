@@ -52,6 +52,9 @@ export default class MainContainer extends Mixins(SessionTimerMixin) {
       await newReqModule.cancelAnalyzeName('Tabs')
       timerModule.stopTimer({ id: NR_COMPLETION_TIMER_NAME })
       this.redirectToStart()
+    } else if (['ExistingRequestDisplay'].indexOf(componentName) > -1) {
+      await newReqModule.cancelAnalyzeName('Tabs')
+      this.redirectToStart()
     } else if (['ExistingRequestEdit'].indexOf(componentName) > -1) {
       // We're editing
       // Check in the NR to release the INPROGRESS lock on the NR
