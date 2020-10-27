@@ -11,7 +11,10 @@
     <NrNotRequired />
     <PickEntityOrConversion />
     <PickRequestType />
-    <PaymentModal :onActivated="onPaymentModalActivated" />
+    <PaymentModal
+      :onActivate="onPaymentModalActivated"
+      :onCancel="onPaymentCancelled"
+    />
     <UpgradeModal />
     <ReapplyModal />
     <PaymentCompleteModal />
@@ -54,9 +57,13 @@ import Header from '@/components/header.vue'
 import TimeoutModal from '@/components/session-timer/timeout-modal.vue'
 import SessionTimerMixin from '@/components/session-timer/session-timer-mixin'
 
-import newRequestModule, { ROLLBACK_ACTIONS as rollbackActions } from '@/store/new-request-module'
-import timerModule from "@/modules/vx-timer"
-import paymentModule from "@/modules/payment"
+import newRequestModule, {
+  NR_COMPLETION_TIMER_NAME,
+  ROLLBACK_ACTIONS as rollbackActions
+} from '@/store/new-request-module'
+
+import timerModule from '@/modules/vx-timer'
+import paymentModule from '@/modules/payment'
 
 @Component({
   components: {
@@ -87,6 +94,18 @@ export default class App extends Mixins(SessionTimerMixin) {
   rollbackOnExpire: boolean
   checkInOnExpire: boolean
 
+  async resetAppState () {
+    // Redirect to the start
+    // Catch any errors, so we don't get errors like:
+    // Avoided redundant navigation to current location: "/"
+    this.$router.replace('/').catch(() => {})
+
+    // Display the tabs
+    await newRequestModule.resetAnalyzeName()
+    await newRequestModule.mutateName('')
+    await newRequestModule.mutateDisplayedComponent('Tabs')
+  }
+
   async onTimerModalExpired () {
     const { nrId } = newRequestModule
     const componentName = newRequestModule.displayedComponent
@@ -100,15 +119,7 @@ export default class App extends Mixins(SessionTimerMixin) {
       newRequestModule.checkinNameRequest().then(() => {})
     }
 
-    // Redirect to the start
-    // Catch any errors, so we don't get errors like:
-    // Avoided redundant navigation to current location: "/"
-    this.$router.replace('/').catch(() => {})
-
-    // Display the tabs
-    await newRequestModule.resetAnalyzeName()
-    await newRequestModule.mutateName('')
-    await newRequestModule.mutateDisplayedComponent('Tabs')
+    await this.resetAppState()
   }
 
   async onTimerModalSessionExtended () {
@@ -122,13 +133,46 @@ export default class App extends Mixins(SessionTimerMixin) {
   }
 
   async onPaymentModalActivated () {
-    timerModule.createAndStartTimer({
-      id: PAYMENT_COMPLETION_TIMER_NAME,
-      expirationFn: () => {
-        paymentModule.togglePaymentModal(false)
-      },
-      timeoutMs: PAYMENT_COMPLETION_TIMEOUT_MS
-    })
+    const { nrId } = newRequestModule
+    const componentName = newRequestModule.displayedComponent
+    // Only do this for New NRs!!!
+    if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
+      // First, clear the NR session timer
+      timerModule.stopTimer(NR_COMPLETION_TIMER_NAME)
+
+      // Start a new timer for the payment
+      timerModule.createAndStartTimer({
+        id: PAYMENT_COMPLETION_TIMER_NAME,
+        expirationFn: () => {
+          const { nrId } = newRequestModule
+          // Cancel the NR using the rollback endpoint if we were processing a NEW NR
+          // Don't await this request, that way there's no lag, fire it off async and don't block I/O
+          // The empty then clause just prevents a linting issue that warns when you don't
+          // await an async function which is not an issue, since we don't want to block I/O
+          newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL }).then(() => {})
+          paymentModule.togglePaymentModal(false)
+        },
+        timeoutMs: PAYMENT_COMPLETION_TIMEOUT_MS
+      })
+    }
+  }
+
+  async onPaymentCancelled () {
+    const { nrId } = newRequestModule
+    const componentName = newRequestModule.displayedComponent
+    // Only do this for New NRs!!!
+    if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
+      // Cancel the NR using the rollback endpoint if we were processing a NEW NR
+      // Don't await this request, that way there's no lag, fire it off async and don't block I/O
+      // The empty then clause just prevents a linting issue that warns when you don't
+      // await an async function which is not an issue, since we don't want to block I/O
+      newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL }).then(() => {})
+
+      // If the payment was cancelled direct the user back to the start
+      await this.resetAppState()
+    }
+
+    paymentModule.togglePaymentModal(false)
   }
 }
 
