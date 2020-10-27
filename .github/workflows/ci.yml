@@ -1,0 +1,48 @@
+name: Name Request UI CI
+
+on:
+  pull_request:
+    types: [assigned, synchronize]
+
+jobs:
+  name-request-ui-ci:
+    runs-on: ubuntu-latest
+
+    env:
+      working-directory: ./client
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: install
+        run: |
+          npm ci
+        env:
+          CI: true
+      - name: lint
+        run: |
+          npm run lint:nofix
+        env:
+          CI: true
+      - name: unit test
+        run: |
+          npm run test:unit
+        env:
+          CI: true
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          name: codecov-name-request
+          fail_ci_if_error: true
+      - name: build to check strictness
+        run: |
+          npm run build
+        env:
+          CI: true
