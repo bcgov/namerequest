@@ -57,8 +57,12 @@ export const PAYMENT_COMPLETION_TIMEOUT_MS = 2 * (60 * 1000) // Set to 2 minutes
     FeeSummary,
     CountdownTimer
   },
-  data: () => ({
-  }),
+  props: {
+    onActivated: {
+      type: Function,
+      default: async () => undefined
+    },
+  },
   computed: {
     isVisible: () => {
       return paymentModule[paymentTypes.PAYMENT_MODAL_IS_VISIBLE]
@@ -84,15 +88,11 @@ export default class PaymentModal extends Mixins(
         priorityRequest: this.priorityRequest || false
       }
 
-      timerModule.createAndStartTimer({
-        id: PAYMENT_COMPLETION_TIMER_NAME,
-        expirationFn: () => {
-          // eslint-disable-next-line no-console
-          // console.info('Timer expired, closing payment modal')
-          this.hideModal()
-        },
-        timeoutMs: PAYMENT_COMPLETION_TIMEOUT_MS
-      })
+      const { onActivated } = this.$props
+      if (typeof onActivated === 'function') {
+        onActivated(paymentConfig)
+      }
+
       await this.fetchFees(paymentConfig)
     }
   }
@@ -126,21 +126,3 @@ export default class PaymentModal extends Mixins(
   }
 }
 </script>
-
-<style lang='scss'>
-  .choice-indicator {
-    background-color: #002e5e;
-    color: white;
-    border-radius: 100%;
-    width: 1.75rem;
-    height: 1.75rem;
-    margin-right: 0.5rem;
-    margin-bottom: 5px;
-    box-sizing: border-box;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 0.8rem;
-    font-weight: bold;
-  }
-</style>
