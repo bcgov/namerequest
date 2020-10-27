@@ -11,7 +11,7 @@
     <NrNotRequired />
     <PickEntityOrConversion />
     <PickRequestType />
-    <PaymentModal />
+    <PaymentModal :onActivated="onPaymentModalActivated" />
     <UpgradeModal />
     <ReapplyModal />
     <PaymentCompleteModal />
@@ -26,7 +26,7 @@
       :displayExpireNowButton="true"
     />
   </v-app>
-</template>df
+</template>
 
 <script lang="ts">
 import Conditions from '@/components/modals/conditions.vue'
@@ -35,7 +35,10 @@ import LocationInfoModal from '@/components/modals/location-info.vue'
 import NrNotRequired from '@/components/modals/nr-not-required.vue'
 import PickEntityOrConversion from '@/components/modals/pick-entity-or-conversion.vue'
 import PickRequestType from '@/components/modals/pick-request-type.vue'
-import PaymentModal from '@/components/payment/payment-modal.vue'
+import PaymentModal, {
+  PAYMENT_COMPLETION_TIMEOUT_MS,
+  PAYMENT_COMPLETION_TIMER_NAME
+} from '@/components/payment/payment-modal.vue'
 import PaymentHistoryModal from '@/components/payment/payment-history-modal.vue'
 import UpgradeModal from '@/components/payment/upgrade-modal.vue'
 import ReapplyModal from '@/components/payment/reapply-modal.vue'
@@ -52,6 +55,8 @@ import TimeoutModal from '@/components/session-timer/timeout-modal.vue'
 import SessionTimerMixin from '@/components/session-timer/session-timer-mixin'
 
 import newRequestModule, { ROLLBACK_ACTIONS as rollbackActions } from '@/store/new-request-module'
+import timerModule from "@/modules/vx-timer"
+import paymentModule from "@/modules/payment"
 
 @Component({
   components: {
@@ -110,10 +115,20 @@ export default class App extends Mixins(SessionTimerMixin) {
     const { nrId } = newRequestModule
     const componentName = newRequestModule.displayedComponent
     if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
-      this.startNewNrTimer()
+      await this.startNewNrTimer()
     } else if (nrId && ['ExistingRequestEdit'].indexOf(componentName) > -1) {
-      this.startExistingNrTimer()
+      await this.startExistingNrTimer()
     }
+  }
+
+  async onPaymentModalActivated () {
+    timerModule.createAndStartTimer({
+      id: PAYMENT_COMPLETION_TIMER_NAME,
+      expirationFn: () => {
+        paymentModule.togglePaymentModal(false)
+      },
+      timeoutMs: PAYMENT_COMPLETION_TIMEOUT_MS
+    })
   }
 }
 
