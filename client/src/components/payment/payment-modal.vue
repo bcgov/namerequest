@@ -19,7 +19,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn @click='confirmPayment' id='payment-pay-btn' class='primary' text>Accept</v-btn>
-        <v-btn @click='hideModal' id='payment-close-btn' class='normal' text>Cancel</v-btn>
+        <v-btn @click='cancelPayment' id='payment-close-btn' class='normal' text>Cancel</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -58,10 +58,14 @@ export const PAYMENT_COMPLETION_TIMEOUT_MS = 2 * (60 * 1000) // Set to 2 minutes
     CountdownTimer
   },
   props: {
-    onActivated: {
+    onActivate: {
       type: Function,
       default: async () => undefined
     },
+    onCancel: {
+      type: Function,
+      default: async () => {}
+    }
   },
   computed: {
     isVisible: () => {
@@ -88,9 +92,9 @@ export default class PaymentModal extends Mixins(
         priorityRequest: this.priorityRequest || false
       }
 
-      const { onActivated } = this.$props
-      if (typeof onActivated === 'function') {
-        onActivated(paymentConfig)
+      const { onActivate } = this.$props
+      if (typeof onActivate === 'function') {
+        onActivate(paymentConfig)
       }
 
       await this.fetchFees(paymentConfig)
@@ -123,6 +127,15 @@ export default class PaymentModal extends Mixins(
       filingType: filingTypes.NM620,
       priorityRequest: priorityRequest
     } as CreatePaymentParams, onSuccess)
+  }
+
+  async cancelPayment () {
+    const { onCancel } = this.$props
+    if (typeof onCancel === 'function') {
+      onCancel()
+    }
+
+    this.hideModal()
   }
 }
 </script>

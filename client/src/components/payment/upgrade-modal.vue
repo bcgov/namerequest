@@ -68,7 +68,7 @@ export default class UpgradeModal extends Mixins(
    * This could be turned into a prop for easier configuration.
    */
   get displayTimer () {
-    return true
+    return false
   }
 
   get timerName () {
