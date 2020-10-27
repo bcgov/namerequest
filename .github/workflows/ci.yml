@@ -36,7 +36,7 @@ jobs:
       - name: unit test
         working-directory: ${{env.working-directory}}
         run: |
-          npm run test:unit
+          npm run test
         env:
           CI: true
       - name: Upload coverage to Codecov
