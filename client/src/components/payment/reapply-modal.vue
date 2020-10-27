@@ -117,21 +117,3 @@ export default class ReapplyModal extends Mixins(
   }
 }
 </script>
-
-<style lang='scss'>
-  .choice-indicator {
-    background-color: #002e5e;
-    color: white;
-    border-radius: 100%;
-    width: 1.75rem;
-    height: 1.75rem;
-    margin-right: 0.5rem;
-    margin-bottom: 5px;
-    box-sizing: border-box;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 0.8rem;
-    font-weight: bold;
-  }
-</style>
