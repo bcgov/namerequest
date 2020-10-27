@@ -22,16 +22,19 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: install
+        working-directory: ${{env.working-directory}}
         run: |
           npm ci
         env:
           CI: true
       - name: lint
+        working-directory: ${{env.working-directory}}
         run: |
-          npm run lint:nofix
+          npm run lint
         env:
           CI: true
       - name: unit test
+        working-directory: ${{env.working-directory}}
         run: |
           npm run test:unit
         env:
@@ -42,6 +45,7 @@ jobs:
           name: codecov-name-request
           fail_ci_if_error: true
       - name: build to check strictness
+        working-directory: ${{env.working-directory}}
         run: |
           npm run build
         env:
