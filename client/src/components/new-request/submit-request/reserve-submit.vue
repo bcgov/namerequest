@@ -46,12 +46,20 @@ export default class ReserveSubmitButton extends Vue {
     if (this.setup === 'cancel') {
       return 'Stop & Send To Examination'
     }
+
+    // delete the next 3 lines when re-enabling auto and conditional approvals
+    if (this.setup !== 'assumed') {
+      return 'Send to Examination'
+    }
+
     if (this.location !== 'BC' && this.setup !== 'assumed') {
       return 'Send for Examination'
     }
     switch (this.setup) {
+      // @ts-ignore - typescript knows setup can only === 'assumed' at this point and gives error
       case 'consent':
         return 'Conditionally Reserve'
+      // @ts-ignore - typescript knows setup can only === 'assumed' at this point and gives error
       case 'examine':
         return 'Send for Examination'
       case 'assumed':
@@ -75,11 +83,14 @@ export default class ReserveSubmitButton extends Vue {
       this.sendToExamination()
       return
     }
-    if (['add_descriptive', 'add_distinctive'].includes(newReqModule.currentIssue.issue_type)) {
-      if (!newReqModule.showActualInput) {
-        this.$root.$emit('show-original-name')
+    if (newReqModule.currentIssue && newReqModule.currentIssue.issue_type) {
+      if (['add_descriptive', 'add_distinctive'].includes(newReqModule.currentIssue.issue_type)) {
+        if (!newReqModule.showActualInput) {
+          this.$root.$emit('show-original-name')
+        }
       }
     }
+
     let goToNames = () => {
       newReqModule.mutateSubmissionType('examination')
       newReqModule.mutateSubmissionTabComponent('NamesCapture')
@@ -90,6 +101,16 @@ export default class ReserveSubmitButton extends Vue {
       goToNames()
       return
     }
+
+    /* the next 4 lines disable auto and condiotional approvals.  all setup types except
+    'assumed' are short-circuited to call goToNames.  The assumed logic can remain in effect
+    since they already go to examination per the existing logic.  to re-enable approvals
+    delete the 4 lines that immediately follow this comment */
+    if (setup !== 'assumed') {
+      goToNames()
+      return
+    }
+
     switch (setup) {
       case 'assumed':
         if (this.$xproMapping['ASSUMED'].includes(entity_type_cd)) {
@@ -99,9 +120,11 @@ export default class ReserveSubmitButton extends Vue {
         newReqModule.mutateAssumedNameOriginal()
         goToNames()
         return
+      // @ts-ignore - typescript knows setup can only === 'assumed' at this point and gives error
       case 'examine':
         goToNames()
         return
+      // @ts-ignore - typescript knows setup can only === 'assumed' at this point and gives error
       case 'consent':
         newReqModule.postNameRequests('conditional')
         newReqModule.mutateSubmissionType('consent')

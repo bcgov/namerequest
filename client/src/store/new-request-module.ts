@@ -131,6 +131,7 @@ export const ROLLBACK_ACTIONS = {
 export class NewRequestModule extends VuexModule {
   actingOnOwnBehalf: boolean = true
   addressSuggestions: object | null = null
+  allowAutoApprove: boolean = false
   analysisJSON: AnalysisJSONI | null = null
   applicant: ApplicantI = {
     addrLine1: '',

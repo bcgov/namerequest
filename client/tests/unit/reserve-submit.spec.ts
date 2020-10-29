@@ -10,6 +10,9 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
+/* commented out lines and blocks of tests were correct and passing before it was decided not to allow auto
+   analyze approvals and conditional approvals */
+
 async function provideWrapper (setup) {
   let wrapper = shallowMount(ReserveSubmit, {
     localVue,
@@ -46,15 +49,18 @@ describe('reserve-submit', () => {
     test('The button is labelled "Reserve and Continue"', async () => {
       await newReqModule.mutateLocation('BC')
       wrapper.vm.$nextTick()
-      expect(wrapper.text()).toBe('Reserve and Continue')
+      expect(wrapper.text()).toBe('Send to Examination')
+      // expect(wrapper.text()).toBe('Reserve and Continue')
     })
     describe('If location === "BC", it acts as a RESERVED name', () => {
       test('postNameRequests("reserved") is called with correct argument', async () => {
         wrapper.vm.handleSubmit()
         await wrapper.vm.$nextTick()
-        expect(newReqModule.postNameRequests.calledOnce).toBeTruthy()
-        expect(newReqModule.postNameRequests.getCall(0).args[0] === 'reserved').toBeTruthy()
+        // expect(newReqModule.postNameRequests.calledOnce).toBeTruthy()
+        // expect(newReqModule.postNameRequests.getCall(0).args[0] === 'reserved').toBeTruthy()
+        expect(newReqModule.postNameRequests.calledOnce).toBeFalsy()
       })
+      /*
       test('submissionType is set to "normal"', async () => {
         wrapper.vm.handleSubmit()
         await wrapper.vm.$nextTick()
@@ -64,7 +70,7 @@ describe('reserve-submit', () => {
         wrapper.vm.handleSubmit()
         await wrapper.vm.$nextTick()
         expect(newReqModule.submissionTabNumber === 2).toBeTruthy()
-      })
+      }) */
     })
     describe('If location !== "BC", it sends to examination', () => {
       test('postNameRequests is not called', async () => {
@@ -99,8 +105,10 @@ describe('reserve-submit', () => {
       wrapper.destroy()
     })
     test('The button is labelled "Conditionally Reserve"', () => {
-      expect(wrapper.html()).toContain('Conditionally Reserve')
+      expect(wrapper.text()).toContain('Send to Examination')
+      // expect(wrapper.text()).toContain('Conditionally Reserve')
     })
+    /*
     describe('If location === "BC", it acts as a RESERVED-CONDITION name', () => {
       test('postNameRequests("conditional") is called with correct argument', async () => {
         wrapper.vm.handleSubmit()
@@ -118,6 +126,12 @@ describe('reserve-submit', () => {
         await wrapper.vm.$nextTick()
         expect(newReqModule.submissionTabNumber === 2).toBeTruthy()
       })
+    }) */
+    test('The UI displays names-capture', async () => {
+      wrapper.vm.handleSubmit()
+      await wrapper.vm.$nextTick()
+      // 1 === names-capture tab
+      expect(newReqModule.submissionTabNumber).toEqual(1)
     })
     describe('If location !== "BC", it sends to examination', () => {
       test('postNameRequests is not called', async () => {
@@ -151,8 +165,8 @@ describe('reserve-submit', () => {
       sandbox.reset()
       wrapper.destroy()
     })
-    test('The button is labelled "Send for Examination"', () => {
-      expect(wrapper.text()).toBe('Send for Examination')
+    test('The button is labelled "Send to Examination"', () => {
+      expect(wrapper.text()).toBe('Send to Examination')
     })
     describe('If location === "BC", it sends to examination', () => {
       newReqModule.mutateLocation('BC')
