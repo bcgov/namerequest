@@ -1,4 +1,3 @@
-import ExistingRequestEdit from '@/components/existing-request/existing-request-edit.vue'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import querystring from 'qs'
 import Vue from 'vue'
@@ -1225,6 +1224,7 @@ export class NewRequestModule extends VuexModule {
      "ExistingRequestDisplay",
      "ExistingRequestEdit",
      "LowerContainer",
+     "SearchPending",
      "Stats",
      "Success"
      */
@@ -1442,12 +1442,14 @@ export class NewRequestModule extends VuexModule {
   @Action
   async findNameRequest () {
     this.resetAnalyzeName()
-    this.mutateDisplayedComponent('AnalyzePending')
+    this.mutateDisplayedComponent('SearchPending')
+
     let params = {
       nrNum: this.existingRequestSearch.nrNum,
       phoneNumber: this.existingRequestSearch.phoneNumber,
       emailAddress: this.existingRequestSearch.emailAddress
     }
+
     try {
       let { CancelToken } = axios
       source = CancelToken.source()

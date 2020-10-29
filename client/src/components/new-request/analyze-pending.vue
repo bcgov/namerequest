@@ -11,31 +11,31 @@
         <NameInput class="mt-3" />
       </v-row>
       <v-row justify="center" class="mt-n7 mb-n3 py-0">
-      <v-col cols="auto">
-        <b>This could take several minutes</b>
-      </v-col>
-    </v-row>
-    <v-row justify="center">
-      <v-col cols="auto">
-        <v-progress-circular color="orange"
-                             id="analyze-pending-spinner"
-                             size="50"
-                             indeterminate />
-      </v-col>
-    </v-row>
-    <v-row justify="center" class="mt-n3">
-      <v-col cols="auto" class="copy-small">
-        Search Status: Analyzing
-      </v-col>
-    </v-row>
-    <v-row justify="center">
-      <v-col cols="auto">
-        <v-btn id="analyze-pending-stop-button" @click="startOver">Stop Search</v-btn>
-      </v-col>
-      <v-col cols="auto">
-        <ReserveSubmit setup="cancel" />
-      </v-col>
-    </v-row>
+        <v-col cols="auto">
+          <b>This could take several minutes</b>
+        </v-col>
+      </v-row>
+      <v-row justify="center">
+        <v-col cols="auto">
+          <v-progress-circular color="orange"
+                               id="analyze-pending-spinner"
+                               size="50"
+                               indeterminate />
+        </v-col>
+      </v-row>
+      <v-row justify="center" class="mt-n3">
+        <v-col cols="auto" class="copy-small">
+          Search Status: Analyzing
+        </v-col>
+      </v-row>
+      <v-row justify="center">
+        <v-col cols="auto">
+          <v-btn id="analyze-pending-stop-button" @click="startOver">Stop Search</v-btn>
+        </v-col>
+        <v-col cols="auto">
+          <ReserveSubmit setup="cancel" />
+        </v-col>
+      </v-row>
     </template>
   </MainContainer>
 </template>

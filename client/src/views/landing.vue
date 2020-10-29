@@ -24,14 +24,14 @@ import AnalyzeCharacters from '@/components/new-request/analyze-characters.vue'
 import AnalyzePending from '@/components/new-request/analyze-pending.vue'
 import AnalyzeResults from '@/components/new-request/analyze-results.vue'
 import ExistingRequestDisplay from '@/components/existing-request/existing-request-display.vue'
-import Success from '@/components/common/success.vue'
+import ExistingRequestEdit from '@/components/existing-request/existing-request-edit.vue'
 import LowerContainer from '@/components/lower-info-area/lower-container.vue'
-import newRequestModule from '@/store/new-request-module'
+import SearchPending from '@/components/existing-request/search-pending.vue'
 import Stats from '@/components/new-request/stats.vue'
 import SubmissionTabs from '@/components/new-request/submit-request/submission-tabs.vue'
+import Success from '@/components/common/success.vue'
 import Tabs from '@/components/tabs.vue'
-
-import ExistingRequestEdit from '@/components/existing-request/existing-request-edit.vue'
+import newRequestModule from '@/store/new-request-module'
 
 @Component({
   components: {
@@ -41,6 +41,7 @@ import ExistingRequestEdit from '@/components/existing-request/existing-request-
     ExistingRequestDisplay,
     ExistingRequestEdit,
     LowerContainer,
+    SearchPending,
     Stats,
     SubmissionTabs,
     Success,
@@ -67,7 +68,6 @@ export default class Landing extends Vue {
     return newRequestModule.displayedComponent
   }
 }
-
 </script>
 
 <style lang="sass" scoped>
@@ -91,5 +91,4 @@ export default class Landing extends Vue {
   color: white
   height: 700px
   padding: 0 200px 0 200px
-
 </style>

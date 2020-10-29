@@ -68,7 +68,7 @@ const NR_REGEX = /^(NR\ ?L?|L?)?([\d]{6,8})$/
 @Component({
   components: { ForgotNrModal }
 })
-export default class ExistingRequstSearch extends Vue {
+export default class ExistingRequestSearch extends Vue {
   emailRules = [ v => v === '' || /.+@.+\..+/.test(v) || 'Please be sure to enter a valid email' ]
   nrRules = [ v => NR_REGEX.test(v) || 'Please enter a valid NR number' ]
   errorMessage: string = ''
