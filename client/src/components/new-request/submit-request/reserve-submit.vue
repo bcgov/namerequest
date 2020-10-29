@@ -77,8 +77,6 @@ export default class ReserveSubmitButton extends Vue {
     }
     if (['add_descriptive', 'add_distinctive'].includes(newReqModule.currentIssue.issue_type)) {
       if (!newReqModule.showActualInput) {
-        // eslint-disable-next-line
-        console.log('emitted')
         this.$root.$emit('show-original-name')
       }
     }
