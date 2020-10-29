@@ -11,7 +11,7 @@
             {{ editMode ? 'Return' : 'Start Search Over' }}
           </span>
         </button>
-        <countdown-timer v-if="displayTimer" :timerName="timerName" colorString="#1669bb" bgColorString="#efefef" />
+        <countdown-timer :timerName="timerName" colorString="#1669bb" bgColorString="#efefef" />
       </v-col>
     </v-row>
     <slot name="content"/>
@@ -29,6 +29,7 @@ import newReqModule, {
   EXISTING_NR_TIMER_NAME, EXISTING_NR_TIMEOUT_MS,
   NR_COMPLETION_TIMER_NAME, NR_COMPLETION_TIMEOUT_MS
 } from '@/store/new-request-module'
+import timerModule from "@/modules/vx-timer"
 
 @Component({
   components: {

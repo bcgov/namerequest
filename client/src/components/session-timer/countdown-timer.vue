@@ -47,19 +47,22 @@ export default class CountdownTimer extends Vue {
   setActiveStyles () {
     const { colorString, bgColorString } = this
     const timerInstance = this.getTimerInstance()
-
-    const countdownClass = `countdown`
-    this.countdownClass = countdownClass
-    this.countdownActivated = false
-    this.$nextTick(() => {
+    if (timerInstance) {
+      const countdownClass = `countdown`
+      this.countdownClass = countdownClass
+      this.countdownActivated = false
+      this.$nextTick(() => {
+        this.countdownActivated = true
+        // Set display to none and back to re-flow
+        const animation = `countdown ${timerInstance.timeoutMs / 1000}s linear forwards`
+        const fill = bgColorString || 'none'
+        const stroke = colorString
+        const style = `animation: ${animation}; fill: ${fill}; stroke: ${stroke}`
+        this.countdownCircleStyle = style
+      })
+    } else {
       this.countdownActivated = true
-      // Set display to none and back to re-flow
-      const animation = `countdown ${timerInstance.timeoutMs / 1000}s linear forwards`
-      const fill = bgColorString || 'none'
-      const stroke = colorString
-      const style = `animation: ${animation}; fill: ${fill}; stroke: ${stroke}`
-      this.countdownCircleStyle = style
-    })
+    }
   }
 
   createCountdownWatcher () {
@@ -78,6 +81,8 @@ export default class CountdownTimer extends Vue {
           oldExpiredValue = false
           this.setActiveStyles()
         }
+      } else {
+        this.countdownActivated = false
       }
     }, 1000)
   }
