@@ -18,6 +18,15 @@ export default class ReserveSubmitButton extends Vue {
   get entity_type_cd () {
     return newReqModule.entity_type_cd
   }
+  messages () {
+    if (Array.isArray(newReqModule.analysisJSON.issues)) {
+      newReqModule.analysisJSON.issues.map(issue => {
+        if (Array.isArray(issue.name_actions)) {
+          return issue.name_actions.map(action => (action || {}).message)
+        }
+      })
+    }
+  }
   get isAssumedName () {
     return newReqModule.isAssumedName
   }
@@ -29,6 +38,9 @@ export default class ReserveSubmitButton extends Vue {
   }
   get request_action_cd () {
     return newReqModule.request_action_cd
+  }
+  get showActualInput () {
+    return newReqModule.showActualInput
   }
   get text () {
     if (this.setup === 'cancel') {
@@ -63,7 +75,11 @@ export default class ReserveSubmitButton extends Vue {
       this.sendToExamination()
       return
     }
-
+    if (['add_descriptive', 'add_distinctive'].includes(newReqModule.currentIssue.issue_type)) {
+      if (!newReqModule.showActualInput) {
+        this.$root.$emit('show-original-name')
+      }
+    }
     let goToNames = () => {
       newReqModule.mutateSubmissionType('examination')
       newReqModule.mutateSubmissionTabComponent('NamesCapture')
