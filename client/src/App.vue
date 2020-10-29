@@ -138,12 +138,12 @@ export default class App extends Mixins(SessionTimerMixin) {
     // Only do this for New NRs!!!
     if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
       // First, clear the NR session timer
-      timerModule.stopTimer(NR_COMPLETION_TIMER_NAME)
+      await timerModule.stopTimer({ id: NR_COMPLETION_TIMER_NAME })
 
       // Start a new timer for the payment
       timerModule.createAndStartTimer({
         id: PAYMENT_COMPLETION_TIMER_NAME,
-        expirationFn: () => {
+        expirationFn: async () => {
           const { nrId } = newRequestModule
           // Cancel the NR using the rollback endpoint if we were processing a NEW NR
           // Don't await this request, that way there's no lag, fire it off async and don't block I/O
@@ -151,6 +151,8 @@ export default class App extends Mixins(SessionTimerMixin) {
           // await an async function which is not an issue, since we don't want to block I/O
           newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL }).then(() => {})
           paymentModule.togglePaymentModal(false)
+          // Direct the user back to the start
+          await this.resetAppState()
         },
         timeoutMs: PAYMENT_COMPLETION_TIMEOUT_MS
       })
