@@ -35,6 +35,18 @@ export class Timer {
    * If not provided, a default poll rate is used.
    */
   pollRate: number
+  /**
+   * The time interval in milliseconds.
+   */
+  timeRemaining: number
+  /**
+   * The number of ticks.
+   */
+  ticks: number
+  /**
+   * Flag set when timer is expired.
+   */
+  isExpired: boolean
 
   private _pollInterval: any
   private _lastActiveTimestamp: number
@@ -45,6 +57,9 @@ export class Timer {
     this.expirationFn = opts.expirationFn
     this.timeoutMs = opts.timeoutMs
     this.pollRate = opts.pollRate ? opts.pollRate : DEFAULT_POLL_RATE_MS
+    this.ticks = 0
+    this.timeRemaining = 0
+    this.isExpired = false
 
     // Internal data
     this._pollInterval = null
@@ -52,18 +67,22 @@ export class Timer {
   }
 
   // The polling function checks that the action is done
-  private _pollFn () {
+  private pollFn () {
     if (!this._lastActiveTimestamp) {
       // If we have no last tracked activity, we should stop the timer
-      this._stopPolling()
+      this.stopPolling()
     }
+
+    this.timeRemaining = this.timeoutMs - (this.ticks * this.pollRate)
+    this.ticks++
+
     const currentTimestamp = new Date().getTime()
     // If not already in idle state, set idle and show warning when difference
     // between current time and last activity exceeds timeout period.
     if (currentTimestamp - this._lastActiveTimestamp > this.timeoutMs) {
       // Once we have expired, make sure to stop the interval from running
-      this._stopPolling()
-      // eslint-disable-next-line no-debugger
+      this.stopPolling()
+      this.isExpired = true
       this.expirationFn()
     }
   }
@@ -74,27 +93,33 @@ export class Timer {
   refresh () {
     // Set a new last active time
     this._lastActiveTimestamp = new Date().getTime()
+    this.ticks = 0
+    this.timeRemaining = 0
+    this.isExpired = false
   }
 
   /**
    * Begins the timer polling
    */
   start () {
-    this._stopPolling()
+    this.stopPolling()
     this.refresh()
     // Run one poll right away before starting the interval
-    this._pollFn()
-    this._pollInterval = setInterval(this._pollFn.bind(this), this.pollRate)
+    this.pollFn()
+    this._pollInterval = setInterval(this.pollFn.bind(this), this.pollRate)
   }
 
   /**
    * Stops the timer from polling
    */
   stop () {
-    this._stopPolling()
+    this.stopPolling()
+    this.ticks = 0
+    this.timeRemaining = 0
+    this.isExpired = true
   }
 
-  _stopPolling () {
+  private stopPolling () {
     if (this._pollInterval) {
       clearInterval(this._pollInterval)
       this._pollInterval = null

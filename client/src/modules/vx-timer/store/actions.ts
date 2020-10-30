@@ -2,7 +2,6 @@ import * as types from './types'
 import { TimerOptions } from '../timer'
 
 export const createAndStartTimer = ({ commit }, opts: TimerOptions) => {
-  // eslint-disable-next-line no-debugger
   commit(types.CREATE_AND_START_TIMER, opts)
 }
 
