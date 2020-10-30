@@ -3,7 +3,13 @@
     <v-card class='pa-9'>
       <v-card-text class='h3'>
         Re-apply for Name
-        <countdown-timer v-if="displayTimer" :timerName="timerName" colorString="#003366" bgColorString="#efefef" style="float: right"/>
+        <countdown-timer
+          v-if="displayTimer"
+          :timerName="timerName"
+          colorString="#003366"
+          bgColorString="#efefef"
+          style="float: right"
+        />
       </v-card-text>
       <v-card-text class='copy-normal'>
         <fee-summary
