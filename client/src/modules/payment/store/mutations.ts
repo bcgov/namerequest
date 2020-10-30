@@ -42,8 +42,8 @@ export default {
   [types.TOGGLE_PAYMENT_COMPLETE_MODAL]: (state, isVisible: boolean) => {
     state[STATE_KEY].isPaymentCompleteVisible = isVisible || false
   },
-  [types.SET_PAYMENT_INVOICE]: (state, invoice: any) => {
-    state[STATE_KEY].invoice = invoice || {}
+  [types.SET_PAYMENT_RECEIPT]: (state, receipt: any) => {
+    state[STATE_KEY].receipt = receipt || {}
   },
   [types.SET_PAYMENT_RECEIPT]: (state, receipt: any) => {
     state[STATE_KEY].receipt = receipt || {}

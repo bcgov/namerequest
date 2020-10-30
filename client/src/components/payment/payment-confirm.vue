@@ -29,17 +29,17 @@
     />
 
     <ul class="fee-list" v-show="!fetchError">
-      <!-- <li class="container fee-list__item" v-if="invoice">
+      <li class="container fee-list__item" v-if="receipt">
         <div class="fee-list__item-name">Payment Ref #</div>
-        <div class="fee-list__item-value">{{invoice.references[0].reference_number}}</div>
-      </li> -->
-      <li class="container fee-list__item" v-if="summary">
-        <div class="fee-list__item-name">Payment Date</div>
-        <div class="fee-list__item-value">{{new Date(summary.completionDate).toLocaleDateString("en-US")}}</div>
+        <div class="fee-list__item-value">{{receipt.receiptNumber}}</div>
       </li>
-      <li class="container fee-list__item" v-if="invoice">
+      <li class="container fee-list__item" v-if="receipt">
+        <div class="fee-list__item-name">Payment Date</div>
+        <div class="fee-list__item-value">{{new Date(receipt.receiptDate).toLocaleDateString("en-US")}}</div>
+      </li>
+      <li class="container fee-list__item" v-if="receipt">
         <div class="fee-list__item-name">Amount</div>
-        <div class="fee-list__item-value">${{invoice.total.toFixed(2)}} CAD</div>
+        <div class="fee-list__item-value">${{receipt.receiptAmount.toFixed(2)}} CAD</div>
       </li>
       <li class="container fee-list__item" v-if="summary">
         <div class='fee-list__item-name'>Status</div>
@@ -64,7 +64,7 @@ import { ApplicantI } from '@/models'
 export default class PaymentConfirm extends Vue {
   @Prop(String) nrNum: string
   @Prop(Object) summary: any
-  @Prop(Object) invoice: any
+  @Prop(Object) receipt: any
   @Prop(Object) applicant: ApplicantI
   @Prop(Array) nameChoices: {
     type: any[]
@@ -74,11 +74,11 @@ export default class PaymentConfirm extends Vue {
   // @Prop(Boolean) priorityRequest: boolean
   // @Prop(Object) payment: any
   @Prop({ default: {
-    invoice: {
+    receipt: {
       created_on: '',
       total: 0.00,
       references: [{
-        invoice_number: '',
+        receipt_number: '',
         status_code: ''
       }]
     },
@@ -107,11 +107,11 @@ header {
   font-size: 0.875rem;
 }
 
-.filing_invoice-list {
+.filing_receipt-list {
   border-bottom: 1px solid $gray3;
 }
 
-.filing_invoice-list__item {
+.filing_receipt-list__item {
   &-name, &-value {
     font-weight: 700;
   }
@@ -127,11 +127,11 @@ header {
   }
 }
 
-.filing_invoice-list__item + .filing_invoice-list__item {
+.filing_receipt-list__item + .filing_receipt-list__item {
   border-top: 1px solid $gray3;
 }
 
-.filing_invoice-total {
+.filing_receipt-total {
   align-items: center;
   letter-spacing: -0.01rem;
   line-height: auto;
