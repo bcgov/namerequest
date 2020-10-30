@@ -35,7 +35,9 @@ export const routes = [
     name: 'signin-redirect-full',
     component: Signin,
     props: true,
-    meta: { requiresAuth: false }
+    meta: {
+      requiresAuth: false
+    }
   },
   {
     // SbcHeader.logout() redirects here:
@@ -43,7 +45,7 @@ export const routes = [
     name: 'signout',
     component: Signout,
     meta: {
-      requiresAuth: false
+      requiresAuth: true
     }
   },
   {
@@ -51,7 +53,9 @@ export const routes = [
     name: 'signout-redirect',
     component: Signout,
     props: true,
-    meta: { requiresAuth: true }
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '*',
