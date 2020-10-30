@@ -14,7 +14,7 @@
     "babel-plugin-transform-decorators": "^6.24.1",
     "core-js": "^3.3.2",
     "lodash": "^4.17.20",
-    "@mdi/font": "^5.0.45",
+    "@mdi/font": "^4.5.95",
     "material-design-icons-iconfont": "^5.0.1",
     "moment": "^2.27.0",
     "remove-accents": "^0.4.2",
