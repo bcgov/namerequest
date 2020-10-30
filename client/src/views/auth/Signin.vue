@@ -31,10 +31,10 @@ export default class Signin extends Vue {
       await this.$router.push(this.redirectUrl)
     } else {
       console.error('Signin page missing redirect param') // eslint-disable-line no-console
-      // redirect to Name Request home page
-      const nameRequestUrl = sessionStorage.getItem('Name_Request')
-      // assume Name Request URL is always reachable
-      window.location.assign(nameRequestUrl)
+      // redirect to business home page
+      const businessUrl = sessionStorage.getItem('BUSINESSES_URL')
+      // assume business URL is always reachable
+      window.location.assign(businessUrl)
     }
   }
 }
