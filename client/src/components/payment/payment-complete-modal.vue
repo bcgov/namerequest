@@ -9,7 +9,7 @@
           v-bind:nameChoices="nameChoices"
           v-bind:name="name"
           v-bind:summary="summary"
-          v-bind:receipt="paymentInvoice"
+          v-bind:receipt="paymentReceipt"
         />
       </v-card-text>
       <v-card-actions>
@@ -171,8 +171,8 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
 
   get summary () {
     return {
-      completionDate: '',
-      statusCode: ''
+      completionDate: this.paymentDate,
+      statusCode: this.paymentStatus
     }
   }
 }
