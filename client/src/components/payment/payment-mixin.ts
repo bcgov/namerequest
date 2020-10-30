@@ -167,11 +167,6 @@ export default class PaymentMixin extends Vue {
     window.location.href = paymentPortalUrl
   }
 
-  async downloadReceipt () {
-    const { paymentId } = this
-    await this.fetchReceiptPdf(paymentId)
-  }
-
   /**
    * Grab the receipt PDF and download / display it for the user...
    * @param paymentId
@@ -179,6 +174,33 @@ export default class PaymentMixin extends Vue {
   async fetchReceiptPdf (paymentId) {
     try {
       const response = await paymentService.getReceiptRequest(paymentId)
+      const url = window.URL.createObjectURL(new Blob([response]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `payment-receipt-${paymentId}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+    } catch (error) {
+      if (error instanceof PaymentApiError) {
+        await errorModule.setAppError({ id: 'fetch-receipt-pdf-api-error', error: error.message } as ErrorI)
+      } else {
+        await errorModule.setAppError({ id: 'fetch-receipt-pdf-error', error: error.message } as ErrorI)
+      }
+    }
+  }
+
+  async downloadReceipt () {
+    const { paymentId } = this
+    await this.downloadReceiptPdf(paymentId)
+  }
+
+  /**
+   * Grab the receipt PDF and download / display it for the user...
+   * @param paymentId
+   */
+  async downloadReceiptPdf (paymentId) {
+    try {
+      const response = await paymentService.generateReceiptRequest(paymentId)
       const url = window.URL.createObjectURL(new Blob([response]))
       const link = document.createElement('a')
       link.href = url

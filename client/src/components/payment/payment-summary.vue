@@ -71,7 +71,7 @@ export default class PaymentSummary extends Mixins(PaymentMixin) {
 
   async downloadReceipt () {
     const { id } = this
-    await this.fetchReceiptPdf(id)
+    await this.downloadReceiptPdf(id)
   }
 }
 </script>
