@@ -9,7 +9,7 @@
           v-bind:nameChoices="nameChoices"
           v-bind:name="name"
           v-bind:summary="summary"
-          v-bind:invoice="paymentInvoice"
+          v-bind:receipt="paymentInvoice"
         />
       </v-card-text>
       <v-card-actions>
@@ -77,14 +77,13 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
       await this.fetchData(!DEBUG_RECEIPT)
       // Make sure edit mode is disabled or it will screw up the back button
       await newRequestModule.mutateEditMode(false)
-      const { nrId, paymentStatus, sbcPayment = { status_code: '' } } = this
-      const sbcPaymentStatusCode = sbcPayment.status_code
+      const { nrId, paymentStatus, sbcPayment = { statusCode: '' } } = this
+      const sbcPaymentStatusCode = sbcPayment.statusCode
 
       // If the payment is already complete for some reason, skip this
       // TODO: Maybe set a constant instead somewhere...
       if (paymentStatus === SbcPaymentStatus.COMPLETED) return
-      if (sbcPaymentStatusCode === SbcPaymentStatus.COMPLETED &&
-              paymentStatus === SbcPaymentStatus.CREATED) {
+      if (sbcPaymentStatusCode === SbcPaymentStatus.COMPLETED && paymentStatus === SbcPaymentStatus.CREATED) {
         // Then complete the payment
         await this.completePayment(nrId, sessionPaymentId, sessionPaymentAction)
       } else {

@@ -44,7 +44,7 @@ export default class PaymentMixin extends Vue {
    * @param paymentResponse
    */
   savePaymentResponseToSession (paymentAction, paymentResponse: NameRequestPaymentResponse) {
-    const { id, nrId, payment, sbcPayment = { invoices: [] }, token, statusCode, completionDate } = paymentResponse
+    const { id, nrId, payment, sbcPayment = { receipts: [] }, token, statusCode, completionDate } = paymentResponse
 
     // TODO: Remove this one, we don't want to set the payment to session once we're done!
     // TODO: Or... we could add a debug payments mode?

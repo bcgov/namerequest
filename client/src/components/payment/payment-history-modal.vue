@@ -7,7 +7,7 @@
           v-bind:key="summary.id"
           v-bind:id="summary.id"
           v-bind:summary="summary.payment"
-          v-bind:invoice="summary.invoice"
+          v-bind:receipt="summary.receipt"
         />
       </v-card-text>
       <v-card-actions>

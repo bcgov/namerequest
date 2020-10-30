@@ -42,7 +42,7 @@ export default class PaymentMixin extends Vue {
   }
 
   get paymentInvoice () {
-    return this.$store.getters[paymentTypes.GET_PAYMENT_INVOICE]
+    return this.$store.getters[paymentTypes.GET_PAYMENT_RECEIPT]
   }
 
   get paymentReceipt () {
@@ -61,17 +61,17 @@ export default class PaymentMixin extends Vue {
     const payments = this.$store.getters[paymentTypes.GET_PAYMENTS]
     const summaries = payments.map(payment => {
       const { id, sbcPayment } = payment
-      let invoice
+      let receipt
       if (sbcPayment &&
-        sbcPayment.invoices instanceof Array &&
-        sbcPayment.invoices.length > 0) {
-        invoice = sbcPayment.invoices[0]
+        sbcPayment.receipts instanceof Array &&
+        sbcPayment.receipts.length > 0) {
+        receipt = sbcPayment.receipts[0]
       }
 
       return {
         id,
         payment,
-        invoice
+        receipt
       }
     })
     return summaries
@@ -132,10 +132,10 @@ export default class PaymentMixin extends Vue {
 
     try {
       const paymentResponse: NameRequestPaymentResponse = await paymentService.createPaymentRequest(nrId, action, req)
-      const { payment, sbcPayment = { invoices: [] } } = paymentResponse
+      const { payment, sbcPayment = { receipts: [] } } = paymentResponse
 
       await paymentModule.setPayment(payment)
-      // await paymentModule.setPaymentInvoice(sbcPayment.invoices[0])
+      // await paymentModule.setPaymentReceipt(sbcPayment.receipts[0])
       await paymentModule.setPaymentRequest(req)
 
       if (onSuccess) {
@@ -204,15 +204,15 @@ export default class PaymentMixin extends Vue {
       const paymentResponse: NameRequestPaymentResponse =
         await paymentService.getNameRequestPayment(nrId, paymentId, {})
       const { payment, sbcPayment =
-      { invoices: [], status_code: '' }, token, statusCode, completionDate } = paymentResponse
+      { receipts: [], status_code: '' }, token, statusCode, completionDate } = paymentResponse
 
       await paymentModule.setPayment(payment)
       await paymentModule.setSbcPayment(sbcPayment)
       if (sbcPayment &&
-        sbcPayment.invoices instanceof Array &&
-        sbcPayment.invoices.length > 0) {
-        const invoice = sbcPayment.invoices[0]
-        await paymentModule.setPaymentInvoice(invoice)
+        sbcPayment.receipts instanceof Array &&
+        sbcPayment.receipts.length > 0) {
+        const receipt = sbcPayment.receipts[0]
+        await paymentModule.setPaymentReceipt(receipt)
       }
     } catch (error) {
       if (error instanceof PaymentApiError) {

@@ -46,7 +46,6 @@ export default {
 
     return paymentRequestState
   },
-  [types.GET_PAYMENT_INVOICE]: state => state[STATE_KEY].invoice,
   [types.GET_PAYMENT_RECEIPT]: state => state[STATE_KEY].receipt,
   [types.GET_PAYMENTS]: state => state[STATE_KEY].payments
 }

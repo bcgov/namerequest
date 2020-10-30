@@ -40,10 +40,6 @@ export const setPayment = ({ commit }, payment: any) => {
   commit(types.SET_PAYMENT, payment)
 }
 
-export const setPaymentInvoice = ({ commit }, invoice: any) => {
-  commit(types.SET_PAYMENT_INVOICE, invoice)
-}
-
 export const setPaymentReceipt = ({ commit }, receipt: any) => {
   commit(types.SET_PAYMENT_RECEIPT, receipt)
 }

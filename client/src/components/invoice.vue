@@ -8,22 +8,22 @@
       <v-alert color="error" icon="warning" outlined>{{fetchError}}</v-alert>
     </div>
 
-    <ul class="fee-list" v-show="!fetchError && invoice">
+    <ul class="fee-list" v-show="!fetchError && receipt">
       <li class="container fee-list__item">
         <div class="fee-list__item-name">Ref #</div>
-        <div class="fee-list__item-value">{{invoice.references[0].reference_number}}</div>
+        <div class="fee-list__item-value">{{receipt.receiptNumber}}</div>
       </li>
       <li class="container fee-list__item">
         <div class="fee-list__item-name">Payment Date</div>
-        <div class="fee-list__item-value">{{new Date(invoice.created_on).toLocaleDateString("en-US")}}</div>
+        <div class="fee-list__item-value">{{new Date(receipt.receiptDate).toLocaleDateString("en-US")}}</div>
       </li>
       <li class="container fee-list__item">
         <div class="fee-list__item-name">Amount</div>
-        <div class="fee-list__item-value">${{invoice.total.toFixed(2)}} CAD</div>
+        <div class="fee-list__item-value">${{receipt.receiptAmount.toFixed(2)}} CAD</div>
       </li>
       <li class="container fee-list__item">
         <div class="fee-list__item-name">Status</div>
-        <div class="fee-list__item-value">{{invoice.references[0].status_code}}</div>
+        <div class="fee-list__item-value">{{summary.statusCode}}</div>
       </li>
     </ul>
   </v-card>
@@ -50,14 +50,14 @@ export default class Invoice extends Vue {
     references: [
       {
         id: '',
-        invoice_number: '',
+        receipt_number: '',
         reference_number: '',
         status_code: ''
       }
     ],
     status_code: ''
   } })
-  protected invoice: any
+  protected receipt: any
 
   protected fetchError: string = ''
 }
@@ -78,11 +78,11 @@ header {
   font-size: 0.875rem;
 }
 
-.filing_invoice-list {
+.filing_receipt-list {
   border-bottom: 1px solid $gray3;
 }
 
-.filing_invoice-list__item {
+.filing_receipt-list__item {
   &-name, &-value {
     font-weight: 700;
   }
@@ -98,11 +98,11 @@ header {
   }
 }
 
-.filing_invoice-list__item + .filing_invoice-list__item {
+.filing_receipt-list__item + .filing_receipt-list__item {
   border-top: 1px solid $gray3;
 }
 
-.filing_invoice-total {
+.filing_receipt-total {
   align-items: center;
   letter-spacing: -0.01rem;
   line-height: auto;
