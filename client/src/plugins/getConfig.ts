@@ -28,6 +28,16 @@ export function getConfig (): Promise<void> {
     const legalApiUrl = response.data[0]['LEGAL_API_URL']
     sessionStorage.setItem('LEGAL_API_URL', legalApiUrl)
 
+    /**
+     * authConfig is a workaround to fix the user settings call as it expects a URL with no trailing slash.
+     * This will be removed when a fix is made to sbc-common-components to handle this
+     */
+    const authConfig = {
+      'AUTH_URL': businessUrl
+    }
+    const authConfigString = JSON.stringify(authConfig)
+    sessionStorage.setItem('AUTH_API_CONFIG', authConfigString)
+
     axios.defaults.baseURL = baseURL
     resolve(paymentURL)
   })
