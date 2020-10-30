@@ -1,7 +1,6 @@
 <template>
   <v-app id="app">
     <sbc-header
-      class="px-9"
       :in-auth="false"
       :redirectOnLoginSuccess="nameRequestUrl"
       :redirect-on-login-fail="nameRequestUrl"
