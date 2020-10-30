@@ -13,7 +13,9 @@ export default {
   [types.GET_PAYMENT]: state => state[STATE_KEY].payment,
   [types.GET_PAYMENT_ID]: state => state[STATE_KEY].payment.id,
   [types.GET_PAYMENT_TOKEN]: state => state[STATE_KEY].payment.payment_token,
-  [types.GET_PAYMENT_STATUS]: state => state[STATE_KEY].payment.payment_status_code,
+  [types.GET_PAYMENT_STATUS]: state =>
+    state[STATE_KEY].sbcPayment.paymentStatus || state[STATE_KEY].payment.payment_status_code,
+  [types.GET_PAYMENT_DATE]: state => state[STATE_KEY].payment.payment_status_code,
   [types.GET_PAYMENT_FEES]: state => state[STATE_KEY].fees,
   [types.GET_PAYMENT_DETAILS]: state => {
     const {

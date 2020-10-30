@@ -43,7 +43,9 @@ const state = {
     },
     request: {},
     payment: {},
-    sbcPayment: {},
+    sbcPayment: {
+      paymentStatus: ''
+    },
     payments: [],
     receipt: {
       id: undefined,

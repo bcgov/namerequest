@@ -33,16 +33,16 @@ export default class PaymentMixin extends Vue {
     return this.$store.getters[paymentTypes.GET_PAYMENT_STATUS]
   }
 
+  get paymentDate () {
+    return this.$store.getters[paymentTypes.GET_PAYMENT_DATE]
+  }
+
   get paymentRequest () {
     return this.$store.getters[paymentTypes.GET_PAYMENT_REQUEST]
   }
 
   get paymentDetails () {
     return this.$store.getters[paymentTypes.GET_PAYMENT_DETAILS]
-  }
-
-  get paymentInvoice () {
-    return this.$store.getters[paymentTypes.GET_PAYMENT_RECEIPT]
   }
 
   get paymentReceipt () {
