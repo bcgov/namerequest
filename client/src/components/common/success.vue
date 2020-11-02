@@ -6,7 +6,7 @@
           Update Successful
         </v-col>
         <v-col cols="12" class="text-center approved fs-58">
-          <v-icon class="approved fs-58">check_circle</v-icon>
+          <v-icon class="approved fs-58">mdi-check-circle</v-icon>
         </v-col>
       </v-row>
     </template>

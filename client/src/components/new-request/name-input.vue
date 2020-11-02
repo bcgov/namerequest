@@ -11,7 +11,7 @@
       <template v-slot:append>
         <v-icon class="name-search-icon"
                 id="name-input-icon"
-                @click="startAnalyzeName">search</v-icon>
+                @click="startAnalyzeName">mdi-magnify</v-icon>
       </template>
     </v-text-field>
   </v-col>

@@ -14,7 +14,7 @@
                       :ripple="false"
                       @mouseover="itemIndex = i"
               >
-                <v-icon v-if="isActiveTab(i)" color="primary" left>check_circle</v-icon>
+                <v-icon v-if="isActiveTab(i)" color="primary" left>mdi-check-circle</v-icon>
                 <v-icon v-else color="primary" left>check</v-icon>
                 <v-list-item-content>
                   <v-list-item-title

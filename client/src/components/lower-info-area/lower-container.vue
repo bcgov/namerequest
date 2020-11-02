@@ -68,7 +68,7 @@
                 <v-col class="text-center copy-small"> Stay away from protected names and trade marks.
                   <br><a href="https://www.ic.gc.ca/app/opic-cipo/trdmrks/srch/home?lang=eng">
                     Search Canadian trade marked names</a>
-                  <v-icon class="launch-icon">launch</v-icon>
+                  <v-icon class="launch-icon">mdi-launch</v-icon>
                 </v-col>
               </v-row>
             </v-container>

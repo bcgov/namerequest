@@ -27,7 +27,7 @@
       </v-col>
       <v-col cols="4" class="flex">
         <div class="block-box">
-          <v-icon class="icon-class" @click="handleClick">refresh</v-icon>
+          <v-icon class="icon-class" @click="handleClick">mdi-refresh</v-icon>
         </div>
         <div class="block-box link-xsm" style="max-width: 50%">
           See another name example
