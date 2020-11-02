@@ -2,7 +2,7 @@
   <v-col cols="5"
          class="text-right">
     <v-btn x-large
-           id="submit-back-btn"
+           :id="`submit-back-btn-${isValid}`"
            class="mr-3"
            v-if="showBack"
            @click="back">
@@ -11,7 +11,7 @@
     <v-btn x-large
            @click="next"
            :disabled="!isValid"
-           id="submit-continue-btn">
+           :id="`submit-continue-btn-${isValid}`">
       {{ nextText }}
     </v-btn>
   </v-col>
