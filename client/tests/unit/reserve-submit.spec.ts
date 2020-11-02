@@ -106,9 +106,11 @@ describe('reserve-submit', () => {
     })
     test('The button is labelled "Conditionally Reserve"', () => {
       expect(wrapper.text()).toContain('Send to Examination')
-      // expect(wrapper.text()).toContain('Conditionally Reserve')
+      /* Whenever auto-approvals are turned back on again, replace line 108 with the following:
+         expect(wrapper.text()).toContain('Conditionally Reserve') */
     })
-    /*
+    /* Whenever auto-approvals are turned back on again, these tests should pass once again, can remove comments
+
     describe('If location === "BC", it acts as a RESERVED-CONDITION name', () => {
       test('postNameRequests("conditional") is called with correct argument', async () => {
         wrapper.vm.handleSubmit()
