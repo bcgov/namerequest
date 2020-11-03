@@ -40,6 +40,15 @@ export const routes = [
     }
   },
   {
+    // SbcHeader.logout() redirects here:
+    path: '/signout',
+    name: 'signout',
+    component: Signout,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: '/signout/:redirectUrl',
     name: 'signout-redirect',
     component: Signout,
