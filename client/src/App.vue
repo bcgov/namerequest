@@ -101,7 +101,7 @@ export default class App extends Mixins(SessionTimerMixin) {
   checkInOnExpire: boolean
 
   private get nameRequestUrl (): string {
-    return `${window.location.origin}/${process.env.VUE_APP_PATH}`
+    return `${window.location.origin}${process.env.VUE_APP_PATH}`
   }
 
   async resetAppState () {
