@@ -39,7 +39,7 @@
       </v-container>
       <v-card-actions class="bg-grey-1 text-center">
         <div style="display: block; width: 100%;">
-          <button @click="showModal = false"><v-icon>close</v-icon> Close</button>
+          <button @click="showModal = false"><v-icon>mdi-close</v-icon> Close</button>
         </div>
       </v-card-actions>
     </v-card>

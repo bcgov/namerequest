@@ -7,7 +7,7 @@
                 class="modal-activator pa-0 link-std-sans-ul"
                 @click="cancelAndResetState">
           <span class="link-std-sans-ul">
-            <v-icon class="ma-0 pa-0 mr-n1 mini-back-arrow">arrow_back_ios</v-icon>
+            <v-icon class="ma-0 pa-0 mr-n1 mini-back-arrow">mdi-chevron-left</v-icon>
             {{ editMode ? 'Return' : 'Start Search Over' }}
           </span>
         </button>

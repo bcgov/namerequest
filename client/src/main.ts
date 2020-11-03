@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import App from './App.vue'
-import router from './router'
+import { getVueRouter } from '@/router'
 import store from './store'
 import { getConfig } from '@/plugins/getConfig'
-import vuetify from './plugins/vuetify'
+import vuetify from '@/plugins/vuetify'
 import KeyCloakService from 'sbc-common-components/src/services/keycloak.services'
 
+// NB: order matters - do not change
 import 'quill/dist/quill.core.css'
-import 'material-design-icons-iconfont/dist/material-design-icons.css'
+import '@mdi/font/css/materialdesignicons.min.css' // ensure you are using css-loader
 import '@/sass/main.sass'
 import '@/sass/overrides.sass'
 
@@ -28,20 +29,14 @@ async function startVue () {
   Vue.prototype.$USAStateCodes = USAStateCodes
   Vue.prototype.$xproMapping = mapping.xproMapping
 
-  // // configure Keycloak Service
-  // await KeyCloakService.setKeycloakConfigUrl(sessionStorage.getItem('KEYCLOAK_CONFIG_PATH'))
-  // if (!window.location.pathname.includes('/signin')) {
-  //   await KeyCloakService.initializeToken(null).catch(err => {
-  //     if (err?.message !== 'NOT_AUTHENTICATED') {
-  //       throw err
-  //     }
-  //   })
-  // }
+  // configure Keycloak Service
+  console.info('Starting Keycloak service...') // eslint-disable-line no-console
+  await KeyCloakService.setKeycloakConfigUrl(sessionStorage.getItem('KEYCLOAK_CONFIG_PATH'))
 
   new Vue({
-    router,
+    vuetify: vuetify,
+    router: getVueRouter(),
     store,
-    vuetify,
     render: h => h(App)
   }).$mount('#app')
 }

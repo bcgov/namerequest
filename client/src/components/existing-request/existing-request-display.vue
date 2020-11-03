@@ -195,13 +195,13 @@ export default class ExistingRequestDisplay extends Vue {
     }
     if (name.state === 'APPROVED' || name.state === 'CONDITION') {
       return {
-        icon: 'check',
+        icon: 'mdi-check',
         class: 'approved'
       }
     }
     if (name.state === 'REJECTED') {
       return {
-        icon: 'close',
+        icon: 'mdi-close',
         class: 'action'
       }
     }

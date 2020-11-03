@@ -1,7 +1,13 @@
 <template>
   <v-app id="app">
     <div id="main-column">
-      <Header />
+      <sbc-header
+              class="sbc-header"
+              :in-auth="false"
+              :redirectOnLoginSuccess="nameRequestUrl"
+              :redirect-on-login-fail="nameRequestUrl"
+              :redirect-on-logout="nameRequestUrl"
+      />
       <router-view />
     </div>
     <!--All v-dialogue (modal) components App-wide-->
@@ -32,6 +38,7 @@
 </template>
 
 <script lang="ts">
+import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import Conditions from '@/components/modals/conditions.vue'
 import HelpMeChoose from '@/components/modals/help-me-choose.vue'
 import LocationInfoModal from '@/components/modals/location-info.vue'
@@ -53,7 +60,6 @@ import ApiErrorModal from '@/components/common/error/modal.vue'
 import { Component, Mixins } from 'vue-property-decorator'
 import { mapState } from 'vuex'
 
-import Header from '@/components/header.vue'
 import TimeoutModal from '@/components/session-timer/timeout-modal.vue'
 import SessionTimerMixin from '@/components/session-timer/session-timer-mixin'
 
@@ -69,7 +75,7 @@ import paymentModule from '@/modules/payment'
   components: {
     TimeoutModal,
     Conditions,
-    Header,
+    SbcHeader,
     LocationInfoModal,
     NrNotRequired,
     HelpMeChoose,
@@ -93,6 +99,10 @@ import paymentModule from '@/modules/payment'
 export default class App extends Mixins(SessionTimerMixin) {
   rollbackOnExpire: boolean
   checkInOnExpire: boolean
+
+  private get nameRequestUrl (): string {
+    return `${window.location.origin}/${process.env.VUE_APP_PATH}`
+  }
 
   async resetAppState () {
     // Redirect to the start
