@@ -135,9 +135,7 @@
                 <v-col cols="12" class="copy-normal pt-2 pb-4">
                   <v-row justify="center">
                     <v-col cols="auto">
-                      Name is available for a
-                      {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }}
-                      {{ ' ' + entityText }}
+                      Your name looks good to send to BC Registries Names Staff for a final decision.
                     </v-col>
                   </v-row>
                   <v-row>
@@ -333,7 +331,7 @@ export default class AnalyzeResults extends Vue {
         return {
           class: 'approved',
           icon: 'mdi-check-circle',
-          text: 'You May Proceed',
+          text: 'Name OK for Examination',
           showNextLines: false
         }
       }
