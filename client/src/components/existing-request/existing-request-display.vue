@@ -93,23 +93,29 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Mixins, Vue } from 'vue-property-decorator'
+import { mapGetters } from 'vuex'
 import Moment from 'moment'
 
 import MainContainer from '@/components/new-request/main-container.vue'
 import newReqModule, { EXISTING_NR_TIMER_NAME, EXISTING_NR_TIMEOUT_MS } from '@/store/new-request-module'
+import NrAffiliationMixin from '@/components/mixins/nr-affiliation-mixin'
 import paymentModule from '@/modules/payment'
 import timerModule from '@/modules/vx-timer'
 import * as types from '@/store/types'
 
 @Component({
-  components: { MainContainer }
+  components: { MainContainer },
+  computed: {
+    ...mapGetters(['isAuthenticated'])
+  }
 })
-export default class ExistingRequestDisplay extends Vue {
+export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
   daysBeforeExpiry: number = 5
   checking: boolean = false
   refreshCount: number = 0
   furnished: string = 'notfurnished'
+  readonly isAuthenticated!: boolean
 
   get actions () {
     return this.nr.actions
@@ -248,6 +254,9 @@ export default class ExistingRequestDisplay extends Vue {
         case 'RECEIPT':
           paymentModule.togglePaymentHistoryModal(true)
           break
+        case 'INCORPORATE': // PlaceHolder Action. Future Action Name TBD.
+          this.affiliateOrLogin()
+          break
         default:
           await newReqModule.patchNameRequestsByAction(action)
           break
@@ -279,11 +288,15 @@ export default class ExistingRequestDisplay extends Vue {
     newReqModule.mutateConditionsModalVisible(true)
   }
 
-  /** Open Incorporate Now Login Modal and apply NR Data to Session */
-  activateILModal () {
-    newReqModule.mutateIncorporateLoginModalVisible(true)
-    // nr persisted in the session to be used for affiliation/creation upon authentication in Signin.vue.
-    sessionStorage.setItem('NR_DATA', JSON.stringify(this.nr))
+  /** Affiliate the current Nr if authenticated or prompt login if unauthenticated */
+  affiliateOrLogin (): void {
+    if (this.isAuthenticated) {
+      this.createAffiliation(this.nr)
+    } else {
+      // Persist Nr in session for use in affiliation upon authentication via SignIn.vue.
+      sessionStorage.setItem('NR_DATA', JSON.stringify(this.nr))
+      newReqModule.mutateIncorporateLoginModalVisible(true)
+    }
   }
 }
 </script>

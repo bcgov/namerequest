@@ -4,9 +4,9 @@
       <sbc-header
               class="sbc-header"
               :in-auth="false"
-              :redirectOnLoginSuccess="nameRequestUrl"
-              :redirect-on-login-fail="nameRequestUrl"
-              :redirect-on-logout="nameRequestUrl"
+              :redirectOnLoginSuccess="getNameRequestUrl"
+              :redirect-on-login-fail="getNameRequestUrl"
+              :redirect-on-logout="getNameRequestUrl"
       />
       <router-view />
     </div>
@@ -58,7 +58,7 @@ import AffiliationErrorModal from '@/components/modals/affiliation-error.vue'
 import ApiErrorModal from '@/components/common/error/modal.vue'
 
 import { Component, Mixins } from 'vue-property-decorator'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 import TimeoutModal from '@/components/session-timer/timeout-modal.vue'
 import SessionTimerMixin from '@/components/session-timer/session-timer-mixin'
@@ -90,19 +90,19 @@ import paymentModule from '@/modules/payment'
     AffiliationErrorModal,
     ApiErrorModal
   },
-  computed: mapState([
-    'showNrSessionExpiryModal',
-    'rollbackOnExpire',
-    'checkInOnExpire'
-  ])
+  computed: {
+    ...mapState([
+      'showNrSessionExpiryModal',
+      'rollbackOnExpire',
+      'checkInOnExpire'
+    ]),
+    ...mapGetters(['getNameRequestUrl'])
+  }
 })
 export default class App extends Mixins(SessionTimerMixin) {
   rollbackOnExpire: boolean
   checkInOnExpire: boolean
-
-  private get nameRequestUrl (): string {
-    return `${window.location.origin}${process.env.VUE_APP_PATH}`
-  }
+  readonly getNameRequestUrl!: string
 
   async resetAppState () {
     // Redirect to the start

@@ -4,6 +4,7 @@ import { AnalyzeName } from './analyze-name-module'
 
 import * as rootActions from './actions'
 import rootMutations from './mutations'
+import * as Getters from './getters'
 
 Vue.use(Vuex)
 
@@ -21,5 +22,6 @@ export default new Vuex.Store<RootStateI>({
     checkInOnExpire: false
   },
   actions: rootActions,
-  mutations: rootMutations
+  mutations: rootMutations,
+  getters: Getters
 })
