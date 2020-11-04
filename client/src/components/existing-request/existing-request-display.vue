@@ -118,9 +118,6 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
   readonly isAuthenticated!: boolean
 
   get actions () {
-    // eslint-disable-next-line no-console
-    console.log(this.nr.actions)
-    this.nr.actions.push('INCORPORATE')
     return this.nr.actions
   }
   get address () {
