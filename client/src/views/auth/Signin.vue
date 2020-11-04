@@ -32,6 +32,7 @@ export default class Signin extends Mixins(NrAffiliationMixin) {
     if (this.redirectUrl) {
       // navigate to the route we originally came from and process an affiliation if an Nr is pending.
       await this.$router.push(this.redirectUrl).then(() => {
+        // If there is stored NR data to process, create the affiliation
         const nr = JSON.parse(sessionStorage.getItem('NR_DATA'))
         if (nr) this.createAffiliation(nr)
       })

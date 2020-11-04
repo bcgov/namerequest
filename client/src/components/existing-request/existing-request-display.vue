@@ -118,6 +118,9 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
   readonly isAuthenticated!: boolean
 
   get actions () {
+    // eslint-disable-next-line no-console
+    console.log(this.nr.actions)
+    this.nr.actions.push('INCORPORATE')
     return this.nr.actions
   }
   get address () {
@@ -254,7 +257,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
         case 'RECEIPT':
           paymentModule.togglePaymentHistoryModal(true)
           break
-        case 'INCORPORATE': // PlaceHolder Action. Future Action Name TBD.
+        case 'INCORPORATE':
           this.affiliateOrLogin()
           break
         default:

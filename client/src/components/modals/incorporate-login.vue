@@ -1,7 +1,7 @@
 <template>
-  <v-dialog v-model="showModal" max-width="60%" >
+  <v-dialog v-model="showModal" max-width="850px" persistent>
     <v-card class="pa-4">
-      <sbc-authentication-options :redirectUrl="getNameRequestUrl" />
+      <sbc-authentication-options :redirectUrl="getNameRequestUrl" @close="toggleModal(false)"/>
     </v-card>
   </v-dialog>
 </template>
@@ -26,7 +26,7 @@ export default class IncorporateLoginModal extends Vue {
   get showModal () {
     return newReqModule.incorporateLoginModalVisible
   }
-  set showModal (value: boolean) {
+  toggleModal (value: boolean) {
     newReqModule.mutateIncorporateLoginModalVisible(value)
   }
 }

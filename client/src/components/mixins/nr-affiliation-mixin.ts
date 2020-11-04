@@ -13,15 +13,15 @@ export default class NrAffiliationMixin extends Vue {
    * @param nr The Nr to affiliate
    */
   async createAffiliation (nr: NameRequestI): Promise<any> {
-    const currentOrganizationId = JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT')).id
-    const requestBody: CreateNRAffiliationRequestBody = {
-      businessIdentifier: nr.nrNum,
-      phone: nr.applicants.phoneNumber || '',
-      email: nr.applicants.emailAddress || ''
-    }
-
     try {
-    // Request to affiliate NR to current account
+      const currentOrganizationId = JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT')).id
+      const requestBody: CreateNRAffiliationRequestBody = {
+        businessIdentifier: nr.nrNum,
+        phone: nr.applicants?.phoneNumber || '',
+        email: nr.applicants?.emailAddress || ''
+      }
+
+      // Request to affiliate NR to current account
       const nrResponse = await AuthServices.createNRAffiliation(currentOrganizationId, requestBody)
       if (nrResponse?.status === 201) {
       // update the legal api if the status is success
@@ -51,7 +51,10 @@ export default class NrAffiliationMixin extends Vue {
         }
       }
     } catch (e) {
-    // navigate to landing, show error dialog and clear NR Data
+      // eslint-disable-next-line no-console
+      console.error(e)
+
+      // navigate to landing, show error dialog and clear NR Data
       await this.$router.push('/')
       sessionStorage.removeItem('NR_DATA')
       newReqModule.mutateAffiliationErrorModalVisible(true)
