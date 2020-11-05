@@ -39,6 +39,9 @@ export default class DisplayedComponentMixin extends Vue {
       await newRequestModule.checkinNameRequest()
       timerModule.stopTimer({ id: EXISTING_NR_TIMER_NAME })
       this.redirectToStart()
+    } else {
+      await newRequestModule.cancelAnalyzeName('Tabs')
+      this.redirectToStart()
     }
   }
 
