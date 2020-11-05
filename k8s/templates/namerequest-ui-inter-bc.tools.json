@@ -57,7 +57,7 @@
                 "resources": {
                     "limits": {
                         "cpu": "4",
-                        "memory": "4Gi"
+                        "memory": "8Gi"
                     }
                 },
                 "postCommit": {},

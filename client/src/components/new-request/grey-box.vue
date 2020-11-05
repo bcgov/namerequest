@@ -5,7 +5,7 @@
     <v-col class="fw-700 mt-n3" cols="12">
       <div style="display: flex; width: 100%; justify-content: flex-start">
         <div class="h5">
-          <v-icon class="pr-2 colour-p-blue-text">info</v-icon>
+          <v-icon class="pr-2 colour-p-blue-text">mdi-information</v-icon>
           {{ option.header }}
         </div>
       </div>

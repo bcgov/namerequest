@@ -3,7 +3,7 @@
     <v-card class="notify-dialog">
       <v-card-title>
         <slot name="icon">
-          <v-icon large color="error">error</v-icon>
+          <v-icon large color="error">mdi-alert</v-icon>
         </slot>
         <span>
           <slot name="title">Error Adding Name Request</slot>

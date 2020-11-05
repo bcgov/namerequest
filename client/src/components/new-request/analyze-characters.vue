@@ -14,7 +14,7 @@
         <v-col>
           <v-container class="copy-small text-left helpful-hint">
             <v-row align-content="space-between" style="height: 100%">
-              <v-col class="h5 py-0"><v-icon class="pr-2 colour-p-blue-text">info</v-icon>
+              <v-col class="h5 py-0"><v-icon class="pr-2 colour-p-blue-text">mdi-information</v-icon>
                 Helpful Hint</v-col>
               <v-col cols="12">
                 <p v-if="!nameStartsWithSymbol">

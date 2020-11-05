@@ -121,7 +121,7 @@
             <template v-slot:append>
               <v-icon :class="showCorpNumErrorState ? 'red--text' : 'green--text'"
                       v-if="hideCorpNum === 'auto'">
-                {{ error || loading || corpNumDirty ? 'close' : 'check' }}</v-icon>
+                {{ error || loading || corpNumDirty ? 'mdi-close' : 'mdi-check' }}</v-icon>
             </template>
           </v-text-field>
         </v-col>

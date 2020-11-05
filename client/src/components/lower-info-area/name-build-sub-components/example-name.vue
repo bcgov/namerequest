@@ -51,10 +51,10 @@
     </v-row>
     <v-row>
       <v-col cols="12" sm="6">
-        <p><v-icon color="red" left>cancel</v-icon>Construction Renovation</p>
+        <p><v-icon color="red" left>mdi-cancel</v-icon>Construction Renovation</p>
       </v-col>
       <v-col cols="12" sm="6">
-        <p><v-icon color="red" left>cancel</v-icon>Renovation Development</p>
+        <p><v-icon color="red" left>mdi-cancel</v-icon>Renovation Development</p>
       </v-col>
     </v-row>
   </v-container>

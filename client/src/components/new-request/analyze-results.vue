@@ -18,7 +18,7 @@
           <div style="position: relative; left: 865px; top: -45px; z-index: 1000">
             <v-icon @click.capture.stop="handleSubmit"
                     class="name-search-icon"
-                    id="name-input-icon">search</v-icon>
+                    id="name-input-icon">mdi-magnify</v-icon>
           </div>
         </v-col>
       </v-row>
@@ -322,7 +322,7 @@ export default class AnalyzeResults extends Vue {
     if (this.json.status === 'Available') {
       return {
         class: 'approved',
-        icon: 'check_circle',
+        icon: 'mdi-check-circle',
         text: 'Name Available',
         showNextLines: true
       }
@@ -332,7 +332,7 @@ export default class AnalyzeResults extends Vue {
       if (!this.changesInBaseName && this.designationIsFixed && this.examinationOrConsentCompleted) {
         return {
           class: 'approved',
-          icon: 'check_circle',
+          icon: 'mdi-check-circle',
           text: 'You May Proceed',
           showNextLines: false
         }
@@ -340,7 +340,7 @@ export default class AnalyzeResults extends Vue {
     }
     return {
       class: 'action',
-      icon: 'stars',
+      icon: 'mdi-star-circle',
       text: 'Further Action Required',
       showNextLines: true
     }
