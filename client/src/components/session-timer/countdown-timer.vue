@@ -1,6 +1,6 @@
 <template>
   <countdown-timer-display
-    v-if="countdownActivated"
+    v-if="displayCountdown"
     :bgColorString="bgColorString"
     :colorString="colorString"
     :countdownSeconds="countdownNumber"
@@ -11,11 +11,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Watch, Vue } from 'vue-property-decorator'
 import { Timer } from '@/modules/vx-timer/timer'
 import timerModule from '@/modules/vx-timer'
 
 import CountdownTimerDisplay from '@/components/session-timer/countdown-timer-display.vue'
+
+const COUNTDOWN_STATE_ACTIVE = 'active'
+const COUNTDOWN_STATE_EXPIRED = 'expired'
+const COUNTDOWN_STATE_NONE = 'none'
 
 @Component({
   components: {
@@ -32,27 +36,41 @@ export default class CountdownTimer extends Vue {
   countdownNumberStyle: string = ''
   countdownCircleStyle: string = ''
   tickInterval: any = undefined
-  countdownActivated: boolean = true
+  countdownState: string = COUNTDOWN_STATE_NONE
+  displayCountdown: boolean = false
 
   mounted () {
     this.tickInterval = this.createCountdownWatcher()
-    this.setActiveStyles()
   }
 
-  setExpiredStyles () {
-    const countdownClass = `countdown expired`
-    this.countdownClass = countdownClass
+  @Watch('countdownState')
+  onCountdownStateChanged (newVal, oldVal) {
+    const timerInstance = this.getTimerInstance()
+    if (!timerInstance) return
+    if (newVal === COUNTDOWN_STATE_ACTIVE && oldVal !== COUNTDOWN_STATE_ACTIVE) {
+      // The CSS animation won't 'restart' unless the DOM element is re-inserted,
+      // replace the timer display with a new instance
+      this.setActiveStyles()
+      this.displayCountdown = false
+      this.$nextTick(() => {
+        this.setActiveStyles()
+        this.displayCountdown = true
+      })
+    } else if (newVal === COUNTDOWN_STATE_EXPIRED && oldVal !== COUNTDOWN_STATE_EXPIRED) {
+      this.displayCountdown = true
+      this.setExpiredStyles()
+    } else {
+      this.displayCountdown = false
+    }
   }
 
   setActiveStyles () {
-    const { colorString, bgColorString } = this
     const timerInstance = this.getTimerInstance()
     if (timerInstance) {
+      const { colorString, bgColorString } = this
       const countdownClass = `countdown`
       this.countdownClass = countdownClass
-      this.countdownActivated = false
       this.$nextTick(() => {
-        this.countdownActivated = true
         // Set display to none and back to re-flow
         const animation = `countdown ${timerInstance.timeoutMs / 1000}s linear forwards`
         const fill = bgColorString || 'none'
@@ -60,29 +78,25 @@ export default class CountdownTimer extends Vue {
         const style = `animation: ${animation}; fill: ${fill}; stroke: ${stroke}`
         this.countdownCircleStyle = style
       })
-    } else {
-      this.countdownActivated = true
     }
   }
 
+  setExpiredStyles () {
+    const countdownClass = `countdown expired`
+    this.countdownClass = countdownClass
+  }
+
   createCountdownWatcher () {
-    let oldExpiredValue = false
     return setInterval(() => {
       const timerInstance = this.getTimerInstance()
-      if (timerInstance && timerInstance.isExpired) {
-        this.countdownNumber = 0
-        if (oldExpiredValue !== true) {
-          oldExpiredValue = true
-          this.setExpiredStyles()
-        }
-      } else if (timerInstance && !timerInstance.isExpired) {
+      if (timerInstance && !timerInstance.isExpired) {
         this.countdownNumber = timerInstance.timeRemaining / 1000
-        if (oldExpiredValue === true) {
-          oldExpiredValue = false
-          this.setActiveStyles()
-        }
-      } else {
-        this.countdownActivated = false
+        this.countdownState = COUNTDOWN_STATE_ACTIVE
+      } if (timerInstance && timerInstance.isExpired) {
+        this.countdownNumber = 0
+        this.countdownState = COUNTDOWN_STATE_EXPIRED
+      } else if (!timerInstance) {
+        this.countdownState = COUNTDOWN_STATE_NONE
       }
     }, 1000)
   }
