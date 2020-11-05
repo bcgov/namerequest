@@ -254,8 +254,8 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
         case 'RECEIPT':
           paymentModule.togglePaymentHistoryModal(true)
           break
-        case 'INCORPORATE':
-          this.affiliateOrLogin()
+        case 'INCORPORATE NOW':
+          await this.affiliateOrLogin()
           break
         default:
           await newReqModule.patchNameRequestsByAction(action)
@@ -289,9 +289,9 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
   }
 
   /** Affiliate the current Nr if authenticated or prompt login if unauthenticated */
-  affiliateOrLogin (): void {
+  async affiliateOrLogin (): Promise<any> {
     if (this.isAuthenticated) {
-      this.createAffiliation(this.nr)
+      await this.createAffiliation(this.nr)
     } else {
       // Persist Nr in session for use in affiliation upon authentication via SignIn.vue.
       sessionStorage.setItem('NR_DATA', JSON.stringify(this.nr))
