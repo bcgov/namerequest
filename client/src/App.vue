@@ -135,7 +135,7 @@ export default class App extends Mixins(SessionTimerMixin) {
   async onTimerModalSessionExtended () {
     const { nrId } = newRequestModule
     const componentName = newRequestModule.displayedComponent
-    if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
+    if (['SubmissionTabs'].indexOf(componentName) > -1) {
       await this.startNewNrTimer()
     } else if (nrId && ['ExistingRequestEdit'].indexOf(componentName) > -1) {
       await this.startExistingNrTimer()
