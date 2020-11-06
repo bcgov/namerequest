@@ -60,7 +60,7 @@ export default class NrAffiliationMixin extends Vue {
       this.$root.$emit('showSpinner', false)
 
       // navigate to landing, show error dialog and clear NR Data
-      // await this.$router.push('/')
+      await this.$router.push('/')
       sessionStorage.removeItem('NR_DATA')
       newReqModule.mutateAffiliationErrorModalVisible(true)
     }

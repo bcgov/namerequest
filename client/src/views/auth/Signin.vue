@@ -30,11 +30,9 @@ export default class Signin extends Mixins(NrAffiliationMixin) {
   /** called when keycloak session is ready. */
   private async onReady () {
     if (this.redirectUrl) {
-      await this.$router.push(this.redirectUrl)
-
       // If there is stored NR data to process, create the affiliation OR navigate to redirectUrl
       const nr = JSON.parse(sessionStorage.getItem('NR_DATA'))
-      if (nr) await this.createAffiliation(nr)
+      nr ? await this.createAffiliation(nr) : await this.$router.push(this.redirectUrl)
     } else {
       console.error('Signin page missing redirect param') // eslint-disable-line no-console
       // redirect to business home page
