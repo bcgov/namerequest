@@ -17,7 +17,7 @@
     "@mdi/font": "^4.5.95",
     "moment": "^2.27.0",
     "remove-accents": "^0.4.2",
-    "sbc-common-components": "2.4.3",
+    "sbc-common-components": "2.4.5",
     "style-loader": "^1.2.1",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
