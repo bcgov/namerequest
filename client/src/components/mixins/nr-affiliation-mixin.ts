@@ -26,7 +26,7 @@ export default class NrAffiliationMixin extends Vue {
 
       // Request to affiliate NR to current account
       const nrResponse = await AuthServices.createNRAffiliation(currentOrganizationId, requestBody)
-      if (nrResponse?.status === 201) {
+      if (nrResponse?.status === 200 || nrResponse?.status === 201) {
         // update the legal api if the status is success
         const filingBody: BusinessRequest = {
           filing: {
@@ -47,12 +47,12 @@ export default class NrAffiliationMixin extends Vue {
         }
         const filingResponse = await BusinessServices.createBusiness(filingBody)
         // navigate to manage business dashboard
-        if (filingResponse?.status === 201) {
+        if (filingResponse?.status === 200 || filingResponse?.status === 201) {
           window.location.assign(
             `${sessionStorage.getItem('BUSINESSES_URL')}account/${currentOrganizationId}/business`
           )
-        }
-      }
+        } else throw new Error('Business creation error: invalid api response ')
+      } else throw new Error('Affiliation error: invalid api response ')
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(e)
