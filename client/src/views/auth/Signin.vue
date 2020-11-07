@@ -8,18 +8,21 @@
 
 <script lang="ts">
 // Libraries
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Prop, Mixins } from 'vue-property-decorator'
 
 // Components
 // @ts-ignore
 import SbcSignin from 'sbc-common-components/src/components/SbcSignin'
+
+// Mixins
+import NrAffiliationMixin from '@/components/mixins/nr-affiliation-mixin'
 
 @Component({
   components: {
     SbcSignin
   }
 })
-export default class Signin extends Vue {
+export default class Signin extends Mixins(NrAffiliationMixin) {
   @Prop({ default: 'bcsc' }) idpHint: string
   @Prop({ default: '' }) redirectUrl: string
   @Prop({ default: '' }) redirectUrlLoginFail: string
@@ -27,8 +30,11 @@ export default class Signin extends Vue {
   /** called when keycloak session is ready. */
   private async onReady () {
     if (this.redirectUrl) {
-      // navigate to the route we originally came from
       await this.$router.push(this.redirectUrl)
+
+      // If there is stored NR data to process, create the affiliation OR navigate to redirectUrl
+      const nr = JSON.parse(sessionStorage.getItem('NR_DATA'))
+      if (nr) await this.createAffiliation(nr)
     } else {
       console.error('Signin page missing redirect param') // eslint-disable-line no-console
       // redirect to business home page

@@ -1,12 +1,28 @@
 <template>
   <v-app id="app">
     <div id="main-column">
+      <sbc-authentication-options-dialog
+        attach="#app"
+        :showModal="showAuthModal"
+        :redirectUrl="getNameRequestUrl"
+        @close="closeAuthModal()"
+      />
+
+      <!-- Loading Spinner -->
+      <v-fade-transition>
+        <div class="loading-container grayed-out" v-show="showSpinner">
+          <div class="loading__content">
+            <v-progress-circular color="primary" size="50" indeterminate />
+          </div>
+        </div>
+      </v-fade-transition>
+
       <sbc-header
-              class="sbc-header"
-              :in-auth="false"
-              :redirectOnLoginSuccess="nameRequestUrl"
-              :redirect-on-login-fail="nameRequestUrl"
-              :redirect-on-logout="nameRequestUrl"
+        class="sbc-header"
+        :in-auth="false"
+        :redirectOnLoginSuccess="getNameRequestUrl"
+        :redirect-on-login-fail="getNameRequestUrl"
+        :redirect-on-logout="getNameRequestUrl"
       />
       <router-view />
     </div>
@@ -25,7 +41,6 @@
     <ReapplyModal />
     <PaymentCompleteModal />
     <PaymentHistoryModal />
-    <IncorporateLoginModal />
     <AffiliationErrorModal />
     <ApiErrorModal />
     <TimeoutModal
@@ -53,12 +68,12 @@ import PaymentHistoryModal from '@/components/payment/payment-history-modal.vue'
 import UpgradeModal from '@/components/payment/upgrade-modal.vue'
 import ReapplyModal from '@/components/payment/reapply-modal.vue'
 import PaymentCompleteModal from '@/components/payment/payment-complete-modal.vue'
-import IncorporateLoginModal from '@/components/modals/incorporate-login.vue'
 import AffiliationErrorModal from '@/components/modals/affiliation-error.vue'
 import ApiErrorModal from '@/components/common/error/modal.vue'
+import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
 
 import { Component, Mixins } from 'vue-property-decorator'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 import TimeoutModal from '@/components/session-timer/timeout-modal.vue'
 import SessionTimerMixin from '@/components/session-timer/session-timer-mixin'
@@ -86,22 +101,37 @@ import paymentModule from '@/modules/payment'
     ReapplyModal,
     PaymentCompleteModal,
     PaymentHistoryModal,
-    IncorporateLoginModal,
     AffiliationErrorModal,
-    ApiErrorModal
+    ApiErrorModal,
+    SbcAuthenticationOptionsDialog
   },
-  computed: mapState([
-    'showNrSessionExpiryModal',
-    'rollbackOnExpire',
-    'checkInOnExpire'
-  ])
+  computed: {
+    ...mapState([
+      'showNrSessionExpiryModal',
+      'rollbackOnExpire',
+      'checkInOnExpire'
+    ]),
+    ...mapGetters(['getNameRequestUrl'])
+  }
 })
 export default class App extends Mixins(SessionTimerMixin) {
   rollbackOnExpire: boolean
   checkInOnExpire: boolean
+  readonly getNameRequestUrl!: string
+  private showSpinner = false
 
-  private get nameRequestUrl (): string {
-    return `${window.location.origin}${process.env.VUE_APP_PATH}`
+  get showAuthModal () {
+    return newRequestModule.incorporateLoginModalVisible
+  }
+
+  created (): void {
+    // listen for spinner show/hide events
+    this.$root.$on('showSpinner', (flag = false) => { this.showSpinner = flag })
+  }
+
+  destroyed (): void {
+    // stop listening for spinner show/hide events
+    this.$root.$off('showSpinner')
   }
 
   async resetAppState () {
@@ -186,6 +216,10 @@ export default class App extends Mixins(SessionTimerMixin) {
 
     paymentModule.togglePaymentModal(false)
   }
+
+  private closeAuthModal () {
+    newRequestModule.mutateIncorporateLoginModalVisible(false)
+  }
 }
 
 </script>
@@ -199,4 +233,8 @@ export default class App extends Mixins(SessionTimerMixin) {
   width: 1380px
   max-width: 1380px
 
+.loading-container.grayed-out
+  opacity: 0.46
+  background-color: rgb(33, 33, 33) // grey darken-4
+  border-color: rgb(33, 33, 33) // grey darken-4
 </style>

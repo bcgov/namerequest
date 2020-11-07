@@ -5,7 +5,10 @@ module.exports = {
   notifyMode: 'always',
   globals: {
     'ts-jest': {
-      diagnostics: false
+      diagnostics: false,
+      isolatedModules: true,
+      babelConfig: true
     }
-  }
+  },
+  transformIgnorePatterns: []
 }
