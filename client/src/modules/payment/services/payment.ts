@@ -90,26 +90,6 @@ export async function getPaymentFees (params): Promise<any> {
   }
 }
 
-export async function getInvoiceRequest (paymentId, params): Promise<any> {
-  const url = `/payments/${paymentId}/invoice`
-  try {
-    const response: AxiosResponse = await axios.get(url, params)
-    return response.data
-  } catch (err) {
-    await handleApiError(err, 'Could not retrieve Name Request payment invoice')
-  }
-}
-
-export async function getInvoicesRequest (paymentId, params): Promise<any> {
-  const url = `/payments/${paymentId}/invoices`
-  try {
-    const response: AxiosResponse = await axios.get(url, params)
-    return response.data
-  } catch (err) {
-    await handleApiError(err, 'Could not retrieve Name Request payment invoices')
-  }
-}
-
 /**
  * @param paymentId
  */
@@ -118,6 +98,20 @@ export async function getReceiptRequest (paymentId): Promise<any> {
   const url = `/payments/${paymentId}/receipt`
   try {
     const response: AxiosResponse = await axios.get(url, params)
+    return response.data
+  } catch (err) {
+    await handleApiError(err, 'Could not retrieve Name Request payment receipt')
+  }
+}
+
+/**
+ * @param paymentId
+ */
+export async function generateReceiptRequest (paymentId): Promise<any> {
+  const params = { responseType: 'blob' } as AxiosRequestConfig
+  const url = `/payments/${paymentId}/receipt`
+  try {
+    const response: AxiosResponse = await axios.post(url, params)
     return response.data
   } catch (err) {
     await handleApiError(err, 'Could not retrieve Name Request payment receipt')

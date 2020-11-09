@@ -8,6 +8,14 @@ export const STATE_KEY = 'payment'
 
 const state = {
   [STATE_KEY]: {
+    // The payment reference
+    references: [
+      {
+        id: '',
+        receiptNumber: '',
+        statusCode: ''
+      }
+    ],
     isPaymentVisible: false,
     isPaymentHistoryVisible: false,
     isUpgradeVisible: false,
@@ -23,43 +31,29 @@ const state = {
     priority: false,
     futureEffective: false,
     fees: {
-      filing_fees: 0.0,
-      filing_type: '',
-      filing_type_code: undefined,
-      future_effective_fees: 0.0,
-      priority_fees: 0.0,
-      processing_fees: 0.0,
-      service_fees: 0.0,
-      tax: [],
+      filingFees: 0.0,
+      filingType: '',
+      filingTypeCode: undefined,
+      futureEffectiveFees: 0.0,
+      priorityFees: 0.0,
+      processingFees: 0.0,
+      serviceFees: 0.0,
+      tax: {},
       total: 0.0
     },
     request: {},
     payment: {},
-    sbcPayment: {},
-    payments: [],
-    invoice: {
-      reference_number: null,
-      created_name: null,
-      created_by: '',
-      created_on: null,
-      updated_name: '',
-      updated_on: null,
-      paid: 0.00,
-      refund: null,
-      service_fees: 0.00,
-      total: 0.00,
-      // The payment reference
-      references: [
-        {
-          id: '',
-          invoice_number: '',
-          reference_number: '',
-          status_code: ''
-        }
-      ],
-      status_code: ''
+    sbcPayment: {
+      paymentStatus: ''
     },
-    receipt: {}
+    payments: [],
+    receipt: {
+      id: undefined,
+      receiptAmount: 0.00,
+      receiptDate: '',
+      receiptNumber: ''
+    },
+    receipts: []
   }
 }
 

@@ -10,29 +10,29 @@
 
     <v-slide-y-transition group tag="ul" class="fee-list" v-show="!fetchError">
       <template
-        v-show="(totalFilingFees > 0 && lineItem.filing_fees) || (totalFilingFees == 0)"
+        v-show="(totalFilingFees > 0 && lineItem.filingFees) || (totalFilingFees == 0)"
         v-for="lineItem in fees"
         >
         <li class="container fee-list__item"
-          :key="lineItem.filing_type"
+          :key="lineItem.filingType"
           >
-          <div class="fee-list__item-name">{{lineItem.filing_type}}</div>
-          <div class="fee-list__item-value" v-if="lineItem.filing_fees > 0">${{lineItem.filing_fees.toFixed(2)}}</div>
+          <div class="fee-list__item-name">{{lineItem.filingType}}</div>
+          <div class="fee-list__item-value" v-if="lineItem.filingFees > 0">${{lineItem.filingFees.toFixed(2)}}</div>
           <div class="fee-list__item-value" v-else>No Fee</div>
         </li>
         <li class="container fee-list__item"
-          v-if="lineItem.priority_fees"
-          :key="lineItem.filing_type_code+'-priority'"
+          v-if="lineItem.priorityFees"
+          :key="lineItem.filingTypeCode+'-priority'"
           >
           <div class="fee-list__item-name pl-3">Priority Fee</div>
-          <div class="fee-list__item-value">${{lineItem.priority_fees.toFixed(2)}}</div>
+          <div class="fee-list__item-value">${{lineItem.priorityFees.toFixed(2)}}</div>
         </li>
         <li class="container fee-list__item"
-          v-if="lineItem.service_fees"
-          :key="lineItem.filing_type_code+'-transaction'"
+          v-if="lineItem.serviceFees"
+          :key="lineItem.filingTypeCode+'-transaction'"
           >
           <div class="fee-list__item-name pl-3">Service Fee</div>
-          <div class="fee-list__item-value">${{lineItem.service_fees.toFixed(2)}}</div>
+          <div class="fee-list__item-value">${{lineItem.serviceFees.toFixed(2)}}</div>
         </li>
       </template>
     </v-slide-y-transition>
@@ -95,15 +95,14 @@ export default class FeeSummary extends Vue {
   /* getter */
   protected get totalFees (): number {
     return this.fees.reduce((feeTotal: number, item: any) => {
-      return feeTotal + item.filing_fees + item.future_effective_fees + item.priority_fees + item.service_fees
+      return feeTotal + item.filingFees + item.futureEffectiveFees + item.priorityFees + item.serviceFees
     }, 0)
   }
 
   protected get totalTax (): number {
     return this.fees.reduce((taxTotal: number, item: any) => {
-      return taxTotal + item.tax.reduce((taxTypeTotal: number, taxType) => {
-        return taxTypeTotal + taxType.gst + taxType.pst
-      }, 0)
+      const { gst = 0.00, pst = 0.00 } = item.tax
+      return taxTotal + gst + pst
     }, 0)
   }
 
