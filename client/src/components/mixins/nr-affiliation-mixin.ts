@@ -35,11 +35,11 @@ export default class NrAffiliationMixin extends Vue {
               accountId: currentOrganizationId
             },
             business: {
-              legalType: nr.entity_type_cd
+              legalType: (nr.entity_type_cd === 'BC') ? 'BEN' : nr.entity_type_cd
             },
             incorporationApplication: {
               nameRequest: {
-                legalType: nr.entity_type_cd,
+                legalType: (nr.entity_type_cd === 'BC') ? 'BEN' : nr.entity_type_cd,
                 nrNumber: nr.nrNum
               }
             }
