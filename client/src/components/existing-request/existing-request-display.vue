@@ -254,7 +254,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
         case 'RECEIPT':
           paymentModule.togglePaymentHistoryModal(true)
           break
-        case 'INCORPORATE NOW':
+        case 'INCORPORATE':
           await this.affiliateOrLogin()
           break
         default:
