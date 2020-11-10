@@ -68,59 +68,34 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import { FilingData } from 'sbc-common-components/src/models'
 import '../../plugins/vuetify'
-import { Fee, FilingData } from 'sbc-common-components/src/models'
 
 @Component({})
 export default class FeeSummary extends Vue {
-  /* This prop is an array of filing data. See model for details. */
-  @Prop({ default: [] })
-  protected filingData!: Array<FilingData>
-
-  @Prop({ default: '' })
-  protected payURL!: string
-
-  /* class properties */
-  @Prop({ default: [] })
-  protected fees: any[] = []
-
+  @Prop({ default: () => [] }) filingData!: Array<FilingData>
+  @Prop({ default: () => [] }) fees: any[]
   protected fetchError: string = ''
 
-  /* lifecycle event */
-  protected mounted (): void {
-    // console.log('%c FeeModule-Data Received on Mount as %s %s', 'color: blue; font-size: 12px',
-  }
-
-  /* getter */
   protected get totalFees (): number {
-    return this.fees.reduce((feeTotal: number, item: any) => {
+    return this.fees instanceof Array ? this.fees.reduce((feeTotal: number, item: any) => {
       return feeTotal + item.filingFees + item.futureEffectiveFees + item.priorityFees + item.serviceFees
-    }, 0)
+    }, 0) : 0
   }
 
   protected get totalTax (): number {
-    return this.fees.reduce((taxTotal: number, item: any) => {
+    return this.fees instanceof Array ? this.fees.reduce((taxTotal: number, item: any) => {
       const { gst = 0.00, pst = 0.00 } = item.tax
       return taxTotal + gst + pst
-    }, 0)
+    }, 0) : 0
   }
 
   protected get total (): number {
-    return this.fees.reduce((feeTotal: number, item: any) => {
+    return this.fees instanceof Array ? this.fees.reduce((feeTotal: number, item: any) => {
       return feeTotal + item.total
-    }, 0)
+    }, 0) : 0
   }
-
-  /* watcher */
-  @Watch('filingData')
-  protected onFilingDataChanged (val: string, oldVal: string): void {
-    // console.log('%c FeeModule-Watch Activated as %s', 'color: blue; font-size: 12px',
-  }
-
-  /* emitter */
-  @Emit('total-fee')
-  protected emitTotalFee (val: number): void {}
 }
 </script>
 
