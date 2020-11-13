@@ -86,9 +86,10 @@ export default class Landing extends Vue {
   padding: 0
 
 #upper-row
-  background-size: 1380px 700px
   background: url('../assets/images/analyze-name-bg.jpg')
+  background-repeat: no-repeat
   color: white
   height: 700px
   padding: 0 200px 0 200px
+  background-size: 100%
 </style>

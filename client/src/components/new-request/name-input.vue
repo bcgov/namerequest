@@ -6,11 +6,12 @@
                   autocomplete="off"
                   filled
                   id="name-input-text-field"
-                  placeholder="Search a Name"
+                  placeholder="Enter a Name"
                   v-model="nameSearch">
       <template v-slot:append>
         <v-icon class="name-search-icon"
                 id="name-input-icon"
+                color="primary"
                 @click="startAnalyzeName">mdi-magnify</v-icon>
       </template>
     </v-text-field>

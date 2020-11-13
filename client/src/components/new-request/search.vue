@@ -1,7 +1,13 @@
 <template>
   <v-container fluid id="new-request-container" class="copy-normal">
     <v-row justify="end">
-      <v-col cols="12" class="copy-normal">I need a name to:</v-col>
+      <v-col cols="6" class="copy-normal copy-bold">I need a name to:</v-col>
+      <v-col cols="6">
+        <span id="nr-required-activator"
+              class="link-std"
+              style="display: flex; justify-content: flex-end;"
+              @click="activateNRRModal()">Check to see if you need to file a a Name Request</span>
+      </v-col>
       <v-col cols="5">
         <!--request_action_cd-->
         <v-select :error-messages="errors.includes('request_action_cd') ? 'Please select a type' : ''"
@@ -38,52 +44,50 @@
     </v-row>
     <v-row no-gutters class="ma-0 pa-0 mt-n3" align="center">
       <v-col cols="4">
-      <v-tooltip bottom open-delay="300">
-        <template v-slot:activator="{on}">
-            <v-checkbox v-model="isPersonsName"
-                        v-on="on"
-                        id="name-checkbox"
-                        class="copy-small px-0 mx-0"
-                        label="The name is a person's name" />
-        </template>
-        <p class="py-0 my-0">Check this box if you are...</p>
+        <v-tooltip bottom open-delay="300">
+          <template v-slot:activator="{on}">
+              <v-checkbox v-model="isPersonsName"
+                          v-on="on"
+                          id="name-checkbox"
+                          class="copy-small px-0 mx-0"
+                          label="Name is a person's name" />
+          </template>
+          <p class="py-0 my-0">Check this box if you are...</p>
+            <ul>
+              <li>Incorporating under your own name (eg. DR. JOE SMITH INC.)</li>
+              <li>The name contains one or more names. (eg. BLAKE, CHAN & DOUGLAS INC.)</li>
+              <li>The name contains one or more names. (eg. FRANKLIN INC.)</li>
+            </ul>
+        </v-tooltip>
+      </v-col>
+      <v-col cols="4">
+        <v-tooltip bottom open-delay="300">
+          <template v-slot:activator="{on}">
+
+              <v-checkbox v-model="nameIsEnglish"
+                          v-on="on"
+                          id="name-checkbox"
+                          class="copy-small ml-n6"
+                          label="Name contains no English words" />
+
+          </template>
+          <p class="py-0 my-0">This refers to the language of the words in your name.</p>
           <ul>
-            <li>Incorporating under your own name (eg. DR. JOE SMITH INC.)</li>
-            <li>The name contains one or more names. (eg. BLAKE, CHAN & DOUGLAS INC.)</li>
-            <li>The name contains one or more names. (eg. FRANKLIN INC.)</li>
+            <li>Leave this box checked if your name contains <b>only</b> English <b>or a mix</b> of English and
+              another Language
+            </li>
+            <li>Uncheck this box if your name is written <b>entirely</b> in another language and does <b>not</b> contain
+              any English
+            </li>
           </ul>
-      </v-tooltip>
-      </v-col>
-      <v-col cols="3">
-      <v-tooltip bottom open-delay="300">
-        <template v-slot:activator="{on}">
-
-            <v-checkbox v-model="nameIsEnglish"
-                        v-on="on"
-                        id="name-checkbox"
-                        class="copy-small ml-n6"
-                        label="The name is English" />
-
-        </template>
-        <p class="py-0 my-0">This refers to the language of the words in your name.</p>
-        <ul>
-          <li>Leave this box checked if your name contains <b>only</b> English <b>or a mix</b> of English and
-            another Language
-          </li>
-          <li>Uncheck this box if your name is written <b>entirely</b> in another language and does <b>not</b> contain
-            any English
-          </li>
-        </ul>
-      </v-tooltip>
-      </v-col>
-      <v-col cols="5">
-        <span id="nr-required-activator"
-              class="link-std"
-              style="margin-left: auto"
-              @click="activateNRRModal()">Check to see if you need to file a a name request</span>
+        </v-tooltip>
       </v-col>
     </v-row>
-
+    <div class="mt-1 mb-4 text-center">
+      <v-btn
+              class="search-name-btn"
+              @click="handleSubmit()">Search Name</v-btn>
+    </div>
   </v-container>
 </template>
 
@@ -191,10 +195,10 @@ export default class NewSearch extends Vue {
     return newReqModule.locationOptions
   }
   get nameIsEnglish () {
-    return newReqModule.nameIsEnglish
+    return !newReqModule.nameIsEnglish
   }
   set nameIsEnglish (value) {
-    newReqModule.mutateNameIsEnglish(value)
+    newReqModule.mutateNameIsEnglish(!value)
   }
   get request_action_cd () {
     return newReqModule.request_action_cd
@@ -224,10 +228,17 @@ export default class NewSearch extends Vue {
   clearErrors () {
     newReqModule.clearErrors()
   }
-  handleSubmit (event: Event) {
-    event.preventDefault()
+  handleSubmit () {
     newReqModule.startAnalyzeName()
   }
 }
 
 </script>
+
+<style lang="sass" scoped>
+.search-name-btn
+  padding: 0 50px 0 50px !important
+  font-size: 16px !important
+  text-transform: none !important
+
+</style>

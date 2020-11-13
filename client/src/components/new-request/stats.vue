@@ -1,16 +1,17 @@
 <template>
   <v-container class="mt-1 mb-n3 py-0" fluid>
     <v-row class="float-right stats-v-row">
-        <div class="stats-content-outer py-0">
-          <div class="stats-content-inner-1 text-center">
-            <div class="stats-value h3-lt">{{ autoApprovedCount }}</div>
-            <div class="stats-unit">Names</div>
-          </div>
-          <div class="stats-content-inner-2">
-            <u>Auto-Approved</u> Today.<br>
-            No Wait Time
-          </div>
-        </div>
+<!--      COMMENTED OUT FOR FUTURE IMPLEMENTATION-->
+<!--        <div class="stats-content-outer py-0">-->
+<!--          <div class="stats-content-inner-1 text-center">-->
+<!--            <div class="stats-value h3-lt">{{ autoApprovedCount }}</div>-->
+<!--            <div class="stats-unit">Names</div>-->
+<!--          </div>-->
+<!--          <div class="stats-content-inner-2">-->
+<!--            <u>Auto-Approved</u> Today.<br>-->
+<!--            No Wait Time-->
+<!--          </div>-->
+<!--        </div>-->
         <div class="stats-content-outer py-0">
           <div class="stats-content-inner-1 text-center">
             <div class="stats-value h3-lt">{{ priorityWaitTime }}</div>

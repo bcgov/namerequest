@@ -16,13 +16,14 @@
                class="upper-left-border"
                tabindex="0"><span
                :class="tabNumber !== 1 ? 'h5' : 'h5-lt'">New Name Search</span></v-tab>
+        <!--   :class="{ 'h5': tabNumber !== 1 }">New Name Search</span></v-tab>-->
         <v-tab :ripple="false"
                style="min-height: 64px"
                id="existing-tab"
                class="upper-right-border"
                tabindex="1"><span
                :class="tabNumber === 1 ? 'h5' : 'h5-lt'">Existing Name Request</span></v-tab>
-        <v-tabs-items v-model="tabNumber">
+        <v-tabs-items class="tab-items" v-model="tabNumber">
           <v-tab-item class="px-6">
             <NewSearch />
           </v-tab-item>
@@ -59,6 +60,10 @@ export default class Tabs extends Vue {
 </script>
 
 <style lang="sass" scoped>
+.tab-items
+  border-bottom-left-radius: 6px !important
+  border-bottom-right-radius: 6px !important
+
 .active-tab
    background-color: #003366
 
