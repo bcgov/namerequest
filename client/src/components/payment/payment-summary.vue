@@ -3,7 +3,7 @@
     <header class='font-weight-bold px-3 py-3'>
       <slot name='header'>
         <span>
-          <small>{{new Date(receipt.receiptDate).toLocaleDateString('en-US')}}</small>
+          <small>{{receipt.receiptDate}}</small>
         </span>
         <span style="float: right" v-if="receipt">
           <small><small>Receipt No.</small></small> {{receipt.receiptNumber}}
