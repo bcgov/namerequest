@@ -108,10 +108,10 @@ export async function getReceiptRequest (paymentId): Promise<any> {
  * @param paymentId
  */
 export async function generateReceiptRequest (paymentId): Promise<any> {
-  const params = { responseType: 'blob' } as AxiosRequestConfig
+  const params = { responseType: 'arraybuffer' } as AxiosRequestConfig
   const url = `/payments/${paymentId}/receipt`
   try {
-    const response: AxiosResponse = await axios.post(url, params)
+    const response: AxiosResponse = await axios.post(url, {}, params)
     return response.data
   } catch (err) {
     await handleApiError(err, 'Could not retrieve Name Request payment receipt')
