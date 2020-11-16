@@ -17,6 +17,10 @@ export default class PaymentMixin extends Vue {
     return this.$store.getters[paymentTypes.GET_SBC_PAYMENT]
   }
 
+  get sbcPaymentStatus () {
+    return this.$store.getters[paymentTypes.GET_SBC_PAYMENT_STATUS]
+  }
+
   get payment () {
     return this.$store.getters[paymentTypes.GET_PAYMENT]
   }
@@ -201,7 +205,7 @@ export default class PaymentMixin extends Vue {
   async downloadReceiptPdf (paymentId) {
     try {
       const response = await paymentService.generateReceiptRequest(paymentId)
-      const url = window.URL.createObjectURL(new Blob([response]))
+      const url = window.URL.createObjectURL(new Blob([response], { type: 'application/pdf' }))
       const link = document.createElement('a')
       link.href = url
       link.setAttribute('download', `payment-receipt-${paymentId}.pdf`)

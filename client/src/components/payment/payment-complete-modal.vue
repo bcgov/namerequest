@@ -29,7 +29,7 @@ import PaymentConfirm from '@/components/payment/payment-confirm.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 
 import paymentModule from '@/modules/payment'
-import { NameRequestPayment, SbcPaymentStatus } from '@/modules/payment/models'
+import { NameRequestPayment, PaymentStatus, SbcPaymentStatus } from '@/modules/payment/models'
 import newRequestModule, { ROLLBACK_ACTIONS as rollbackActions } from '@/store/new-request-module'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
@@ -77,13 +77,12 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
       await this.fetchData(!DEBUG_RECEIPT)
       // Make sure edit mode is disabled or it will screw up the back button
       await newRequestModule.mutateEditMode(false)
-      const { nrId, paymentStatus, sbcPayment = { statusCode: '' } } = this
-      const sbcPaymentStatusCode = sbcPayment.statusCode
+      const { nrId, paymentStatus, sbcPaymentStatus } = this
 
       // If the payment is already complete for some reason, skip this
       // TODO: Maybe set a constant instead somewhere...
-      if (paymentStatus === SbcPaymentStatus.COMPLETED) return
-      if (sbcPaymentStatusCode === SbcPaymentStatus.COMPLETED && paymentStatus === SbcPaymentStatus.CREATED) {
+      if (paymentStatus === PaymentStatus.COMPLETED) return
+      if (sbcPaymentStatus === SbcPaymentStatus.COMPLETED && paymentStatus === PaymentStatus.CREATED) {
         // Then complete the payment
         await this.completePayment(nrId, sessionPaymentId, sessionPaymentAction)
       } else {
@@ -172,7 +171,7 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
   get summary () {
     return {
       completionDate: this.paymentDate,
-      statusCode: this.paymentStatus
+      statusCode: this.sbcPaymentStatus
     }
   }
 }
