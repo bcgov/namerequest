@@ -17,6 +17,10 @@ export default class PaymentMixin extends Vue {
     return this.$store.getters[paymentTypes.GET_SBC_PAYMENT]
   }
 
+  get sbcPaymentStatus () {
+    return this.$store.getters[paymentTypes.GET_SBC_PAYMENT_STATUS]
+  }
+
   get payment () {
     return this.$store.getters[paymentTypes.GET_PAYMENT]
   }

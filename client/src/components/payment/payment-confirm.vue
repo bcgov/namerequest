@@ -30,7 +30,7 @@
 
     <ul class="fee-list" v-show="!fetchError">
       <li class="container fee-list__item" v-if="receipt">
-        <div class="fee-list__item-name">Payment Ref #</div>
+        <div class="fee-list__item-name">Receipt #</div>
         <div class="fee-list__item-value">{{receipt.receiptNumber}}</div>
       </li>
       <li class="container fee-list__item" v-if="receipt">
