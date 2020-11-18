@@ -41,7 +41,8 @@ import { ErrorI } from '@/modules/error/store/actions'
 import * as types from '@/store/types'
 
 const qs: any = querystring
-const ANALYSIS_TIMEOUT_MS = 180 * 1000 // 3 minuteslet source: any
+const ANALYSIS_TIMEOUT_MS = 180 * 1000 // 3 minutes
+let source: any
 
 const MINUTES_60_IN_MS = 60 * (60 * 1000)
 const MINUTES_5_IN_MS = 5 * (60 * 1000)
