@@ -41,14 +41,18 @@ import { ErrorI } from '@/modules/error/store/actions'
 import * as types from '@/store/types'
 
 const qs: any = querystring
-const debounce = require('lodash/debounce')
-const analysisTimeout: number = 180000
+const ANALYSIS_TIMEOUT_MS = 3 * 60 * 1000 // 3 minutes
 let source: any
 
 export const NR_COMPLETION_TIMER_NAME = 'nrCompletionTimer'
-export const NR_COMPLETION_TIMEOUT_MS = 5 * (60 * 1000) // Set to 5 minutes
 export const EXISTING_NR_TIMER_NAME = 'existingNrTimer'
-export const EXISTING_NR_TIMEOUT_MS = 5 * (60 * 1000) // Set to 5 minutes
+
+// give developers more time while coding
+const MINUTES_60_IN_MS = 60 * (60 * 1000)
+const MINUTES_5_IN_MS = 5 * (60 * 1000)
+// NB: window['webpackHotUpdate'] is a function when running locally, otherwise it's undefined
+export const NR_COMPLETION_TIMEOUT_MS = window['webpackHotUpdate'] ? MINUTES_60_IN_MS : MINUTES_5_IN_MS
+export const EXISTING_NR_TIMEOUT_MS = window['webpackHotUpdate'] ? MINUTES_60_IN_MS : MINUTES_5_IN_MS
 
 export class ApiError extends Error {}
 
@@ -1340,7 +1344,7 @@ export class NewRequestModule extends VuexModule {
       let resp = await axios.get('name-analysis', {
         params,
         cancelToken: source.token,
-        timeout: analysisTimeout
+        timeout: ANALYSIS_TIMEOUT_MS
       })
       let json = resp.data
       this.mutateAnalysisJSON(json)
@@ -1390,7 +1394,7 @@ export class NewRequestModule extends VuexModule {
       let resp = await axios.get('/xpro-name-analysis', {
         params,
         cancelToken: source.token,
-        timeout: analysisTimeout
+        timeout: ANALYSIS_TIMEOUT_MS
       })
       let json = resp.data
       this.mutateAnalysisJSON(json)
