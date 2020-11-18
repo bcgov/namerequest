@@ -85,12 +85,6 @@
           {{ mainMessage}}
         </v-col>
       </v-row>
-      <v-row v-if="entityPhraseRequired" class="my-1 py-0 colour-text">
-        <v-col cols="10" class="py-0">
-          A {{ entity_type_cd === 'CC' ? 'Community Contribution Company' : 'Cooperative'}} name must
-          include (but not start with) one of the following phrases: <b>{{ entityPhraseText }}</b>
-        </v-col>
-      </v-row>
       <v-row class="mt-2">
         <v-col cols="2" class="py-0 h5" align-self="start" key="static-2">
           Second Choice
@@ -337,6 +331,9 @@ export default class NamesCapture extends Vue {
   get entity_type_cd () {
     return newReqModule.entity_type_cd
   }
+  get entityTypeText () {
+    return (this.entity_type_cd === 'CC') ? 'Community Contribution Company' : 'Cooperative'
+  }
   get entityTypeOptions () {
     return newReqModule.entityTypeOptions
   }
@@ -376,26 +373,7 @@ export default class NamesCapture extends Vue {
       }
       return outcome
     }
-    if (this.editMode) {
-      let outcome = true
-      if (designationAtEnd) {
-        for (let choice of [1, 2, 3]) {
-          if (nameChoices[`name${choice}`]) {
-            if (!nameChoices[`designation${choice}`]) {
-              messages[`des${choice}`] = 'Please choose a designation'
-              this.showDesignationErrors[`des${choice}`] = true
-              outcome = false
-            } else {
-              this.messages[`des${choice}`] = ''
-            }
-          }
-        }
-        if (!outcome) {
-          this.hide = 'auto'
-        }
-      }
-      return outcome
-    }
+
     function name1 () {
       messages.name1 = ''
       messages.des1 = ''
@@ -461,6 +439,31 @@ export default class NamesCapture extends Vue {
       return true
     }
 
+    if (this.editMode) {
+      let outcome = true
+      if (designationAtEnd) {
+        if (!name1() || !name2() || !name3()) {
+          outcome = false
+        } else {
+          for (let choice of [1, 2, 3]) {
+            if (nameChoices[`name${choice}`]) {
+              if (!nameChoices[`designation${choice}`]) {
+                messages[`des${choice}`] = 'Please choose a designation'
+                this.showDesignationErrors[`des${choice}`] = true
+                outcome = false
+              } else {
+                this.messages[`des${choice}`] = ''
+              }
+            }
+          }
+        }
+        if (!outcome) {
+          this.hide = 'auto'
+        }
+      }
+      return outcome
+    }
+
     let step1 = name1()
     let step2 = name2()
     let step3 = name3()
@@ -487,8 +490,8 @@ export default class NamesCapture extends Vue {
   }
   get mainMessage () {
     if (this.isAssumedName) {
-      return `${this.name}  is  too similar to a name already in use.  Please enter a new name such as your corporation
-  number`
+      return `${this.name} is too similar to a name already in use. Please enter a new name such as your
+        corporation number.`
     }
     return `You may provide up to two additional names which will be considered at no further cost, in the
         order provided, only if your First Choice cannot be approved.`
@@ -652,19 +655,18 @@ export default class NamesCapture extends Vue {
     this.validate(true)
   }
   validatePhrases (choice: string) {
-    if (!this.editMode) {
-      let name = this.nameChoices[choice]
-      if (this.entityPhraseRequired) {
-        let name = this.nameChoices[choice].toUpperCase()
-        if (this.entityPhraseChoices.every(phrase => {
-          phrase = phrase.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')
-          return (name.search(new RegExp('(\\s)' + phrase + '(\\s|$)')) === -1)
-        })) {
-          this.messages[choice] = 'Your name must contain one of the required phrases'
-        }
-        if (this.entityPhraseChoices.some(phrase => name.startsWith(phrase))) {
-          this.messages[choice] = 'Your name must not begin with one of the required phrases'
-        }
+    if (this.entityPhraseRequired) {
+      const name = this.nameChoices[choice].toUpperCase()
+      if (this.entityPhraseChoices.every(phrase => {
+        phrase = phrase.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')
+        return (name.search(new RegExp('(\\s)' + phrase + '(\\s|$)')) === -1)
+      })) {
+        this.messages[choice] = `A ${this.entityTypeText} name must include (but not start with)
+          one of the following phrases: ${this.entityPhraseText}`
+      }
+      if (this.entityPhraseChoices.some(phrase => name.startsWith(phrase))) {
+        this.messages[choice] = `A ${this.entityTypeText} name must not begin with one of the
+          following phrases: ${this.entityPhraseText}`
       }
     }
   }
