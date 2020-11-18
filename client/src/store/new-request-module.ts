@@ -165,36 +165,44 @@ export class NewRequestModule extends VuexModule {
   conversionTypeAddToSelect: ConversionTypesI | null = null
   conversionTypes: ConversionTypesI[] = [
     {
-      desc: 'BC Corporation ⇨ Unlimited Liability Company',
-      text: 'BC Corp. ⇨ U.L.C.',
+      desc: 'Limited company to an unlimited liability company',
+      text: 'Limited company to an unlimited liability company',
       entity_type_cd: 'UL',
-      blurb: 'Convert from a <b>BC Corporation</b> to an <b>Unlimited Liability Company</b>',
+      blurb: [
+        'Alter business type from a limited company to an unlimited liability company.'
+      ],
       value: 'UC',
       rank: 1,
       shortlist: true
     },
     {
-      desc: 'BC Corporation ⇨ Community Contribution Company',
-      text: 'BC Corp. ⇨ Comunity Contribution Co.',
+      desc: 'Limited company to a community contribution company',
+      text: 'Limited company to a community contribution company',
       entity_type_cd: 'CC',
-      blurb: 'blah',
+      blurb: [
+        'Alter business type from a limited company to a community contribution company.'
+      ],
       value: 'CCV',
       rank: 2,
       shortlist: true
     },
     {
-      desc: 'BC Corporation ⇨ BC Benefit Company',
-      text: 'BC Corp. ⇨ Benefit Company',
+      desc: 'Limited company to a benefit company',
+      text: 'Limited company to a benefit company',
       entity_type_cd: 'BC',
-      blurb: 'blah',
+      blurb: [
+        'Alter business type from a limited company to a benefit company.'
+      ],
       value: 'BECV',
       shortlist: false
     },
     {
-      desc: 'BC Benefit Company ⇨ BC Corporation',
-      text: 'Benefit Company ⇨ BC Corp.',
+      desc: 'Benefit company to a limited company',
+      text: 'Benefit company to a limited company',
       entity_type_cd: 'CR',
-      blurb: 'blah',
+      blurb: [
+        'Alter business type from a benefit company to a limited company.'
+      ],
       value: 'BECR',
       shortlist: false
     }
@@ -386,26 +394,37 @@ export class NewRequestModule extends VuexModule {
         'Corporation established and operating in a Canadian province or territory and plans to operate in BC as well.',
         'Has name protection in BC'
       ],
+      intBlurb: [
+        'Corporation established and operating outside of Canada.  Plans to operate in BC as well.',
+        'Has name protection in BC'
+      ],
       value: 'XCR',
       shortlist: true,
       rank: 1
     },
-    // POTENTIALLY BEING REMOVED, COMMENTED OUT OPTION UNTIL FURTHER RESEARCH.
-    // {
-    //   text: 'Unlimited liability company',
-    //   cat: 'Corporations',
-    //   blurb: [
-    //     'ULC established and operating in Alberta or Nova Scotia and plans to operate in BC as well.',
-    //     'Has name protection in BC'
-    //   ],
-    //   value: 'XUL'
-    // },
+    {
+      text: 'Unlimited liability company',
+      cat: 'Corporations',
+      blurb: [
+        'ULC established and operating in Alberta or Nova Scotia and plans to operate in BC as well.',
+        'Has name protection in BC'
+      ],
+      intBlurb: [
+        'ULC established and operating outside of Canada.  Plans to operate in BC as well.',
+        'Has name protection in BC'
+      ],
+      value: 'XUL'
+    },
     {
       text: 'Limited liability company',
       cat: 'Corporations',
       blurb: [
-        'A Limited Liability Company (LLC) formed outside of Canada that plans to operate in BC as well.\n',
-        'Does not have name protection in BC'
+        'A Limited Liability Company (LLC) formed outside of Canada that plans to operate in BC as well.',
+        'Does have name protection in BC'
+      ],
+      intBlurb: [
+        'A Limited Liability Company (LLC) formed outside of Canada that plans to operate in BC as well.',
+        'Does have name protection in BC'
       ],
       value: 'RLC',
       shortlist: true,
@@ -418,13 +437,21 @@ export class NewRequestModule extends VuexModule {
         'LP established and operating in a Canadian province or territory and plans to operate in BC as well.',
         'Does not have name protection in BC'
       ],
+      intBlurb: [
+        'LP established and operating in the US or UK.  Plans to operate in BC as well.',
+        'Does not have name protection in BC'
+      ],
       value: 'XLP'
     },
     {
       text: 'Limited liability partnership',
       cat: 'Partnerships',
       blurb: [
-        'LLP established and operating in another province or country. Plans to operate in BC as well.',
+        'LLP established and operating in a Canadian province or territory and plans to operate in BC as well.',
+        'Does not have name protection in BC'
+      ],
+      intBlurb: [
+        'LLP established and operating in the US or UK.  Plans to operate in BC as well.',
         'Does not have name protection in BC'
       ],
       value: 'XLL'
@@ -437,6 +464,10 @@ export class NewRequestModule extends VuexModule {
          jurisdiction and plans to operate in BC.`,
         'Has Name protection in BC'
       ],
+      intBlurb: [
+        'Cooperative established and operating outside of Canada.  Plans to operate in BC.',
+        'Has Name protection in BC'
+      ],
       value: 'XCP',
       shortlist: true,
       rank: 3
@@ -444,7 +475,12 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Society',
       cat: 'Social Enterprises',
-      blurb: ['Societies must use Societies Online to get their name'],
+      blurb: [
+        'Societies must use Societies Online to get their name'
+      ],
+      intBlurb: [
+        'Societies must use Societies Online to get their name'
+      ],
       value: 'XSO'
     }
   ]
@@ -845,12 +881,30 @@ export class NewRequestModule extends VuexModule {
       {
         text: 'Extra provincial (Canada based)',
         value: 'CA',
-        blurb: `Your existing business is currently located in any Province or Territory other than BC.`
+        blurb: [
+          `Your existing business is currently located in any Province or Territory other than BC.`,
+          `Your existing business is currently located in any Province or Territory other than BC.`,
+          `One or more of the businesses that need to be restored or reinstated are Canada based and were 
+           extra provincially registered in BC.`,
+          `One or more of the businesses that have amalgamated are Canadian and are extra provincially 
+           registered in BC.`,
+          `Your existing Canada based business is extra provincially registered in BC and has changed its name in the 
+           home jurisdiction.`
+        ]
       },
       {
         text: 'Extra provincial (Internationally based)',
         value: 'IN',
-        blurb: `Your existing business is currently located outside of Canada.`
+        blurb: [
+          `Your existing business is currently located outside of Canada.`,
+          `Your existing business is currently located in any Province or Territory other than BC.`,
+          `One or more of the businesses that need to be restored or reinstated are Internationally based and 
+           were extra provincially registered in BC.`,
+          `One or more of the businesses that have amalgamated are Internationally based and are extra 
+           provincially registered in BC.`,
+          `Your existing Internationally based business is extra provincially registered in BC and has changed its name 
+           in the home jurisdiction.`
+        ]
       }
     ]
     if (['CNV'].includes(this.request_action_cd)) {
@@ -860,7 +914,7 @@ export class NewRequestModule extends VuexModule {
       return options.filter(location => location.value !== 'BC')
     }
     if (['MVE'].includes(this.request_action_cd)) {
-      return options.filter(location => location.value === 'IN')
+      return options.filter(location => location.value !== 'BC')
     }
     return options
   }
@@ -2065,7 +2119,7 @@ export class NewRequestModule extends VuexModule {
     this.mutateName(name)
     if (this.location === 'BC') {
       if (this.nameIsEnglish && !this.isPersonsName && !this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
-        if (['NEW', 'DBA', 'CHG', 'MVE'].includes(this.request_action_cd)) {
+        if (['NEW', 'DBA', 'CHG'].includes(this.request_action_cd)) {
           this.getNameAnalysis()
           return
         }
@@ -2074,7 +2128,7 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('SubmissionTabs')
       return
     } else {
-      if (['AML', 'CHG', 'DBA', 'NEW', 'REH', 'REN', 'REST'].includes(this.request_action_cd)) {
+      if (['AML', 'CHG', 'DBA', 'MVE', 'NEW', 'REH', 'REN', 'REST'].includes(this.request_action_cd)) {
         this.getNameAnalysisXPRO()
       }
     }
@@ -2324,12 +2378,8 @@ export class NewRequestModule extends VuexModule {
   }
   @Mutation
   mutateRequestAction (action: string) {
-    // eslint-disable-next-line no-console
-    console.log(action)
     this.request_action_cd = action
     if (action === 'MVE' && this.location === 'BC') {
-      // eslint-disable-next-line no-console
-      console.log('inside IF')
       this.location = 'CA'
       this.entity_type_cd = 'XCR'
     }

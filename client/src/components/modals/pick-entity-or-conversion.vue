@@ -10,24 +10,22 @@
         </v-col>
       </v-row>
       <template v-if="isConversion">
-        <v-card-text class="py-4 text-center">
-          <v-container fluid>
+        <v-card-text>
+          <v-container fluid class="px-4">
             <v-row>
-              <v-col cols="12" class="h5">Possible Conversions</v-col>
+              <v-col cols="12" class="copy-bold">Alterations</v-col>
             </v-row>
             <v-row v-for="(conversion, i) in conversionTypes" :key="'conv-'+i">
               <v-col cols="12" class="clickable-cell"
                      :id="conversion.value"
                      @click="chooseConversion(conversion)">
-                <v-tooltip bottom max-width="500" open-delay="500">
+                <v-tooltip bottom content-class="bottom-tooltip">
                   <template v-slot:activator="scope">
-                    <button v-on="scope.on" class="link-sm-sans-ul text-left">{{ conversion.desc }}</button>
+                    <button v-on="scope.on" class="link-sm-sans-ul entity-link">{{ conversion.desc }}</button>
                   </template>
-                  <ul class="ma-0 pa-0">
-                    <li class="no-bullet"
-                        v-html="conversion.blurb"
-                        :key="i + '-blurb'" />
-                  </ul>
+                  <div v-for="(text, i) in conversion.blurb" :key="i + '-blurb'">
+                    <span>{{ text }}</span>
+                  </div>
                 </v-tooltip>
               </v-col>
             </v-row>
@@ -48,8 +46,8 @@
                   <template v-slot:activator="scope">
                     <button v-on="scope.on" class="link-sm-sans-ul text-left entity-link">{{ entity.text }}</button>
                   </template>
-                  <template v-if="entity.blurb.length > 1">
-                    <div v-for="(text, i) in entity.blurb" :key="i + '-blurb'">
+                  <template v-if="(location === 'IN' ? entity.intBlurb.length : entity.blurb.length) >= 1">
+                    <div v-for="(text, i) in (location === 'IN' ? entity.intBlurb : entity.blurb)" :key="i + '-blurb'">
                       <span :class="{ 'tooltip-bullet': i !== 0}">{{ text }}</span>
                     </div>
                   </template>
@@ -168,9 +166,6 @@ export default class PickEntityOrConversion extends Vue {
 }
 
 </script>
-th
-  border-bottom: 1px solid grey
-
 <style lang="sass" scoped>
 .v-card__text
   padding: 0 !important
