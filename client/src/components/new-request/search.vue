@@ -29,7 +29,10 @@
       </v-col>
       <v-col cols="2">
         <!--location-->
-        <v-tooltip top content-class="top-tooltip" :disabled="location === 'BC'">
+        <v-tooltip id="location-options-select"
+                   top
+                   content-class="top-tooltip"
+                   :disabled="location === 'BC'">
           <template v-slot:activator="scope">
             <div v-on="scope.on">
               <v-select :error-messages="errors.includes('location') ? 'Please select a location' : ''"
@@ -37,7 +40,6 @@
                         :items="locationOptions"
                         @change="clearErrors()"
                         filled
-                        id="location-options-select"
                         v-model="location">
                 <template slot="item" slot-scope="data">
                   <v-tooltip :disabled="!data.item.blurb" right>
@@ -60,7 +62,8 @@
       </v-col>
       <v-col cols="5">
         <!--entityConversionType-->
-        <v-tooltip top
+        <v-tooltip id="entity-type-options-select"
+                   top
                    content-class="top-tooltip"
                    :disabled="request_action_cd !== 'CNV' || !entityConversionText">
           <template v-slot:activator="scope">
@@ -71,7 +74,6 @@
                         :placeholder="isConversion ? 'Please choose a conversion type' : ''"
                         @change="clearErrors()"
                         filled
-                        id="entity-type-options-select"
                         v-model="entity_type_cd">
                 <template slot="item" slot-scope="data">
                   <v-tooltip
