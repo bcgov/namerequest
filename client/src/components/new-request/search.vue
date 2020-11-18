@@ -1,6 +1,6 @@
 <template>
   <v-container fluid id="new-request-container" class="copy-normal">
-    <v-row justify="end">
+    <v-row>
       <v-col cols="6" class="copy-normal copy-bold">I need a name to:</v-col>
       <v-col cols="6">
         <span id="nr-required-activator"
@@ -8,26 +8,52 @@
               style="display: flex; justify-content: flex-end;"
               @click="activateNRRModal()">Check to see if you need to file a a Name Request</span>
       </v-col>
-      <v-col cols="5">
+      <v-col cols="4.5">
         <!--request_action_cd-->
         <v-select :error-messages="errors.includes('request_action_cd') ? 'Please select a type' : ''"
                   :hide-details="!errors.includes('request_action_cd')"
-                  :items="requestTypeOptions"
+                  :items="requestActions"
                   @change="clearErrors()"
                   filled
                   id="search-type-options-select"
-                  v-model="request_action_cd" />
+                  v-model="request_action_cd">
+          <template slot="item" slot-scope="data">
+            <v-tooltip :disabled="!data.item.blurb" right>
+              <template v-slot:activator="scope">
+                <span v-on="scope.on" class="list-item">{{ data.item.text }}</span>
+              </template>
+              <span>{{ data.item.blurb }}</span>
+            </v-tooltip>
+          </template>
+        </v-select>
       </v-col>
-      <v-col cols="2">
+      <v-col cols="3">
         <!--location-->
-        <v-select :error-messages="errors.includes('location') ? 'Please select a location' : ''"
-                  :hide-details="!errors.includes('location')"
-                  :items="locationOptions"
-                  filled
-                  id="location-options-select"
-                  v-model="location" />
+        <v-tooltip top content-class="top-tooltip" :disabled="location === 'BC'">
+          <template v-slot:activator="scope">
+            <div v-on="scope.on">
+              <v-select :error-messages="errors.includes('location') ? 'Please select a location' : ''"
+                        :hide-details="!errors.includes('location')"
+                        :items="locationOptions"
+                        @change="clearErrors()"
+                        filled
+                        id="location-options-select"
+                        v-model="location">
+                <template slot="item" slot-scope="data">
+                  <v-tooltip :disabled="!data.item.blurb" right>
+                    <template v-slot:activator="scope">
+                      <span v-on="scope.on" class="list-item">{{ data.item.text }}</span>
+                    </template>
+                    <span>{{ data.item.blurb }}</span>
+                  </v-tooltip>
+                </template>
+              </v-select>
+            </div>
+          </template>
+          <span>{{ locationText }}</span>
+        </v-tooltip>
       </v-col>
-      <v-col cols="5">
+      <v-col cols="4.5">
         <!--entityConversionType-->
         <v-select :error-messages="errors.includes('entity_type_cd') ? 'Please select a type' : ''"
                   :hide-details="!errors.includes('entity_type_cd')"
@@ -36,51 +62,80 @@
                   @change="clearErrors()"
                   filled
                   id="entity-type-options-select"
-                  v-model="entity_type_cd" />
+                  v-model="entity_type_cd">
+          <template slot="item" slot-scope="data">
+            <v-tooltip
+                    :right="isScreenLg"
+                    :left="!isScreenLg"
+                    :disabled="!data.item.blurb"
+                    :content-class="!isScreenLg && 'left-tooltip'">
+              <template v-slot:activator="scope">
+                <span v-on="scope.on"
+                      class="list-item"
+                      :class="{ 'entity-type-info': data.item.value === 'INFO' }">
+                  {{ data.item.text }}
+                </span>
+              </template>
+              <div v-for="(item, index) in data.item.blurb" :key="`Blurb-${index}`">
+                <span :class="{ 'tooltip-bullet': index !== 0}">
+                  {{ item }}
+                </span>
+              </div>
+            </v-tooltip>
+          </template>
+        </v-select>
       </v-col>
       <NameInput :class="inputCompClass"
                  id="name-input-component"
                  class="mb-n7"/>
     </v-row>
-    <v-row no-gutters class="ma-0 pa-0 mt-n3" align="center">
+    <v-row no-gutters>
       <v-col cols="4">
-        <v-tooltip bottom open-delay="300">
-          <template v-slot:activator="{on}">
-              <v-checkbox v-model="isPersonsName"
-                          v-on="on"
-                          id="name-checkbox"
-                          class="copy-small px-0 mx-0"
-                          label="Name is a person's name" />
+        <v-checkbox
+                v-model="isPersonsName"
+                id="name-checkbox"
+                class="copy-small mr-5">
+          <template v-slot:label>
+            <div>
+              <v-tooltip bottom content-class="bottom-tooltip">
+                <template v-slot:activator="{ on }">
+                  <span v-on="on">Name is a person's name</span>
+                </template>
+                <p class="py-0 my-0">Check this box if you are...</p>
+                <ul>
+                  <li>Incorporating under your own name (eg. DR. JOE SMITH INC.)</li>
+                  <li>The name contains one or more names. (eg. BLAKE, CHAN & DOUGLAS INC.)</li>
+                  <li>The name contains one or more names. (eg. FRANKLIN INC.)</li>
+                </ul>
+              </v-tooltip>
+            </div>
           </template>
-          <p class="py-0 my-0">Check this box if you are...</p>
-            <ul>
-              <li>Incorporating under your own name (eg. DR. JOE SMITH INC.)</li>
-              <li>The name contains one or more names. (eg. BLAKE, CHAN & DOUGLAS INC.)</li>
-              <li>The name contains one or more names. (eg. FRANKLIN INC.)</li>
-            </ul>
-        </v-tooltip>
+        </v-checkbox>
       </v-col>
       <v-col cols="4">
-        <v-tooltip bottom open-delay="300">
-          <template v-slot:activator="{on}">
-
-              <v-checkbox v-model="nameIsEnglish"
-                          v-on="on"
-                          id="name-checkbox"
-                          class="copy-small ml-n6"
-                          label="Name contains no English words" />
-
+        <v-checkbox
+                v-model="nameIsEnglish"
+                id="name-checkbox"
+                class="copy-small ml-n6">
+          <template v-slot:label>
+            <div>
+              <v-tooltip bottom content-class="bottom-tooltip">
+                <template v-slot:activator="{ on }">
+                  <span v-on="on">Name contains no English words</span>
+                </template>
+                <p>This refers to the language of the words in your name.</p>
+                <ul>
+                  <li>Leave this box checked if your name contains <b>only</b> English <b>or a mix</b> of English and
+                    another Language
+                  </li>
+                  <li>Uncheck this box if your name is written <b>entirely</b> in another language and does <b>not</b>
+                    contain any English
+                  </li>
+                </ul>
+              </v-tooltip>
+            </div>
           </template>
-          <p class="py-0 my-0">This refers to the language of the words in your name.</p>
-          <ul>
-            <li>Leave this box checked if your name contains <b>only</b> English <b>or a mix</b> of English and
-              another Language
-            </li>
-            <li>Uncheck this box if your name is written <b>entirely</b> in another language and does <b>not</b> contain
-              any English
-            </li>
-          </ul>
-        </v-tooltip>
+        </v-checkbox>
       </v-col>
     </v-row>
     <div class="mt-1 mb-4 text-center">
@@ -132,6 +187,9 @@ export default class NewSearch extends Vue {
         this.location = 'CA'
       }
     }
+  }
+  private get isScreenLg () {
+    return this.$vuetify.breakpoint.width > 1440
   }
 
   get displayedComponent () {
@@ -194,6 +252,9 @@ export default class NewSearch extends Vue {
   get locationOptions () {
     return newReqModule.locationOptions
   }
+  get locationText () {
+    return newReqModule.locationText
+  }
   get nameIsEnglish () {
     return !newReqModule.nameIsEnglish
   }
@@ -204,13 +265,14 @@ export default class NewSearch extends Vue {
     return newReqModule.request_action_cd
   }
   set request_action_cd (value: string) {
-    newReqModule.mutateRequestAction(value)
-    if (value === 'INFO') {
-      newReqModule.mutatePickRequestTypeModalVisible(true)
+    const request = this.requestActions.find(request => request.value === value)
+    if (request.value !== 'NEW') {
+      newReqModule.mutateExtendedRequestType(request)
     }
+    newReqModule.mutateRequestAction(value)
   }
-  get requestTypeOptions () {
-    return newReqModule.requestTypeOptions
+  get requestActions () {
+    return newReqModule.requestActions
   }
   get showNameCheckBox () {
     if (this.location === 'BC' && this.entity_type_cd === 'CR') {
@@ -236,9 +298,20 @@ export default class NewSearch extends Vue {
 </script>
 
 <style lang="sass" scoped>
+.list-item
+  width: 100%
+
+.entity-type-info
+  border-top: 1px solid #DEE2E6
+  padding: 10px 0 10px 0 !important
+
+.list-item:hover
+  color: #1669BB
+
 .search-name-btn
   padding: 0 50px 0 50px !important
   font-size: 16px !important
   text-transform: none !important
+  letter-spacing: normal !important
 
 </style>

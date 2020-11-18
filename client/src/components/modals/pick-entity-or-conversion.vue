@@ -1,6 +1,14 @@
 <template>
-  <v-dialog v-model="showModal" :max-width="width" hide-overlay>
-    <v-card class="pa-0 no-border">
+  <v-dialog v-model="showModal" :max-width="width" persistent>
+    <v-card class="pa-6 no-border pick-entity-card">
+      <v-row class="pl-1 mx-0">
+        <v-col cols="11">
+          <label>{{ locationText }}:</label>
+        </v-col>
+        <v-col cols="1">
+          <v-icon md color="primary" @click="showModal = false">mdi-close</v-icon>
+        </v-col>
+      </v-row>
       <template v-if="isConversion">
         <v-card-text class="py-4 text-center">
           <v-container fluid>
@@ -27,32 +35,23 @@
         </v-card-text>
       </template>
       <template v-else-if="!showSocietiesInfo">
-        <v-card-text class="py-4" style="display: flex; justify-items: center; width: 100%">
+        <v-card-text style="display: flex; justify-items: center; width: 100%">
           <v-simple-table v-for="(category, i) in tableData" :key="'cat'+i">
             <tr>
               <th>
-                <span class="h5" v-if="location === 'BC'">{{ category.text }}</span>
-                <span class="h5" v-else>
-                {{ location === 'CA' ? 'Canadian' : 'Foreign' }}
-                <br>{{ category.text }}
-              </span>
+                <span class="copy-bold copy-small">{{ category.text }}</span>
               </th>
             </tr>
             <tr v-for="(entity, n) in category.entities" :key="'ent'+n">
               <td class="clickable-cell" :id="entity.value" @click="chooseType(entity)">
-                <v-tooltip bottom max-width="500" open-delay="500">
+                <v-tooltip bottom content-class="bottom-tooltip">
                   <template v-slot:activator="scope">
-                    <button v-on="scope.on" class="link-sm-sans-ul text-left">{{ entity.text }}</button>
+                    <button v-on="scope.on" class="link-sm-sans-ul text-left entity-link">{{ entity.text }}</button>
                   </template>
                   <template v-if="entity.blurb.length > 1">
-                    <ul class="ma-0 pa-0">
-                      <li v-for="(text, i) in entity.blurb"
-                          :class="i == 0 ? 'no-bullet' : 'yes-bullet'"
-                          :key="i + '-blurb'">{{ text }}</li>
-                    </ul>
-                  </template>
-                  <template v-else>
-                    <span>{{ entity.blurb[0] }}</span>
+                    <div v-for="(text, i) in entity.blurb" :key="i + '-blurb'">
+                      <span :class="{ 'tooltip-bullet': i !== 0}">{{ text }}</span>
+                    </div>
                   </template>
                 </v-tooltip>
               </td>
@@ -73,11 +72,6 @@
           </v-container>
         </v-card-text>
       </template>
-      <v-card-actions class="bg-grey-1 text-center">
-        <div style="display: block; width: 100%;">
-          <button @click="showModal = false"><v-icon>mdi-close</v-icon> Close</button>
-        </div>
-      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -112,6 +106,9 @@ export default class PickEntityOrConversion extends Vue {
   }
   get location () {
     return newReqModule.location
+  }
+  get locationText () {
+    return newReqModule.locationText === 'BC' ? 'British Columbia' : newReqModule.locationText
   }
   get showModal () {
     return newReqModule.pickEntityModalVisible
@@ -175,18 +172,15 @@ th
   border-bottom: 1px solid grey
 
 <style lang="sass" scoped>
-.no-bullet
-  list-style-type: none
-  margin-bottom: 8px
-  line-height: 18px
-.yes-bullet
-  list-style-position: inside
-  margin-left: 30px
-  line-height: 18px
+.v-card__text
+  padding: 0 !important
+.entity-link
+  text-decoration: none
 .clickable-cell:hover
   background-color: $grey-2
   cursor: pointer
 .no-border
   border-radius: 0 !important
+  text-decoration: none !important
 
 </style>
