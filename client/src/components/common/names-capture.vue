@@ -673,6 +673,7 @@ export default class NamesCapture extends Vue {
 }
 </script>
 
-<style lang="sass">
-
+<style scoped lang="sass">
+::v-deep .v-messages__message
+  line-height: 14px !important
 </style>
