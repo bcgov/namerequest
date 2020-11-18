@@ -374,15 +374,6 @@ export class NewRequestModule extends VuexModule {
       rank: 1
     },
     {
-      text: 'Unlimited Liability Co.',
-      cat: 'Corporations',
-      blurb: [
-        'ULC established and operating in another province or country. Plans to operate in BC as well. ',
-        'Has name protection in BC'
-      ],
-      value: 'XUL'
-    },
-    {
       text: 'Limited Liability Co.',
       cat: 'Corporations',
       blurb: [
