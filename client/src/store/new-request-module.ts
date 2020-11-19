@@ -378,15 +378,6 @@ export class NewRequestModule extends VuexModule {
       rank: 1
     },
     {
-      text: 'Unlimited Liability Co.',
-      cat: 'Corporations',
-      blurb: [
-        'ULC established and operating in another province or country. Plans to operate in BC as well. ',
-        'Has name protection in BC'
-      ],
-      value: 'XUL'
-    },
-    {
       text: 'Limited Liability Co.',
       cat: 'Corporations',
       blurb: [
@@ -576,7 +567,7 @@ export class NewRequestModule extends VuexModule {
     if (this.location === 'BC' && this.request_action_cd === 'CNV') {
       return 'colin'
     }
-    let mrasEntities = ['XUL', 'XCR', 'XLP', 'UL', 'CR', 'CP', 'BC', 'CC']
+    let mrasEntities = ['XCR', 'XLP', 'UL', 'CR', 'CP', 'BC', 'CC']
     let { xproJurisdiction } = this.nrData
 
     if ($mrasJurisdictions.includes(xproJurisdiction) && mrasEntities.includes(this.entity_type_cd)) {
@@ -959,8 +950,6 @@ export class NewRequestModule extends VuexModule {
           return 'AL'
         case 'XCR':
           return 'AS'
-        case 'XUL':
-          return 'UA'
         default:
           return ''
       }
