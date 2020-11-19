@@ -563,7 +563,7 @@ export class NewRequestModule extends VuexModule {
     if (this.location === 'BC' && this.request_action_cd === 'CNV') {
       return 'colin'
     }
-    let mrasEntities = ['XUL', 'XCR', 'XLP', 'UL', 'CR', 'CP', 'BC', 'CC']
+    let mrasEntities = ['XCR', 'XLP', 'UL', 'CR', 'CP', 'BC', 'CC']
     let { xproJurisdiction } = this.nrData
 
     if ($mrasJurisdictions.includes(xproJurisdiction) && mrasEntities.includes(this.entity_type_cd)) {
@@ -946,8 +946,6 @@ export class NewRequestModule extends VuexModule {
           return 'AL'
         case 'XCR':
           return 'AS'
-        case 'XUL':
-          return 'UA'
         default:
           return ''
       }
