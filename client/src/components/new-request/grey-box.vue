@@ -1,130 +1,125 @@
 <template>
-  <v-container :class="optionClasses(i)"
-               class="grey-box-class py-2 px-3"
-               :key="option.type + '-' + i  + '-container'">
-    <v-col class="fw-700 mt-n3" cols="12">
-      <div style="display: flex; width: 100%; justify-content: flex-start">
-        <div class="h5">
-          <v-icon class="pr-2 colour-p-blue-text">mdi-information</v-icon>
-          {{ option.header }}
-        </div>
-      </div>
-    </v-col>
-    <template v-if="issueType === 'user_cancelled'">
-      <v-col class="copy-small colour-p-blue-text pt-0" cols="12">
-        <p v-if="option.line1" class="ma-0 pa-0" v-html="option.line1" />
-        <p v-if="option.line2" class="ma-0 pa-0 pt-2" v-html="option.line2" />
+  <v-container :class="optionClasses"
+               no-gutters
+               :key="option.type + '-' + i  + '-container-'">
+    <v-row no-gutters class="ma-0 pa-0">
+      <v-col cols="12">
+        <span class="title-bold-14" v-if="this.issue.setup.length > 1">Option {{ i + 1 }}:</span>
+        <span class="ml-1 title-bold-16">{{ option.header }}</span>
       </v-col>
-      <v-col cols="12" class="text-center" v-if="option.type === 'cancel_to_examiner'">
-        <ReserveSubmit setup="examine"
-                       id="reserve-submit-button"
-                       style="display: inline" />
-      </v-col>
-      <v-col cols="12" class="text-center" v-else>
-        <v-btn @click="cancelAnalyzeName('Tabs')">Start Over</v-btn>
-      </v-col>
-    </template>
-    <template v-else>
-      <transition :name="i === 0 ? 'fade' : '' " mode="out-in">
-        <v-row class="copy-small colour-p-blue-text"
-               align-content="start"
-               :key="changesInBaseName+designationIsFixed+'key'+i">
-          <!-- Header, Line 1 and Line 2-->
-
-          <v-col class="copy-small colour-p-blue-text pt-0"
-                 v-if="designationIsFixed && isDesignationIssueType && i === 0"
-                 cols="12">
-            {{ isLastIndex ? 'No additional issues were identified with your name.  You may proceed.' :
-            'Please click the "Next Issue" button to continue' }}
-          </v-col>
-          <v-col class="copy-small colour-p-blue-text pt-0"
-                 v-else-if="changesInBaseName && isDesignationIssueType && i === 0"
-                 cols="12">
-            You have altered the base text of your name.  You must
-            either change it back or click the magnifying glass to run a new search for your edited name.
-          </v-col>
-          <v-col class="copy-small colour-p-blue-text pt-0"
-                 v-else
-                 cols="12">
-            <p v-if="option.line1" class="ma-0 pa-0" v-html="option.line1" />
-            <p v-if="option.line2" class="ma-0 pa-0 pt-2" v-html="option.line2" />
-          </v-col>
-
-          <!-- NAME/DESIGNATION-MANIPULATING OPTION BOXES -->
-          <template v-if="isDesignationIssueType">
-            <transition name="fade"
-                        mode="out-in">
-              <v-col v-if="!designationIsFixed && !changesInBaseName && i === 0"
-                     class="text-center"
-                     key="designation-error-col">
-                <template v-if="Array.isArray(designations) && designations.length > 0">
-                  <div class="designation-buttons">
-                    <button tag="div"
-                            :key="'designation-'+d"
-                            :id="'designation-'+d"
-                            @click.once.prevent="changeDesignation(des)"
-                            class="link-sm ma-0 pa-0 px-1"
-                            v-for="(des, d) in designations">
-                      {{ des }}{{ (d !== issue.designations.length - 1) ? ',' : '' }}
-                    </button>
-                  </div>
-                </template>
-                <template v-if="option.type === 'change designation at the end'">
-                  <v-btn @click="moveDesignation" id="move-designation-btn">Move Designation</v-btn>
-                </template>
-              </v-col>
-              <v-col v-if="designationIsFixed && i === 0 && issueIndex + 1 === issueLength"
-                     key="designation-fixed-col" class="text-center">
-                <ReserveSubmit id="reserve-submit-button"
-                               style="display: inline"
-                               :setup="reserveSubmitConfig" />
-              </v-col>
-            </transition>
-          </template>
-
-          <!-- CHANGE_ENTITY_TYPE OPTION BOX -->
-          <template v-if="option.type === 'change_entity_type'">
-            <v-col class="text-center mt-4">
-              <v-btn @click="cancelAnalyzeName('Tabs')">Restart and Change Type</v-btn>
+      <template v-if="issueType === 'user_cancelled'">
+        <v-col class="copy-small colour-p-blue-text" cols="12">
+          <p v-if="option.line1" v-html="option.line1" />
+          <p v-if="option.line2" v-html="option.line2" />
+        </v-col>
+        <v-col cols="12" class="text-center" v-if="option.type === 'cancel_to_examiner'">
+          <ReserveSubmit setup="examine"
+                         id="reserve-submit-button"
+                         style="display: inline" />
+        </v-col>
+        <v-col cols="12" class="text-center" v-else>
+          <v-btn @click="cancelAnalyzeName('Tabs')">Start Over</v-btn>
+        </v-col>
+      </template>
+      <template v-else>
+        <transition :name="i === 0 ? 'fade' : '' " mode="out-in">
+          <v-row class="copy-small colour-p-blue-text"
+                 align-content="start"
+                 :key="changesInBaseName+designationIsFixed+'key'+i">
+            <!-- Header, Line 1 and Line 2-->
+            <v-col class="copy-small colour-p-blue-text"
+                   v-if="changesInBaseName && isDesignationIssueType && i === 0"
+                   cols="12">
+              You have altered the base text of your name.  You must
+              either change it back or click the magnifying glass to run a new search for your edited name.
             </v-col>
-          </template>
-          <!-- ASSUMED NAME OPTION BOX -->
-          <template v-else-if="option.type === 'assumed_name'">
-            <v-col :id="option.type + '-button-checkbox-col'"
-                   class="pa-0 grey-box-checkbox-button text-center">
-              <transition name="fade" mode="out-in" >
-                <ReserveSubmit :key="option.type+'-reserve-submit'"
-                               setup="assumed"
-                               id="reserve-submit-comp"
-                               v-if="isLastIndex"
-                               style="display: inline" />
+            <v-col class="copy-small colour-p-blue-text"
+                   v-else
+                   cols="12">
+              <p v-if="option.line1" class="ma-0 pa-0" v-html="option.line1" />
+              <p v-if="option.line2" class="ma-0 pa-0 pt-2 mb-n1" v-html="option.line2" />
+            </v-col>
+
+            <!-- NAME/DESIGNATION-MANIPULATING OPTION BOXES -->
+            <template v-if="isDesignationIssueType">
+              <transition name="fade"
+                          mode="out-in">
+                <v-col v-if="!designationIsFixed && !changesInBaseName && i === 0"
+                       class="text-center designation-error-col"
+                       key="designation-error-col">
+                  <template v-if="Array.isArray(designations) && designations.length > 0">
+                    <div class="designation-buttons pa-0">
+                      <button tag="div"
+                              :key="'designation-'+d"
+                              :id="'designation-'+d"
+                              @click.once.prevent="changeDesignation(des)"
+                              class="link-sm"
+                              v-for="(des, d) in designations">
+                      <span :class="d > 0 ? 'ml-1' : '' ">
+                        {{ des }}{{ (d !== issue.designations.length - 1) ? ',' : '' }}
+                      </span>
+                      </button>
+                    </div>
+                  </template>
+                  <template v-if="option.type === 'change designation at the end'">
+                    <v-btn @click="moveDesignation" id="move-designation-btn">Move Designation</v-btn>
+                  </template>
+                </v-col>
+                <v-col v-if="designationIsFixed && i === 0 && issueIndex + 1 === issueLength"
+                       key="designation-fixed-col" class="text-center">
+                  <ReserveSubmit id="reserve-submit-button"
+                                 style="display: inline"
+                                 :setup="reserveSubmitConfig" />
+                </v-col>
               </transition>
-            </v-col>
-          </template>
-          <!-- ALL OTHER TYPES OF OPTION BOXES -->
-          <template v-else>
-            <v-col :id="option.type + '-button-checkbox-col'"
-                   v-if="i !== 0"
-                   class="pa-0 grey-box-checkbox-button text-center">
-              <transition name="fade" mode="out-in" >
-                <v-checkbox :error="showError"
-                            :key="option.type+'-checkbox'"
-                            :label="checkBoxLabel"
-                            class="ma-0 pa-0"
-                            id="provide-consent-checkbox"
-                            v-if="showCheckBoxOrButton === 'checkbox'"
-                            v-model="boxIsChecked" />
-                <ReserveSubmit :key="option.type+'-reserve-submit'"
-                               :setup="reserveSubmitConfig"
-                               id="reserve-submit-button"
-                               style="display: inline"
-                               v-if="showCheckBoxOrButton === 'button'" />
-              </transition>
-            </v-col>
-          </template>
-        </v-row>
-      </transition>
-    </template>
+            </template>
+
+            <!-- CHANGE_ENTITY_TYPE OPTION BOX -->
+            <template v-if="option.type === 'change_entity_type'">
+              <v-col class="text-center">
+                <v-btn @click="cancelAnalyzeName('Tabs')">Start Search Over</v-btn>
+              </v-col>
+            </template>
+            <!-- ASSUMED NAME OPTION BOX -->
+            <template v-else-if="option.type === 'assumed_name'">
+              <v-col :id="option.type + '-button-checkbox-col'"
+                     class="grey-box-checkbox-button text-center">
+                <transition name="fade" mode="out-in" >
+                  <ReserveSubmit :key="option.type+'-reserve-submit'"
+                                 setup="assumed"
+                                 id="reserve-submit-comp"
+                                 v-if="isLastIndex"
+                                 style="display: inline" />
+                </transition>
+              </v-col>
+            </template>
+            <!-- ALL OTHER TYPES OF OPTION BOXES -->
+            <template v-else>
+              <v-col :id="option.type + '-button-checkbox-col'"
+                     v-if="i !== 0"
+                     class="grey-box-checkbox-button my-0 py-0 text-center">
+                <transition name="fade" mode="out-in" >
+                  <v-checkbox :error="showError"
+                              :key="option.type+'-checkbox'"
+                              :label="checkBoxLabel"
+                              :ripple="false"
+                              :hide-details="true"
+                              class="py-0 my-0"
+                              id="provide-consent-checkbox"
+                              v-if="showCheckBoxOrButton === 'checkbox'"
+                              v-model="boxIsChecked" />
+                  <ReserveSubmit :key="option.type+'-reserve-submit'"
+                                 :setup="reserveSubmitConfig"
+                                 class="my-0 py-0"
+                                 id="reserve-submit-button"
+                                 v-if="showCheckBoxOrButton === 'button'" />
+                </transition>
+              </v-col>
+            </template>
+          </v-row>
+        </transition>
+      </template>
+    </v-row>
   </v-container>
 </template>
 
@@ -185,11 +180,6 @@ export default class GreyBox extends Vue {
   }
 
   clickedDesignation: string = ''
-  nameObj = {
-    0: '',
-    1: '',
-    2: ''
-  }
   originalNameBase: string = ''
   showError: boolean = false
   showLastStepButtons = {
@@ -247,11 +237,10 @@ export default class GreyBox extends Vue {
   get checkBoxLabel () {
     switch (this.option.type) {
       case 'send_to_examiner':
-        return 'I want to send my name to be examined'
+        return 'I want to send my name for review'
       case 'obtain_consent':
-        return 'I will obtain and submit consent'
       case 'conflict_self_consent':
-        return 'I have authority over the conflicting name; I will submit written consent'
+        return 'I will submit written consent to the BC Business Registry'
       case 'assumed_name':
         return 'I want to send my name to be examined as an Assumed Name'
       default:
@@ -262,21 +251,24 @@ export default class GreyBox extends Vue {
     try {
       if (this.userCancelled) return false
       if (!this.changesInBaseName) {
+        // an array containing each designation code used in namex eg. [ 'CR', 'BC', 'CCC', etc... ]
         let AllDesignationsList = allDesignationsList
+        // allDesignations is an array of objects containing {words, end} keys, set designationEntityTypes to the
+        // relevant object
         const designationEntityTypes = allDesignations[this.entity_type_cd]
-        // below condition is entity types PAR, FI, PA, and the proprietorships - don't use a designation
+        /* designationEntityTypes.words.length === 0 is true for types 'PAR', 'FI', 'PA', and the proprietorships so
+        the designation issue is fixed as long as there are no designations present and no nameAction words which in
+        this situation would only be designation-like words to be removed */
         if (designationEntityTypes && designationEntityTypes.words.length === 0) {
           if (this.nameActionWords.length > 0) {
             for (let word of this.nameActionWords) {
-              // in addition to checking the name for the inclusion of designations from the list-data, check for any
-              // designation-like words that the back-end is providing in the name_actions (eg. INC, CORP)
+              // so we add any nameActionWords onto the allDesignationsList that were not already part of it
               if (!AllDesignationsList.includes(word)) {
                 AllDesignationsList = AllDesignationsList.concat(word)
               }
             }
           }
-          // these entity types do not use designations, so they should not have one in their text
-          // fail the test (return false) if any are found
+          // and then fail the test if this.name includes any of the consolodated AllDesignationsList
           for (let designation of AllDesignationsList) {
             if (matchWord(this.name, designation)) {
               return false
@@ -285,15 +277,15 @@ export default class GreyBox extends Vue {
           return true
         }
         let end: string
+        // here we determine which valid end designation is being used in this.name
         AllDesignationsList.forEach(designation => {
           if (this.name.endsWith(' ' + designation)) {
             end = designation
           }
         })
-        // entities which don't use ending designations have either been dealt with above or are not covered by
-        // the name-request app so by this point, any name still being considered by this getter use one
+        /* all the cases where a valid designation was not required are covered by this point, so end should contain
+        a match, and we fail the test if it does not */
         if (!end) {
-          // so fail the test if there is no ending designation
           return false
         }
         if (this.nameActionWords.length > 0) {
@@ -490,8 +482,42 @@ export default class GreyBox extends Vue {
     }
     return ''
   }
+  get optionClasses () {
+    let { i } = this
+    if (this.issue && Array.isArray(this.issue.setup)) {
+      switch (this.issue.setup.length) {
+        case 1:
+          return 'square-card-x1'
+        case 2:
+          if (i === 1) {
+            return 'square-card-x2 ml-3'
+          }
+          return 'square-card-x2'
+        case 3:
+          if (i === 1) {
+            return 'square-card-x3 mx-3'
+          }
+          return 'square-card-x3'
+        default:
+          return ''
+      }
+    }
+    return ''
+  }
   get showCheckBoxOrButton () {
     let { type } = this.option
+    if (['obtain_consent', 'conflict_self_consent'].includes(type)) {
+      if (this.requestExaminationOrProvideConsent[this.issueIndex].send_to_examiner) {
+        return 'checkbox'
+      }
+    }
+    if (type === 'send_to_examiner') {
+      if (['obtain_consent', 'conflict_self_consent'].some(
+        issue => this.requestExaminationOrProvideConsent[this.issueIndex][issue]
+      )) {
+        return 'checkbox'
+      }
+    }
     if (this.issueIndex + 1 === this.issueLength) {
       switch (type) {
         case 'cancel_to_examiner':
@@ -589,27 +615,6 @@ export default class GreyBox extends Vue {
       baseName = this.extractInnerDesignation(this.originalName, this.word)
     }
     this.name = baseName + ' ' + this.word
-  }
-  optionClasses (i) {
-    if (this.issue && Array.isArray(this.issue.setup)) {
-      switch (this.issue.setup.length) {
-        case 1:
-          return 'helpful-hint'
-        case 2:
-          if (i === 1) {
-            return 'square-card-x2 ml-3'
-          }
-          return 'square-card-x2'
-        case 3:
-          if (i === 1) {
-            return 'square-card-x3 mx-3'
-          }
-          return 'square-card-x3'
-        default:
-          return ''
-      }
-    }
-    return ''
   }
   removeMismatchedDesignations (name, designation = null) {
     if (designation) {

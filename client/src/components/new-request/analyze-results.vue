@@ -79,16 +79,17 @@
               </v-row>
 
             <!--GREY BOXES-->
-            <v-row class="row colour-p-blue-text no-gutters justify-center">
-              <v-col :key="issue.issue_type + '-' + option.header + '-' + optionIndex"
-                     cols="auto"
-                     v-for="(option, optionIndex) of issue.setup">
-                <GreyBox :i="optionIndex"
-                         :issueIndex="issueIndex"
-                         :option="option"
-                         :originalName="originalName" />
-              </v-col>
-            </v-row>
+
+              <v-row class="colour-p-blue-text justify-center" dense v-if="showGreyBoxes">
+                <v-col :key="issue.issue_type + '-' + option.header + '-' + optionIndex"
+                       v-for="(option, optionIndex) of issue.setup">
+                  <GreyBox :i="optionIndex"
+                           :issueIndex="issueIndex"
+                           :option="option"
+                           class="mx-0"
+                           :originalName="originalName" />
+                </v-col>
+              </v-row>
 
               <!--SUBMISSION BUTTON-->
               <v-row v-if="issue.show_examination_button || issue.show_reserve_button"
@@ -270,8 +271,14 @@ export default class AnalyzeResults extends Vue {
     }
     return []
   }
+  get hasDesignationIssue () {
+    return (this.json.issues.some(issue => newReqModule.designationIssueTypes.includes(issue.issue_type)))
+  }
   get designationIsFixed () {
-    if (this.json.issues.every(issue => !newReqModule.designationIssueTypes.includes(issue.issue_type))) {
+    /* newReqModule.designationIssueTypes is a list of all the designation-related issue types.  designationIsFixed
+    will not be true unless one of these issues was solved.  some sets of issues will not include a designation-related
+    issue and this will need to return true in these cases even tho designationIsFixed will be false */
+    if (!this.hasDesignationIssue) {
       if (this.isLastIndex) {
         return true
       }
@@ -404,6 +411,12 @@ export default class AnalyzeResults extends Vue {
   }
   get showActualInput () {
     return newReqModule.showActualInput
+  }
+  get showGreyBoxes () {
+    if (!this.isLastIndex || this.changesInBaseName || !this.hasDesignationIssue) {
+      return true
+    }
+    return !(this.examinationOrConsentCompleted && this.designationIsFixed)
   }
   get word () {
     if (Array.isArray(this.issue.name_actions) && this.issue.name_actions[0]) {

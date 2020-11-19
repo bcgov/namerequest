@@ -2349,7 +2349,7 @@ export class NewRequestModule extends VuexModule {
     }
     this.mutateDisplayedComponent('ExistingRequestEdit')
   }
-  @Action
+  @Action({ rawError: true })
   startAnalyzeName () {
     this.resetAnalyzeName()
     this.mutateUserCancelledAnalysis(false)

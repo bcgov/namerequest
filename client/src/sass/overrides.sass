@@ -23,6 +23,14 @@
   font-weight: 700
   src: url('~@/assets/fonts/BCSans-BoldItalic.woff') format('woff')
 
+.grey-box-checkbox-button .v-input--selection-controls__ripple
+  display: none
+
+.grey-box-checkbox-button .v-input__slot
+  position: relative
+  left: 0px
+  top: 0px
+
 .v-application
   font-size: 16px
   line-height: 24px
@@ -30,7 +38,7 @@
   padding: 0
 
 .grey-box-class label
-  font-size: 13px !important
+  font-size: 14px !important
   line-height: 16px !important
   color: $p-blue-text !important
 
@@ -38,16 +46,19 @@
   margin: 0 0 0 0 !important
   padding: 0 0 0 0 !important
 
+.designation-error-col
+  padding: 5px 10px 0px 10px
 
-.grey-box-checkbox-button div.v-input__slot
-  padding: 0 10px 0 10px !important
+.grey-box-checkbox-button label
+  font-size: 14px
+  color: $p-blue-text !important
 
 .v-btn
   color: white !important
   background-color: $link !important
   height: 40px !important
   padding: inherit 28px inherit 28px !important
-  border-bottom-width: 2px !important
+  text-transform: none !important
 
 .v-btn.normal
   color: white !important
@@ -178,6 +189,9 @@ input#name-generator-1, input#name-generator-2
 
 #applicant-info-2-form div.col:not(.submission-tabs-top)
   padding: 0 10px 12px 5px !important
+
+#send_to_examiner-button-checkbox-col .v-messages
+  display: none
 
 .submission-tabs-top div.col
   padding: 5px 6px 15px 6px
