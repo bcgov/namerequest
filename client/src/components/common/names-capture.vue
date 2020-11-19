@@ -3,7 +3,7 @@
     <v-container fluid class="pa-0" id="send-to-examination-container">
       <template v-if="editMode">
         <v-row justify="end" class="mt-n3 mb-n5">
-          <v-col cols="6" class="copy-normal copy-bold">I need a name to:</v-col>
+          <v-col cols="6" class="font-weight-bold">I need a name to:</v-col>
           <v-col cols="6" style="display: flex; justify-content: flex-end">
             <button class="link-std"
                     id="help-me-choose-activator"

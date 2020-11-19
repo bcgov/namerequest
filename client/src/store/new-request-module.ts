@@ -168,7 +168,7 @@ export class NewRequestModule extends VuexModule {
       desc: 'Limited company to an unlimited liability company',
       text: 'Limited company to an unlimited liability company',
       entity_type_cd: 'UL',
-      blurb: [
+      blurbs: [
         'Alter business type from a limited company to an unlimited liability company.'
       ],
       value: 'UC',
@@ -179,7 +179,7 @@ export class NewRequestModule extends VuexModule {
       desc: 'Limited company to a community contribution company',
       text: 'Limited company to a community contribution company',
       entity_type_cd: 'CC',
-      blurb: [
+      blurbs: [
         'Alter business type from a limited company to a community contribution company.'
       ],
       value: 'CCV',
@@ -190,7 +190,7 @@ export class NewRequestModule extends VuexModule {
       desc: 'Limited company to a benefit company',
       text: 'Limited company to a benefit company',
       entity_type_cd: 'BC',
-      blurb: [
+      blurbs: [
         'Alter business type from a limited company to a benefit company.'
       ],
       value: 'BECV',
@@ -200,7 +200,7 @@ export class NewRequestModule extends VuexModule {
       desc: 'Benefit company to a limited company',
       text: 'Benefit company to a limited company',
       entity_type_cd: 'CR',
-      blurb: [
+      blurbs: [
         'Alter business type from a benefit company to a limited company.'
       ],
       value: 'BECR',
@@ -225,7 +225,7 @@ export class NewRequestModule extends VuexModule {
       text: 'Sole proprietorship',
       value: 'FR',
       cat: 'Proprietorships',
-      blurb: [
+      blurbs: [
         'A company owned and operated by one person who is personally responsible for all debt and liability.',
         'Owner makes decisions, receives all profits, and claims all losses',
         'Reported on your personal taxes',
@@ -238,7 +238,7 @@ export class NewRequestModule extends VuexModule {
       text: '"Doing Business As" Name (DBA)',
       value: 'DBA',
       cat: 'Proprietorships',
-      blurb: [
+      blurbs: [
         `An existing legal BC entity that would like to be known as another name. Referred to as a "Doing Business As", 
         "Operating As" or trade 
         name. `,
@@ -248,7 +248,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Limited company',
       cat: 'Corporations',
-      blurb: [
+      blurbs: [
         `A company that may have one or more people who own shares with some personal responsibility for debt and
         liabilities.`,
         `Has many of the same rights of an individual`,
@@ -262,7 +262,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Unlimited liability company',
       cat: 'Corporations',
-      blurb: [
+      blurbs: [
         `A type of corporation that is often used by American corporations as a Canadian subsidiary or to hold Canadian
          assets.`,
         'Shareholders liable for debts and liabilities',
@@ -274,7 +274,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'General partnership',
       cat: 'Partnerships',
-      blurb: [
+      blurbs: [
         `A business owned and operated by two or more people or BC entities who are personally responsible for all debt 
          and liability.`,
         'Profits or losses are divided among the partners based on each partner\'s share',
@@ -289,7 +289,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Limited partnership',
       cat: 'Partnerships',
-      blurb: [
+      blurbs: [
         `Frequently used in real estate developments or film industry projects.  This type of partnership ends when 
         the project is complete`,
         'Formed by a general partner (person or entity)',
@@ -301,7 +301,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Limited liability partnership',
       cat: 'Partnerships',
-      blurb: [
+      blurbs: [
         'Frequently used by professionals such as doctors or lawyers to form a practice',
         'Formed by two or more individuals or entities',
         'Partners have limited liability as an LLP has a legal status separate from its partners',
@@ -313,7 +313,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Cooperative association',
       cat: 'Social Enterprises',
-      blurb: [
+      blurbs: [
         'Membership-based organization, owned and operated by the people who use its services',
         'Has independent legal status separate from its members',
         'Members take on shares and have limited liability',
@@ -325,7 +325,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Benefit company',
       cat: 'Corporations',
-      blurb: [
+      blurbs: [
         `A type of corporation with special commitments to conduct business in a responsible and sustainable way.`,
         'Must publish and post an audited annual benefit report',
         'Reported as Corporate tax',
@@ -336,7 +336,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Community contribution company',
       cat: 'Social Enterprises',
-      blurb: [
+      blurbs: [
         `A type of corporation which has a benefit to  the community.  They are intended to bridge the gap between 
         for-profit and non-profit companies.`,
         'Reported as Corporate tax',
@@ -347,7 +347,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Society',
       cat: 'Social Enterprises',
-      blurb: [
+      blurbs: [
         `A non-profit organization that is also known as a non-share corporation.`,
         'Has name protection in BC',
         'Must use Societies Online to register a name and incorporate'
@@ -357,7 +357,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Private Act',
       cat: 'Other',
-      blurb: [
+      blurbs: [
         `A special type of business structure that may often be established through legislation or by economic growth 
         initiatives`,
         'Examples include resorts and ski areas',
@@ -368,7 +368,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Credit union',
       cat: 'Other',
-      blurb: [
+      blurbs: [
         'Credit Unions.',
         'Needs authorizion from the BC Financial Services Authority',
         'Has name protection in BC'
@@ -378,7 +378,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Parish',
       cat: 'Other',
-      blurb: [
+      blurbs: [
         'Church Parish',
         'Call BC Registries and Online Services at 1-877-526-162 for more information',
         'Has name protection in BC'
@@ -390,7 +390,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Limited company',
       cat: 'Corporations',
-      blurb: [
+      blurbs: [
         'Corporation established and operating in a Canadian province or territory and plans to operate in BC as well.',
         'Has name protection in BC'
       ],
@@ -405,7 +405,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Unlimited liability company',
       cat: 'Corporations',
-      blurb: [
+      blurbs: [
         'ULC established and operating in Alberta or Nova Scotia and plans to operate in BC as well.',
         'Has name protection in BC'
       ],
@@ -418,7 +418,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Limited liability company',
       cat: 'Corporations',
-      blurb: [
+      blurbs: [
         'A Limited Liability Company (LLC) formed outside of Canada that plans to operate in BC as well.',
         'Does have name protection in BC'
       ],
@@ -433,7 +433,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Limited partnership',
       cat: 'Partnerships',
-      blurb: [
+      blurbs: [
         'LP established and operating in a Canadian province or territory and plans to operate in BC as well.',
         'Does not have name protection in BC'
       ],
@@ -446,7 +446,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Limited liability partnership',
       cat: 'Partnerships',
-      blurb: [
+      blurbs: [
         'LLP established and operating in a Canadian province or territory and plans to operate in BC as well.',
         'Does not have name protection in BC'
       ],
@@ -459,7 +459,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Cooperative association',
       cat: 'Social Enterprises',
-      blurb: [
+      blurbs: [
         `Cooperative association established and operating in a Canadian province or territory or in the federal 
          jurisdiction and plans to operate in BC.`,
         'Has Name protection in BC'
@@ -475,7 +475,7 @@ export class NewRequestModule extends VuexModule {
     {
       text: 'Society',
       cat: 'Social Enterprises',
-      blurb: [
+      blurbs: [
         'Societies must use Societies Online to get their name'
       ],
       intBlurb: [
@@ -554,14 +554,14 @@ export class NewRequestModule extends VuexModule {
       text: 'Start a new',
       shortDesc: 'New Request',
       value: 'NEW',
-      blurb: `Create a new business in British Columbia or register a business you formed in another province or 
+      blurbs: `Create a new business in British Columbia or register a business you formed in another province or 
               territory, country or federal jurisdiction so that you may also conduct business here in BC.`
     },
     {
       text: 'Move (continue) into BC a',
       shortDesc: 'Move Request',
       value: 'MVE',
-      blurb: `Create a new business in British Columbia or register a business you formed in another province or 
+      blurbs: `Create a new business in British Columbia or register a business you formed in another province or 
               territory, country or with the federal jurisdiction so that you may also conduct business here in BC.`
     },
     // COMMENTED OUT FOR FUTURE IMPLEMENTATION
@@ -576,20 +576,20 @@ export class NewRequestModule extends VuexModule {
       text: 'Change the name of an existing',
       shortDesc: 'Change of Name Request',
       value: 'CHG',
-      blurb: `You have an existing business that is registered or incorporated in BC and you want to change your name.  
+      blurbs: `You have an existing business that is registered or incorporated in BC and you want to change your name.
               You will need your incorporation or firm number assigned to you by BC Registries and Online Services.`
     },
     {
       text: 'Amalgamate two or more',
       shortDesc: 'Amalgamation Request',
       value: 'AML',
-      blurb: 'You have two or more businesses that you want to combine to create a new business.'
+      blurbs: 'You have two or more businesses that you want to combine to create a new business.'
     },
     {
       text: 'Change (alter) the business type of a',
       shortDesc: 'Conversion Request',
       value: 'CNV',
-      blurb: `You want to alter from one type of corporation to another.  For example you are a limited company and 
+      blurbs: `You want to alter from one type of corporation to another.  For example you are a limited company and 
               want to become an unlimited liability company.   You will need the incorporation number assigned to you 
               by BC Registries and Online Services.`
     },
@@ -597,7 +597,7 @@ export class NewRequestModule extends VuexModule {
       text: 'Restore or Reinstate a',
       shortDesc: 'Restore-Historical Request',
       value: 'REH',
-      blurb: `You have a corporation, cooperative association, society or financial institution that has been dissolved
+      blurbs: `You have a corporation, cooperative association, society or financial institution that has been dissolved
               or cancelled.  You want to start up again and use the same name.  You will need the incorporation number
               assigned to you by BC Registries and Online Services.`
     }
@@ -876,12 +876,13 @@ export class NewRequestModule extends VuexModule {
     return !!this.assumedNameOriginal
   }
   get locationOptions () {
+    // To save template conditional logic, some locations have duplicate descriptions to align with there request
     let options = [
       { text: 'BC', value: 'BC' },
       {
         text: 'Extra provincial (Canada based)',
         value: 'CA',
-        blurb: [
+        blurbs: [
           `Your existing business is currently located in any Province or Territory other than BC.`,
           `Your existing business is currently located in any Province or Territory other than BC.`,
           `One or more of the businesses that need to be restored or reinstated are Canada based and were 
@@ -895,7 +896,7 @@ export class NewRequestModule extends VuexModule {
       {
         text: 'Extra provincial (Internationally based)',
         value: 'IN',
-        blurb: [
+        blurbs: [
           `Your existing business is currently located outside of Canada.`,
           `Your existing business is currently located in any Province or Territory other than BC.`,
           `One or more of the businesses that need to be restored or reinstated are Internationally based and 

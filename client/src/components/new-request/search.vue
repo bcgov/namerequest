@@ -1,11 +1,10 @@
 <template>
   <v-container fluid id="new-request-container" class="copy-normal">
     <v-row cols="12">
-      <v-col cols="6" class="copy-normal copy-bold">I need a name to:</v-col>
+      <v-col cols="6" class="font-weight-bold">I need a name to:</v-col>
       <v-col cols="6">
         <span id="nr-required-activator"
-              class="link-std"
-              style="display: flex; justify-content: flex-end;"
+              class="link-std d-flex justify-end"
               @click="activateNRRModal()">Check to see if you need to file a a Name Request</span>
       </v-col>
       <v-col cols="5">
@@ -18,11 +17,11 @@
                   id="search-type-options-select"
                   v-model="request_action_cd">
           <template slot="item" slot-scope="data">
-            <v-tooltip :disabled="!data.item.blurb" right>
+            <v-tooltip :disabled="!data.item.blurbs" right>
               <template v-slot:activator="scope">
                 <span v-on="scope.on" class="list-item">{{ data.item.text }}</span>
               </template>
-              <span>{{ data.item.blurb }}</span>
+              <span>{{ data.item.blurbs }}</span>
             </v-tooltip>
           </template>
         </v-select>
@@ -42,11 +41,11 @@
                         filled
                         v-model="location">
                 <template slot="item" slot-scope="data">
-                  <v-tooltip :disabled="!data.item.blurb" right>
+                  <v-tooltip :disabled="!data.item.blurbs" right>
                     <template v-slot:activator="scope">
                       <span v-on="scope.on" class="list-item">{{ data.item.text }}</span>
                     </template>
-                      <div v-for="(item, index) in data.item.blurb "
+                      <div v-for="(item, index) in data.item.blurbs "
                            :key="`Location-Blurb-${index}`">
                         <span v-if="request_action_cd === request_action_enum[index]">
                           {{ item }}
@@ -79,7 +78,7 @@
                   <v-tooltip
                           :right="isScreenLg"
                           :left="!isScreenLg"
-                          :disabled="!data.item.blurb"
+                          :disabled="!data.item.blurbs"
                           :content-class="!isScreenLg ? 'left-tooltip' : ''">
                     <template v-slot:activator="scope">
                       <span v-on="scope.on"
@@ -88,7 +87,7 @@
                         {{ data.item.text }}
                       </span>
                     </template>
-                    <div v-for="(item, index) in (location === 'IN' ? data.item.intBlurb : data.item.blurb)"
+                    <div v-for="(item, index) in (location === 'IN' ? data.item.intBlurb : data.item.blurbs)"
                          :key="`Blurb-${index}`">
                       <span :class="{ 'tooltip-bullet': index !== 0}">
                         {{ item }}
@@ -130,6 +129,8 @@
         <v-checkbox
                 v-model="nameIsEnglish"
                 id="name-checkbox"
+                :false-value="true"
+                :true-value="false"
                 class="copy-small ml-n6">
           <template v-slot:label>
             <v-tooltip bottom content-class="bottom-tooltip">
@@ -208,7 +209,7 @@ export default class NewSearch extends Vue {
     'CHG'
   ]
   private get isScreenLg () {
-    return this.$vuetify.breakpoint.width > 1440
+    return this.$vuetify.breakpoint.lg
   }
   get displayedComponent () {
     return newReqModule.displayedComponent
@@ -277,10 +278,10 @@ export default class NewSearch extends Vue {
     return newReqModule.locationText
   }
   get nameIsEnglish () {
-    return !newReqModule.nameIsEnglish
+    return newReqModule.nameIsEnglish
   }
   set nameIsEnglish (value) {
-    newReqModule.mutateNameIsEnglish(!value)
+    newReqModule.mutateNameIsEnglish(value)
   }
   get request_action_cd () {
     return newReqModule.request_action_cd

@@ -15,7 +15,7 @@
             <v-row>
               <v-col cols="12" class="copy-bold">Alterations</v-col>
             </v-row>
-            <v-row v-for="(conversion, i) in conversionTypes" :key="'conv-'+i">
+            <v-row v-for="(conversion, i) in conversionTypes" :key="'conv-' + i">
               <v-col cols="12" class="clickable-cell"
                      :id="conversion.value"
                      @click="chooseConversion(conversion)">
@@ -23,7 +23,7 @@
                   <template v-slot:activator="scope">
                     <button v-on="scope.on" class="link-sm-sans-ul entity-link">{{ conversion.desc }}</button>
                   </template>
-                  <div v-for="(text, i) in conversion.blurb" :key="i + '-blurb'">
+                  <div v-for="(text, i) in conversion.blurbs" :key="'blurb-' + i">
                     <span>{{ text }}</span>
                   </div>
                 </v-tooltip>
@@ -33,21 +33,21 @@
         </v-card-text>
       </template>
       <template v-else-if="!showSocietiesInfo">
-        <v-card-text style="display: flex; justify-items: center; width: 100%">
-          <v-simple-table v-for="(category, i) in tableData" :key="'cat'+i">
+        <v-card-text class="d-flex">
+          <v-simple-table v-for="(category, i) in tableData" :key="'cat' + i">
             <tr>
               <th>
                 <span class="copy-bold copy-small">{{ category.text }}</span>
               </th>
             </tr>
-            <tr v-for="(entity, n) in category.entities" :key="'ent'+n">
+            <tr v-for="(entity, n) in category.entities" :key="'ent' + n">
               <td class="clickable-cell" :id="entity.value" @click="chooseType(entity)">
                 <v-tooltip bottom content-class="bottom-tooltip">
                   <template v-slot:activator="scope">
                     <button v-on="scope.on" class="link-sm-sans-ul text-left entity-link">{{ entity.text }}</button>
                   </template>
-                  <template v-if="(location === 'IN' ? entity.intBlurb.length : entity.blurb.length) >= 1">
-                    <div v-for="(text, i) in (location === 'IN' ? entity.intBlurb : entity.blurb)" :key="i + '-blurb'">
+                  <template v-if="(location === 'IN' ? entity.intBlurb.length : entity.blurbs.length) >= 1">
+                    <div v-for="(text, i) in (location === 'IN' ? entity.intBlurb : entity.blurbs)" :key="'blurb-' + i">
                       <span :class="{ 'tooltip-bullet': i !== 0}">{{ text }}</span>
                     </div>
                   </template>
