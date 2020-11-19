@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="showModal" :max-width="width" persistent>
     <v-card class="pa-6 no-border pick-entity-card">
-      <v-row class="pl-1 mx-0">
+      <v-row class="pl-3">
         <v-col cols="11">
           <label>{{ locationText }}:</label>
         </v-col>
@@ -12,8 +12,8 @@
       <template v-if="isConversion">
         <v-card-text>
           <v-container fluid class="px-4">
-            <v-row>
-              <v-col cols="12" class="copy-bold">Alterations</v-col>
+            <v-row class="category-bg">
+              <v-col cols="12" class="font-weight-bold">Alterations</v-col>
             </v-row>
             <v-row v-for="(conversion, i) in conversionTypes" :key="'conv-' + i">
               <v-col cols="12" class="clickable-cell"
@@ -35,9 +35,9 @@
       <template v-else-if="!showSocietiesInfo">
         <v-card-text class="d-flex">
           <v-simple-table v-for="(category, i) in tableData" :key="'cat' + i">
-            <tr>
+            <tr class="category-bg">
               <th>
-                <span class="copy-bold copy-small">{{ category.text }}</span>
+                <span class="font-weight-bold copy-small">{{ category.text }}</span>
               </th>
             </tr>
             <tr v-for="(entity, n) in category.entities" :key="'ent' + n">
@@ -133,7 +133,7 @@ export default class PickEntityOrConversion extends Vue {
     }
     let cols = this.tableData.length
     // 210 per column with a max of 900px
-    return `${210 * cols > 900 ? 900 : 210 * cols}px`
+    return `${210 * cols > 900 ? 960 : 210 * cols}px`
   }
 
   clearEntitySelection () {
@@ -167,13 +167,20 @@ export default class PickEntityOrConversion extends Vue {
 
 </script>
 <style lang="sass" scoped>
+.v-data-table
+  margin: 0 -3px
+.category-bg
+  background-color: #F1F3F5
 .v-card__text
   padding: 0 !important
 .entity-link
   text-decoration: none
-.clickable-cell:hover
-  background-color: $grey-2
-  cursor: pointer
+.clickable-cell
+  min-width: 160px
+  padding-top: 16px
+  &:hover
+    background-color: $grey-2
+    cursor: pointer
 .no-border
   border-radius: 0 !important
   text-decoration: none !important

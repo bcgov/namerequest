@@ -107,48 +107,50 @@
     </v-row>
     <v-row no-gutters>
       <v-col cols="4">
-        <v-checkbox
-                v-model="isPersonsName"
-                id="name-checkbox"
-                class="copy-small mr-5">
-          <template v-slot:label>
-            <v-tooltip bottom content-class="bottom-tooltip">
-              <template v-slot:activator="{ on }">
+        <v-tooltip bottom content-class="bottom-tooltip mt-n5">
+          <template v-slot:activator="{ on }">
+            <v-checkbox
+                    v-model="isPersonsName"
+                    id="name-checkbox"
+                    class="copy-small mr-5"
+                    v-slot:label v-on="on">
+              <template>
                 <span v-on="on">Name is a person's name</span>
               </template>
-              <p>Check this box if you are...</p>
-              <ul>
-                <li>Incorporating under your own name (eg. DR. JOE SMITH INC.)</li>
-                <li>The name contains one or more names. (eg. BLAKE, CHAN & DOUGLAS INC.)</li>
-              </ul>
-            </v-tooltip>
+            </v-checkbox>
           </template>
-        </v-checkbox>
+          <p>Check this box if you are...</p>
+          <ul>
+            <li>Incorporating under your own name (eg. DR. JOE SMITH INC.)</li>
+            <li>The name contains one or more names. (eg. BLAKE, CHAN & DOUGLAS INC.)</li>
+          </ul>
+        </v-tooltip>
       </v-col>
       <v-col cols="4">
-        <v-checkbox
-                v-model="nameIsEnglish"
-                id="name-checkbox"
-                :false-value="true"
-                :true-value="false"
-                class="copy-small ml-n6">
-          <template v-slot:label>
-            <v-tooltip bottom content-class="bottom-tooltip">
-              <template v-slot:activator="{ on }">
+        <v-tooltip bottom content-class="bottom-tooltip mt-n5">
+          <template v-slot:activator="{ on }">
+            <v-checkbox
+                    v-model="nameIsEnglish"
+                    id="name-checkbox"
+                    :false-value="true"
+                    :true-value="false"
+                    class="copy-small mr-5"
+                    v-slot:label v-on="on">
+              <template>
                 <span v-on="on">Name contains no English words</span>
               </template>
-              <p>This refers to the language of the words in your name.</p>
-              <ul>
-                <li>Leave this box checked if your name contains <b>only</b> English <b>or a mix</b> of English and
-                  another Language
-                </li>
-                <li>Uncheck this box if your name is written <b>entirely</b> in another language and does <b>not</b>
-                  contain any English
-                </li>
-              </ul>
-            </v-tooltip>
+            </v-checkbox>
           </template>
-        </v-checkbox>
+          <p>This refers to the language of the words in your name.</p>
+          <ul>
+            <li>Leave this box checked if your name contains <b>only</b> English <b>or a mix</b> of English and
+              another Language
+            </li>
+            <li>Uncheck this box if your name is written <b>entirely</b> in another language and does <b>not</b>
+              contain any English
+            </li>
+          </ul>
+        </v-tooltip>
       </v-col>
     </v-row>
     <div class="mt-1 mb-4 text-center">
