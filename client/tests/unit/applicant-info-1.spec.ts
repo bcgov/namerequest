@@ -5,7 +5,9 @@ import Vuetify from 'vuetify'
 import $intJurisdictions from '@/store/list-data/intl-jurisdictions'
 import $canJurisdictions from '@/store/list-data/canada-jurisdictions'
 
-const store = newReqModule
+// Prevent the warning "[Vuetify] Unable to locate target [data-app]"
+document.body.setAttribute('data-app', 'true')
+
 const localVue = createLocalVue()
 const vuetify = new Vuetify()
 

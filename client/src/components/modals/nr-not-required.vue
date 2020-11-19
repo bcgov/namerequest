@@ -1,5 +1,6 @@
 <template>
-  <v-dialog v-model="showModal" max-width="40%">
+  <!-- NB: dummy modal attach point so unit tests can see it -->
+  <v-dialog v-model="showModal" max-width="40%" attach="">
     <v-card class="pa-9">
       <v-card-text class="h3">You don't need a Name Request if you...</v-card-text>
       <v-card-text class="copy-normal">

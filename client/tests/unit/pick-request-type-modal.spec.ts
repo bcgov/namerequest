@@ -3,6 +3,9 @@ import newReqModule from '@/store/new-request-module'
 import { mount, createLocalVue } from '@vue/test-utils'
 import Vuetify from 'vuetify'
 
+// Prevent the warning "[Vuetify] Unable to locate target [data-app]"
+document.body.setAttribute('data-app', 'true')
+
 const localVue = createLocalVue()
 const vuetify = new Vuetify()
 
@@ -16,6 +19,10 @@ describe('pick-request-type.vue', (): void => {
       localVue,
       vuetify
     })
+  })
+
+  afterEach(() => {
+    wrapper.destroy()
   })
 
   it('When the modal visibility state key is set to false, the components internal getter is false', () => {
@@ -33,6 +40,7 @@ describe('pick-request-type.vue', (): void => {
     expect(wrapper.find('#pick-request-type-modal-card').element).toBeTruthy()
     expect(wrapper.vm.showModal).toBe(true)
   })
+
   it('clicking an entity sets the entity_type_cd and closes the modal', async () => {
     wrapper.vm.showModal = true
     await wrapper.vm.$nextTick()
