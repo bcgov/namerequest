@@ -515,16 +515,16 @@ export class NewRequestModule extends VuexModule {
         'Has name protection in BC'
       ],
       rehBlurbs: [
-        '*** REMOVE THIS OPTION FROM REINSTATE ***'
+        'Unlimited liability company'
       ],
       amlBlurbs: [
         [
-          '*** REMOVE THIS OPTION FROM AML REQUESTS ***'
+          'Unlimited liability company'
         ]
       ],
       chgBlurbs: [
         [
-          '*** REMOVE THIS OPTION FROM CHG REQUESTS ***'
+          'Unlimited liability company'
         ]
       ],
       value: 'XUL'
@@ -575,11 +575,11 @@ export class NewRequestModule extends VuexModule {
         'Does not have name protection in BC'
       ],
       mveBlurbs: [
-        'TO REMOVE THIS OPTION FROM MVE REQUEST TYPE'
+        'Limited partnership'
       ],
       amlBlurbs: [
         [
-          '*** REMOVE THIS OPTION FROM AML REQUESTS ***'
+          'Limited partnership'
         ]
       ],
       chgBlurbs: [
@@ -602,11 +602,11 @@ export class NewRequestModule extends VuexModule {
         'Does not have name protection in BC'
       ],
       mveBlurbs: [
-        'TO REMOVE THIS OPTION FROM MVE REQUEST TYPE'
+        'Limited liability partnership'
       ],
       amlBlurbs: [
         [
-          '*** REMOVE THIS OPTION FROM AML REQUESTS ***'
+          'Limited liability partnership'
         ]
       ],
       chgBlurbs: [
@@ -673,7 +673,7 @@ export class NewRequestModule extends VuexModule {
       ],
       amlBlurbs: [
         [
-          '*** REMOVE THIS OPTION FROM AML REQUESTS ***'
+          'Society'
         ]
       ],
       chgBlurbs: [

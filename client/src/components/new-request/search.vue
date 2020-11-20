@@ -122,7 +122,7 @@
           <p>Check this box if you are...</p>
           <ul>
             <li>Incorporating under your own name (eg. DR. JOE SMITH INC.)</li>
-            <li>The name contains one or more names. (eg. BLAKE, CHAN & DOUGLAS INC.)</li>
+            <li>The name contains one or more names. (eg. BLAKE, CHAN &amp; DOUGLAS INC.)</li>
           </ul>
         </v-tooltip>
       </v-col>
@@ -144,7 +144,7 @@
           <p>This refers to the language of the words in your name.</p>
           <ul>
             <li>Leave this box checked if your name contains <b>only</b> English <b>or a mix</b> of English and
-              another Language
+              another language
             </li>
             <li>Uncheck this box if your name is written <b>entirely</b> in another language and does <b>not</b>
               contain any English

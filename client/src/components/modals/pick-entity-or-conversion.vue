@@ -135,8 +135,10 @@ export default class PickEntityOrConversion extends Vue {
       return '550px'
     }
     let cols = this.tableData.length
-    // 210 per column with a max of 900px
-    return `${210 * cols > 900 ? 960 : 210 * cols}px`
+    const maxThreshold = this.$vuetify.breakpoint.thresholds.sm
+
+    // 210 per column with a max threshold of 960px
+    return `${210 * cols > maxThreshold ? maxThreshold : 210 * cols}px`
   }
   entityBlurbs (entity_type_cd: string) {
     return newReqModule.entityBlurbs.find(type => type.value === entity_type_cd)?.blurbs
