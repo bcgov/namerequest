@@ -16,7 +16,6 @@
                class="upper-left-border"
                tabindex="0"><span
                :class="tabNumber !== 1 ? 'h5' : 'h5-lt'">New Name Search</span></v-tab>
-        <!--   :class="{ 'h5': tabNumber !== 1 }">New Name Search</span></v-tab>-->
         <v-tab :ripple="false"
                style="min-height: 64px"
                id="existing-tab"
@@ -60,9 +59,6 @@ export default class Tabs extends Vue {
 </script>
 
 <style lang="sass" scoped>
-#tabs-landing-comp
-  max-width: 1264px
-
 .tab-items
   border-bottom-left-radius: 6px !important
   border-bottom-right-radius: 6px !important
