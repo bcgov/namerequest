@@ -1,7 +1,7 @@
 <template>
   <v-container fluid id="new-request-container" class="copy-normal">
     <v-row cols="12">
-      <v-col cols="6" class="font-weight-bold">I need a name to: {{request_action_cd}}</v-col>
+      <v-col cols="6" class="font-weight-bold">I need a name to:</v-col>
       <v-col cols="6">
         <span id="nr-required-activator"
               class="link-std d-flex justify-end"
