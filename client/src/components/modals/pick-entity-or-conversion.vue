@@ -23,7 +23,7 @@
                   <template v-slot:activator="scope">
                     <button v-on="scope.on" class="link-sm-sans-ul entity-link">{{ conversion.desc }}</button>
                   </template>
-                  <div v-for="(text, i) in conversion.blurbs" :key="'blurb-' + i">
+                  <div v-for="(text, i) in entityBlurbs(conversion.value)" :key="'blurb-' + i">
                     <span>{{ text }}</span>
                   </div>
                 </v-tooltip>
@@ -46,9 +46,12 @@
                   <template v-slot:activator="scope">
                     <button v-on="scope.on" class="link-sm-sans-ul text-left entity-link">{{ entity.text }}</button>
                   </template>
-                  <template v-if="(location === 'IN' ? entity.intBlurb.length : entity.blurbs.length) >= 1">
-                    <div v-for="(text, i) in (location === 'IN' ? entity.intBlurb : entity.blurbs)" :key="'blurb-' + i">
-                      <span :class="{ 'tooltip-bullet': i !== 0}">{{ text }}</span>
+                  <template>
+                    <div v-for="(item, index) in entityBlurbs(entity.value)"
+                         :key="`Blurb-${index}`">
+                      <span :class="{ 'tooltip-bullet': index !== 0}">
+                        {{ item }}
+                      </span>
                     </div>
                   </template>
                 </v-tooltip>
@@ -135,7 +138,9 @@ export default class PickEntityOrConversion extends Vue {
     // 210 per column with a max of 900px
     return `${210 * cols > 900 ? 960 : 210 * cols}px`
   }
-
+  entityBlurbs (entity_type_cd: string) {
+    return newReqModule.entityBlurbs.find(type => type.value === entity_type_cd)?.blurbs
+  }
   clearEntitySelection () {
     this.entity_type_cd = 'INFO'
   }

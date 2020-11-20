@@ -1,7 +1,7 @@
 <template>
   <v-container fluid id="new-request-container" class="copy-normal">
     <v-row cols="12">
-      <v-col cols="6" class="font-weight-bold">I need a name to:</v-col>
+      <v-col cols="6" class="font-weight-bold">I need a name to: {{request_action_cd}}</v-col>
       <v-col cols="6">
         <span id="nr-required-activator"
               class="link-std d-flex justify-end"
@@ -87,7 +87,7 @@
                         {{ data.item.text }}
                       </span>
                     </template>
-                    <div v-for="(item, index) in (location === 'IN' ? data.item.intBlurb : data.item.blurbs)"
+                    <div v-for="(item, index) in entityBlurbs(data.item.value)"
                          :key="`Blurb-${index}`">
                       <span :class="{ 'tooltip-bullet': index !== 0}">
                         {{ item }}
@@ -210,6 +210,9 @@ export default class NewSearch extends Vue {
     'AML',
     'CHG'
   ]
+  entityBlurbs (entity_type_cd: string) {
+    return newReqModule.entityBlurbs.find(type => type.value === entity_type_cd)?.blurbs
+  }
   private get isScreenLg () {
     return this.$vuetify.breakpoint.lg
   }

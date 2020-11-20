@@ -231,6 +231,9 @@ export class NewRequestModule extends VuexModule {
         'Reported on your personal taxes',
         'Does not have name protection in BC'
       ],
+      chgBlurbs: [
+        'Change the business name of an existing sole proprietorship.'
+      ],
       shortlist: true,
       rank: 3
     },
@@ -243,6 +246,9 @@ export class NewRequestModule extends VuexModule {
         "Operating As" or trade 
         name. `,
         'Does not have name protection in BC'
+      ],
+      chgBlurbs: [
+        'Change the business name of a DBA.'
       ]
     },
     {
@@ -254,6 +260,15 @@ export class NewRequestModule extends VuexModule {
         `Has many of the same rights of an individual`,
         `Reported separately as Corporate tax`,
         `Has name protection in BC`
+      ],
+      rehBlurbs: [
+        'Restore a limited company that is no longer active with BC Registries.'
+      ],
+      amlBlurbs: [
+        'Request a name for an amalgamation of two or more corporations that result in a limited company.'
+      ],
+      chgBlurbs: [
+        'Change/Correct the name of an existing limited company.'
       ],
       value: 'CR',
       shortlist: true,
@@ -269,6 +284,15 @@ export class NewRequestModule extends VuexModule {
         'Reported separately as Canadian Corporate tax',
         'Has name protection in BC'
       ],
+      rehBlurbs: [
+        'Restore a ULC that is no longer active with BC Registries.'
+      ],
+      amlBlurbs: [
+        'Request a name for an amalgamation of two or more corporations that result in an unlimited liability company.'
+      ],
+      chgBlurbs: [
+        'Change/Correct the name of an existing unlimited liability company.'
+      ],
       value: 'UL'
     },
     {
@@ -281,6 +305,9 @@ export class NewRequestModule extends VuexModule {
         'A partnership agreement is recommended',
         'Reported on your personal income tax',
         'Does not have name protection in BC'
+      ],
+      chgBlurbs: [
+        'Change the name of an existing general partnership.'
       ],
       value: 'GP',
       shortlist: true,
@@ -296,6 +323,9 @@ export class NewRequestModule extends VuexModule {
         'A partnership agreement is recommended',
         'Does not have name protection in BC'
       ],
+      chgBlurbs: [
+        'Change the name of an existing limited partnership.'
+      ],
       value: 'LP'
     },
     {
@@ -307,6 +337,9 @@ export class NewRequestModule extends VuexModule {
         'Partners have limited liability as an LLP has a legal status separate from its partners',
         'A partnership agreement is recommended',
         'Does not have name protection in BC'
+      ],
+      chgBlurbs: [
+        'Change the name of an existing limited liability partnership.'
       ],
       value: 'LL'
     },
@@ -320,6 +353,16 @@ export class NewRequestModule extends VuexModule {
         'Reported as Corporate tax',
         'Has name protection in BC'
       ],
+      rehBlurbs: [
+        'Restore a cooperative association that is no longer active with BC Registries.'
+      ],
+      amlBlurbs: [
+        `Request a name for an amalgamation of two or more cooperative associations that result in a new cooperative 
+        association.`
+      ],
+      chgBlurbs: [
+        'Change/correct the name of an existing cooperative association.'
+      ],
       value: 'CP'
     },
     {
@@ -330,6 +373,15 @@ export class NewRequestModule extends VuexModule {
         'Must publish and post an audited annual benefit report',
         'Reported as Corporate tax',
         'Has name protection in BC'
+      ],
+      rehBlurbs: [
+        'Restore a benefit company that is no longer active with BC Registries.'
+      ],
+      amlBlurbs: [
+        'Request a name for an amalgamation of two or more corporations that result in a benefit company.'
+      ],
+      chgBlurbs: [
+        'Change/Correct the name of an existing benefit company.'
       ],
       value: 'BC'
     },
@@ -342,6 +394,16 @@ export class NewRequestModule extends VuexModule {
         'Reported as Corporate tax',
         'Has name protection in BC'
       ],
+      rehBlurbs: [
+        'Restore a limited company that is no longer active with BC Registries.'
+      ],
+      amlBlurbs: [
+        `Request a name for an amalgamation of two or more corporations that result in a community contribution 
+        company.`
+      ],
+      chgBlurbs: [
+        'Change/correct the name of an existing community contribution company.'
+      ],
       value: 'CC'
     },
     {
@@ -351,6 +413,9 @@ export class NewRequestModule extends VuexModule {
         `A non-profit organization that is also known as a non-share corporation.`,
         'Has name protection in BC',
         'Must use Societies Online to register a name and incorporate'
+      ],
+      chgBlurbs: [
+        'Societies must use Societies Online to get their name.'
       ],
       value: 'SO'
     },
@@ -370,8 +435,14 @@ export class NewRequestModule extends VuexModule {
       cat: 'Other',
       blurbs: [
         'Credit Unions.',
-        'Needs authorizion from the BC Financial Services Authority',
+        'Needs authorization from the BC Financial Services Authority',
         'Has name protection in BC'
+      ],
+      rehBlurbs: [
+        'Restore a credit union that is no longer active with BC Registries.'
+      ],
+      chgBlurbs: [
+        'Correct/change the name of an existing credit union.'
       ],
       value: 'FI'
     },
@@ -394,9 +465,35 @@ export class NewRequestModule extends VuexModule {
         'Corporation established and operating in a Canadian province or territory and plans to operate in BC as well.',
         'Has name protection in BC'
       ],
-      intBlurb: [
+      intBlurbs: [
         'Corporation established and operating outside of Canada.  Plans to operate in BC as well.',
         'Has name protection in BC'
+      ],
+      mveBlurbs: [
+        `Corporation established and operating outside of Canada.  Plans to operate in BC as well.`,
+        'Has name protection in BC'
+      ],
+      rehBlurbs: [
+        'Reinstate an extra provincially registered company that is no longer active with BC Registries.'
+      ],
+      amlBlurbs: [
+        [
+          `Register an amalgamation that occurred in another jurisdiction where at least one of the companies is 
+           extra provincially registered in BC.`
+        ],
+        [
+          `Register an amalgamation or merger that occurred in another jurisdiction where at least one of the companies
+          is extra provincially registered in BC.`
+        ]
+      ],
+      chgBlurbs: [
+        [
+          'Update the name of an extra provincial company to reflect a change of name in the home jurisdiction.',
+          'Name request is not required for a company incorporated in the Federal jurisdiction'
+        ],
+        [
+          'Update the name of an extra provincial company to reflect a change of name in the home jurisdiction.'
+        ]
       ],
       value: 'XCR',
       shortlist: true,
@@ -409,9 +506,26 @@ export class NewRequestModule extends VuexModule {
         'ULC established and operating in Alberta or Nova Scotia and plans to operate in BC as well.',
         'Has name protection in BC'
       ],
-      intBlurb: [
+      intBlurbs: [
         'ULC established and operating outside of Canada.  Plans to operate in BC as well.',
         'Has name protection in BC'
+      ],
+      mveBlurbs: [
+        `ULC established and operating outside of Canada.  Plans to operate in BC as well.`,
+        'Has name protection in BC'
+      ],
+      rehBlurbs: [
+        '*** REMOVE THIS OPTION FROM REINSTATE ***'
+      ],
+      amlBlurbs: [
+        [
+          '*** REMOVE THIS OPTION FROM AML REQUESTS ***'
+        ]
+      ],
+      chgBlurbs: [
+        [
+          '*** REMOVE THIS OPTION FROM CHG REQUESTS ***'
+        ]
       ],
       value: 'XUL'
     },
@@ -419,12 +533,31 @@ export class NewRequestModule extends VuexModule {
       text: 'Limited liability company',
       cat: 'Corporations',
       blurbs: [
+        ''
+      ],
+      intBlurbs: [
         'A Limited Liability Company (LLC) formed outside of Canada that plans to operate in BC as well.',
         'Does have name protection in BC'
       ],
-      intBlurb: [
+      mveBlurbs: [
         'A Limited Liability Company (LLC) formed outside of Canada that plans to operate in BC as well.',
         'Does have name protection in BC'
+      ],
+      rehBlurbs: [
+        'Reinstate an extra provincially registered LLC that is no longer active with BC Registries.'
+      ],
+      amlBlurbs: [
+        [
+          '*** REMOVE THIS OPTION FROM AML REQUESTS ***'
+        ]
+      ],
+      chgBlurbs: [
+        [
+          'Not an available option for CA'
+        ],
+        [
+          'Update the name of an extra provincial LLC to reflect a change of name in the home jurisdiction.'
+        ]
       ],
       value: 'RLC',
       shortlist: true,
@@ -437,9 +570,23 @@ export class NewRequestModule extends VuexModule {
         'LP established and operating in a Canadian province or territory and plans to operate in BC as well.',
         'Does not have name protection in BC'
       ],
-      intBlurb: [
+      intBlurbs: [
         'LP established and operating in the US or UK.  Plans to operate in BC as well.',
         'Does not have name protection in BC'
+      ],
+      mveBlurbs: [
+        'TO REMOVE THIS OPTION FROM MVE REQUEST TYPE'
+      ],
+      amlBlurbs: [
+        [
+          '*** REMOVE THIS OPTION FROM AML REQUESTS ***'
+        ]
+      ],
+      chgBlurbs: [
+        [
+          `Update the name of an extra provincial limited partnership to reflect a change of name in the home 
+          jurisdiction.`
+        ]
       ],
       value: 'XLP'
     },
@@ -450,9 +597,23 @@ export class NewRequestModule extends VuexModule {
         'LLP established and operating in a Canadian province or territory and plans to operate in BC as well.',
         'Does not have name protection in BC'
       ],
-      intBlurb: [
+      intBlurbs: [
         'LLP established and operating in the US or UK.  Plans to operate in BC as well.',
         'Does not have name protection in BC'
+      ],
+      mveBlurbs: [
+        'TO REMOVE THIS OPTION FROM MVE REQUEST TYPE'
+      ],
+      amlBlurbs: [
+        [
+          '*** REMOVE THIS OPTION FROM AML REQUESTS ***'
+        ]
+      ],
+      chgBlurbs: [
+        [
+          `Update the name of an extra provincial limited liability partnership to reflect a change of name in the home 
+          jurisdiction.`
+        ]
       ],
       value: 'XLL'
     },
@@ -460,13 +621,35 @@ export class NewRequestModule extends VuexModule {
       text: 'Cooperative association',
       cat: 'Social Enterprises',
       blurbs: [
-        `Cooperative association established and operating in a Canadian province or territory or in the federal 
+        `Cooperative association established and operating in a Canadian province or territory or in the federal
          jurisdiction and plans to operate in BC.`,
         'Has Name protection in BC'
       ],
-      intBlurb: [
+      intBlurbs: [
         'Cooperative established and operating outside of Canada.  Plans to operate in BC.',
         'Has Name protection in BC'
+      ],
+      mveBlurbs: [
+        'Membership-based organization, owned and operated by the people who use its services.',
+        'Has independent legal status separate from its members',
+        'Members take on shares and have limited liability',
+        'Reported as Corporate tax',
+        'Has name protection in BC'
+      ],
+      rehBlurbs: [
+        'Restore an extra provincially registered cooperative association that is no longer active with BC Registries.'
+      ],
+      amlBlurbs: [
+        [
+          `Register an amalgamation that occurred in another jurisdiction where at least one of the cooperative 
+          associations is extra provincially registered in BC.`
+        ]
+      ],
+      chgBlurbs: [
+        [
+          `Update the name of an extra provincial cooperative association to reflect a change of name in the home 
+          jurisdiction.`
+        ]
       ],
       value: 'XCP',
       shortlist: true,
@@ -478,8 +661,25 @@ export class NewRequestModule extends VuexModule {
       blurbs: [
         'Societies must use Societies Online to get their name'
       ],
-      intBlurb: [
+      intBlurbs: [
         'Societies must use Societies Online to get their name'
+      ],
+      mveBlurbs: [
+        'A non-profit organization that is also known as a non-share corporation.',
+        'Any funds or profits must be used only for social or community benefit',
+        'When incorporated has independent legal status separate from its members',
+        'Has name protection in BC',
+        'Must use Societies Online to register a name and incorporate'
+      ],
+      amlBlurbs: [
+        [
+          '*** REMOVE THIS OPTION FROM AML REQUESTS ***'
+        ]
+      ],
+      chgBlurbs: [
+        [
+          `Societies must use Societies Online to get their name.`
+        ]
       ],
       value: 'XSO'
     }
@@ -881,6 +1081,7 @@ export class NewRequestModule extends VuexModule {
       { text: 'BC', value: 'BC' },
       {
         text: 'Extra provincial (Canada based)',
+        altText: 'Canadian',
         value: 'CA',
         blurbs: [
           `Your existing business is currently located in any Province or Territory other than BC.`,
@@ -895,10 +1096,11 @@ export class NewRequestModule extends VuexModule {
       },
       {
         text: 'Extra provincial (Internationally based)',
+        altText: 'International',
         value: 'IN',
         blurbs: [
           `Your existing business is currently located outside of Canada.`,
-          `Your existing business is currently located in any Province or Territory other than BC.`,
+          `Your existing business is currently located outside of Canada.`,
           `One or more of the businesses that need to be restored or reinstated are Internationally based and 
            were extra provincially registered in BC.`,
           `One or more of the businesses that have amalgamated are Internationally based and are extra 
@@ -915,7 +1117,8 @@ export class NewRequestModule extends VuexModule {
       return options.filter(location => location.value !== 'BC')
     }
     if (['MVE'].includes(this.request_action_cd)) {
-      return options.filter(location => location.value !== 'BC')
+      let moveOptions = options.filter(location => location.value !== 'BC')
+      return moveOptions.map(x => ({ ...x, text: x.altText }))
     }
     return options
   }
@@ -1279,7 +1482,73 @@ export class NewRequestModule extends VuexModule {
     }
     return data
   }
-
+  /** Map the appropriate Blurb based on the request action and location */
+  get entityBlurbs (): any {
+    switch (this.request_action_cd) {
+      // NEW REQUEST
+      case 'NEW':
+        if (['BC'].includes(this.location)) {
+          return this.entityTypesBCData
+        }
+        if (['CA'].includes(this.location)) {
+          return this.entityTypesXPROData
+        }
+        if (['IN'].includes(this.location)) {
+          return this.entityTypesXPROData.map(x => ({ ...x, blurbs: x.intBlurbs }))
+        }
+        break
+      // MOVE REQUEST
+      case 'MVE':
+        if (['CA', 'IN'].includes(this.location)) {
+          return this.entityTypesXPROData.map(x => ({ ...x, blurbs: x.mveBlurbs }))
+        }
+        break
+      // RESTORE OR REINSTATE REQUEST
+      case 'REH':
+        if (['BC'].includes(this.location)) {
+          return this.entityTypesBCData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
+        }
+        if (['CA', 'IN'].includes(this.location)) {
+          return this.entityTypesXPROData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
+        }
+        break
+      // AMALGAMATE REQUEST
+      case 'AML':
+        if (['BC'].includes(this.location)) {
+          return this.entityTypesBCData.map(x => ({ ...x, blurbs: x.amlBlurbs }))
+        }
+        if (['CA'].includes(this.location)) {
+          return this.entityTypesXPROData.map(x => ({ ...x, blurbs: x.amlBlurbs[0] }))
+        }
+        if (['IN'].includes(this.location)) {
+          // If international blurb is the same as national, map that blurb
+          return this.entityTypesXPROData.map(x => ({ ...x, blurbs: x.amlBlurbs[1] || x.amlBlurbs[0] }))
+        }
+        break
+      // CHANGE NAME REQUEST
+      case 'CHG':
+        if (['BC'].includes(this.location)) {
+          return this.entityTypesBCData.map(x => ({ ...x, blurbs: x.chgBlurbs }))
+        }
+        if (['CA'].includes(this.location)) {
+          return this.entityTypesXPROData.map(x => ({ ...x, blurbs: x.chgBlurbs[0] }))
+        }
+        if (['IN'].includes(this.location)) {
+          // If international blurb is the same as national, map that blurb
+          return this.entityTypesXPROData.map(x => ({ ...x, blurbs: x.chgBlurbs[1] || x.chgBlurbs[0] }))
+        }
+        break
+      // CONVERSION REQUEST
+      case 'CNV':
+        if (['BC'].includes(this.location)) {
+          return this.conversionTypes
+        }
+        break
+      default:
+        return ''
+    }
+    return ''
+  }
   @Action
   setActiveComponent (component: string) {
     enum Tabs {
