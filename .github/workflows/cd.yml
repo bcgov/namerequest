@@ -28,7 +28,7 @@ jobs:
       - uses: pwei1018/bcrs-cd-action@latest
         with:
           WORKING_DIRECTORY: "./client"
-          APP_NAME: "namerequest"
+          APP_NAME: "namerequest-ui"
           VAULTS: ""
           SKIP_OP: "true"
           OP_PARAMETERS: ""
