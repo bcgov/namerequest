@@ -1,10 +1,9 @@
 name: Name Request UI CD
 
 on:
-  #tempoary disable auto deployment until new deployment process get approval.
-  #push:
-  #  branches:
-  #    - master
+  push:
+    branches:
+      - master
   workflow_dispatch:
     inputs:
       environement:
@@ -38,7 +37,7 @@ jobs:
           OPENSHIFT_SA_NAME: ${{ secrets.OPENSHIFT_SA_NAME }}
           OPENSHIFT_SA_TOKEN: ${{ secrets.OPENSHIFT_SA_TOKEN }}
           OPENSHIFT_REPOSITORY: ${{ secrets.OPENSHIFT_REPOSITORY }}
-          OPENSHIFT_REPOSITORY_DEPLOYMENT: ${{ secrets.OPENSHIFT_REPOSITORY }}
+          OPENSHIFT_REPOSITORY_DEPLOYMENT: ${{ secrets.OPENSHIFT_REPOSITORY_DEPLOYMENT }}
 
       - name: Rocket.Chat Notification
         uses: RocketChat/Rocket.Chat.GitHub.Action.Notification@master
