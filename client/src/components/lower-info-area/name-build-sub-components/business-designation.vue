@@ -45,8 +45,8 @@ export default class BusinessDesignation extends Vue {
       words (e.g. "Ltd.", "Ltee.", "Inc." or "Corp.") is acceptable`
     },
     {
-      title: 'Extra provincial Companies',
-      content: `Extra provincial companies may have "Limited Liability Company" or "LLC" as the last word in their
+      title: 'Extraprovincial Companies',
+      content: `Extraprovincial companies may have "Limited Liability Company" or "LLC" as the last word in their
       name.`
     },
     {

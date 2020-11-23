@@ -227,9 +227,11 @@ export default class App extends Mixins(SessionTimerMixin) {
 <style lang="sass">
 #app
   background-color: $body-bg
+
 #main-column
-  padding: 0
-  margin: 0 auto 0 auto
+  display: flex
+  flex-flow: column nowrap
+  min-height: 100vh
 
 .loading-container.grayed-out
   opacity: 0.46
