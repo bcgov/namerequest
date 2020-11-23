@@ -135,25 +135,23 @@ import { matchWord, removeExcessSpaces, replaceWord } from '@/plugins/utilities'
   components: { ReserveSubmit }
 })
 export default class GreyBox extends Vue {
+  @Prop(Boolean) changesInBaseName: boolean
+  @Prop(Boolean) designationIsFixed: boolean
   @Prop(Number) i: number
   @Prop(Number) issueIndex: number
   @Prop(Object) option: OptionI
   @Prop(String) originalName: string
 
-  @Watch('changesInBaseName', { immediate: true })
-  updateChangesInBaseName (newVal) {
-    newReqModule.mutateChangesInBaseName(newVal)
+  clickedDesignation: string = ''
+  originalNameBase: string = ''
+  showError: boolean = false
+  showLastStepButtons = {
+    conflict_self_consent: false,
+    obtain_consent: false,
+    send_to_examiner: false,
+    assumed_name: false
   }
-  @Watch('designationIsFixed', { immediate: true })
-  updateDesignationIsFixed (newVal) {
-    newReqModule.mutateDesignationIsFixed(newVal)
-  }
-  @Watch('designationIsFixedStore', { immediate: true })
-  syncDesignationIsFixed () {
-    if (this.designationIsFixedStore !== this.designationIsFixed) {
-      newReqModule.mutateDesignationIsFixed(this.designationIsFixed)
-    }
-  }
+  types = ['send_to_examiner', 'obtain_consent', 'conflict_self_consent', 'assumed_name']
 
   mounted () {
     this.$root.$on('start-search-again', () => {
@@ -179,30 +177,8 @@ export default class GreyBox extends Vue {
     this.originalNameBase = originalName
   }
 
-  clickedDesignation: string = ''
-  originalNameBase: string = ''
-  showError: boolean = false
-  showLastStepButtons = {
-    conflict_self_consent: false,
-    obtain_consent: false,
-    send_to_examiner: false,
-    assumed_name: false
-  }
-  types = ['send_to_examiner', 'obtain_consent', 'conflict_self_consent', 'assumed_name']
-
   get allDesignationsStripped () {
     return this.stripAllDesignations(this.originalName)
-  }
-  get baseWordsAreUnchanged () {
-    let nameTest = this.stripAllDesignations(this.name)
-    let { allDesignationsStripped } = this
-    if (this.nameActionWords.length > 0) {
-      for (let word of this.nameActionWords) {
-        nameTest = replaceWord(nameTest, word)
-        allDesignationsStripped = replaceWord(allDesignationsStripped, word)
-      }
-    }
-    return (allDesignationsStripped === nameTest)
   }
   get boxIsChecked () {
     let { type } = this.option
@@ -228,12 +204,6 @@ export default class GreyBox extends Vue {
       index: this.issueIndex
     })
   }
-  get changesInBaseName () {
-    if (this.name === this.originalName) {
-      return false
-    }
-    return !this.baseWordsAreUnchanged
-  }
   get checkBoxLabel () {
     switch (this.option.type) {
       case 'send_to_examiner':
@@ -246,105 +216,6 @@ export default class GreyBox extends Vue {
       default:
         return ''
     }
-  }
-  get designationIsFixed () {
-    try {
-      if (this.userCancelled) return false
-      if (!this.changesInBaseName) {
-        // an array containing each designation code used in namex eg. [ 'CR', 'BC', 'CCC', etc... ]
-        let AllDesignationsList = allDesignationsList
-        // allDesignations is an array of objects containing {words, end} keys, set designationEntityTypes to the
-        // relevant object
-        const designationEntityTypes = allDesignations[this.entity_type_cd]
-        /* designationEntityTypes.words.length === 0 is true for types 'PAR', 'FI', 'PA', and the proprietorships so
-        the designation issue is fixed as long as there are no designations present and no nameAction words which in
-        this situation would only be designation-like words to be removed */
-        if (designationEntityTypes && designationEntityTypes.words.length === 0) {
-          if (this.nameActionWords.length > 0) {
-            for (let word of this.nameActionWords) {
-              // so we add any nameActionWords onto the allDesignationsList that were not already part of it
-              if (!AllDesignationsList.includes(word)) {
-                AllDesignationsList = AllDesignationsList.concat(word)
-              }
-            }
-          }
-          // and then fail the test if this.name includes any of the consolodated AllDesignationsList
-          for (let designation of AllDesignationsList) {
-            if (matchWord(this.name, designation)) {
-              return false
-            }
-          }
-          return true
-        }
-        let end: string
-        // here we determine which valid end designation is being used in this.name
-        AllDesignationsList.forEach(designation => {
-          if (this.name.endsWith(' ' + designation)) {
-            end = designation
-          }
-        })
-        /* all the cases where a valid designation was not required are covered by this point, so end should contain
-        a match, and we fail the test if it does not */
-        if (!end) {
-          return false
-        }
-        if (this.nameActionWords.length > 0) {
-          for (let word of this.nameActionWords) {
-            if (!AllDesignationsList.includes(word)) {
-              AllDesignationsList = AllDesignationsList.concat(word)
-            }
-          }
-        }
-        let matches = []
-        for (let designation of AllDesignationsList) {
-          if (matches.includes(designation)) {
-            continue
-          }
-          let matchedWords = matchWord(this.name, designation)
-          if (matchedWords) {
-            if (matchedWords.length > 1) {
-              return false
-            }
-            if (matchedWords.length === 1) {
-              matches.push(designation)
-            }
-          }
-        }
-        if (this.isMisplacedPrecedingMismatch) {
-          let nextWords = []
-          if (Array.isArray(newReqModule.analysisJSON.issues[this.issueIndex + 1].name_actions)) {
-            nextWords = newReqModule.analysisJSON.issues[this.issueIndex + 1].name_actions.map(
-              action => action.word.toUpperCase()
-            )
-            nextWords = nextWords.filter(word => word !== end)
-            matches = matches.filter(match => !nextWords.includes(match))
-          }
-        }
-        if (matches.length > 1) {
-          return false
-        }
-        if (Array.isArray(this.designations) && this.designations.length > 0) {
-          if (this.designations.some(designation => this.name.endsWith(designation))) {
-            return true
-          }
-        } else {
-          if (designationEntityTypes && designationEntityTypes.words.some(word => this.name.endsWith(word))) {
-            return true
-          }
-        }
-      }
-      return false
-    } catch (err) {
-      // Catch designation errors and log to console, as it will prevent this component from rendering properly
-      // eslint-disable-next-line no-console
-      console.warn(err)
-      // If something fails in this method, return false, as getters are expected to return a value
-      // We don't want to prevent the component from rendering, log the error and continue
-      return false
-    }
-  }
-  get designationIsFixedStore () {
-    return newReqModule.designationIsFixed
   }
   get designations () {
     if (this.issue && this.issue.designations) {
@@ -365,41 +236,20 @@ export default class GreyBox extends Vue {
     }
     return false
   }
+  get isAssumedName () {
+    return this.issue.setup.some(box => box.type === 'assumed_name')
+  }
   get isDesignationIssueType () {
     if (newReqModule.designationIssueTypes.includes(this.issueType)) {
       return true
     }
     return false
   }
-  get isMismatchFollowingMisplaced () {
-    if (this.issueIndex > 0 &&
-        this.issueType === 'designation_mismatch' &&
-        newReqModule.analysisJSON.issues[this.issueIndex - 1].issue_type === 'designation_misplaced') {
-      return true
-    }
-    return false
-  }
-  get isMisplacedPrecedingMismatch () {
-    if (this.issueLength > 1 && this.issueIndex < this.issueLength) {
-      if (['designation_misplaced', 'end_designation_more_than_once'].includes(this.issueType)) {
-        if (newReqModule.analysisJSON.issues[this.issueIndex + 1]) {
-          return (newReqModule.analysisJSON.issues[this.issueIndex + 1].issue_type === 'designation_mismatch')
-        }
-      }
-    }
-    return false
+  get isLastIndex () {
+    return (this.issueIndex === this.lastIndex)
   }
   get issue () {
     return newReqModule.analysisJSON.issues[this.issueIndex]
-  }
-  get isAssumedName () {
-    return this.issue.setup.some(box => box.type === 'assumed_name')
-  }
-  get lastIndex () {
-    return this.issueLength - 1
-  }
-  get isLastIndex () {
-    return (this.issueIndex === this.lastIndex)
   }
   get issueLength () {
     if (Array.isArray(newReqModule.analysisJSON.issues)) {
@@ -412,6 +262,9 @@ export default class GreyBox extends Vue {
       return this.issue.issue_type
     }
     return ''
+  }
+  get lastIndex () {
+    return this.issueLength - 1
   }
   get multipleMismatchedDesignations () {
     if (this.issueType === 'designation_mismatch') {
@@ -441,6 +294,28 @@ export default class GreyBox extends Vue {
       return this.nameActions.map(action => action.word.toUpperCase())
     }
     return []
+  }
+  get optionClasses () {
+    let { i } = this
+    if (this.issue && Array.isArray(this.issue.setup)) {
+      switch (this.issue.setup.length) {
+        case 1:
+          return 'square-card-x1'
+        case 2:
+          if (i === 1) {
+            return 'square-card-x2 ml-3'
+          }
+          return 'square-card-x2'
+        case 3:
+          if (i === 1) {
+            return 'square-card-x3 mx-3'
+          }
+          return 'square-card-x3'
+        default:
+          return ''
+      }
+    }
+    return ''
   }
   get requestExaminationOrProvideConsent () {
     return newReqModule.requestExaminationOrProvideConsent
@@ -478,28 +353,6 @@ export default class GreyBox extends Vue {
       }
       if (['conflict_self_consent', 'obtain_consent'].includes(this.option.type)) {
         return 'consent'
-      }
-    }
-    return ''
-  }
-  get optionClasses () {
-    let { i } = this
-    if (this.issue && Array.isArray(this.issue.setup)) {
-      switch (this.issue.setup.length) {
-        case 1:
-          return 'square-card-x1'
-        case 2:
-          if (i === 1) {
-            return 'square-card-x2 ml-3'
-          }
-          return 'square-card-x2'
-        case 3:
-          if (i === 1) {
-            return 'square-card-x3 mx-3'
-          }
-          return 'square-card-x3'
-        default:
-          return ''
       }
     }
     return ''
@@ -559,9 +412,6 @@ export default class GreyBox extends Vue {
       return this.clickedDesignation
     }
     return ''
-  }
-  get userCancelled () {
-    return newReqModule.userCancelledAnalysis
   }
 
   cancelAnalyzeName (destination) {

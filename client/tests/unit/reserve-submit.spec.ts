@@ -225,8 +225,8 @@ describe('reserve-submit', () => {
       sandbox.reset()
       wrapper.destroy()
     })
-    test('The button is labelled "Assume a name in BC"', () => {
-      expect(wrapper.text()).toBe('Assume a name in BC')
+    test('The button is labelled "Continue"', () => {
+      expect(wrapper.text()).toBe('Continue')
     })
 
     for (let code of ['XCR', 'RLC', 'XUL']) {

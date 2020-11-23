@@ -87,6 +87,8 @@
                            :issueIndex="issueIndex"
                            :option="option"
                            class="mx-0"
+                           :changesInBaseName="changesInBaseName"
+                           :designationIsFixed="designationIsFixed"
                            :originalName="originalName" />
                 </v-col>
               </v-row>
@@ -160,13 +162,14 @@
 <script lang="ts">
 import GreyBox from '@/components/new-request/grey-box.vue'
 import MainContainer from '@/components/new-request/main-container.vue'
+import allDesignations, { allDesignationsList } from '@/store/list-data/designations'
 import Moment from 'moment'
 import newReqModule from '@/store/new-request-module'
 import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { IssueI, QuillOpsI, SelectionI } from '@/models'
 import { quillEditor } from 'vue-quill-editor'
-import { removeExcessSpaces } from '@/plugins/utilities'
+import { matchWord, removeExcessSpaces, replaceWord } from '@/plugins/utilities'
 
 @Component({
   components: { GreyBox, MainContainer, quillEditor, ReserveSubmit }
@@ -189,7 +192,6 @@ export default class AnalyzeResults extends Vue {
     this.originalName = newReqModule.name
   }
   mounted () {
-    newReqModule.mutateDesignationIsFixed(false)
     this.$root.$on('updatecontents', (name) => { this.updateContents(name) })
     this.$root.$on('show-original-name', () => { this.name = this.originalName })
     document.addEventListener('keydown', this.handleEnterKey)
@@ -245,8 +247,36 @@ export default class AnalyzeResults extends Vue {
     }
   }
 
+  get allDesignationsStripped () {
+    return this.stripAllDesignations(this.originalName)
+  }
+  get allowProceed () {
+    /* newReqModule.designationIssueTypes is a list of all the designation-related issue types.  designationIsFixed
+     will not be true unless one of these issues was solved.  some sets of issues will not include a designation-related
+     issue and this will need to return true in these cases even tho designationIsFixed will be false */
+    if (!this.hasDesignationIssue) {
+      if (this.isLastIndex) {
+        return true
+      }
+    }
+    return this.designationIsFixed
+  }
+  get baseWordsAreUnchanged () {
+    let nameTest = this.stripAllDesignations(this.name)
+    let { allDesignationsStripped } = this
+    if (this.nameActionWords.length > 0) {
+      for (let word of this.nameActionWords) {
+        nameTest = replaceWord(nameTest, word)
+        allDesignationsStripped = replaceWord(allDesignationsStripped, word)
+      }
+    }
+    return (allDesignationsStripped === nameTest)
+  }
   get changesInBaseName () {
-    return newReqModule.changesInBaseName
+    if (this.name === this.originalName) {
+      return false
+    }
+    return !this.baseWordsAreUnchanged
   }
   get chunkedName () {
     return this.name.split(' ')
@@ -271,19 +301,115 @@ export default class AnalyzeResults extends Vue {
     }
     return []
   }
-  get hasDesignationIssue () {
-    return (this.json.issues.some(issue => newReqModule.designationIssueTypes.includes(issue.issue_type)))
+  get designations () {
+    if (this.issue && this.issue.designations) {
+      return this.issue.designations
+    }
+    return null
   }
   get designationIsFixed () {
-    /* newReqModule.designationIssueTypes is a list of all the designation-related issue types.  designationIsFixed
-    will not be true unless one of these issues was solved.  some sets of issues will not include a designation-related
-    issue and this will need to return true in these cases even tho designationIsFixed will be false */
-    if (!this.hasDesignationIssue) {
-      if (this.isLastIndex) {
-        return true
+    try {
+      if (this.userCancelled) return false
+      if (!this.changesInBaseName) {
+        // creating a new version of allDesignationsList because we are going to modify it but still need the original
+        let AllDesignationsList = allDesignationsList
+        // allDesignations is an array of objects containing {words, end} keys, set designationEntityTypes to the
+        // relevant object
+        const designationEntityTypes = allDesignations[this.entity_type_cd]
+        /* designationEntityTypes.words.length === 0 is true for types 'PAR', 'FI', 'PA', and the proprietorships so
+         the designation issue is fixed as long as there are no designations present and no nameAction words which in
+         this situation would only be designation-like words to be removed */
+        if (designationEntityTypes && designationEntityTypes.words.length === 0) {
+          if (this.nameActionWords.length > 0) {
+            for (let word of this.nameActionWords) {
+              // so we add any nameActionWords onto the allDesignationsList that were not already part of it
+              if (!AllDesignationsList.includes(word)) {
+                AllDesignationsList = AllDesignationsList.concat(word)
+              }
+            }
+          }
+          // and then fail the test if this.name includes any of the consolodated AllDesignationsList
+          for (let designation of AllDesignationsList) {
+            if (matchWord(this.name, designation)) {
+              return false
+            }
+          }
+          return true
+        }
+        let end: string
+        // here we determine which valid end designation is being used in this.name
+        AllDesignationsList.forEach(designation => {
+          if (this.name.endsWith(' ' + designation)) {
+            end = designation
+          }
+        })
+        /* all the cases where a valid designation was not required are covered by this point, so end should contain
+         a match, and we fail the test if it does not */
+        if (!end) {
+          return false
+        }
+        if (this.nameActionWords.length > 0) {
+          for (let word of this.nameActionWords) {
+            if (!AllDesignationsList.includes(word)) {
+              AllDesignationsList = AllDesignationsList.concat(word)
+            }
+          }
+        }
+        let matches = []
+        for (let designation of AllDesignationsList) {
+          if (matches.includes(designation)) {
+            continue
+          }
+          let matchedWords = matchWord(this.name, designation)
+          if (matchedWords) {
+            if (matchedWords.length > 1) {
+              return false
+            }
+            if (matchedWords.length === 1) {
+              matches.push(designation)
+            }
+          }
+        }
+        // checks for a designation_misplaced issue type that is not the last issue... ie. the name won't be fixed yet
+        // but need to pass to proceed to the next issue.
+        if (!this.isLastIndex && this.issue.issue_type === 'designation_misplaced') {
+          return this.name.endsWith(this.nameActionWords[0])
+        }
+        if (this.isMisplacedPrecedingMismatch) {
+          let nextWords = []
+          if (Array.isArray(newReqModule.analysisJSON.issues[this.issueIndex + 1].name_actions)) {
+            nextWords = newReqModule.analysisJSON.issues[this.issueIndex + 1].name_actions.map(
+              action => action.word.toUpperCase()
+            )
+            nextWords = nextWords.filter(word => word !== end)
+            matches = matches.filter(match => !nextWords.includes(match))
+          }
+        }
+        if (matches.length > 1) {
+          return false
+        }
+        if (Array.isArray(this.designations) && this.designations.length > 0) {
+          if (this.designations.some(designation => this.name.endsWith(designation))) {
+            return true
+          }
+        } else {
+          if (designationEntityTypes && designationEntityTypes.words.some(word => this.name.endsWith(word))) {
+            return true
+          }
+        }
       }
+      return false
+    } catch (err) {
+      // Catch designation errors and log to console, as it will prevent this component from rendering properly
+      // eslint-disable-next-line no-console
+      console.warn(err)
+      // If something fails in this method, return false, as getters are expected to return a value
+      // We don't want to prevent the component from rendering, log the error and continue
+      return false
     }
-    return newReqModule.designationIsFixed
+  }
+  get hasDesignationIssue () {
+    return (this.json.issues.some(issue => newReqModule.designationIssueTypes.includes(issue.issue_type)))
   }
   get enableNextForAssumedName () {
     if (this.issue && ['corp_conflict', 'queue_conflict'].includes(this.issue.issue_type)) {
@@ -336,7 +462,7 @@ export default class AnalyzeResults extends Vue {
     }
     let { length } = this.json.issues
     if (this.isLastIndex && this.issue.issue_type !== 'word_to_avoid') {
-      if (!this.changesInBaseName && this.designationIsFixed && this.examinationOrConsentCompleted) {
+      if (!this.changesInBaseName && this.allowProceed && this.examinationOrConsentCompleted) {
         return {
           class: 'approved',
           icon: 'mdi-check-circle',
@@ -355,8 +481,32 @@ export default class AnalyzeResults extends Vue {
   get isApproved () {
     return (this.json.status === 'Available')
   }
+  get isDesignationIssue () {
+    if (this.issue && this.issue.issue_type) {
+      return (newReqModule.designationIssueTypes.some(issue => issue.issue_type === this.issue.issue_type))
+    }
+    return false
+  }
   get isLastIndex () {
     return (this.issueIndex === this.issueLength - 1)
+  }
+  get isMismatchFollowingMisplaced () {
+    if (this.issueIndex > 0 &&
+    this.issueType === 'designation_mismatch' &&
+    newReqModule.analysisJSON.issues[this.issueIndex - 1].issue_type === 'designation_misplaced') {
+      return true
+    }
+    return false
+  }
+  get isMisplacedPrecedingMismatch () {
+    if (this.issueLength > 1 && this.issueIndex < this.issueLength) {
+      if (['designation_misplaced', 'end_designation_more_than_once'].includes(this.issueType)) {
+        if (newReqModule.analysisJSON.issues[this.issueIndex + 1]) {
+          return (newReqModule.analysisJSON.issues[this.issueIndex + 1].issue_type === 'designation_mismatch')
+        }
+      }
+    }
+    return false
   }
   get issue () {
     if (Array.isArray(this.json.issues)) {
@@ -369,6 +519,12 @@ export default class AnalyzeResults extends Vue {
       return this.json.issues.length
     }
     return 1
+  }
+  get issueType () {
+    if (this?.issue?.issue_type) {
+      return this.issue.issue_type
+    }
+    return ''
   }
   get json () {
     return newReqModule.analysisJSON
@@ -387,12 +543,18 @@ export default class AnalyzeResults extends Vue {
     }
     return null
   }
+  get nameActionWords () {
+    if (Array.isArray(this.nameActions) && this.nameActions.length > 0) {
+      return this.nameActions.map(action => action.word.toUpperCase())
+    }
+    return []
+  }
   get nextButtonDisabled () {
     if (this.enableNextForAssumedName) {
       return false
     }
     if (['designation_misplaced', 'end_designation_more_than_once'].includes(this.issue.issue_type)) {
-      if (newReqModule.designationIsFixed && this.issueIndex < this.json.issues.length) {
+      if (this.allowProceed && this.issueIndex < this.json.issues.length) {
         return false
       }
     }
@@ -429,6 +591,9 @@ export default class AnalyzeResults extends Vue {
   }
   set showActualInput (value) {
     newReqModule.mutateShowActualInput(value)
+  }
+  get userCancelled () {
+    return newReqModule.userCancelledAnalysis
   }
 
   cancelAnalyzeName () {
@@ -530,6 +695,12 @@ export default class AnalyzeResults extends Vue {
     event.preventDefault()
     this.name = this.quill.getText()
     newReqModule.startAnalyzeName()
+  }
+  stripAllDesignations (name) {
+    for (let word of allDesignationsList) {
+      name = replaceWord(name, word)
+    }
+    return name
   }
   updateContents (text: string) {
     try {
