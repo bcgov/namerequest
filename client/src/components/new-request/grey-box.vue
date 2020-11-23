@@ -23,9 +23,9 @@
       </template>
       <template v-else>
         <transition :name="i === 0 ? 'fade' : '' " mode="out-in">
-          <v-row class="copy-small colour-p-blue-text"
+          <v-row :key="changesInBaseName+designationIsFixed+'key'+i"
                  align-content="start"
-                 :key="changesInBaseName+designationIsFixed+'key'+i">
+                 class="copy-small colour-p-blue-text">
             <!-- Header, Line 1 and Line 2-->
             <v-col class="copy-small colour-p-blue-text"
                    v-if="changesInBaseName && isDesignationIssueType && i === 0"
@@ -49,11 +49,11 @@
                        key="designation-error-col">
                   <template v-if="Array.isArray(designations) && designations.length > 0">
                     <div class="designation-buttons pa-0">
-                      <button tag="div"
+                      <button :id="'designation-'+d"
                               :key="'designation-'+d"
-                              :id="'designation-'+d"
                               @click.once.prevent="changeDesignation(des)"
                               class="link-sm"
+                              tag="div"
                               v-for="(des, d) in designations">
                       <span :class="d > 0 ? 'ml-1' : '' ">
                         {{ des }}{{ (d !== issue.designations.length - 1) ? ',' : '' }}
@@ -86,10 +86,9 @@
                      class="grey-box-checkbox-button text-center">
                 <transition name="fade" mode="out-in" >
                   <ReserveSubmit :key="option.type+'-reserve-submit'"
-                                 setup="assumed"
                                  id="reserve-submit-comp"
-                                 v-if="isLastIndex"
-                                 style="display: inline" />
+                                 setup="assumed"
+                                 v-if="isLastIndex" />
                 </transition>
               </v-col>
             </template>
@@ -146,10 +145,10 @@ export default class GreyBox extends Vue {
   originalNameBase: string = ''
   showError: boolean = false
   showLastStepButtons = {
+    assumed_name: false,
     conflict_self_consent: false,
     obtain_consent: false,
-    send_to_examiner: false,
-    assumed_name: false
+    send_to_examiner: false
   }
   types = ['send_to_examiner', 'obtain_consent', 'conflict_self_consent', 'assumed_name']
 
