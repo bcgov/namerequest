@@ -230,8 +230,6 @@ export default class App extends Mixins(SessionTimerMixin) {
 #main-column
   padding: 0
   margin: 0 auto 0 auto
-  width: 1380px
-  max-width: 1380px
 
 .loading-container.grayed-out
   opacity: 0.46

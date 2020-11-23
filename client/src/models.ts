@@ -54,7 +54,7 @@ export interface ConsentConflictI {
   [propName: string]: any
 }
 export interface ConversionTypesI {
-  blurb?: string
+  blurbs?: string[]
   desc?: string
   entity_type_cd?: string
   rank?: number
@@ -84,7 +84,12 @@ export interface DraftReqI {
   request_type_cd?: string
 }
 export interface EntityI {
-  blurb?: string[] | string
+  blurbs?: string[] | string
+  intBlurbs?: string[]
+  mveBlurbs?: string[]
+  rehBlurbs?: string[]
+  amlBlurbs?: string[] | [string[], string[]?]
+  chgBlurbs?: string [] | [string[], string[]?]
   cat?: string
   rank?: number
   shortlist?: boolean
@@ -155,7 +160,7 @@ export interface RequestActionMappingI {
 export interface RequestActionsI {
   text: string
   value: string
-  blurb?: string
+  blurbs?: string
   rank?: number
   shortDesc?: string
 }

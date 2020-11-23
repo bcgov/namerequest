@@ -1,25 +1,31 @@
 <template>
-  <v-dialog v-model="showModal" :max-width="width" hide-overlay>
-    <v-card class="pa-0 no-border">
+  <v-dialog v-model="showModal" :max-width="width" persistent>
+    <v-card class="pa-6 no-border pick-entity-card">
+      <v-row class="pl-3">
+        <v-col cols="11">
+          <label>{{ locationText }}:</label>
+        </v-col>
+        <v-col cols="1">
+          <v-icon md color="primary" @click="showModal = false">mdi-close</v-icon>
+        </v-col>
+      </v-row>
       <template v-if="isConversion">
-        <v-card-text class="py-4 text-center">
-          <v-container fluid>
-            <v-row>
-              <v-col cols="12" class="h5">Possible Conversions</v-col>
+        <v-card-text>
+          <v-container fluid class="px-4">
+            <v-row class="category-bg">
+              <v-col cols="12" class="font-weight-bold">Alterations</v-col>
             </v-row>
-            <v-row v-for="(conversion, i) in conversionTypes" :key="'conv-'+i">
+            <v-row v-for="(conversion, i) in conversionTypes" :key="'conv-' + i">
               <v-col cols="12" class="clickable-cell"
                      :id="conversion.value"
                      @click="chooseConversion(conversion)">
-                <v-tooltip bottom max-width="500" open-delay="500">
+                <v-tooltip bottom content-class="bottom-tooltip">
                   <template v-slot:activator="scope">
-                    <button v-on="scope.on" class="link-sm-sans-ul text-left">{{ conversion.desc }}</button>
+                    <button v-on="scope.on" class="link-sm-sans-ul entity-link">{{ conversion.desc }}</button>
                   </template>
-                  <ul class="ma-0 pa-0">
-                    <li class="no-bullet"
-                        v-html="conversion.blurb"
-                        :key="i + '-blurb'" />
-                  </ul>
+                  <div v-for="(text, i) in entityBlurbs(conversion.value)" :key="'blurb-' + i">
+                    <span>{{ text }}</span>
+                  </div>
                 </v-tooltip>
               </v-col>
             </v-row>
@@ -27,32 +33,26 @@
         </v-card-text>
       </template>
       <template v-else-if="!showSocietiesInfo">
-        <v-card-text class="py-4" style="display: flex; justify-items: center; width: 100%">
-          <v-simple-table v-for="(category, i) in tableData" :key="'cat'+i">
-            <tr>
+        <v-card-text class="d-flex">
+          <v-simple-table v-for="(category, i) in tableData" :key="'cat' + i">
+            <tr class="category-bg">
               <th>
-                <span class="h5" v-if="location === 'BC'">{{ category.text }}</span>
-                <span class="h5" v-else>
-                {{ location === 'CA' ? 'Canadian' : 'Foreign' }}
-                <br>{{ category.text }}
-              </span>
+                <span class="font-weight-bold copy-small">{{ category.text }}</span>
               </th>
             </tr>
-            <tr v-for="(entity, n) in category.entities" :key="'ent'+n">
+            <tr v-for="(entity, n) in category.entities" :key="'ent' + n">
               <td class="clickable-cell" :id="entity.value" @click="chooseType(entity)">
-                <v-tooltip bottom max-width="500" open-delay="500">
+                <v-tooltip bottom content-class="bottom-tooltip">
                   <template v-slot:activator="scope">
-                    <button v-on="scope.on" class="link-sm-sans-ul text-left">{{ entity.text }}</button>
+                    <button v-on="scope.on" class="link-sm-sans-ul text-left entity-link">{{ entity.text }}</button>
                   </template>
-                  <template v-if="entity.blurb.length > 1">
-                    <ul class="ma-0 pa-0">
-                      <li v-for="(text, i) in entity.blurb"
-                          :class="i == 0 ? 'no-bullet' : 'yes-bullet'"
-                          :key="i + '-blurb'">{{ text }}</li>
-                    </ul>
-                  </template>
-                  <template v-else>
-                    <span>{{ entity.blurb[0] }}</span>
+                  <template>
+                    <div v-for="(item, index) in entityBlurbs(entity.value)"
+                         :key="`Blurb-${index}`">
+                      <span :class="{ 'tooltip-bullet': index !== 0}">
+                        {{ item }}
+                      </span>
+                    </div>
                   </template>
                 </v-tooltip>
               </td>
@@ -73,11 +73,6 @@
           </v-container>
         </v-card-text>
       </template>
-      <v-card-actions class="bg-grey-1 text-center">
-        <div style="display: block; width: 100%;">
-          <button @click="showModal = false"><v-icon>mdi-close</v-icon> Close</button>
-        </div>
-      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -113,6 +108,9 @@ export default class PickEntityOrConversion extends Vue {
   get location () {
     return newReqModule.location
   }
+  get locationText () {
+    return newReqModule.locationText === 'BC' ? 'British Columbia' : newReqModule.locationText
+  }
   get showModal () {
     return newReqModule.pickEntityModalVisible
   }
@@ -137,10 +135,14 @@ export default class PickEntityOrConversion extends Vue {
       return '550px'
     }
     let cols = this.tableData.length
-    // 210 per column with a max of 900px
-    return `${210 * cols > 900 ? 900 : 210 * cols}px`
-  }
+    const maxThreshold = this.$vuetify.breakpoint.thresholds.sm
 
+    // 210 per column with a max threshold of 960px
+    return `${210 * cols > maxThreshold ? maxThreshold : 210 * cols}px`
+  }
+  entityBlurbs (entity_type_cd: string) {
+    return newReqModule.entityBlurbs.find(type => type.value === entity_type_cd)?.blurbs
+  }
   clearEntitySelection () {
     this.entity_type_cd = 'INFO'
   }
@@ -171,22 +173,23 @@ export default class PickEntityOrConversion extends Vue {
 }
 
 </script>
-th
-  border-bottom: 1px solid grey
-
 <style lang="sass" scoped>
-.no-bullet
-  list-style-type: none
-  margin-bottom: 8px
-  line-height: 18px
-.yes-bullet
-  list-style-position: inside
-  margin-left: 30px
-  line-height: 18px
-.clickable-cell:hover
-  background-color: $grey-2
-  cursor: pointer
+.v-data-table
+  margin: 0 -3px
+.category-bg
+  background-color: #F1F3F5
+.v-card__text
+  padding: 0 !important
+.entity-link
+  text-decoration: none
+.clickable-cell
+  min-width: 160px
+  padding-top: 16px
+  &:hover
+    background-color: $grey-2
+    cursor: pointer
 .no-border
   border-radius: 0 !important
+  text-decoration: none !important
 
 </style>

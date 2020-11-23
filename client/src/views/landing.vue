@@ -3,7 +3,7 @@
     <v-row id="upper-row" no-gutters align-content="start">
       <Stats class="py-0 mt-3 mb-n8 mr-4" />
       <v-col align-self="end" cols="12" class="h2 mb-1 ml-3 colour-white">
-        Name Request
+        Name Request <sup class="beta-tag">Beta</sup>
       </v-col>
       <v-col>
         <transition name="flip" mode="out-in">
@@ -74,7 +74,7 @@ export default class Landing extends Vue {
 #landing-container
   margin: 0
   padding: 0
-  min-width: 1380px !important
+  min-width: 1080px !important
 
 #name-container, .box-style
   background-color: white
@@ -86,9 +86,19 @@ export default class Landing extends Vue {
   padding: 0
 
 #upper-row
-  background-size: 1380px 700px
-  background: url('../assets/images/analyze-name-bg.jpg')
+  background: url('../assets/images/analyze-name-bg.jpg') no-repeat bottom
   color: white
-  height: 700px
+  min-height: 700px
   padding: 0 200px 0 200px
+  background-size: 100%
+
+  @media only screen and (max-width: 1440px)
+    background-size: 130%
+
+.beta-tag
+  top: -1rem
+  color: #FCBA19
+  font-size: 19px
+  font-weight: bold
+  text-transform: uppercase
 </style>

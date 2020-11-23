@@ -6,11 +6,12 @@
                   autocomplete="off"
                   filled
                   id="name-input-text-field"
-                  placeholder="Search a Name"
+                  :label="nameLabel"
                   v-model="nameSearch">
       <template v-slot:append>
         <v-icon class="name-search-icon"
                 id="name-input-icon"
+                color="primary"
                 @click="startAnalyzeName">mdi-magnify</v-icon>
       </template>
     </v-text-field>
@@ -41,7 +42,11 @@ export default class NameInput extends Vue {
   set nameSearch (name: string) {
     newReqModule.mutateName(name)
   }
-
+  get nameLabel () {
+    return newReqModule.location !== 'BC'
+      ? 'Enter the full legal name that the business uses in its home jurisdiction'
+      : 'Enter a Name'
+  }
   clearErrors () {
     newReqModule.clearErrors()
   }
