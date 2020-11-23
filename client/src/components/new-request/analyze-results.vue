@@ -25,6 +25,7 @@
       <transition name="fade" mode="out-in" >
         <v-row no-gutters :key="issueIndex+'vcol'">
           <v-col>
+
             <!--"FURTHER ACTION REQUIRED" OR "APPROVABLE" TEXT + ICON-->
             <transition name="fade" mode="out-in" >
               <v-row no-gutters justify="center"
@@ -78,18 +79,17 @@
                 </v-col>
               </v-row>
 
-            <!--GREY BOXES-->
-
+              <!--GREY BOXES-->
               <v-row class="colour-p-blue-text justify-center" dense v-if="showGreyBoxes">
                 <v-col :key="issue.issue_type + '-' + option.header + '-' + optionIndex"
                        v-for="(option, optionIndex) of issue.setup">
-                  <GreyBox :i="optionIndex"
+                  <GreyBox :changesInBaseName="changesInBaseName"
+                           :designationIsFixed="designationIsFixed"
+                           :i="optionIndex"
                            :issueIndex="issueIndex"
                            :option="option"
-                           class="mx-0"
-                           :changesInBaseName="changesInBaseName"
-                           :designationIsFixed="designationIsFixed"
-                           :originalName="originalName" />
+                           :originalName="originalName"
+                           class="mx-0" />
                 </v-col>
               </v-row>
 
@@ -131,8 +131,10 @@
                 </v-col>
               </v-row>
             </template>
+
             <!--APPROVABLE NAME, NO ISSUES-->
             <template v-else>
+
               <!--APPROVED TEXT-->
               <v-row no-gutters justify="center">
                 <v-col cols="12" class="copy-normal pt-2 pb-4">
@@ -154,7 +156,6 @@
           </v-col>
         </v-row>
       </transition>
-      <!--TITLE, START OVER, SEARCH FIELD-->
     </template>
   </MainContainer>
 </template>
@@ -254,10 +255,8 @@ export default class AnalyzeResults extends Vue {
     /* newReqModule.designationIssueTypes is a list of all the designation-related issue types.  designationIsFixed
      will not be true unless one of these issues was solved.  some sets of issues will not include a designation-related
      issue and this will need to return true in these cases even tho designationIsFixed will be false */
-    if (!this.hasDesignationIssue) {
-      if (this.isLastIndex) {
-        return true
-      }
+    if (!this.hasDesignationIssue && this.isLastIndex) {
+      return true
     }
     return this.designationIsFixed
   }

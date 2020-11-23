@@ -49,7 +49,7 @@
                        key="designation-error-col">
                   <template v-if="Array.isArray(designations) && designations.length > 0">
                     <div class="designation-buttons pa-0">
-                      <button :id="'designation-'+d"
+                      <button :id="'designation-btn-'+d"
                               :key="'designation-'+d"
                               @click.once.prevent="changeDesignation(des)"
                               class="link-sm"
