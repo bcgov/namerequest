@@ -57,7 +57,7 @@ describe('AnalyzeResults', () => {
               case 'designation_mismatch':
               case 'end_designation_more_than_once':
                 // eslint-disable-next-line
-                let designation = wrapper.find('#designation-0')
+                let designation = wrapper.find('#designation-btn-0')
                 await designation.trigger('click')
                 return new Promise(resolve => { resolve() })
 
