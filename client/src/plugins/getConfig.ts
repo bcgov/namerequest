@@ -13,6 +13,7 @@ export function getConfig (): Promise<void> {
         'Cache-Control': 'no-cache'
       }
     })
+
     const baseURL = response.data[0]['URL'] + '/api/v1'
     const paymentURL = response.data[0]['PAYMENT_PORTAL_URL']
 
@@ -28,7 +29,7 @@ export function getConfig (): Promise<void> {
     const legalApiUrl = response.data[0]['LEGAL_API_URL']
     sessionStorage.setItem('LEGAL_API_URL', legalApiUrl)
 
-    const ldClientId: string = response.data['LD_CLIENT_ID'];
+    const ldClientId: string = response.data[0]['LD_CLIENT_ID'];
     (<any>window).ldClientId = ldClientId
 
     /**
