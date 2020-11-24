@@ -1,25 +1,25 @@
 <template>
-  <v-dialog max-width='40%' :value='isVisible' persistent>
-    <v-card class='pa-9'>
-      <v-card-text class='h3'>
+  <v-dialog max-width="40%" :value="isVisible" persistent>
+    <v-card class="pa-9">
+      <v-card-text class="h3">
         Confirm Name Request
         <countdown-timer :timerName="timerName" colorString="#003366" bgColorString="#efefef" style="float: right"/>
       </v-card-text>
-      <v-card-text class='copy-normal'>
+      <v-card-text class="copy-normal">
         <request-details
-          v-bind:applicant='applicant'
-          v-bind:name='name'
-          v-bind:nameChoices='nameChoices'
+          :applicant="applicant"
+          :name="name"
+          :nameChoices="nameChoices"
         />
         <fee-summary
-          v-bind:filingData='[...paymentDetails]'
-          v-bind:fees='[...paymentFees]'
+          :filingData="[...paymentDetails]"
+          :fees="[...paymentFees]"
         />
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click='confirmPayment' id='payment-pay-btn' class='primary' text>Accept</v-btn>
-        <v-btn @click='cancelPayment' id='payment-close-btn' class='normal' text>Cancel</v-btn>
+        <v-btn @click="confirmPayment" id="payment-pay-btn" class="primary" text>Accept</v-btn>
+        <v-btn @click="cancelPayment" id="payment-close-btn" class="normal" text>Cancel</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

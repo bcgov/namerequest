@@ -76,12 +76,14 @@
               </v-col>
               <v-col cols="3" v-if="nr.state !== 'CANCELLED'">
                 <v-row dense>
-                  <v-col cols="12" v-for="action of actions" :key="action+'-button'">
-                    <v-btn @click="handleButtonClick(action)"
-                           block
-                           :disabled="disableUnfurnished && action !== 'RECEIPT'">{{ action }}</v-btn>
-                  </v-col>
-                  <!--<v-btn @click="activateILModal">incorporate now</v-btn>-->
+                  <template v-for="action of actions">
+                    <v-col cols="12" :key="action+'-button'" :class="{ 'mt-8': action === 'REFUND' }">
+                      <v-btn @click="handleButtonClick(action)"
+                             block
+                             :disabled="disableUnfurnished && action !== 'RECEIPT'">{{ actionText(action) }}</v-btn>
+                    </v-col>
+                    <!--<v-btn @click="activateILModal">incorporate now</v-btn>-->
+                  </template>
                 </v-row>
               </v-col>
             </v-row>
@@ -118,7 +120,13 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
   readonly isAuthenticated!: boolean
 
   get actions () {
-    return this.nr.actions
+    const actions = this.nr.actions || []
+    // move 'REFUND' action (if present) to end of array
+    // eg, ['EDIT', 'REFUND', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'REFUND']
+    return actions.sort((a, b) => {
+      if (b === 'REFUND') return -1
+      return 0
+    })
   }
   get address () {
     let fields = ['addrLine2', 'city', 'stateProvinceCd', 'countryCd', 'postalCd']
@@ -192,6 +200,14 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
     return (this.nr && this.nr.priorityCd && this.nr.priorityCd === 'Y')
   }
 
+  private actionText (action): string {
+    switch (action) {
+      case 'RECEIPT': return 'RECEIPTS'
+      case 'REFUND': return 'CANCEL AND REFUND'
+      default: return action
+    }
+  }
+
   getNameFormatting (name) {
     if (name.state === 'NE') {
       return {
@@ -253,6 +269,9 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
           break
         case 'RECEIPT':
           paymentModule.togglePaymentHistoryModal(true)
+          break
+        case 'REFUND':
+          paymentModule.toggleRefundModal(true)
           break
         case 'INCORPORATE':
           await this.affiliateOrLogin()

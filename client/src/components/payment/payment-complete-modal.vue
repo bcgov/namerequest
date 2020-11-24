@@ -16,7 +16,7 @@
         <!--<span>Time Remaining - 10:00</span>-->
         <v-spacer></v-spacer>
         <v-btn @click="hideModal" id="receipt-close-btn" class="normal" text>Done</v-btn>
-        <v-btn @click="downloadReceipt" id="download-receipt-btn" class="primary" text>Download Receipt</v-btn>
+        <v-btn @click="downloadReceipt" class="primary download-receipt-btn" text>Download Receipt</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

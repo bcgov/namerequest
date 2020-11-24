@@ -1,0 +1,52 @@
+/*
+ * Vuetify Overrides
+ */
+
+@import "theme.scss";
+
+.v-application {
+  font-size: 1rem; /* 16px */
+  line-height: 1.5rem; /* 24px */
+  font-family: 'BCSans', Verdana, Arial, sans-serif !important;
+  padding: 0;
+}
+
+.v-application .text-body-1,
+.v-application .text-body-2 {
+  font-family: 'BCSans', Verdana, Arial, sans-serif !important;
+}
+
+.v-btn {
+  letter-spacing: normal;
+  border-bottom-width: 1px !important;
+}
+
+/* generic layout for dialogs */
+.v-dialog > .v-card {
+  padding: 2.5rem;
+
+  .v-card__title {
+    padding: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: $gray9;
+    letter-spacing: normal;
+    margin-top: -0.5rem;
+    margin-bottom: -0.5rem;
+  }
+
+  .v-card__text {
+    padding: 2rem 0 0 0;
+    font-size: 1rem;
+    color: $gray7;
+    line-height: 1.5rem;
+  }
+
+  .v-card__actions {
+    padding: 2rem 0 0 0;
+  }
+
+  .v-btn.dialog-close {
+    background-color: unset !important;
+  }
+}

@@ -18,6 +18,7 @@ const state = {
     ],
     isPaymentVisible: false,
     isPaymentHistoryVisible: false,
+    isRefundVisible: false,
     isUpgradeVisible: false,
     isReapplyVisible: false,
     isPaymentCompleteVisible: false,
