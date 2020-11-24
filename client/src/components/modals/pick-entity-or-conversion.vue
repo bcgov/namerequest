@@ -1,9 +1,9 @@
 <template>
   <v-dialog v-model="showModal" :max-width="width" persistent>
     <v-card class="pa-6 no-border pick-entity-card">
-      <v-row class="pl-3">
+      <v-row>
         <v-col cols="11">
-          <label>{{ locationText }}:</label>
+          <span class="ml-7 copy-small">{{ locationText }}:</span>
         </v-col>
         <v-col cols="1">
           <v-icon md color="primary" @click="showModal = false">mdi-close</v-icon>
@@ -11,7 +11,7 @@
       </v-row>
       <template v-if="isConversion">
         <v-card-text>
-          <v-container fluid class="px-4">
+          <v-container>
             <v-row class="category-bg">
               <v-col cols="12" class="font-weight-bold">Alterations</v-col>
             </v-row>
@@ -19,7 +19,7 @@
               <v-col cols="12" class="clickable-cell"
                      :id="conversion.value"
                      @click="chooseConversion(conversion)">
-                <v-tooltip bottom content-class="bottom-tooltip">
+                <v-tooltip bottom content-class="bottom-tooltip" transition="fade-transition">
                   <template v-slot:activator="scope">
                     <button v-on="scope.on" class="link-sm-sans-ul entity-link">{{ conversion.desc }}</button>
                   </template>
@@ -35,16 +35,16 @@
       <template v-else-if="!showSocietiesInfo">
         <v-card-text class="d-flex">
           <v-simple-table v-for="(category, i) in tableData" :key="'cat' + i">
-            <tr class="category-bg">
+            <tr class="category-bg cell">
               <th>
-                <span class="font-weight-bold copy-small">{{ category.text }}</span>
+                <span class="font-weight-bold">{{ category.text }}</span>
               </th>
             </tr>
             <tr v-for="(entity, n) in category.entities" :key="'ent' + n">
               <td class="clickable-cell" :id="entity.value" @click="chooseType(entity)">
-                <v-tooltip bottom content-class="bottom-tooltip">
+                <v-tooltip bottom content-class="bottom-tooltip" transition="fade-transition">
                   <template v-slot:activator="scope">
-                    <button v-on="scope.on" class="link-sm-sans-ul text-left entity-link">{{ entity.text }}</button>
+                    <button v-on="scope.on" class="link-sm-sans-ul entity-link">{{ entity.text }}</button>
                   </template>
                   <template>
                     <div v-for="(item, index) in entityBlurbs(entity.value)"
@@ -178,13 +178,19 @@ export default class PickEntityOrConversion extends Vue {
   margin: 0 -3px
 .category-bg
   background-color: #F1F3F5
-.v-card__text
-  padding: 0 !important
+.cell
+  padding: 10px
+  color: #212529
+  display: flex
 .entity-link
+  width: 100%
   text-decoration: none
+  text-align: left
 .clickable-cell
-  min-width: 160px
-  padding-top: 16px
+  min-width: 180px
+  width: 100%
+  padding: 10px
+
   &:hover
     background-color: $grey-2
     cursor: pointer

@@ -1,7 +1,7 @@
 <template>
   <v-container fluid id="new-request-container" class="copy-normal">
     <v-row cols="12">
-      <v-col cols="6" class="font-weight-bold">I need a name to:</v-col>
+      <v-col cols="6" class="font-weight-bold h6">I need a name to:</v-col>
       <v-col cols="6">
         <span id="nr-required-activator"
               class="link-std d-flex justify-end"
@@ -17,7 +17,7 @@
                   id="search-type-options-select"
                   v-model="request_action_cd">
           <template slot="item" slot-scope="data">
-            <v-tooltip :disabled="!data.item.blurbs" right>
+            <v-tooltip :disabled="!data.item.blurbs" right transition="fade-transition">
               <template v-slot:activator="scope">
                 <span v-on="scope.on" class="list-item">{{ data.item.text }}</span>
               </template>
@@ -31,6 +31,7 @@
         <v-tooltip id="location-options-select"
                    top
                    content-class="top-tooltip"
+                   transition="fade-transition"
                    :disabled="location === 'BC'">
           <template v-slot:activator="scope">
             <div v-on="scope.on">
@@ -41,7 +42,7 @@
                         filled
                         v-model="location">
                 <template slot="item" slot-scope="data">
-                  <v-tooltip :disabled="!data.item.blurbs" right>
+                  <v-tooltip :disabled="!data.item.blurbs" right transition="fade-transition">
                     <template v-slot:activator="scope">
                       <span v-on="scope.on" class="list-item">{{ data.item.text }}</span>
                     </template>
@@ -64,13 +65,14 @@
         <v-tooltip id="entity-type-options-select"
                    top
                    content-class="top-tooltip"
-                   :disabled="request_action_cd !== 'CNV' || !entityConversionText">
+                   :disabled="request_action_cd !== 'CNV' || !entityConversionText"
+                   transition="fade-transition">
           <template v-slot:activator="scope">
             <div v-on="scope.on">
               <v-select :error-messages="errors.includes('entity_type_cd') ? 'Please select a type' : ''"
                         :hide-details="!errors.includes('entity_type_cd')"
                         :items="entityConversionTypeOptions"
-                        :placeholder="isConversion ? 'Please choose a conversion type' : ''"
+                        :label="isConversion ? 'Please choose a conversion type' : ''"
                         @change="clearErrors()"
                         filled
                         v-model="entity_type_cd">
@@ -79,7 +81,8 @@
                           :right="isScreenLg"
                           :left="!isScreenLg"
                           :disabled="!data.item.blurbs"
-                          :content-class="!isScreenLg ? 'left-tooltip' : ''">
+                          :content-class="!isScreenLg ? 'left-tooltip' : ''"
+                          transition="fade-transition">
                     <template v-slot:activator="scope">
                       <span v-on="scope.on"
                             class="list-item"
@@ -106,8 +109,8 @@
                  class="mb-n7"/>
     </v-row>
     <v-row no-gutters>
-      <v-col cols="4">
-        <v-tooltip bottom content-class="bottom-tooltip mt-n5">
+      <v-col>
+        <v-tooltip top content-class="top-tooltip" transition="fade-transition" open-delay="200">
           <template v-slot:activator="{ on }">
             <v-checkbox
                     v-model="isPersonsName"
@@ -115,7 +118,7 @@
                     class="copy-small mr-5"
                     v-slot:label v-on="on">
               <template>
-                <span v-on="on">Name is a person's name</span>
+                <span v-on="on" class="copy-small">Name is a person's name</span>
               </template>
             </v-checkbox>
           </template>
@@ -126,18 +129,18 @@
           </ul>
         </v-tooltip>
       </v-col>
-      <v-col cols="4">
-        <v-tooltip bottom content-class="bottom-tooltip mt-n5">
+      <v-col cols="4" class="ml-n8">
+        <v-tooltip top content-class="top-tooltip" transition="fade-transition" open-delay="200">
           <template v-slot:activator="{ on }">
             <v-checkbox
                     v-model="nameIsEnglish"
                     id="name-checkbox"
                     :false-value="true"
                     :true-value="false"
-                    class="copy-small mr-5"
+                    class="copy-small"
                     v-slot:label v-on="on">
               <template>
-                <span v-on="on">Name contains no English words</span>
+                <span v-on="on" class="copy-small">Name contains no English words</span>
               </template>
             </v-checkbox>
           </template>
@@ -152,6 +155,7 @@
           </ul>
         </v-tooltip>
       </v-col>
+      <v-col cols="5"></v-col>
     </v-row>
     <div class="mt-1 mb-4 text-center">
       <v-btn
@@ -321,14 +325,20 @@ export default class NewSearch extends Vue {
 .list-item
   width: 100%
 
+.v-select
+  &::placeholder
+    color: green !important
+
 .entity-type-info
   border-top: 1px solid #DEE2E6
-  padding: 10px 0 10px 0 !important
+  margin-top: 10px !important
+  padding: 20px 0 20px 0 !important
 
 .list-item:hover
   color: #1669BB
 
 .search-name-btn
+  min-height: 45px
   padding: 0 50px 0 50px !important
   font-size: 16px !important
   text-transform: none !important

@@ -238,7 +238,7 @@ export class NewRequestModule extends VuexModule {
       rank: 3
     },
     {
-      text: '"Doing Business As" Name (DBA)',
+      text: '"Doing Business As" name (DBA)',
       value: 'DBA',
       cat: 'Proprietorships',
       blurbs: [
@@ -318,7 +318,7 @@ export class NewRequestModule extends VuexModule {
       cat: 'Partnerships',
       blurbs: [
         `Frequently used in real estate developments or film industry projects.  This type of partnership ends when 
-        the project is complete`,
+        the project is complete.`,
         'Formed by a general partner (person or entity)',
         'A partnership agreement is recommended',
         'Does not have name protection in BC'
@@ -332,7 +332,7 @@ export class NewRequestModule extends VuexModule {
       text: 'Limited liability partnership',
       cat: 'Partnerships',
       blurbs: [
-        'Frequently used by professionals such as doctors or lawyers to form a practice',
+        'Frequently used by professionals such as doctors or lawyers to form a practice.',
         'Formed by two or more individuals or entities',
         'Partners have limited liability as an LLP has a legal status separate from its partners',
         'A partnership agreement is recommended',
@@ -347,7 +347,7 @@ export class NewRequestModule extends VuexModule {
       text: 'Cooperative association',
       cat: 'Social Enterprises',
       blurbs: [
-        'Membership-based organization, owned and operated by the people who use its services',
+        'Membership-based organization, owned and operated by the people who use its services.',
         'Has independent legal status separate from its members',
         'Members take on shares and have limited liability',
         'Reported as Corporate tax',
@@ -424,7 +424,7 @@ export class NewRequestModule extends VuexModule {
       cat: 'Other',
       blurbs: [
         `A special type of business structure that may often be established through legislation or by economic growth 
-        initiatives`,
+        initiatives.`,
         'Examples include resorts and ski areas',
         'Has name protection in BC'
       ],
@@ -474,25 +474,25 @@ export class NewRequestModule extends VuexModule {
         'Has name protection in BC'
       ],
       rehBlurbs: [
-        'Reinstate an extra provincially registered company that is no longer active with BC Registries.'
+        'Reinstate an extraprovincially registered company that is no longer active with BC Registries.'
       ],
       amlBlurbs: [
         [
           `Register an amalgamation that occurred in another jurisdiction where at least one of the companies is 
-           extra provincially registered in BC.`
+           extraprovincially registered in BC.`
         ],
         [
           `Register an amalgamation or merger that occurred in another jurisdiction where at least one of the companies
-          is extra provincially registered in BC.`
+          is extraprovincially registered in BC.`
         ]
       ],
       chgBlurbs: [
         [
-          'Update the name of an extra provincial company to reflect a change of name in the home jurisdiction.',
+          'Update the name of an extraprovincial company to reflect a change of name in the home jurisdiction.',
           'Name request is not required for a company incorporated in the Federal jurisdiction'
         ],
         [
-          'Update the name of an extra provincial company to reflect a change of name in the home jurisdiction.'
+          'Update the name of an extraprovincial company to reflect a change of name in the home jurisdiction.'
         ]
       ],
       value: 'XCR',
@@ -544,7 +544,7 @@ export class NewRequestModule extends VuexModule {
         'Does have name protection in BC'
       ],
       rehBlurbs: [
-        'Reinstate an extra provincially registered LLC that is no longer active with BC Registries.'
+        'Reinstate an extraprovincially registered LLC that is no longer active with BC Registries.'
       ],
       amlBlurbs: [
         [
@@ -556,7 +556,7 @@ export class NewRequestModule extends VuexModule {
           'Not an available option for CA'
         ],
         [
-          'Update the name of an extra provincial LLC to reflect a change of name in the home jurisdiction.'
+          'Update the name of an extraprovincial LLC to reflect a change of name in the home jurisdiction.'
         ]
       ],
       value: 'RLC',
@@ -584,7 +584,7 @@ export class NewRequestModule extends VuexModule {
       ],
       chgBlurbs: [
         [
-          `Update the name of an extra provincial limited partnership to reflect a change of name in the home 
+          `Update the name of an extraprovincial limited partnership to reflect a change of name in the home 
           jurisdiction.`
         ]
       ],
@@ -611,7 +611,7 @@ export class NewRequestModule extends VuexModule {
       ],
       chgBlurbs: [
         [
-          `Update the name of an extra provincial limited liability partnership to reflect a change of name in the home 
+          `Update the name of an extraprovincial limited liability partnership to reflect a change of name in the home 
           jurisdiction.`
         ]
       ],
@@ -637,17 +637,17 @@ export class NewRequestModule extends VuexModule {
         'Has name protection in BC'
       ],
       rehBlurbs: [
-        'Restore an extra provincially registered cooperative association that is no longer active with BC Registries.'
+        'Restore an extraprovincially registered cooperative association that is no longer active with BC Registries.'
       ],
       amlBlurbs: [
         [
           `Register an amalgamation that occurred in another jurisdiction where at least one of the cooperative 
-          associations is extra provincially registered in BC.`
+          associations is extraprovincially registered in BC.`
         ]
       ],
       chgBlurbs: [
         [
-          `Update the name of an extra provincial cooperative association to reflect a change of name in the home 
+          `Update the name of an extraprovincial cooperative association to reflect a change of name in the home 
           jurisdiction.`
         ]
       ],
@@ -773,11 +773,12 @@ export class NewRequestModule extends VuexModule {
     //           business to BC, however, the name of your business is already in use in BC`
     // },
     {
-      text: 'Change the name of an existing',
-      shortDesc: 'Change of Name Request',
-      value: 'CHG',
-      blurbs: `You have an existing business that is registered or incorporated in BC and you want to change your name.
-              You will need your incorporation or firm number assigned to you by BC Registries and Online Services.`
+      text: 'Restore or Reinstate a',
+      shortDesc: 'Restore-Historical Request',
+      value: 'REH',
+      blurbs: `You have a corporation, cooperative association, society or financial institution that has been dissolved
+              or cancelled.  You want to start up again and use the same name.  You will need the incorporation number
+              assigned to you by BC Registries and Online Services.`
     },
     {
       text: 'Amalgamate two or more',
@@ -786,20 +787,19 @@ export class NewRequestModule extends VuexModule {
       blurbs: 'You have two or more businesses that you want to combine to create a new business.'
     },
     {
+      text: 'Change the name of an existing',
+      shortDesc: 'Change of Name Request',
+      value: 'CHG',
+      blurbs: `You have an existing business that is registered or incorporated in BC and you want to change your name.
+              You will need your incorporation or firm number assigned to you by BC Registries and Online Services.`
+    },
+    {
       text: 'Change (alter) the business type of a',
       shortDesc: 'Conversion Request',
       value: 'CNV',
       blurbs: `You want to alter from one type of corporation to another.  For example you are a limited company and 
               want to become an unlimited liability company.   You will need the incorporation number assigned to you 
               by BC Registries and Online Services.`
-    },
-    {
-      text: 'Restore or Reinstate a',
-      shortDesc: 'Restore-Historical Request',
-      value: 'REH',
-      blurbs: `You have a corporation, cooperative association, society or financial institution that has been dissolved
-              or cancelled.  You want to start up again and use the same name.  You will need the incorporation number
-              assigned to you by BC Registries and Online Services.`
     }
     // COMMENTED OUT FOR FUTURE IMPLEMENTATION
     // {
@@ -1080,32 +1080,32 @@ export class NewRequestModule extends VuexModule {
     let options = [
       { text: 'BC', value: 'BC' },
       {
-        text: 'Extra provincial (Canada based)',
+        text: 'Extraprovincial (Canada based)',
         altText: 'Canadian',
         value: 'CA',
         blurbs: [
           `Your existing business is currently located in any Province or Territory other than BC.`,
           `Your existing business is currently located in any Province or Territory other than BC.`,
           `One or more of the businesses that need to be restored or reinstated are Canada based and were 
-           extra provincially registered in BC.`,
-          `One or more of the businesses that have amalgamated are Canadian and are extra provincially 
+           extraprovincially registered in BC.`,
+          `One or more of the businesses that have amalgamated are Canadian and are extraprovincially 
            registered in BC.`,
-          `Your existing Canada based business is extra provincially registered in BC and has changed its name in the 
+          `Your existing Canada based business is extraprovincially registered in BC and has changed its name in the 
            home jurisdiction.`
         ]
       },
       {
-        text: 'Extra provincial (Internationally based)',
+        text: 'Extraprovincial (Internationally based)',
         altText: 'International',
         value: 'IN',
         blurbs: [
           `Your existing business is currently located outside of Canada.`,
           `Your existing business is currently located outside of Canada.`,
           `One or more of the businesses that need to be restored or reinstated are Internationally based and 
-           were extra provincially registered in BC.`,
+           were extraprovincially registered in BC.`,
           `One or more of the businesses that have amalgamated are Internationally based and are extra 
            provincially registered in BC.`,
-          `Your existing Internationally based business is extra provincially registered in BC and has changed its name 
+          `Your existing Internationally based business is extraprovincially registered in BC and has changed its name 
            in the home jurisdiction.`
         ]
       }
