@@ -36,8 +36,6 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-const _flatten = require('lodash/flatten')
-
 @Component({})
 export default class RefundSummary extends Vue {
   @Prop({ default: () => [] })
@@ -45,17 +43,15 @@ export default class RefundSummary extends Vue {
 
   /** The array of line items in all completed SBC payments. */
   private get lineItems (): any[] {
-    const lineItems = _flatten(
-      this.payments.map(p => (p.sbcPayment.statusCode === 'COMPLETED') ? p.sbcPayment.lineItems : [])
-    )
+    const arrays = this.payments.map(p => (p.sbcPayment.statusCode === 'COMPLETED') ? p.sbcPayment.lineItems : [])
+    const lineItems = [].concat(...arrays)
     return lineItems
   }
 
   /** The total of all the Filing, Priority and Service fees. */
   private get total (): number {
-    const fees = _flatten(
-      this.lineItems.map(li => [li.filingFees, li.priorityFees, li.serviceFees])
-    )
+    const arrays = this.lineItems.map(li => [li.filingFees, li.priorityFees, li.serviceFees])
+    const fees = [].concat(...arrays)
     const total = fees.reduce((t, n) => (t + n), 0)
     return total
   }

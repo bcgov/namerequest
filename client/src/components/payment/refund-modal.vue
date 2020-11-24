@@ -48,6 +48,7 @@ import PaymentMixin from '@/components/payment/payment-mixin'
 import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
 import RefundSummary from '@/components/payment/refund-summary.vue'
 import * as PaymentTypes from '@/modules/payment/store/types'
+import * as PaymentActions from './payment-actions'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
 import NewReqModule from '@/store/new-request-module'
 
@@ -83,7 +84,7 @@ export default class RefundModal extends Mixins(NameRequestMixin, PaymentMixin, 
   /** Called when user clicks "Cancel this NR" button. */
   private async confirmRefund (): Promise<void> {
     this.loading = true
-    await NewReqModule.patchNameRequestsByAction('REFUND')
+    await NewReqModule.patchNameRequestsByAction(PaymentActions.REFUND)
     this.loading = false
     this.hideModal() // TODO: not needed? will success component be displayed instead?
   }
