@@ -2,8 +2,8 @@
   <v-container id="landing-container" fluid>
     <v-row id="upper-row" no-gutters align-content="start">
       <v-container class="content-container" fluid>
-        <Stats class="pr-10"/>
-        <v-col cols="12" class="h2 ml-3 mt-5 colour-white">
+        <Stats class="pr-10 py-1"/>
+        <v-col cols="12" class="h2 ml-3 mt-5 mb-n3 colour-white">
           Name Request <sup class="beta-tag">Beta</sup>
         </v-col>
         <v-col>

@@ -146,11 +146,11 @@
           </template>
           <p>This refers to the language of the words in your name.</p>
           <ul>
-            <li>Leave this box checked if your name contains <b>only</b> English <b>or a mix</b> of English and
-              another language
+            <li>Check this box if your name is written <b>entirely</b> in another language and does <b>not</b> contain
+            any English
             </li>
-            <li>Uncheck this box if your name is written <b>entirely</b> in another language and does <b>not</b>
-              contain any English
+            <li>Leave this box unchecked if your name contains <b>only</b> English or a mix of English and another
+              language.
             </li>
           </ul>
         </v-tooltip>
