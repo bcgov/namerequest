@@ -5,6 +5,7 @@
     "BUSINESSES_URL": "https://dev.bcregistry.ca/business/auth/",
     "KEYCLOAK_CONFIG_PATH": "/local-keycloak-config-url/keycloak.json",
     "AUTH_API_URL": "https://auth-api-dev.pathfinder.gov.bc.ca/api/v1",
-    "LEGAL_API_URL": "https://legal-api-dev.pathfinder.gov.bc.ca/api/v1"
+    "LEGAL_API_URL": "https://legal-api-dev.pathfinder.gov.bc.ca/api/v1",
+    "LD_CLIENT_ID": ""
   }
 ]

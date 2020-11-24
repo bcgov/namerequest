@@ -28,6 +28,9 @@ export function getConfig (): Promise<void> {
     const legalApiUrl = response.data[0]['LEGAL_API_URL']
     sessionStorage.setItem('LEGAL_API_URL', legalApiUrl)
 
+    const ldClientId: string = response.data['LD_CLIENT_ID'];
+    (<any>window).ldClientId = ldClientId
+
     /**
      * authConfig is a workaround to fix the user settings call as it expects a URL with no trailing slash.
      * This will be removed when a fix is made to sbc-common-components to handle this
