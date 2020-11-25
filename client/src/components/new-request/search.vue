@@ -10,6 +10,7 @@
       <v-col cols="5 mt-n1">
         <!--request_action_cd-->
         <v-tooltip top
+                   id="search-type-options-select"
                    content-class="top-tooltip"
                    transition="fade-transition"
                    :disabled="request_action_cd !== 'CNV'">
@@ -20,7 +21,6 @@
                         :items="requestActions"
                         @change="clearErrors()"
                         filled
-                        id="search-type-options-select"
                         v-model="request_action_cd">
                 <template slot="item" slot-scope="data">
                   <v-tooltip :disabled="!data.item.blurbs" right transition="fade-transition">
