@@ -27,21 +27,21 @@
         </template>
         <p>During Business Hours</p>
       </v-tooltip>
-        <v-tooltip bottom nudge-left="56" content-class="bottom-tooltip wait-time-tooltip" transition="fade-transition">
-          <template v-slot:activator="{ on }">
-            <div id="stats-content-outer-3" class="stats-content-outer py-0" v-on="on">
-              <div class="stats-content-inner-1 text-center">
-                <div class="stats-value h3-lt">{{ regularWaitTime }}</div>
-                <div class="stats-unit">Days</div>
-              </div>
-              <div class="stats-content-inner-2">
-                Standard Request<br>
-                Wait Time
-              </div>
+      <v-tooltip bottom nudge-left="56" content-class="bottom-tooltip wait-time-tooltip" transition="fade-transition">
+        <template v-slot:activator="{ on }">
+          <div id="stats-content-outer-3" class="stats-content-outer py-0" v-on="on">
+            <div class="stats-content-inner-1 text-center">
+              <div class="stats-value h3-lt">{{ regularWaitTime }}</div>
+              <div class="stats-unit">Days</div>
             </div>
-          </template>
-          <p>Business Days</p>
-        </v-tooltip>
+            <div class="stats-content-inner-2">
+              Standard Request<br>
+              Wait Time
+            </div>
+          </div>
+        </template>
+        <p>Business Days</p>
+      </v-tooltip>
     </v-row>
   </v-container>
 </template>

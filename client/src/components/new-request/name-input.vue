@@ -20,9 +20,7 @@
                     v-on="scope.on"
                     @click="startAnalyzeName">mdi-magnify</v-icon>
           </template>
-          <template>
-            Search Again
-          </template>
+          Search Again
         </v-tooltip>
       </template>
     </v-text-field>
@@ -77,9 +75,10 @@ export default class NameInput extends Vue {
 
 </script>
 
-<style lang="sass" scoped>
-.search-tooltip
-  max-width: 100px
-  text-align: center
-  padding: 10px !important
+<style lang="scss" scoped>
+.search-tooltip {
+  max-width: 100px;
+  text-align: center;
+  padding: 10px !important;
+}
 </style>

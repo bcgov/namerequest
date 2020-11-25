@@ -7,7 +7,7 @@
               class="link-std d-flex justify-end"
               @click="activateNRRModal()">Check to see if you need to file a a Name Request</span>
       </v-col>
-      <v-col cols="5 mt-n1">
+      <v-col cols="5" class="mt-n1">
         <!--request_action_cd-->
         <v-tooltip top
                    id="search-type-options-select"
@@ -36,7 +36,7 @@
           <span>{{requestText}}</span>
         </v-tooltip>
       </v-col>
-      <v-col cols="2 px-0 mt-n1">
+      <v-col cols="2" class="px-0 mt-n1">
         <!--location-->
         <v-tooltip id="location-options-select"
                    top
@@ -70,7 +70,7 @@
           <span>{{ locationText }}</span>
         </v-tooltip>
       </v-col>
-      <v-col cols="5 mt-n1">
+      <v-col cols="5" class="mt-n1">
         <!--entityConversionType-->
         <v-tooltip id="entity-type-options-select"
                    top
