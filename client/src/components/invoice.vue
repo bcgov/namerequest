@@ -64,7 +64,7 @@ export default class Invoice extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "../assets/scss/theme.scss";
+@import "@/assets/scss/theme.scss";
 
 header {
   color: #fff;

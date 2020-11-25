@@ -1,33 +1,33 @@
 <template>
-  <v-card class='mb-5' v-if="summary">
-    <header class='font-weight-bold px-3 py-3'>
-      <slot name='header'>
-        <span>
-          <small>{{receipt.receiptDate}}</small>
-        </span>
-        <span style="float: right" v-if="receipt">
-          <small><small>Receipt No.</small></small> {{receipt.receiptNumber}}
-        </span>
-      </slot>
+  <v-card v-if="summary" class="payment-summary">
+
+    <header class="font-weight-bold pa-3">
+      <span>
+        <small>{{receipt.receiptDate}}</small>
+      </span>
+      <span style="float: right" v-if="receipt">
+        <small><small>Receipt No.</small></small> {{receipt.receiptNumber}}
+      </span>
     </header>
 
-    <div v-show='fetchError'>
-      <v-alert color='error' icon='warning' outlined>{{fetchError}}</v-alert>
+    <div v-show="fetchError">
+      <v-alert color="error" icon="mdi-alert" outlined>{{fetchError}}</v-alert>
     </div>
 
-    <ul class='fee-list' v-show='!fetchError'>
-      <li class='container fee-list__item' v-if="receipt">
-        <div class='fee-list__item-name'>Amount</div>
-        <div class='fee-list__item-value'>${{receipt.receiptAmount.toFixed(2)}} CAD</div>
+    <ul class="fee-list" v-show="!fetchError">
+      <li class="container fee-list__item" v-if="receipt">
+        <div class="fee-list__item-name">Amount</div>
+        <div class="fee-list__item-value">${{receipt.receiptAmount.toFixed(2)}} CAD</div>
       </li>
-      <li class='container fee-list__item' v-if="summary">
-        <div class='fee-list__item-name'>Status</div>
-        <div class='fee-list__item-value'>{{summary.statusCode}}</div>
+      <li class="container fee-list__item" v-if="summary">
+        <div class="fee-list__item-name">Status</div>
+        <div class="fee-list__item-value">{{summary.statusCode}}</div>
       </li>
-      <li class='container fee-list__item'>
-        <div class='fee-list__item-name'>Receipt</div>
-        <div class='fee-list__item-value'>
-          <v-btn @click='downloadReceipt' id='download-receipt-btn' class='primary' text small>Download PDF</v-btn>
+      <li class="container fee-list__item">
+        <div class="fee-list__item-name">Receipt</div>
+        <div class="fee-list__item-value">
+          <v-btn text small class="primary download-receipt-btn"
+            :loading="loading" @click="downloadReceipt()">Download PDF</v-btn>
         </div>
       </li>
     </ul>
@@ -35,7 +35,7 @@
   </v-card>
 </template>
 
-<script lang='ts'>
+<script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import '../../plugins/vuetify'
 
@@ -50,107 +50,46 @@ import PaymentMixin from '@/components/payment/payment-mixin'
   }
 })
 export default class PaymentSummary extends Mixins(PaymentMixin) {
-  @Prop(Number) id: number
-  @Prop(Object) summary: any
-  @Prop(Object) receipt: any
-  @Prop({ default: {
-    receipt: {
-      created_on: '',
-      total: 0.00,
-      references: [{
-        receipt_number: '',
-        status_code: ''
-      }]
-    },
-    summary: {
-      completionDate: '',
-      statusCode: ''
-    }
-  } })
-  protected fetchError: string = ''
+  @Prop(Number)
+  readonly id: number
+
+  @Prop(Object)
+  readonly summary: any
+
+  @Prop(Object)
+  readonly receipt: any
+
+  protected fetchError = ''
+
+  private loading = false
 
   async downloadReceipt () {
     const { id } = this
+    this.loading = true
     await this.downloadReceiptPdf(id)
+    this.loading = false
   }
 }
 </script>
 
-<style lang='scss' scoped>
-@import '../../assets/scss/theme';
+<style lang="scss" scoped>
+@import "@/assets/scss/theme";
 
 header {
   color: #fff;
   background: $BCgovBlue5;
 }
 
-.container {
+.container.fee-list__item {
   display: flex;
   flex-flow: row nowrap;
   line-height: 1.2rem;
   font-size: 0.875rem;
-}
-
-.filing_receipt-list {
-  border-bottom: 1px solid $gray3;
-}
-
-.filing_receipt-list__item {
-  &-name, &-value {
-    font-weight: 700;
-  }
-
-  &-name {
-    flex: 1 1 auto;
-    margin-right: 2rem;
-  }
-
-  &-value {
-    flex: 0 0 auto;
-    text-align: right;
-  }
-}
-
-.filing_receipt-list__item + .filing_receipt-list__item {
-  border-top: 1px solid $gray3;
-}
-
-.filing_receipt-total {
-  align-items: center;
-  letter-spacing: -0.01rem;
-  line-height: auto;
-
-  &__name {
-    flex: 1 1 auto;
-    margin-right: auto;
-    font-weight: 700;
-  }
-
-  &__currency {
-    margin-right: 0.5rem;
-    color: $gray5;
-    font-weight: 500;
-  }
-
-  &__value {
-    font-size: 1.65rem;
-    font-weight: 700;
-  }
-}
-
-.container.fee-total {
-  font-weight: bold;
+  justify-content: space-between;
+  border-bottom: 1px dotted grey;
 }
 
 .fee-list__item-name {
   font-weight: bold;
-}
-
-.container.fee-list__item {
-  justify-content: space-between;
-}
-
-.container.fee-list__item {
-  border-bottom: 1px dotted grey;
 }
 </style>

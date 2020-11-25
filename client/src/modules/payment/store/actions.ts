@@ -8,6 +8,10 @@ export const togglePaymentHistoryModal = ({ commit }, isVisible: boolean) => {
   commit(types.TOGGLE_PAYMENT_HISTORY_MODAL, isVisible)
 }
 
+export const toggleRefundModal = ({ commit }, isVisible: boolean) => {
+  commit(types.TOGGLE_REFUND_MODAL, isVisible)
+}
+
 export const toggleUpgradeModal = ({ commit }, isVisible: boolean) => {
   commit(types.TOGGLE_UPGRADE_MODAL, isVisible)
 }

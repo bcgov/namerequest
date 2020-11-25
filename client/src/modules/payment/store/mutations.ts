@@ -9,6 +9,9 @@ export default {
   [types.TOGGLE_PAYMENT_HISTORY_MODAL]: (state, isVisible: boolean) => {
     state[STATE_KEY].isPaymentHistoryVisible = isVisible || false
   },
+  [types.TOGGLE_REFUND_MODAL]: (state, isVisible: boolean) => {
+    state[STATE_KEY].isRefundVisible = isVisible || false
+  },
   [types.TOGGLE_UPGRADE_MODAL]: (state, isVisible: boolean) => {
     state[STATE_KEY].isUpgradeVisible = isVisible || false
   },

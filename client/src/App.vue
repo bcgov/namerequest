@@ -41,6 +41,7 @@
     <ReapplyModal />
     <PaymentCompleteModal />
     <PaymentHistoryModal />
+    <RefundModal />
     <AffiliationErrorModal />
     <ApiErrorModal />
     <TimeoutModal
@@ -65,6 +66,7 @@ import PaymentModal, {
   PAYMENT_COMPLETION_TIMER_NAME
 } from '@/components/payment/payment-modal.vue'
 import PaymentHistoryModal from '@/components/payment/payment-history-modal.vue'
+import RefundModal from '@/components/payment/refund-modal.vue'
 import UpgradeModal from '@/components/payment/upgrade-modal.vue'
 import ReapplyModal from '@/components/payment/reapply-modal.vue'
 import PaymentCompleteModal from '@/components/payment/payment-complete-modal.vue'
@@ -101,6 +103,7 @@ import paymentModule from '@/modules/payment'
     ReapplyModal,
     PaymentCompleteModal,
     PaymentHistoryModal,
+    RefundModal,
     AffiliationErrorModal,
     ApiErrorModal,
     SbcAuthenticationOptionsDialog

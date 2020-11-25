@@ -8,9 +8,13 @@ import KeyCloakService from 'sbc-common-components/src/services/keycloak.service
 
 // NB: order matters - do not change
 import 'quill/dist/quill.core.css'
-import '@mdi/font/css/materialdesignicons.min.css' // ensure you are using css-loader
+import '@mdi/font/css/materialdesignicons.min.css'
 import '@/sass/main.sass'
 import '@/sass/overrides.sass'
+
+import '@/assets/scss/base.scss'
+import '@/assets/scss/layout.scss'
+import '@/assets/scss/overrides.scss'
 
 import designations from '@/store/list-data/designations'
 import canJurisdictions from '@/store/list-data/canada-jurisdictions'
