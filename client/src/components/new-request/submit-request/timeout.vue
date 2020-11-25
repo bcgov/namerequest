@@ -27,8 +27,3 @@ export default class Timeout extends Vue {
   }
 }
 </script>
-
-<style lang="sass">
-  .approved
-    color: $approved !important
-</style>

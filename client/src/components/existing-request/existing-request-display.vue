@@ -1,93 +1,90 @@
 <template>
-  <MainContainer id="existing-request-display">
+  <MainContainer id="existing-request-display" class="pa-8">
     <template v-slot:container-header>
-      <v-col cols="auto">
-        <b>Your search returned the following Name Request:</b>
+      <v-col cols="auto" class="fs-24 py-0">
+        <span class="h3">{{ nr.nrNum || '-' }}</span>
       </v-col>
     </template>
+
     <template v-slot:content>
-      <v-row align="start" v-if="nr.nrNum">
-        <v-col cols="auto" class="fs-24">
-          <span class="h3 mr-2">{{ nr.nrNum }}</span>
-        </v-col>
-        <v-col class="copy-bold">
-          <div style="display: inline-block" class="">
-            <div v-for="name of names"
-                 :class="getNameFormatting(name).class"
-                 :key="name.choice+'-name'">{{ `${name.choice}) ${name.name}` }}
-              <v-icon v-if="getNameFormatting(name).icon" :class="getNameFormatting(name).class"
-                      style="font-size: 20px; position: relative; top: -3px;">
-                {{ getNameFormatting(name).icon }}</v-icon>
-              <a class="link-sm ml-3"
-                 @click.prevent="showConditionsModal"
-                 href="#"
-                 v-if="name.state === 'CONDITION'">Conditions</a>
-            </div>
-          </div>
-        </v-col>
-      </v-row>
+      <names-block
+        v-if="nr.nrNum"
+        class="mt-4"
+        :names="names"
+        @conditionsClicked="showConditionsModal()"
+      />
+
       <transition mode="out-in" name="fade">
-        <v-row style="background-color: rgba(165,205,230,0.31)"
-               :key="furnished"
-               class="mx-1"
-               v-if="disableUnfurnished">
-          <v-col cols="12"
-                 key="initial-msg"
-                 class="copy-normal font-italic">
+        <v-row v-if="disableUnfurnished" class="mx-0 mt-5 bg-light-blue" :key="furnished">
+          <v-col cols="12" class="copy-normal font-italic" key="initial-msg">
             We are currently processing your request.
-            Click<a class="link" href="#" @click.prevent="refresh"> Refresh </a>
+            Click<a class="link" href="#" @click.prevent="refresh">&nbsp;Refresh&nbsp;</a>
             {{ $route.query && $route.query.paymentId ? '' : 'or retry your search ' }}
-            after 5 mins to enable all the buttons below.
+            after 5 minutes to enable all the buttons.
           </v-col>
         </v-row>
       </transition>
+
       <transition mode="out-in" name="fade">
-        <v-row :key="refreshCount">
-          <v-col cols="12">
-            <v-row class="pt-3">
-              <v-col cols="9">
-                <v-row dense class="mt-n5">
-                  <v-col cols="12">
-                    <span class="fw-700">Last Update: </span> {{ lastUpdate }}
-                  </v-col>
-                  <v-col cols="12">
-                    <span class="fw-700">Status: </span> {{ nr.state }}
-                  </v-col>
-                  <v-col cols="12">
-                    <span class="fw-700">Priority Request: </span> {{ priorityReq ? 'Yes' : 'No' }}
-                  </v-col>
-                  <v-col cols="12">
-                    <span class="fw-700">Expiry Date: </span> {{ expiryDate }}
-                  </v-col>
-                  <v-col cols="12">
-                    <span class="fw-700">Submit Count: </span>{{ nr.submitCount }}
-                  </v-col>
-                  <v-col cols="12" v-if="nr.consentFlag && nr.consentFlag !== 'N'">
-                    <span class="fw-700">Consent Rec'd: </span> {{ consentDate }}
-                  </v-col>
-                  <v-col cols="12">
-                    <span class="fw-700">Submitting Party: </span> {{ nr.applicants.lastName }},
-                    {{ nr.applicants.firstName }}
-                  </v-col>
-                  <v-col cols="12">
-                    <span class="fw-700">Address: </span> {{ address }}
-                  </v-col>
-                </v-row>
+        <v-row class="mt-4" :key="refreshCount">
+          <!-- labels and values -->
+          <v-col cols="9" class="py-0">
+            <v-row dense>
+              <v-col cols="12">
+                <span>Last Update:</span>
+                &nbsp;{{ lastUpdate }}
               </v-col>
-              <v-col cols="3" v-if="nr.state !== 'CANCELLED'">
-                <v-row dense>
-                  <template v-for="action of actions">
-                    <v-col cols="12" :key="action+'-button'" :class="{ 'mt-8': action === 'REFUND' }">
-                      <v-btn @click="handleButtonClick(action)"
-                             block
-                             :disabled="disableUnfurnished && action !== 'RECEIPT'">{{ actionText(action) }}</v-btn>
-                    </v-col>
-                    <!--<v-btn @click="activateILModal">incorporate now</v-btn>-->
-                  </template>
-                </v-row>
+              <v-col cols="12">
+                <span>Request Status:</span>
+                &nbsp;{{ requestStatusText }}
+                <v-icon v-if="isAlertState" small color="error">mdi-alert</v-icon>
+              </v-col>
+              <v-col cols="12">
+                <span>Priority Request:</span>
+                &nbsp;{{ isPriorityReq ? 'Yes' : 'No' }}
+              </v-col>
+              <v-col cols="12">
+                <span>Expiry Date:</span>
+                &nbsp;{{ expiryDate }}
+              </v-col>
+              <v-col cols="12">
+                <span>Reapplications Remaining:</span>
+                &nbsp;{{ reapplicationsRemainingText }}
+              </v-col>
+              <v-col cols="12" v-if="nr.consentFlag && (nr.consentFlag !== 'N')">
+                <span>Consent Rec'd:</span>
+                &nbsp;{{ consentDate }}
+              </v-col>
+              <v-col cols="12">
+                <span>Applicant Name:</span>
+                &nbsp;{{ nr.applicants.lastName }},
+                &nbsp;{{ nr.applicants.firstName }}
+              </v-col>
+              <v-col cols="12">
+                <span>Address:</span>
+                &nbsp;{{ address }}
               </v-col>
             </v-row>
           </v-col>
+
+          <!-- action buttons -->
+          <template v-if="nr.state !== NrState.CANCELLED">
+            <v-col cols="3" class="py-0">
+              <v-row dense>
+                <template v-for="action of actions">
+                  <v-col cols="12" :key="action+'-button'">
+                    <v-btn block
+                           class="button"
+                           :class="isRedButton(action) ? 'button-red' : 'button-blue'"
+                           :loading="loading"
+                           :disabled="disableUnfurnished && (action !== NrAction.RECEIPT)"
+                           @click="handleButtonClick(action)">{{ actionText(action) }}</v-btn>
+                  </v-col>
+                  <!--<v-btn @click="activateILModal">incorporate now</v-btn>-->
+                </template>
+              </v-row>
+            </v-col>
+          </template>
         </v-row>
       </transition>
     </template>
@@ -102,29 +99,39 @@ import Moment from 'moment'
 import MainContainer from '@/components/new-request/main-container.vue'
 import newReqModule, { EXISTING_NR_TIMER_NAME, EXISTING_NR_TIMEOUT_MS } from '@/store/new-request-module'
 import NrAffiliationMixin from '@/components/mixins/nr-affiliation-mixin'
+import CommonMixin from '@/components/mixins/common-mixin'
 import paymentModule from '@/modules/payment'
 import timerModule from '@/modules/vx-timer'
 import * as types from '@/store/types'
+import NamesBlock from '@/components/common/names-block.vue'
+import { NameState, NrAction, NrState } from '@/enums'
 
 @Component({
-  components: { MainContainer },
+  components: { MainContainer, NamesBlock },
   computed: {
     ...mapGetters(['isAuthenticated'])
   }
 })
-export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
+export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, CommonMixin) {
+  // enums used in the template:
+  NameState = NameState
+  NrAction = NrAction
+  NrState = NrState
+
   daysBeforeExpiry: number = 5
   checking: boolean = false
   refreshCount: number = 0
   furnished: string = 'notfurnished'
   readonly isAuthenticated!: boolean
+  private loading = false
 
   get actions () {
     const actions = this.nr.actions || []
-    // move 'REFUND' action (if present) to end of array
-    // eg, ['EDIT', 'REFUND', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'REFUND']
+    // move 'REFUND' or 'CANCEL' action (if present) to bottom of list
+    // eg ['EDIT', 'REFUND', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'REFUND']
+    // or ['EDIT', 'CANCEL', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'CANCEL']
     return actions.sort((a, b) => {
-      if (b === 'REFUND') return -1
+      if ([NrAction.REFUND, NrAction.CANCEL].includes(b)) return -1
       return 0
     })
   }
@@ -150,8 +157,8 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
     return applicants.city + ', ' + applicants.stateProvinceCd + ', ' + applicants.postalCd
   }
   get condition () {
-    if (this.nr.names.some(name => name.state === 'CONDITION' && name.decision_text)) {
-      let found = this.nr.names.find(name => name.state === 'CONDITION' && name.decision_text)
+    if (this.nr.names.some(name => name.state === NameState.CONDITION && name.decision_text)) {
+      let found = this.nr.names.find(name => name.state === NameState.CONDITION && name.decision_text)
       return found.decision_text
     }
     return ''
@@ -179,7 +186,10 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
     return nameObj.name
   }
   get disableUnfurnished (): boolean {
-    return (['CONDITIONAL', 'REJECTED', 'APPROVED'].includes(this.nr.stateCd) && this.nr.furnished === 'N')
+    return (
+      this.nr.furnished === 'N' &&
+      [NrState.CONDITIONAL, NrState.REJECTED, NrState.APPROVED].includes(this.nr.stateCd)
+    )
   }
   get names () {
     return this.nr.names.sort((a, b) => {
@@ -192,46 +202,53 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
       return 0
     })
   }
-
   get nr () {
     return newReqModule.nr
   }
-  get priorityReq () {
+  get isPriorityReq () {
     return (this.nr && this.nr.priorityCd && this.nr.priorityCd === 'Y')
   }
 
-  private actionText (action): string {
-    switch (action) {
-      case 'RECEIPT': return 'RECEIPTS'
-      case 'REFUND': return 'CANCEL AND REFUND'
-      default: return action
+  /** The display text for the reapplications remaining. */
+  private get reapplicationsRemainingText (): string {
+    const totalReapplications = 2
+    return `${totalReapplications - this.nr.submitCount}/${totalReapplications}`
+  }
+
+  /** The display text for the request status. */
+  private get requestStatusText (): string {
+    const state = this.nr.state
+    switch (state) {
+      // FUTURE: new state for "Approved / Used For XXX"
+      case NrState.CONDITIONAL: return 'Conditional Approval'
+      case NrState.IN_PROGRESS: return 'In Progress'
+      case NrState.ON_HOLD: return 'On Hold'
+      case NrState.REFUNDED: return 'Cancelled, Refund Requested'
+      default: return this.toTitleCase(state)
     }
   }
 
-  getNameFormatting (name) {
-    if (name.state === 'NE') {
-      return {
-        icon: false,
-        class: ''
-      }
-    }
-    if (name.state === 'APPROVED' || name.state === 'CONDITION') {
-      return {
-        icon: 'mdi-check',
-        class: 'approved'
-      }
-    }
-    if (name.state === 'REJECTED') {
-      return {
-        icon: 'mdi-close',
-        class: 'action'
-      }
-    }
+  /** True if the current state should display an alert icon. */
+  private get isAlertState (): boolean {
+    const state = this.nr.state
+    return [NrState.CANCELLED, NrState.REFUNDED, NrState.EXPIRED].includes(state)
+  }
 
-    // Rendering template looks for an icon and class, so make sure to set a default here!
-    return {
-      icon: false,
-      class: ''
+  /** Returns True if the specified action should display a red button. */
+  private isRedButton (action: NrAction): boolean {
+    return [NrAction.REFUND, NrAction.CANCEL].includes(action)
+  }
+
+  /** Returns display text for the specified action code. */
+  private actionText (action: NrAction): string {
+    switch (action) {
+      case NrAction.UPGRADE: return 'Upgrade Priority ($100)'
+      case NrAction.REAPPLY: return 'Reapply ($30)'
+      case NrAction.RESULTS: return 'Download Results'
+      case NrAction.RECEIPTS: return 'Download Receipts'
+      case NrAction.REFUND: return 'Cancel and Refund'
+      case NrAction.CANCEL: return 'Cancel Name Request'
+      default: return this.toTitleCase(action)
     }
   }
 
@@ -239,9 +256,9 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
     let outcome = await newReqModule.confirmAction(action)
     if (outcome) {
       switch (action) {
-        case 'EDIT':
+        case NrAction.EDIT:
           // eslint-disable-next-line no-case-declarations
-          const doCheckout = (['DRAFT', 'INPROGESS'].indexOf(newReqModule.nrState) > -1)
+          const doCheckout = ([NrState.DRAFT, NrState.IN_PROGRESS].indexOf(newReqModule.nrState) > -1)
           // eslint-disable-next-line no-case-declarations
           let success: boolean | undefined
           if (doCheckout) {
@@ -261,19 +278,19 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
             await newReqModule.editExistingRequest()
           }
           break
-        case 'UPGRADE':
+        case NrAction.UPGRADE:
           paymentModule.toggleUpgradeModal(true)
           break
-        case 'REAPPLY':
+        case NrAction.REAPPLY:
           paymentModule.toggleReapplyModal(true)
           break
-        case 'RECEIPT':
+        case NrAction.RECEIPTS:
           paymentModule.togglePaymentHistoryModal(true)
           break
-        case 'REFUND':
+        case NrAction.REFUND:
           paymentModule.toggleRefundModal(true)
           break
-        case 'INCORPORATE':
+        case NrAction.INCORPORATE:
           await this.affiliateOrLogin()
           break
         default:
@@ -284,10 +301,12 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
       newReqModule.setActiveComponent('InvalidActionMessage')
     }
   }
+
   async goBack () {
     await newReqModule.cancelEditExistingRequest()
     newReqModule.cancelAnalyzeName('Tabs')
   }
+
   async refresh (event) {
     // refreshCount is used in the template at the transition key for the affected template triggering a fade in/out
     this.refreshCount += 1
@@ -303,11 +322,12 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
       this.checking = false
     }
   }
+
   showConditionsModal () {
     newReqModule.mutateConditionsModalVisible(true)
   }
 
-  /** Affiliate the current Nr if authenticated or prompt login if unauthenticated */
+  /** Affiliates the current NR if authenticated, or prompts login if unauthenticated. */
   async affiliateOrLogin (): Promise<any> {
     if (this.isAuthenticated) {
       await this.createAffiliation(this.nr)
@@ -320,21 +340,16 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin) {
 }
 </script>
 
-<style lang="sass" scoped>
-.whitesmoke-bg
-  background-color: whitesmoke
-.max-height
-  max-height: 60px
-.no-style-button
-  background-color: unset !important
-  border: 0 !important
-  border-radius: 0 !important
-  box-shadow: unset !important
-.forgot-nr-link
-  text-decoration: underline
-  cursor: pointer !important
-.action
-  color: $error !important
-.approved
-  color: $approved !important
+<style lang="scss" scoped>
+@import "@/assets/scss/theme";
+
+.col {
+  color: $text;
+  font-size: 1rem;
+
+  span {
+    color: $dk-text;
+    font-weight: bold;
+  }
+}
 </style>

@@ -16,7 +16,7 @@ $BCgovBlue1: #b3c2d1;
 $BCgovBlue2: #8099b3;
 $BCgovBlue3: #4d7094;
 $BCgovBlue4: #26527d;
-$BCgovBlue5: #003366; // PRIMARY BLUE
+$BCgovBlue5: #003366;
 $BCgovBlue6: #002e5e;
 $BCgovBlue7: #002753;
 $BCgovBlue8: #002049;
@@ -34,37 +34,24 @@ $BCgovGold1: #feeaba;
 $BCgovGold2: #fedd8c;
 $BCgovGold3: #fdcf5e;
 $BCgovGold4: #fcc43c;
-$BCgovGold5: #fcba19; // PRIMARY GOLD
+$BCgovGold5: #fcba19;
 $BCgovGold6: #fcb316;
 $BCgovGold7: #fbab12;
 $BCgovGold8: #fba30e;
 $BCgovGold9: #fa9408;
 
 // Accent Gold
-$BCgovAGold1: #ffffff;
+$BCgovAGold1: #FFFFFF;
 $BCgovAGold2: #FFF8EF;
 $BCgovAGold3: #FFE0BC;
 $BCgovAGold4: #FFD4A2;
 
-$border: #899EB2;
+// Font colors
+$dk-text: $gray9;
+$text: $gray7;
 
-// Link
-$link: #1669bb;
-
-// Approved
-$approved: #1a9031;
-
-// Caution
-$caution: #bf4803;
-
-// Error Colors
-$BCgovInputError: #ff5252;
-$error: #d3272c;
-
-// Form Inputs
-$BCgovInputBG: #ffffff;
-
-// Font Colors
-$BCgovFontColorInverted: #ffffff;
-$dk-text: #212529;
-$text: #495057;
+// Some popular colors
+$app-blue: #1669bb;
+$app-red: #d3272c;
+$app-green: #2e8540;
+$border: #899eb2;

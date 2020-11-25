@@ -331,7 +331,6 @@ export default class NewSearch extends Vue {
     newReqModule.startAnalyzeName()
   }
 }
-
 </script>
 
 <style lang="scss" scoped>
@@ -348,7 +347,7 @@ export default class NewSearch extends Vue {
   padding: 20px 8px !important;
 }
 .list-item:hover {
-  color: $link;
+  color: $app-blue;
 }
 .search-name-btn {
   font-size: 1rem !important;

@@ -93,7 +93,7 @@ export default class Landing extends Vue {
 
 .beta-tag
   top: -1rem
-  color: #FCBA19
+  color: $gold
   font-size: 19px
   font-weight: bold
   text-transform: uppercase
