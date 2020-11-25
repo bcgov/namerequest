@@ -1,5 +1,4 @@
 import Vue from 'vue-property-decorator'
-import quill from 'quill'
 
 export interface DesignationI {
   words: string[]
