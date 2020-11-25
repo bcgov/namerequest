@@ -94,8 +94,7 @@
                              :i="optionIndex"
                              :issueIndex="issueIndex"
                              :option="option"
-                             :originalName="originalName"
-                             class="issue.setup.length === 3 && i === 1 ? 'mx-2' : ''" />
+                             :originalName="originalName" />
                   </v-col>
                 </v-row>
               </transition>
