@@ -9,10 +9,19 @@
                   :label="nameLabel"
                   v-model="nameSearch">
       <template v-slot:append>
-        <v-icon class="name-search-icon"
-                id="name-input-icon"
-                color="primary"
-                @click="startAnalyzeName">mdi-magnify</v-icon>
+        <v-tooltip bottom
+                   content-class="bottom-tooltip search-tooltip"
+                   transition="fade-transition"
+                   :disabled="!isSearchAgain">
+          <template v-slot:activator="scope">
+            <v-icon class="name-search-icon"
+                    id="name-input-icon"
+                    color="primary"
+                    v-on="scope.on"
+                    @click="startAnalyzeName">mdi-magnify</v-icon>
+          </template>
+          Search Again
+        </v-tooltip>
       </template>
     </v-text-field>
   </v-col>
@@ -24,6 +33,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component({})
 export default class NameInput extends Vue {
+  @Prop({ default: false }) isSearchAgain: boolean
   get errors () {
     return newReqModule.errors
   }
@@ -65,6 +75,10 @@ export default class NameInput extends Vue {
 
 </script>
 
-<style lang="sass" scoped>
-
+<style lang="scss" scoped>
+.search-tooltip {
+  max-width: 100px;
+  text-align: center;
+  padding: 10px !important;
+}
 </style>

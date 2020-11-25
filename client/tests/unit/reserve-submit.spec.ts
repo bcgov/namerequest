@@ -1,5 +1,5 @@
 import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import newReqModule from '@/store/new-request-module'
 import Vuetify from 'vuetify'
 import sinon from 'sinon'
@@ -14,7 +14,7 @@ localVue.use(Vuetify)
    analyze approvals and conditional approvals */
 
 async function provideWrapper (setup) {
-  let wrapper = shallowMount(ReserveSubmit, {
+  let wrapper = mount(ReserveSubmit, {
     localVue,
     vuetify,
     mocks: {

@@ -418,7 +418,7 @@ export class NewRequestModule extends VuexModule {
       value: 'SO'
     },
     {
-      text: 'Private Act',
+      text: 'Private act',
       cat: 'Other',
       blurbs: [
         `A special type of business structure that may often be established through legislation or by economic growth 
@@ -432,7 +432,7 @@ export class NewRequestModule extends VuexModule {
       text: 'Credit union',
       cat: 'Other',
       blurbs: [
-        'Credit Unions.',
+        'Credit unions',
         'Needs authorization from the BC Financial Services Authority',
         'Has name protection in BC'
       ],
@@ -621,11 +621,11 @@ export class NewRequestModule extends VuexModule {
       blurbs: [
         `Cooperative association established and operating in a Canadian province or territory or in the federal
          jurisdiction and plans to operate in BC.`,
-        'Has Name protection in BC'
+        'Has name protection in BC'
       ],
       intBlurbs: [
         'Cooperative established and operating outside of Canada.  Plans to operate in BC.',
-        'Has Name protection in BC'
+        'Has name protection in BC'
       ],
       mveBlurbs: [
         'Membership-based organization, owned and operated by the people who use its services.',
@@ -789,7 +789,7 @@ export class NewRequestModule extends VuexModule {
       shortDesc: 'Change of Name Request',
       value: 'CHG',
       blurbs: `You have an existing business that is registered or incorporated in BC and you want to change your name.
-              You will need your incorporation or firm number assigned to you by BC Registries and Online Services.`
+              You will need the incorporation or firm number assigned to you by BC Registries and Online Services.`
     },
     {
       text: 'Change (alter) the business type of a',
@@ -1046,6 +1046,9 @@ export class NewRequestModule extends VuexModule {
   }
   get locationText () {
     return this.locationOptions.find(options => options.value === this.location).text
+  }
+  get requestText () {
+    return this.requestActions.find(options => options.value === this.request_action_cd).text
   }
   get entityTypeOptions () {
     let bcOptions: SelectOptionsI[] = this.entityTypesBC.filter(type => type.shortlist)

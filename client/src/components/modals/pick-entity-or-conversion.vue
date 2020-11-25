@@ -1,9 +1,9 @@
 <template>
   <v-dialog v-model="showModal" :max-width="width" persistent>
-    <v-card class="pa-6 no-border pick-entity-card">
+    <v-card class="no-border pick-entity-card">
       <v-row>
         <v-col cols="11">
-          <span class="ml-7 copy-small">{{ locationText }}:</span>
+          <span class="ml-1 copy-small">{{ locationText }}:</span>
         </v-col>
         <v-col cols="1">
           <v-icon md color="primary" @click="showModal = false">mdi-close</v-icon>
