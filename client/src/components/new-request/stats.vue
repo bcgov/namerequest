@@ -12,26 +12,36 @@
 <!--            No Wait Time-->
 <!--          </div>-->
 <!--        </div>-->
-        <div class="stats-content-outer py-0">
-          <div class="stats-content-inner-1 text-center">
-            <div class="stats-value h3-lt">{{ priorityWaitTime }}</div>
-            <div class="stats-unit">Hours</div>
+      <v-tooltip bottom nudge-left="56" content-class="bottom-tooltip wait-time-tooltip" transition="fade-transition">
+        <template v-slot:activator="{ on }">
+          <div class="stats-content-outer py-0" v-on="on">
+            <div class="stats-content-inner-1 text-center">
+              <div class="stats-value h3-lt">{{ priorityWaitTime }}</div>
+              <div class="stats-unit">Hours</div>
+            </div>
+            <div class="stats-content-inner-2">
+              Priority Request<br>
+              Wait Time
+            </div>
           </div>
-          <div class="stats-content-inner-2">
-            Priority Request<br>
-            Wait Time
-          </div>
-        </div>
-        <div id="stats-content-outer-3" class="stats-content-outer py-0">
-          <div class="stats-content-inner-1 text-center">
-            <div class="stats-value h3-lt">{{ regularWaitTime }}</div>
-            <div class="stats-unit">Days</div>
-          </div>
-          <div class="stats-content-inner-2">
-            Standard Request<br>
-            Wait Time
-          </div>
-        </div>
+        </template>
+        <p>During Business Hours</p>
+      </v-tooltip>
+        <v-tooltip bottom nudge-left="56" content-class="bottom-tooltip wait-time-tooltip" transition="fade-transition">
+          <template v-slot:activator="{ on }">
+            <div id="stats-content-outer-3" class="stats-content-outer py-0" v-on="on">
+              <div class="stats-content-inner-1 text-center">
+                <div class="stats-value h3-lt">{{ regularWaitTime }}</div>
+                <div class="stats-unit">Days</div>
+              </div>
+              <div class="stats-content-inner-2">
+                Standard Request<br>
+                Wait Time
+              </div>
+            </div>
+          </template>
+          <p>Business Days</p>
+        </v-tooltip>
     </v-row>
   </v-container>
 </template>
@@ -100,5 +110,10 @@ export default class Stats extends Vue {
   padding: 0
   font-size: 24px
   font-weight: 700
+
+.wait-time-tooltip
+  padding: 15px 0 0 0 !important
+  text-align: center
+  max-width: 120px
 
 </style>

@@ -1,16 +1,16 @@
 <template>
   <v-container id="landing-container" fluid>
     <v-row id="upper-row" no-gutters align-content="start">
-      <v-container class="content-container" fluid>
-        <Stats class="pr-10 py-1"/>
-        <v-col cols="12" class="h2 ml-3 mt-5 mb-n3 colour-white">
-          Name Request <sup class="beta-tag">Beta</sup>
+      <v-container class="content-container">
+        <v-col cols="12" class="mb-4">
+          <Stats class="pr-10"/>
         </v-col>
-        <v-col>
-          <transition name="flip" mode="out-in">
-            <component :is="displayedComponent" :key="displayedComponent" />
-          </transition>
+        <v-col cols="12" class="ml-3 mb-n2">
+          <span class="h2 colour-white">Name Request <sup class="beta-tag">Beta</sup></span>
         </v-col>
+        <transition name="flip" mode="out-in">
+            <component :is="displayedComponent" :key="displayedComponent" transition="fade-transition" />
+        </transition>
       </v-container>
     </v-row>
     <v-row id="lower-row" no-gutters>
@@ -76,20 +76,16 @@ export default class Landing extends Vue {
 #landing-container
   margin: 0
   padding: 0
-  min-width: 1280px !important
 
 .content-container
-  max-width: 1280px
+  min-width: 940px
+  max-width: 1185px
 
 #upper-row
   background: url('../assets/images/analyze-name-bg.jpg') no-repeat bottom
+  background-size: cover
   color: white
   min-height: 700px
-  padding: 0 200px 0 200px
-  background-size: 100%
-
-  @media only screen and (max-width: 1440px)
-    background-size: 110%
 
 .beta-tag
   top: -1rem

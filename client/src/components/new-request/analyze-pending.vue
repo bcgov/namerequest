@@ -8,11 +8,12 @@
     </template>
     <template v-slot:content>
       <v-row no-gutters justify="space-between" align-content="space-around">
-        <NameInput class="mt-3" />
+        <NameInput class="mt-3" :is-search-again="true"/>
       </v-row>
       <v-row justify="center" class="mt-n7 mb-n3 py-0">
-        <v-col cols="auto">
-          <b>This could take several minutes</b>
+        <v-col cols="12" class="text-center">
+          <b>This could take several minutes.</b>
+          <p>Analysis of long names or names that use common words can take significantly longer.</p>
         </v-col>
       </v-row>
       <v-row justify="center">

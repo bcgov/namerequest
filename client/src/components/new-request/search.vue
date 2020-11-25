@@ -1,32 +1,42 @@
 <template>
   <v-container fluid id="new-request-container" class="copy-normal">
     <v-row cols="12">
-      <v-col cols="6" class="font-weight-bold h6">I need a name to:</v-col>
+      <v-col cols="6" class="font-weight-bold h6"><span>I need a name to:</span></v-col>
       <v-col cols="6">
         <span id="nr-required-activator"
               class="link-std d-flex justify-end"
               @click="activateNRRModal()">Check to see if you need to file a a Name Request</span>
       </v-col>
-      <v-col cols="5">
+      <v-col cols="5 mt-n1">
         <!--request_action_cd-->
-        <v-select :error-messages="errors.includes('request_action_cd') ? 'Please select a type' : ''"
-                  :hide-details="!errors.includes('request_action_cd')"
-                  :items="requestActions"
-                  @change="clearErrors()"
-                  filled
-                  id="search-type-options-select"
-                  v-model="request_action_cd">
-          <template slot="item" slot-scope="data">
-            <v-tooltip :disabled="!data.item.blurbs" right transition="fade-transition">
-              <template v-slot:activator="scope">
-                <span v-on="scope.on" class="list-item">{{ data.item.text }}</span>
-              </template>
-              <span>{{ data.item.blurbs }}</span>
-            </v-tooltip>
+        <v-tooltip top
+                   content-class="top-tooltip"
+                   transition="fade-transition"
+                   :disabled="request_action_cd !== 'CNV'">
+          <template v-slot:activator="scope">
+            <div v-on="scope.on">
+              <v-select :error-messages="errors.includes('request_action_cd') ? 'Please select a type' : ''"
+                        :hide-details="!errors.includes('request_action_cd')"
+                        :items="requestActions"
+                        @change="clearErrors()"
+                        filled
+                        id="search-type-options-select"
+                        v-model="request_action_cd">
+                <template slot="item" slot-scope="data">
+                  <v-tooltip :disabled="!data.item.blurbs" right transition="fade-transition">
+                    <template v-slot:activator="scope">
+                      <span v-on="scope.on" class="list-item">{{ data.item.text }}</span>
+                    </template>
+                    <span>{{ data.item.blurbs }}</span>
+                  </v-tooltip>
+                </template>
+              </v-select>
+            </div>
           </template>
-        </v-select>
+          <span>{{requestText}}</span>
+        </v-tooltip>
       </v-col>
-      <v-col cols="2">
+      <v-col cols="2 px-0 mt-n1">
         <!--location-->
         <v-tooltip id="location-options-select"
                    top
@@ -60,7 +70,7 @@
           <span>{{ locationText }}</span>
         </v-tooltip>
       </v-col>
-      <v-col cols="5">
+      <v-col cols="5 mt-n1">
         <!--entityConversionType-->
         <v-tooltip id="entity-type-options-select"
                    top
@@ -108,7 +118,7 @@
                  id="name-input-component"
                  class="mb-n7"/>
     </v-row>
-    <v-row no-gutters>
+    <v-row class="mt-n3" no-gutters>
       <v-col>
         <v-tooltip top content-class="top-tooltip" transition="fade-transition" open-delay="200">
           <template v-slot:activator="{ on }">
@@ -218,7 +228,7 @@ export default class NewSearch extends Vue {
     return newReqModule.entityBlurbs.find(type => type.value === entity_type_cd)?.blurbs
   }
   private get isScreenLg () {
-    return this.$vuetify.breakpoint.lg
+    return this.$vuetify.breakpoint.lgAndUp
   }
   get displayedComponent () {
     return newReqModule.displayedComponent
@@ -308,6 +318,9 @@ export default class NewSearch extends Vue {
   get requestActions () {
     return newReqModule.requestActions
   }
+  get requestText () {
+    return newReqModule.requestText
+  }
   activateNRRModal () {
     newReqModule.mutateNrRequiredModalVisible(true)
   }
@@ -322,8 +335,12 @@ export default class NewSearch extends Vue {
 </script>
 
 <style lang="sass" scoped>
+.v-list
+  padding: 0
+
 .list-item
   width: 100%
+  padding: 8px
 
 .v-select
   &::placeholder
@@ -331,8 +348,7 @@ export default class NewSearch extends Vue {
 
 .entity-type-info
   border-top: 1px solid #DEE2E6
-  margin-top: 10px !important
-  padding: 20px 0 20px 0 !important
+  padding: 20px 8px !important
 
 .list-item:hover
   color: #1669BB
@@ -340,8 +356,5 @@ export default class NewSearch extends Vue {
 .search-name-btn
   min-height: 45px
   padding: 0 50px 0 50px !important
-  font-size: 16px !important
-  text-transform: none !important
-  letter-spacing: normal !important
 
 </style>

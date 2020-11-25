@@ -1,7 +1,7 @@
 <template>
   <MainContainer id="analyze-results-container">
     <template v-slot:container-header>
-      <v-col cols="auto" class="h4">
+      <v-col cols="auto" class="h6 pt-6">
         You are searching for a name for a
         {{ entityText === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }} {{ entityText }}
       </v-col>

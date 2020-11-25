@@ -1047,6 +1047,9 @@ export class NewRequestModule extends VuexModule {
   get locationText () {
     return this.locationOptions.find(options => options.value === this.location).text
   }
+  get requestText () {
+    return this.requestActions.find(options => options.value === this.request_action_cd).text
+  }
   get entityTypeOptions () {
     let bcOptions: SelectOptionsI[] = this.entityTypesBC.filter(type => type.shortlist)
     let xproOptions: SelectOptionsI[] = this.entityTypesXPRO.filter(type => type.shortlist)

@@ -59,9 +59,6 @@ export default class Tabs extends Vue {
 </script>
 
 <style lang="sass" scoped>
-#tabs-landing-comp
-  max-width: 1264px !important
-
 .tab-items
   border-bottom-left-radius: 6px !important
   border-bottom-right-radius: 6px !important

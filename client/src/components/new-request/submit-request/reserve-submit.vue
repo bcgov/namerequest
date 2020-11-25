@@ -1,9 +1,19 @@
 <template>
-  <v-btn @click="handleSubmit"
-         class="mt-auto margin-top-auto reserve-submit-btn"
-         ref="reserve-submit-button">
-    {{ text }}
-  </v-btn>
+  <v-tooltip bottom
+             content-class="bottom-tooltip"
+             transition="fade-transition">
+    <template v-slot:activator="scope">
+      <v-btn @click="handleSubmit"
+             class="mt-auto margin-top-auto reserve-submit-btn"
+             v-on="scope.on"
+             ref="reserve-submit-button">
+        {{ text }}
+      </v-btn>
+    </template>
+    <template>
+      Stop the analysis of this name and submit it for review. Please check wait times at the top of the screen.
+    </template>
+  </v-tooltip>
 </template>
 
 <script lang="ts">
