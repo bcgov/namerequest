@@ -11,6 +11,7 @@
         <v-col cols="12" class="mt-3" @click="clickNameField">
           <quill-editor :contents="contents"
                         :options="config"
+                        :disabled="!!finalName"
                         @change="handleChange($event)"
                         @keydown.native.capture="handleEnterKey"
                         id="name-search-bar"
@@ -80,18 +81,24 @@
               </v-row>
 
               <!--GREY BOXES-->
-              <v-row class="colour-p-blue-text justify-center" dense v-if="showGreyBoxes">
-                <v-col :key="issue.issue_type + '-' + option.header + '-' + optionIndex"
-                       v-for="(option, optionIndex) of issue.setup">
-                  <GreyBox :changesInBaseName="changesInBaseName"
-                           :designationIsFixed="designationIsFixed"
-                           :i="optionIndex"
-                           :issueIndex="issueIndex"
-                           :option="option"
-                           :originalName="originalName"
-                           class="issue.setup.length === 3 && i === 1 ? 'mx-2' : ''" />
-                </v-col>
-              </v-row>
+              <transition name="fade" mode="out-in" >
+                <v-row :key="'grey-box-row' + showGreyBoxes"
+                       class="colour-p-blue-text justify-center"
+                       dense
+                       v-if="showGreyBoxes">
+                  <v-col :key="issue.issue_type + '-' + option.header + '-' + optionIndex"
+                         v-for="(option, optionIndex) of issue.setup">
+                    <GreyBox :changesInBaseName="changesInBaseName"
+                             :designationIsFixed="designationIsFixed"
+                             :finalName="finalName"
+                             :i="optionIndex"
+                             :issueIndex="issueIndex"
+                             :option="option"
+                             :originalName="originalName"
+                             class="issue.setup.length === 3 && i === 1 ? 'mx-2' : ''" />
+                  </v-col>
+                </v-row>
+              </transition>
 
               <!--SUBMISSION BUTTON-->
               <v-row v-if="issue.show_examination_button || issue.show_reserve_button"
@@ -184,9 +191,10 @@ export default class AnalyzeResults extends Vue {
     scrollingContainer: false
   }
   contents: string = ''
+  finalName: string = ''
   highlightCheckboxes: boolean = false
   issueIndex: number = 0
-  originalName: string | null = null
+  originalName: string = ''
   originalOps = []
 
   created () {
@@ -234,7 +242,9 @@ export default class AnalyzeResults extends Vue {
   @Watch('issueIndex')
   resetShowActualInput (newVal, oldVal) {
     if (newVal !== oldVal) {
-      this.showActualInput = false
+      if (this.name !== this.finalName) {
+        this.showActualInput = false
+      }
     }
     if (newVal === this.issueLength - 1) {
       let keys = Object.keys(this.requestExaminationOrProvideConsent[newVal])
@@ -245,6 +255,13 @@ export default class AnalyzeResults extends Vue {
           index: newVal
         })
       })
+    }
+  }
+  @Watch('nameIsFixed')
+  updateFinalName (newVal) {
+    if (newVal) {
+      this.finalName = this.name
+      this.showActualInput = true
     }
   }
 
@@ -272,6 +289,7 @@ export default class AnalyzeResults extends Vue {
     return (allDesignationsStripped === nameTest)
   }
   get changesInBaseName () {
+    if (this.finalName && this.name === this.finalName) return false
     if (this.name === this.originalName) {
       return false
     }
@@ -309,6 +327,7 @@ export default class AnalyzeResults extends Vue {
   get designationIsFixed () {
     try {
       if (this.userCancelled) return false
+      if (this.finalName && this.name === this.finalName) return true
       if (!this.changesInBaseName) {
         // creating a new version of allDesignationsList because we are going to modify it but still need the original
         let AllDesignationsList = allDesignationsList
@@ -371,8 +390,8 @@ export default class AnalyzeResults extends Vue {
         }
         // checks for a designation_misplaced issue type that is not the last issue... ie. the name won't be fixed yet
         // but need to pass to proceed to the next issue.
-        if (!this.isLastIndex && this.issue.issue_type === 'designation_misplaced') {
-          return this.name.endsWith(this.nameActionWords[0])
+        if (this.issueType === 'designation_misplaced') {
+          return !!this.name.endsWith(this.nameActionWords[0])
         }
         if (this.isMisplacedPrecedingMismatch) {
           let nextWords = []
@@ -547,6 +566,9 @@ export default class AnalyzeResults extends Vue {
       return this.nameActions.map(action => action.word.toUpperCase())
     }
     return []
+  }
+  get nameIsFixed () {
+    return (this.hasDesignationIssue && this.isLastIndex && this.designationIsFixed && !this.changesInBaseName)
   }
   get nextButtonDisabled () {
     if (this.enableNextForAssumedName) {

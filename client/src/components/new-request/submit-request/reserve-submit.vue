@@ -1,7 +1,6 @@
 <template>
-  <v-btn id="reserve-submit-button"
-         @click="handleSubmit"
-         class="mt-auto margin-top-auto"
+  <v-btn @click="handleSubmit"
+         class="mt-auto margin-top-auto reserve-submit-btn"
          ref="reserve-submit-button">
     {{ text }}
   </v-btn>

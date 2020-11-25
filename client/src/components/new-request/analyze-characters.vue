@@ -12,7 +12,7 @@
       </v-row>
       <v-row>
         <v-col>
-          <v-container class="copy-normal text-center square-card-x1 padding-50-px colour-p-blue-text">
+          <v-container class="copy-normal text-center square-card-x1 py-6 px-12 colour-p-blue-text">
             <v-row class="ma-0 pa-0">
               <v-col class="h5">
                 Required Action</v-col>
@@ -21,12 +21,12 @@
                   Review your name as it appears above and, if needed, make any necessary changes and try your ur
                   search again.</p>
                 <p class="copy-bold colour-p-blue-text">
-                  Only the following special characters may be used in your name::</p>
-                <p class="my-3 copy-bold colour-p-blue-text">/ [ ] ^ * + - = & ( ) . , " ' # @ ! ? ; :</p>
+                  Only the following special characters may be used in your name:</p>
+                <p class="mt-n3 copy-bold colour-p-blue-text">/ [ ] ^ * + - = & ( ) . , " ' # @ ! ? ; :</p>
                 <p>Your name must not begin with a special character.</p>
               </v-col>
             </v-row>
-            <v-row>
+            <v-row class="mt-n1">
               <v-col><v-btn @click="startOver">Search Again</v-btn></v-col>
             </v-row>
           </v-container>
@@ -83,8 +83,3 @@ export default class AnalyzeCharacters extends Vue {
 }
 
 </script>
-
-<style scoped lang="sass">
-.padding-50-px
-  padding: 50px !important
-</style>

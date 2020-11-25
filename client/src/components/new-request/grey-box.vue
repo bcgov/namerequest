@@ -14,7 +14,7 @@
         </v-col>
         <v-col cols="12" class="text-center" v-if="option.type === 'cancel_to_examiner'">
           <ReserveSubmit setup="examine"
-                         id="reserve-submit-button"
+                         class="reserve-submit-btn"
                          style="display: inline" />
         </v-col>
         <v-col cols="12" class="text-center" v-else>
@@ -34,7 +34,7 @@
               either change it back or click the magnifying glass to run a new search for your edited name.
             </v-col>
             <v-col class="copy-small colour-p-blue-text"
-                   v-else
+                   v-else-if="!isDesignationIssueType || !designationIsFixed"
                    cols="12">
               <p v-if="option.line1" class="ma-0 pa-0" v-html="option.line1" />
               <p v-if="option.line2" class="ma-0 pa-0 pt-2 mb-n1" v-html="option.line2" />
@@ -44,6 +44,11 @@
             <template v-if="isDesignationIssueType">
               <transition name="fade"
                           mode="out-in">
+                <v-col v-if="designationIsFixed && !changesInBaseName && !isLastIndex"
+                       class="text-center designation-error-col"
+                       key="designation-error-col">
+                  This issue has been resolved.  You are ready to review the next issue.
+                </v-col>
                 <v-col v-if="!designationIsFixed && !changesInBaseName && i === 0"
                        class="text-center designation-error-col"
                        key="designation-error-col">
@@ -67,7 +72,7 @@
                 </v-col>
                 <v-col v-if="designationIsFixed && i === 0 && issueIndex + 1 === issueLength"
                        key="designation-fixed-col" class="text-center">
-                  <ReserveSubmit id="reserve-submit-button"
+                  <ReserveSubmit class="reserve-submit-btn"
                                  style="display: inline"
                                  :setup="reserveSubmitConfig" />
                 </v-col>
@@ -109,8 +114,7 @@
                               v-model="boxIsChecked" />
                   <ReserveSubmit :key="option.type+'-reserve-submit'"
                                  :setup="reserveSubmitConfig"
-                                 class="my-0 py-0"
-                                 id="reserve-submit-button"
+                                 class="my-0 py-0 reserve-submit-btn"
                                  v-if="showCheckBoxOrButton === 'button'" />
                 </transition>
               </v-col>
@@ -136,6 +140,7 @@ import { matchWord, removeExcessSpaces, replaceWord } from '@/plugins/utilities'
 export default class GreyBox extends Vue {
   @Prop(Boolean) changesInBaseName: boolean
   @Prop(Boolean) designationIsFixed: boolean
+  @Prop(String) finalName: string
   @Prop(Number) i: number
   @Prop(Number) issueIndex: number
   @Prop(Object) option: OptionI
