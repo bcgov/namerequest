@@ -46,10 +46,10 @@ describe('reserve-submit', () => {
       sandbox.reset()
       wrapper.destroy()
     })
-    test('The button is labelled "Reserve and Continue"', async () => {
+    test('The button is labelled "Continue"', async () => {
       await newReqModule.mutateLocation('BC')
       wrapper.vm.$nextTick()
-      expect(wrapper.text()).toBe('Send to Examination')
+      expect(wrapper.text()).toBe('Continue')
       // expect(wrapper.text()).toBe('Reserve and Continue')
     })
     describe('If location === "BC", it acts as a RESERVED name', () => {
@@ -104,8 +104,8 @@ describe('reserve-submit', () => {
       sandbox.reset()
       wrapper.destroy()
     })
-    test('The button is labelled "Conditionally Reserve"', () => {
-      expect(wrapper.text()).toContain('Send to Examination')
+    test('The button is labelled "Continue"', () => {
+      expect(wrapper.text()).toContain('Continue')
       /* Whenever auto-approvals are turned back on again, replace line 108 with the following:
          expect(wrapper.text()).toContain('Conditionally Reserve') */
     })
@@ -167,8 +167,8 @@ describe('reserve-submit', () => {
       sandbox.reset()
       wrapper.destroy()
     })
-    test('The button is labelled "Send to Examination"', () => {
-      expect(wrapper.text()).toBe('Send to Examination')
+    test('The button is labelled "Continue"', () => {
+      expect(wrapper.text()).toBe('Continue')
     })
     describe('If location === "BC", it sends to examination', () => {
       newReqModule.mutateLocation('BC')
@@ -226,7 +226,7 @@ describe('reserve-submit', () => {
       wrapper.destroy()
     })
     test('The button is labelled "Continue"', () => {
-      expect(wrapper.text()).toBe('Assume a name in BC')
+      expect(wrapper.text()).toBe('Continue')
     })
 
     for (let code of ['XCR', 'RLC', 'XUL']) {

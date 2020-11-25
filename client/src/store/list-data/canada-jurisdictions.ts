@@ -71,6 +71,6 @@ const jurisdictions = [
   }
 ]
 
-export const $mrasJurisdictions = ['ALBERTA', 'MANITOBA', 'SASKATCHEWAN']
+export const $mrasJurisdictions = ['ALBERTA', 'MANITOBA', 'SASKATCHEWAN', 'QUEBEC']
 
 export default jurisdictions

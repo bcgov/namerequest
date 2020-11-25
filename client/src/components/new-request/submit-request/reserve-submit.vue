@@ -1,7 +1,7 @@
 <template>
-  <v-btn :color="setup === 'consent' ? 'red' : ''" class="mt-auto margin-top-auto"
-         id="reserve-submit-button"
-          @click="handleSubmit" ref="reserve-submit-button">
+  <v-btn @click="handleSubmit"
+         class="mt-auto margin-top-auto reserve-submit-btn"
+         ref="reserve-submit-button">
     {{ text }}
   </v-btn>
 </template>
@@ -37,30 +37,7 @@ export default class ReserveSubmitButton extends Vue {
     if (this.setup === 'cancel') {
       return 'Stop & Send To Examination'
     }
-
-    // delete the next 3 lines when re-enabling auto and conditional approvals
-    if (this.setup !== 'assumed') {
-      return 'Send to Examination'
-    }
-
-    if (this.location !== 'BC' && this.setup !== 'assumed') {
-      return 'Send for Examination'
-    }
-    switch (this.setup) {
-      // @ts-ignore - typescript knows setup can only === 'assumed' at this point and gives error
-      case 'consent':
-        return 'Conditionally Reserve'
-      // @ts-ignore - typescript knows setup can only === 'assumed' at this point and gives error
-      case 'examine':
-        return 'Send for Examination'
-      case 'assumed':
-        if (this.$xproMapping['ASSUMED'].includes(this.entity_type_cd)) {
-          return 'Assume a name in BC'
-        }
-        return 'Pick a new Name'
-      default:
-        return 'Reserve and Continue'
-    }
+    return 'Continue'
   }
   async sendToExamination () {
     await newReqModule.userClickedStopAnalysis()

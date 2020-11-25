@@ -158,7 +158,6 @@ export class NewRequestModule extends VuexModule {
     stateProvinceCd: ''
   }
   assumedNameOriginal: string = ''
-  changesInBaseName: boolean = false
   conditionsModalVisible: boolean = false
   conflictId: string | null = null
   conversionType: string = ''
@@ -208,7 +207,6 @@ export class NewRequestModule extends VuexModule {
     }
   ]
   corpNum: string = ''
-  designationIsFixed: boolean = false
   designationIssueTypes = [
     'designation_non_existent',
     'designation_mismatch',
@@ -2349,7 +2347,7 @@ export class NewRequestModule extends VuexModule {
     }
     this.mutateDisplayedComponent('ExistingRequestEdit')
   }
-  @Action
+  @Action({ rawError: true })
   startAnalyzeName () {
     this.resetAnalyzeName()
     this.mutateUserCancelledAnalysis(false)
@@ -2473,10 +2471,6 @@ export class NewRequestModule extends VuexModule {
     this.applicant[appKV.key] = appKV.value
   }
   @Mutation
-  mutateChangesInBaseName (newVal) {
-    this.changesInBaseName = newVal
-  }
-  @Mutation
   mutateConflictId (id) {
     this.conflictId = id
   }
@@ -2491,10 +2485,6 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateCorpNum (corpNum: string) {
     this.corpNum = corpNum
-  }
-  @Mutation
-  mutateDesignationIsFixed (value) {
-    this.designationIsFixed = value
   }
   @Mutation
   mutateDisplayedComponent (comp: string) {

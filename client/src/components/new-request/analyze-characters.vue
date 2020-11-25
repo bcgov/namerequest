@@ -12,20 +12,22 @@
       </v-row>
       <v-row>
         <v-col>
-          <v-container class="copy-small text-left helpful-hint">
-            <v-row align-content="space-between" style="height: 100%">
-              <v-col class="h5 py-0"><v-icon class="pr-2 colour-p-blue-text">mdi-information</v-icon>
-                Helpful Hint</v-col>
+          <v-container class="copy-normal text-center square-card-x1 py-6 px-12 colour-p-blue-text">
+            <v-row class="ma-0 pa-0">
+              <v-col class="h5">
+                Required Action</v-col>
               <v-col cols="12">
-                <p v-if="!nameStartsWithSymbol">
-                  Your name contained unsupported characters, which we have automatically removed.  Please review your
-                name as it appears above and make any necessary changes before clicking the magnifying glass to try
-                  your search again.</p>
-                <p class="text-lg-center">
-                  Your name must not begin with a special character.   The first character must be alphanumeric.
-                  Only the following special characters may be used in your name::</p>
-                <p class="my-3 text-center copy-large copy-bold">/ [ ] ^ * + - = & ( ) . , " ' # @ ! ? ; :</p>
+                <p>
+                  Review your name as it appears above and, if needed, make any necessary changes and try your ur
+                  search again.</p>
+                <p class="copy-bold colour-p-blue-text">
+                  Only the following special characters may be used in your name:</p>
+                <p class="mt-n3 copy-bold colour-p-blue-text">/ [ ] ^ * + - = & ( ) . , " ' # @ ! ? ; :</p>
+                <p>Your name must not begin with a special character.</p>
               </v-col>
+            </v-row>
+            <v-row class="mt-n1">
+              <v-col><v-btn @click="startOver">Search Again</v-btn></v-col>
             </v-row>
           </v-container>
         </v-col>

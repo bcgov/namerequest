@@ -11,6 +11,7 @@
         <v-col cols="12" class="mt-3" @click="clickNameField">
           <quill-editor :contents="contents"
                         :options="config"
+                        :disabled="!!finalName"
                         @change="handleChange($event)"
                         @keydown.native.capture="handleEnterKey"
                         id="name-search-bar"
@@ -25,6 +26,7 @@
       <transition name="fade" mode="out-in" >
         <v-row no-gutters :key="issueIndex+'vcol'">
           <v-col>
+
             <!--"FURTHER ACTION REQUIRED" OR "APPROVABLE" TEXT + ICON-->
             <transition name="fade" mode="out-in" >
               <v-row no-gutters justify="center"
@@ -78,17 +80,24 @@
                 </v-col>
               </v-row>
 
-            <!--GREY BOXES-->
-            <v-row class="row colour-p-blue-text no-gutters justify-center">
-              <v-col :key="issue.issue_type + '-' + option.header + '-' + optionIndex"
-                     cols="auto"
-                     v-for="(option, optionIndex) of issue.setup">
-                <GreyBox :i="optionIndex"
-                         :issueIndex="issueIndex"
-                         :option="option"
-                         :originalName="originalName" />
-              </v-col>
-            </v-row>
+              <!--GREY BOXES-->
+              <transition name="fade" mode="out-in" >
+                <v-row :key="'grey-box-row' + showGreyBoxes"
+                       class="colour-p-blue-text justify-center"
+                       dense
+                       v-if="showGreyBoxes">
+                  <v-col :key="issue.issue_type + '-' + option.header + '-' + optionIndex"
+                         v-for="(option, optionIndex) of issue.setup">
+                    <GreyBox :changesInBaseName="changesInBaseName"
+                             :designationIsFixed="designationIsFixed"
+                             :finalName="finalName"
+                             :i="optionIndex"
+                             :issueIndex="issueIndex"
+                             :option="option"
+                             :originalName="originalName" />
+                  </v-col>
+                </v-row>
+              </transition>
 
               <!--SUBMISSION BUTTON-->
               <v-row v-if="issue.show_examination_button || issue.show_reserve_button"
@@ -128,8 +137,10 @@
                 </v-col>
               </v-row>
             </template>
+
             <!--APPROVABLE NAME, NO ISSUES-->
             <template v-else>
+
               <!--APPROVED TEXT-->
               <v-row no-gutters justify="center">
                 <v-col cols="12" class="copy-normal pt-2 pb-4">
@@ -151,7 +162,6 @@
           </v-col>
         </v-row>
       </transition>
-      <!--TITLE, START OVER, SEARCH FIELD-->
     </template>
   </MainContainer>
 </template>
@@ -159,13 +169,14 @@
 <script lang="ts">
 import GreyBox from '@/components/new-request/grey-box.vue'
 import MainContainer from '@/components/new-request/main-container.vue'
+import allDesignations, { allDesignationsList } from '@/store/list-data/designations'
 import Moment from 'moment'
 import newReqModule from '@/store/new-request-module'
 import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { IssueI, QuillOpsI, SelectionI } from '@/models'
 import { quillEditor } from 'vue-quill-editor'
-import { removeExcessSpaces } from '@/plugins/utilities'
+import { matchWord, removeExcessSpaces, replaceWord } from '@/plugins/utilities'
 
 @Component({
   components: { GreyBox, MainContainer, quillEditor, ReserveSubmit }
@@ -179,16 +190,16 @@ export default class AnalyzeResults extends Vue {
     scrollingContainer: false
   }
   contents: string = ''
+  finalName: string = ''
   highlightCheckboxes: boolean = false
   issueIndex: number = 0
-  originalName: string | null = null
+  originalName: string = ''
   originalOps = []
 
   created () {
     this.originalName = newReqModule.name
   }
   mounted () {
-    newReqModule.mutateDesignationIsFixed(false)
     this.$root.$on('updatecontents', (name) => { this.updateContents(name) })
     this.$root.$on('show-original-name', () => { this.name = this.originalName })
     document.addEventListener('keydown', this.handleEnterKey)
@@ -230,7 +241,9 @@ export default class AnalyzeResults extends Vue {
   @Watch('issueIndex')
   resetShowActualInput (newVal, oldVal) {
     if (newVal !== oldVal) {
-      this.showActualInput = false
+      if (this.name !== this.finalName) {
+        this.showActualInput = false
+      }
     }
     if (newVal === this.issueLength - 1) {
       let keys = Object.keys(this.requestExaminationOrProvideConsent[newVal])
@@ -243,9 +256,43 @@ export default class AnalyzeResults extends Vue {
       })
     }
   }
+  @Watch('nameIsFixed')
+  updateFinalName (newVal) {
+    if (newVal) {
+      this.finalName = this.name
+      this.showActualInput = true
+    }
+  }
 
+  get allDesignationsStripped () {
+    return this.stripAllDesignations(this.originalName)
+  }
+  get allowProceed () {
+    /* newReqModule.designationIssueTypes is a list of all the designation-related issue types.  designationIsFixed
+     will not be true unless one of these issues was solved.  some sets of issues will not include a designation-related
+     issue and this will need to return true in these cases even tho designationIsFixed will be false */
+    if (!this.hasDesignationIssue && this.isLastIndex) {
+      return true
+    }
+    return this.designationIsFixed
+  }
+  get baseWordsAreUnchanged () {
+    let nameTest = this.stripAllDesignations(this.name)
+    let { allDesignationsStripped } = this
+    if (this.nameActionWords.length > 0) {
+      for (let word of this.nameActionWords) {
+        nameTest = replaceWord(nameTest, word)
+        allDesignationsStripped = replaceWord(allDesignationsStripped, word)
+      }
+    }
+    return (allDesignationsStripped === nameTest)
+  }
   get changesInBaseName () {
-    return newReqModule.changesInBaseName
+    if (this.finalName && this.name === this.finalName) return false
+    if (this.name === this.originalName) {
+      return false
+    }
+    return !this.baseWordsAreUnchanged
   }
   get chunkedName () {
     return this.name.split(' ')
@@ -270,13 +317,116 @@ export default class AnalyzeResults extends Vue {
     }
     return []
   }
-  get designationIsFixed () {
-    if (this.json.issues.every(issue => !newReqModule.designationIssueTypes.includes(issue.issue_type))) {
-      if (this.isLastIndex) {
-        return true
-      }
+  get designations () {
+    if (this.issue && this.issue.designations) {
+      return this.issue.designations
     }
-    return newReqModule.designationIsFixed
+    return null
+  }
+  get designationIsFixed () {
+    try {
+      if (this.userCancelled) return false
+      if (this.finalName && this.name === this.finalName) return true
+      if (!this.changesInBaseName) {
+        // creating a new version of allDesignationsList because we are going to modify it but still need the original
+        let AllDesignationsList = allDesignationsList
+        // allDesignations is an array of objects containing {words, end} keys, set designationEntityTypes to the
+        // relevant object
+        const designationEntityTypes = allDesignations[this.entity_type_cd]
+        /* designationEntityTypes.words.length === 0 is true for types 'PAR', 'FI', 'PA', and the proprietorships so
+         the designation issue is fixed as long as there are no designations present and no nameAction words which in
+         this situation would only be designation-like words to be removed */
+        if (designationEntityTypes && designationEntityTypes.words.length === 0) {
+          if (this.nameActionWords.length > 0) {
+            for (let word of this.nameActionWords) {
+              // so we add any nameActionWords onto the allDesignationsList that were not already part of it
+              if (!AllDesignationsList.includes(word)) {
+                AllDesignationsList = AllDesignationsList.concat(word)
+              }
+            }
+          }
+          // and then fail the test if this.name includes any of the consolodated AllDesignationsList
+          for (let designation of AllDesignationsList) {
+            if (matchWord(this.name, designation)) {
+              return false
+            }
+          }
+          return true
+        }
+        let end: string
+        // here we determine which valid end designation is being used in this.name
+        AllDesignationsList.forEach(designation => {
+          if (this.name.endsWith(' ' + designation)) {
+            end = designation
+          }
+        })
+        /* all the cases where a valid designation was not required are covered by this point, so end should contain
+         a match, and we fail the test if it does not */
+        if (!end) {
+          return false
+        }
+        if (this.nameActionWords.length > 0) {
+          for (let word of this.nameActionWords) {
+            if (!AllDesignationsList.includes(word)) {
+              AllDesignationsList = AllDesignationsList.concat(word)
+            }
+          }
+        }
+        let matches = []
+        for (let designation of AllDesignationsList) {
+          if (matches.includes(designation)) {
+            continue
+          }
+          let matchedWords = matchWord(this.name, designation)
+          if (matchedWords) {
+            if (matchedWords.length > 1) {
+              return false
+            }
+            if (matchedWords.length === 1) {
+              matches.push(designation)
+            }
+          }
+        }
+        // checks for a designation_misplaced issue type that is not the last issue... ie. the name won't be fixed yet
+        // but need to pass to proceed to the next issue.
+        if (this.issueType === 'designation_misplaced') {
+          return !!this.name.endsWith(this.nameActionWords[0])
+        }
+        if (this.isMisplacedPrecedingMismatch) {
+          let nextWords = []
+          if (Array.isArray(newReqModule.analysisJSON.issues[this.issueIndex + 1].name_actions)) {
+            nextWords = newReqModule.analysisJSON.issues[this.issueIndex + 1].name_actions.map(
+              action => action.word.toUpperCase()
+            )
+            nextWords = nextWords.filter(word => word !== end)
+            matches = matches.filter(match => !nextWords.includes(match))
+          }
+        }
+        if (matches.length > 1) {
+          return false
+        }
+        if (Array.isArray(this.designations) && this.designations.length > 0) {
+          if (this.designations.some(designation => this.name.endsWith(designation))) {
+            return true
+          }
+        } else {
+          if (designationEntityTypes && designationEntityTypes.words.some(word => this.name.endsWith(word))) {
+            return true
+          }
+        }
+      }
+      return false
+    } catch (err) {
+      // Catch designation errors and log to console, as it will prevent this component from rendering properly
+      // eslint-disable-next-line no-console
+      console.warn(err)
+      // If something fails in this method, return false, as getters are expected to return a value
+      // We don't want to prevent the component from rendering, log the error and continue
+      return false
+    }
+  }
+  get hasDesignationIssue () {
+    return (this.json.issues.some(issue => newReqModule.designationIssueTypes.includes(issue.issue_type)))
   }
   get enableNextForAssumedName () {
     if (this.issue && ['corp_conflict', 'queue_conflict'].includes(this.issue.issue_type)) {
@@ -329,7 +479,7 @@ export default class AnalyzeResults extends Vue {
     }
     let { length } = this.json.issues
     if (this.isLastIndex && this.issue.issue_type !== 'word_to_avoid') {
-      if (!this.changesInBaseName && this.designationIsFixed && this.examinationOrConsentCompleted) {
+      if (!this.changesInBaseName && this.allowProceed && this.examinationOrConsentCompleted) {
         return {
           class: 'approved',
           icon: 'mdi-check-circle',
@@ -348,8 +498,32 @@ export default class AnalyzeResults extends Vue {
   get isApproved () {
     return (this.json.status === 'Available')
   }
+  get isDesignationIssue () {
+    if (this.issue && this.issue.issue_type) {
+      return (newReqModule.designationIssueTypes.some(issue => issue.issue_type === this.issue.issue_type))
+    }
+    return false
+  }
   get isLastIndex () {
     return (this.issueIndex === this.issueLength - 1)
+  }
+  get isMismatchFollowingMisplaced () {
+    if (this.issueIndex > 0 &&
+    this.issueType === 'designation_mismatch' &&
+    newReqModule.analysisJSON.issues[this.issueIndex - 1].issue_type === 'designation_misplaced') {
+      return true
+    }
+    return false
+  }
+  get isMisplacedPrecedingMismatch () {
+    if (this.issueLength > 1 && this.issueIndex < this.issueLength) {
+      if (['designation_misplaced', 'end_designation_more_than_once'].includes(this.issueType)) {
+        if (newReqModule.analysisJSON.issues[this.issueIndex + 1]) {
+          return (newReqModule.analysisJSON.issues[this.issueIndex + 1].issue_type === 'designation_mismatch')
+        }
+      }
+    }
+    return false
   }
   get issue () {
     if (Array.isArray(this.json.issues)) {
@@ -362,6 +536,12 @@ export default class AnalyzeResults extends Vue {
       return this.json.issues.length
     }
     return 1
+  }
+  get issueType () {
+    if (this?.issue?.issue_type) {
+      return this.issue.issue_type
+    }
+    return ''
   }
   get json () {
     return newReqModule.analysisJSON
@@ -380,12 +560,21 @@ export default class AnalyzeResults extends Vue {
     }
     return null
   }
+  get nameActionWords () {
+    if (Array.isArray(this.nameActions) && this.nameActions.length > 0) {
+      return this.nameActions.map(action => action.word.toUpperCase())
+    }
+    return []
+  }
+  get nameIsFixed () {
+    return (this.hasDesignationIssue && this.isLastIndex && this.designationIsFixed && !this.changesInBaseName)
+  }
   get nextButtonDisabled () {
     if (this.enableNextForAssumedName) {
       return false
     }
     if (['designation_misplaced', 'end_designation_more_than_once'].includes(this.issue.issue_type)) {
-      if (newReqModule.designationIsFixed && this.issueIndex < this.json.issues.length) {
+      if (this.allowProceed && this.issueIndex < this.json.issues.length) {
         return false
       }
     }
@@ -405,6 +594,12 @@ export default class AnalyzeResults extends Vue {
   get showActualInput () {
     return newReqModule.showActualInput
   }
+  get showGreyBoxes () {
+    if (!this.isLastIndex || this.changesInBaseName || !this.hasDesignationIssue) {
+      return true
+    }
+    return !(this.examinationOrConsentCompleted && this.designationIsFixed)
+  }
   get word () {
     if (Array.isArray(this.issue.name_actions) && this.issue.name_actions[0]) {
       return this.issue.name_actions[0].word.toUpperCase()
@@ -416,6 +611,9 @@ export default class AnalyzeResults extends Vue {
   }
   set showActualInput (value) {
     newReqModule.mutateShowActualInput(value)
+  }
+  get userCancelled () {
+    return newReqModule.userCancelledAnalysis
   }
 
   cancelAnalyzeName () {
@@ -517,6 +715,12 @@ export default class AnalyzeResults extends Vue {
     event.preventDefault()
     this.name = this.quill.getText()
     newReqModule.startAnalyzeName()
+  }
+  stripAllDesignations (name) {
+    for (let word of allDesignationsList) {
+      name = replaceWord(name, word)
+    }
+    return name
   }
   updateContents (text: string) {
     try {

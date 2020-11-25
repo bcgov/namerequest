@@ -22,8 +22,8 @@ export function matchWord (name: string, word: string): string[] | string {
   // cases for LIMITED and LIMITEE which are both designations on their own and part of others so as to only return
   // one match for the longer designation in such cases.  Return value is an array of <word> of length equal to the
   // number of matches or null if there were none.
-  name = name.toUpperCase()
-  word = word.toUpperCase()
+  if (name) name = name.toUpperCase()
+  if (word) word = word.toUpperCase()
   function escWrd () {
     return word.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')
   }
@@ -52,8 +52,8 @@ export function replaceWord (name: string, word: string, substitution: string | 
   // rules as matchWord above, replaces them with nothing (ie. removes them), and returns <name>.  When called with 3
   // arguments, it finds the first match for <word> in <name>, replaces it with <substitution>, and returns <name>.  In
   // either case, if there are no matches, <name> is returned without modification (aside from capitalization)
-  name = name.toUpperCase()
-  word = word.toUpperCase()
+  if (name) name = name.toUpperCase()
+  if (word) word = word.toUpperCase()
 
   if (containsLongAndShortDesignation(name, word)) {
     return name
@@ -76,8 +76,8 @@ export function replaceWord (name: string, word: string, substitution: string | 
 }
 
 export function containsLongAndShortDesignation (name: string, word: string): boolean {
-  word = word.toUpperCase()
-  name = name.toUpperCase()
+  if (word) word = word.toUpperCase()
+  if (name) name = name.toUpperCase()
 
   if (word === 'LIMITED') {
     let designationsContainingWord = [

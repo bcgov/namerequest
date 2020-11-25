@@ -1,130 +1,128 @@
 <template>
-  <v-container :class="optionClasses(i)"
-               class="grey-box-class py-2 px-3"
-               :key="option.type + '-' + i  + '-container'">
-    <v-col class="fw-700 mt-n3" cols="12">
-      <div style="display: flex; width: 100%; justify-content: flex-start">
-        <div class="h5">
-          <v-icon class="pr-2 colour-p-blue-text">mdi-information</v-icon>
-          {{ option.header }}
-        </div>
-      </div>
-    </v-col>
-    <template v-if="issueType === 'user_cancelled'">
-      <v-col class="copy-small colour-p-blue-text pt-0" cols="12">
-        <p v-if="option.line1" class="ma-0 pa-0" v-html="option.line1" />
-        <p v-if="option.line2" class="ma-0 pa-0 pt-2" v-html="option.line2" />
+  <v-container :class="optionClasses"
+               no-gutters
+               :key="option.type + '-' + i  + '-container-'">
+    <v-row no-gutters class="ma-0 pa-0">
+      <v-col cols="12">
+        <span class="title-bold-14" v-if="this.issue.setup.length > 1">Option {{ i + 1 }}:</span>
+        <span class="ml-1 title-bold-16">{{ option.header }}</span>
       </v-col>
-      <v-col cols="12" class="text-center" v-if="option.type === 'cancel_to_examiner'">
-        <ReserveSubmit setup="examine"
-                       id="reserve-submit-button"
-                       style="display: inline" />
-      </v-col>
-      <v-col cols="12" class="text-center" v-else>
-        <v-btn @click="cancelAnalyzeName('Tabs')">Start Over</v-btn>
-      </v-col>
-    </template>
-    <template v-else>
-      <transition :name="i === 0 ? 'fade' : '' " mode="out-in">
-        <v-row class="copy-small colour-p-blue-text"
-               align-content="start"
-               :key="changesInBaseName+designationIsFixed+'key'+i">
-          <!-- Header, Line 1 and Line 2-->
-
-          <v-col class="copy-small colour-p-blue-text pt-0"
-                 v-if="designationIsFixed && isDesignationIssueType && i === 0"
-                 cols="12">
-            {{ isLastIndex ? 'No additional issues were identified with your name.  You may proceed.' :
-            'Please click the "Next Issue" button to continue' }}
-          </v-col>
-          <v-col class="copy-small colour-p-blue-text pt-0"
-                 v-else-if="changesInBaseName && isDesignationIssueType && i === 0"
-                 cols="12">
-            You have altered the base text of your name.  You must
-            either change it back or click the magnifying glass to run a new search for your edited name.
-          </v-col>
-          <v-col class="copy-small colour-p-blue-text pt-0"
-                 v-else
-                 cols="12">
-            <p v-if="option.line1" class="ma-0 pa-0" v-html="option.line1" />
-            <p v-if="option.line2" class="ma-0 pa-0 pt-2" v-html="option.line2" />
-          </v-col>
-
-          <!-- NAME/DESIGNATION-MANIPULATING OPTION BOXES -->
-          <template v-if="isDesignationIssueType">
-            <transition name="fade"
-                        mode="out-in">
-              <v-col v-if="!designationIsFixed && !changesInBaseName && i === 0"
-                     class="text-center"
-                     key="designation-error-col">
-                <template v-if="Array.isArray(designations) && designations.length > 0">
-                  <div class="designation-buttons">
-                    <button tag="div"
-                            :key="'designation-'+d"
-                            :id="'designation-'+d"
-                            @click.once.prevent="changeDesignation(des)"
-                            class="link-sm ma-0 pa-0 px-1"
-                            v-for="(des, d) in designations">
-                      {{ des }}{{ (d !== issue.designations.length - 1) ? ',' : '' }}
-                    </button>
-                  </div>
-                </template>
-                <template v-if="option.type === 'change designation at the end'">
-                  <v-btn @click="moveDesignation" id="move-designation-btn">Move Designation</v-btn>
-                </template>
-              </v-col>
-              <v-col v-if="designationIsFixed && i === 0 && issueIndex + 1 === issueLength"
-                     key="designation-fixed-col" class="text-center">
-                <ReserveSubmit id="reserve-submit-button"
-                               style="display: inline"
-                               :setup="reserveSubmitConfig" />
-              </v-col>
-            </transition>
-          </template>
-
-          <!-- CHANGE_ENTITY_TYPE OPTION BOX -->
-          <template v-if="option.type === 'change_entity_type'">
-            <v-col class="text-center mt-4">
-              <v-btn @click="cancelAnalyzeName('Tabs')">Restart and Change Type</v-btn>
+      <template v-if="issueType === 'user_cancelled'">
+        <v-col class="copy-small colour-p-blue-text" cols="12">
+          <p v-if="option.line1" v-html="option.line1" />
+          <p v-if="option.line2" v-html="option.line2" />
+        </v-col>
+        <v-col cols="12" class="text-center" v-if="option.type === 'cancel_to_examiner'">
+          <ReserveSubmit setup="examine"
+                         class="reserve-submit-btn"
+                         style="display: inline" />
+        </v-col>
+        <v-col cols="12" class="text-center" v-else>
+          <v-btn @click="cancelAnalyzeName('Tabs')">Start Over</v-btn>
+        </v-col>
+      </template>
+      <template v-else>
+        <transition :name="i === 0 ? 'fade' : '' " mode="out-in">
+          <v-row :key="changesInBaseName+designationIsFixed+'key'+i"
+                 align-content="start"
+                 class="copy-small colour-p-blue-text">
+            <!-- Header, Line 1 and Line 2-->
+            <v-col class="copy-small colour-p-blue-text"
+                   v-if="changesInBaseName && isDesignationIssueType && i === 0"
+                   cols="12">
+              You have altered the base text of your name.  You must
+              either change it back or click the magnifying glass to run a new search for your edited name.
             </v-col>
-          </template>
-          <!-- ASSUMED NAME OPTION BOX -->
-          <template v-else-if="option.type === 'assumed_name'">
-            <v-col :id="option.type + '-button-checkbox-col'"
-                   class="pa-0 grey-box-checkbox-button text-center">
-              <transition name="fade" mode="out-in" >
-                <ReserveSubmit :key="option.type+'-reserve-submit'"
-                               setup="assumed"
-                               id="reserve-submit-comp"
-                               v-if="isLastIndex"
-                               style="display: inline" />
+            <v-col class="copy-small colour-p-blue-text"
+                   v-else-if="!isDesignationIssueType || !designationIsFixed"
+                   cols="12">
+              <p v-if="option.line1" class="ma-0 pa-0" v-html="option.line1" />
+              <p v-if="option.line2" class="ma-0 pa-0 pt-2 mb-n1" v-html="option.line2" />
+            </v-col>
+
+            <!-- NAME/DESIGNATION-MANIPULATING OPTION BOXES -->
+            <template v-if="isDesignationIssueType">
+              <transition name="fade"
+                          mode="out-in">
+                <v-col v-if="designationIsFixed && !changesInBaseName && !isLastIndex"
+                       class="text-center designation-error-col"
+                       key="designation-error-col">
+                  This issue has been resolved.  You are ready to review the next issue.
+                </v-col>
+                <v-col v-if="!designationIsFixed && !changesInBaseName && i === 0"
+                       class="text-center designation-error-col"
+                       key="designation-error-col">
+                  <template v-if="Array.isArray(designations) && designations.length > 0">
+                    <div class="designation-buttons pa-0">
+                      <button :id="'designation-btn-'+d"
+                              :key="'designation-'+d"
+                              @click.once.prevent="changeDesignation(des)"
+                              class="link-sm"
+                              tag="div"
+                              v-for="(des, d) in designations">
+                      <span :class="d > 0 ? 'ml-1' : '' ">
+                        {{ des }}{{ (d !== issue.designations.length - 1) ? ',' : '' }}
+                      </span>
+                      </button>
+                    </div>
+                  </template>
+                  <template v-if="option.type === 'change designation at the end'">
+                    <v-btn @click="moveDesignation" id="move-designation-btn">Move Designation</v-btn>
+                  </template>
+                </v-col>
+                <v-col v-if="designationIsFixed && i === 0 && issueIndex + 1 === issueLength"
+                       key="designation-fixed-col" class="text-center">
+                  <ReserveSubmit class="reserve-submit-btn"
+                                 style="display: inline"
+                                 :setup="reserveSubmitConfig" />
+                </v-col>
               </transition>
-            </v-col>
-          </template>
-          <!-- ALL OTHER TYPES OF OPTION BOXES -->
-          <template v-else>
-            <v-col :id="option.type + '-button-checkbox-col'"
-                   v-if="i !== 0"
-                   class="pa-0 grey-box-checkbox-button text-center">
-              <transition name="fade" mode="out-in" >
-                <v-checkbox :error="showError"
-                            :key="option.type+'-checkbox'"
-                            :label="checkBoxLabel"
-                            class="ma-0 pa-0"
-                            id="provide-consent-checkbox"
-                            v-if="showCheckBoxOrButton === 'checkbox'"
-                            v-model="boxIsChecked" />
-                <ReserveSubmit :key="option.type+'-reserve-submit'"
-                               :setup="reserveSubmitConfig"
-                               id="reserve-submit-button"
-                               style="display: inline"
-                               v-if="showCheckBoxOrButton === 'button'" />
-              </transition>
-            </v-col>
-          </template>
-        </v-row>
-      </transition>
-    </template>
+            </template>
+
+            <!-- CHANGE_ENTITY_TYPE OPTION BOX -->
+            <template v-if="option.type === 'change_entity_type'">
+              <v-col class="text-center">
+                <v-btn @click="cancelAnalyzeName('Tabs')">Start Search Over</v-btn>
+              </v-col>
+            </template>
+            <!-- ASSUMED NAME OPTION BOX -->
+            <template v-else-if="option.type === 'assumed_name'">
+              <v-col :id="option.type + '-button-checkbox-col'"
+                     class="grey-box-checkbox-button text-center">
+                <transition name="fade" mode="out-in" >
+                  <ReserveSubmit :key="option.type+'-reserve-submit'"
+                                 id="reserve-submit-comp"
+                                 setup="assumed"
+                                 v-if="isLastIndex" />
+                </transition>
+              </v-col>
+            </template>
+            <!-- ALL OTHER TYPES OF OPTION BOXES -->
+            <template v-else>
+              <v-col :id="option.type + '-button-checkbox-col'"
+                     v-if="i !== 0"
+                     class="grey-box-checkbox-button my-0 py-0 text-center">
+                <transition name="fade" mode="out-in" >
+                  <v-checkbox :error="showError"
+                              :key="option.type+'-checkbox'"
+                              :label="checkBoxLabel"
+                              :ripple="false"
+                              :hide-details="true"
+                              class="py-0 my-0"
+                              id="provide-consent-checkbox"
+                              v-if="showCheckBoxOrButton === 'checkbox'"
+                              v-model="boxIsChecked" />
+                  <ReserveSubmit :key="option.type+'-reserve-submit'"
+                                 :setup="reserveSubmitConfig"
+                                 class="my-0 py-0 reserve-submit-btn"
+                                 v-if="showCheckBoxOrButton === 'button'" />
+                </transition>
+              </v-col>
+            </template>
+          </v-row>
+        </transition>
+      </template>
+    </v-row>
   </v-container>
 </template>
 
@@ -140,25 +138,24 @@ import { matchWord, removeExcessSpaces, replaceWord } from '@/plugins/utilities'
   components: { ReserveSubmit }
 })
 export default class GreyBox extends Vue {
+  @Prop(Boolean) changesInBaseName: boolean
+  @Prop(Boolean) designationIsFixed: boolean
+  @Prop(String) finalName: string
   @Prop(Number) i: number
   @Prop(Number) issueIndex: number
   @Prop(Object) option: OptionI
   @Prop(String) originalName: string
 
-  @Watch('changesInBaseName', { immediate: true })
-  updateChangesInBaseName (newVal) {
-    newReqModule.mutateChangesInBaseName(newVal)
+  clickedDesignation: string = ''
+  originalNameBase: string = ''
+  showError: boolean = false
+  showLastStepButtons = {
+    assumed_name: false,
+    conflict_self_consent: false,
+    obtain_consent: false,
+    send_to_examiner: false
   }
-  @Watch('designationIsFixed', { immediate: true })
-  updateDesignationIsFixed (newVal) {
-    newReqModule.mutateDesignationIsFixed(newVal)
-  }
-  @Watch('designationIsFixedStore', { immediate: true })
-  syncDesignationIsFixed () {
-    if (this.designationIsFixedStore !== this.designationIsFixed) {
-      newReqModule.mutateDesignationIsFixed(this.designationIsFixed)
-    }
-  }
+  types = ['send_to_examiner', 'obtain_consent', 'conflict_self_consent', 'assumed_name']
 
   mounted () {
     this.$root.$on('start-search-again', () => {
@@ -184,35 +181,8 @@ export default class GreyBox extends Vue {
     this.originalNameBase = originalName
   }
 
-  clickedDesignation: string = ''
-  nameObj = {
-    0: '',
-    1: '',
-    2: ''
-  }
-  originalNameBase: string = ''
-  showError: boolean = false
-  showLastStepButtons = {
-    conflict_self_consent: false,
-    obtain_consent: false,
-    send_to_examiner: false,
-    assumed_name: false
-  }
-  types = ['send_to_examiner', 'obtain_consent', 'conflict_self_consent', 'assumed_name']
-
   get allDesignationsStripped () {
     return this.stripAllDesignations(this.originalName)
-  }
-  get baseWordsAreUnchanged () {
-    let nameTest = this.stripAllDesignations(this.name)
-    let { allDesignationsStripped } = this
-    if (this.nameActionWords.length > 0) {
-      for (let word of this.nameActionWords) {
-        nameTest = replaceWord(nameTest, word)
-        allDesignationsStripped = replaceWord(allDesignationsStripped, word)
-      }
-    }
-    return (allDesignationsStripped === nameTest)
   }
   get boxIsChecked () {
     let { type } = this.option
@@ -238,121 +208,18 @@ export default class GreyBox extends Vue {
       index: this.issueIndex
     })
   }
-  get changesInBaseName () {
-    if (this.name === this.originalName) {
-      return false
-    }
-    return !this.baseWordsAreUnchanged
-  }
   get checkBoxLabel () {
     switch (this.option.type) {
       case 'send_to_examiner':
-        return 'I want to send my name to be examined'
+        return 'I want to send my name for review'
       case 'obtain_consent':
-        return 'I will obtain and submit consent'
       case 'conflict_self_consent':
-        return 'I have authority over the conflicting name; I will submit written consent'
+        return 'I will submit written consent to the BC Business Registry'
       case 'assumed_name':
         return 'I want to send my name to be examined as an Assumed Name'
       default:
         return ''
     }
-  }
-  get designationIsFixed () {
-    try {
-      if (this.userCancelled) return false
-      if (!this.changesInBaseName) {
-        let AllDesignationsList = allDesignationsList
-        const designationEntityTypes = allDesignations[this.entity_type_cd]
-        // below condition is entity types PAR, FI, PA, and the proprietorships - don't use a designation
-        if (designationEntityTypes && designationEntityTypes.words.length === 0) {
-          if (this.nameActionWords.length > 0) {
-            for (let word of this.nameActionWords) {
-              // in addition to checking the name for the inclusion of designations from the list-data, check for any
-              // designation-like words that the back-end is providing in the name_actions (eg. INC, CORP)
-              if (!AllDesignationsList.includes(word)) {
-                AllDesignationsList = AllDesignationsList.concat(word)
-              }
-            }
-          }
-          // these entity types do not use designations, so they should not have one in their text
-          // fail the test (return false) if any are found
-          for (let designation of AllDesignationsList) {
-            if (matchWord(this.name, designation)) {
-              return false
-            }
-          }
-          return true
-        }
-        let end: string
-        AllDesignationsList.forEach(designation => {
-          if (this.name.endsWith(' ' + designation)) {
-            end = designation
-          }
-        })
-        // entities which don't use ending designations have either been dealt with above or are not covered by
-        // the name-request app so by this point, any name still being considered by this getter use one
-        if (!end) {
-          // so fail the test if there is no ending designation
-          return false
-        }
-        if (this.nameActionWords.length > 0) {
-          for (let word of this.nameActionWords) {
-            if (!AllDesignationsList.includes(word)) {
-              AllDesignationsList = AllDesignationsList.concat(word)
-            }
-          }
-        }
-        let matches = []
-        for (let designation of AllDesignationsList) {
-          if (matches.includes(designation)) {
-            continue
-          }
-          let matchedWords = matchWord(this.name, designation)
-          if (matchedWords) {
-            if (matchedWords.length > 1) {
-              return false
-            }
-            if (matchedWords.length === 1) {
-              matches.push(designation)
-            }
-          }
-        }
-        if (this.isMisplacedPrecedingMismatch) {
-          let nextWords = []
-          if (Array.isArray(newReqModule.analysisJSON.issues[this.issueIndex + 1].name_actions)) {
-            nextWords = newReqModule.analysisJSON.issues[this.issueIndex + 1].name_actions.map(
-              action => action.word.toUpperCase()
-            )
-            nextWords = nextWords.filter(word => word !== end)
-            matches = matches.filter(match => !nextWords.includes(match))
-          }
-        }
-        if (matches.length > 1) {
-          return false
-        }
-        if (Array.isArray(this.designations) && this.designations.length > 0) {
-          if (this.designations.some(designation => this.name.endsWith(designation))) {
-            return true
-          }
-        } else {
-          if (designationEntityTypes && designationEntityTypes.words.some(word => this.name.endsWith(word))) {
-            return true
-          }
-        }
-      }
-      return false
-    } catch (err) {
-      // Catch designation errors and log to console, as it will prevent this component from rendering properly
-      // eslint-disable-next-line no-console
-      console.warn(err)
-      // If something fails in this method, return false, as getters are expected to return a value
-      // We don't want to prevent the component from rendering, log the error and continue
-      return false
-    }
-  }
-  get designationIsFixedStore () {
-    return newReqModule.designationIsFixed
   }
   get designations () {
     if (this.issue && this.issue.designations) {
@@ -373,41 +240,20 @@ export default class GreyBox extends Vue {
     }
     return false
   }
+  get isAssumedName () {
+    return this.issue.setup.some(box => box.type === 'assumed_name')
+  }
   get isDesignationIssueType () {
     if (newReqModule.designationIssueTypes.includes(this.issueType)) {
       return true
     }
     return false
   }
-  get isMismatchFollowingMisplaced () {
-    if (this.issueIndex > 0 &&
-        this.issueType === 'designation_mismatch' &&
-        newReqModule.analysisJSON.issues[this.issueIndex - 1].issue_type === 'designation_misplaced') {
-      return true
-    }
-    return false
-  }
-  get isMisplacedPrecedingMismatch () {
-    if (this.issueLength > 1 && this.issueIndex < this.issueLength) {
-      if (['designation_misplaced', 'end_designation_more_than_once'].includes(this.issueType)) {
-        if (newReqModule.analysisJSON.issues[this.issueIndex + 1]) {
-          return (newReqModule.analysisJSON.issues[this.issueIndex + 1].issue_type === 'designation_mismatch')
-        }
-      }
-    }
-    return false
+  get isLastIndex () {
+    return (this.issueIndex === this.lastIndex)
   }
   get issue () {
     return newReqModule.analysisJSON.issues[this.issueIndex]
-  }
-  get isAssumedName () {
-    return this.issue.setup.some(box => box.type === 'assumed_name')
-  }
-  get lastIndex () {
-    return this.issueLength - 1
-  }
-  get isLastIndex () {
-    return (this.issueIndex === this.lastIndex)
   }
   get issueLength () {
     if (Array.isArray(newReqModule.analysisJSON.issues)) {
@@ -420,6 +266,9 @@ export default class GreyBox extends Vue {
       return this.issue.issue_type
     }
     return ''
+  }
+  get lastIndex () {
+    return this.issueLength - 1
   }
   get multipleMismatchedDesignations () {
     if (this.issueType === 'designation_mismatch') {
@@ -449,6 +298,28 @@ export default class GreyBox extends Vue {
       return this.nameActions.map(action => action.word.toUpperCase())
     }
     return []
+  }
+  get optionClasses () {
+    let { i } = this
+    if (this.issue && Array.isArray(this.issue.setup)) {
+      switch (this.issue.setup.length) {
+        case 1:
+          return 'square-card-x1'
+        case 2:
+          if (i === 1) {
+            return 'square-card-x2 ml-3'
+          }
+          return 'square-card-x2'
+        case 3:
+          if (i === 1) {
+            return 'square-card-x3 mx-3'
+          }
+          return 'square-card-x3'
+        default:
+          return ''
+      }
+    }
+    return ''
   }
   get requestExaminationOrProvideConsent () {
     return newReqModule.requestExaminationOrProvideConsent
@@ -492,6 +363,18 @@ export default class GreyBox extends Vue {
   }
   get showCheckBoxOrButton () {
     let { type } = this.option
+    if (['obtain_consent', 'conflict_self_consent'].includes(type)) {
+      if (this.requestExaminationOrProvideConsent[this.issueIndex].send_to_examiner) {
+        return 'checkbox'
+      }
+    }
+    if (type === 'send_to_examiner') {
+      if (['obtain_consent', 'conflict_self_consent'].some(
+        issue => this.requestExaminationOrProvideConsent[this.issueIndex][issue]
+      )) {
+        return 'checkbox'
+      }
+    }
     if (this.issueIndex + 1 === this.issueLength) {
       switch (type) {
         case 'cancel_to_examiner':
@@ -533,9 +416,6 @@ export default class GreyBox extends Vue {
       return this.clickedDesignation
     }
     return ''
-  }
-  get userCancelled () {
-    return newReqModule.userCancelledAnalysis
   }
 
   cancelAnalyzeName (destination) {
@@ -589,27 +469,6 @@ export default class GreyBox extends Vue {
       baseName = this.extractInnerDesignation(this.originalName, this.word)
     }
     this.name = baseName + ' ' + this.word
-  }
-  optionClasses (i) {
-    if (this.issue && Array.isArray(this.issue.setup)) {
-      switch (this.issue.setup.length) {
-        case 1:
-          return 'helpful-hint'
-        case 2:
-          if (i === 1) {
-            return 'square-card-x2 ml-3'
-          }
-          return 'square-card-x2'
-        case 3:
-          if (i === 1) {
-            return 'square-card-x3 mx-3'
-          }
-          return 'square-card-x3'
-        default:
-          return ''
-      }
-    }
-    return ''
   }
   removeMismatchedDesignations (name, designation = null) {
     if (designation) {

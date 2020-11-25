@@ -7,14 +7,15 @@
         <v-col cols="12" class="h5 text-center mt-n6">
           Further Information
         </v-col>
+      </v-row>
+      <v-row class="text-center" v-if="boxes">
         <v-col cols="12"
                class="text-center mt-n4"
                v-html="title" />
         <v-col v-for="(box, i) in boxes" :key="'box-'+i">
           <v-container class="copy-small text-left" :class="box.class">
             <v-row align-content="space-between" style="height: 100%">
-              <v-col class="h5 py-0"><v-icon class="pr-2 colour-p-blue-text">mdi-information</v-icon>
-                {{ box.title }}</v-col>
+              <v-col class="h5 py-0">{{ box.title }}</v-col>
               <v-col cols="12" v-html="box.text" />
                <v-col class="text-center">
                 <v-btn x-large
@@ -75,28 +76,6 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
       text: 'You can enter a different name and try your search again.  Click the button below to cancel this request' +
       'and start again.'
     }
-    let entityExplanation = {
-      title: 'Option 2',
-      class: 'square-card-x2',
-      button: 'restart',
-      text: 'You can choose a different entity type and search again.  Please consult with a lawyer' +
-      '/accounting professional if you are unsure about the most appropriate structure for your situation.'
-    }
-    let nameExplanation = {
-      title: 'Helpful Hint',
-      class: 'helpful-hint',
-      button: 'examine',
-      text: 'Click the button below to submit your request.  Please check the wait times listed at the top of' +
-      ' the screen.  Rush services are also available.'
-    }
-    let requestActionExplanation = {
-      title: 'Option 1',
-      class: 'helpful-hint',
-      button: 'examine',
-      text: `Currently only requests for New Names, New Tradenames and Name Changes are handled automatically.
-        Click the button below to submit your request to examination.  Please check the wait times listed at the top of
-        the screen.  Rush services are also available.`
-    }
     let slashEditExplanation = {
       title: 'Option 1',
       class: 'square-card-x2',
@@ -114,17 +93,17 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
       return [timeoutExplanation1, timeoutExplanation2]
     }
     if (this.requestActionNotSupported) {
-      return [requestActionExplanation]
+      return false
     }
     if (this.entityTypeNotAnalyzed) {
       let edits = { title: 'Option 1', class: 'square-card-x2' }
-      return [ { ...nameExplanation, ...edits }, entityExplanation ]
+      return false
     }
     if (this.nameIsSlashed) {
       return [ slashEditExplanation, slashExamineExplanation ]
     }
     if (this.isPersonsName || !this.nameIsEnglish) {
-      return [ nameExplanation ]
+      return false
     }
     return []
   }
