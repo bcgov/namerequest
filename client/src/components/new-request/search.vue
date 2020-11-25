@@ -5,7 +5,7 @@
       <v-col cols="6">
         <span id="nr-required-activator"
               class="link-std d-flex justify-end"
-              @click="activateNRRModal()">Check to see if you need to file a a Name Request</span>
+              @click="activateNRRModal()">Check to see if you need to file a Name Request</span>
       </v-col>
       <v-col cols="5" class="mt-n1">
         <!--request_action_cd-->
