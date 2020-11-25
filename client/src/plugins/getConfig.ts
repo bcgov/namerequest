@@ -25,6 +25,9 @@ export function getConfig (): Promise<void> {
     const authApiUrl = response.data[0]['AUTH_API_URL']
     sessionStorage.setItem('AUTH_API_URL', authApiUrl)
 
+    const authPayUrl = response.data[0]['VUE_APP_PAY_ROOT_API']
+    sessionStorage.setItem('VUE_APP_PAY_ROOT_API', authPayUrl)
+
     const legalApiUrl = response.data[0]['LEGAL_API_URL']
     sessionStorage.setItem('LEGAL_API_URL', legalApiUrl)
 
@@ -33,7 +36,8 @@ export function getConfig (): Promise<void> {
      * This will be removed when a fix is made to sbc-common-components to handle this
      */
     const authConfig = {
-      'AUTH_URL': businessUrl
+      'AUTH_URL': businessUrl,
+      "VUE_APP_PAY_ROOT_API": authPayUrl
     }
     const authConfigString = JSON.stringify(authConfig)
     sessionStorage.setItem('AUTH_API_CONFIG', authConfigString)
