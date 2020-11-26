@@ -123,7 +123,7 @@
           <v-row>
             <v-col cols="12" class="h3 info-underline px-0">Need more information?</v-col>
             <v-col cols="12" class="px-0">
-              <a href="https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business/permits-licences/businesses-incorporated-companies/approval-business-name" class="white--text">
+              <a :href="needMoreInfo" class="white--text">
                 Learn more about requesting a name
               </a>
             </v-col>
@@ -158,7 +158,9 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component({
   components: { NameBuildInfo }
 })
-export default class LowerContainer extends Vue {}
+export default class LowerContainer extends Vue {
+  needMoreInfo = 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business/permits-licences/businesses-incorporated-companies/approval-business-name'
+}
 
 </script>
 
