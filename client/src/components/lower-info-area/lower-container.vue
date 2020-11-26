@@ -117,49 +117,54 @@
       </v-col>
     </v-row>
 
-    <v-row no-gutters class="px-9 contact-section">
-      <v-col cols="6" class="pr-9 pl-3 mt-3">
+    <v-row no-gutters class="contact-section">
+      <v-col cols="6">
         <v-container class="pa-9">
           <v-row>
-            <v-col cols="12" class="h3 info-underline">Need More Information?</v-col>
-            <v-col cols="12" class="copy-normal">To learn more about BC Names Request Online, please visit
-              the BC Government Homepage</v-col>
+            <v-col cols="12" class="h3 info-underline px-0">Need more information?</v-col>
+            <v-col cols="12" class="px-0">
+              <a href="#" class="white--text">
+                Learn more about business name requests in BC
+              </a>
+            </v-col>
           </v-row>
         </v-container>
       </v-col>
-      <v-col cols="6" class="pl-9 pr-3 mt-3">
+      <v-col cols="6">
         <v-container class="pa-9">
           <v-row alinn="start" align-content="start" align-items="start">
-            <v-col cols="11" class="h3 info-underline">Contact Us</v-col>
-            <v-col cols="12" class="copy-normal">
+            <v-col cols="11" class="h3 info-underline px-0">Contact Us</v-col>
+            <v-col cols="12" class="px-0">
               For support or questions about this application contact us at:
             </v-col>
-            <v-col cols="12" class="pb-0">Toll Free: 1-877-526-1526</v-col>
-            <v-col cols="12" class="py-0">Phone: 250 952-0568</v-col>
-            <v-col cols="12" class="pt-0">Email: SBC_ITOperationsSupport@gov.bc.ca</v-col>
-            <v-col cols="12" class="pb-0 fw-700">Hours of Operation</v-col>
-            <v-col cols="12" class="pt-0">Monday to Friday, 8:30am - 4:30pm PST</v-col>
+            <ul class="contact-info-list">
+              <li>Toll Free: <a href="tel:1-877-370-1033" class="white--text">1-877-370-1033</a></li>
+              <li>Phone: <a href="tel:250-370-1033" class="white--text">250-370-1033</a></li>
+              <li>Email: <a href="mailto:bcregistries@gov.bc.ca" class="white--text">bcregistries@gov.bc.ca</a></li>
+            </ul>
+            <v-col cols="12" class="pb-0 px-0 fw-700">Hours of Operation:</v-col>
+            <v-col cols="12" class="pt-0 px-0">Monday to Friday, 8:30am - 4:30pm Pacific Time</v-col>
           </v-row>
         </v-container>
       </v-col>
     </v-row>
-    <Footer />
  </v-container>
 </template>
 
 <script lang="ts">
-import Footer from '@/components/lower-info-area/footer.vue'
 import NameBuildInfo from '@/components/lower-info-area/name-build-info.vue'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
-  components: { Footer, NameBuildInfo }
+  components: { NameBuildInfo }
 })
 export default class LowerContainer extends Vue {}
 
 </script>
 
 <style lang="sass" scoped>
+@import "@/assets/scss/theme.scss"
+
 li
   font-size: 16px
 
@@ -170,11 +175,22 @@ li
   color: $text
   background-color: #F1F3F5
 
-  .words-section, .contact-section
+  .words-section
     background-color: white
 
+  .contact-section
+    background-color: $BCgovBlue5
+    color: white
+
+    .contact-info-list
+      margin: 0
+      padding: 0
+      list-style-type: none
+
 .info-underline
-  border-bottom: 1px solid lightgray
+  font-size: 1.25rem
+  border-bottom: 1px solid $BCgovBlue3
+  color: white
 
 .launch-icon
   font-size: 16px
@@ -188,5 +204,4 @@ li
   border-radius: 4px
   background-color: white
   box-shadow: 2px 2px 4px 0 darkgray
-
 </style>

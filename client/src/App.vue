@@ -25,6 +25,7 @@
         :redirect-on-logout="getNameRequestUrl"
       />
       <router-view />
+      <sbc-footer />
     </div>
     <!--All v-dialogue (modal) components App-wide-->
     <Conditions />
@@ -55,6 +56,7 @@
 
 <script lang="ts">
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
+import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 import Conditions from '@/components/modals/conditions.vue'
 import HelpMeChoose from '@/components/modals/help-me-choose.vue'
 import LocationInfoModal from '@/components/modals/location-info.vue'
@@ -93,6 +95,7 @@ import paymentModule from '@/modules/payment'
     TimeoutModal,
     Conditions,
     SbcHeader,
+    SbcFooter,
     LocationInfoModal,
     NrNotRequired,
     HelpMeChoose,
@@ -240,4 +243,10 @@ export default class App extends Mixins(SessionTimerMixin) {
   opacity: 0.46
   background-color: rgb(33, 33, 33) // grey darken-4
   border-color: rgb(33, 33, 33) // grey darken-4
+
+.app-footer
+  .container
+    max-width: 100%
+    padding-right: 1rem
+    padding-left: 1rem
 </style>
