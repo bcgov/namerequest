@@ -4,48 +4,7 @@
     <!--- Build a Name Info Container -->
     <name-build-info />
 
-    <v-row no-gutters class="bg-grey-1 pa-9 words-section">
-      <v-col cols="6" class="pr-9 pl-3">
-        <v-card class="ma-9 py-6 px-9">
-          <v-card-title class="h3">Top 10 Words Approved This Week</v-card-title>
-          <v-card-subtitle class="pt-3 copy-normal">
-            Try to stand out, choose a name that isn't widely used
-          </v-card-subtitle>
-          <v-card-text class="mt-n6 mb-n5">
-            <v-container>
-              <v-row>
-                <v-col cols="6">
-                  <ol>
-                    <li v-for="(n,  key) in 5" :key="`li+${key}`">
-                      <span class="fw-700">Name {{ key + 1 }}</span>
-                    </li>
-                  </ol>
-                </v-col>
-                <v-col cols="6">
-                  <ol start="6">
-                    <li v-for="(n,  key) in 5" :key="`li+${key}`">
-                      <span class="fw-700">Name {{ key + 6 }}</span>
-                    </li>
-                  </ol>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="6" class="mt-9 pt-6 pl-9">
-        <v-row>
-          <v-col cols="12" class="h3">Avoid Certain Words</v-col>
-          <v-col cols="11">
-            Name approvals can be delayed or declined if they contain popular words, words that require consent, words
-            that are trademarked or otherwise cannot be used. Lorem ipsum dolor sit amet to make this longer.
-          </v-col>
-          <v-col>
-            <v-btn deopressed>Learn More</v-btn>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
+    <new-and-better-way />
 
     <v-row no-gutters class="bg-grey-1 px-9 py-6" justify="center">
       <v-col cols="auto" class="h3 mt-9 mb-6">Helpful Tips</v-col>
@@ -123,7 +82,7 @@
           <v-row>
             <v-col cols="12" class="h3 info-underline px-0">Need more information?</v-col>
             <v-col cols="12" class="px-0">
-              <a :href="needMoreInfo" class="white--text">
+              <a :href="needMoreInfo" target="_blank" class="white--text">
                 Learn more about requesting a name
               </a>
             </v-col>
@@ -153,10 +112,11 @@
 
 <script lang="ts">
 import NameBuildInfo from '@/components/lower-info-area/name-build-info.vue'
+import NewAndBetterWay from '@/components/lower-info-area/new-and-better-way.vue'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
-  components: { NameBuildInfo }
+  components: { NameBuildInfo, NewAndBetterWay }
 })
 export default class LowerContainer extends Vue {
   needMoreInfo = 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business/permits-licences/businesses-incorporated-companies/approval-business-name'
@@ -176,9 +136,6 @@ li
   font-size: 16px
   color: $text
   background-color: #F1F3F5
-
-  .words-section
-    background-color: white
 
   .contact-section
     background-color: $BCgovBlue5
