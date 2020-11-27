@@ -7,13 +7,25 @@
 /* @font-face should go here */
 
 /* HTML element styles should go here */
-
+.h6, h6 {
+  color: $dk-text;
+  font-size: 1rem;
+  line-height: 20px;
+  font-weight: 700;
+}
 /* global styles should go here */
-
-
 .pr-75 {
   padding-right: 75px !important;
 }
 .pl-75 {
   padding-left: 75px !important;
+}
+.action {
+  color: $error !important;
+}
+.approved {
+  color: $approved !important;
+}
+.error-message {
+  color: $error;
 }

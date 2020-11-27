@@ -5,7 +5,7 @@
       </v-row>
       <v-row class="text-center">
         <v-col cols="12" class="h5 text-center mt-n6">
-          Further Information
+          Further Information {{isPersonsName}}
         </v-col>
       </v-row>
       <v-row class="text-center" v-if="boxes">
@@ -103,7 +103,7 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
       return [ slashEditExplanation, slashExamineExplanation ]
     }
     if (this.isPersonsName || !this.nameIsEnglish) {
-      return false
+      return []
     }
     return []
   }
