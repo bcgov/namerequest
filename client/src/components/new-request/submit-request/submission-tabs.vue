@@ -1,7 +1,7 @@
 <template>
   <MainContainer>
     <template v-slot:container-header>
-      <v-col cols="auto" class="h4" v-if="submissionTabNumber === 1">
+      <v-col cols="auto" class="font-weight-bold h6" v-if="submissionTabNumber === 1">
         Submit Name Request for Examination
       </v-col>
       <v-col cols="auto" class="h4" v-else-if="submissionTabNumber > 1">

@@ -354,6 +354,7 @@ export default class NewSearch extends Vue {
   color: #1669BB
 
 .search-name-btn
+  font-size: 1rem !important
   min-height: 45px
   padding: 0 50px 0 50px !important
 

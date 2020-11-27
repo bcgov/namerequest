@@ -1,10 +1,13 @@
 <template>
   <v-tooltip bottom
              content-class="bottom-tooltip"
-             transition="fade-transition">
+             transition="fade-transition"
+              :disabled="isContinue">
     <template v-slot:activator="scope">
       <v-btn @click="handleSubmit"
-             class="mt-auto margin-top-auto reserve-submit-btn"
+             outlined
+             :class="{ 'reserve-submit-btn': !isContinue }"
+             class="mt-auto margin-top-auto"
              v-on="scope.on"
              ref="reserve-submit-button">
         {{ text }}
@@ -24,6 +27,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 @Component({})
 export default class ReserveSubmitButton extends Vue {
   @Prop(String) setup: string
+  private isContinue: boolean = true
 
   get entity_type_cd () {
     return newReqModule.entity_type_cd
@@ -45,8 +49,10 @@ export default class ReserveSubmitButton extends Vue {
   }
   get text () {
     if (this.setup === 'cancel') {
-      return 'Stop & Send To Examination'
+      this.isContinue = false
+      return 'Stop and Send Name for Review'
     }
+    this.isContinue = true
     return 'Continue'
   }
   async sendToExamination () {
@@ -121,4 +127,11 @@ export default class ReserveSubmitButton extends Vue {
 <style scoped lang="sass">
 .margin-top-auto
   margin-top: auto !important
+.v-btn
+  min-width: 125px !important
+.reserve-submit-btn
+  color: #1669bb !important
+  background-color: white !important
+  &:hover
+    background-color: rgba(22, 105, 187, .01) !important
 </style>
