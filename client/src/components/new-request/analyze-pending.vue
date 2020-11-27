@@ -82,7 +82,8 @@ export default class AnalyzePending extends Vue {
 }
 
 </script>
-<style scoped lang="sass">
-#analyze-pending-container
-  max-width: 1140px
+<style scoped lang="scss">
+#analyze-pending-container {
+  max-width: 1140px;
+}
 </style>

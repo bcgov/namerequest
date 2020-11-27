@@ -36,7 +36,7 @@
         <v-row no-gutters :key="issueIndex+'vcol'">
           <v-col>
 
-            <!--"FURTHER ACTION REQUIRED" OR "APPROVAL" TEXT + ICON-->
+            <!--"FURTHER ACTION REQUIRED" OR "APPROVABLE" TEXT + ICON-->
             <transition name="fade" mode="out-in" >
               <v-row no-gutters justify="center"
                      class="mt-n4"
@@ -226,6 +226,8 @@ export default class AnalyzeResults extends Vue {
       }
       let { length } = this.chunkedName
       this.nameActions.forEach(action => {
+        // eslint-disable-next-line no-console
+        console.log(this.nameActions)
         if (action.index < length) {
           if (action.type === 'brackets') {
             let op: QuillOpsI = { insert: ` [${action.message}]`, attributes: { color: 'red' } }
@@ -748,36 +750,47 @@ export default class AnalyzeResults extends Vue {
 
 </script>
 
-<style scoped lang="sass">
-#analyze-results-container
-  max-width: 1140px
-#name-search-bar
-  margin: -20px 0 20px 0
-  max-height: 40px
-  min-height: 40px
-.action
-  color: $error !important
-.approved
-  color: $approved !important
-.error-message
-  color: red
-  margin-left: 20px
-  margin-top: 15px
-.modal-activator
-  background-color: unset !important
-  color: $link !important
-  cursor: pointer !important
-  letter-spacing: unset !important
-  text-decoration: underline
-  text-transform: none !important
-.strike
-  text-decoration-line: line-through
-.search-tooltip
-  max-width: 100px !important
-  text-align: center
-  padding: 10px !important
-#next-issue-btn.disabled-issue-btn
-  color: #1669bb !important
-  border-color: #1669bb !important
-  opacity: .4 !important
+<style scoped lang="scss">
+@import '@/assets/scss/theme.scss';
+
+#analyze-results-container {
+  max-width: 1140px;
+}
+#name-search-bar {
+  margin: -20px 0 20px 0;
+  max-height: 40px;
+  min-height: 40px;
+}
+.action {
+  color: $BCgovInputError !important;
+}
+.approved {
+  color: $approved !important;
+}
+.error-message {
+  color: red;
+  margin-left: 20px;
+  margin-top: 15px;
+}
+.modal-activator {
+  background-color: unset !important;
+  color: $link !important;
+  cursor: pointer !important;
+  letter-spacing: unset !important;
+  text-decoration: underline;
+  text-transform: none !important;
+}
+.strike {
+  text-decoration-line: line-through;
+}
+.search-tooltip {
+  max-width: 100px !important;
+  text-align: center;
+  padding: 10px !important;
+}
+#next-issue-btn.disabled-issue-btn {
+  color: $link !important;
+  border-color: $link !important;
+  opacity: .4 !important;
+}
 </style>

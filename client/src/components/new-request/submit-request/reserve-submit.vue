@@ -124,14 +124,18 @@ export default class ReserveSubmitButton extends Vue {
 }
 </script>
 
-<style scoped lang="sass">
-.margin-top-auto
-  margin-top: auto !important
-.v-btn
-  min-width: 125px !important
-.reserve-submit-btn
-  color: #1669bb !important
-  background-color: white !important
-  &:hover
-    background-color: rgba(22, 105, 187, .01) !important
+<style scoped lang="scss">
+.margin-top-auto {
+  margin-top: auto !important;
+}
+.v-btn {
+  min-width: 125px !important;
+}
+.reserve-submit-btn {
+  color: #1669bb !important;
+  background-color: white !important;
+  &:hover {
+    background-color: rgba(22, 105, 187, .01) !important;
+  }
+}
 </style>
