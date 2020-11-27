@@ -22,7 +22,7 @@
                class="upper-right-border"
                tabindex="1"><span
                :class="tabNumber === 1 ? 'h5' : 'h5-lt'">Existing Name Request</span></v-tab>
-        <v-tabs-items class="tab-items" v-model="tabNumber">
+        <v-tabs-items class="rounded-b tab-items" v-model="tabNumber">
           <v-tab-item class="px-6">
             <NewSearch />
           </v-tab-item>
@@ -58,25 +58,26 @@ export default class Tabs extends Vue {
 
 </script>
 
-<style lang="sass" scoped>
-#tabs-landing-comp
-  max-width: 1264px !important
-
-.tab-items
-  border-bottom-left-radius: 6px !important
-  border-bottom-right-radius: 6px !important
-
-.active-tab
-   background-color: #003366
-
-.upper-left-border
-   border-top-left-radius: 6px
-   min-height: 58px
-   max-height: 58px
-
-.upper-right-border
-   border-top-right-radius: 6px
-   min-height: 58px
-   max-height: 58px
-
+<style lang="scss" scoped>
+@import '@/assets/scss/theme.scss';
+#tabs-landing-comp {
+  max-width: 1140px !important;
+  padding: 0 !important;
+}
+.tab-items {
+  border-radius: 6px !important;
+}
+.active-tab {
+  background-color: $BCgovBlue5;
+}
+.upper-left-border {
+  border-top-left-radius: 6px;
+  min-height: 58px;
+  max-height: 58px;
+}
+.upper-right-border {
+  border-top-right-radius: 6px;
+  min-height: 58px;
+  max-height: 58px;
+}
 </style>

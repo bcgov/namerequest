@@ -1,14 +1,14 @@
 <template>
   <MainContainer id="analyze-results-container">
     <template v-slot:container-header>
-      <v-col cols="auto" class="h4">
+      <v-col cols="auto" class="font-weight-bold h6 ml-3">
         You are searching for a name for a
         {{ entityText === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }} {{ entityText }}
       </v-col>
     </template>
     <template v-slot:content>
       <v-row>
-        <v-col cols="12" class="mt-3" @click="clickNameField">
+        <v-col cols="12" class="mt-3 pb-0" @click="clickNameField">
           <quill-editor :contents="contents"
                         :options="config"
                         :disabled="!!finalName"
@@ -16,14 +16,23 @@
                         @keydown.native.capture="handleEnterKey"
                         id="name-search-bar"
                         ref="quill" />
-          <div style="position: relative; left: 865px; top: -45px; z-index: 1000">
-            <v-icon @click.capture.stop="handleSubmit"
-                    class="name-search-icon"
-                    id="name-input-icon">mdi-magnify</v-icon>
+          <div class="search-icon">
+            <v-tooltip bottom
+                       content-class="bottom-tooltip search-tooltip"
+                       transition="fade-transition">
+              <template v-slot:activator="scope">
+                <v-icon @click.capture.stop="handleSubmit"
+                        class="name-search-icon"
+                        color="primary"
+                        id="name-input-icon"
+                        v-on="scope.on">mdi-magnify</v-icon>
+              </template>
+              Search Again
+            </v-tooltip>
           </div>
         </v-col>
       </v-row>
-      <transition name="fade" mode="out-in" >
+      <transition name="fade" mode="out-in" :duration="{ enter: 200, leave: 200 }">
         <v-row no-gutters :key="issueIndex+'vcol'">
           <v-col>
 
@@ -46,6 +55,7 @@
               <!--MAIN HEADINGS / INFO: LINE 1 & LINE 2-->
               <transition name="fade" mode="out-in">
                 <v-row no-gutters justify="center"
+                       class="py-1"
                        v-if="headerProps.showNextLines"
                        :key="headerProps.text">
                   <v-col class="pt-2 pb-4 mt-n1 text-center"
@@ -66,8 +76,8 @@
               </transition>
 
               <!--CORP CONFLICT TABLE-->
-              <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n3 pb-5 text-center">
-                <v-col cols="auto" >
+              <v-row no-gutters justify="center" v-if="conflicts.length > 0" class="mt-n3 pb-4 text-center">
+                <v-col cols="auto">
                   <div v-for="(corp, n) in conflicts" :key="'conflict-' + n">
                     <b>{{ corp.name }}</b><br>
                     <span v-if="conflictDate && conflictId.startsWith('NR ')">
@@ -83,7 +93,7 @@
               <!--GREY BOXES-->
               <transition name="fade" mode="out-in" >
                 <v-row :key="'grey-box-row' + showGreyBoxes"
-                       class="colour-p-blue-text justify-center"
+                       class="colour-p-blue-text justify-center mb-1"
                        dense
                        v-if="showGreyBoxes">
                   <v-col :key="issue.issue_type + '-' + option.header + '-' + optionIndex"
@@ -112,14 +122,20 @@
               <!--ERROR MESSAGE / NEXT - PREVIOUS BUTTONS-->
               <v-row v-if="json.issues.length > 1" justify="end" no-gutters>
                 <v-col v-if="highlightCheckboxes"
-                       class="copy-small text-center">
+                       cols="5"
+                       justify="left"
+                       align-self="center"
+                       class="copy-small text-left">
                   <div class="error-message">
-                    You must either tick whichever box applies or take the action prescribed in Option 1.
+                    Select an option above to continue
                   </div>
                 </v-col>
-                <v-col cols="auto" class="text-right mt-1 mb-7">
+                <v-col cols="3" class="pl-5" justify="center" align-self="center">
+                  <span class="copy-small">Viewing {{ issueIndex + 1 }} of {{ json.issues.length }} Issues</span>
+                </v-col>
+                <v-col cols="4" class="text-right mt-1 mb-7">
                   <v-btn @click="issueIndex--"
-                         class="mt-3 mb-n4 rnd-wht-btn"
+                         class="mt-1 mb-n4 rnd-wht-btn"
                          color="#1669bb"
                          id="previous-issue-btn"
                          large
@@ -128,7 +144,7 @@
                   </v-btn>
                   <v-btn :class="nextButtonDisabled ? 'disabled-issue-btn' : 'active-issue-btn'"
                          @click="clickNext"
-                         class="mt-3 mb-n4"
+                         class="mt-1 mb-n4 mr-0"
                          id="next-issue-btn"
                          large
                          outlined
@@ -152,7 +168,7 @@
                     </v-col>
                   </v-row>
                   <v-row>
-                    <v-col cols="12" class="text-center">
+                    <v-col cols="12" class="text-center mb-n5">
                       <ReserveSubmit id="reserve-submit-normal" />
                     </v-col>
                   </v-row>
@@ -735,27 +751,42 @@ export default class AnalyzeResults extends Vue {
 
 </script>
 
-<style scoped lang="sass">
-#name-search-bar
-  margin: -20px 0 20px 0
-  max-height: 40px
-  min-height: 40px
-.action
-  color: $error !important
-.approved
-  color: $approved !important
-.error-message
-  color: red
-  margin-left: 20px
-  margin-top: 15px
-.modal-activator
-  background-color: unset !important
-  color: $link !important
-  cursor: pointer !important
-  letter-spacing: unset !important
-  text-decoration: underline
-  text-transform: none !important
-.strike
-  text-decoration-line: line-through
+<style scoped lang="scss">
+@import '@/assets/scss/theme.scss';
 
+#analyze-results-container {
+  max-width: 1140px;
+}
+#name-search-bar {
+  margin: -20px 0 20px 0;
+  max-height: 40px;
+  min-height: 40px;
+}
+.modal-activator {
+  background-color: unset !important;
+  color: $link !important;
+  cursor: pointer !important;
+  letter-spacing: unset !important;
+  text-decoration: underline;
+  text-transform: none !important;
+}
+.strike {
+  text-decoration-line: line-through;
+}
+.search-icon {
+  position: relative;
+  left: 96.5%;
+  top: -45px;
+  z-index: 1000;
+}
+.search-tooltip {
+  max-width: 100px !important;
+  text-align: center;
+  padding: 10px !important;
+}
+#next-issue-btn.disabled-issue-btn {
+  color: $link !important;
+  border-color: $link !important;
+  opacity: .4 !important;
+}
 </style>

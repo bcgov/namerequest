@@ -5,12 +5,16 @@
         <v-col cols="12" class="mb-4">
           <Stats class="pr-10"/>
         </v-col>
-        <v-col cols="12" class="ml-3 mb-n2">
+        <v-col cols="12" class="mb-n2">
           <span class="h2 colour-white">Name Request <sup class="beta-tag">Beta</sup></span>
         </v-col>
-        <transition name="flip" mode="out-in">
-            <component :is="displayedComponent" :key="displayedComponent" transition="fade-transition" />
-        </transition>
+        <div class="main-container-style mt-3">
+          <transition name="fade" mode="out-in" :duration="{ enter: 100, leave: 100 }">
+            <keep-alive :include="['Tabs', 'AnalyzePending']">
+              <component :is="displayedComponent" :key="displayedComponent" transition="fade-transition" />
+            </keep-alive>
+          </transition>
+        </div>
       </v-container>
     </v-row>
     <v-row id="lower-row" no-gutters>
@@ -79,7 +83,7 @@ export default class Landing extends Vue {
 
 .content-container
   min-width: 940px
-  max-width: 1185px
+  max-width: 1140px
 
 #upper-row
   background: url('../assets/images/analyze-name-bg.jpg') no-repeat bottom

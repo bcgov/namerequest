@@ -334,27 +334,25 @@ export default class NewSearch extends Vue {
 
 </script>
 
-<style lang="sass" scoped>
-.v-list
-  padding: 0
-
-.list-item
-  width: 100%
-  padding: 8px
-
-.v-select
-  &::placeholder
-    color: green !important
-
-.entity-type-info
-  border-top: 1px solid #DEE2E6
-  padding: 20px 8px !important
-
-.list-item:hover
-  color: #1669BB
-
-.search-name-btn
-  min-height: 45px
-  padding: 0 50px 0 50px !important
-
+<style lang="scss" scoped>
+@import '@/assets/scss/theme.scss';
+.v-list {
+  padding: 0;
+}
+.list-item {
+  width: 100%;
+  padding: 8px;
+}
+.entity-type-info {
+  border-top: 1px solid $gray3;
+  padding: 20px 8px !important;
+}
+.list-item:hover {
+  color: $link;
+}
+.search-name-btn {
+  font-size: 1rem !important;
+  min-height: 45px;
+  padding: 0 50px 0 50px !important;
+}
 </style>
