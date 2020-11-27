@@ -122,12 +122,15 @@
               <!--ERROR MESSAGE / NEXT - PREVIOUS BUTTONS-->
               <v-row v-if="json.issues.length > 1" justify="end" no-gutters>
                 <v-col v-if="highlightCheckboxes"
-                       class="copy-small text-center">
+                       cols="5"
+                       justify="left"
+                       align-self="center"
+                       class="copy-small text-left">
                   <div class="error-message">
-                    You must either tick whichever box applies or take the action prescribed in Option 1.
+                    Select an option above to continue
                   </div>
                 </v-col>
-                <v-col v-else cols="3" class="pl-5" justify="center" align-self="center">
+                <v-col cols="3" class="pl-5" justify="center" align-self="center">
                   <span class="copy-small">Viewing {{ issueIndex + 1 }} of {{ json.issues.length }} Issues</span>
                 </v-col>
                 <v-col cols="4" class="text-right mt-1 mb-7">
@@ -226,8 +229,6 @@ export default class AnalyzeResults extends Vue {
       }
       let { length } = this.chunkedName
       this.nameActions.forEach(action => {
-        // eslint-disable-next-line no-console
-        console.log(this.nameActions)
         if (action.index < length) {
           if (action.type === 'brackets') {
             let op: QuillOpsI = { insert: ` [${action.message}]`, attributes: { color: 'red' } }
@@ -762,7 +763,7 @@ export default class AnalyzeResults extends Vue {
   min-height: 40px;
 }
 .action {
-  color: $BCgovInputError !important;
+  color: red !important;
 }
 .approved {
   color: $approved !important;
@@ -770,7 +771,6 @@ export default class AnalyzeResults extends Vue {
 .error-message {
   color: red;
   margin-left: 20px;
-  margin-top: 15px;
 }
 .modal-activator {
   background-color: unset !important;
