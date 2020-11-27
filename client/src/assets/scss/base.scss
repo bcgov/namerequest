@@ -21,11 +21,11 @@
   padding-left: 75px !important;
 }
 .action {
-  color: red !important;
+  color: $error !important;
 }
 .approved {
   color: $approved !important;
 }
 .error-message {
-  color: red;
+  color: $error;
 }

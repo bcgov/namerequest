@@ -9,8 +9,8 @@
           <span class="h2 colour-white">Name Request <sup class="beta-tag">Beta</sup></span>
         </v-col>
         <div class="main-container-style mt-3">
-          <transition name="fade" mode="out-in" :duration="{ enter: 100, leave: 200 }">
-            <keep-alive>
+          <transition name="fade" mode="out-in" :duration="{ enter: 100, leave: 100 }">
+            <keep-alive :include="['Tabs', 'AnalyzePending']">
               <component :is="displayedComponent" :key="displayedComponent" transition="fade-transition" />
             </keep-alive>
           </transition>
