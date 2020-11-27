@@ -32,20 +32,23 @@ export default class NewAndBetterWay extends Vue {
 }
 </script>
 
-<style lang="sass" scoped>
-@import "@/assets/scss/base.scss"
+<style lang="scss" scoped>
+@import "@/assets/scss/base.scss";
 
-#new-and-better-way
-  max-width: none
-  background-color: white
+#new-and-better-way {
+  max-width: none;
+  background-color: white;
 
-  ul
+  ul {
+    li {
+      list-style-type: circle;
+      color: $BCgovABlue2;
+      padding: 5px 0;
 
-    li
-      list-style-type: circle
-      color: $BCgovABlue2
-      padding: 5px 0
-
-      span
-        color: black
+      span {
+        color: black;
+      }
+    }
+  }
+}
 </style>
