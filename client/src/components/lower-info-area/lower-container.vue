@@ -6,14 +6,14 @@
 
     <new-and-better-way />
 
-    <v-row no-gutters class="bg-grey-1 px-9 py-6" justify="center">
+    <v-row no-gutters class="bg-grey-1 px-9 py-6 pt-14" justify="center">
       <v-col cols="auto" class="h3 mt-9 mb-6">Helpful Tips</v-col>
       <v-col cols="12">
         <v-row no-gutters justify="center" class="mb-9 pb-6">
           <v-col cols="auto">
             <v-container class="square-card">
               <v-row justify="center">
-                <v-col class="h5" cols="auto">TRADE MARKS</v-col>
+                <v-col class="h5" cols="auto">TRADEMARKS</v-col>
               </v-row>
               <v-row justify="center">
                 <v-col cols="auto">
@@ -24,15 +24,17 @@
                 </v-col>
               </v-row>
               <v-row justify="end">
-                <v-col class="text-center copy-small"> Stay away from protected names and trade marks.
-                  <br><a href="https://www.ic.gc.ca/app/opic-cipo/trdmrks/srch/home?lang=eng">
-                    Search Canadian trade marked names</a>
+                <v-col class="text-center copy-small">
+                  See if your name may be in use outside of BC,
+                  <a href="https://www.ic.gc.ca/app/opic-cipo/trdmrks/srch/home?lang=eng">
+                    search for Canadian trademarked names
+                  </a>
                   <v-icon class="launch-icon">mdi-launch</v-icon>
                 </v-col>
               </v-row>
             </v-container>
           </v-col>
-          <v-col cols="auto" class="mx-6">
+          <v-col cols="auto" class="mx-7">
             <v-container class="square-card">
               <v-row justify="center">
                 <v-col class="h5" cols="auto">DOMAIN NAMES</v-col>
@@ -47,7 +49,9 @@
               </v-row>
               <v-row>
                 <v-col class="text-center copy-small">
-                  Before selecting your business name, considering checking available website domain names.
+                  Before selecting your business
+                  <br/>name, considering checking
+                  <br/>available website domain names.
                 </v-col>
               </v-row>
             </v-container>
@@ -67,7 +71,9 @@
               </v-row>
               <v-row>
                 <v-col class="text-center copy-small">
-                  Search social media sites to see which usernames may be available for your business.
+                  Search social media sites to see
+                  <br/>which usernames may be available
+                  <br/>for your business.
                 </v-col>
               </v-row>
             </v-container>
@@ -124,43 +130,50 @@ export default class LowerContainer extends Vue {
 
 </script>
 
-<style lang="sass" scoped>
-@import "@/assets/scss/theme.scss"
+<style lang="scss" scoped>
+@import "@/assets/scss/theme.scss";
 
-li
-  font-size: 16px
+li {
+  font-size: 16px;
+}
 
-#lower-container
-  padding: 0
-  margin: 0
-  font-size: 16px
-  color: $text
-  background-color: #F1F3F5
+#lower-container {
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+  color: $gray7;
+  background-color: #F1F3F5;
 
-  .contact-section
-    background-color: $BCgovBlue5
-    color: white
+  .contact-section {
+    background-color: $BCgovBlue5;
+    color: white;
 
-    .contact-info-list
-      margin: 0
-      padding: 0
-      list-style-type: none
+    .contact-info-list {
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
+    }
 
-.info-underline
-  font-size: 1.25rem
-  border-bottom: 1px solid $BCgovBlue3
-  color: white
+    .info-underline {
+      font-size: 1.25rem;
+      border-bottom: 1px solid $BCgovBlue3;
+      color: white;
+    }
+  }
 
-.launch-icon
-  font-size: 16px
-  color: $link
-  padding-left: 4px
+  .square-card {
+    height: 260px;
+    width: 300px;
+    padding: 15px 30px 30px 15px;
+    border-radius: 4px;
+    background-color: white;
+    box-shadow: 2px 2px 4px 0 darkgray;
 
-.square-card
-  height: 260px
-  width: 260px
-  padding: 15px 30px 30px 15px
-  border-radius: 4px
-  background-color: white
-  box-shadow: 2px 2px 4px 0 darkgray
+    .launch-icon {
+      font-size: 16px;
+      color: $link;
+      padding-left: 4px;
+    }
+  }
+}
 </style>

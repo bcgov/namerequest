@@ -2,7 +2,7 @@
   <v-container id="new-and-better-way" class="pt-16">
     <v-row no-gutters class="pa-9">
       <v-col cols="6" class="pl-3 pr-75">
-        <v-img src="../../assets/images/bcnamerequest-laptop_x2.jpg" />
+        <v-img src="@/assets/images/bcnamerequest-laptop_x2.jpg" />
       </v-col>
       <v-col cols="6" class="pr-3 pl-75">
         <v-row>

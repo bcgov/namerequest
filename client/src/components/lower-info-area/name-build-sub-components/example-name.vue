@@ -3,14 +3,7 @@
     <v-row>
       <v-col cols=6>
         <v-row>
-          <v-chip
-                  class="name-chip mx-4"
-                  color="#38598A"
-                  label
-                  outlined
-          >
-            Sarah's
-          </v-chip>
+          <img src="@/assets/images/Sarahsx1.png" />
         </v-row>
         <v-row>
           <div class="text-divider-1"></div>
@@ -26,14 +19,7 @@
       </v-col>
       <v-col cols="6">
         <v-row>
-          <v-chip
-                  class="name-chip"
-                  color="#38598A"
-                  label
-                  outlined
-          >
-            Construction
-          </v-chip>
+          <img src="@/assets/images/Constructionx1.png" />
         </v-row>
         <v-row>
           <div class="text-divider-2"></div>
@@ -67,30 +53,25 @@ import { Component, Vue } from 'vue-property-decorator'
 export default class ExampleName extends Vue {}
 </script>
 
-<style scoped lang="sass">
-#example-name
-  p
-    font-size: 14px
-    margin-bottom: 0
+<style scoped lang="scss">
+#example-name {
+  p {
+    font-size: 14px;
+    margin-bottom: 0;
+  }
 
-.name-chip
-  border: 1px dashed $p-blue-text
-  background-color: $grey-1
-  font-size: 36px
-  font-weight: bold
-  padding: 1.5rem
-
-.text-content
-  text-align: center
-
-.text-divider-1
-  margin-left: 6.5rem
-  border-left: 1px solid rgba(0, 0, 0, 0.12)
-  height: 2rem
-
-.text-divider-2
-  margin-left: 9rem
-  border-right: 1px solid rgba(0, 0, 0, 0.12)
-  height: 2rem
-
+  .text-content {
+    text-align: center;
+  }
+  .text-divider-1 {
+    margin-left: 6.5rem;
+    border-left: 1px solid rgba(0, 0, 0, 0.12);
+    height: 2rem;
+  }
+  .text-divider-2 {
+    margin-left: 9rem;
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+    height: 2rem;
+  }
+}
 </style>
