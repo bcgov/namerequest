@@ -22,7 +22,7 @@
                class="upper-right-border"
                tabindex="1"><span
                :class="tabNumber === 1 ? 'h5' : 'h5-lt'">Existing Name Request</span></v-tab>
-        <v-tabs-items class="tab-items" v-model="tabNumber">
+        <v-tabs-items class="rounded-b tab-items" v-model="tabNumber">
           <v-tab-item class="px-6">
             <NewSearch />
           </v-tab-item>
@@ -65,8 +65,7 @@ export default class Tabs extends Vue {
   padding: 0 !important;
 }
 .tab-items {
-  border-bottom-left-radius: 6px !important;
-  border-bottom-right-radius: 6px !important;
+  border-radius: 6px !important;
 }
 .active-tab {
   background-color: $BCgovBlue5;

@@ -1,7 +1,7 @@
 <template>
   <MainContainer id="analyze-pending-container">
     <template v-slot:container-header>
-      <v-col cols="auto font-weight-bold h6 ml-3">
+      <v-col cols="auto" class="font-weight-bold h6 ml-3">
         You are searching for a name for a
         {{ entityText === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }} {{ entityText }}
       </v-col>
@@ -11,7 +11,7 @@
         <NameInput is-search-again="true"/>
       </v-row>
       <v-row justify="center" class="mt-n7 mb-n3 py-0">
-        <v-col cols="12" class="text-center copy-small">
+        <v-col cols="12" class="text-center text-body-2">
           <b>This could take several minutes.</b>
           <p>Analysis of long names or names that use common words can take significantly longer.</p>
         </v-col>
@@ -25,7 +25,7 @@
         </v-col>
       </v-row>
       <v-row justify="center" class="mt-n3">
-        <v-col cols="auto" class="copy-small">
+        <v-col cols="auto" class="text-body-2">
           Search Status: Analyzing
         </v-col>
       </v-row>
@@ -83,7 +83,4 @@ export default class AnalyzePending extends Vue {
 
 </script>
 <style scoped lang="scss">
-#analyze-pending-container {
-  max-width: 1140px;
-}
 </style>

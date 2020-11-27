@@ -16,7 +16,7 @@
                         @keydown.native.capture="handleEnterKey"
                         id="name-search-bar"
                         ref="quill" />
-          <div style="position: relative; left: 96.5%; top: -45px; z-index: 1000">
+          <div class="search-icon">
             <v-tooltip bottom
                        content-class="bottom-tooltip search-tooltip"
                        transition="fade-transition">
@@ -762,16 +762,6 @@ export default class AnalyzeResults extends Vue {
   max-height: 40px;
   min-height: 40px;
 }
-.action {
-  color: red !important;
-}
-.approved {
-  color: $approved !important;
-}
-.error-message {
-  color: red;
-  margin-left: 20px;
-}
 .modal-activator {
   background-color: unset !important;
   color: $link !important;
@@ -782,6 +772,12 @@ export default class AnalyzeResults extends Vue {
 }
 .strike {
   text-decoration-line: line-through;
+}
+.search-icon {
+  position: relative;
+  left: 96.5%;
+  top: -45px;
+  z-index: 1000;
 }
 .search-tooltip {
   max-width: 100px !important;

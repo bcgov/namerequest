@@ -7,7 +7,7 @@
       <v-btn @click="handleSubmit"
              outlined
              :class="{ 'reserve-submit-btn': !isContinue }"
-             class="mt-auto margin-top-auto"
+             class="mt-auto"
              v-on="scope.on"
              ref="reserve-submit-button">
         {{ text }}
@@ -125,14 +125,13 @@ export default class ReserveSubmitButton extends Vue {
 </script>
 
 <style scoped lang="scss">
-.margin-top-auto {
-  margin-top: auto !important;
-}
+@import '@/assets/scss/theme.scss';
+
 .v-btn {
   min-width: 125px !important;
 }
 .reserve-submit-btn {
-  color: #1669bb !important;
+  color: $link !important;
   background-color: white !important;
   &:hover {
     background-color: rgba(22, 105, 187, .01) !important;
