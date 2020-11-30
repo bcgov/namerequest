@@ -29,7 +29,7 @@
                   <a href="https://www.ic.gc.ca/app/opic-cipo/trdmrks/srch/home?lang=eng">
                     search for Canadian trademarked names
                   </a>
-                  <v-icon class="launch-icon">mdi-launch</v-icon>
+                  <v-icon class="launch-icon pl-1">mdi-launch</v-icon>
                 </v-col>
               </v-row>
             </v-container>
@@ -137,13 +137,13 @@ export default class LowerContainer extends Vue {
 @import "@/assets/scss/theme.scss";
 
 li {
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 #lower-container {
   padding: 0;
   margin: 0;
-  font-size: 16px;
+  font-size: 1rem;
   color: $gray7;
   background-color: #F1F3F5;
 
@@ -173,9 +173,8 @@ li {
     box-shadow: 2px 2px 4px 0 darkgray;
 
     .launch-icon {
-      font-size: 16px;
+      font-size: 1rem;
       color: $link;
-      padding-left: 4px;
     }
   }
 }
