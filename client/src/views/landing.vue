@@ -1,7 +1,7 @@
 <template>
   <v-container id="landing-container" fluid>
     <v-row id="upper-row" no-gutters align-content="start">
-      <v-container class="content-container">
+      <v-container class="landing-content-container">
         <v-col cols="12" class="mb-4">
           <Stats class="pr-10"/>
         </v-col>
@@ -81,7 +81,7 @@ export default class Landing extends Vue {
   margin: 0
   padding: 0
 
-.content-container
+.landing-content-container
   min-width: 940px
   max-width: 1140px
 

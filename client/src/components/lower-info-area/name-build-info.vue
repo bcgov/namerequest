@@ -1,9 +1,9 @@
 <template>
-  <v-container id="name-build-info">
+  <v-container id="name-build-info" class="content-container">
     <v-row no-gutters>
       <v-col cols="auto" sm="12" class="h3" align="center">How to Build Your Name</v-col>
       <v-col cols="12" sm="6" class="my-9">
-        <v-card class="ma-9 mr-0" flat>
+        <v-card class="my-9 ml-6 mr-0" flat>
           <v-list class="name-build-list">
             <v-list-item-group v-model="itemIndex" color="primary">
               <v-list-item
@@ -100,13 +100,14 @@ export default class NameBuildInfo extends Vue {
 @import "@/assets/scss/base.scss";
 
 #name-build-info {
-  max-width: none;
   min-height: 36rem;
   padding-top: 92px;
 
   .divider {
     max-height: 24rem;
+    border-color: $border;
   }
+
   .name-build-list {
     background-color: #F1F3F5;
 
@@ -114,6 +115,11 @@ export default class NameBuildInfo extends Vue {
       border: solid rgba(0, 0, 0, 0.12);
       border-width: 1px 0 0 0;
     }
+    .name-build-list-item:last-of-type {
+      border: solid rgba(0, 0, 0, 0.12);
+      border-width: 1px 0 1px 0;
+    }
+
     .name-build-list-item:before {
       background-color: white;
     }
