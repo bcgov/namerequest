@@ -246,7 +246,7 @@ export default class App extends Mixins(SessionTimerMixin) {
 
 .app-footer
   .container
-    max-width: 100%
+    max-width: 1300px
     padding-right: 1rem
     padding-left: 1rem
 </style>

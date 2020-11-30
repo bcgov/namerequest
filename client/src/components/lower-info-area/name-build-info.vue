@@ -1,9 +1,9 @@
 <template>
-  <v-container id="name-build-info">
+  <v-container id="name-build-info" class="content-container">
     <v-row no-gutters>
-      <v-col cols="auto" sm="12" class="h3 mt-12" align="center">How to Build Your Name</v-col>
+      <v-col cols="auto" sm="12" class="h3" align="center">How to Build Your Name</v-col>
       <v-col cols="12" sm="6" class="my-9">
-        <v-card class="ma-9 mr-0" flat>
+        <v-card class="my-9 ml-6 mr-0" flat>
           <v-list class="name-build-list">
             <v-list-item-group v-model="itemIndex" color="primary">
               <v-list-item
@@ -30,7 +30,7 @@
         </v-card>
       </v-col>
       <v-divider class="mt-9 divider" vertical></v-divider>
-      <v-col cols="12" sm="5" class="ma-9">
+      <v-col cols="12" sm="5" class="my-9 mr-9 pl-75">
         <component :is="getDisplayedComponent(itemIndex)" :key="itemIndex" />
       </v-col>
     </v-row>
@@ -96,30 +96,41 @@ export default class NameBuildInfo extends Vue {
 
 </script>
 
-<style lang="sass" scoped>
-#name-build-info
-  max-width: none
-  min-height: 36rem
+<style lang="scss" scoped>
+@import "@/assets/scss/base.scss";
 
-  .divider
-    max-height: 24rem
+#name-build-info {
+  min-height: 36rem;
+  padding-top: 92px;
 
-  .name-build-list
-    background-color: #F1F3F5
+  .divider {
+    max-height: 24rem;
+    border-color: $border;
+  }
 
-    .name-build-list-item
-      border: solid rgba(0, 0, 0, 0.12)
-      border-width: 1px 0 0 0
+  .name-build-list {
+    background-color: #F1F3F5;
 
-    .name-build-list-item:before
-      background-color: white
+    .name-build-list-item {
+      border: solid rgba(0, 0, 0, 0.12);
+      border-width: 1px 0 0 0;
+    }
+    .name-build-list-item:last-of-type {
+      border: solid rgba(0, 0, 0, 0.12);
+      border-width: 1px 0 1px 0;
+    }
 
-    .name-build-list-item-title
-      color: $link
-
-    .name-build-list-item-active
-      color: $text
-      font-weight: bold
-      background-color: white
-
+    .name-build-list-item:before {
+      background-color: white;
+    }
+    .name-build-list-item-title {
+      color: $link;
+    }
+    .name-build-list-item-active {
+      color: $gray7;
+      font-weight: bold;
+      background-color: white;
+    }
+  }
+}
 </style>

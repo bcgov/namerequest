@@ -1,8 +1,8 @@
 <template>
-  <v-container id="new-and-better-way" class="pt-16">
-    <v-row no-gutters class="pa-9">
-      <v-col cols="6" class="pl-3 pr-75">
-        <v-img src="../../assets/images/bcnamerequest-laptop_x2.jpg" />
+  <div id="new-and-better-way" class="pt-16">
+    <v-row no-gutters class="py-9 px-15 content-container">
+      <v-col cols="6" class="pl-1 pr-75">
+        <v-img src="@/assets/images/bcnamerequest-laptop_x2.jpg" />
       </v-col>
       <v-col cols="6" class="pr-3 pl-75">
         <v-row>
@@ -22,7 +22,7 @@
         </v-row>
       </v-col>
     </v-row>
-  </v-container>
+  </div>
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
@@ -36,8 +36,8 @@ export default class NewAndBetterWay extends Vue {
 @import "@/assets/scss/base.scss";
 
 #new-and-better-way {
-  max-width: none;
   background-color: white;
+  width: 100%;
 
   ul {
     li {

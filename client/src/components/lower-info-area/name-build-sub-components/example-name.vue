@@ -1,21 +1,14 @@
 <template>
   <v-container id="example-name">
     <v-row>
-      <v-col cols=6>
+      <v-col cols="5" class="mx-3">
         <v-row>
-          <v-chip
-                  class="name-chip mx-4"
-                  color="#38598A"
-                  label
-                  outlined
-          >
-            Sarah's
-          </v-chip>
+          <img src="@/assets/images/Sarahsx1.png" class="name-img" />
         </v-row>
-        <v-row>
-          <div class="text-divider-1"></div>
+        <v-row align="center" justify="center">
+          <div class="text-divider"></div>
         </v-row>
-        <v-row class="mr-4 pr-9">
+        <v-row class="pr-2">
           <p class="text-content">Use unique words that will set you apart such as: <br>
             an individual's name; <br>
             a geographical location; <br>
@@ -24,21 +17,14 @@
           </p>
         </v-row>
       </v-col>
-      <v-col cols="6">
+      <v-col cols="5" class="mx-3">
         <v-row>
-          <v-chip
-                  class="name-chip"
-                  color="#38598A"
-                  label
-                  outlined
-          >
-            Construction
-          </v-chip>
+          <img src="@/assets/images/Constructionx1.png" class="name-img" />
         </v-row>
-        <v-row>
-          <div class="text-divider-2"></div>
+        <v-row align="center" justify="center">
+          <div class="text-divider"></div>
         </v-row>
-        <v-row class="mr-4 pl-9">
+        <v-row class="pl-2">
           <p class="text-content">The second part of your name describes the "nature of your business".
             What is the service that your business is offering to the public?
           </p>
@@ -67,30 +53,26 @@ import { Component, Vue } from 'vue-property-decorator'
 export default class ExampleName extends Vue {}
 </script>
 
-<style scoped lang="sass">
-#example-name
-  p
-    font-size: 14px
-    margin-bottom: 0
+<style scoped lang="scss">
+@import "@/assets/scss/base.scss";
 
-.name-chip
-  border: 1px dashed $p-blue-text
-  background-color: $grey-1
-  font-size: 36px
-  font-weight: bold
-  padding: 1.5rem
+#example-name {
+  p {
+    font-size: .875rem;
+    margin-bottom: 0;
+  }
 
-.text-content
-  text-align: center
+  .name-img {
+    width: 100%;
+    height: 50px;
+  }
 
-.text-divider-1
-  margin-left: 6.5rem
-  border-left: 1px solid rgba(0, 0, 0, 0.12)
-  height: 2rem
-
-.text-divider-2
-  margin-left: 9rem
-  border-right: 1px solid rgba(0, 0, 0, 0.12)
-  height: 2rem
-
+  .text-content {
+    text-align: center;
+  }
+  .text-divider {
+    border-left: 1px solid $border;
+    height: 2rem;
+  }
+}
 </style>

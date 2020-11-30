@@ -29,3 +29,12 @@
 .error-message {
   color: $error;
 }
+
+.content-container {
+  min-width: 960px !important;
+  max-width: 1300px !important;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 0;
+  padding-right: 0;
+}
