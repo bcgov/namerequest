@@ -114,6 +114,7 @@ import MainContainer from '@/components/new-request/main-container.vue'
 import newReqModule, { EXISTING_NR_TIMER_NAME, EXISTING_NR_TIMEOUT_MS } from '@/store/new-request-module'
 import NrAffiliationMixin from '@/components/mixins/nr-affiliation-mixin'
 import CommonMixin from '@/components/mixins/common-mixin'
+import DateMixin from '@/components/mixins/date-mixin'
 import paymentModule from '@/modules/payment'
 import timerModule from '@/modules/vx-timer'
 import * as types from '@/store/types'
@@ -126,7 +127,7 @@ import { NameState, NrAction, NrState } from '@/enums'
     ...mapGetters(['isAuthenticated'])
   }
 })
-export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, CommonMixin) {
+export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, CommonMixin, DateMixin) {
   // enums used in the template:
   NameState = NameState
   NrAction = NrAction
@@ -268,15 +269,9 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   private get requestStatusText (): string {
     switch (this.nr.state) {
       case NrState.COMPLETED: {
-        if (this.approvedName) {
-          // consumed = NR is completed + a name is approved + approved name is consumed
-          if (this.isApprovedNameConsumed) return `Approved / Used For ${this.approvedName.corpNum}`
-
-          // expired = NR is completed + a name is approved (but not consumed) + NR has an expiry date
-          // TODO: verify that expiry date is in the past
-          if (this.nr.expirationDate) return 'Expired'
-        }
-        return 'Completed'
+        if (this.isNrConsumed) return `Approved / Used For ${this.approvedName.corpNum}`
+        if (this.isNrExpired) return 'Expired'
+        return 'Completed' // should never happen
       }
       case NrState.CONDITIONAL: return 'Conditional Approval'
       case NrState.HOLD: return 'On Hold'
@@ -286,19 +281,51 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     }
   }
 
-  /** The first approved name object in the NR, if any. */
+  /** Whether this NR is consumed. */
+  private get isNrConsumed (): boolean {
+    // consumed = NR is completed + a name is approved + approved name is consumed
+    return (this.isNrCompleted &&
+      !!this.approvedName &&
+      this.isApprovedNameConsumed)
+  }
+
+  /** Whether this NR is expired. */
+  private get isNrExpired (): boolean {
+    // expired = NR is completed + a name is approved + approved name is not consumed + expiry date has passed
+    return (this.isNrCompleted &&
+      !!this.approvedName &&
+      !this.isApprovedNameConsumed &&
+      this.hasExpirationDatePassed)
+  }
+
+  /** Whether this NR is in Completed state. */
+  private get isNrCompleted (): boolean {
+    return (this.nr.state === NrState.COMPLETED)
+  }
+
+  /** The NR's (first) approved name object, if any. */
   private get approvedName (): any {
     return this.nr.names.find(name => [NameState.APPROVED, NameState.CONDITION].includes(name.state))
   }
 
-  /** Whether the (first) approved name is consumed. */
+  /** Whether the Approved Name is consumed. */
   private get isApprovedNameConsumed (): boolean {
-    return (!!this.approvedName.consumptionDate && !!this.approvedName.corpNum)
+    // consumed = name is approved + has a consumption date + has a corp num
+    return (!!this.approvedName?.consumptionDate && !!this.approvedName?.corpNum)
+  }
+
+  /** Whether the NR's expiration date has passed. */
+  private get hasExpirationDatePassed (): boolean {
+    const expireDays = this.daysFromToday(this.nr.expirationDate)
+    // 0 means today (which means it's expired)
+    return (isNaN(expireDays) || expireDays < 1)
   }
 
   /** True if the current state should display an alert icon. */
   private get isAlertState (): boolean {
-    return ['Cancelled', 'Expired'].includes(this.requestStatusText)
+    return ['Cancelled', 'Cancelled, Refund Requested', 'Expired'].includes(this.requestStatusText)
+    // FUTURE: use enums when EXPIRED state is implemented (ticket #5669)
+    // return [NrState.CANCELLED, NrState.REFUND_REQUESTED, NrState.EXPIRED].includes(this.nr.state)
   }
 
   /** Returns True if the specified action should display a red button. */

@@ -35,8 +35,6 @@
         >
           {{ getIcon(name) }}
         </v-icon>
-        <!-- FOR DEBUGGING ONLY: -->
-        <span v-if="getTooltipText(name)">[{{getTooltipText(name)}}]</span>
       </div>
     </v-col>
   </v-row>
@@ -76,11 +74,6 @@ export default class NamesBlock extends Vue {
       case NameState.NE:
       default: return ''
     }
-  }
-
-  /** Returns the decision text for the specified name, or falsy. */
-  private getTooltipText (name): string {
-    return (name.state !== NameState.NE) && name.decision_text
   }
 }
 </script>
