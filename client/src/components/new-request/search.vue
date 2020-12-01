@@ -120,7 +120,7 @@
     </v-row>
     <v-row class="mt-n3" no-gutters>
       <v-col>
-        <v-tooltip top content-class="top-tooltip" transition="fade-transition" open-delay="200">
+        <v-tooltip top content-class="top-tooltip" transition="fade-transition">
           <template v-slot:activator="{ on }">
             <v-checkbox
                     v-model="isPersonsName"
@@ -140,7 +140,7 @@
         </v-tooltip>
       </v-col>
       <v-col cols="4" class="ml-n8">
-        <v-tooltip top content-class="top-tooltip" transition="fade-transition" open-delay="200">
+        <v-tooltip top content-class="top-tooltip" transition="fade-transition">
           <template v-slot:activator="{ on }">
             <v-checkbox
                     v-model="nameIsEnglish"
