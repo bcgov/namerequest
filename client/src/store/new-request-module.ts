@@ -1823,8 +1823,6 @@ export class NewRequestModule extends VuexModule {
   }
   @Action
   async getNameAnalysisXPRO () {
-    // eslint-disable-next-line no-console
-    console.log('Inside XPRO Analysis')
     this.mutateDisplayedComponent('AnalyzePending')
     this.resetRequestExaminationOrProvideConsent()
 
@@ -2476,7 +2474,7 @@ export class NewRequestModule extends VuexModule {
     }
     // MRAS Profile Search
     if (this.isXproMras && !this.noCorpNum) {
-      const profile = await this.fetchMRASProfile(this.corpSearch)
+      const profile = await this.fetchMRASProfile()
       if (profile) {
         name = sanitizeName(profile?.LegalEntity?.names?.legalName)
         this.mutateName(name)
@@ -2546,8 +2544,8 @@ export class NewRequestModule extends VuexModule {
 
   /** Fetch the MRAS Profile and handle varied responses */
   @Action
-  async fetchMRASProfile (corpNum: string): Promise<any> {
-    let url = `mras-profile/${this.request_jurisdiction_cd}/${corpNum}`
+  async fetchMRASProfile (): Promise<any> {
+    let url = `mras-profile/${this.request_jurisdiction_cd}/${this.corpSearch}`
     const response = await axios.get(url).then(response => {
       if (response?.status === 200) {
         return response?.data
