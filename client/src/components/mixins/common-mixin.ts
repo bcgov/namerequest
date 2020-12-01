@@ -2,6 +2,7 @@ import { Component, Vue } from 'vue-property-decorator'
 
 @Component
 export default class CommonMixin extends Vue {
+  /** Returns the specified string in Title Case. */
   toTitleCase (str: any): string {
     return str && str
       .toLowerCase()
