@@ -40,7 +40,7 @@
                   &nbsp;{{ requestStatusText }}
                   <v-icon v-if="isAlertState" color="error" size="20" class="mt-n1 ml-1">
                     mdi-alert
-                    </v-icon>
+                  </v-icon>
                   <a href="#"
                     class="link-sm ml-1"
                     v-if="nr.state === NrState.CONDITIONAL"
@@ -278,6 +278,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
       this.isApprovedNameConsumed)
   }
 
+  // TODO: removed this when EXPIRED state is implemented (ticket #5669)
   /** Whether this NR is expired. */
   private get isNrExpired (): boolean {
     // expired = NR is completed + a name is approved + approved name is not consumed + expiry date has passed
