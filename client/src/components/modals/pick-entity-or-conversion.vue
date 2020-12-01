@@ -177,10 +177,10 @@ export default class PickEntityOrConversion extends Vue {
 .v-data-table
   margin: 0 -3px
 .category-bg
-  background-color: #F1F3F5
+  background-color: $grey-1
 .cell
   padding: 10px
-  color: #212529
+  color: $dk-text
   display: flex
 .entity-link
   width: 100%
@@ -190,12 +190,10 @@ export default class PickEntityOrConversion extends Vue {
   min-width: 180px
   width: 100%
   padding: 10px
-
   &:hover
     background-color: $grey-2
     cursor: pointer
 .no-border
   border-radius: 0 !important
   text-decoration: none !important
-
 </style>

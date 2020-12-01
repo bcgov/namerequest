@@ -100,10 +100,10 @@ export default class FeeSummary extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "../../assets/scss/theme";
+@import "@/assets/scss/theme";
 
 header {
-  color: #fff;
+  color: white;
   background: $BCgovBlue5;
 }
 
@@ -120,7 +120,7 @@ header {
 
 .filing_fees-list__item {
   &-name, &-value {
-    font-weight: 700;
+    font-weight: bold;
   }
 
   &-name {
@@ -146,18 +146,18 @@ header {
   &__name {
     flex: 1 1 auto;
     margin-right: auto;
-    font-weight: 700;
+    font-weight: bold;
   }
 
   &__currency {
     margin-right: 0.5rem;
     color: $gray5;
-    font-weight: 500;
+    font-weight: normal;
   }
 
   &__value {
     font-size: 1.65rem;
-    font-weight: 700;
+    font-weight: bold700;
   }
 }
 

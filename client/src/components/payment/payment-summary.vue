@@ -76,7 +76,7 @@ export default class PaymentSummary extends Mixins(PaymentMixin) {
 @import "@/assets/scss/theme";
 
 header {
-  color: #fff;
+  color: white;
   background: $BCgovBlue5;
 }
 

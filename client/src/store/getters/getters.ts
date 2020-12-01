@@ -1,6 +1,6 @@
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
-/** Fetch current name request url */
+/** Returns current name request URL. */
 export const getNameRequestUrl = (state: any): string => {
   return `${window.location.origin}${process.env.VUE_APP_PATH}`
 }

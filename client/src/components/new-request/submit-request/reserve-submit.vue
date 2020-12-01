@@ -131,7 +131,7 @@ export default class ReserveSubmitButton extends Vue {
   min-width: 125px !important;
 }
 .reserve-submit-btn {
-  color: $link !important;
+  color: $app-blue !important;
   background-color: white !important;
   &:hover {
     background-color: rgba(22, 105, 187, .01) !important;

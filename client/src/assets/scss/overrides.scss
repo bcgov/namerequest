@@ -1,30 +1,43 @@
 /*
- * Vuetify Overrides
+ * Vuetify overrides
  */
 
 @import "theme.scss";
 
 .v-application {
-  font-size: 1rem; /* 16px */
-  line-height: 1.5rem; /* 24px */
+  font-size: 1rem;
+  line-height: 1.5rem;
   font-family: 'BCSans', Verdana, Arial, sans-serif !important;
   padding: 0;
-}
 
-.v-application .text-body-1 {
-  font-family: 'BCSans', Verdana, Arial, sans-serif !important;
-  letter-spacing: normal !important;
-}
-
-.v-application .text-body-2 {
-  font-family: 'BCSans', Verdana, Arial, sans-serif !important;
-  letter-spacing: normal !important;
-  line-height: 1.375rem !important; /* 22px */
+  .text-body-1 {
+    font-family: inherit !important;
+    letter-spacing: normal !important;
+    line-height: 1.5rem !important;
+  }
+  
+  .text-body-2 {
+    font-family: inherit !important;
+    letter-spacing: normal !important;
+    line-height: 1.375rem !important;
+  }
+  
+  .text-name {
+    font-family: inherit;
+    font-size: 1.125rem;
+    line-height: 1.875rem;
+    text-transform: capitalize;
+    color: $text;
+  }
 }
 
 .v-btn {
-  letter-spacing: normal;
-  border-bottom-width: 1px !important;
+  font-family: inherit !important;
+  font-size: 0.875rem !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  height: 2.5rem !important;
+  box-shadow: 1px 1px rgba(0,0,0,.2) !important;
 }
 
 /* generic layout for dialogs */
@@ -35,7 +48,7 @@
     padding: 0;
     font-size: 1.5rem;
     font-weight: bold;
-    color: $gray9;
+    color: $dk-text;
     letter-spacing: normal;
     margin-top: -0.5rem;
     margin-bottom: -0.5rem;
@@ -44,7 +57,7 @@
   .v-card__text {
     padding: 2rem 0 0 0;
     font-size: 1rem;
-    color: $gray7;
+    color: $text;
     line-height: 1.5rem;
   }
 
@@ -53,6 +66,8 @@
   }
 
   .v-btn.dialog-close {
-    background-color: unset !important;
+    color: $app-blue !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
   }
 }

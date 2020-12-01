@@ -80,7 +80,7 @@ export default class RefundSummary extends Vue {
 header {
   font-size: large;
   font-weight: bold;
-  color: $gray9;
+  color: $dk-text;
   letter-spacing: normal;
   border-bottom: solid 1px $gray3;
   padding-bottom: 15px;
@@ -110,7 +110,7 @@ header {
 footer {
   font-size: medium;
   font-weight: bold;
-  color: $gray9;
+  color: $dk-text;
   letter-spacing: normal;
   border-top: solid 1px $gray3;
   padding-top: 10px;

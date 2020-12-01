@@ -49,7 +49,7 @@ export default class ConsentWords extends Vue {
     background: inherit
 
     .consent-words-list-item
-      color: #495057
+      color: $text
       font-size: 14px
       letter-spacing: 0
       line-height: 22px

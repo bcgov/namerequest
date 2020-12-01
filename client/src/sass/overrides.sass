@@ -1,28 +1,4 @@
 
-@font-face
-  font-family: 'BCSans'
-  font-style: normal
-  font-weight: 400
-  src: url('~@/assets/fonts/BCSans-Regular.woff') format('woff')
-
-@font-face
-  font-family: 'BCSans'
-  font-style: italic
-  font-weight: 400
-  src: url('~@/assets/fonts/BCSans-Italic.woff') format('woff')
-
-@font-face
-  font-family: 'BCSans'
-  font-style: normal
-  font-weight: 700
-  src: url('~@/assets/fonts/BCSans-Bold.woff') format('woff')
-
-@font-face
-  font-family: 'BCSans'
-  font-style: italic
-  font-weight: 700
-  src: url('~@/assets/fonts/BCSans-BoldItalic.woff') format('woff')
-
 .grey-box-checkbox-button .v-input--selection-controls__ripple
   display: none
 
@@ -31,20 +7,9 @@
   left: 0px
   top: 0px
 
-.v-application
-  font-size: 16px
-  line-height: 24px
-  font-family: 'BCSans', Verdana, Arial, sans-serif !important
-  padding: 0
-
-.grey-box-class label
-  font-size: 14px !important
-  line-height: 16px !important
-  color: $p-blue-text !important
-
 .designation-buttons button
-  margin: 0 0 0 0 !important
-  padding: 0 0 0 0 !important
+  margin: 0 !important
+  padding: 0 !important
 
 .designation-error-col
   padding: 5px 10px 0px 10px
@@ -56,11 +21,8 @@
 .v-btn
   color: white !important
   background-color: $link !important
-  height: 40px !important
-  padding: inherit 28px inherit 28px !important
-  text-transform: none !important
-  font-size: .875rem !important
-  letter-spacing: normal !important
+  padding: inherit 28px !important
+  font-size: 1rem !important
 
 .v-btn.normal
   color: white !important
@@ -73,7 +35,7 @@
   .v-btn
     background-color: rgba(0, 0, 0, 0)!important
     text-transform: none!important
-    font-weight: 400!important
+    font-weight: normal !important
     letter-spacing: normal!important
     font-size: .875rem!important
 
@@ -104,13 +66,13 @@
 .v-tab
   text-transform: none !important
   font-size: 18px !important
-  font-weight: 700 !important
+  font-weight: bold !important
   color: white !important
 
 .v-tab.active-tab
   text-transform: none !important
   font-size: 18px !important
-  font-weight: 700 !important
+  font-weight: bold !important
   color: $dk-text !important
 
 .v-tab.active-tab:hover, .v-tab--active
@@ -175,7 +137,7 @@
   color: $dk-text !important
 
 .v-input__slot:not(.v-input--checkbox .v-input__slot)
-  background-color: $primary-bg !important
+  background-color: $grey-1 !important
 
 input#name-generator-1, input#name-generator-2
   color: $p-blue-text !important
@@ -194,18 +156,15 @@ input#name-generator-1, input#name-generator-2
 #send_to_examiner-button-checkbox-col .v-messages
   display: none
 
-.submission-tabs-top div.col
-  padding: 5px 6px 15px 6px
-
 #applicant-info-slider div.v-text-field__details
   margin: 0 !important
 
 .ql-container
-  font-family: 'BCSans' !important
+  font-family: inherit !important
   font-size: 16px !important
   border-left: none !important
   border-right: none !important
   border-top: none !important
-  border-bottom: 1px solid $formlines !important
+  border-bottom: 1px solid $grey-5 !important
   background-color: $grey-1 !important
   height: 52px !important

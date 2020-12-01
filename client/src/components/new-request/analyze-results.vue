@@ -505,7 +505,7 @@ export default class AnalyzeResults extends Vue {
       }
     }
     return {
-      class: 'action',
+      class: 'app-red',
       icon: 'mdi-star-circle',
       text: 'Further Action Required',
       showNextLines: true
@@ -764,7 +764,7 @@ export default class AnalyzeResults extends Vue {
 }
 .modal-activator {
   background-color: unset !important;
-  color: $link !important;
+  color: $app-blue !important;
   cursor: pointer !important;
   letter-spacing: unset !important;
   text-decoration: underline;
@@ -785,8 +785,8 @@ export default class AnalyzeResults extends Vue {
   padding: 10px !important;
 }
 #next-issue-btn.disabled-issue-btn {
-  color: $link !important;
-  border-color: $link !important;
+  color: $app-blue !important;
+  border-color: $app-blue !important;
   opacity: .4 !important;
 }
 </style>

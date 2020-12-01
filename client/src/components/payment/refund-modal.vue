@@ -4,7 +4,7 @@
 
       <v-card-title class="d-flex justify-space-between">
         <div>Cancel and Refund</div>
-        <v-btn icon large color="primary" class="dialog-close" @click="hideModal()">
+        <v-btn icon large class="dialog-close" @click="hideModal()">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -26,14 +26,14 @@
       </v-card-text>
 
       <v-card-actions class="justify-center">
-        <v-btn text
+        <v-btn
+          class="px-6 button-normal"
           id="refund-confirm-btn"
-          class="primary"
           :loading="loading"
           @click="confirmRefund()">Cancel this Name Request</v-btn>
-        <v-btn outlined
+        <v-btn
+          class="px-6 button-blue"
           id="refund-cancel-btn"
-          class="outlined"
           @click="hideModal()">Keep this Name Request</v-btn>
       </v-card-actions>
 
@@ -104,14 +104,3 @@ export default class RefundModal extends Mixins(NameRequestMixin, PaymentMixin, 
   }
 }
 </script>
-
-<style lang="scss" scoped>
-@import "@/assets/scss/theme.scss";
-
-#refund-confirm-btn,
-#refund-cancel-btn {
-  text-transform: none;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-}
-</style>
