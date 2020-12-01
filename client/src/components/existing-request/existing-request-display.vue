@@ -103,7 +103,7 @@ import CommonMixin from '@/components/mixins/common-mixin'
 import paymentModule from '@/modules/payment'
 import timerModule from '@/modules/vx-timer'
 import * as types from '@/store/types'
-import NamesBlock from '@/components/common/names-block.vue'
+import NamesBlock from './names-block.vue'
 import { NameState, NrAction, NrState } from '@/enums'
 
 @Component({

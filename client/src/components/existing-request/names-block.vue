@@ -21,6 +21,40 @@
           @click.prevent="onConditionsClicked()"
         >Conditions</a>
       </div>
+      <div
+        v-for="name of names"
+        :key="`name2-${name.choice}`"
+        class="approved"
+      >
+        {{ `2. ${name.name}` }}
+        <v-icon
+          class="mt-n1 approved"
+        >
+          mdi-check
+        </v-icon>
+        <a
+          href="#"
+          class="link-sm ml-1"
+          @click.prevent="onConditionsClicked()"
+        >Conditions</a>
+      </div>
+      <div
+        v-for="name of names"
+        :key="`name-${name.choice}`"
+        class="rejected"
+      >
+        {{ `3. ${name.name}` }}
+        <v-icon
+          class="mt-n1 rejected"
+        >
+          mdi-close
+        </v-icon>
+        <a
+          href="#"
+          class="link-sm ml-1"
+          @click.prevent="onConditionsClicked()"
+        >Conditions</a>
+      </div>
     </v-col>
   </v-row>
 </template>
