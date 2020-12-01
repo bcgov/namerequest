@@ -45,11 +45,13 @@
                class="h4 mb-3 ml-n1"
                v-if="editMode">Name Choices
         </v-col>
+        <v-col cols="12" v-if="!editMode && isAssumedName" class="main-message-style">
+              Name in Home Jurisdiction: {{name}}
+        </v-col>
       </v-row>
-
         <v-row>
-          <v-col cols="2" class="py-0 h5" align-self="start" key="static-1">
-            First Choice
+          <v-col cols="2" class="py-0 label-style" align-self="start" key="static-1">
+            {{choicesLabelsAndHints[0].label}}
           </v-col>
           <transition name="fade" mode="out-in">
             <v-col :key="transitionKey(1)" class="ma-0 pa-0" cols="10"><v-row class="ma-0 pa-0">
@@ -61,7 +63,8 @@
                           @blur="handleBlur()"
                           @input="editChoices('name1', $event, true)"
                           filled
-                          id="choice-1-text-field" />
+                          id="choice-1-text-field"
+                          :placeholder="choicesLabelsAndHints[0].hint"/>
           </v-col>
           <v-col cols="4" class="py-0" v-if="designationAtEnd">
             <v-select :autofocus="autofocusField === 'des1'"
@@ -79,15 +82,15 @@
             </v-row></v-col>
           </transition>
         </v-row>
-      <v-row v-if="!editMode" class="my-1 py-0 colour-text">
-        <v-col cols="2" v-if="isAssumedName" class="py-0"></v-col>
-        <v-col cols="10" class="py-0" :class="isAssumedName ? 'copy-bold' : ''">
-          {{ mainMessage}}
+      <v-row v-if="!editMode" class="my-1 py-0 colour-text mt-5">
+        <v-col cols="2" class="py-0"></v-col>
+        <v-col cols="10" class="py-0 main-message-style"
+        v-html='mainMessage'>
         </v-col>
       </v-row>
-      <v-row class="mt-2">
-        <v-col cols="2" class="py-0 h5" align-self="start" key="static-2">
-          Second Choice
+      <v-row class="mt-5">
+        <v-col cols="2" class="py-0 label-style" align-self="start" key="static-2">
+          {{choicesLabelsAndHints[1].label}}
         </v-col>
         <transition name="fade" mode="out-in">
           <v-col :key="transitionKey(2)" class="ma-0 pa-0" cols="10">
@@ -101,7 +104,7 @@
                               @input="editChoices('name2', $event, true)"
                               filled
                               id="choice-2-text-field"
-                              placeholder="Second Alternate Name (Optional)" />
+                              :placeholder="choicesLabelsAndHints[1].hint" />
               </v-col>
               <v-col cols="4" class="py-0" v-if="designationAtEnd">
                 <v-select :error-messages="des2Message"
@@ -119,14 +122,14 @@
           </v-col>
         </transition>
       </v-row>
-      <v-row no gutters class="mt-2" key="static-3">
-        <v-col cols="2" class="py-0 h5" align-self="start">
-          Third Choice
+      <v-row no gutters class="mt-5" key="static-3">
+        <v-col cols="2" class="py-0 label-style" align-self="start">
+          {{choicesLabelsAndHints[2].label}}
         </v-col>
         <transition name="fade" mode="out-in">
           <v-col :key="transitionKey(3)" class="ma-0 pa-0" cols="10">
             <v-row class="ma-0 pa-0">
-              <v-col :cols="designationAtEnd ? 8: 12" class="py-0" style="height:60px">
+              <v-col :cols="designationAtEnd? 8: 12" class="py-0" style="height:60px">
                 <v-text-field :error-messages="messages.name3"
                               :hide-details="hide"
                               :value="nameChoices.name3"
@@ -134,7 +137,7 @@
                               @input="editChoices('name3', $event)"
                               filled
                               id="choice-3-text-field"
-                              placeholder="Third Alternate Name (Optional)" />
+                              :placeholder="choicesLabelsAndHints[2].hint" />
               </v-col>
               <v-col cols="4" class="py-0" style="height: 60px" v-if="designationAtEnd">
                 <v-select :error-messages="des3Message"
@@ -301,13 +304,46 @@ export default class NamesCapture extends Vue {
     return ''
   }
   get designationAtEnd () {
-    if (this.location === 'BC') {
-      if (this.entity_type_cd && this.$designations[this.entity_type_cd]) {
-        return this.$designations[this.entity_type_cd].end
-      }
+    if (this.entity_type_cd && this.$designations[this.entity_type_cd]) {
+      return this.$designations[this.entity_type_cd].end
     }
     return false
   }
+
+  get choicesLabelsAndHints () {
+    if (this.isAssumedName) {
+      return [
+        {
+          'label': 'Assumed Name First Choice',
+          'hint': 'Enter your first choice for an assumed name (Optional)'
+        },
+        {
+          'label': 'Assumed Name Second Choice',
+          'hint': 'Enter your second choice for an assumed name (Optional)'
+        },
+        {
+          'label': 'Assumed Name Third Choice',
+          'hint': 'Enter your third choice for an assumed name (Optional)'
+        }
+      ]
+    } else {
+      return [
+        {
+          'label': 'Name in Home Jurisdiction',
+          'hint': ''
+        },
+        {
+          'label': 'Assumed Name First Choice',
+          'hint': 'Enter your first choice for an assumed name (Optional)'
+        },
+        {
+          'label': 'Assumed Name Second Choice',
+          'hint': 'Enter your second choice for an assumed name (Optional)'
+        }
+      ]
+    }
+  }
+
   get editMode () {
     return newReqModule.editMode
   }
@@ -490,11 +526,13 @@ export default class NamesCapture extends Vue {
   }
   get mainMessage () {
     if (this.isAssumedName) {
-      return `${this.name} is too similar to a name already in use. Please enter a new name such as your
-        corporation number.`
+      return `You may provide up to two additional assumed names which will be considered at no further cost, in the
+        order provided, if your first choice cannot be approved. Be sure to follow all 
+        <a href='' target='_blank'>guidelines for how to build a name.</a>`
     }
-    return `You may provide up to two additional names which will be considered at no further cost, in the
-        order provided, only if your First Choice cannot be approved.`
+    return `You may provide up to two additional assumed names which will be considered at no further cost, in the
+        order provided, if the name in the home jurisdiction cannot be approved. Be sure to follow all 
+        <a href='' target='_blank'>guidelines for how to build a name.</a>`
   }
   get name () {
     return newReqModule.name
@@ -676,4 +714,12 @@ export default class NamesCapture extends Vue {
 <style scoped lang="sass">
 ::v-deep .v-messages__message
   line-height: 14px !important
+
+.main-message-style
+  font-size: 14px
+  color: #495057
+.label-style
+  font-size: 16px
+  font-weight: bold
+  color: #212529
 </style>

@@ -744,22 +744,26 @@ export class NewRequestModule extends VuexModule {
     0: {
       send_to_examiner: false,
       obtain_consent: false,
-      conflict_self_consent: false
+      conflict_self_consent: false,
+      assumed_name: false
     },
     1: {
       send_to_examiner: false,
       obtain_consent: false,
-      conflict_self_consent: false
+      conflict_self_consent: false,
+      assumed_name: false
     },
     2: {
       send_to_examiner: false,
       obtain_consent: false,
-      conflict_self_consent: false
+      conflict_self_consent: false,
+      assumed_name: false
     },
     3: {
       send_to_examiner: false,
       obtain_consent: false,
-      conflict_self_consent: false
+      conflict_self_consent: false,
+      assumed_name: false
     }
   }
   requestActions: RequestActionsI[] = [
