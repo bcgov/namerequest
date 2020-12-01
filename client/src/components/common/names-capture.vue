@@ -54,32 +54,61 @@
             {{choicesLabelsAndHints[0].label}}
           </v-col>
           <transition name="fade" mode="out-in">
-            <v-col :key="transitionKey(1)" class="ma-0 pa-0" cols="10"><v-row class="ma-0 pa-0">
-          <v-col :cols="designationAtEnd ? 8 : 12" class="py-0" >
-            <v-text-field :autofocus="autofocusField === 'name1'"
-                          :error-messages="messages.name1"
-                          :hide-details="hide"
-                          :value="nameChoices.name1"
-                          @blur="handleBlur()"
-                          @input="editChoices('name1', $event, true)"
-                          filled
-                          id="choice-1-text-field"
-                          :placeholder="choicesLabelsAndHints[0].hint"/>
-          </v-col>
-          <v-col cols="4" class="py-0" v-if="designationAtEnd">
-            <v-select :autofocus="autofocusField === 'des1'"
-                      :error-messages="des1Message"
-                      :hide-details="hide"
-                      :items="items"
-                      :menu-props="props"
-                      :value="nameChoices.designation1"
-                      @blur="handleBlur(); showDesignationErrors.des1 = true"
-                      @input="editChoices('designation1', $event, true)"
-                      filled
-                      id="designation-1-select"
-                      placeholder="Designation" />
-          </v-col>
-            </v-row></v-col>
+            <v-col :key="transitionKey(1)" class="ma-0 pa-0" cols="10">
+              <v-row class="ma-0 pa-0" v-if="location === 'BC'">
+                <v-col :cols="designationAtEnd ? 8 : 12" class="py-0" >
+                  <v-text-field :autofocus="autofocusField === 'name1'"
+                                :error-messages="messages.name1"
+                                :hide-details="hide"
+                                :value="nameChoices.name1"
+                                @blur="handleBlur()"
+                                @input="editChoices('name1', $event, true)"
+                                filled
+                                id="choice-1-text-field"
+                                :placeholder="choicesLabelsAndHints[0].hint"/>
+                </v-col>
+                <v-col cols="4" class="py-0" v-if="designationAtEnd">
+                  <v-select :autofocus="autofocusField === 'des1'"
+                            :error-messages="des1Message"
+                            :hide-details="hide"
+                            :items="items"
+                            :menu-props="props"
+                            :value="nameChoices.designation1"
+                            @blur="handleBlur(); showDesignationErrors.des1 = true"
+                            @input="editChoices('designation1', $event, true)"
+                            filled
+                            id="designation-1-select"
+                            placeholder="Designation" />
+                </v-col>
+              </v-row>
+              <v-row class="ma-0 pa-0" v-else>
+                <v-col :cols="isAssumedName ? 8 : 12" class="py-0" >
+                  <v-text-field :autofocus="autofocusField === 'name1'"
+                                :error-messages="messages.name1"
+                                :hide-details="hide"
+                                :value="xproNameWithoutConflict"
+                                @blur="handleBlur()"
+                                @input="editChoices('name1', $event, true)"
+                                :filled="isAssumedName"
+                                id="choice-1-text-field"
+                                :placeholder="choicesLabelsAndHints[0].hint"
+                                :disabled="!isAssumedName"/>
+                </v-col>
+                <v-col cols="4" class="py-0" v-if="isAssumedName">
+                  <v-select :autofocus="autofocusField === 'des1'"
+                            :error-messages="des1Message"
+                            :hide-details="hide"
+                            :items="items"
+                            :menu-props="props"
+                            :value="nameChoices.designation1"
+                            @blur="handleBlur(); showDesignationErrors.des1 = true"
+                            @input="editChoices('designation1', $event, true)"
+                            filled
+                            id="designation-1-select"
+                            placeholder="Designation" />
+                </v-col>
+              </v-row>
+            </v-col>
           </transition>
         </v-row>
       <v-row v-if="!editMode" class="my-1 py-0 colour-text mt-5">
@@ -311,36 +340,53 @@ export default class NamesCapture extends Vue {
   }
 
   get choicesLabelsAndHints () {
-    if (this.isAssumedName) {
+    if (this.location === 'BC') {
       return [
         {
-          'label': 'Assumed Name First Choice',
-          'hint': 'Enter your first choice for an assumed name (Optional)'
-        },
-        {
-          'label': 'Assumed Name Second Choice',
-          'hint': 'Enter your second choice for an assumed name (Optional)'
-        },
-        {
-          'label': 'Assumed Name Third Choice',
-          'hint': 'Enter your third choice for an assumed name (Optional)'
-        }
-      ]
-    } else {
-      return [
-        {
-          'label': 'Name in Home Jurisdiction',
+          'label': 'First Choice',
           'hint': ''
         },
         {
-          'label': 'Assumed Name First Choice',
-          'hint': 'Enter your first choice for an assumed name (Optional)'
+          'label': 'Second Choice',
+          'hint': 'Second Alternate Name (Optional)'
         },
         {
-          'label': 'Assumed Name Second Choice',
-          'hint': 'Enter your second choice for an assumed name (Optional)'
+          'label': 'Third Choice',
+          'hint': 'Third Alternate Name (Optional)'
         }
       ]
+    } else {
+      if (this.isAssumedName) {
+        return [
+          {
+            'label': 'Assumed Name First Choice',
+            'hint': 'Enter your first choice for an assumed name'
+          },
+          {
+            'label': 'Assumed Name Second Choice',
+            'hint': 'Enter your second choice for an assumed name (Optional)'
+          },
+          {
+            'label': 'Assumed Name Third Choice',
+            'hint': 'Enter your third choice for an assumed name (Optional)'
+          }
+        ]
+      } else {
+        return [
+          {
+            'label': 'Name in Home Jurisdiction',
+            'hint': ''
+          },
+          {
+            'label': 'Assumed Name First Choice',
+            'hint': 'Enter your first choice for an assumed name (Optional)'
+          },
+          {
+            'label': 'Assumed Name Second Choice',
+            'hint': 'Enter your second choice for an assumed name (Optional)'
+          }
+        ]
+      }
     }
   }
 
@@ -525,14 +571,21 @@ export default class NamesCapture extends Vue {
     return newReqModule.locationOptions
   }
   get mainMessage () {
-    if (this.isAssumedName) {
+    if (this.location !== 'BC') {
+      if (this.isAssumedName) {
+        return `You may provide up to two additional assumed names which will be considered at no further cost, in the
+          order provided, if your first choice cannot be approved. Be sure to follow all 
+          <a href='https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business/permits-licences/businesses-incorporated-companies/approval-business-name/how-to-name-business' target='_blank'>guidelines for how to build a name. 
+          </a>`
+      }
       return `You may provide up to two additional assumed names which will be considered at no further cost, in the
-        order provided, if your first choice cannot be approved. Be sure to follow all 
-        <a href='' target='_blank'>guidelines for how to build a name.</a>`
+          order provided, if the name in the home jurisdiction cannot be approved. Be sure to follow all 
+          <a href='https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business/permits-licences/businesses-incorporated-companies/approval-business-name/how-to-name-business' target='_blank'>guidelines for how to build a name.
+          </a>`
+    } else {
+      return `You may provide up to two additional names which will be considered at no further cost, in the
+        order provided, only if your First Choice cannot be approved.`
     }
-    return `You may provide up to two additional assumed names which will be considered at no further cost, in the
-        order provided, if the name in the home jurisdiction cannot be approved. Be sure to follow all 
-        <a href='' target='_blank'>guidelines for how to build a name.</a>`
   }
   get name () {
     return newReqModule.name
@@ -548,6 +601,13 @@ export default class NamesCapture extends Vue {
   }
   get requestTypeOptions () {
     return newReqModule.requestTypeOptions
+  }
+  get xproNameWithoutConflict () {
+    var name = this.nameChoices.name1
+    if (this.nameChoices.designation1) {
+      name = `${name} ${this.nameChoices.designation1}`
+    }
+    return name
   }
   set entity_type_cd (type: string) {
     newReqModule.mutateEntityType(type)
