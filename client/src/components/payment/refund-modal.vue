@@ -86,7 +86,7 @@ export default class RefundModal extends Mixins(NameRequestMixin, PaymentMixin, 
     this.loading = true
     await NewReqModule.patchNameRequestsByAction(PaymentActions.REFUND)
     this.loading = false
-    this.hideModal() // TODO: not needed? will success component be displayed instead?
+    this.hideModal() // FUTURE: not needed? will success component be displayed instead?
   }
 
   /** Called when user clicks "Keep this NR" button. */

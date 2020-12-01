@@ -190,15 +190,6 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     return applicants.city + ', ' + applicants.stateProvinceCd + ', ' + applicants.postalCd
   }
 
-  // TODO: reuse this for Conditions tooltip? (see also Conditions modal)
-  // get condition () {
-  //   if (this.nr.names.some(name => name.state === NameState.CONDITION && name.decision_text)) {
-  //     let found = this.nr.names.find(name => name.state === NameState.CONDITION && name.decision_text)
-  //     return found.decision_text
-  //   }
-  //   return ''
-  // }
-
   get consentDate () {
     if (this.nr.consent_dt) {
       return Moment(this.nr.consent_dt).utc().format('MMM Do[,] YYYY')
@@ -241,8 +232,6 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   }
 
   get nr () {
-    // eslint-disable-next-line no-console
-    console.log('*** NR =', newReqModule.nr)
     return newReqModule.nr
   }
 
