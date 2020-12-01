@@ -1,40 +1,91 @@
 /*
- * Base Styles
+ * Base styles
  */
 
 @import "theme.scss";
 
-/* @font-face should go here */
+/*
+ * Fonts
+ */
+@font-face {
+  font-family: 'BCSans';
+  font-style: normal;
+  font-weight: normal;
+  src: url('~@/assets/fonts/BCSans-Regular.woff') format('woff');
+}
 
-/* HTML element styles should go here */
+@font-face {
+  font-family: 'BCSans';
+  font-style: italic;
+  font-weight: normal;
+  src: url('~@/assets/fonts/BCSans-Italic.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'BCSans';
+  font-style: normal;
+  font-weight: bold;
+  src: url('~@/assets/fonts/BCSans-Bold.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'BCSans';
+  font-style: italic;
+  font-weight: bold;
+  src: url('~@/assets/fonts/BCSans-BoldItalic.woff') format('woff');
+}
+
+/*
+ * HTML element styles
+ */
 .h6, h6 {
   color: $dk-text;
   font-size: 1rem;
   line-height: 20px;
-  font-weight: 700;
-}
-/* global styles should go here */
-.pr-75 {
-  padding-right: 75px !important;
-}
-.pl-75 {
-  padding-left: 75px !important;
-}
-.action {
-  color: $error !important;
-}
-.approved {
-  color: $approved !important;
-}
-.error-message {
-  color: $error;
+  font-weight: bold;
 }
 
-.content-container {
-  min-width: 960px !important;
-  max-width: 1300px !important;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 0;
-  padding-right: 0;
+/*
+ * Global styles
+ */
+.approved {
+  color: $app-green !important;
+}
+
+.rejected {
+  color: $app-red !important;
+}
+
+.error-message {
+  color: $app-red !important;
+}
+
+// background colours
+.bg-light-gray {
+  background-color: $gray1 !important;
+}
+
+.bg-light-blue {
+  background-color: #e3f0f7 !important;
+}
+
+// normal button: white on blue
+.button-normal {
+  color: white !important;
+  background-color: $app-blue  !important;
+  border: thin solid $app-blue !important;
+}
+
+// blue button: blue on white
+.button-blue {
+  color: $app-blue !important;
+  background-color: transparent !important;
+  border: thin solid $app-blue !important;
+}
+  
+// red button: red on white
+.button-red {
+  color: $app-red !important;
+  background-color: transparent !important;
+  border: thin solid $app-red !important;
 }

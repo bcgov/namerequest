@@ -23,7 +23,7 @@
                tabindex="1"><span
                :class="tabNumber === 1 ? 'h5' : 'h5-lt'">Existing Name Request</span></v-tab>
         <v-tabs-items class="rounded-b tab-items" v-model="tabNumber">
-          <v-tab-item class="px-6">
+          <v-tab-item>
             <NewSearch />
           </v-tab-item>
           <v-tab-item>

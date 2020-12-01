@@ -36,6 +36,8 @@ export default class CountdownTimerDisplay extends Vue {
 </script>
 
 <style lang="scss">
+@import "@/assets/scss/theme.scss";
+
 svg {
   position: absolute;
   top: 0;
@@ -51,7 +53,7 @@ svg circle {
   stroke-dashoffset: 0;
   stroke-linecap: round;
   stroke-width: 2px;
-  stroke: #003366;
+  stroke: $BCgovBlue5;
   fill: none;
 }
 
@@ -73,7 +75,7 @@ svg circle {
   text-align: center;
 
   .countdown-number {
-    color: #003366;
+    color: $BCgovBlue5;
     display: inline-block;
     line-height: 40px;
     z-index: 10;

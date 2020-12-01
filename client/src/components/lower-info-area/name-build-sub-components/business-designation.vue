@@ -97,7 +97,7 @@ export default class BusinessDesignation extends Vue {
       background: inherit
 
       .business-designation-list-item
-        color: #495057
+        color: $text
         font-size: 14px
         letter-spacing: 0
         line-height: 22px

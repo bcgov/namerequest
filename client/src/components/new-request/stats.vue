@@ -99,7 +99,7 @@ export default class Stats extends Vue {
   position: relative
   top: -4px
   font-size: 12px
-  font-weight: 700
+  font-weight: bold
 
 .stats-v-row
   height: 68px
@@ -109,7 +109,7 @@ export default class Stats extends Vue {
   margin: 0
   padding: 0
   font-size: 24px
-  font-weight: 700
+  font-weight: bold
 
 .wait-time-tooltip
   padding: 15px 0 0 0 !important

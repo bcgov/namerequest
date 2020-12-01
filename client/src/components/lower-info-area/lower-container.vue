@@ -108,7 +108,7 @@
                 <li>Phone: <a href="tel:250-370-1033" class="white--text">250-370-1033</a></li>
                 <li>Email: <a href="mailto:bcregistries@gov.bc.ca" class="white--text">bcregistries@gov.bc.ca</a></li>
               </ul>
-              <v-col cols="12" class="pb-0 px-0 fw-700">Hours of Operation:</v-col>
+              <v-col cols="12" class="pb-0 px-0 font-weight-bold">Hours of Operation:</v-col>
               <v-col cols="12" class="pt-0 px-0">Monday to Friday, 8:30am - 4:30pm Pacific Time</v-col>
             </v-row>
           </v-container>
@@ -128,9 +128,8 @@ import { Component, Vue } from 'vue-property-decorator'
 })
 export default class LowerContainer extends Vue {
   private needMoreInfo = 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business/' +
-                          'permits-licences/businesses-incorporated-companies/approval-business-name'
+                         'permits-licences/businesses-incorporated-companies/approval-business-name'
 }
-
 </script>
 
 <style lang="scss" scoped>
@@ -144,8 +143,8 @@ li {
   padding: 0;
   margin: 0;
   font-size: 1rem;
-  color: $gray7;
-  background-color: #F1F3F5;
+  color: $text;
+  background-color: $gray1;
 
   .contact-section {
     background-color: $BCgovBlue5;
@@ -170,11 +169,11 @@ li {
     padding: 15px 30px 30px 15px;
     border-radius: 4px;
     background-color: white;
-    box-shadow: 2px 2px 4px 0 darkgray;
+    box-shadow: 2px 2px 4px 0 darkgray; // FUTURE: should be $border?
 
     .launch-icon {
       font-size: 1rem;
-      color: $link;
+      color: $app-blue;
     }
   }
 }

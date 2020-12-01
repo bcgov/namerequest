@@ -29,8 +29,3 @@ export default class Success extends Vue {
   }
 }
 </script>
-
-<style lang="sass">
-  .approved
-    color: $approved !important
-</style>

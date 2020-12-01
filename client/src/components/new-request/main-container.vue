@@ -1,14 +1,18 @@
 <template>
-  <v-container class="main-container-style px-9 py-5 copy-normal">
+  <v-container fluid class="white rounded copy-normal">
     <v-row justify="space-between" class="submission-tabs-top">
       <slot name="container-header" />
-      <v-col cols="auto" class="pt-0" v-if="displayedComponent !== 'Success'">
+      <v-col cols="auto" class="py-0" v-if="displayedComponent !== 'Success'">
         <button id="back-to-search-btn"
-                class="modal-activator pa-0 link-std-sans-ul"
-                @click="cancelAndResetState">
-          <span class="link-std-sans-ul mr-3">
+                class="modal-activator mt-2 link-std-sans-ul"
+                @click="cancelAndResetState()">
+          <span class="link-std-sans-ul" v-if="editMode">
             <v-icon class="mr-n1 mini-back-arrow">mdi-chevron-left</v-icon>
-            {{ editMode ? 'Return' : 'Start Search Over' }}
+            Return
+          </span>
+          <span class="link-std-sans-ul" v-else>
+            Exit
+            <v-icon color="primary" class="dialog-close mt-n1">mdi-close</v-icon>
           </span>
         </button>
         <countdown-timer :timerName="timerName" colorString="#1669bb" bgColorString="#efefef" />
@@ -63,6 +67,3 @@ export default class MainContainer extends Mixins(SessionTimerMixin, DisplayedCo
   }
 }
 </script>
-
-<style lang="sass" scoped>
-</style>

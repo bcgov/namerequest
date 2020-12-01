@@ -109,7 +109,7 @@ export default class NameBuildInfo extends Vue {
   }
 
   .name-build-list {
-    background-color: #F1F3F5;
+    background-color: $gray1;
 
     .name-build-list-item {
       border: solid rgba(0, 0, 0, 0.12);
@@ -124,10 +124,10 @@ export default class NameBuildInfo extends Vue {
       background-color: white;
     }
     .name-build-list-item-title {
-      color: $link;
+      color: $app-blue;
     }
     .name-build-list-item-active {
-      color: $gray7;
+      color: $text;
       font-weight: bold;
       background-color: white;
     }

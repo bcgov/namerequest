@@ -49,7 +49,6 @@ export default class ExampleNameGenerator extends Vue {
     return null
   }
 }
-
 </script>
 
 <style scoped lang="sass">
