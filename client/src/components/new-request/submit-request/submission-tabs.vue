@@ -1,13 +1,10 @@
 <template>
   <MainContainer>
     <template v-slot:container-header>
-      <v-col cols="auto" class="font-weight-bold h6" v-if="submissionTabNumber === 1">
-        Submit Name Request for Examination
+      <v-col cols="auto" class="font-weight-bold h5 py-0 mt-2">
+        <span v-if="submissionTabNumber === 1">Submit Name Request for Examination</span>
+        <span v-if="submissionTabNumber > 1">Submission Details</span>
       </v-col>
-      <v-col cols="auto" class="h4" v-else-if="submissionTabNumber > 1">
-        Submission Details
-      </v-col>
-      <v-col cols="auto" v-else />
     </template>
     <template v-slot:content>
       <v-tabs v-model="submissionTabNumber" id="applicant-info-slider">

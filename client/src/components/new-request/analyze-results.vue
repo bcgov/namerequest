@@ -1,14 +1,15 @@
 <template>
   <MainContainer id="analyze-results-container">
     <template v-slot:container-header>
-      <v-col cols="auto" class="font-weight-bold h6 ml-3">
+      <v-col cols="auto" class="font-weight-bold h6 py-0 mt-1">
         You are searching for a name for a
-        {{ entityText === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }} {{ entityText }}
+        {{ entityText === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }}
+        {{ entityText }}
       </v-col>
     </template>
     <template v-slot:content>
-      <v-row>
-        <v-col cols="12" class="mt-3 pb-0" @click="clickNameField">
+      <v-row class="mt-5">
+        <v-col cols="12" class="pb-0" @click="clickNameField">
           <quill-editor :contents="contents"
                         :options="config"
                         :disabled="!!finalName"
@@ -32,6 +33,7 @@
           </div>
         </v-col>
       </v-row>
+
       <transition name="fade" mode="out-in" :duration="{ enter: 200, leave: 200 }">
         <v-row no-gutters :key="issueIndex+'vcol'">
           <v-col>
@@ -93,7 +95,7 @@
               <!--GREY BOXES-->
               <transition name="fade" mode="out-in" >
                 <v-row :key="'grey-box-row' + showGreyBoxes"
-                       class="colour-p-blue-text justify-center mb-1"
+                       class="colour-p-blue-text justify-center"
                        dense
                        v-if="showGreyBoxes">
                   <v-col :key="issue.issue_type + '-' + option.header + '-' + optionIndex"
@@ -110,32 +112,31 @@
               </transition>
 
               <!--SUBMISSION BUTTON-->
-              <v-row v-if="issue.show_examination_button || issue.show_reserve_button"
-                     justify="center"
-                     class="mt-3">
-                <v-col cols="auto">
-                <ReserveSubmit :id="issue.show_examination_button ? 'reserve-submit-examine' : 'reserve-submit-normal'"
-                               :setup="issue.show_examination_button ? 'examine' : ''" />
+              <v-row justify="center" v-if="issue.show_examination_button || issue.show_reserve_button">
+                <v-col cols="auto" class="pb-0">
+                  <ReserveSubmit
+                    :id="issue.show_examination_button ? 'reserve-submit-examine' : 'reserve-submit-normal'"
+                    :setup="issue.show_examination_button ? 'examine' : ''"
+                  />
                 </v-col>
               </v-row>
 
               <!--ERROR MESSAGE / NEXT - PREVIOUS BUTTONS-->
-              <v-row v-if="json.issues.length > 1" justify="end" no-gutters>
-                <v-col v-if="highlightCheckboxes"
-                       cols="5"
-                       justify="left"
-                       align-self="center"
-                       class="copy-small text-left">
-                  <div class="error-message">
+              <v-row v-if="json.issues.length > 1" no-gutters class="mt-5">
+                <!-- left third -->
+                <v-col cols="4" class="text-left align-self-center">
+                  <div v-if="highlightCheckboxes" class="copy-small error-message">
                     Select an option above to continue
                   </div>
                 </v-col>
-                <v-col cols="3" class="pl-5" justify="center" align-self="center">
+                <!-- middle third -->
+                <v-col cols="4" class="text-center align-self-center">
                   <span class="copy-small">Viewing {{ issueIndex + 1 }} of {{ json.issues.length }} Issues</span>
                 </v-col>
-                <v-col cols="4" class="text-right mt-1 mb-7">
+                <!-- right third -->
+                <v-col cols="4" class="text-right align-self-center">
                   <v-btn @click="issueIndex--"
-                         class="mt-1 mb-n4 rnd-wht-btn"
+                         class="rnd-wht-btn mr-0"
                          color="#1669bb"
                          id="previous-issue-btn"
                          large
@@ -144,7 +145,7 @@
                   </v-btn>
                   <v-btn :class="nextButtonDisabled ? 'disabled-issue-btn' : 'active-issue-btn'"
                          @click="clickNext"
-                         class="mt-1 mb-n4 mr-0"
+                         class="mr-0"
                          id="next-issue-btn"
                          large
                          outlined
@@ -159,7 +160,7 @@
 
               <!--APPROVED TEXT-->
               <v-row no-gutters justify="center">
-                <v-col cols="12" class="copy-normal pt-2 pb-4">
+                <v-col cols="12" class="copy-normal pt-2">
                   <v-row justify="center">
                     <v-col cols="auto">
                       Name is available for a
@@ -167,8 +168,8 @@
                       {{ ' ' + entityText }}
                     </v-col>
                   </v-row>
-                  <v-row>
-                    <v-col cols="12" class="text-center mb-n5">
+                  <v-row justify="center">
+                    <v-col cols="auto" class="pb-0">
                       <ReserveSubmit id="reserve-submit-normal" />
                     </v-col>
                   </v-row>

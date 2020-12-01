@@ -1,13 +1,13 @@
 <template>
   <MainContainer id="search-pending-container">
     <template v-slot:container-header>
-      <v-col cols="auto h4">
+      <v-col cols="auto h4 py-0 mt-1">
         You are searching for an existing Name Request
       </v-col>
     </template>
 
     <template v-slot:content>
-      <v-row justify="center">
+      <v-row justify="center" class="mt-3">
         <v-col cols="auto">
           <b>Please wait a moment</b>
         </v-col>
@@ -21,7 +21,7 @@
         </v-col>
       </v-row>
       <v-row justify="center">
-        <v-col cols="auto" class="copy-small">
+        <v-col cols="auto" class="copy-small pb-0">
           Search Status: Searching
         </v-col>
       </v-row>

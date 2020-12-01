@@ -1,9 +1,10 @@
 <template>
   <MainContainer id="analyze-pending-container">
     <template v-slot:container-header>
-      <v-col cols="auto h4">
+      <v-col cols="auto h4 py-0 mt-1">
         You are searching for a name for a
-        {{ entityText === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }} {{ entityText }}
+        {{ entityText === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }}
+        {{ entityText }}
       </v-col>
     </template>
     <template v-slot:content>
