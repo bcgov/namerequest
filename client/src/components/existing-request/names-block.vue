@@ -1,7 +1,27 @@
 <template>
+  <!-- TODO: try a v-row with prop "no-gutters" -->
   <v-row align="start" class="mx-0 bg-light-gray">
     <v-col class="text-name pa-4">
       <!-- TODO: once NR is reviewed (state != NE), add tooltips to all names -->
+
+      <!-- <v-tooltip top min-width="390" content-class="top-tooltip" transition="fade-transition">
+        <template v-slot:activator="{ on }">
+          <v-checkbox
+                  v-model="noCorpNum"
+                  id="corp-num-checkbox"
+                  class="copy-small"
+                  v-slot:label v-on="on">
+            <template>
+              <span v-on="on" class="copy-small">I don't have a corporate number</span>
+            </template>
+          </v-checkbox>
+        </template>
+        <p>If you don't have or don't know the corporation number of the business, enter the full legal name of the
+          business in its home jurisdiction.</p>
+        <p>Note: If the home jurisdiction requires a name reservation, you may want to complete a name search in the
+          home jurisdiction first to ensure that the name is available and then return to BC</p>
+      </v-tooltip> -->
+
       <div
         v-for="name of names"
         :key="`name-${name.choice}`"
@@ -15,7 +35,8 @@
         >
           {{ getIcon(name) }}
         </v-icon>
-        <!-- <span v-if="getTooltipText(name) || true">[{{getTooltipText(name)}}]</span> -->
+        <!-- FOR DEBUGGING ONLY: -->
+        <span v-if="getTooltipText(name)">[{{getTooltipText(name)}}]</span>
       </div>
     </v-col>
   </v-row>

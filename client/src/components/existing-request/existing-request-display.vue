@@ -166,7 +166,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   }
 
   get address () {
-    let fields = ['addrLine2', 'city', 'stateProvinceCd', 'countryCd', 'postalCd']
+    const fields = ['addrLine2', 'city', 'stateProvinceCd', 'countryCd', 'postalCd']
     let output: string = this.nr.applicants.addrLine1
     for (let field of fields) {
       if (this.nr.applicants[field]) {
@@ -177,7 +177,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   }
 
   get addressLines () {
-    let output = [ this.nr.applicants.addrLine1 ]
+    const output = [ this.nr.applicants.addrLine1 ]
     if (this.nr.applicants.addrLine2) {
       output.push(this.nr.applicants.addrLine2)
     }
@@ -185,11 +185,11 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   }
 
   get cityProvPostal () {
-    let { applicants } = this.nr
+    const { applicants } = this.nr
     return applicants.city + ', ' + applicants.stateProvinceCd + ', ' + applicants.postalCd
   }
 
-  // apparently not used
+  // TODO: reuse this for Conditions tooltip? (see also Conditions modal)
   // get condition () {
   //   if (this.nr.names.some(name => name.state === NameState.CONDITION && name.decision_text)) {
   //     let found = this.nr.names.find(name => name.state === NameState.CONDITION && name.decision_text)
@@ -219,11 +219,6 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     return ''
   }
 
-  // apparently not used
-  // get name () {
-  //   let nameObj = this.nr.names.find(name => name.choice === 1)
-  //   return nameObj.name
-  // }
   get disableUnfurnished (): boolean {
     return (
       this.nr.furnished === 'N' &&
@@ -271,22 +266,39 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
 
   /** The display text for Request Status. */
   private get requestStatusText (): string {
-    const state = this.nr.state
-    switch (state) {
-      case NrState.CANCELLED2: return 'Cancelled, Refund Requested'
-      case NrState.CONSUMED: return 'Approved / Used For a Company' // TODO: insert corp num
+    switch (this.nr.state) {
+      case NrState.COMPLETED: {
+        if (this.approvedName) {
+          // consumed = NR is completed + a name is approved + approved name is consumed
+          if (this.isApprovedNameConsumed) return `Approved / Used For ${this.approvedName.corpNum}`
+
+          // expired = NR is completed + a name is approved (but not consumed) + NR has an expiry date
+          // TODO: verify that expiry date is in the past
+          if (this.nr.expirationDate) return 'Expired'
+        }
+        return 'Completed'
+      }
       case NrState.CONDITIONAL: return 'Conditional Approval'
-      case NrState.IN_PROGRESS: return 'In Progress'
-      case NrState.ON_HOLD: return 'On Hold'
-      case NrState.REFUNDED: return 'Cancelled, Refund Requested'
-      default: return this.toTitleCase(state)
+      case NrState.HOLD: return 'On Hold'
+      case NrState.INPROGRESS: return 'In Progress'
+      case NrState.REFUND_REQUESTED: return 'Cancelled, Refund Requested'
+      default: return this.toTitleCase(this.nr.state)
     }
+  }
+
+  /** The first approved name object in the NR, if any. */
+  private get approvedName (): any {
+    return this.nr.names.find(name => [NameState.APPROVED, NameState.CONDITION].includes(name.state))
+  }
+
+  /** Whether the (first) approved name is consumed. */
+  private get isApprovedNameConsumed (): boolean {
+    return (!!this.approvedName.consumptionDate && !!this.approvedName.corpNum)
   }
 
   /** True if the current state should display an alert icon. */
   private get isAlertState (): boolean {
-    const state = this.nr.state
-    return [NrState.CANCELLED, NrState.REFUNDED, NrState.EXPIRED].includes(state)
+    return ['Cancelled', 'Expired'].includes(this.requestStatusText)
   }
 
   /** Returns True if the specified action should display a red button. */
@@ -313,7 +325,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
       switch (action) {
         case NrAction.EDIT:
           // eslint-disable-next-line no-case-declarations
-          const doCheckout = ([NrState.DRAFT, NrState.IN_PROGRESS].indexOf(newReqModule.nrState) > -1)
+          const doCheckout = ([NrState.DRAFT, NrState.INPROGRESS].indexOf(newReqModule.nrState) > -1)
           // eslint-disable-next-line no-case-declarations
           let success: boolean | undefined
           if (doCheckout) {
