@@ -263,7 +263,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
         return 'Completed' // should never happen
       }
       case NrState.CONDITIONAL: return 'Conditional Approval'
-      case NrState.HOLD: return 'On Hold'
+      case NrState.HOLD: return 'In Progress' // this is not a typo
       case NrState.INPROGRESS: return 'In Progress'
       case NrState.REFUND_REQUESTED: return 'Cancelled, Refund Requested'
       default: return this.toTitleCase(this.nr.state)
