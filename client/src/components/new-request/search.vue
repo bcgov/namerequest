@@ -1,8 +1,8 @@
 <template>
-  <v-container fluid id="new-request-container" class="copy-normal">
+  <v-container fluid id="new-request-container" class="copy-normal pa-10">
     <v-row cols="12">
-      <v-col cols="6" class="font-weight-bold h6"><span>I need a name to:</span></v-col>
-      <v-col cols="6">
+      <v-col cols="6" class="pt-0 font-weight-bold h6"><span>I need a name to:</span></v-col>
+      <v-col cols="6" class="pt-0">
         <span id="nr-required-activator"
               class="link-std d-flex justify-end"
               @click="activateNRRModal()">Check to see if you need to file a Name Request</span>
@@ -167,10 +167,8 @@
       </v-col>
       <v-col cols="5"></v-col>
     </v-row>
-    <div class="mt-1 mb-4 text-center">
-      <v-btn
-              class="search-name-btn"
-              @click="handleSubmit()">Search Name</v-btn>
+    <div class="mt-1 text-center">
+      <v-btn class="search-name-btn" @click="handleSubmit()">Search Name</v-btn>
     </div>
   </v-container>
 </template>

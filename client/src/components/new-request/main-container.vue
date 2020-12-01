@@ -1,5 +1,5 @@
 <template>
-  <v-container class="white rounded copy-normal">
+  <v-container fluid class="white rounded copy-normal">
     <v-row justify="space-between" class="submission-tabs-top">
       <slot name="container-header" />
       <v-col cols="auto" class="py-0" v-if="displayedComponent !== 'Success'">

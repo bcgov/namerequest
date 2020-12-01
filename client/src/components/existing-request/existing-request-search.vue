@@ -1,17 +1,20 @@
 <template>
-  <v-form v-model="isValid" lazy-validation @submit="handleSubmit">
-  <v-row align="center" class="pa-6 pl-8 pr-9 copy-normal">
-    <v-col cols="12" class="pa-4">
-      Enter the NR Number or Business Name and either the Applicant's Phone or Email</v-col>
-    <v-col cols="12" class="px-4 mt-n4 red--text" v-if="errorMessage">{{ errorMessage }}</v-col>
-    <v-col cols="1" class="max-height">
-      <v-img src="../../assets/images/one-icon.png"
-                  contain
-                  height="60" />
-    </v-col>
-    <!-- NR NUMBER -->
+  <v-form v-model="isValid" lazy-validation @submit="handleSubmit" class="pa-10">
+    <v-row class="mx-0 copy-normal">
+      <!-- FIRST LINE -->
+      <v-col cols="12" class="mt-0">
+        Enter the NR Number or Business Name and either the Applicant's Phone or Email:
+      </v-col>
+
+      <!-- SECOND LINE -->
+      <v-col cols="12" class="red--text" v-if="errorMessage">{{ errorMessage }}</v-col>
+
+      <!-- THIRD LINE -->
+      <v-col cols="1" class="ml-n4 mr-4 max-height">
+        <v-img src="../../assets/images/one-icon.png" contain height="60" />
+      </v-col>
       <v-col cols="11" class="max-height">
-        <v-text-field  :value="existingRequestSearch.nrNum"
+        <v-text-field :value="existingRequestSearch.nrNum"
                        @input="setExistingRequestSearch('nrNum', $event)"
                        filled
                        validate-on-blur
@@ -19,15 +22,12 @@
                        placeholder="Business Name or NR Number"
                        id="nr-num-text-field" />
       </v-col>
-      <v-col cols="12" class="mr-auto mb-n3">
+
+      <!-- FOURTH LINE -->
+      <v-col cols="1" class="ml-n4 mr-4 max-height">
+        <v-img src="../../assets/images/two-icon.png" contain height="60" />
       </v-col>
-      <v-col cols="1" class="max-height mt-4">
-        <v-img src="../../assets/images/two-icon.png"
-               contain
-               style="margin-bottom: auto;"
-               height="60" />
-      </v-col>
-      <v-col class="max-height mt-4">
+      <v-col class="max-height">
         <v-text-field :value="existingRequestSearch.phoneNumber"
                       @input="setExistingRequestSearch('phoneNumber', $event)"
                       filled
@@ -36,8 +36,8 @@
                       id="phone-number-text-field"
                       placeholder="Applicant's Phone Number" />
       </v-col>
-      <v-col class="max-height shrink mt-auto"> or </v-col>
-      <v-col class="max-height mt-4">
+      <v-col class="pt-4 px-6 max-height shrink">or</v-col>
+      <v-col class="max-height">
         <v-text-field :value="existingRequestSearch.emailAddress"
                       :rules="emailRules"
                       @input="setExistingRequestSearch('emailAddress', $event)"
@@ -46,15 +46,16 @@
                       placeholder="Applicant's Notification Email"
                       id="email-address-text-field" />
       </v-col>
-      <v-col cols="12" class="mt-4 mb-n3">
+
+      <!-- FIFTH LINE -->
+      <v-col cols="12">
         <div style="display: flex; width: 100%;">
           <div style="margin-left: auto" class="colour-link">
-            <v-btn @click="handleSubmit"
-                   :disabled="!allowSubmit || !isValid">Submit</v-btn></div>
+            <v-btn @click="handleSubmit" :disabled="!allowSubmit || !isValid">Submit</v-btn>
+          </div>
         </div>
-
       </v-col>
-  </v-row>
+    </v-row>
   </v-form>
 </template>
 
@@ -109,10 +110,13 @@ export default class ExistingRequestSearch extends Vue {
     }
   }
 }
-
 </script>
 
 <style lang="sass" scoped>
+.col
+  padding: 0
+  margin-top: 1.5rem
+
 .forgot-nr-link
   text-decoration: underline
   cursor: pointer !important
@@ -125,5 +129,4 @@ export default class ExistingRequestSearch extends Vue {
   border: 0 !important
   border-radius: 0 !important
   box-shadow: unset !important
-
 </style>

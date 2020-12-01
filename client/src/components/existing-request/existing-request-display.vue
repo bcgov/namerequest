@@ -1,5 +1,5 @@
 <template>
-  <MainContainer id="existing-request-display" class="pa-8">
+  <MainContainer id="existing-request-display" class="pa-10">
     <template v-slot:container-header>
       <v-col cols="auto" class="fs-24 py-0">
         <span class="h3">{{ nr.nrNum || '-' }}</span>
@@ -9,14 +9,14 @@
     <template v-slot:content>
       <names-block
         v-if="nr.nrNum"
-        class="mt-4"
+        class="mt-5"
         :names="names"
         @conditionsClicked="showConditionsModal()"
       />
 
       <transition mode="out-in" name="fade">
         <v-row v-if="disableUnfurnished" class="mx-0 mt-5 bg-light-blue" :key="furnished">
-          <v-col cols="12" class="copy-normal font-italic" key="initial-msg">
+          <v-col cols="12" class="font-italic px-4" key="initial-msg">
             We are currently processing your request.
             Click<a class="link" href="#" @click.prevent="refresh">&nbsp;Refresh&nbsp;</a>
             {{ $route.query && $route.query.paymentId ? '' : 'or retry your search ' }}
@@ -26,7 +26,7 @@
       </transition>
 
       <transition mode="out-in" name="fade">
-        <v-row class="mt-4" :key="refreshCount">
+        <v-row class="mt-5" :key="refreshCount">
           <!-- labels and values -->
           <v-col cols="9" class="py-0">
             <v-row dense>
