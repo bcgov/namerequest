@@ -41,7 +41,7 @@ describe('name-input.vue', () => {
   it('Resists submission when the request type is set to "all" and detects the correct error type', async () => {
     newReqModule.store.state.newRequestModule.entity_type_cd = 'CR'
     newReqModule.store.state.newRequestModule.request_action_cd = 'INFO'
-    wrapper.vm.nameSearch = 'test'
+    wrapper.vm.searchValue = 'test'
     await wrapper.vm.$nextTick()
 
     let button = wrapper.find('#name-input-icon')
@@ -61,7 +61,7 @@ describe('name-input.vue', () => {
     expect(newReqModule.errors).toEqual(['name'])
   })
   it('Resists submission when the name entered is too short and detects the correct error type', async () => {
-    wrapper.vm.nameSearch = 'ab'
+    wrapper.vm.searchValue = 'ab'
     let button = wrapper.find('#name-input-icon')
     button.trigger('click')
     await wrapper.vm.$nextTick()
