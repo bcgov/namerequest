@@ -1,6 +1,7 @@
 <template>
   <v-row align="start" class="mx-0 bg-light-gray">
     <v-col class="text-name pa-4">
+      <!-- TODO: once NR is reviewed (state != NE), add tooltips to all names -->
       <div
         v-for="name of names"
         :key="`name-${name.choice}`"
@@ -14,19 +15,14 @@
         >
           {{ getIcon(name) }}
         </v-icon>
-        <a
-          href="#"
-          class="link-sm ml-1"
-          v-if="name.state === NameState.CONDITION"
-          @click.prevent="onConditionsClicked()"
-        >Conditions</a>
+        <!-- <span v-if="getTooltipText(name) || true">[{{getTooltipText(name)}}]</span> -->
       </div>
     </v-col>
   </v-row>
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import { NameState } from '@/enums'
 
 @Component({})
@@ -61,7 +57,9 @@ export default class NamesBlock extends Vue {
     }
   }
 
-  @Emit('conditionsClicked')
-  private onConditionsClicked (): void {}
+  /** Returns the decision text for the specified name, or falsy. */
+  private getTooltipText (name): string {
+    return (name.state !== NameState.NE) && name.decision_text
+  }
 }
 </script>

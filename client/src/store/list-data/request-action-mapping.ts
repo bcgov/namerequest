@@ -1,6 +1,6 @@
 import { RequestActionMappingI } from '@/models'
 
-let entityTypesBC = ['FR', 'DBA', 'CR', 'UL', 'GP', 'LP', 'LL', 'CP', 'BC', 'CC', 'SO', 'PA', 'FI', 'PAR']
+const entityTypesBC = ['FR', 'DBA', 'CR', 'UL', 'GP', 'LP', 'LL', 'CP', 'BC', 'CC', 'SO', 'PA', 'FI', 'PAR']
 
 // maps request_action_cd (key) to array of allowable entities (value)
 // { [request_action_cd]: Array<entity_type_cd> }
