@@ -26,7 +26,7 @@
               <v-row justify="end">
                 <v-col class="text-center copy-small">
                   See if your name may be in use outside of BC,
-                  <a href="https://www.ic.gc.ca/app/opic-cipo/trdmrks/srch/home?lang=eng">
+                  <a href="https://www.ic.gc.ca/app/opic-cipo/trdmrks/srch/home?lang=eng" target="_blank">
                     search for Canadian trademarked names
                   </a>
                   <v-icon class="launch-icon pl-1">mdi-launch</v-icon>
@@ -166,7 +166,7 @@ li {
   .square-card {
     height: 260px;
     width: 300px;
-    padding: 15px 30px 30px 15px;
+    padding: 15px;
     border-radius: 4px;
     background-color: white;
     box-shadow: 2px 2px 4px 0 darkgray; // FUTURE: should be $border?

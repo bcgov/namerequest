@@ -2,7 +2,7 @@
   <v-container id="example-name">
     <v-row>
       <v-col cols="5" class="mx-3">
-        <v-row>
+        <v-row justify="center">
           <img src="@/assets/images/Sarahsx1.png" class="name-img" />
         </v-row>
         <v-row align="center" justify="center">
@@ -18,7 +18,7 @@
         </v-row>
       </v-col>
       <v-col cols="5" class="mx-3">
-        <v-row>
+        <v-row justify="center">
           <img src="@/assets/images/Constructionx1.png" class="name-img" />
         </v-row>
         <v-row align="center" justify="center">
@@ -62,9 +62,10 @@ export default class ExampleName extends Vue {}
     margin-bottom: 0;
   }
 
-  .name-img {
-    width: 100%;
-    height: 50px;
+  @media (max-width: 1299px) {
+    .name-img {
+      height: 50px;
+    }
   }
 
   .text-content {

@@ -30,7 +30,7 @@
         </v-card>
       </v-col>
       <v-divider class="mt-9 divider" vertical></v-divider>
-      <v-col cols="12" sm="5" class="my-9 mr-9 pl-75">
+      <v-col cols="12" sm="6" class="my-9 pl-75">
         <component :is="getDisplayedComponent(itemIndex)" :key="itemIndex" />
       </v-col>
     </v-row>
@@ -106,6 +106,8 @@ export default class NameBuildInfo extends Vue {
   .divider {
     max-height: 24rem;
     border-color: $border;
+    margin-left: -1px;
+    z-index: 1;
   }
 
   .name-build-list {

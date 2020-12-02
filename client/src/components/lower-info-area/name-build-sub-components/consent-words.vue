@@ -34,8 +34,8 @@ export default class ConsentWords extends Vue {
   private listItems1 = ['Engineering', 'Engineering', 'Doctor, DR , MD', 'Registered Massage Therapist', 'Acupuncture',
     'Chinese Medicine', 'Lawyer, Law', 'CPA', 'Registered Music Teacher', 'Honeywell', 'Legion',
     'Games (<i>when used for a sport</i>)']
-  private listItems2 = ['Well known Trademarks', '(<i>ex: Apple, Walmart, Pepsi etc.</i>)',
-    '<span class="pt-5">Well known public figures</span>']
+  private listItems2 = ['Well known trademarks', '(<i>ex: Apple, Walmart, Pepsi etc.</i>)',
+    '<div class="pt-5">Well known public figures</div>']
 }
 
 </script>

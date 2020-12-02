@@ -1,5 +1,5 @@
 <template>
-  <div id="new-and-better-way" class="pt-16">
+  <div id="new-and-better-way" class="pt-16 pb-4">
     <v-row no-gutters class="py-9 px-15 content-container">
       <v-col cols="6" class="pl-1 pr-75">
         <v-img src="@/assets/images/bcnamerequest-laptop_x2.jpg" />
@@ -42,11 +42,11 @@ export default class NewAndBetterWay extends Vue {
   ul {
     li {
       list-style-type: circle;
-      color: $BCgovABlue2;
+      color: $app-md-blue;
       padding: 5px 0;
 
       span {
-        color: black;
+        color: $text;
       }
     }
   }
