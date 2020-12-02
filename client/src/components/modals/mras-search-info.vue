@@ -14,8 +14,8 @@
       <v-card-text class="copy-normal pb-3">
         <p>Corporate Number assigned by Home Jurisdiction: <span class="font-weight-bold">{{ corpSearch }}</span><br>
           Home jurisdiction: <span class="font-weight-bold">{{ jurisdictionText }}</span></p>
-        <p>{{ resultConfig[resultCode].desc  }}</p>
-        <p>{{ resultConfig[resultCode].action }}</p>
+        <p>{{ resultDesc  }}</p>
+        <p>{{ resultAct }}</p>
       </v-card-text>
       <NameInput id="name-input-component"
                  class="mb-n7 pa-0"/>
@@ -39,16 +39,16 @@ import { BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
   components: { NameInput }
 })
 export default class MrasSearchInfoModal extends Vue {
-  private resultConfig = {
-    BAD_REQUEST: {
+  private resultConfig: any = {
+    [BAD_REQUEST]: {
       desc: null,
       action: 'To continue, enter the name of your business below:'
     },
-    NOT_FOUND: {
+    [NOT_FOUND]: {
       desc: 'We were not able to retrieve your information from the home jurisdiction.',
       action: 'Close this dialog and try your corporate number again, or enter the name of your business below:'
     },
-    SERVICE_UNAVAILABLE: {
+    [SERVICE_UNAVAILABLE]: {
       desc: 'We were not able to retrieve your information from the home jurisdiction.',
       action: 'Please enter the name of your business below:'
     },
@@ -72,11 +72,14 @@ export default class MrasSearchInfoModal extends Vue {
   get jurisdictionText () {
     return newReqModule.jurisdictionText
   }
-  get resultCode () {
-    return newReqModule.mrasSearchResultCode || 'default'
+  get resultDesc () {
+    return this.resultConfig[newReqModule.mrasSearchResultCode]?.desc
+  }
+  get resultAct () {
+    return this.resultConfig[newReqModule.mrasSearchResultCode]?.action
   }
   get showSearch (): boolean {
-    return (this.name || this.resultCode !== 404)
+    return (this.name || newReqModule.mrasSearchResultCode !== 404)
   }
   get errors () {
     return newReqModule.errors
