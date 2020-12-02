@@ -744,22 +744,26 @@ export class NewRequestModule extends VuexModule {
     0: {
       send_to_examiner: false,
       obtain_consent: false,
-      conflict_self_consent: false
+      conflict_self_consent: false,
+      assumed_name: false
     },
     1: {
       send_to_examiner: false,
       obtain_consent: false,
-      conflict_self_consent: false
+      conflict_self_consent: false,
+      assumed_name: false
     },
     2: {
       send_to_examiner: false,
       obtain_consent: false,
-      conflict_self_consent: false
+      conflict_self_consent: false,
+      assumed_name: false
     },
     3: {
       send_to_examiner: false,
       obtain_consent: false,
-      conflict_self_consent: false
+      conflict_self_consent: false,
+      assumed_name: false
     }
   }
   requestActions: RequestActionsI[] = [
@@ -1161,7 +1165,7 @@ export class NewRequestModule extends VuexModule {
     })
   }
   get isAssumedName () {
-    return !!this.assumedNameOriginal
+    return !!this.assumedNameOriginal || this.request_action_cd === 'ASSUMED'
   }
   get locationOptions () {
     // To save template conditional logic, some locations have duplicate descriptions to align with there request
@@ -1482,7 +1486,7 @@ export class NewRequestModule extends VuexModule {
       while (choiceIdx <= 3) {
         if (nameChoices[`name${choiceIdx}`] as boolean) {
           let combinedName = nameChoices[`name${choiceIdx}`]
-          if (this.location === 'BC' && $designations[this.entity_type_cd].end) {
+          if (($designations[this.entity_type_cd].end)) {
             let des = nameChoices[`designation${choiceIdx}`]
             if (des && !combinedName.endsWith(des)) {
               combinedName = combinedName + ' ' + des
