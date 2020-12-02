@@ -195,11 +195,7 @@ export default class GreyBox extends Vue {
     return this.stripAllDesignations(this.originalName)
   }
   get boxIsChecked () {
-    let { type } = this.option
-    // eslint-disable-next-line no-console
-    console.log(type + this.issueIndex)
-    // eslint-disable-next-line no-console
-    console.log(this.requestExaminationOrProvideConsent[this.issueIndex])
+    let { type } = this.option     
     return this.requestExaminationOrProvideConsent[this.issueIndex][type]
   }
   set boxIsChecked (value) {

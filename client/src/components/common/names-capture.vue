@@ -426,7 +426,7 @@ export default class NamesCapture extends Vue {
     return newReqModule.isAssumedName
   }
   get isValid () {
-    let { nameChoices, messages, designationAtEnd, validatePhrases } = this
+    let { nameChoices, messages, designationAtEnd, validatePhrases, location, isAssumedName } = this
     if (this.isAssumedName && this.editMode) {
       if (!nameChoices['name1']) {
         messages['name1'] = 'Please enter at least one name'
@@ -444,6 +444,9 @@ export default class NamesCapture extends Vue {
           messages['name1'] = 'Please enter a first choice before any subsequent choices'
           return false
         }
+      }
+      if (designationAtEnd && !nameChoices.designation1) {
+        return false
       }
       let outcome = true
       for (let choice of [1, 2, 3]) {
@@ -468,8 +471,10 @@ export default class NamesCapture extends Vue {
           messages.name1 = 'Please enter at least one name'
         }
       }
-      if (designationAtEnd && !nameChoices.designation1) {
-        messages.des1 = 'Please choose a designation'
+      if (location === 'BC') {
+        if (designationAtEnd && !nameChoices.designation1) {
+          messages.des1 = 'Please choose a designation'
+        }
       }
       if (messages.name1 || messages.des1) {
         return false
@@ -604,7 +609,7 @@ export default class NamesCapture extends Vue {
   }
   get xproNameWithoutConflict () {
     var name = this.nameChoices.name1
-    if (this.nameChoices.designation1) {
+    if (!this.isAssumedName && this.nameChoices.designation1) {
       name = `${name} ${this.nameChoices.designation1}`
     }
     return name
