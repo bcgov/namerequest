@@ -133,12 +133,15 @@
           </template>
         </v-select>
       </v-col>
-      <v-col :cols="isXproMras ? 7 : 12" :class="{ 'pr-0': isXproMras }">
-        <NameInput :class="inputCompClass"
+      <v-col :cols="isXproMras ? 7 : 12" :class="{ 'pr-0': (isXproMras && !isFederal) }">
+        <NameInput v-if="!isFederal"
+                   :class="inputCompClass"
                    :is-mras-search="(isXproMras && !noCorpNum)"
                    id="name-input-component"
                    class="mb-n7 pa-0"
                    @emit-corp-num-validity="corpNumValid = $event"/>
+        <p v-else class="pl-3 mt-n2 text-body-2">Federally incorporated businesses do not need a Name Request. You may
+          register  your extraprovincial business immediately using its existing name at Corporate Online.</p>
       </v-col>
     </v-row>
     <!-- Person name and english checkboxes, render when location is NOT XPro Canada -->
@@ -192,7 +195,7 @@
       <v-col cols="5"></v-col>
     </v-row>
     <!-- Corporate number checkbox, only for XPro Canadian Locations -->
-    <v-row v-else class="mt-n3" no-gutters>
+    <v-row v-else-if="!isFederal" class="mt-n3" no-gutters>
       <v-col class="d-flex justify-end">
         <v-tooltip top min-width="390" content-class="top-tooltip" transition="fade-transition">
           <template v-slot:activator="{ on }">
@@ -216,10 +219,15 @@
     <v-row>
 
     </v-row>
-    <div class="mt-1 text-center">
+    <div v-if="!isFederal" class="mt-1 text-center">
       <v-btn class="search-name-btn"
              :disabled="!corpNumValid"
               @click="handleSubmit()">{{ isXproMras ? 'Search' : 'Search Name'}}</v-btn>
+    </div>
+    <div v-else class="mt-6 mb-n2 text-center">
+      <v-btn class="goto-corporate-btn" :href="corpOnlineLink" target="_blank">
+        Go to Corporate Online to Register <v-icon small class="ml-1">mdi-open-in-new</v-icon>
+      </v-btn>
     </div>
   </v-container>
 </template>
@@ -237,6 +245,7 @@ import { LocationT } from '@/models'
 export default class NewSearch extends Vue {
   /** Local Properties */
   private corpNumValid: boolean = true
+  private corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
 
   @Watch('location')
   watchLocation (newVal, oldVal) {
@@ -279,7 +288,7 @@ export default class NewSearch extends Vue {
   entityBlurbs (entity_type_cd: string) {
     return newReqModule.entityBlurbs.find(type => type.value === entity_type_cd)?.blurbs
   }
-  private get isScreenLg () {
+  get isScreenLg () {
     return this.$vuetify.breakpoint.lgAndUp
   }
   get displayedComponent () {
@@ -329,6 +338,9 @@ export default class NewSearch extends Vue {
   }
   get isConversion () {
     return newReqModule.request_action_cd === 'CNV'
+  }
+  get isFederal () {
+    return this.jurisdiction === 'FD'
   }
   get isPersonsName () {
     return newReqModule.isPersonsName
@@ -425,6 +437,9 @@ export default class NewSearch extends Vue {
   min-height: 45px !important;
   width: 200px !important;
   padding: 0 50px 0 50px !important;
+}
+.goto-corporate-btn {
+  min-height: 45px !important;
 }
 /*Deep Vuetify overrides*/
 ::v-deep {
