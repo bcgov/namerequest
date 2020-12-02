@@ -195,7 +195,7 @@ export default class GreyBox extends Vue {
     return this.stripAllDesignations(this.originalName)
   }
   get boxIsChecked () {
-    let { type } = this.option     
+    let { type } = this.option
     return this.requestExaminationOrProvideConsent[this.issueIndex][type]
   }
   set boxIsChecked (value) {
