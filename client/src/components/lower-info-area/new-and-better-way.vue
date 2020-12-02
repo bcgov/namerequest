@@ -42,11 +42,11 @@ export default class NewAndBetterWay extends Vue {
   ul {
     li {
       list-style-type: circle;
-      color: $BCgovABlue5;
+      color: $app-md-blue;
       padding: 5px 0;
 
       span {
-        color: $gray7;
+        color: $text;
       }
     }
   }
