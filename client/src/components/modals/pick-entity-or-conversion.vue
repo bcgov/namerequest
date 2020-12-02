@@ -141,7 +141,7 @@ export default class PickEntityOrConversion extends Vue {
     return `${210 * cols > maxThreshold ? maxThreshold : 210 * cols}px`
   }
   entityBlurbs (entity_type_cd: string) {
-    return newReqModule.entityBlurbs.find(type => type.value === entity_type_cd)?.blurbs
+    return newReqModule.entityBlurbs && newReqModule.entityBlurbs.find(type => type.value === entity_type_cd)?.blurbs
   }
   clearEntitySelection () {
     this.entity_type_cd = 'INFO'
