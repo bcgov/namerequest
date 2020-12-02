@@ -96,7 +96,7 @@
                     <template v-slot:activator="scope">
                       <span v-on="scope.on"
                             class="list-item"
-                            :class="{ 'entity-type-info': data.item.value === 'INFO' }">
+                            :class="{ 'last-select-item': data.item.value === 'INFO' }">
                         {{ data.item.text }}
                       </span>
                     </template>
@@ -114,17 +114,41 @@
           <span>{{ entityConversionText }}</span>
         </v-tooltip>
       </v-col>
-      <NameInput :class="inputCompClass"
-                 id="name-input-component"
-                 class="mb-n7"/>
     </v-row>
-    <v-row class="mt-n3" no-gutters>
+    <v-row>
+      <v-col cols="5" class="pt-1 mr-n3" v-if="isXproMras">
+        <v-select :error-messages="errors.includes('jurisdiction') ? 'Please select a jurisdiction' : ''"
+                  :hide-details="!errors.includes('jurisdiction')"
+                  :items="jurisdictionOptions"
+                  class="mb-n7 pa-0"
+                  label="Select business's home jurisdiction"
+                  @change="clearErrors()"
+                  filled
+                  v-model="jurisdiction">
+          <template slot="item" slot-scope="data">
+            <span class="list-item"
+                  :class="{ 'last-select-item': data.item.value === 'FD' }">
+              {{ data.item.text }}
+            </span>
+          </template>
+        </v-select>
+      </v-col>
+      <v-col :cols="isXproMras ? 7 : 12" :class="{ 'pr-0': isXproMras }">
+        <NameInput :class="inputCompClass"
+                   :is-mras-search="(isXproMras && !noCorpNum)"
+                   id="name-input-component"
+                   class="mb-n7 pa-0"
+                   @emit-corp-num-validity="corpNumValid = $event"/>
+      </v-col>
+    </v-row>
+    <!-- Person name and english checkboxes, render when location is NOT XPro Canada -->
+    <v-row v-if="!isXproMras" class="mt-n3" no-gutters>
       <v-col>
         <v-tooltip top content-class="top-tooltip" transition="fade-transition" open-delay="200">
           <template v-slot:activator="{ on }">
             <v-checkbox
                     v-model="isPersonsName"
-                    id="name-checkbox"
+                    id="person-checkbox"
                     class="copy-small mr-5"
                     v-slot:label v-on="on">
               <template>
@@ -167,8 +191,35 @@
       </v-col>
       <v-col cols="5"></v-col>
     </v-row>
+    <!-- Corporate number checkbox, only for XPro Canadian Locations -->
+    <v-row v-else class="mt-n3" no-gutters>
+      <v-col class="d-flex justify-end">
+        <v-tooltip top min-width="390" content-class="top-tooltip" transition="fade-transition">
+          <template v-slot:activator="{ on }">
+            <v-checkbox
+                    v-model="noCorpNum"
+                    id="corp-num-checkbox"
+                    class="copy-small"
+                    v-slot:label v-on="on">
+              <template>
+                <span v-on="on" class="copy-small">I don't have a corporate number</span>
+              </template>
+            </v-checkbox>
+          </template>
+          <p>If you don't have or don't know the corporation number of the business, enter the full legal name of the
+            business in its home jurisdiction.</p>
+          <p>Note: If the home jurisdiction requires a name reservation, you may want to complete a name search in the
+            home jurisdiction first to ensure that the name is available and then return to BC</p>
+        </v-tooltip>
+      </v-col>
+    </v-row>
+    <v-row>
+
+    </v-row>
     <div class="mt-1 text-center">
-      <v-btn class="search-name-btn" @click="handleSubmit()">Search Name</v-btn>
+      <v-btn class="search-name-btn"
+             :disabled="!corpNumValid"
+              @click="handleSubmit()">{{ isXproMras ? 'Search' : 'Search Name'}}</v-btn>
     </div>
   </v-container>
 </template>
@@ -184,6 +235,9 @@ import { LocationT } from '@/models'
   components: { NameInput }
 })
 export default class NewSearch extends Vue {
+  /** Local Properties */
+  private corpNumValid: boolean = true
+
   @Watch('location')
   watchLocation (newVal, oldVal) {
     if (newVal === 'INFO') {
@@ -291,6 +345,12 @@ export default class NewSearch extends Vue {
   get locationOptions () {
     return newReqModule.locationOptions
   }
+  get jurisdiction () {
+    return newReqModule.request_jurisdiction_cd
+  }
+  set jurisdiction (jurisdiction: string) {
+    newReqModule.mutateJurisdiction(jurisdiction)
+  }
   get locationText () {
     return newReqModule.locationText
   }
@@ -299,6 +359,12 @@ export default class NewSearch extends Vue {
   }
   set nameIsEnglish (value) {
     newReqModule.mutateNameIsEnglish(value)
+  }
+  get noCorpNum () {
+    return newReqModule.noCorpNum
+  }
+  set noCorpNum (value) {
+    newReqModule.mutateNoCorpNum(value)
   }
   get request_action_cd () {
     return newReqModule.request_action_cd
@@ -319,14 +385,22 @@ export default class NewSearch extends Vue {
   get requestText () {
     return newReqModule.requestText
   }
+  get isXproMras () {
+    return newReqModule.isXproMras
+  }
+  get jurisdictionOptions () {
+    return this.location === 'CA' ? this.$canJurisdictions.filter(jur => jur.value !== 'BC') : this.$intJurisdictions
+  }
   activateNRRModal () {
     newReqModule.mutateNrRequiredModalVisible(true)
   }
   clearErrors () {
     newReqModule.clearErrors()
   }
-  handleSubmit () {
-    newReqModule.startAnalyzeName()
+  async handleSubmit () {
+    if (this.isXproMras) this.$root.$emit('showSpinner', true)
+    await newReqModule.startAnalyzeName()
+    this.$root.$emit('showSpinner', false)
   }
 }
 </script>
@@ -340,7 +414,7 @@ export default class NewSearch extends Vue {
   width: 100%;
   padding: 8px;
 }
-.entity-type-info {
+.last-select-item {
   border-top: 1px solid $gray3;
   padding: 20px 8px !important;
 }
@@ -348,8 +422,18 @@ export default class NewSearch extends Vue {
   color: $app-blue;
 }
 .search-name-btn {
-  font-size: 1rem !important;
-  min-height: 45px;
+  min-height: 45px !important;
+  width: 200px !important;
   padding: 0 50px 0 50px !important;
+}
+/*Deep Vuetify overrides*/
+::v-deep {
+  .theme--light.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
+    background-color: RGBA(22,105,187,.6) !important;
+    color: white !important;
+  }
+  .v-select:not(.v-select--is-multi).v-text-field--single-line .v-select__selections{
+    line-height: 2;
+  }
 }
 </style>
