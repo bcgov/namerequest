@@ -113,8 +113,25 @@
         </v-row>
       <v-row v-if="!editMode" class="my-1 py-0 colour-text mt-5">
         <v-col cols="2" class="py-0"></v-col>
-        <v-col cols="10" class="py-0 main-message-style"
-        v-html='mainMessage'>
+        <v-col cols="10" class="py-0 main-message-style">
+          <span v-if="location!=='BC'">
+            <span v-if="isAssumedName">
+              You may provide up to two additional assumed names which will be considered at no further cost,
+              in the order provided, f your first choice cannot be approved. Be sure to follow
+              all <a :href="buildNameURL" target='_blank'>guidelines for how to build a name.</a>
+              <v-icon class="launch-icon">mdi-launch</v-icon>
+            </span>
+            <span v-else>
+              You may provide up to two additional assumed names which will be considered at no further cost,
+              in the order provided, if the name in the home jurisdiction cannot be approved. Be sure to follow
+              all <a :href="buildNameURL" target='_blank'>for how to build a name.</a>
+              <v-icon class="launch-icon">mdi-launch</v-icon>
+            </span>
+          </span>
+          <span v-else>
+            You may provide up to two additional names which will be considered at no further cost, in the
+            order provided, only if your First Choice cannot be approved.`
+          </span>
         </v-col>
       </v-row>
       <v-row class="mt-5">
@@ -575,23 +592,6 @@ export default class NamesCapture extends Vue {
   get locationOptions () {
     return newReqModule.locationOptions
   }
-  get mainMessage () {
-    if (this.location !== 'BC') {
-      if (this.isAssumedName) {
-        return `You may provide up to two additional assumed names which will be considered at no further cost, in the
-          order provided, if your first choice cannot be approved. Be sure to follow all 
-          <a href='https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business/permits-licences/businesses-incorporated-companies/approval-business-name/how-to-name-business' target='_blank'>guidelines for how to build a name. 
-          </a>`
-      }
-      return `You may provide up to two additional assumed names which will be considered at no further cost, in the
-          order provided, if the name in the home jurisdiction cannot be approved. Be sure to follow all 
-          <a href='https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business/permits-licences/businesses-incorporated-companies/approval-business-name/how-to-name-business' target='_blank'>guidelines for how to build a name.
-          </a>`
-    } else {
-      return `You may provide up to two additional names which will be considered at no further cost, in the
-        order provided, only if your First Choice cannot be approved.`
-    }
-  }
   get name () {
     return newReqModule.name
   }
@@ -613,6 +613,10 @@ export default class NamesCapture extends Vue {
       name = `${name} ${this.nameChoices.designation1}`
     }
     return name
+  }
+  get buildNameURL () {
+    return 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business/' +
+    'permits-licences/businesses-incorporated-companies/approval-business-name/how-to-name-business'
   }
   set entity_type_cd (type: string) {
     newReqModule.mutateEntityType(type)
@@ -776,15 +780,25 @@ export default class NamesCapture extends Vue {
 }
 </script>
 
-<style scoped lang="sass">
-::v-deep .v-messages__message
-  line-height: 14px !important
+<style lang="scss" scoped>
+@import "@/assets/scss/theme.scss";
 
-.main-message-style
-  font-size: 14px
-  color: #495057
-.label-style
-  font-size: 16px
-  font-weight: bold
-  color: #212529
+::v-deep .v-messages__message {
+  line-height: 14px !important;
+}
+
+.main-message-style {
+  font-size: 14px;
+  color: #495057;
+}
+.label-style {
+  font-size: 16px;
+  font-weight: bold;
+  color: #212529;
+}
+
+.launch-icon {
+  font-size: 1rem;
+  color: $link;
+}
 </style>
