@@ -45,79 +45,79 @@
                class="h4 mb-3 ml-n1"
                v-if="editMode">Name Choices
         </v-col>
-        <v-col cols="12" v-if="!editMode && isAssumedName" class="main-message-style">
+        <v-col cols="12" v-if="!editMode && isAssumedName" class="text-body-3">
               Name in Home Jurisdiction: {{name}}
         </v-col>
       </v-row>
-        <v-row>
-          <v-col cols="2" class="py-0 label-style" align-self="start" key="static-1">
-            {{choicesLabelsAndHints[0].label}}
+      <v-row>
+        <v-col cols="2" class="py-0 label-style" align-self="start" key="static-1">
+          {{choicesLabelsAndHints[0].label}}
+        </v-col>
+        <transition name="fade" mode="out-in">
+          <v-col :key="transitionKey(1)" class="ma-0 pa-0" cols="10">
+            <v-row class="ma-0 pa-0" v-if="location === 'BC'">
+              <v-col :cols="designationAtEnd ? 8 : 12" class="py-0" >
+                <v-text-field :autofocus="autofocusField === 'name1'"
+                              :error-messages="messages.name1"
+                              :hide-details="hide"
+                              :value="nameChoices.name1"
+                              @blur="handleBlur()"
+                              @input="editChoices('name1', $event, true)"
+                              filled
+                              id="choice-1-text-field"
+                              :label="choicesLabelsAndHints[0].hint"/>
+              </v-col>
+              <v-col cols="4" class="py-0" v-if="designationAtEnd">
+                <v-select :autofocus="autofocusField === 'des1'"
+                          :error-messages="des1Message"
+                          :hide-details="hide"
+                          :items="items"
+                          :menu-props="props"
+                          :value="nameChoices.designation1"
+                          @blur="handleBlur(); showDesignationErrors.des1 = true"
+                          @input="editChoices('designation1', $event, true)"
+                          filled
+                          id="designation-1-select"
+                          placeholder="Designation" />
+              </v-col>
+            </v-row>
+            <v-row class="ma-0 pa-0" v-else>
+              <v-col :cols="isAssumedName ? 8 : 12" class="py-0" >
+                <v-text-field :autofocus="autofocusField === 'name1'"
+                              :error-messages="messages.name1"
+                              :hide-details="hide"
+                              :value="xproNameWithoutConflict"
+                              @blur="handleBlur()"
+                              @input="editChoices('name1', $event, true)"
+                              :filled="isAssumedName"
+                              id="choice-1-text-field"
+                              :label="choicesLabelsAndHints[0].hint"
+                              :disabled="!isAssumedName"/>
+              </v-col>
+              <v-col cols="4" class="py-0" v-if="isAssumedName">
+                <v-select :autofocus="autofocusField === 'des1'"
+                          :error-messages="des1Message"
+                          :hide-details="hide"
+                          :items="items"
+                          :menu-props="props"
+                          :value="nameChoices.designation1"
+                          @blur="handleBlur(); showDesignationErrors.des1 = true"
+                          @input="editChoices('designation1', $event, true)"
+                          filled
+                          id="designation-1-select"
+                          placeholder="Designation" />
+              </v-col>
+            </v-row>
           </v-col>
-          <transition name="fade" mode="out-in">
-            <v-col :key="transitionKey(1)" class="ma-0 pa-0" cols="10">
-              <v-row class="ma-0 pa-0" v-if="location === 'BC'">
-                <v-col :cols="designationAtEnd ? 8 : 12" class="py-0" >
-                  <v-text-field :autofocus="autofocusField === 'name1'"
-                                :error-messages="messages.name1"
-                                :hide-details="hide"
-                                :value="nameChoices.name1"
-                                @blur="handleBlur()"
-                                @input="editChoices('name1', $event, true)"
-                                filled
-                                id="choice-1-text-field"
-                                :placeholder="choicesLabelsAndHints[0].hint"/>
-                </v-col>
-                <v-col cols="4" class="py-0" v-if="designationAtEnd">
-                  <v-select :autofocus="autofocusField === 'des1'"
-                            :error-messages="des1Message"
-                            :hide-details="hide"
-                            :items="items"
-                            :menu-props="props"
-                            :value="nameChoices.designation1"
-                            @blur="handleBlur(); showDesignationErrors.des1 = true"
-                            @input="editChoices('designation1', $event, true)"
-                            filled
-                            id="designation-1-select"
-                            placeholder="Designation" />
-                </v-col>
-              </v-row>
-              <v-row class="ma-0 pa-0" v-else>
-                <v-col :cols="isAssumedName ? 8 : 12" class="py-0" >
-                  <v-text-field :autofocus="autofocusField === 'name1'"
-                                :error-messages="messages.name1"
-                                :hide-details="hide"
-                                :value="xproNameWithoutConflict"
-                                @blur="handleBlur()"
-                                @input="editChoices('name1', $event, true)"
-                                :filled="isAssumedName"
-                                id="choice-1-text-field"
-                                :placeholder="choicesLabelsAndHints[0].hint"
-                                :disabled="!isAssumedName"/>
-                </v-col>
-                <v-col cols="4" class="py-0" v-if="isAssumedName">
-                  <v-select :autofocus="autofocusField === 'des1'"
-                            :error-messages="des1Message"
-                            :hide-details="hide"
-                            :items="items"
-                            :menu-props="props"
-                            :value="nameChoices.designation1"
-                            @blur="handleBlur(); showDesignationErrors.des1 = true"
-                            @input="editChoices('designation1', $event, true)"
-                            filled
-                            id="designation-1-select"
-                            placeholder="Designation" />
-                </v-col>
-              </v-row>
-            </v-col>
-          </transition>
-        </v-row>
+        </transition>
+      </v-row>
       <v-row v-if="!editMode" class="my-1 py-0 colour-text mt-5">
         <v-col cols="2" class="py-0"></v-col>
-        <v-col cols="10" class="py-0 main-message-style">
+        <v-col cols="10" class="py-0 text-body-3">
           <span v-if="location!=='BC'">
             <span v-if="isAssumedName">
               You may provide up to two additional assumed names which will be considered at no further cost,
-              in the order provided, f your first choice cannot be approved. Be sure to follow
+              in the order provided, if your first choice cannot be approved. Be sure to follow
               all <a :href="buildNameURL" target='_blank'>guidelines for how to build a name.</a>
               <v-icon class="launch-icon">mdi-launch</v-icon>
             </span>
@@ -150,7 +150,7 @@
                               @input="editChoices('name2', $event, true)"
                               filled
                               id="choice-2-text-field"
-                              :placeholder="choicesLabelsAndHints[1].hint" />
+                              :label="choicesLabelsAndHints[1].hint" />
               </v-col>
               <v-col cols="4" class="py-0" v-if="designationAtEnd">
                 <v-select :error-messages="des2Message"
@@ -183,7 +183,7 @@
                               @input="editChoices('name3', $event)"
                               filled
                               id="choice-3-text-field"
-                              :placeholder="choicesLabelsAndHints[2].hint" />
+                              :label="choicesLabelsAndHints[2].hint" />
               </v-col>
               <v-col cols="4" class="py-0" style="height: 60px" v-if="designationAtEnd">
                 <v-select :error-messages="des3Message"
@@ -787,12 +787,8 @@ export default class NamesCapture extends Vue {
   line-height: 14px !important;
 }
 
-.main-message-style {
-  font-size: 14px;
-  color: #495057;
-}
 .label-style {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: bold;
   color: #212529;
 }
