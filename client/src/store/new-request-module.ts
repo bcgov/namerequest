@@ -1165,7 +1165,7 @@ export class NewRequestModule extends VuexModule {
     })
   }
   get isAssumedName () {
-    return !!this.assumedNameOriginal
+    return !!this.assumedNameOriginal || this.request_action_cd === 'ASSUMED'
   }
   get locationOptions () {
     // To save template conditional logic, some locations have duplicate descriptions to align with there request
