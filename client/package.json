@@ -45,7 +45,6 @@
     "cross-env": "^7.0.2",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.2.3",
-    "geckodriver": "^1.19.1",
     "json-server": "^0.15.1",
     "sass": "^1.26.7",
     "sass-loader": "^8.0.2",
