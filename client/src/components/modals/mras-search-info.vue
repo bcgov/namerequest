@@ -33,21 +33,22 @@
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
 import NameInput from '@/components/new-request/name-input.vue'
+import { BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
 
 @Component({
   components: { NameInput }
 })
 export default class MrasSearchInfoModal extends Vue {
   private resultConfig = {
-    400: {
+    BAD_REQUEST: {
       desc: null,
       action: 'To continue, enter the name of your business below:'
     },
-    404: {
+    NOT_FOUND: {
       desc: 'We were not able to retrieve your information from the home jurisdiction.',
       action: 'Close this dialog and try your corporate number again, or enter the name of your business below:'
     },
-    503: {
+    SERVICE_UNAVAILABLE: {
       desc: 'We were not able to retrieve your information from the home jurisdiction.',
       action: 'Please enter the name of your business below:'
     },
@@ -95,9 +96,6 @@ export default class MrasSearchInfoModal extends Vue {
 </script>
 <style lang="scss" scoped>
 .search-btn {
-  font-size: 1rem !important;
-  min-height: 45px !important;
-  width: 200px !important;
-  padding: 0 50px 0 50px !important;
+  min-width: 160px !important;
 }
 </style>

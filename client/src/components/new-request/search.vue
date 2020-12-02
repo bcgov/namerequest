@@ -422,11 +422,11 @@ export default class NewSearch extends Vue {
   color: $app-blue;
 }
 .search-name-btn {
-  font-size: 1rem !important;
   min-height: 45px !important;
   width: 200px !important;
   padding: 0 50px 0 50px !important;
 }
+/*Deep Vuetify overrides*/
 ::v-deep {
   .theme--light.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
     background-color: RGBA(22,105,187,.6) !important;

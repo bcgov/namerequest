@@ -6,8 +6,8 @@
                   autocomplete="off"
                   filled
                   id="name-input-text-field"
+                  ref="nameInput"
                   :rules="isMrasSearch ? mrasRules : []"
-                  ref="ifCorpNumInput"
                   :label="nameLabel"
                   v-model="searchValue">
       <template v-slot:append>
@@ -37,7 +37,7 @@ import { Component, Prop, Vue, Watch, Emit } from 'vue-property-decorator'
 export default class NameInput extends Vue {
   // Refs
   $refs!: {
-    corpNumInput: any
+    nameInput: any
   }
   /** Local Properties */
   @Prop({ default: false }) isSearchAgain: boolean
@@ -52,7 +52,7 @@ export default class NameInput extends Vue {
 
   /** Local validator when input is a MRAS corp num. */
   private get isCorpNumValid (): any {
-    return this.isMrasSearch ? this.$refs['ifCorpNumInput'].valid : true
+    return this.isMrasSearch ? this.$refs['nameInput'].valid : true
   }
 
   get errors () {
