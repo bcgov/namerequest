@@ -799,6 +799,6 @@ export default class NamesCapture extends Vue {
 
 .launch-icon {
   font-size: 1rem;
-  color: $link;
+  color: $app-blue;
 }
 </style>
