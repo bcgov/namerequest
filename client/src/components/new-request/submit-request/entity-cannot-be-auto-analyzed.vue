@@ -6,7 +6,7 @@
       <v-row class="text-center">
         <v-col cols="12" class="h5 text-center py-0 mt-3">Further Information</v-col>
       </v-row>
-      <v-row class="text-center" v-if="boxes">
+      <v-row class="text-center">
         <v-col cols="12"
                class="text-center pb-0 mb-n4"
                v-html="title" />

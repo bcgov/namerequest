@@ -12,7 +12,7 @@
         <v-col cols="12" class="pb-0" @click="clickNameField">
           <quill-editor :contents="contents"
                         :options="config"
-                        :disabled="!!finalName"
+                        :disabled="!!finalName || isApproved"
                         @change="handleChange($event)"
                         @keydown.native.capture="handleEnterKey"
                         id="name-search-bar"
@@ -26,6 +26,7 @@
                         class="name-search-icon"
                         color="primary"
                         id="name-input-icon"
+                        :disabled="isApproved"
                         v-on="scope.on">mdi-magnify</v-icon>
               </template>
               Search Again
@@ -163,9 +164,7 @@
                 <v-col cols="12" class="copy-normal pt-2">
                   <v-row justify="center">
                     <v-col cols="auto">
-                      Name is available for a
-                      {{ entityText === 'BC Corporation' && location.text === 'BC' ? '' : location.text }}
-                      {{ ' ' + entityText }}
+                     The name has passed initial checks and is ready to send to staff for a final decision.
                     </v-col>
                   </v-row>
                   <v-row justify="center">
@@ -486,27 +485,37 @@ export default class AnalyzeResults extends Vue {
     return false
   }
   get headerProps () {
+    // eslint-disable-next-line no-console
+    console.log(this.json)
     if (this.json.status === 'Available') {
       return {
         class: 'approved',
         icon: 'mdi-check-circle',
-        text: 'Name Available',
+        text: 'Name Ready for Review',
         showNextLines: true
       }
     }
     let { length } = this.json.issues
+    if (length >= 1) {
+      return {
+        class: 'rejected',
+        icon: 'mdi-star-circle',
+        text: 'Further Action Required',
+        showNextLines: true
+      }
+    }
     if (this.isLastIndex && this.issue.issue_type !== 'word_to_avoid') {
       if (!this.changesInBaseName && this.allowProceed && this.examinationOrConsentCompleted) {
         return {
           class: 'approved',
           icon: 'mdi-check-circle',
-          text: 'You May Proceed',
+          text: 'Name Ready for Review',
           showNextLines: false
         }
       }
     }
     return {
-      class: 'app-red',
+      class: 'rejected',
       icon: 'mdi-star-circle',
       text: 'Further Action Required',
       showNextLines: true
