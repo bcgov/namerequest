@@ -109,7 +109,7 @@ export default class BusinessDesignation extends Vue {
 
       .business-designation-list-item-title
         font-size: 14px
-        color: $link
+        color: $app-blue
         margin-bottom: 0
         text-decoration: underline
 
