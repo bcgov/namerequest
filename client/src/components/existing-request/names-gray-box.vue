@@ -45,7 +45,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { NameState } from '@/enums'
 
 @Component({})
-export default class NamesBlock extends Vue {
+export default class NamesGrayBox extends Vue {
   // enums used in the template:
   NameState = NameState
 

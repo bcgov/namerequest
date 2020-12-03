@@ -8,7 +8,7 @@
     </template>
 
     <template v-slot:content>
-      <names-block
+      <names-gray-box
         v-if="nr.nrNum"
         class="mt-5"
         :names="names"
@@ -43,7 +43,7 @@
                   </v-icon>
                   <a href="#"
                     class="link-sm ml-1"
-                    v-if="nr.state === NrState.CONDITIONAL"
+                    v-if="isNrConditional"
                     @click.prevent="showConditionsModal()"
                   >Conditions</a>
                 </v-col>
@@ -95,8 +95,23 @@
             </v-col>
           </v-row>
 
+          <check-status-gray-box
+            class="mt-5"
+            v-if="showCheckStatus"
+            :nrNum="nr.nrNum" />
+
+          <nr-approved-gray-box
+            class="mt-5"
+            v-if="!isBenefitCompany && showNrApproved"
+            :nrNum="nr.nrNum"
+            :approvedName="approvedName && approvedName.name"
+            :emailAddress="nr.applicants.emailAddress"/>
+
           <!-- incorporate button -->
-          <div v-if="showIncorporateButton" class="mt-5 text-center">
+          <div
+            v-if="isBenefitCompany && showIncorporateButton"
+            class="mt-5 text-center"
+          >
             <v-btn @click="handleButtonClick(NrAction.INCORPORATE)">Incorporate Using This Name Request</v-btn>
           </div>
         </v-container>
@@ -118,11 +133,13 @@ import DateMixin from '@/components/mixins/date-mixin'
 import paymentModule from '@/modules/payment'
 import timerModule from '@/modules/vx-timer'
 import * as types from '@/store/types'
-import NamesBlock from './names-block.vue'
-import { NameState, NrAction, NrState } from '@/enums'
+import NamesGrayBox from './names-gray-box.vue'
+import CheckStatusGrayBox from './check-status-gray-box.vue'
+import NrApprovedGrayBox from './nr-approved-gray-box.vue'
+import { EntityCode, NameState, NrAction, NrState } from '@/enums'
 
 @Component({
-  components: { MainContainer, NamesBlock },
+  components: { MainContainer, NamesGrayBox, CheckStatusGrayBox, NrApprovedGrayBox },
   computed: {
     ...mapGetters(['isAuthenticated'])
   }
@@ -247,6 +264,25 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     return this.actions.includes(NrAction.INCORPORATE)
   }
 
+  /** True if the Check Status component should be shown. */
+  private get showCheckStatus (): boolean {
+    return [NrState.DRAFT, NrState.INPROGRESS, NrState.ONHOLD].includes(this.nr.state)
+  }
+
+  /** True if the NR Approved component should be shown. */
+  private get showNrApproved (): boolean {
+    return [NrState.APPROVED, NrState.CONDITIONAL, NrState.COND_RESERVE].includes(this.nr.state)
+  }
+
+  private get isBenefitCompany (): boolean {
+    return (this.nr.entity_type_cd === EntityCode.BC)
+  }
+
+  /** Whether this NR is in a conditional state. */
+  private get isNrConditional (): boolean {
+    return [NrState.CONDITIONAL, NrState.COND_RESERVE].includes(this.nr.state)
+  }
+
   /** The display text for Expiry Extensions Remaining. */
   private get extensionsRemainingText (): string {
     const extensions = 2
@@ -262,8 +298,8 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
         if (this.isNrExpired) return 'Expired'
         return 'Completed' // should never happen
       }
-      case NrState.CONDITIONAL: return 'Conditional Approval'
-      case NrState.HOLD: return 'In Progress' // this is not a typo
+      case NrState.CONDITIONAL: return 'Approved' // show CONDITIONAL as "Approved"
+      case NrState.ONHOLD: return 'In Progress' // show ONHOLD as "In Progress"
       case NrState.INPROGRESS: return 'In Progress'
       case NrState.REFUND_REQUESTED: return 'Cancelled, Refund Requested'
       default: return this.toTitleCase(this.nr.state)
