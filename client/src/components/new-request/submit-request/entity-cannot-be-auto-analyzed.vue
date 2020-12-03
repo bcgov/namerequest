@@ -1,18 +1,16 @@
 <template>
-    <v-container fluid class="pa-0 ma-0">
+    <v-container fluid class="pa-0">
       <v-row v-if="nameIsSlashed">
-        <NameInput class="mt-n4" />
+        <NameInput />
       </v-row>
       <v-row class="text-center">
-        <v-col cols="12" class="h5 text-center mt-n6">
-          Further Information {{isPersonsName}}
-        </v-col>
+        <v-col cols="12" class="h5 text-center py-0 mt-3">Further Information</v-col>
       </v-row>
       <v-row class="text-center" v-if="boxes">
         <v-col cols="12"
-               class="text-center mt-n4"
+               class="text-center pb-0 mb-n4"
                v-html="title" />
-        <v-col v-for="(box, i) in boxes" :key="'box-'+i">
+        <v-col v-for="(box, i) in boxes" :key="'box-'+i" class="pb-0">
           <v-container class="copy-small text-left" :class="box.class">
             <v-row align-content="space-between" style="height: 100%">
               <v-col class="h5 py-0">{{ box.title }}</v-col>
@@ -31,7 +29,7 @@
                         v-if="box.button === 'english'"
                         @click="newSearch()">Search Again</v-btn>
               </v-col>
-              </v-row>
+            </v-row>
           </v-container>
         </v-col>
       </v-row>
@@ -181,7 +179,3 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   }
 }
 </script>
-
-<style lang="sass">
-
-</style>
