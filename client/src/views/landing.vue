@@ -6,7 +6,17 @@
           <Stats class="pr-10"/>
         </v-col>
         <v-col cols="12" class="mb-n2">
-          <span class="h2 colour-white">Name Request <sup class="beta-tag">Beta</sup></span>
+          <span class="h2 colour-white">Name Request
+            <v-tooltip bottom nudge-right="10" content-class="bottom-tooltip" transition="fade-transition">
+              <template v-slot:activator="{ on }">
+                <sup class="beta-tag" v-on="on">Beta</sup>
+              </template>
+              <p>The Name Request website is available as a Beta version. Name Requests obtained through the Beta are
+                official name requests and can be used in the province of British Columbia.</p>
+              <p>As part of a new <u>agile software development process</u>, the Name Request website will be
+                continually updated and improved based on feedback from citizens and businesses in BC.</p>
+            </v-tooltip>
+          </span>
         </v-col>
         <div class="main-container-style mt-3">
           <transition name="fade" mode="out-in" :duration="{ enter: 100, leave: 100 }">
@@ -76,25 +86,28 @@ export default class Landing extends Vue {
 }
 </script>
 
-<style lang="sass" scoped>
-#landing-container
-  margin: 0
-  padding: 0
+<style lang="scss" scoped>
+@import '@/assets/scss/theme.scss';
 
-.landing-content-container
-  min-width: 940px
-  max-width: 1140px
-
-#upper-row
-  background: url('../assets/images/analyze-name-bg.jpg') no-repeat bottom
-  background-size: cover
-  color: white
-  min-height: 700px
-
-.beta-tag
-  top: -1rem
-  color: $gold
-  font-size: 19px
-  font-weight: bold
-  text-transform: uppercase
+#landing-container {
+  margin: 0;
+  padding: 0;
+}
+.landing-content-container {
+  min-width: 940px;
+  max-width: 1140px;
+}
+#upper-row {
+  background: url('../assets/images/analyze-name-bg.jpg') no-repeat bottom;
+  background-size: cover;
+  color: white;
+  min-height: 700px;
+}
+.beta-tag {
+  top: -1rem;
+  color: $BCgovGold5;
+  font-size: 19px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
 </style>
