@@ -98,19 +98,27 @@
           <check-status-gray-box
             class="mt-5"
             v-if="showCheckStatus"
-            :nrNum="nr.nrNum" />
+            :nrNum="nr.nrNum"
+          />
 
           <nr-approved-gray-box
             class="mt-5"
             v-if="!isBenefitCompany && showNrApproved"
             :nrNum="nr.nrNum"
             :approvedName="approvedName && approvedName.name"
-            :emailAddress="nr.applicants.emailAddress"/>
+            :emailAddress="nr.applicants.emailAddress"
+          />
+
+          <nr-not-approved-gray-box
+            class="mt-5"
+            v-if="!isBenefitCompany && showNrNotApproved"
+            :nrNum="nr.nrNum"
+          />
 
           <!-- incorporate button -->
           <div
-            v-if="isBenefitCompany && showIncorporateButton"
             class="mt-5 text-center"
+            v-if="isBenefitCompany && showIncorporateButton"
           >
             <v-btn @click="handleButtonClick(NrAction.INCORPORATE)">Incorporate Using This Name Request</v-btn>
           </div>
@@ -136,10 +144,17 @@ import * as types from '@/store/types'
 import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
+import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
 import { EntityCode, NameState, NrAction, NrState } from '@/enums'
 
 @Component({
-  components: { MainContainer, NamesGrayBox, CheckStatusGrayBox, NrApprovedGrayBox },
+  components: {
+    MainContainer,
+    NamesGrayBox,
+    CheckStatusGrayBox,
+    NrApprovedGrayBox,
+    NrNotApprovedGrayBox
+  },
   computed: {
     ...mapGetters(['isAuthenticated'])
   }
@@ -274,6 +289,12 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     return [NrState.APPROVED, NrState.CONDITIONAL, NrState.COND_RESERVE].includes(this.nr.state)
   }
 
+  /** True if the NR NotApproved component should be shown. */
+  private get showNrNotApproved (): boolean {
+    return (this.nr.state === NrState.REJECTED)
+  }
+
+  /** True if this is a Benefit Company NR. */
   private get isBenefitCompany (): boolean {
     return (this.nr.entity_type_cd === EntityCode.BC)
   }
@@ -362,12 +383,13 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   /** Returns display text for the specified action code. */
   private actionText (action: NrAction): string {
     switch (action) {
-      case NrAction.UPGRADE: return 'Upgrade Priority ($100)'
+      case NrAction.CANCEL: return 'Cancel Name Request'
       case NrAction.REAPPLY: return 'Extend Expiry ($30)'
-      case NrAction.RESULTS: return 'Download Results'
       case NrAction.RECEIPTS: return 'Download Receipts'
       case NrAction.REFUND: return 'Cancel and Refund'
-      case NrAction.CANCEL: return 'Cancel Name Request'
+      case NrAction.RESEND: return 'Resend Email' // FUTURE: will be removed
+      case NrAction.RESULTS: return 'Download Results' // FUTURE: will be implemented
+      case NrAction.UPGRADE: return 'Upgrade Priority ($100)'
       default: return this.toTitleCase(action)
     }
   }
