@@ -792,7 +792,7 @@ export default class NamesCapture extends Vue {
 .label-style {
   font-size: 1rem;
   font-weight: bold;
-  color: #212529;
+  color: $gray9;
 }
 
 .launch-icon {
