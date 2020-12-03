@@ -12,7 +12,7 @@
 <!--            No Wait Time-->
 <!--          </div>-->
 <!--        </div>-->
-      <v-tooltip bottom nudge-left="56" content-class="bottom-tooltip wait-time-tooltip" transition="fade-transition">
+      <v-tooltip bottom nudge-left="50" content-class="bottom-tooltip wait-time-tooltip" transition="fade-transition">
         <template v-slot:activator="{ on }">
           <div class="stats-content-outer py-0" v-on="on">
             <div class="stats-content-inner-1 text-center">
