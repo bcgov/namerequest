@@ -137,6 +137,7 @@ export class NewRequestModule extends VuexModule {
   addressSuggestions: object | null = null
   allowAutoApprove: boolean = false
   analysisJSON: AnalysisJSONI | null = null
+  analyzePending: boolean = false
   applicant: ApplicantI = {
     addrLine1: '',
     addrLine2: '',
@@ -735,6 +736,10 @@ export class NewRequestModule extends VuexModule {
   nrOriginal: Partial<NameRequestI> = {} as NameRequestI
   nrRequestNameMap: RequestNameMapI[] = []
   nrRequiredModalVisible: boolean = false
+  pendingLastProgressUpdate: number = 0
+  pendingProcessed: number = 0
+  pendingStartTime: number = 0
+  pendingTotal: number = 0
   pickEntityModalVisible: boolean = false
   pickRequestTypeModalVisible: boolean = false
   priorityRequest: boolean = false
@@ -1776,9 +1781,12 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
-  async getNameAnalysis () {
-    this.mutateDisplayedComponent('AnalyzePending')
-    this.resetRequestExaminationOrProvideConsent()
+  async getNameAnalysis (uuid: string) {
+    if (!this.analyzePending) {
+      this.updatePendingStartTime(Date.now())
+      this.updateAnalyzePending(true)
+      this.resetRequestExaminationOrProvideConsent()
+    }
 
     let params: NewRequestNameSearchI = {
       name: this.name,
@@ -1791,74 +1799,80 @@ export class NewRequestModule extends VuexModule {
     try {
       let { CancelToken } = axios
       source = CancelToken.source()
-
-      let resp = await axios.get('name-analysis', {
+      // let url = 'name-analysis-v2'
+      let url = 'name-analysis'
+      let resp = null
+      // if (uuid) {
+      //   url = url.concat('/', uuid)
+      resp = await axios.get(url, {
         params,
         cancelToken: source.token,
         timeout: ANALYSIS_TIMEOUT_MS
       })
+      // } else {
+      //   resp = await axios.post(url, {
+      //     params,
+      //     cancelToken: source.token,
+      //     timeout: ANALYSIS_TIMEOUT_MS
+      //   })
+      // }
       let json = resp.data
-      this.mutateAnalysisJSON(json)
-      if (Array.isArray(json.issues) && json.issues.length > 0) {
-        let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
-        if (corpConflict && Array.isArray(corpConflict.conflicts) && corpConflict.conflicts.length > 0) {
-          let firstConflict = corpConflict.conflicts[0]
-          if (firstConflict.id) {
-            this.mutateConflictId(firstConflict.id)
-          }
+      json.header = {
+        'uuid': 10,
+        'state': 'running',
+        'processed': 0,
+        'total': 200
+      }
+      if (uuid) {
+        json.header.uuid = uuid
+        json.header.processed = json.header.uuid
+        json.header.uuid += 10
+        if (json.header.processed === json.header.total) {
+          json.header.uuid = 10
         }
       }
-      this.mutateDisplayedComponent('AnalyzeResults')
-    } catch (error) {
-      // eslint-disable-next-line
-      console.log(error)
-      if (error.code === 'ECONNABORTED') {
-        this.mutateNameAnalysisTimedOut(true)
-        this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
-        this.mutateDisplayedComponent('SubmissionTabs')
-        return
-      }
-      if (this.userCancelledAnalysis) {
-        this.setActiveComponent('NamesCapture')
-        return
-      }
-      this.mutateDisplayedComponent('Tabs')
-    }
-  }
-  @Action
-  async getNameAnalysisXPRO () {
-    this.mutateDisplayedComponent('AnalyzePending')
-    this.resetRequestExaminationOrProvideConsent()
-
-    let params: NewRequestNameSearchI = {
-      name: this.name,
-      location: this.location,
-      // @ts-ignore TODO: This is not typed correctly!
-      entity_type_cd: this.entity_type_cd,
-      request_action_cd: this.request_action_cd
-    }
-
-    try {
-      let { CancelToken } = axios
-      source = CancelToken.source()
-
-      let resp = await axios.get('/xpro-name-analysis', {
-        params,
-        cancelToken: source.token,
-        timeout: ANALYSIS_TIMEOUT_MS
-      })
-      let json = resp.data
-      this.mutateAnalysisJSON(json)
-      if (Array.isArray(json.issues) && json.issues.length > 0) {
-        let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
-        if (corpConflict && Array.isArray(corpConflict.conflicts) && corpConflict.conflicts.length > 0) {
-          let firstConflict = corpConflict.conflicts[0]
-          if (firstConflict.id) {
-            this.mutateConflictId(firstConflict.id)
+      // repeatedly call every 1 second until cancelled or returns complete
+      if (json.header.state === 'running') {
+        // if state is running and it's the first call mutate display for analyzePending
+        if (this.pendingTotal === 0) {
+          this.mutateDisplayedComponent('AnalyzePending')
+        }
+        // update progress
+        this.updatePendingLastProgressUpdate(Date.now())
+        this.updatePendingProcessed(json.header.processed)
+        this.updatePendingTotal(json.header.total)
+        // wait 1 sec before updating again
+        setTimeout(() => {
+          // check to make sure search wasn't cancelled during the wait before executing again
+          if (this.analyzePending) {
+            uuid = json.header.uuid
+            this.getNameAnalysis(uuid)
+          }
+        }, 1000)
+      } else {
+        // if (!uuid) {
+        //   uuid = json.header.uuid
+        // }
+        // url = 'name-analysis-v2'.concat('/', uuid)
+        // resp = await axios.delete(url, {
+        //   params,
+        //   cancelToken: source.token,
+        //   timeout: ANALYSIS_TIMEOUT_MS
+        // })
+        this.updateAnalyzePending(false)
+        let analysis = json
+        this.mutateAnalysisJSON(analysis)
+        if (Array.isArray(analysis.issues) && analysis.issues.length > 0) {
+          let corpConflict = analysis.issues.find(issue => issue.issue_type === 'corp_conflict')
+          if (corpConflict && Array.isArray(corpConflict.conflicts) && corpConflict.conflicts.length > 0) {
+            let firstConflict = corpConflict.conflicts[0]
+            if (firstConflict.id) {
+              this.mutateConflictId(firstConflict.id)
+            }
           }
         }
+        this.mutateDisplayedComponent('AnalyzeResults')
       }
-      this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
       // eslint-disable-next-line
       console.log(error)
@@ -2374,6 +2388,11 @@ export class NewRequestModule extends VuexModule {
     this.resetNameChoices()
     this.mutateNameRequest({})
     this.mutateNameAnalysisTimedOut(false)
+    this.updatePendingProcessed(0)
+    this.updatePendingTotal(0)
+    this.updatePendingStartTime(0)
+    this.updatePendingLastProgressUpdate(0)
+    this.updateAnalyzePending(false)
   }
   @Action
   cancelAnalyzeName (destination: string) {
@@ -2504,7 +2523,7 @@ export class NewRequestModule extends VuexModule {
     if (this.location === 'BC') {
       if (this.nameIsEnglish && !this.isPersonsName && !this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
         if (['NEW', 'DBA', 'CHG'].includes(this.request_action_cd)) {
-          this.getNameAnalysis()
+          this.getNameAnalysis(null)
           return
         }
       }
@@ -2513,7 +2532,7 @@ export class NewRequestModule extends VuexModule {
       return
     } else {
       if (['AML', 'CHG', 'DBA', 'MVE', 'NEW', 'REH', 'REN', 'REST'].includes(this.request_action_cd)) {
-        this.getNameAnalysisXPRO()
+        this.getNameAnalysis(null)
       }
     }
   }
@@ -2963,6 +2982,26 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateUserCancelledAnalysis (value: boolean) {
     this.userCancelledAnalysis = value
+  }
+  @Mutation
+  updatePendingProcessed (value: number) {
+    this.pendingProcessed = value
+  }
+  @Mutation
+  updatePendingTotal (value: number) {
+    this.pendingTotal = value
+  }
+  @Mutation
+  updateAnalyzePending (value: boolean) {
+    this.analyzePending = value
+  }
+  @Mutation
+  updatePendingStartTime (value: number) {
+    this.pendingStartTime = value
+  }
+  @Mutation
+  updatePendingLastProgressUpdate (value: number) {
+    this.pendingLastProgressUpdate = value
   }
 }
 

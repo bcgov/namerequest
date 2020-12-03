@@ -15,7 +15,7 @@
       <v-row justify="center">
         <v-col cols="auto">
           <v-progress-circular color="orange"
-                               id="analyze-pending-spinner"
+                               id="search-pending-spinner"
                                size="50"
                                indeterminate />
         </v-col>

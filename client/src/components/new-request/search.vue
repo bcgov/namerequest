@@ -220,9 +220,9 @@
 
     </v-row>
     <div v-if="!isFederal" class="mt-1 text-center">
-      <v-btn class="search-name-btn"
-             :disabled="!corpNumValid"
-              @click="handleSubmit()">{{ isXproMras ? 'Search' : 'Search Name'}}</v-btn>
+      <v-btn class="search-name-btn" :loading="analyzePending" :disabled="!corpNumValid" @click="handleSubmit()">
+        {{ isXproMras ? 'Search' : 'Search Name'}}
+      </v-btn>
     </div>
     <div v-else class="mt-6 mb-n2 text-center">
       <v-btn class="goto-corporate-btn" :href="corpOnlineLink" target="_blank">
@@ -247,6 +247,9 @@ export default class NewSearch extends Vue {
   private corpNumValid: boolean = true
   private corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
 
+  get analyzePending () {
+    return newReqModule.analyzePending
+  }
   @Watch('location')
   watchLocation (newVal, oldVal) {
     if (newVal === 'INFO') {
