@@ -569,5 +569,5 @@ export default class ApplicantInfo1 extends Vue {
 
 <style scoped lang="sass">
 .highlight-list-item
-  background-color: $grey-3
+  background-color: $gray2
 </style>

@@ -58,7 +58,7 @@ export default class ExampleNameGenerator extends Vue {
 
 .dotted-outline
   border: 1px dashed $pale-blue
-  background-color: $grey-1
+  background-color: $gray1
 
 .icon-class
   font-size: 40px !important

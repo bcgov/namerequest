@@ -177,7 +177,7 @@ export default class PickEntityOrConversion extends Vue {
 .v-data-table
   margin: 0 -3px
 .category-bg
-  background-color: $grey-1
+  background-color: $gray1
 .cell
   padding: 10px
   color: $dk-text
