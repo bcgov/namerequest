@@ -81,7 +81,7 @@
                       rows="3" />
         </v-col>
         <v-col cols="2" />
-        <v-col cols="5" v-if="showCorpNum">
+        <v-col cols="5" v-if="showCorpNum === 'colin'">
           <label for="corpNum" class="hidden">Incorporation Number (required)</label>
           <v-text-field :error-messages="corpNumError"
                         :hide-details="hideCorpNum"

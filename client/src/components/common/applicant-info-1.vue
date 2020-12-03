@@ -286,8 +286,7 @@
                             placeholder="Postal/Zip Code" />
             </v-col>
           </v-row>
-
-          <v-row class="mt-2" v-if="showXproJurisdiction && showAllFields">
+          <v-row class="mt-2" v-if="showXproJurisdiction && showAllFields && editMode">
             <v-col cols="6" class="py-0 my-0">
               <label for="xprojurisdiction" class="hidden">Business Jurisdiction</label>
               <v-select :messages="messages['xproJurisdiction']"

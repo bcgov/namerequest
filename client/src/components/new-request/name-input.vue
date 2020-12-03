@@ -46,7 +46,7 @@ export default class NameInput extends Vue {
   /** The array of validation rules for the MRAS corp num. */
   private get mrasRules (): Array<Function> {
     return [
-      v => (/^\d+$/.test(v) || 'A corp num is required')
+      v => (/^\d+$/.test(v) || 'A corporate number is required')
     ]
   }
 
