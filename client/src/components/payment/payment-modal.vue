@@ -33,7 +33,6 @@ import RequestDetails from '@/components/common/request-details.vue'
 import CountdownTimer from '@/components/session-timer/countdown-timer.vue'
 
 import paymentModule from '@/modules/payment'
-import timerModule from '@/modules/vx-timer'
 import { CreatePaymentParams } from '@/modules/payment/models'
 
 import * as paymentTypes from '@/modules/payment/store/types'

@@ -1,4 +1,4 @@
-import Vue from 'vue-property-decorator'
+import { EnvConfigI } from './plugins/getConfig'
 
 export interface DesignationI {
   words: string[]
@@ -16,12 +16,14 @@ export interface MappingI {
   [propname: string]: string[]
 }
 
+interface AppConfigI extends EnvConfigI {
+  // System codes
+  $designations: DesignationI[]
+  $canJurisdictions: JurisdictionI[]
+  $intJurisdictions: JurisdictionI[]
+  $xproMapping: MappingI[]
+}
+
 declare module 'vue/types/vue' {
-  interface Vue {
-    $PAYMENT_PORTAL_URL?: string
-    $designations: DesignationI[]
-    $canJurisdictions: JurisdictionI[]
-    $intJurisdictions: JurisdictionI[]
-    $xproMapping: MappingI[]
-  }
+  interface Vue extends AppConfigI {}
 }

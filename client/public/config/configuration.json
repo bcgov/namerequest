@@ -1,12 +1,21 @@
 [
   {
-    "URL":"https://namex-dev.pathfinder.gov.bc.ca",
+    "URL":"http://localhost:5000",
     "PAYMENT_PORTAL_URL": "https://dev.bcregistry.ca/business/auth/makepayment",
     "VUE_APP_PAY_ROOT_API": "https://pay-api-dev.pathfinder.gov.bc.ca/api/v1",
     "BUSINESSES_URL": "https://dev.bcregistry.ca/business/auth/",
     "KEYCLOAK_CONFIG_PATH": "/local-keycloak-config-url/keycloak.json",
     "AUTH_API_URL": "https://auth-api-dev.pathfinder.gov.bc.ca/api/v1",
     "LEGAL_API_URL": "https://legal-api-dev.pathfinder.gov.bc.ca/api/v1",
-    "LD_CLIENT_ID": ""
+    "LD_CLIENT_ID": "",
+    "NR_COMPLETION_TIMER_NAME": "nrCompletionTimer",
+    "NR_COMPLETION_TIMEOUT_MS": 300000,
+    "DEV_NR_COMPLETION_TIMEOUT_MS": 300000,
+    "EXISTING_NR_TIMER_NAME": "existingNrTimer",
+    "EXISTING_NR_TIMEOUT_MS": 300000,
+    "DEV_EXISTING_NR_TIMEOUT_MS": 300000,
+    "PAYMENT_COMPLETION_TIMER_NAME": "paymentCompletionTimer",
+    "PAYMENT_COMPLETION_TIMEOUT_MS": 120000,
+    "DEV_PAYMENT_COMPLETION_TIMEOUT_MS": 120000
   }
 ]

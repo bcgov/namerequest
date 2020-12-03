@@ -47,12 +47,8 @@ let source: any
 export const NR_COMPLETION_TIMER_NAME = 'nrCompletionTimer'
 export const EXISTING_NR_TIMER_NAME = 'existingNrTimer'
 
-// give developers more time while coding
-const MINUTES_60_IN_MS = 60 * (60 * 1000)
-const MINUTES_5_IN_MS = 5 * (60 * 1000)
-// NB: window['webpackHotUpdate'] is a function when running locally, otherwise it's undefined
-export const NR_COMPLETION_TIMEOUT_MS = window['webpackHotUpdate'] ? MINUTES_60_IN_MS : MINUTES_5_IN_MS
-export const EXISTING_NR_TIMEOUT_MS = window['webpackHotUpdate'] ? MINUTES_60_IN_MS : MINUTES_5_IN_MS
+export const NR_COMPLETION_TIMEOUT_MS = 300000
+export const EXISTING_NR_TIMEOUT_MS = 300000
 
 export class ApiError extends Error {}
 
