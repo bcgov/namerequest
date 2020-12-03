@@ -1,5 +1,5 @@
 <template>
-  <v-container id="landing-container" fluid>
+  <v-container id="landing-container" class="ma-0 pa-0" fluid>
     <v-row id="upper-row" no-gutters align-content="start">
       <v-container class="landing-content-container">
         <v-col cols="12" class="mb-4">
@@ -89,10 +89,6 @@ export default class Landing extends Vue {
 <style lang="scss" scoped>
 @import '@/assets/scss/theme.scss';
 
-#landing-container {
-  margin: 0;
-  padding: 0;
-}
 .landing-content-container {
   min-width: 940px;
   max-width: 1140px;
