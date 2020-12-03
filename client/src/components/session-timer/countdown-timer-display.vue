@@ -1,5 +1,5 @@
 <template>
-  <div class="countdown" :class="countdownClass">
+  <div :class="countdownClass">
     <div
       class="countdown-number"
       :style="countdownSecondsStyle">
@@ -69,7 +69,7 @@ svg circle {
 .countdown {
   display: inline-block;
   position: relative;
-  margin: auto 15px;
+  margin-left: 15px;
   height: 40px;
   width: 40px;
   text-align: center;

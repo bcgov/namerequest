@@ -1,10 +1,10 @@
 <template>
-  <v-container fluid class="white rounded copy-normal">
+  <v-container fluid class="white rounded copy-normal pa-10">
     <v-row justify="space-between" class="submission-tabs-top">
       <slot name="container-header" />
       <v-col cols="auto" class="py-0" v-if="displayedComponent !== 'Success'">
         <button id="back-to-search-btn"
-                class="modal-activator mt-2 link-std-sans-ul"
+                class="modal-activator link-std-sans-ul"
                 @click="cancelAndResetState()">
           <span class="link-std-sans-ul" v-if="isExistingRequestDisplay">
             Exit

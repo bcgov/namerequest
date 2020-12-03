@@ -40,6 +40,7 @@
           </v-col>
         </v-row>
       </template>
+
       <v-row :class="editMode ? '' : 'mt-3' ">
         <v-col cols="12"
                class="h4 mb-3 ml-n1"
@@ -200,8 +201,9 @@
           </v-col>
         </transition>
       </v-row>
-      <v-row>
-        <v-col cols="7" />
+
+      <v-row class="mt-5">
+        <v-col cols="7" class="py-0" />
         <ApplicantInfoNav :isValid="isValid" />
       </v-row>
     </v-container>

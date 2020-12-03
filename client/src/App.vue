@@ -251,6 +251,10 @@ export default class App extends Mixins(SessionTimerMixin) {
   background-color: rgb(33, 33, 33) // grey darken-4
   border-color: rgb(33, 33, 33) // grey darken-4
 
+.app-header
+  .v-btn
+    box-shadow: unset !important
+
 .app-footer
   .container
     max-width: 1300px

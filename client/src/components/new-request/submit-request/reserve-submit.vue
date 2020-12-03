@@ -5,8 +5,7 @@
               :disabled="isContinue">
     <template v-slot:activator="scope">
       <v-btn @click="handleSubmit"
-             outlined
-             :class="{ 'reserve-submit-btn': !isContinue }"
+             :class="isContinue ? 'button-normal' : 'button-blue'"
              class="mt-auto"
              v-on="scope.on"
              ref="reserve-submit-button">
@@ -123,18 +122,3 @@ export default class ReserveSubmitButton extends Vue {
   }
 }
 </script>
-
-<style scoped lang="scss">
-@import '@/assets/scss/theme.scss';
-
-.v-btn {
-  min-width: 125px !important;
-}
-.reserve-submit-btn {
-  color: $app-blue !important;
-  background-color: white !important;
-  &:hover {
-    background-color: rgba(22, 105, 187, .01) !important;
-  }
-}
-</style>

@@ -1,6 +1,5 @@
 <template>
-  <v-col cols="5"
-         class="text-right">
+  <v-col cols="5" class="text-right py-0">
     <v-btn x-large
            :id="`submit-back-btn-${isValid}`"
            class="mr-3"

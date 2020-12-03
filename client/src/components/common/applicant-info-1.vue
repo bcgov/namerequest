@@ -2,10 +2,10 @@
   <v-form v-model="isValid" ref="step1" id="applicant-info-1-form">
     <v-container fluid class="pa-0" id="applicant-info-1">
       <v-row>
-        <v-col cols="2" align-self="start" class="h5 ml-n3 mr-3">
+        <v-col cols="2" align-self="start" class="h6">
           Applicant
         </v-col>
-        <v-col cols="10" class="pa-0">
+        <v-col cols="10" class="py-0">
           <!--FIRST NAME, LAST NAME, MIDDLE NAME-->
           <v-row>
             <v-col cols="4">
@@ -56,6 +56,7 @@
                             placeholder="Middle Name (Optional)" />
             </v-col>
           </v-row>
+
           <!--ADDDRESS !-->
           <v-row class="mt-n1">
             <v-col cols="12" class="py-0 my-0">
@@ -136,6 +137,7 @@
               </v-menu>
             </v-col>
           </v-row>
+
           <v-row class="mt-2" v-if="applicant.addrLine1 && !showAddressMenu">
             <v-col cols="12" class="py-0 my-0">
               <label for="line2" class="hidden">Additional Street Address (Optional)</label>
@@ -154,6 +156,7 @@
                             ref="Line2" />
             </v-col>
           </v-row>
+
           <v-row class="mt-2" v-if="(applicant.addrLine2 || applicant.addrLine3) && !showAddressMenu">
             <v-col cols="12" class="py-0 my-0">
               <label for="line3" class="hidden">Additional Street Address (Optional)</label>
@@ -172,6 +175,7 @@
                             ref="Line3" />
             </v-col>
           </v-row>
+
           <v-row class="mt-2">
             <v-col cols="6" class="py-0 my-0">
               <label for="city" class="hidden">City</label>
@@ -245,6 +249,7 @@
                             ref="state" />
             </v-col>
           </v-row>
+
           <v-row class="mt-2">
             <v-col cols="6" class="py-0 my-0">
               <label for="country" class="hidden">Country</label>
@@ -302,9 +307,15 @@
             </v-col>
             <v-col cols="6" class="py-0 my-0" />
           </v-row>
-          <v-row>
-            <v-col cols="7" class="mt-n5">
-              <v-checkbox label="I am completing this reservation on my own behalf" v-model="actingOnOwnBehalf" />
+
+          <v-row class="mt-5">
+            <v-col cols="7" class="py-0">
+              <v-checkbox
+                hide-details
+                label="I am completing this reservation on my own behalf"
+                v-model="actingOnOwnBehalf"
+                class="mt-2 pt-0"
+              />
             </v-col>
             <ApplicantInfoNav :isValid="isValid" />
           </v-row>
