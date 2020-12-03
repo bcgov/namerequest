@@ -242,6 +242,10 @@ export default class App extends Mixins(SessionTimerMixin) {
   flex-flow: column nowrap
   min-height: 100vh
 
+  .sbc-header
+    .v-btn
+      box-shadow: none !important
+
 .loading-container.grayed-out
   opacity: 0.46
   background-color: rgb(33, 33, 33) // grey darken-4

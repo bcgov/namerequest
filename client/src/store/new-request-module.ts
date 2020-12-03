@@ -870,7 +870,7 @@ export class NewRequestModule extends VuexModule {
     if (!this.showCorpNum) {
       return {
         corpNum: '',
-        homeJurisNum: ''
+        homeJurisNum: this.nrData.homeJurisNum
       }
     }
     if (this.showCorpNum === 'colin') {
@@ -881,7 +881,7 @@ export class NewRequestModule extends VuexModule {
     }
     return {
       corpNum: this.corpNum,
-      homeJurisNum: this.corpNum
+      homeJurisNum: this.nrData.homeJurisNum
     }
   }
   get currentIssue () {
@@ -1063,13 +1063,13 @@ export class NewRequestModule extends VuexModule {
     return ''
   }
   get locationText () {
-    return this.locationOptions.find(options => options.value === this.location).text
+    return this.locationOptions.find(options => options.value === this.location)?.text
   }
   get isXproMras () {
     return (['CA', 'IN'].includes(this.location) && this.request_action_cd !== 'MVE')
   }
   get requestText () {
-    return this.requestActions.find(options => options.value === this.request_action_cd).text
+    return this.requestActions.find(options => options.value === this.request_action_cd)?.text
   }
   get entityTypeOptions () {
     let bcOptions: SelectOptionsI[] = this.entityTypesBC.filter(x => {
@@ -2476,13 +2476,16 @@ export class NewRequestModule extends VuexModule {
     if (this.errors.length > 0) {
       return
     }
-    // MRAS Profile Search
-    if (this.isXproMras && !this.noCorpNum) {
-      const profile = await this.fetchMRASProfile()
-      if (profile) {
-        name = sanitizeName(profile?.LegalEntity?.names?.legalName)
-        this.mutateName(name)
-      } else return
+    if (this.isXproMras) {
+      this.mutateNRData({ key: 'xproJurisdiction', value: this.request_jurisdiction_cd })
+      if (!this.noCorpNum) {
+        const profile = await this.fetchMRASProfile()
+        if (profile) {
+          name = sanitizeName(profile?.LegalEntity?.names?.legalName)
+          this.mutateName(name)
+          this.mutateNRData({ key: 'homeJurisNum', value: this.corpSearch })
+        } else return
+      }
     }
     let testName = this.name.toUpperCase()
     testName = removeExcessSpaces(testName)
