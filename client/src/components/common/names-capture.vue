@@ -554,9 +554,11 @@ export default class NamesCapture extends Vue {
           for (let choice of [1, 2, 3]) {
             if (nameChoices[`name${choice}`]) {
               if (!nameChoices[`designation${choice}`]) {
-                messages[`des${choice}`] = 'Please choose a designation'
-                this.showDesignationErrors[`des${choice}`] = true
-                outcome = false
+                if (location === 'BC' || isAssumedName) {
+                  messages[`des${choice}`] = 'Please choose a designation'
+                  this.showDesignationErrors[`des${choice}`] = true
+                  outcome = false
+                }
               } else {
                 this.messages[`des${choice}`] = ''
               }
@@ -677,61 +679,49 @@ export default class NamesCapture extends Vue {
       }
       newReqModule.mutateNameChoices({ key: `name${choice}`, value: name.name })
     }
-    if (this.location === 'BC') {
-      const { nameChoices } = this
-      if (nr && nr.names && Array.isArray(nr.names)) {
-        for (let choice of [1, 2, 3]) {
-          if (nr.names.find(name => name.choice === choice)) {
-            let { name } = nr.names.find(name => name.choice === choice)
-            if (name.designation && name.name) {
-              newReqModule.mutateNameChoices({ key: `name${choice}`, value: name.name })
-              newReqModule.mutateNameChoices({ key: `designation${choice}`, value: name.designation })
-              continue
-            }
-            if (this.designationAtEnd) {
-              for (let item of this.items) {
-                if ([' LTD', ' INC', ' CORP'].some(des => name.endsWith(des))) {
-                  name = name + '.'
-                }
-                if (item) {
-                  if (name.endsWith(item)) {
-                    newReqModule.mutateNameChoices({ key: `designation${choice}`, value: item })
-                    let value = name.replace(item, '').trim()
-                    newReqModule.mutateNameChoices({ key: `name${choice}`, value })
-                  }
-                }
-              }
-              if (!nameChoices[`name${choice}`]) {
-                newReqModule.mutateNameChoices({ key: `name${choice}`, value: name })
-              }
-            } else {
-              newReqModule.mutateNameChoices({ key: `name${choice}`, value: name })
-            }
-          }
-          if (this.designationAtEnd) {
-            if (nameChoices[`name${choice}`] && nameChoices[`designation${choice}`]) {
-              if (nameChoices[`name${choice}`].endsWith(' ' + nameChoices[`designation${choice}`])) {
-                let newName = nameChoices[`name${choice}`].replace(nameChoices[`designation${choice}`], '').trim()
-                newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })
-              }
-            }
-          } else {
-            if (this.$designations[this.entity_type_cd].end && nameChoices[`designation${choice}`]) {
-              if (!nameChoices[`name${choice}`].endsWith(nameChoices[`designation${choice}`])) {
-                let newName = nameChoices[`name${choice}`] + ' ' + nameChoices[`designation${choice}`]
-                newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })
-              }
-            }
-          }
-        }
-      }
-    } else {
+    const { nameChoices } = this
+    if (nr && nr.names && Array.isArray(nr.names)) {
       for (let choice of [1, 2, 3]) {
         if (nr.names.find(name => name.choice === choice)) {
           let { name } = nr.names.find(name => name.choice === choice)
-          if (name.designation && !name.name.endsWith(name.designation)) {
-            name.name = name.name.trim() + ' ' + name.designation
+          if (name.designation && name.name) {
             newReqModule.mutateNameChoices({ key: `name${choice}`, value: name.name })
+            newReqModule.mutateNameChoices({ key: `designation${choice}`, value: name.designation })
+            continue
+          }
+          if (this.designationAtEnd) {
+            for (let item of this.items) {
+              if ([' LTD', ' INC', ' CORP'].some(des => name.endsWith(des))) {
+                name = name + '.'
+              }
+              if (item) {
+                if (name.endsWith(item)) {
+                  newReqModule.mutateNameChoices({ key: `designation${choice}`, value: item })
+                  let value = name.replace(item, '').trim()
+                  newReqModule.mutateNameChoices({ key: `name${choice}`, value })
+                }
+              }
+            }
+            if (!nameChoices[`name${choice}`]) {
+              newReqModule.mutateNameChoices({ key: `name${choice}`, value: name })
+            }
+          } else {
+            newReqModule.mutateNameChoices({ key: `name${choice}`, value: name })
+          }
+        }
+        if (this.designationAtEnd) {
+          if (nameChoices[`name${choice}`] && nameChoices[`designation${choice}`]) {
+            if (nameChoices[`name${choice}`].endsWith(' ' + nameChoices[`designation${choice}`])) {
+              let newName = nameChoices[`name${choice}`].replace(nameChoices[`designation${choice}`], '').trim()
+              newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })
+            }
+          }
+        } else {
+          if (this.$designations[this.entity_type_cd].end && nameChoices[`designation${choice}`]) {
+            if (!nameChoices[`name${choice}`].endsWith(nameChoices[`designation${choice}`])) {
+              let newName = nameChoices[`name${choice}`] + ' ' + nameChoices[`designation${choice}`]
+              newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })
+            }
           }
         }
       }
