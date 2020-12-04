@@ -274,14 +274,14 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
 
   /** True if the Check Status component should be shown. */
   private get showCheckStatus (): boolean {
-    return [NrState.DRAFT, NrState.INPROGRESS, NrState.ONHOLD].includes(this.nr.state)
+    return [NrState.DRAFT, NrState.IN_PROGRESS, NrState.ON_HOLD].includes(this.nr.state)
   }
 
   /** True if the NR Approved component should be shown. */
   private get showNrApproved (): boolean {
     return (
       !this.isBenefitCompany(this.nr) &&
-      [NrState.APPROVED, NrState.CONDITIONAL, NrState.COND_RESERVE].includes(this.nr.state)
+      [NrState.APPROVED, NrState.CONDITIONAL, NrState.COND_RESERVED].includes(this.nr.state)
     )
   }
 
@@ -295,7 +295,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
 
   /** True if the NR is in a conditional state. */
   private get isNrConditional (): boolean {
-    return [NrState.CONDITIONAL, NrState.COND_RESERVE].includes(this.nr.state)
+    return [NrState.CONDITIONAL, NrState.COND_RESERVED].includes(this.nr.state)
   }
 
   /** The display text for Expiry Extensions Remaining. */
@@ -313,9 +313,10 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
         if (this.isNrExpired) return 'Expired'
         return 'Completed' // should never happen
       }
+      case NrState.COND_RESERVED: return 'Approved' // show COND_RESERVED as "Approved"
       case NrState.CONDITIONAL: return 'Approved' // show CONDITIONAL as "Approved"
-      case NrState.ONHOLD: return 'In Progress' // show ONHOLD as "In Progress"
-      case NrState.INPROGRESS: return 'In Progress'
+      case NrState.ON_HOLD: return 'In Progress' // show ON_HOLD as "In Progress"
+      case NrState.IN_PROGRESS: return 'In Progress'
       case NrState.REFUND_REQUESTED: return 'Cancelled, Refund Requested'
       default: return this.toTitleCase(this.nr.state)
     }
@@ -394,7 +395,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
       switch (action) {
         case NrAction.EDIT:
           // eslint-disable-next-line no-case-declarations
-          const doCheckout = ([NrState.DRAFT, NrState.INPROGRESS].indexOf(newReqModule.nrState) > -1)
+          const doCheckout = ([NrState.DRAFT, NrState.IN_PROGRESS].indexOf(newReqModule.nrState) > -1)
           // eslint-disable-next-line no-case-declarations
           let success: boolean | undefined
           if (doCheckout) {

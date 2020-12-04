@@ -4,16 +4,16 @@ import { EntityType } from '@/enums'
 @Component
 export default class CommonMixin extends Vue {
   /** Returns the specified string in Title Case. */
-  toTitleCase (str: any): string {
+  toTitleCase (str: string): string {
     return str && str
       .toLowerCase()
       .split(' ')
-      .map(word => word.replace(word[0], word[0].toUpperCase()))
+      .map((word: string) => word.replace(word[0], word[0].toUpperCase()))
       .join(' ')
   }
 
   /** Returns entity type text for the the specified code. */
-  entityTypeCdToText (cd: string): string {
+  entityTypeCdToText (cd: EntityType): string {
     switch (cd) {
       // BC Entity Types:
       case EntityType.FR: return 'BC Sole Proprietorship'
