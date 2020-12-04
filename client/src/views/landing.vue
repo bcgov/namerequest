@@ -13,8 +13,9 @@
               </template>
               <p>The Name Request website is available as a Beta version. Name Requests obtained through the Beta are
                 official name requests and can be used in the province of British Columbia.</p>
-              <p>As part of a new <u>agile software development process</u>, the Name Request website will be
-                continually updated and improved based on feedback from citizens and businesses in BC.</p>
+              <p>As part of a new <u><a :href="agileUrl"></a>agile software development process</u>, the Name Request
+                website will be continually updated and improved based on feedback from citizens and businesses in
+                BC.</p>
             </v-tooltip>
           </span>
         </v-col>
@@ -66,6 +67,8 @@ import newRequestModule from '@/store/new-request-module'
 })
 export default class Landing extends Vue {
   @Prop(String) id: string
+  private agileUrl = 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business' +
+    '/permits-licences/news-updates/modernization'
 
   mounted () {
     const { id } = this
@@ -105,5 +108,8 @@ export default class Landing extends Vue {
   font-size: 19px;
   font-weight: bold;
   text-transform: uppercase;
+  &:hover {
+    cursor: default;
+  }
 }
 </style>

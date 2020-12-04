@@ -93,6 +93,8 @@ export default class Stats extends Vue {
   background-repeat: no-repeat
   display: flex
   align-items: center
+  &:hover
+    cursor: default
 
 .stats-unit
   display: block
