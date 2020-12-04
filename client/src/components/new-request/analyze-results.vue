@@ -485,8 +485,6 @@ export default class AnalyzeResults extends Vue {
     return false
   }
   get headerProps () {
-    // eslint-disable-next-line no-console
-    console.log(this.json)
     if (this.json.status === 'Available') {
       return {
         class: 'approved',

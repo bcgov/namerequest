@@ -13,7 +13,7 @@
               </template>
               <p>The Name Request website is available as a Beta version. Name Requests obtained through the Beta are
                 official name requests and can be used in the province of British Columbia.</p>
-              <p>As part of a new <u><a :href="agileUrl"></a>agile software development process</u>, the Name Request
+              <p>As part of a new <a class="" :href="agileUrl">agile software development process</a>, the Name Request
                 website will be continually updated and improved based on feedback from citizens and businesses in
                 BC.</p>
             </v-tooltip>
@@ -111,5 +111,8 @@ export default class Landing extends Vue {
   &:hover {
     cursor: default;
   }
+}
+.v-application a {
+  color: white;
 }
 </style>
