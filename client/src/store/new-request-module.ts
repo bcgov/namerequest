@@ -875,8 +875,11 @@ export class NewRequestModule extends VuexModule {
     }
   }
   get currentIssue () {
-    if (this.analysisJSON && this.analysisJSON.issues && Array.isArray(this.analysisJSON.issues)) {
-      return this.analysisJSON.issues[this.issueIndex]
+    const { analysisJSON } = this
+    if (!analysisJSON) return {}
+
+    if (analysisJSON && analysisJSON.issues && Array.isArray(analysisJSON.issues)) {
+      return analysisJSON.issues[this.issueIndex]
     }
     return {}
   }
@@ -904,11 +907,15 @@ export class NewRequestModule extends VuexModule {
     let output: ConsentConflictI = {
       name: ''
     }
+
+    const { analysisJSON } = this
+    if (!analysisJSON) return output
+
     for (let key in this.requestExaminationOrProvideConsent) {
       if (this.requestExaminationOrProvideConsent[key].conflict_self_consent) {
-        output.name = this.analysisJSON.issues[key].conflicts[0].name
-        if (this.analysisJSON.issues[key].conflicts[0].id) {
-          output.corpNum = this.analysisJSON.issues[key].conflicts[0].id
+        output.name = analysisJSON.issues[key].conflicts[0].name
+        if (analysisJSON.issues[key].conflicts[0].id) {
+          output.corpNum = analysisJSON.issues[key].conflicts[0].id
         }
       }
     }
@@ -916,9 +923,13 @@ export class NewRequestModule extends VuexModule {
   }
   get consentWords () {
     let consentWords = []
+
+    const { analysisJSON } = this
+    if (!analysisJSON) return consentWords
+
     for (let step in this.requestExaminationOrProvideConsent) {
       if (this.requestExaminationOrProvideConsent[step].obtain_consent) {
-        let words = this.analysisJSON.issues[step].name_actions.map(action => action.word)
+        let words = analysisJSON.issues[step].name_actions.map(action => action.word)
         consentWords = consentWords.concat(words)
       }
     }
