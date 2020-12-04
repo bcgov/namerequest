@@ -164,7 +164,7 @@
                 <v-col cols="12" class="copy-normal pt-2">
                   <v-row justify="center">
                     <v-col cols="auto">
-                     The name has passed initial checks and is ready to send to staff for a final decision.
+                     This name has passed initial checks and is ready to send to staff for a final decision.
                     </v-col>
                   </v-row>
                   <v-row justify="center">
