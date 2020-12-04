@@ -54,12 +54,12 @@ export default class MainContainer extends Mixins(SessionTimerMixin, DisplayedCo
   @Watch('componentName')
   async onDisplayedComponentChanged () {
     const componentName = newReqModule.displayedComponent
-    if (['SubmissionTabs'].indexOf(componentName) > -1) {
+    if (['SubmissionTabs'].indexOf(componentName) > -1 && this.$NR_COMPLETION_TIMEOUT_MS > 0) {
       await this.startNewNrTimer()
       this.$set(this, 'displayTimer', true)
       this.$set(this, 'timerName', this.$NR_COMPLETION_TIMER_NAME)
       this.$set(this, 'countdownMins', this.$NR_COMPLETION_TIMEOUT_MS / 1000 / 60)
-    } else if (['ExistingRequestEdit'].indexOf(componentName) > -1) {
+    } else if (['ExistingRequestEdit'].indexOf(componentName) > -1 && this.$EXISTING_NR_TIMEOUT_MS > 0) {
       await this.startExistingNrTimer()
       this.$set(this, 'displayTimer', true)
       this.$set(this, 'timerName', this.$EXISTING_NR_TIMER_NAME)

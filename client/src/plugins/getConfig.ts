@@ -6,18 +6,12 @@ export interface EnvConfigI {
     // NEW NR completion timer
     $NR_COMPLETION_TIMER_NAME?: string
     $NR_COMPLETION_TIMEOUT_MS?: number
-    // ** ONLY for use when developing locally
-    $DEV_NR_COMPLETION_TIMEOUT_MS?: number
     // EXISTING NR timer
     $EXISTING_NR_TIMER_NAME?: string
     $EXISTING_NR_TIMEOUT_MS?: number
-    // ** ONLY for use when developing locally
-    $DEV_EXISTING_NR_TIMEOUT_MS?: number
     // PAYMENT timer
     $PAYMENT_COMPLETION_TIMER_NAME?: string
     $PAYMENT_COMPLETION_TIMEOUT_MS?: number
-    // ** ONLY for use when developing locally
-    $DEV_PAYMENT_COMPLETION_TIMEOUT_MS?: number
 }
 
 // Detailed commentary on how this works @ github.com/bcgov/business-filings-ui/utils/fetch-config.ts
@@ -80,19 +74,18 @@ export function getConfig (): Promise<EnvConfigI> {
 
     axios.defaults.baseURL = baseURL
 
+    const appIsRunningLocally = !!(window['webpackHotUpdate'])
+
     const config: EnvConfigI = {
       // NB: window['webpackHotUpdate'] is a function when running locally, otherwise it's undefined
-      $APP_IS_RUNNING_LOCALLY: !!(window['webpackHotUpdate']),
+      $APP_IS_RUNNING_LOCALLY: appIsRunningLocally,
       $PAYMENT_PORTAL_URL: paymentUrl,
       $NR_COMPLETION_TIMER_NAME: nrCompletionTimerName,
-      $NR_COMPLETION_TIMEOUT_MS: nrCompletionTimeoutMs,
-      $DEV_NR_COMPLETION_TIMEOUT_MS: nrCompletionTimeoutMs_dev,
+      $NR_COMPLETION_TIMEOUT_MS: !appIsRunningLocally ? nrCompletionTimeoutMs : nrCompletionTimeoutMs_dev,
       $EXISTING_NR_TIMER_NAME: existingNrTimerName,
-      $EXISTING_NR_TIMEOUT_MS: existingNrTimeoutMs,
-      $DEV_EXISTING_NR_TIMEOUT_MS: existingNrTimeoutMs_dev,
+      $EXISTING_NR_TIMEOUT_MS: !appIsRunningLocally ? existingNrTimeoutMs : existingNrTimeoutMs_dev,
       $PAYMENT_COMPLETION_TIMER_NAME: paymentCompletionTimerName,
-      $PAYMENT_COMPLETION_TIMEOUT_MS: paymentCompletionTimeoutMs,
-      $DEV_PAYMENT_COMPLETION_TIMEOUT_MS: paymentCompletionTimeoutMs_dev
+      $PAYMENT_COMPLETION_TIMEOUT_MS: appIsRunningLocally ? paymentCompletionTimeoutMs : paymentCompletionTimeoutMs_dev
     }
     resolve(config)
   })
