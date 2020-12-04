@@ -347,7 +347,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
 
   /** The NR's (first) approved name object, if any. */
   private get approvedName (): any {
-    return this.nr.names.find(name => [NameState.APPROVED, NameState.CONDITION].includes(name.state))
+    return this.nr.names.find(name => [NameState.APPROVED, NameState.CONDITIONAL].includes(name.state))
   }
 
   /** True if the Approved Name is consumed. */
@@ -437,11 +437,6 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     } else {
       newReqModule.setActiveComponent('InvalidActionMessage')
     }
-  }
-
-  async goBack () {
-    await newReqModule.cancelEditExistingRequest()
-    newReqModule.cancelAnalyzeName('Tabs')
   }
 
   private async refresh (event) {

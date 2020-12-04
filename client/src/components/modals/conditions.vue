@@ -22,7 +22,7 @@ import { NameState } from '@/enums'
 @Component({})
 export default class ConditionsModal extends Vue {
   get nameObject () {
-    const name = (this.nrNames || []).find(name => name.state === NameState.CONDITION && name.decision_text)
+    const name = (this.nrNames || []).find(name => name.state === NameState.CONDITIONAL && name.decision_text)
     return name || {}
   }
   get showModal () {

@@ -1,7 +1,7 @@
 /** Enum for Name State. */
 export enum NameState {
   APPROVED = 'APPROVED',
-  CONDITION = 'CONDITION',
-  NE = 'NE',
+  CONDITIONAL = 'CONDITION',
+  NOT_EXAMINED = 'NE',
   REJECTED = 'REJECTED',
 }
