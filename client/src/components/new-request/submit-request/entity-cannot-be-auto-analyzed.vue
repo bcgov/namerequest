@@ -6,9 +6,9 @@
       <v-row class="text-center">
         <v-col cols="12" class="h5 text-center py-0 mt-3">Further Information</v-col>
       </v-row>
-      <v-row class="text-center" v-if="boxes">
+      <v-row class="text-center">
         <v-col cols="12"
-               class="text-center pb-0 mb-n4"
+               class="text-center pb-0"
                v-html="title" />
         <v-col v-for="(box, i) in boxes" :key="'box-'+i" class="pb-0">
           <v-container class="copy-small text-left" :class="box.class">

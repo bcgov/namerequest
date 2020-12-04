@@ -91,8 +91,8 @@ describe('AnalyzeResults', () => {
           await wrapper.vm.$nextTick()
           done()
         })
-        test('You may proceed message is displayed', async () => {
-          expect(wrapper.text()).toContain('You May Proceed')
+        test('Further Action required message to be displayed', async () => {
+          expect(wrapper.text()).toContain('Further Action Required')
         })
         test(`this.name === ${data.corrected}`, () => {
           expect(wrapper.vm.name).toBe(data.corrected)

@@ -20,6 +20,7 @@
                     id="name-input-icon"
                     color="primary"
                     v-on="scope.on"
+                    :disabled="!isCorpNumValid"
                     @click="startAnalyzeName">mdi-magnify</v-icon>
           </template>
           Search Again
@@ -86,7 +87,7 @@ export default class NameInput extends Vue {
     newReqModule.clearErrors()
   }
   handleSubmit (event: KeyboardEvent) {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && this.isCorpNumValid) {
       event.preventDefault()
       this.startAnalyzeName()
       return
