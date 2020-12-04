@@ -1,6 +1,6 @@
 <template>
   <div id="names-container" class="bg-light-gray">
-    <div class="name-container text-name">
+    <div class="px-5 py-4 text-name cursor-help">
       <v-tooltip right v-for="name of names" :key="name.choice" content-class="tooltip">
         <template v-slot:activator="{ on, attrs }">
           <div v-bind="attrs" v-on="on" :class="getClass(name)">
@@ -66,11 +66,6 @@ export default class NamesGrayBox extends Vue {
   display: flex;
   flex-wrap: wrap;
   flex: 1 1 auto;
-}
-
-.name-container {
-  padding: 1.25rem 1rem;
-  cursor: help;
 }
 
 .tooltip {
