@@ -22,6 +22,19 @@
     line-height: 1.375rem !important;
   }
 
+  .text-body-3 {
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.375rem;
+  }
+
+  .text-body-4 {
+    font-family: inherit;
+    font-size: 0.875rem;
+    line-height: 1.375rem;
+    color: $text;
+  }
+
   .text-name {
     font-family: inherit;
     font-size: 1.125rem;

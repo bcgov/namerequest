@@ -8,7 +8,7 @@
     </template>
 
     <template v-slot:content>
-      <names-block
+      <names-gray-box
         v-if="nr.nrNum"
         class="mt-5"
         :names="names"
@@ -18,7 +18,7 @@
         <v-row v-if="disableUnfurnished" class="mx-0 mt-5 bg-light-blue" :key="furnished">
           <v-col cols="12" class="font-italic px-4" key="initial-msg">
             We are currently processing your request.
-            Click<a class="link" href="#" @click.prevent="refresh">&nbsp;Refresh&nbsp;</a>
+            Click<a class="link" href="#" @click.prevent="refresh()">&nbsp;Refresh&nbsp;</a>
             {{ $route.query && $route.query.paymentId ? '' : 'or retry your search ' }}
             after 5 minutes to enable all the buttons.
           </v-col>
@@ -43,13 +43,13 @@
                   </v-icon>
                   <a href="#"
                     class="link-sm ml-1"
-                    v-if="nr.state === NrState.CONDITIONAL"
+                    v-if="isNrConditional"
                     @click.prevent="showConditionsModal()"
                   >Conditions</a>
                 </v-col>
                 <v-col cols="12">
                   <span>Priority Request:</span>
-                  &nbsp;{{ isPriorityReq ? 'Yes' : 'No' }}
+                  &nbsp;{{ isPriorityReq(nr) ? 'Yes' : 'No' }}
                 </v-col>
                 <v-col cols="12" v-if="expiryDate">
                   <span>Expiry Date:</span>
@@ -95,8 +95,28 @@
             </v-col>
           </v-row>
 
+          <check-status-gray-box
+            class="mt-5"
+            v-if="showCheckStatus"
+            :nrNum="nr.nrNum"
+          />
+
+          <nr-approved-gray-box
+            class="mt-5"
+            v-if="showNrApproved"
+            :nrNum="nr.nrNum"
+            :approvedName="approvedName && approvedName.name"
+            :emailAddress="nr.applicants.emailAddress"
+          />
+
+          <nr-not-approved-gray-box
+            class="mt-5"
+            v-if="showNrNotApproved"
+            :nrNum="nr.nrNum"
+          />
+
           <!-- incorporate button -->
-          <div v-if="showIncorporateButton" class="mt-5 text-center">
+          <div class="mt-5 text-center" v-if="showIncorporateButton">
             <v-btn @click="handleButtonClick(NrAction.INCORPORATE)">Incorporate Using This Name Request</v-btn>
           </div>
         </v-container>
@@ -118,11 +138,20 @@ import DateMixin from '@/components/mixins/date-mixin'
 import paymentModule from '@/modules/payment'
 import timerModule from '@/modules/vx-timer'
 import * as types from '@/store/types'
-import NamesBlock from './names-block.vue'
+import NamesGrayBox from './names-gray-box.vue'
+import CheckStatusGrayBox from './check-status-gray-box.vue'
+import NrApprovedGrayBox from './nr-approved-gray-box.vue'
+import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
 import { NameState, NrAction, NrState } from '@/enums'
 
 @Component({
-  components: { MainContainer, NamesBlock },
+  components: {
+    MainContainer,
+    NamesGrayBox,
+    CheckStatusGrayBox,
+    NrApprovedGrayBox,
+    NrNotApprovedGrayBox
+  },
   computed: {
     ...mapGetters(['isAuthenticated'])
   }
@@ -136,20 +165,17 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   // external getter
   readonly isAuthenticated!: boolean
 
-  /**
-   * "checking" is True while refreshing the NR.
-   * (Not used in template at the moment.)
-   */
+  /** This is True while refreshing the NR. (Not used in template at the moment.) */
   private checking = false
 
   /**
-   * "refreshCount" is used in the template as the transition key for the affected template,
+   * This is used in the template as the transition key for the affected template,
    * triggering a fade in/out.
    */
   private refreshCount = 0
 
   /**
-   * "furnished" is used in the template at the transition key for the affected template,
+   * This is used in the template at the transition key for the affected template,
    * triggering a fade in/out.
    */
   private furnished = 'notfurnished'
@@ -166,7 +192,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     })
   }
 
-  get address () {
+  private get address () {
     const fields = ['addrLine2', 'city', 'stateProvinceCd', 'countryCd', 'postalCd']
     let output: string = this.nr.applicants.addrLine1
     for (let field of fields) {
@@ -177,7 +203,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     return output
   }
 
-  get addressLines () {
+  private get addressLines () {
     const output = [ this.nr.applicants.addrLine1 ]
     if (this.nr.applicants.addrLine2) {
       output.push(this.nr.applicants.addrLine2)
@@ -185,33 +211,33 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     return output
   }
 
-  get cityProvPostal () {
+  private get cityProvPostal () {
     const { applicants } = this.nr
     return applicants.city + ', ' + applicants.stateProvinceCd + ', ' + applicants.postalCd
   }
 
-  get consentDate () {
+  private get consentDate () {
     if (this.nr.consent_dt) {
       return Moment(this.nr.consent_dt).utc().format('MMM Do[,] YYYY')
     }
     return 'Not Yet Received'
   }
 
-  get expiryDate () {
+  private get expiryDate () {
     if (this.nr.expirationDate) {
       return Moment(this.nr.expirationDate).format('MMM Do[,] YYYY')
     }
     return ''
   }
 
-  get lastUpdate () {
+  private get lastUpdate () {
     if (this.nr.lastUpdate) {
       return Moment(this.nr.lastUpdate).format('MMM Do[,] YYYY')
     }
     return ''
   }
 
-  get disableUnfurnished (): boolean {
+  private get disableUnfurnished (): boolean {
     return (
       this.nr.furnished === 'N' &&
       [NrState.CONDITIONAL, NrState.REJECTED, NrState.APPROVED].includes(this.nr.stateCd)
@@ -219,7 +245,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   }
 
   /** The names list, sorted by choice number. */
-  get names () {
+  private get names () {
     return this.nr.names.sort((a, b) => {
       if (a.choice > b.choice) {
         return 1
@@ -231,12 +257,8 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     })
   }
 
-  get nr () {
+  private get nr () {
     return newReqModule.nr
-  }
-
-  get isPriorityReq () {
-    return (this.nr && this.nr.priorityCd && this.nr.priorityCd === 'Y')
   }
 
   /**
@@ -244,7 +266,36 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
    * (It is shown as a distinct button instead of an action.)
    */
   private get showIncorporateButton (): boolean {
-    return this.actions.includes(NrAction.INCORPORATE)
+    return (
+      this.isBenefitCompany(this.nr) &&
+      this.actions.includes(NrAction.INCORPORATE)
+    )
+  }
+
+  /** True if the Check Status component should be shown. */
+  private get showCheckStatus (): boolean {
+    return [NrState.DRAFT, NrState.IN_PROGRESS, NrState.ON_HOLD].includes(this.nr.state)
+  }
+
+  /** True if the NR Approved component should be shown. */
+  private get showNrApproved (): boolean {
+    return (
+      !this.isBenefitCompany(this.nr) &&
+      [NrState.APPROVED, NrState.CONDITIONAL, NrState.COND_RESERVED].includes(this.nr.state)
+    )
+  }
+
+  /** True if the NR NotApproved component should be shown. */
+  private get showNrNotApproved (): boolean {
+    return (
+      this.isXProCompany(this.nr) &&
+      (this.nr.state === NrState.REJECTED)
+    )
+  }
+
+  /** True if the NR is in a conditional state. */
+  private get isNrConditional (): boolean {
+    return [NrState.CONDITIONAL, NrState.COND_RESERVED].includes(this.nr.state)
   }
 
   /** The display text for Expiry Extensions Remaining. */
@@ -262,15 +313,16 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
         if (this.isNrExpired) return 'Expired'
         return 'Completed' // should never happen
       }
-      case NrState.CONDITIONAL: return 'Conditional Approval'
-      case NrState.HOLD: return 'In Progress' // this is not a typo
-      case NrState.INPROGRESS: return 'In Progress'
+      case NrState.COND_RESERVED: return 'Approved' // show COND_RESERVED as "Approved"
+      case NrState.CONDITIONAL: return 'Approved' // show CONDITIONAL as "Approved"
+      case NrState.ON_HOLD: return 'In Progress' // show ON_HOLD as "In Progress"
+      case NrState.IN_PROGRESS: return 'In Progress'
       case NrState.REFUND_REQUESTED: return 'Cancelled, Refund Requested'
       default: return this.toTitleCase(this.nr.state)
     }
   }
 
-  /** Whether this NR is consumed. */
+  /** True if the NR is consumed. */
   private get isNrConsumed (): boolean {
     // consumed = NR is completed + a name is approved + approved name is consumed
     return (this.isNrCompleted &&
@@ -278,8 +330,8 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
       this.isApprovedNameConsumed)
   }
 
-  // TODO: removed this when EXPIRED state is implemented (ticket #5669)
-  /** Whether this NR is expired. */
+  // FUTURE: remove this when EXPIRED state is implemented (ticket #5669)
+  /** True if the NR is expired. */
   private get isNrExpired (): boolean {
     // expired = NR is completed + a name is approved + approved name is not consumed + expiry date has passed
     return (this.isNrCompleted &&
@@ -288,7 +340,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
       this.hasExpirationDatePassed)
   }
 
-  /** Whether this NR is in Completed state. */
+  /** True if NR is in Completed state. */
   private get isNrCompleted (): boolean {
     return (this.nr.state === NrState.COMPLETED)
   }
@@ -298,13 +350,13 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     return this.nr.names.find(name => [NameState.APPROVED, NameState.CONDITION].includes(name.state))
   }
 
-  /** Whether the Approved Name is consumed. */
+  /** True if the Approved Name is consumed. */
   private get isApprovedNameConsumed (): boolean {
     // consumed = name is approved + has a consumption date + has a corp num
     return (!!this.approvedName?.consumptionDate && !!this.approvedName?.corpNum)
   }
 
-  /** Whether the NR's expiration date has passed. */
+  /** True if the NR's expiration date has passed. */
   private get hasExpirationDatePassed (): boolean {
     const expireDays = this.daysFromToday(this.nr.expirationDate)
     // 0 means today (which means it's expired)
@@ -326,23 +378,24 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   /** Returns display text for the specified action code. */
   private actionText (action: NrAction): string {
     switch (action) {
-      case NrAction.UPGRADE: return 'Upgrade Priority ($100)'
+      case NrAction.CANCEL: return 'Cancel Name Request'
       case NrAction.REAPPLY: return 'Extend Expiry ($30)'
-      case NrAction.RESULTS: return 'Download Results'
       case NrAction.RECEIPTS: return 'Download Receipts'
       case NrAction.REFUND: return 'Cancel and Refund'
-      case NrAction.CANCEL: return 'Cancel Name Request'
+      case NrAction.RESEND: return 'Resend Email' // FUTURE: will be removed
+      case NrAction.RESULTS: return 'Download Results' // FUTURE: will be implemented
+      case NrAction.UPGRADE: return 'Upgrade Priority ($100)'
       default: return this.toTitleCase(action)
     }
   }
 
-  async handleButtonClick (action) {
+  private async handleButtonClick (action) {
     let outcome = await newReqModule.confirmAction(action)
     if (outcome) {
       switch (action) {
         case NrAction.EDIT:
           // eslint-disable-next-line no-case-declarations
-          const doCheckout = ([NrState.DRAFT, NrState.INPROGRESS].indexOf(newReqModule.nrState) > -1)
+          const doCheckout = ([NrState.DRAFT, NrState.IN_PROGRESS].indexOf(newReqModule.nrState) > -1)
           // eslint-disable-next-line no-case-declarations
           let success: boolean | undefined
           if (doCheckout) {
@@ -391,7 +444,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     newReqModule.cancelAnalyzeName('Tabs')
   }
 
-  async refresh (event) {
+  private async refresh (event) {
     this.refreshCount += 1
     this.checking = true
     try {
@@ -406,12 +459,12 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     }
   }
 
-  showConditionsModal () {
+  private showConditionsModal () {
     newReqModule.mutateConditionsModalVisible(true)
   }
 
   /** Affiliates the current NR if authenticated, or prompts login if unauthenticated. */
-  async affiliateOrLogin (): Promise<any> {
+  private async affiliateOrLogin (): Promise<any> {
     if (this.isAuthenticated) {
       await this.createAffiliation(this.nr)
     } else {

@@ -105,8 +105,8 @@
               </v-col>
               <ul class="contact-info-list">
                 <li>Toll Free: <a href="tel:1-877-370-1033" class="white--text">1-877-370-1033</a></li>
-                <li>Phone: <a href="tel:250-370-1033" class="white--text">250-370-1033</a></li>
-                <li>Email: <a href="mailto:bcregistries@gov.bc.ca" class="white--text">bcregistries@gov.bc.ca</a></li>
+                <li>Victoria Office: <a href="tel:250-370-1033" class="white--text">250-370-1033</a></li>
+                <li>Email: <a href="mailto:bcregistries@gov.bc.ca" class="white--text">BCRegistries@gov.bc.ca</a></li>
               </ul>
               <v-col cols="12" class="pb-0 px-0 font-weight-bold">Hours of Operation:</v-col>
               <v-col cols="12" class="pt-0 px-0">Monday to Friday, 8:30am - 4:30pm Pacific Time</v-col>
