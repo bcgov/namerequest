@@ -29,10 +29,7 @@ import DisplayedComponentMixin from '@/components/mixins/displayed-component-mix
 import SessionTimerMixin from '@/components/session-timer/session-timer-mixin'
 import CountdownTimer from '@/components/session-timer/countdown-timer.vue'
 
-import newReqModule, {
-  EXISTING_NR_TIMER_NAME, EXISTING_NR_TIMEOUT_MS,
-  NR_COMPLETION_TIMER_NAME, NR_COMPLETION_TIMEOUT_MS
-} from '@/store/new-request-module'
+import newReqModule from '@/store/new-request-module'
 import timerModule from "@/modules/vx-timer"
 
 @Component({
@@ -60,13 +57,13 @@ export default class MainContainer extends Mixins(SessionTimerMixin, DisplayedCo
     if (['SubmissionTabs'].indexOf(componentName) > -1) {
       await this.startNewNrTimer()
       this.$set(this, 'displayTimer', true)
-      this.$set(this, 'timerName', NR_COMPLETION_TIMER_NAME)
-      this.$set(this, 'countdownMins', NR_COMPLETION_TIMEOUT_MS / 1000 / 60)
+      this.$set(this, 'timerName', this.$NR_COMPLETION_TIMER_NAME)
+      this.$set(this, 'countdownMins', this.$NR_COMPLETION_TIMEOUT_MS / 1000 / 60)
     } else if (['ExistingRequestEdit'].indexOf(componentName) > -1) {
       await this.startExistingNrTimer()
       this.$set(this, 'displayTimer', true)
-      this.$set(this, 'timerName', EXISTING_NR_TIMER_NAME)
-      this.$set(this, 'countdownMins', EXISTING_NR_TIMEOUT_MS / 1000 / 60)
+      this.$set(this, 'timerName', this.$EXISTING_NR_TIMER_NAME)
+      this.$set(this, 'countdownMins', this.$EXISTING_NR_TIMEOUT_MS / 1000 / 60)
     }
   }
 }

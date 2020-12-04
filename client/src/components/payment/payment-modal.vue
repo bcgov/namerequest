@@ -47,9 +47,6 @@ import DisplayedComponentMixin from '@/components/mixins/displayed-component-mix
 
 import { getBaseUrl } from './payment-utils'
 
-export const PAYMENT_COMPLETION_TIMER_NAME = 'paymentCompletionTimer'
-export const PAYMENT_COMPLETION_TIMEOUT_MS = 2 * (60 * 1000) // Set to 2 minutes
-
 @Component({
   components: {
     RequestDetails,
@@ -79,7 +76,7 @@ export default class PaymentModal extends Mixins(
   DisplayedComponentMixin
 ) {
   get timerName () {
-    return PAYMENT_COMPLETION_TIMER_NAME
+    return this.$PAYMENT_COMPLETION_TIMER_NAME
   }
 
   @Watch('isVisible')

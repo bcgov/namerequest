@@ -111,7 +111,7 @@ import { mapGetters } from 'vuex'
 import Moment from 'moment'
 
 import MainContainer from '@/components/new-request/main-container.vue'
-import newReqModule, { EXISTING_NR_TIMER_NAME, EXISTING_NR_TIMEOUT_MS } from '@/store/new-request-module'
+import newReqModule from '@/store/new-request-module'
 import NrAffiliationMixin from '@/components/mixins/nr-affiliation-mixin'
 import CommonMixin from '@/components/mixins/common-mixin'
 import DateMixin from '@/components/mixins/date-mixin'

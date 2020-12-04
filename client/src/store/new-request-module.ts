@@ -44,12 +44,6 @@ const qs: any = querystring
 const ANALYSIS_TIMEOUT_MS = 3 * 60 * 1000 // 3 minutes
 let source: any
 
-export const NR_COMPLETION_TIMER_NAME = 'nrCompletionTimer'
-export const EXISTING_NR_TIMER_NAME = 'existingNrTimer'
-
-export const NR_COMPLETION_TIMEOUT_MS = 300000
-export const EXISTING_NR_TIMEOUT_MS = 300000
-
 export class ApiError extends Error {}
 
 function isAxiosError (err: AxiosError | Error): err is AxiosError {
