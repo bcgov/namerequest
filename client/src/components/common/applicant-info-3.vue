@@ -1,11 +1,9 @@
 <template>
-  <v-form v-model="isValid" ref="step2" id="applicant-info-3-form">
-    <v-container fluid class="pa-0">
+  <v-form v-model="isValid" ref="step3" id="applicant-info-3-form">
+    <v-container fluid class="pa-0 pt-2">
       <v-row>
-        <v-col cols="2" class="h5" align-self="start">
-        Contact Info
-        </v-col>
-        <v-col cols="5">
+        <v-col cols="2" class="h6">Contact Info</v-col>
+        <v-col cols="5" class="py-0">
           <v-text-field :messages="messages['contact']"
                         :value="applicant.contact"
                         @blur="messages = {}"
@@ -15,7 +13,7 @@
                         hide-details="auto"
                         placeholder="Contact Name (if is not applicant, optional)" />
         </v-col>
-        <v-col cols="5">
+        <v-col cols="5" class="py-0">
           <v-text-field :messages="messages['email']"
                         :rules="emailRules"
                         :value="applicant.emailAddress"
@@ -50,10 +48,9 @@
                         placeholder="Fax Number (Optional)" />
         </v-col>
       </v-row>
+
       <v-row>
-        <v-col cols="2" class="h5" align-self="start">
-          Client
-        </v-col>
+        <v-col cols="2" class="h6">Client</v-col>
         <v-col cols="5">
           <v-text-field :messages="messages['clientLast']"
                         :value="applicant.clientLastName"
@@ -75,10 +72,9 @@
                         placeholder="First Name" />
         </v-col>
       </v-row>
+
       <v-row v-if="showAllFields">
-        <v-col cols="2" class="h5" align-self="start">
-          About The Business
-        </v-col>
+        <v-col cols="2" class="h6">About The Business</v-col>
         <v-col cols="5" align-self="start">
           <v-textarea :messages="messages['nature']"
                       :rules="requiredRule"
@@ -136,16 +132,21 @@
                         placeholder="Registered Trademark (Optional)" />
         </v-col>
       </v-row>
+
       <v-row>
         <v-col cols="2" />
-        <v-col cols="5" align-self="end" class="mt-1" v-if="showPriorityRequest">
-          <v-checkbox v-model="priorityRequest" class="ma-0 pa-0">
+        <v-col cols="5" align-self="center" class="py-0" v-if="showPriorityRequest">
+          <v-checkbox
+            hide-details
+            v-model="priorityRequest"
+            class="mt-0 pt-0"
+          >
             <template v-slot:label>
-              Priority Request - <b>$100 Fee</b>
+              <span>Priority Request - <b>$100 Fee</b></span>
             </template>
           </v-checkbox>
         </v-col>
-        <v-col v-else cols="5" />
+        <v-col v-else cols="5" class="py-0" />
         <ApplicantInfoNav :isValid="isValid" />
       </v-row>
     </v-container>
@@ -281,8 +282,8 @@ export default class ApplicantInfo3 extends Vue {
     }
   }
   clearValidation () {
-    if (this.$refs.step2 as Vue) {
-      (this.$refs.step2 as any).resetValidation()
+    if (this.$refs.step3 as Vue) {
+      (this.$refs.step3 as any).resetValidation()
     }
     this.corpNumError = ''
   }
@@ -326,8 +327,8 @@ export default class ApplicantInfo3 extends Vue {
     if (this.hideCorpNum !== 'auto') {
       this.hideCorpNum = 'auto'
     }
-    if (this.$refs.step2 as any) {
-      (this.$refs.step2 as any).validate()
+    if (this.$refs.step3 as any) {
+      (this.$refs.step3 as any).validate()
     }
   }
 }

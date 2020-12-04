@@ -112,23 +112,25 @@ export default class RequestDetails extends Vue {
 </script>
 
 <style lang="scss">
-  .choice-indicator {
-    background-color: #002e5e;
-    color: white;
-    border-radius: 100%;
-    width: 1.75rem;
-    height: 1.75rem;
-    margin-right: 0.5rem;
-    margin-bottom: 5px;
-    box-sizing: border-box;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 0.8rem;
-    font-weight: bold;
-  }
+@import "@/assets/scss/theme.scss";
 
-  h4 {
-    font-weight: bold !important;
-  }
+.choice-indicator {
+  background-color: $gray9;
+  color: white;
+  border-radius: 100%;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-right: 0.5rem;
+  margin-bottom: 5px;
+  box-sizing: border-box;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+h4 {
+  font-weight: bold !important;
+}
 </style>

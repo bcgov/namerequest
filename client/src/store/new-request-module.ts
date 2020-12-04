@@ -207,6 +207,7 @@ export class NewRequestModule extends VuexModule {
     }
   ]
   corpNum: string = ''
+  corpSearch: string = ''
   designationIssueTypes = [
     'designation_non_existent',
     'designation_mismatch',
@@ -707,6 +708,8 @@ export class NewRequestModule extends VuexModule {
   issueIndex: number = 0
   location: LocationT = 'BC'
   locationInfoModalVisible: boolean = false
+  mrasSearchInfoModalVisible: boolean = false
+  mrasSearchResultCode: number = null
   name: string = ''
   nameChoices = {
     name1: '',
@@ -718,6 +721,7 @@ export class NewRequestModule extends VuexModule {
   }
   nameIsEnglish: boolean = true
   nameAnalysisTimedOut: boolean = false
+  noCorpNum: boolean = false
   nr: Partial<NameRequestI> = {} as NameRequestI
   nrData = {
     additionalInfo: '',
@@ -735,26 +739,31 @@ export class NewRequestModule extends VuexModule {
   pickRequestTypeModalVisible: boolean = false
   priorityRequest: boolean = false
   request_action_cd: string = 'NEW'
+  request_jurisdiction_cd: string = ''
   requestExaminationOrProvideConsent = {
     0: {
       send_to_examiner: false,
       obtain_consent: false,
-      conflict_self_consent: false
+      conflict_self_consent: false,
+      assumed_name: false
     },
     1: {
       send_to_examiner: false,
       obtain_consent: false,
-      conflict_self_consent: false
+      conflict_self_consent: false,
+      assumed_name: false
     },
     2: {
       send_to_examiner: false,
       obtain_consent: false,
-      conflict_self_consent: false
+      conflict_self_consent: false,
+      assumed_name: false
     },
     3: {
       send_to_examiner: false,
       obtain_consent: false,
-      conflict_self_consent: false
+      conflict_self_consent: false,
+      assumed_name: false
     }
   }
   requestActions: RequestActionsI[] = [
@@ -861,7 +870,7 @@ export class NewRequestModule extends VuexModule {
     if (!this.showCorpNum) {
       return {
         corpNum: '',
-        homeJurisNum: ''
+        homeJurisNum: this.nrData.homeJurisNum
       }
     }
     if (this.showCorpNum === 'colin') {
@@ -872,7 +881,7 @@ export class NewRequestModule extends VuexModule {
     }
     return {
       corpNum: this.corpNum,
-      homeJurisNum: this.corpNum
+      homeJurisNum: this.nrData.homeJurisNum
     }
   }
   get currentIssue () {
@@ -1054,10 +1063,13 @@ export class NewRequestModule extends VuexModule {
     return ''
   }
   get locationText () {
-    return this.locationOptions.find(options => options.value === this.location).text
+    return this.locationOptions.find(options => options.value === this.location)?.text
+  }
+  get isXproMras () {
+    return (['CA', 'IN'].includes(this.location) && this.request_action_cd !== 'MVE')
   }
   get requestText () {
-    return this.requestActions.find(options => options.value === this.request_action_cd).text
+    return this.requestActions.find(options => options.value === this.request_action_cd)?.text
   }
   get entityTypeOptions () {
     let bcOptions: SelectOptionsI[] = this.entityTypesBC.filter(x => {
@@ -1153,7 +1165,7 @@ export class NewRequestModule extends VuexModule {
     })
   }
   get isAssumedName () {
-    return !!this.assumedNameOriginal
+    return !!this.assumedNameOriginal || this.request_action_cd === 'ASSUMED'
   }
   get locationOptions () {
     // To save template conditional logic, some locations have duplicate descriptions to align with there request
@@ -1442,6 +1454,11 @@ export class NewRequestModule extends VuexModule {
     }
     return data
   }
+  get jurisdictionText () {
+    return this.location === 'CA'
+      ? $canJurisdictions.find(jur => jur.value === this.request_jurisdiction_cd)?.text
+      : $intJurisdictions.find(jur => jur.value === this.request_jurisdiction_cd)?.text
+  }
   get nrNames () {
     const { nr } = this
     let names = []
@@ -1469,7 +1486,7 @@ export class NewRequestModule extends VuexModule {
       while (choiceIdx <= 3) {
         if (nameChoices[`name${choiceIdx}`] as boolean) {
           let combinedName = nameChoices[`name${choiceIdx}`]
-          if (this.location === 'BC' && $designations[this.entity_type_cd].end) {
+          if (($designations[this.entity_type_cd].end)) {
             let des = nameChoices[`designation${choiceIdx}`]
             if (des && !combinedName.endsWith(des)) {
               combinedName = combinedName + ' ' + des
@@ -2430,7 +2447,7 @@ export class NewRequestModule extends VuexModule {
     this.mutateDisplayedComponent('ExistingRequestEdit')
   }
   @Action({ rawError: true })
-  startAnalyzeName () {
+  async startAnalyzeName () {
     this.resetAnalyzeName()
     this.mutateUserCancelledAnalysis(false)
     let name
@@ -2442,16 +2459,33 @@ export class NewRequestModule extends VuexModule {
         this.setErrors(field)
       }
     })
-    if (!this.name) {
-      this.setErrors('name')
+    if (['CA'].includes(this.location) && !this.request_jurisdiction_cd) {
+      this.setErrors('jurisdiction')
       return
     }
-    if (this.name.length < 3) {
-      this.setErrors('length')
-      return
+    if (!this.corpSearch) {
+      if (!this.name) {
+        this.setErrors('name')
+        return
+      }
+      if (this.name.length < 3) {
+        this.setErrors('length')
+        return
+      }
     }
     if (this.errors.length > 0) {
       return
+    }
+    if (this.isXproMras) {
+      this.mutateNRData({ key: 'xproJurisdiction', value: this.request_jurisdiction_cd })
+      if (!this.noCorpNum) {
+        const profile = await this.fetchMRASProfile()
+        if (profile) {
+          name = sanitizeName(profile?.LegalEntity?.names?.legalName)
+          this.mutateName(name)
+          this.mutateNRData({ key: 'homeJurisNum', value: this.corpSearch })
+        } else return
+      }
     }
     let testName = this.name.toUpperCase()
     testName = removeExcessSpaces(testName)
@@ -2515,6 +2549,23 @@ export class NewRequestModule extends VuexModule {
     return axios.get(url)
   }
 
+  /** Fetch the MRAS Profile and handle varied responses */
+  @Action
+  async fetchMRASProfile (): Promise<any> {
+    let url = `mras-profile/${this.request_jurisdiction_cd}/${this.corpSearch}`
+    const response = await axios.get(url).then(response => {
+      if (response?.status === 200) {
+        return response?.data
+      }
+    }).catch(e => {
+      this.mutateName('')
+      this.mutateNoCorpNum(true)
+      this.mutateMrasSearchResult(e.response.status)
+      this.mutateMrasSearchInfoModalVisible(true)
+    })
+    return response
+  }
+
   @Mutation
   clearErrors () {
     this.errors = []
@@ -2567,6 +2618,10 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateCorpNum (corpNum: string) {
     this.corpNum = corpNum
+  }
+  @Mutation
+  mutateCorpSearch (corpNum: string) {
+    this.corpSearch = corpNum
   }
   @Mutation
   mutateDisplayedComponent (comp: string) {
@@ -2652,8 +2707,24 @@ export class NewRequestModule extends VuexModule {
     this.locationInfoModalVisible = value
   }
   @Mutation
+  mutateMrasSearchResult (code: number) {
+    this.mrasSearchResultCode = code
+  }
+  @Mutation
+  mutateMrasSearchInfoModalVisible (value: boolean) {
+    this.mrasSearchInfoModalVisible = value
+  }
+  @Mutation
+  mutateJurisdiction (value) {
+    this.request_jurisdiction_cd = value
+  }
+  @Mutation
   mutateName (name: string) {
     this.name = name
+  }
+  @Mutation
+  mutateNoCorpNum (noCorpNum: boolean) {
+    this.noCorpNum = noCorpNum
   }
   @Mutation
   mutateNROriginal (nr) {

@@ -30,6 +30,7 @@
     <!--All v-dialogue (modal) components App-wide-->
     <Conditions />
     <LocationInfoModal />
+    <MrasSearchInfoModal />
     <HelpMeChoose />
     <NrNotRequired />
     <PickEntityOrConversion />
@@ -60,6 +61,7 @@ import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 import Conditions from '@/components/modals/conditions.vue'
 import HelpMeChoose from '@/components/modals/help-me-choose.vue'
 import LocationInfoModal from '@/components/modals/location-info.vue'
+import MrasSearchInfoModal from '@/components/modals/mras-search-info.vue'
 import NrNotRequired from '@/components/modals/nr-not-required.vue'
 import PickEntityOrConversion from '@/components/modals/pick-entity-or-conversion.vue'
 import PickRequestType from '@/components/modals/pick-request-type.vue'
@@ -97,6 +99,7 @@ import paymentModule from '@/modules/payment'
     SbcHeader,
     SbcFooter,
     LocationInfoModal,
+    MrasSearchInfoModal,
     NrNotRequired,
     HelpMeChoose,
     PickEntityOrConversion,
@@ -239,10 +242,18 @@ export default class App extends Mixins(SessionTimerMixin) {
   flex-flow: column nowrap
   min-height: 100vh
 
+  .sbc-header
+    .v-btn
+      box-shadow: none !important
+
 .loading-container.grayed-out
   opacity: 0.46
   background-color: rgb(33, 33, 33) // grey darken-4
   border-color: rgb(33, 33, 33) // grey darken-4
+
+.app-header
+  .v-btn
+    box-shadow: unset !important
 
 .app-footer
   .container

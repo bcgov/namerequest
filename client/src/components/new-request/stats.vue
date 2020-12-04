@@ -12,7 +12,7 @@
 <!--            No Wait Time-->
 <!--          </div>-->
 <!--        </div>-->
-      <v-tooltip bottom nudge-left="56" content-class="bottom-tooltip wait-time-tooltip" transition="fade-transition">
+      <v-tooltip bottom nudge-left="50" content-class="bottom-tooltip wait-time-tooltip" transition="fade-transition">
         <template v-slot:activator="{ on }">
           <div class="stats-content-outer py-0" v-on="on">
             <div class="stats-content-inner-1 text-center">
@@ -97,7 +97,7 @@ export default class Stats extends Vue {
 .stats-unit
   display: block
   position: relative
-  top: -4px
+  top: -8px
   font-size: 12px
   font-weight: bold
 
@@ -114,6 +114,6 @@ export default class Stats extends Vue {
 .wait-time-tooltip
   padding: 15px 0 0 0 !important
   text-align: center
-  max-width: 120px
+  max-width: 160px
 
 </style>

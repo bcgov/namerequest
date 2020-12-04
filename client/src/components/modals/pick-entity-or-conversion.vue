@@ -141,7 +141,7 @@ export default class PickEntityOrConversion extends Vue {
     return `${210 * cols > maxThreshold ? maxThreshold : 210 * cols}px`
   }
   entityBlurbs (entity_type_cd: string) {
-    return newReqModule.entityBlurbs.find(type => type.value === entity_type_cd)?.blurbs
+    return newReqModule.entityBlurbs && newReqModule.entityBlurbs.find(type => type.value === entity_type_cd)?.blurbs
   }
   clearEntitySelection () {
     this.entity_type_cd = 'INFO'
@@ -177,7 +177,7 @@ export default class PickEntityOrConversion extends Vue {
 .v-data-table
   margin: 0 -3px
 .category-bg
-  background-color: $grey-1
+  background-color: $gray1
 .cell
   padding: 10px
   color: $dk-text

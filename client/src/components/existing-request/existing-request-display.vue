@@ -1,8 +1,9 @@
 <template>
   <MainContainer id="existing-request-display" class="pa-10">
     <template v-slot:container-header>
-      <v-col cols="auto" class="fs-24 py-0">
-        <span class="h3">{{ nr.nrNum || '-' }}</span>
+      <v-col cols="auto" class="py-0">
+        <span class="h3">{{ nr.nrNum }}</span>
+        <span class="h6 ml-4">{{ entityTypeCdToText(nr.entity_type_cd) }}</span>
       </v-col>
     </template>
 
@@ -11,7 +12,6 @@
         v-if="nr.nrNum"
         class="mt-5"
         :names="names"
-        @conditionsClicked="showConditionsModal()"
       />
 
       <transition mode="out-in" name="fade">
@@ -26,66 +26,80 @@
       </transition>
 
       <transition mode="out-in" name="fade">
-        <v-row class="mt-5" :key="refreshCount">
-          <!-- labels and values -->
-          <v-col cols="9" class="py-0">
-            <v-row dense>
-              <v-col cols="12">
-                <span>Last Update:</span>
-                &nbsp;{{ lastUpdate }}
-              </v-col>
-              <v-col cols="12">
-                <span>Request Status:</span>
-                &nbsp;{{ requestStatusText }}
-                <v-icon v-if="isAlertState" small color="error">mdi-alert</v-icon>
-              </v-col>
-              <v-col cols="12">
-                <span>Priority Request:</span>
-                &nbsp;{{ isPriorityReq ? 'Yes' : 'No' }}
-              </v-col>
-              <v-col cols="12">
-                <span>Expiry Date:</span>
-                &nbsp;{{ expiryDate }}
-              </v-col>
-              <v-col cols="12">
-                <span>Reapplications Remaining:</span>
-                &nbsp;{{ reapplicationsRemainingText }}
-              </v-col>
-              <v-col cols="12" v-if="nr.consentFlag && (nr.consentFlag !== 'N')">
-                <span>Consent Rec'd:</span>
-                &nbsp;{{ consentDate }}
-              </v-col>
-              <v-col cols="12">
-                <span>Applicant Name:</span>
-                &nbsp;{{ nr.applicants.lastName }},
-                &nbsp;{{ nr.applicants.firstName }}
-              </v-col>
-              <v-col cols="12">
-                <span>Address:</span>
-                &nbsp;{{ address }}
-              </v-col>
-            </v-row>
-          </v-col>
+        <v-container class="nr-data pa-0">
+          <v-row class="mt-5" :key="refreshCount">
+            <!-- labels and values -->
+            <v-col cols="9" class="py-0">
+              <v-row dense>
+                <v-col cols="12">
+                  <span>Last Update:</span>
+                  &nbsp;{{ lastUpdate }}
+                </v-col>
+                <v-col cols="12">
+                  <span>Request Status:</span>
+                  &nbsp;{{ requestStatusText }}
+                  <v-icon v-if="isAlertState" color="error" size="20" class="mt-n1 ml-1">
+                    mdi-alert
+                  </v-icon>
+                  <a href="#"
+                    class="link-sm ml-1"
+                    v-if="nr.state === NrState.CONDITIONAL"
+                    @click.prevent="showConditionsModal()"
+                  >Conditions</a>
+                </v-col>
+                <v-col cols="12">
+                  <span>Priority Request:</span>
+                  &nbsp;{{ isPriorityReq ? 'Yes' : 'No' }}
+                </v-col>
+                <v-col cols="12" v-if="expiryDate">
+                  <span>Expiry Date:</span>
+                  &nbsp;{{ expiryDate }}
+                </v-col>
+                <v-col cols="12">
+                  <span>Expiry Extensions Remaining:</span>
+                  <!-- TODO: add tooltip here -->
+                  &nbsp;{{ extensionsRemainingText }}
+                </v-col>
+                <v-col cols="12" v-if="nr.consentFlag && (nr.consentFlag !== 'N')">
+                  <span>Consent Rec'd:</span>
+                  &nbsp;{{ consentDate }}
+                </v-col>
+                <v-col cols="12">
+                  <span>Applicant Name:</span>
+                  &nbsp;{{ nr.applicants.lastName }},
+                  &nbsp;{{ nr.applicants.firstName }}
+                </v-col>
+                <v-col cols="12">
+                  <span>Address:</span>
+                  &nbsp;{{ address }}
+                </v-col>
+              </v-row>
+            </v-col>
 
-          <!-- action buttons -->
-          <template v-if="nr.state !== NrState.CANCELLED">
-            <v-col cols="3" class="py-0">
+            <!-- action buttons -->
+            <v-col cols="3" class="py-0" v-if="nr.state !== NrState.CANCELLED">
               <v-row dense>
                 <template v-for="action of actions">
-                  <v-col cols="12" :key="action+'-button'">
-                    <v-btn block
-                           class="button"
-                           :class="isRedButton(action) ? 'button-red' : 'button-blue'"
-                           :loading="loading"
-                           :disabled="disableUnfurnished && (action !== NrAction.RECEIPT)"
-                           @click="handleButtonClick(action)">{{ actionText(action) }}</v-btn>
-                  </v-col>
-                  <!--<v-btn @click="activateILModal">incorporate now</v-btn>-->
+                  <!-- incorporate action is a distinct button below -->
+                  <template v-if="action !== NrAction.INCORPORATE">
+                    <v-col cols="12" :key="action+'-button'">
+                      <v-btn block
+                             class="button"
+                             :class="isRedButton(action) ? 'button-red' : 'button-blue'"
+                             :disabled="disableUnfurnished && (action !== NrAction.RECEIPT)"
+                             @click="handleButtonClick(action)">{{ actionText(action) }}</v-btn>
+                    </v-col>
+                  </template>
                 </template>
               </v-row>
             </v-col>
-          </template>
-        </v-row>
+          </v-row>
+
+          <!-- incorporate button -->
+          <div v-if="showIncorporateButton" class="mt-5 text-center">
+            <v-btn @click="handleButtonClick(NrAction.INCORPORATE)">Incorporate Using This Name Request</v-btn>
+          </div>
+        </v-container>
       </transition>
     </template>
   </MainContainer>
@@ -100,6 +114,7 @@ import MainContainer from '@/components/new-request/main-container.vue'
 import newReqModule, { EXISTING_NR_TIMER_NAME, EXISTING_NR_TIMEOUT_MS } from '@/store/new-request-module'
 import NrAffiliationMixin from '@/components/mixins/nr-affiliation-mixin'
 import CommonMixin from '@/components/mixins/common-mixin'
+import DateMixin from '@/components/mixins/date-mixin'
 import paymentModule from '@/modules/payment'
 import timerModule from '@/modules/vx-timer'
 import * as types from '@/store/types'
@@ -112,20 +127,35 @@ import { NameState, NrAction, NrState } from '@/enums'
     ...mapGetters(['isAuthenticated'])
   }
 })
-export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, CommonMixin) {
+export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, CommonMixin, DateMixin) {
   // enums used in the template:
   NameState = NameState
   NrAction = NrAction
   NrState = NrState
 
-  daysBeforeExpiry: number = 5
-  checking: boolean = false
-  refreshCount: number = 0
-  furnished: string = 'notfurnished'
+  // external getter
   readonly isAuthenticated!: boolean
-  private loading = false
 
-  get actions () {
+  /**
+   * "checking" is True while refreshing the NR.
+   * (Not used in template at the moment.)
+   */
+  private checking = false
+
+  /**
+   * "refreshCount" is used in the template as the transition key for the affected template,
+   * triggering a fade in/out.
+   */
+  private refreshCount = 0
+
+  /**
+   * "furnished" is used in the template at the transition key for the affected template,
+   * triggering a fade in/out.
+   */
+  private furnished = 'notfurnished'
+
+  /** The actions list, with some buttons forced to the bottom. */
+  private get actions () {
     const actions = this.nr.actions || []
     // move 'REFUND' or 'CANCEL' action (if present) to bottom of list
     // eg ['EDIT', 'REFUND', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'REFUND']
@@ -135,8 +165,9 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
       return 0
     })
   }
+
   get address () {
-    let fields = ['addrLine2', 'city', 'stateProvinceCd', 'countryCd', 'postalCd']
+    const fields = ['addrLine2', 'city', 'stateProvinceCd', 'countryCd', 'postalCd']
     let output: string = this.nr.applicants.addrLine1
     for (let field of fields) {
       if (this.nr.applicants[field]) {
@@ -145,52 +176,49 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     }
     return output
   }
+
   get addressLines () {
-    let output = [ this.nr.applicants.addrLine1 ]
+    const output = [ this.nr.applicants.addrLine1 ]
     if (this.nr.applicants.addrLine2) {
       output.push(this.nr.applicants.addrLine2)
     }
     return output
   }
+
   get cityProvPostal () {
-    let { applicants } = this.nr
+    const { applicants } = this.nr
     return applicants.city + ', ' + applicants.stateProvinceCd + ', ' + applicants.postalCd
   }
-  get condition () {
-    if (this.nr.names.some(name => name.state === NameState.CONDITION && name.decision_text)) {
-      let found = this.nr.names.find(name => name.state === NameState.CONDITION && name.decision_text)
-      return found.decision_text
-    }
-    return ''
-  }
+
   get consentDate () {
     if (this.nr.consent_dt) {
       return Moment(this.nr.consent_dt).utc().format('MMM Do[,] YYYY')
     }
     return 'Not Yet Received'
   }
+
   get expiryDate () {
     if (this.nr.expirationDate) {
       return Moment(this.nr.expirationDate).format('MMM Do[,] YYYY')
     }
     return ''
   }
+
   get lastUpdate () {
     if (this.nr.lastUpdate) {
       return Moment(this.nr.lastUpdate).format('MMM Do[,] YYYY')
     }
     return ''
   }
-  get name () {
-    let nameObj = this.nr.names.find(name => name.choice === 1)
-    return nameObj.name
-  }
+
   get disableUnfurnished (): boolean {
     return (
       this.nr.furnished === 'N' &&
       [NrState.CONDITIONAL, NrState.REJECTED, NrState.APPROVED].includes(this.nr.stateCd)
     )
   }
+
+  /** The names list, sorted by choice number. */
   get names () {
     return this.nr.names.sort((a, b) => {
       if (a.choice > b.choice) {
@@ -202,36 +230,92 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
       return 0
     })
   }
+
   get nr () {
     return newReqModule.nr
   }
+
   get isPriorityReq () {
     return (this.nr && this.nr.priorityCd && this.nr.priorityCd === 'Y')
   }
 
-  /** The display text for the reapplications remaining. */
-  private get reapplicationsRemainingText (): string {
-    const totalReapplications = 2
-    return `${totalReapplications - this.nr.submitCount}/${totalReapplications}`
+  /**
+   * True if the incorporate button should be shown.
+   * (It is shown as a distinct button instead of an action.)
+   */
+  private get showIncorporateButton (): boolean {
+    return this.actions.includes(NrAction.INCORPORATE)
   }
 
-  /** The display text for the request status. */
+  /** The display text for Expiry Extensions Remaining. */
+  private get extensionsRemainingText (): string {
+    const extensions = 2
+    // total is # extensions + the original approval
+    return `${extensions + 1 - this.nr.submitCount} / ${extensions}`
+  }
+
+  /** The display text for Request Status. */
   private get requestStatusText (): string {
-    const state = this.nr.state
-    switch (state) {
-      // FUTURE: new state for "Approved / Used For XXX"
+    switch (this.nr.state) {
+      case NrState.COMPLETED: {
+        if (this.isNrConsumed) return `Approved / Used For ${this.approvedName.corpNum}`
+        if (this.isNrExpired) return 'Expired'
+        return 'Completed' // should never happen
+      }
       case NrState.CONDITIONAL: return 'Conditional Approval'
-      case NrState.IN_PROGRESS: return 'In Progress'
-      case NrState.ON_HOLD: return 'On Hold'
-      case NrState.REFUNDED: return 'Cancelled, Refund Requested'
-      default: return this.toTitleCase(state)
+      case NrState.HOLD: return 'In Progress' // this is not a typo
+      case NrState.INPROGRESS: return 'In Progress'
+      case NrState.REFUND_REQUESTED: return 'Cancelled, Refund Requested'
+      default: return this.toTitleCase(this.nr.state)
     }
+  }
+
+  /** Whether this NR is consumed. */
+  private get isNrConsumed (): boolean {
+    // consumed = NR is completed + a name is approved + approved name is consumed
+    return (this.isNrCompleted &&
+      !!this.approvedName &&
+      this.isApprovedNameConsumed)
+  }
+
+  // TODO: removed this when EXPIRED state is implemented (ticket #5669)
+  /** Whether this NR is expired. */
+  private get isNrExpired (): boolean {
+    // expired = NR is completed + a name is approved + approved name is not consumed + expiry date has passed
+    return (this.isNrCompleted &&
+      !!this.approvedName &&
+      !this.isApprovedNameConsumed &&
+      this.hasExpirationDatePassed)
+  }
+
+  /** Whether this NR is in Completed state. */
+  private get isNrCompleted (): boolean {
+    return (this.nr.state === NrState.COMPLETED)
+  }
+
+  /** The NR's (first) approved name object, if any. */
+  private get approvedName (): any {
+    return this.nr.names.find(name => [NameState.APPROVED, NameState.CONDITION].includes(name.state))
+  }
+
+  /** Whether the Approved Name is consumed. */
+  private get isApprovedNameConsumed (): boolean {
+    // consumed = name is approved + has a consumption date + has a corp num
+    return (!!this.approvedName?.consumptionDate && !!this.approvedName?.corpNum)
+  }
+
+  /** Whether the NR's expiration date has passed. */
+  private get hasExpirationDatePassed (): boolean {
+    const expireDays = this.daysFromToday(this.nr.expirationDate)
+    // 0 means today (which means it's expired)
+    return (isNaN(expireDays) || expireDays < 1)
   }
 
   /** True if the current state should display an alert icon. */
   private get isAlertState (): boolean {
-    const state = this.nr.state
-    return [NrState.CANCELLED, NrState.REFUNDED, NrState.EXPIRED].includes(state)
+    return ['Cancelled', 'Cancelled, Refund Requested', 'Expired'].includes(this.requestStatusText)
+    // FUTURE: use enums when EXPIRED state is implemented (ticket #5669)
+    // return [NrState.CANCELLED, NrState.REFUND_REQUESTED, NrState.EXPIRED].includes(this.nr.state)
   }
 
   /** Returns True if the specified action should display a red button. */
@@ -243,7 +327,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   private actionText (action: NrAction): string {
     switch (action) {
       case NrAction.UPGRADE: return 'Upgrade Priority ($100)'
-      case NrAction.REAPPLY: return 'Reapply ($30)'
+      case NrAction.REAPPLY: return 'Extend Expiry ($30)'
       case NrAction.RESULTS: return 'Download Results'
       case NrAction.RECEIPTS: return 'Download Receipts'
       case NrAction.REFUND: return 'Cancel and Refund'
@@ -258,7 +342,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
       switch (action) {
         case NrAction.EDIT:
           // eslint-disable-next-line no-case-declarations
-          const doCheckout = ([NrState.DRAFT, NrState.IN_PROGRESS].indexOf(newReqModule.nrState) > -1)
+          const doCheckout = ([NrState.DRAFT, NrState.INPROGRESS].indexOf(newReqModule.nrState) > -1)
           // eslint-disable-next-line no-case-declarations
           let success: boolean | undefined
           if (doCheckout) {
@@ -308,7 +392,6 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   }
 
   async refresh (event) {
-    // refreshCount is used in the template at the transition key for the affected template triggering a fade in/out
     this.refreshCount += 1
     this.checking = true
     try {
@@ -343,7 +426,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
 <style lang="scss" scoped>
 @import "@/assets/scss/theme";
 
-.col {
+.nr-data .col {
   color: $text;
   font-size: 1rem;
 

@@ -40,54 +40,104 @@
           </v-col>
         </v-row>
       </template>
+
       <v-row :class="editMode ? '' : 'mt-3' ">
         <v-col cols="12"
                class="h4 mb-3 ml-n1"
                v-if="editMode">Name Choices
         </v-col>
-      </v-row>
-
-        <v-row>
-          <v-col cols="2" class="py-0 h5" align-self="start" key="static-1">
-            First Choice
-          </v-col>
-          <transition name="fade" mode="out-in">
-            <v-col :key="transitionKey(1)" class="ma-0 pa-0" cols="10"><v-row class="ma-0 pa-0">
-          <v-col :cols="designationAtEnd ? 8 : 12" class="py-0" >
-            <v-text-field :autofocus="autofocusField === 'name1'"
-                          :error-messages="messages.name1"
-                          :hide-details="hide"
-                          :value="nameChoices.name1"
-                          @blur="handleBlur()"
-                          @input="editChoices('name1', $event, true)"
-                          filled
-                          id="choice-1-text-field" />
-          </v-col>
-          <v-col cols="4" class="py-0" v-if="designationAtEnd">
-            <v-select :autofocus="autofocusField === 'des1'"
-                      :error-messages="des1Message"
-                      :hide-details="hide"
-                      :items="items"
-                      :menu-props="props"
-                      :value="nameChoices.designation1"
-                      @blur="handleBlur(); showDesignationErrors.des1 = true"
-                      @input="editChoices('designation1', $event, true)"
-                      filled
-                      id="designation-1-select"
-                      placeholder="Designation" />
-          </v-col>
-            </v-row></v-col>
-          </transition>
-        </v-row>
-      <v-row v-if="!editMode" class="my-1 py-0 colour-text">
-        <v-col cols="2" v-if="isAssumedName" class="py-0"></v-col>
-        <v-col cols="10" class="py-0" :class="isAssumedName ? 'copy-bold' : ''">
-          {{ mainMessage}}
+        <v-col cols="12" v-if="!editMode && isAssumedName" class="text-body-3">
+              Name in Home Jurisdiction: {{name}}
         </v-col>
       </v-row>
-      <v-row class="mt-2">
-        <v-col cols="2" class="py-0 h5" align-self="start" key="static-2">
-          Second Choice
+      <v-row>
+        <v-col cols="2" class="py-0 label-style" align-self="start" key="static-1">
+          {{choicesLabelsAndHints[0].label}}
+        </v-col>
+        <transition name="fade" mode="out-in">
+          <v-col :key="transitionKey(1)" class="ma-0 pa-0" cols="10">
+            <v-row class="ma-0 pa-0" v-if="location === 'BC'">
+              <v-col :cols="designationAtEnd ? 8 : 12" class="py-0" >
+                <v-text-field :autofocus="autofocusField === 'name1'"
+                              :error-messages="messages.name1"
+                              :hide-details="hide"
+                              :value="nameChoices.name1"
+                              @blur="handleBlur()"
+                              @input="editChoices('name1', $event, true)"
+                              filled
+                              id="choice-1-text-field"
+                              :label="choicesLabelsAndHints[0].hint"/>
+              </v-col>
+              <v-col cols="4" class="py-0" v-if="designationAtEnd">
+                <v-select :autofocus="autofocusField === 'des1'"
+                          :error-messages="des1Message"
+                          :hide-details="hide"
+                          :items="items"
+                          :menu-props="props"
+                          :value="nameChoices.designation1"
+                          @blur="handleBlur(); showDesignationErrors.des1 = true"
+                          @input="editChoices('designation1', $event, true)"
+                          filled
+                          id="designation-1-select"
+                          placeholder="Designation" />
+              </v-col>
+            </v-row>
+            <v-row class="ma-0 pa-0" v-else>
+              <v-col :cols="isAssumedName ? 8 : 12" class="py-0" >
+                <v-text-field :autofocus="autofocusField === 'name1'"
+                              :error-messages="messages.name1"
+                              :hide-details="hide"
+                              :value="xproNameWithoutConflict"
+                              @blur="handleBlur()"
+                              @input="editChoices('name1', $event, true)"
+                              :filled="isAssumedName"
+                              id="choice-1-text-field"
+                              :label="choicesLabelsAndHints[0].hint"
+                              :disabled="!isAssumedName"/>
+              </v-col>
+              <v-col cols="4" class="py-0" v-if="isAssumedName">
+                <v-select :autofocus="autofocusField === 'des1'"
+                          :error-messages="des1Message"
+                          :hide-details="hide"
+                          :items="items"
+                          :menu-props="props"
+                          :value="nameChoices.designation1"
+                          @blur="handleBlur(); showDesignationErrors.des1 = true"
+                          @input="editChoices('designation1', $event, true)"
+                          filled
+                          id="designation-1-select"
+                          placeholder="Designation" />
+              </v-col>
+            </v-row>
+          </v-col>
+        </transition>
+      </v-row>
+      <v-row v-if="!editMode" class="my-1 py-0 colour-text mt-5">
+        <v-col cols="2" class="py-0"></v-col>
+        <v-col cols="10" class="py-0 text-body-3">
+          <span v-if="location!=='BC'">
+            <span v-if="isAssumedName">
+              You may provide up to two additional assumed names which will be considered at no further cost,
+              in the order provided, if your first choice cannot be approved. Be sure to follow
+              all <a :href="buildNameURL" target='_blank'>guidelines for how to build a name.</a>
+              <v-icon class="launch-icon">mdi-launch</v-icon>
+            </span>
+            <span v-else>
+              You may provide up to two additional assumed names which will be considered at no further cost,
+              in the order provided, if the name in the home jurisdiction cannot be approved. Be sure to follow
+              all <a :href="buildNameURL" target='_blank'>for how to build a name.</a>
+              <v-icon class="launch-icon">mdi-launch</v-icon>
+            </span>
+          </span>
+          <span v-else>
+            You may provide up to two additional names which will be considered at no further cost, in the
+            order provided, only if your First Choice cannot be approved.`
+          </span>
+        </v-col>
+      </v-row>
+      <v-row class="mt-5">
+        <v-col cols="2" class="py-0 label-style" align-self="start" key="static-2">
+          {{choicesLabelsAndHints[1].label}}
         </v-col>
         <transition name="fade" mode="out-in">
           <v-col :key="transitionKey(2)" class="ma-0 pa-0" cols="10">
@@ -101,7 +151,7 @@
                               @input="editChoices('name2', $event, true)"
                               filled
                               id="choice-2-text-field"
-                              placeholder="Second Alternate Name (Optional)" />
+                              :label="choicesLabelsAndHints[1].hint" />
               </v-col>
               <v-col cols="4" class="py-0" v-if="designationAtEnd">
                 <v-select :error-messages="des2Message"
@@ -119,14 +169,14 @@
           </v-col>
         </transition>
       </v-row>
-      <v-row no gutters class="mt-2" key="static-3">
-        <v-col cols="2" class="py-0 h5" align-self="start">
-          Third Choice
+      <v-row no gutters class="mt-5" key="static-3">
+        <v-col cols="2" class="py-0 label-style" align-self="start">
+          {{choicesLabelsAndHints[2].label}}
         </v-col>
         <transition name="fade" mode="out-in">
           <v-col :key="transitionKey(3)" class="ma-0 pa-0" cols="10">
             <v-row class="ma-0 pa-0">
-              <v-col :cols="designationAtEnd ? 8: 12" class="py-0" style="height:60px">
+              <v-col :cols="designationAtEnd? 8: 12" class="py-0" style="height:60px">
                 <v-text-field :error-messages="messages.name3"
                               :hide-details="hide"
                               :value="nameChoices.name3"
@@ -134,7 +184,7 @@
                               @input="editChoices('name3', $event)"
                               filled
                               id="choice-3-text-field"
-                              placeholder="Third Alternate Name (Optional)" />
+                              :label="choicesLabelsAndHints[2].hint" />
               </v-col>
               <v-col cols="4" class="py-0" style="height: 60px" v-if="designationAtEnd">
                 <v-select :error-messages="des3Message"
@@ -151,8 +201,9 @@
           </v-col>
         </transition>
       </v-row>
-      <v-row>
-        <v-col cols="7" />
+
+      <v-row class="mt-5">
+        <v-col cols="7" class="py-0" />
         <ApplicantInfoNav :isValid="isValid" />
       </v-row>
     </v-container>
@@ -301,13 +352,63 @@ export default class NamesCapture extends Vue {
     return ''
   }
   get designationAtEnd () {
-    if (this.location === 'BC') {
-      if (this.entity_type_cd && this.$designations[this.entity_type_cd]) {
-        return this.$designations[this.entity_type_cd].end
-      }
+    if (this.entity_type_cd && this.$designations[this.entity_type_cd]) {
+      return this.$designations[this.entity_type_cd].end
     }
     return false
   }
+
+  get choicesLabelsAndHints () {
+    if (this.location === 'BC') {
+      return [
+        {
+          'label': 'First Choice',
+          'hint': ''
+        },
+        {
+          'label': 'Second Choice',
+          'hint': 'Second Alternate Name (Optional)'
+        },
+        {
+          'label': 'Third Choice',
+          'hint': 'Third Alternate Name (Optional)'
+        }
+      ]
+    } else {
+      if (this.isAssumedName) {
+        return [
+          {
+            'label': 'Assumed Name First Choice',
+            'hint': 'Enter your first choice for an assumed name'
+          },
+          {
+            'label': 'Assumed Name Second Choice',
+            'hint': 'Enter your second choice for an assumed name (Optional)'
+          },
+          {
+            'label': 'Assumed Name Third Choice',
+            'hint': 'Enter your third choice for an assumed name (Optional)'
+          }
+        ]
+      } else {
+        return [
+          {
+            'label': 'Name in Home Jurisdiction',
+            'hint': ''
+          },
+          {
+            'label': 'Assumed Name First Choice',
+            'hint': 'Enter your first choice for an assumed name (Optional)'
+          },
+          {
+            'label': 'Assumed Name Second Choice',
+            'hint': 'Enter your second choice for an assumed name (Optional)'
+          }
+        ]
+      }
+    }
+  }
+
   get editMode () {
     return newReqModule.editMode
   }
@@ -344,7 +445,7 @@ export default class NamesCapture extends Vue {
     return newReqModule.isAssumedName
   }
   get isValid () {
-    let { nameChoices, messages, designationAtEnd, validatePhrases } = this
+    let { nameChoices, messages, designationAtEnd, validatePhrases, location, isAssumedName } = this
     if (this.isAssumedName && this.editMode) {
       if (!nameChoices['name1']) {
         messages['name1'] = 'Please enter at least one name'
@@ -362,6 +463,9 @@ export default class NamesCapture extends Vue {
           messages['name1'] = 'Please enter a first choice before any subsequent choices'
           return false
         }
+      }
+      if (designationAtEnd && !nameChoices.designation1) {
+        return false
       }
       let outcome = true
       for (let choice of [1, 2, 3]) {
@@ -386,8 +490,10 @@ export default class NamesCapture extends Vue {
           messages.name1 = 'Please enter at least one name'
         }
       }
-      if (designationAtEnd && !nameChoices.designation1) {
-        messages.des1 = 'Please choose a designation'
+      if (location === 'BC') {
+        if (designationAtEnd && !nameChoices.designation1) {
+          messages.des1 = 'Please choose a designation'
+        }
       }
       if (messages.name1 || messages.des1) {
         return false
@@ -448,9 +554,11 @@ export default class NamesCapture extends Vue {
           for (let choice of [1, 2, 3]) {
             if (nameChoices[`name${choice}`]) {
               if (!nameChoices[`designation${choice}`]) {
-                messages[`des${choice}`] = 'Please choose a designation'
-                this.showDesignationErrors[`des${choice}`] = true
-                outcome = false
+                if (location === 'BC' || isAssumedName) {
+                  messages[`des${choice}`] = 'Please choose a designation'
+                  this.showDesignationErrors[`des${choice}`] = true
+                  outcome = false
+                }
               } else {
                 this.messages[`des${choice}`] = ''
               }
@@ -488,14 +596,6 @@ export default class NamesCapture extends Vue {
   get locationOptions () {
     return newReqModule.locationOptions
   }
-  get mainMessage () {
-    if (this.isAssumedName) {
-      return `${this.name} is too similar to a name already in use. Please enter a new name such as your
-        corporation number.`
-    }
-    return `You may provide up to two additional names which will be considered at no further cost, in the
-        order provided, only if your First Choice cannot be approved.`
-  }
   get name () {
     return newReqModule.name
   }
@@ -510,6 +610,17 @@ export default class NamesCapture extends Vue {
   }
   get requestTypeOptions () {
     return newReqModule.requestTypeOptions
+  }
+  get xproNameWithoutConflict () {
+    var name = this.nameChoices.name1
+    if (!this.isAssumedName && this.nameChoices.designation1) {
+      name = `${name} ${this.nameChoices.designation1}`
+    }
+    return name
+  }
+  get buildNameURL () {
+    return 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business/' +
+    'permits-licences/businesses-incorporated-companies/approval-business-name/how-to-name-business'
   }
   set entity_type_cd (type: string) {
     newReqModule.mutateEntityType(type)
@@ -568,61 +679,49 @@ export default class NamesCapture extends Vue {
       }
       newReqModule.mutateNameChoices({ key: `name${choice}`, value: name.name })
     }
-    if (this.location === 'BC') {
-      const { nameChoices } = this
-      if (nr && nr.names && Array.isArray(nr.names)) {
-        for (let choice of [1, 2, 3]) {
-          if (nr.names.find(name => name.choice === choice)) {
-            let { name } = nr.names.find(name => name.choice === choice)
-            if (name.designation && name.name) {
-              newReqModule.mutateNameChoices({ key: `name${choice}`, value: name.name })
-              newReqModule.mutateNameChoices({ key: `designation${choice}`, value: name.designation })
-              continue
-            }
-            if (this.designationAtEnd) {
-              for (let item of this.items) {
-                if ([' LTD', ' INC', ' CORP'].some(des => name.endsWith(des))) {
-                  name = name + '.'
-                }
-                if (item) {
-                  if (name.endsWith(item)) {
-                    newReqModule.mutateNameChoices({ key: `designation${choice}`, value: item })
-                    let value = name.replace(item, '').trim()
-                    newReqModule.mutateNameChoices({ key: `name${choice}`, value })
-                  }
-                }
-              }
-              if (!nameChoices[`name${choice}`]) {
-                newReqModule.mutateNameChoices({ key: `name${choice}`, value: name })
-              }
-            } else {
-              newReqModule.mutateNameChoices({ key: `name${choice}`, value: name })
-            }
-          }
-          if (this.designationAtEnd) {
-            if (nameChoices[`name${choice}`] && nameChoices[`designation${choice}`]) {
-              if (nameChoices[`name${choice}`].endsWith(' ' + nameChoices[`designation${choice}`])) {
-                let newName = nameChoices[`name${choice}`].replace(nameChoices[`designation${choice}`], '').trim()
-                newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })
-              }
-            }
-          } else {
-            if (this.$designations[this.entity_type_cd].end && nameChoices[`designation${choice}`]) {
-              if (!nameChoices[`name${choice}`].endsWith(nameChoices[`designation${choice}`])) {
-                let newName = nameChoices[`name${choice}`] + ' ' + nameChoices[`designation${choice}`]
-                newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })
-              }
-            }
-          }
-        }
-      }
-    } else {
+    const { nameChoices } = this
+    if (nr && nr.names && Array.isArray(nr.names)) {
       for (let choice of [1, 2, 3]) {
         if (nr.names.find(name => name.choice === choice)) {
           let { name } = nr.names.find(name => name.choice === choice)
-          if (name.designation && !name.name.endsWith(name.designation)) {
-            name.name = name.name.trim() + ' ' + name.designation
+          if (name.designation && name.name) {
             newReqModule.mutateNameChoices({ key: `name${choice}`, value: name.name })
+            newReqModule.mutateNameChoices({ key: `designation${choice}`, value: name.designation })
+            continue
+          }
+          if (this.designationAtEnd) {
+            for (let item of this.items) {
+              if ([' LTD', ' INC', ' CORP'].some(des => name.endsWith(des))) {
+                name = name + '.'
+              }
+              if (item) {
+                if (name.endsWith(item)) {
+                  newReqModule.mutateNameChoices({ key: `designation${choice}`, value: item })
+                  let value = name.replace(item, '').trim()
+                  newReqModule.mutateNameChoices({ key: `name${choice}`, value })
+                }
+              }
+            }
+            if (!nameChoices[`name${choice}`]) {
+              newReqModule.mutateNameChoices({ key: `name${choice}`, value: name })
+            }
+          } else {
+            newReqModule.mutateNameChoices({ key: `name${choice}`, value: name })
+          }
+        }
+        if (this.designationAtEnd) {
+          if (nameChoices[`name${choice}`] && nameChoices[`designation${choice}`]) {
+            if (nameChoices[`name${choice}`].endsWith(' ' + nameChoices[`designation${choice}`])) {
+              let newName = nameChoices[`name${choice}`].replace(nameChoices[`designation${choice}`], '').trim()
+              newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })
+            }
+          }
+        } else {
+          if (this.$designations[this.entity_type_cd].end && nameChoices[`designation${choice}`]) {
+            if (!nameChoices[`name${choice}`].endsWith(nameChoices[`designation${choice}`])) {
+              let newName = nameChoices[`name${choice}`] + ' ' + nameChoices[`designation${choice}`]
+              newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })
+            }
           }
         }
       }
@@ -673,7 +772,21 @@ export default class NamesCapture extends Vue {
 }
 </script>
 
-<style scoped lang="sass">
-::v-deep .v-messages__message
-  line-height: 14px !important
+<style lang="scss" scoped>
+@import "@/assets/scss/theme.scss";
+
+::v-deep .v-messages__message {
+  line-height: 14px !important;
+}
+
+.label-style {
+  font-size: 1rem;
+  font-weight: bold;
+  color: $gray9;
+}
+
+.launch-icon {
+  font-size: 1rem;
+  color: $app-blue;
+}
 </style>

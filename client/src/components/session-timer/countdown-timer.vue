@@ -68,8 +68,7 @@ export default class CountdownTimer extends Vue {
     const timerInstance = this.getTimerInstance()
     if (timerInstance) {
       const { colorString, bgColorString } = this
-      const countdownClass = `countdown`
-      this.countdownClass = countdownClass
+      this.countdownClass = 'countdown'
       this.$nextTick(() => {
         // Set display to none and back to re-flow
         const animation = `countdown ${timerInstance.timeoutMs / 1000}s linear forwards`
@@ -82,8 +81,7 @@ export default class CountdownTimer extends Vue {
   }
 
   setExpiredStyles () {
-    const countdownClass = `countdown expired`
-    this.countdownClass = countdownClass
+    this.countdownClass = 'countdown expired'
   }
 
   createCountdownWatcher () {

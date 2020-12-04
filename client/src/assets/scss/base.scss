@@ -66,7 +66,19 @@
 }
 
 .bg-light-blue {
-  background-color: $app-light-blue !important;
+  background-color: $app-lt-blue !important;
+}
+
+.app-blue {
+  color: $app-blue !important;
+}
+
+.app-red {
+  color: $app-red !important;
+}
+
+.app-green {
+  color: $app-green !important;
 }
 
 // normal button: white on blue

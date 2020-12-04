@@ -2,10 +2,8 @@
   <v-form v-model="isValid" ref="step2" id="applicant-info-2-form">
     <v-container fluid class="pa-0 pt-2">
       <v-row>
-        <v-col cols="2" class="h5" align-self="start">
-          Contact Info
-        </v-col>
-        <v-col cols="5">
+        <v-col cols="2" class="h6">Contact Info</v-col>
+        <v-col cols="5" class="py-0">
           <label for="emailAddress" class="hidden">Email Address (for notifications)</label>
           <v-text-field :messages="messages['email']"
                         :rules="emailRules"
@@ -19,7 +17,7 @@
                         hide-details="auto"
                         placeholder="Email Address (for notifications)" />
         </v-col>
-        <v-col cols="5" />
+        <v-col cols="5" class=py-0 />
       </v-row>
       <v-row>
         <v-col cols="2" />
@@ -50,10 +48,9 @@
                         placeholder="Fax Number (Optional)" />
         </v-col>
       </v-row>
+
       <v-row v-if="showAllFields">
-        <v-col cols="2" class="h5" align-self="start">
-          About Your Business
-        </v-col>
+        <v-col cols="2" class="h6">About Your Business</v-col>
         <v-col cols="5" align-self="start">
           <label for="natureBusinessInfo" class="hidden">Nature of Business</label>
           <v-textarea :messages="messages['nature']"
@@ -84,7 +81,7 @@
                       rows="3" />
         </v-col>
         <v-col cols="2" />
-        <v-col cols="5" v-if="showCorpNum">
+        <v-col cols="5" v-if="showCorpNum === 'colin'">
           <label for="corpNum" class="hidden">Incorporation Number (required)</label>
           <v-text-field :error-messages="corpNumError"
                         :hide-details="hideCorpNum"
@@ -121,21 +118,24 @@
                         placeholder="Registered Trademark (Optional)" />
         </v-col>
       </v-row>
+
       <v-row v-if="showPriorityRequest">
-        <v-col cols="2" class="h5">
-         Additional Services
-        </v-col>
-        <v-col cols="5" align-self="center">
-          <v-checkbox v-model="priorityRequest">
+        <v-col cols="2" class="h6">Additional Services</v-col>
+        <v-col cols="10" align-self="center">
+          <v-checkbox
+            hide-details
+            v-model="priorityRequest"
+            class="mt-0 pt-0"
+          >
             <template v-slot:label>
-              Priority Request - <b>$100 Fee</b>
+              <span>Priority Request - <b>$100 Fee</b></span>
             </template>
           </v-checkbox>
         </v-col>
-        <v-col cols="5" />
       </v-row>
-      <v-row>
-        <v-col cols="7"/>
+
+      <v-row class="mt-5">
+        <v-col cols="7" class="py-0" />
         <ApplicantInfoNav :isValid="isValid" />
       </v-row>
     </v-container>

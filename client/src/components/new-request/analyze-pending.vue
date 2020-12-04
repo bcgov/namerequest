@@ -1,13 +1,13 @@
 <template>
   <MainContainer id="analyze-pending-container">
     <template v-slot:container-header>
-      <v-col cols="auto" class="font-weight-bold h6 ml-3">
+      <v-col cols="auto" class="font-weight-bold py-0 mt-1">
         You are searching for a name for a
         {{ entityText === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }} {{ entityText }}
       </v-col>
     </template>
     <template v-slot:content>
-      <v-row no-gutters>
+      <v-row no-gutters class="mt-3">
         <NameInput is-search-again="true"/>
       </v-row>
       <v-row justify="center" class="mt-n7 mb-n3 py-0">
@@ -30,10 +30,10 @@
         </v-col>
       </v-row>
       <v-row justify="center">
-        <v-col cols="auto">
-          <v-btn id="analyze-pending-stop-button" class="mr-n2" @click="startOver">Stop Search</v-btn>
+        <v-col cols="auto" class="pb-0 pr-1">
+          <v-btn id="analyze-pending-stop-button" @click="startOver">Stop Search</v-btn>
         </v-col>
-        <v-col cols="auto">
+        <v-col cols="auto" class="pb-0">
           <ReserveSubmit setup="cancel" />
         </v-col>
       </v-row>

@@ -6,8 +6,10 @@
                   autocomplete="off"
                   filled
                   id="name-input-text-field"
+                  ref="nameInput"
+                  :rules="isMrasSearch ? mrasRules : []"
                   :label="nameLabel"
-                  v-model="nameSearch">
+                  v-model="searchValue">
       <template v-slot:append>
         <v-tooltip bottom
                    content-class="bottom-tooltip search-tooltip"
@@ -29,15 +31,37 @@
 
 <script lang="ts">
 import newReqModule from '@/store/new-request-module'
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue, Watch, Emit } from 'vue-property-decorator'
 
 @Component({})
 export default class NameInput extends Vue {
+  // Refs
+  $refs!: {
+    nameInput: any
+  }
+  /** Local Properties */
   @Prop({ default: false }) isSearchAgain: boolean
+  @Prop({ default: false }) isMrasSearch: boolean
+
+  /** The array of validation rules for the MRAS corp num. */
+  private get mrasRules (): Array<Function> {
+    return [
+      v => (/^\d+$/.test(v) || 'A corporate number is required')
+    ]
+  }
+
+  /** Local validator when input is a MRAS corp num. */
+  private get isCorpNumValid (): any {
+    return this.isMrasSearch ? this.$refs['nameInput'].valid : true
+  }
+
   get errors () {
     return newReqModule.errors
   }
   get message () {
+    if (this.isMrasSearch && this.errors.includes('name')) {
+      return ['Please enter a corporation number to search for']
+    }
     if (this.errors.includes('length')) {
       return ['Please enter a longer name']
     }
@@ -46,15 +70,16 @@ export default class NameInput extends Vue {
     }
     return ''
   }
-  get nameSearch () {
-    return newReqModule.name
+  get searchValue () {
+    return this.isMrasSearch ? newReqModule.corpSearch : newReqModule.name
   }
-  set nameSearch (name: string) {
-    newReqModule.mutateName(name)
+  set searchValue (value: string) {
+    this.isMrasSearch ? newReqModule.mutateCorpSearch(value) : newReqModule.mutateName(value)
   }
   get nameLabel () {
+    if (this.isMrasSearch) return 'Enter the corporate number assigned by the home jurisdiction'
     return newReqModule.location !== 'BC'
-      ? 'Enter the full legal name that the business uses in its home jurisdiction'
+      ? 'Business\'s full legal name in home jurisdiction'
       : 'Enter a Name'
   }
   clearErrors () {
@@ -68,8 +93,15 @@ export default class NameInput extends Vue {
     }
     return event
   }
-  startAnalyzeName () {
-    newReqModule.startAnalyzeName()
+  async startAnalyzeName () {
+    newReqModule.mutateMrasSearchInfoModalVisible(false)
+    if (newReqModule.isXproMras) this.$root.$emit('showSpinner', true)
+    await newReqModule.startAnalyzeName()
+    if (newReqModule.isXproMras) this.$root.$emit('showSpinner', false)
+  }
+  @Watch('isCorpNumValid')
+  @Emit() private emitCorpNumValidity () {
+    return this.isCorpNumValid
   }
 }
 

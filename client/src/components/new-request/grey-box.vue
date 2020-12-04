@@ -88,12 +88,22 @@
             <!-- ASSUMED NAME OPTION BOX -->
             <template v-else-if="option.type === 'assumed_name'">
               <v-col :id="option.type + '-button-checkbox-col'"
-                     class="grey-box-checkbox-button text-center">
+                     class="grey-box-checkbox-button text-center"
+                     v-if="entity_type_cd !== 'XLP' && entity_type_cd !== 'XLL'">
                 <transition name="fade" mode="out-in" >
+                  <v-checkbox :error="showError"
+                              :key="option.type+'-checkbox'"
+                              :label="checkBoxLabel"
+                              :ripple="false"
+                              :hide-details="true"
+                              class="py-0 my-0"
+                              id="assume-name-checkbox"
+                              v-if="showCheckBoxOrButton === 'checkbox'"
+                              v-model="boxIsChecked" />
                   <ReserveSubmit :key="option.type+'-reserve-submit'"
                                  id="reserve-submit-comp"
                                  setup="assumed"
-                                 v-if="isLastIndex" />
+                                 v-if="isLastIndex && showCheckBoxOrButton === 'button'" />
                 </transition>
               </v-col>
             </template>
@@ -216,7 +226,7 @@ export default class GreyBox extends Vue {
       case 'conflict_self_consent':
         return 'I will submit written consent to the BC Business Registry'
       case 'assumed_name':
-        return 'I want to send my name to be examined as an Assumed Name'
+        return 'I want to assume a name in BC'
       default:
         return ''
     }
@@ -381,22 +391,22 @@ export default class GreyBox extends Vue {
         case 'cancel_to_start':
           return 'button'
         case 'send_to_examiner':
-          if (this.showLastStepButtons.send_to_examiner) {
+          if (this.boxIsChecked) {
             return 'button'
           }
           return 'checkbox'
         case 'obtain_consent':
-          if (this.showLastStepButtons.obtain_consent) {
+          if (this.boxIsChecked) {
             return 'button'
           }
           return 'checkbox'
         case 'conflict_self_consent':
-          if (this.showLastStepButtons.conflict_self_consent) {
+          if (this.boxIsChecked) {
             return 'button'
           }
           return 'checkbox'
         case 'assumed_name':
-          if (this.showLastStepButtons.assumed_name) {
+          if (this.boxIsChecked) {
             return 'button'
           }
           return 'checkbox'
