@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import newReqModule, { EXISTING_NR_TIMER_NAME, NR_COMPLETION_TIMER_NAME } from '@/store/new-request-module'
+import newReqModule from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 import timerModule from '@/modules/vx-timer'
 
@@ -86,7 +86,7 @@ export default class ApplicantInfoNav extends Vue {
     if (this.editMode) {
       await newReqModule.patchNameRequests()
       await newReqModule.checkinNameRequest()
-      timerModule.stopTimer({ id: EXISTING_NR_TIMER_NAME })
+      timerModule.stopTimer({ id: this.$EXISTING_NR_TIMER_NAME })
       this.fetchNr(nrId).then(() => {})
     } else {
       if (!nrId) {
@@ -100,7 +100,7 @@ export default class ApplicantInfoNav extends Vue {
           }
         }
         await newReqModule.putNameReservation(nrId)
-        timerModule.stopTimer({ id: NR_COMPLETION_TIMER_NAME })
+        timerModule.stopTimer({ id: this.$NR_COMPLETION_TIMER_NAME })
       }
       await paymentModule.togglePaymentModal(true)
     }

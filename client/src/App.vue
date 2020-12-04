@@ -65,10 +65,7 @@ import MrasSearchInfoModal from '@/components/modals/mras-search-info.vue'
 import NrNotRequired from '@/components/modals/nr-not-required.vue'
 import PickEntityOrConversion from '@/components/modals/pick-entity-or-conversion.vue'
 import PickRequestType from '@/components/modals/pick-request-type.vue'
-import PaymentModal, {
-  PAYMENT_COMPLETION_TIMEOUT_MS,
-  PAYMENT_COMPLETION_TIMER_NAME
-} from '@/components/payment/payment-modal.vue'
+import PaymentModal from '@/components/payment/payment-modal.vue'
 import PaymentHistoryModal from '@/components/payment/payment-history-modal.vue'
 import RefundModal from '@/components/payment/refund-modal.vue'
 import UpgradeModal from '@/components/payment/upgrade-modal.vue'
@@ -85,7 +82,6 @@ import TimeoutModal from '@/components/session-timer/timeout-modal.vue'
 import SessionTimerMixin from '@/components/session-timer/session-timer-mixin'
 
 import newRequestModule, {
-  NR_COMPLETION_TIMER_NAME,
   ROLLBACK_ACTIONS as rollbackActions
 } from '@/store/new-request-module'
 
@@ -187,11 +183,11 @@ export default class App extends Mixins(SessionTimerMixin) {
     // Only do this for New NRs!!!
     if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
       // First, clear the NR session timer
-      await timerModule.stopTimer({ id: NR_COMPLETION_TIMER_NAME })
+      await timerModule.stopTimer({ id: this.$NR_COMPLETION_TIMER_NAME })
 
       // Start a new timer for the payment
       timerModule.createAndStartTimer({
-        id: PAYMENT_COMPLETION_TIMER_NAME,
+        id: this.$PAYMENT_COMPLETION_TIMER_NAME,
         expirationFn: async () => {
           const { nrId } = newRequestModule
           // Cancel the NR using the rollback endpoint if we were processing a NEW NR
@@ -203,7 +199,7 @@ export default class App extends Mixins(SessionTimerMixin) {
           // Direct the user back to the start
           await this.resetAppState()
         },
-        timeoutMs: PAYMENT_COMPLETION_TIMEOUT_MS
+        timeoutMs: this.$PAYMENT_COMPLETION_TIMEOUT_MS
       })
     }
   }

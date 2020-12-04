@@ -32,7 +32,6 @@ import { Component, Mixins, Watch } from 'vue-property-decorator'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 import CountdownTimer from '@/components/session-timer/countdown-timer.vue'
-import { PAYMENT_COMPLETION_TIMER_NAME } from '@/components/payment/payment-modal.vue'
 
 import paymentModule from '@/modules/payment'
 import { CreatePaymentParams } from '@/modules/payment/models'
@@ -78,7 +77,7 @@ export default class UpgradeModal extends Mixins(
   }
 
   get timerName () {
-    return PAYMENT_COMPLETION_TIMER_NAME
+    return this.$PAYMENT_COMPLETION_TIMER_NAME
   }
 
   @Watch('isVisible')
