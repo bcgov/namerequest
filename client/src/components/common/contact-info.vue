@@ -1,53 +1,71 @@
 <template>
-  <div class="contact-info d-flex flex-row">
-    <div class="contact-container">
-      <v-icon class="contact-icon">mdi-phone</v-icon>
-      <span class="contact-key">Canada and U.S. Toll Free:</span>
-      <a href="tel:+1-877-370-1033" class="contact-value">1-877-370-1033</a>
-    </div>
-    <div class="contact-container">
-      <v-icon class="contact-icon">mdi-phone</v-icon>
-      <span class="contact-key">Victoria Office:</span>
-      <a href="tel:+1-250-370-1033" class="contact-value">250-370-1033</a>
-    </div>
-    <div class="contact-container">
-      <v-icon class="contact-icon">mdi-email</v-icon>
-      <span class="contact-key">BC Registries Email:</span>
-      <a href="mailto:BCRegistries@gov.bc.ca" class="contact-value">BCRegistries@gov.bc.ca</a>
+  <div class="contact-info" :class="{ 'flex-column': direction === 'col' }">
+    <div
+      class="contact-container" :class="{ 'justify-center': direction == 'row' }"
+      v-for="(contact, i) in contacts" :key="i"
+    >
+      <v-icon class="contact-icon">{{contact.icon}}</v-icon>
+      <div class="contact-key" v-html="contact.key" />
+      <a :href="contact.href" class="contact-value" v-html="contact.val" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component({})
-export default class ContactInfo extends Vue {}
+export default class ContactInfo extends Vue {
+  /** Can be "row" (default) or "col". */
+  @Prop({ default: 'row' })
+  readonly direction: string
+
+  private readonly contacts = [
+    {
+      icon: 'mdi-phone',
+      key: 'Canada &amp; U.S. Toll Free:',
+      val: '1-877-370-1033',
+      href: 'tel:+1-877-370-1033'
+    },
+    {
+      icon: 'mdi-phone',
+      key: 'Victoria Office:',
+      val: '250-370-1033',
+      href: 'tel:+1-250-370-1033'
+    },
+    {
+      icon: 'mdi-email',
+      key: 'Email:',
+      val: 'BCRegistries@gov.bc.ca',
+      href: 'mailto:BCRegistries@gov.bc.ca'
+    }
+  ]
+}
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/theme.scss";
-
-li {
-  font-size: 0.9rem;
+.contact-info {
+  display: flex;
+  justify-content: space-between;
+  row-gap: 0.25rem; /* in case direction = row */
 }
 
 .contact-container {
   display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.5rem;
+  min-width: 12rem;
+}
+.contact-icon {
+  font-size: 1.25rem;
+}
 
-  .contact-icon {
-    flex: 0 0 1.375rem;
-    justify-content: flex-start;
-    font-size: 1rem;
-    color: $dk-text;
-  }
+.contact-key {
+  white-space: nowrap;
+}
 
-  .contact-key {
-    width: 12rem;
-  }
-
-  .contact-value {
-    flex: 1 1;
-  }
+.contact-value {
+  white-space: nowrap;
+  align-self: center;
 }
 </style>

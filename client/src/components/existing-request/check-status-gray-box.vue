@@ -1,6 +1,5 @@
 <template>
-  <!-- TODO: try a v-row with prop "no-gutters" -->
-  <v-row align="start" class="mx-0 bg-light-gray">
+  <v-row no-gutters class="bg-light-gray">
     <v-col class="text-body-4 px-5 py-4">
       To check on the status of this Name Request in the future, enter the request
       number <b>{{nrNum}}</b> plus the Applicant's Phone Number or Email Address

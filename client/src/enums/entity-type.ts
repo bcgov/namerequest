@@ -1,5 +1,5 @@
 /** Enum for Entity Code. */
-export enum EntityCode {
+export enum EntityType {
   // BC Entity Types:
   FR = 'CR',
   DBA = 'DBA',

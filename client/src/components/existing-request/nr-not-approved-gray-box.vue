@@ -1,10 +1,9 @@
 <template>
-  <!-- TODO: try a v-row with prop "no-gutters" -->
-  <v-row align="start" class="mx-0 bg-light-gray">
+  <v-row no-gutters class="bg-light-gray">
     <v-col class="text-body-4 px-5 py-4">
       Your Name Request <b>{{nrNum}}</b> has not been approved for use. Please contact
       BC Registry staff to obtain an assumed name for an extraprovincial business:
-      <contact-info />
+      <contact-info class="mt-2" />
     </v-col>
   </v-row>
 </template>
@@ -19,11 +18,5 @@ import ContactInfo from '@/components/common/contact-info.vue'
 export default class NrNotApprovedGrayBox extends Vue {
   @Prop({ default: 'TBD' })
   readonly nrNum: string
-
-  @Prop({ default: 'TBD' })
-  readonly approvedName: string
-
-  @Prop({ default: 'TBD' })
-  readonly emailAddress: string
 }
 </script>

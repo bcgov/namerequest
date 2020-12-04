@@ -18,7 +18,7 @@
         <v-row v-if="disableUnfurnished" class="mx-0 mt-5 bg-light-blue" :key="furnished">
           <v-col cols="12" class="font-italic px-4" key="initial-msg">
             We are currently processing your request.
-            Click<a class="link" href="#" @click.prevent="refresh">&nbsp;Refresh&nbsp;</a>
+            Click<a class="link" href="#" @click.prevent="refresh()">&nbsp;Refresh&nbsp;</a>
             {{ $route.query && $route.query.paymentId ? '' : 'or retry your search ' }}
             after 5 minutes to enable all the buttons.
           </v-col>
@@ -49,7 +49,7 @@
                 </v-col>
                 <v-col cols="12">
                   <span>Priority Request:</span>
-                  &nbsp;{{ isPriorityReq ? 'Yes' : 'No' }}
+                  &nbsp;{{ isPriorityReq(nr) ? 'Yes' : 'No' }}
                 </v-col>
                 <v-col cols="12" v-if="expiryDate">
                   <span>Expiry Date:</span>
@@ -103,7 +103,7 @@
 
           <nr-approved-gray-box
             class="mt-5"
-            v-if="!isBenefitCompany && showNrApproved"
+            v-if="showNrApproved"
             :nrNum="nr.nrNum"
             :approvedName="approvedName && approvedName.name"
             :emailAddress="nr.applicants.emailAddress"
@@ -111,15 +111,12 @@
 
           <nr-not-approved-gray-box
             class="mt-5"
-            v-if="!isBenefitCompany && showNrNotApproved"
+            v-if="showNrNotApproved"
             :nrNum="nr.nrNum"
           />
 
           <!-- incorporate button -->
-          <div
-            class="mt-5 text-center"
-            v-if="isBenefitCompany && showIncorporateButton"
-          >
+          <div class="mt-5 text-center" v-if="showIncorporateButton">
             <v-btn @click="handleButtonClick(NrAction.INCORPORATE)">Incorporate Using This Name Request</v-btn>
           </div>
         </v-container>
@@ -145,7 +142,7 @@ import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
-import { EntityCode, NameState, NrAction, NrState } from '@/enums'
+import { NameState, NrAction, NrState } from '@/enums'
 
 @Component({
   components: {
@@ -168,20 +165,17 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   // external getter
   readonly isAuthenticated!: boolean
 
-  /**
-   * "checking" is True while refreshing the NR.
-   * (Not used in template at the moment.)
-   */
+  /** This is True while refreshing the NR. (Not used in template at the moment.) */
   private checking = false
 
   /**
-   * "refreshCount" is used in the template as the transition key for the affected template,
+   * This is used in the template as the transition key for the affected template,
    * triggering a fade in/out.
    */
   private refreshCount = 0
 
   /**
-   * "furnished" is used in the template at the transition key for the affected template,
+   * This is used in the template at the transition key for the affected template,
    * triggering a fade in/out.
    */
   private furnished = 'notfurnished'
@@ -198,7 +192,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     })
   }
 
-  get address () {
+  private get address () {
     const fields = ['addrLine2', 'city', 'stateProvinceCd', 'countryCd', 'postalCd']
     let output: string = this.nr.applicants.addrLine1
     for (let field of fields) {
@@ -209,7 +203,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     return output
   }
 
-  get addressLines () {
+  private get addressLines () {
     const output = [ this.nr.applicants.addrLine1 ]
     if (this.nr.applicants.addrLine2) {
       output.push(this.nr.applicants.addrLine2)
@@ -217,33 +211,33 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     return output
   }
 
-  get cityProvPostal () {
+  private get cityProvPostal () {
     const { applicants } = this.nr
     return applicants.city + ', ' + applicants.stateProvinceCd + ', ' + applicants.postalCd
   }
 
-  get consentDate () {
+  private get consentDate () {
     if (this.nr.consent_dt) {
       return Moment(this.nr.consent_dt).utc().format('MMM Do[,] YYYY')
     }
     return 'Not Yet Received'
   }
 
-  get expiryDate () {
+  private get expiryDate () {
     if (this.nr.expirationDate) {
       return Moment(this.nr.expirationDate).format('MMM Do[,] YYYY')
     }
     return ''
   }
 
-  get lastUpdate () {
+  private get lastUpdate () {
     if (this.nr.lastUpdate) {
       return Moment(this.nr.lastUpdate).format('MMM Do[,] YYYY')
     }
     return ''
   }
 
-  get disableUnfurnished (): boolean {
+  private get disableUnfurnished (): boolean {
     return (
       this.nr.furnished === 'N' &&
       [NrState.CONDITIONAL, NrState.REJECTED, NrState.APPROVED].includes(this.nr.stateCd)
@@ -251,7 +245,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   }
 
   /** The names list, sorted by choice number. */
-  get names () {
+  private get names () {
     return this.nr.names.sort((a, b) => {
       if (a.choice > b.choice) {
         return 1
@@ -263,12 +257,8 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     })
   }
 
-  get nr () {
+  private get nr () {
     return newReqModule.nr
-  }
-
-  get isPriorityReq () {
-    return (this.nr && this.nr.priorityCd && this.nr.priorityCd === 'Y')
   }
 
   /**
@@ -276,7 +266,10 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
    * (It is shown as a distinct button instead of an action.)
    */
   private get showIncorporateButton (): boolean {
-    return this.actions.includes(NrAction.INCORPORATE)
+    return (
+      this.isBenefitCompany(this.nr) &&
+      this.actions.includes(NrAction.INCORPORATE)
+    )
   }
 
   /** True if the Check Status component should be shown. */
@@ -286,20 +279,21 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
 
   /** True if the NR Approved component should be shown. */
   private get showNrApproved (): boolean {
-    return [NrState.APPROVED, NrState.CONDITIONAL, NrState.COND_RESERVE].includes(this.nr.state)
+    return (
+      !this.isBenefitCompany(this.nr) &&
+      [NrState.APPROVED, NrState.CONDITIONAL, NrState.COND_RESERVE].includes(this.nr.state)
+    )
   }
 
   /** True if the NR NotApproved component should be shown. */
   private get showNrNotApproved (): boolean {
-    return (this.nr.state === NrState.REJECTED)
+    return (
+      this.isXProCompany(this.nr) &&
+      (this.nr.state === NrState.REJECTED)
+    )
   }
 
-  /** True if this is a Benefit Company NR. */
-  private get isBenefitCompany (): boolean {
-    return (this.nr.entity_type_cd === EntityCode.BC)
-  }
-
-  /** Whether this NR is in a conditional state. */
+  /** True if the NR is in a conditional state. */
   private get isNrConditional (): boolean {
     return [NrState.CONDITIONAL, NrState.COND_RESERVE].includes(this.nr.state)
   }
@@ -327,7 +321,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     }
   }
 
-  /** Whether this NR is consumed. */
+  /** True if the NR is consumed. */
   private get isNrConsumed (): boolean {
     // consumed = NR is completed + a name is approved + approved name is consumed
     return (this.isNrCompleted &&
@@ -335,8 +329,8 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
       this.isApprovedNameConsumed)
   }
 
-  // TODO: removed this when EXPIRED state is implemented (ticket #5669)
-  /** Whether this NR is expired. */
+  // FUTURE: remove this when EXPIRED state is implemented (ticket #5669)
+  /** True if the NR is expired. */
   private get isNrExpired (): boolean {
     // expired = NR is completed + a name is approved + approved name is not consumed + expiry date has passed
     return (this.isNrCompleted &&
@@ -345,7 +339,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
       this.hasExpirationDatePassed)
   }
 
-  /** Whether this NR is in Completed state. */
+  /** True if NR is in Completed state. */
   private get isNrCompleted (): boolean {
     return (this.nr.state === NrState.COMPLETED)
   }
@@ -355,13 +349,13 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     return this.nr.names.find(name => [NameState.APPROVED, NameState.CONDITION].includes(name.state))
   }
 
-  /** Whether the Approved Name is consumed. */
+  /** True if the Approved Name is consumed. */
   private get isApprovedNameConsumed (): boolean {
     // consumed = name is approved + has a consumption date + has a corp num
     return (!!this.approvedName?.consumptionDate && !!this.approvedName?.corpNum)
   }
 
-  /** Whether the NR's expiration date has passed. */
+  /** True if the NR's expiration date has passed. */
   private get hasExpirationDatePassed (): boolean {
     const expireDays = this.daysFromToday(this.nr.expirationDate)
     // 0 means today (which means it's expired)
@@ -394,7 +388,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     }
   }
 
-  async handleButtonClick (action) {
+  private async handleButtonClick (action) {
     let outcome = await newReqModule.confirmAction(action)
     if (outcome) {
       switch (action) {
@@ -449,7 +443,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     newReqModule.cancelAnalyzeName('Tabs')
   }
 
-  async refresh (event) {
+  private async refresh (event) {
     this.refreshCount += 1
     this.checking = true
     try {
@@ -464,12 +458,12 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     }
   }
 
-  showConditionsModal () {
+  private showConditionsModal () {
     newReqModule.mutateConditionsModalVisible(true)
   }
 
   /** Affiliates the current NR if authenticated, or prompts login if unauthenticated. */
-  async affiliateOrLogin (): Promise<any> {
+  private async affiliateOrLogin (): Promise<any> {
     if (this.isAuthenticated) {
       await this.createAffiliation(this.nr)
     } else {

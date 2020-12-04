@@ -1,9 +1,7 @@
 <template>
-  <!-- TODO: try a v-row with prop "no-gutters" -->
-  <v-row align="start" class="mx-0 bg-light-gray">
+  <v-row no-gutters class="bg-light-gray">
     <v-col class="text-name pa-4">
       <!-- TODO: once NR is reviewed (state != NE), add tooltips to all names -->
-
       <!-- <v-tooltip top min-width="390" content-class="top-tooltip" transition="fade-transition">
         <template v-slot:activator="{ on }">
           <v-checkbox
