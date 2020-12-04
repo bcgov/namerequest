@@ -50,7 +50,7 @@
               <v-row>
                 <v-col class="text-center copy-small">
                   Before selecting your business
-                  <br/>name, considering checking
+                  <br/>name, consider checking
                   <br/>available website domain names.
                 </v-col>
               </v-row>
