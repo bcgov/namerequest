@@ -1,6 +1,6 @@
 [
   {
-    "URL":"http://localhost:5000",
+    "URL": "https://namex-dev.pathfinder.gov.bc.ca",
     "PAYMENT_PORTAL_URL": "https://dev.bcregistry.ca/business/auth/makepayment",
     "VUE_APP_PAY_ROOT_API": "https://pay-api-dev.pathfinder.gov.bc.ca/api/v1",
     "BUSINESSES_URL": "https://dev.bcregistry.ca/business/auth/",
@@ -9,10 +9,10 @@
     "LEGAL_API_URL": "https://legal-api-dev.pathfinder.gov.bc.ca/api/v1",
     "LD_CLIENT_ID": "",
     "NR_COMPLETION_TIMER_NAME": "nrCompletionTimer",
-    "NR_COMPLETION_TIMEOUT_MS": 300000,
+    "NR_COMPLETION_TIMEOUT_MS": 0,
     "DEV_NR_COMPLETION_TIMEOUT_MS": 0,
     "EXISTING_NR_TIMER_NAME": "existingNrTimer",
-    "EXISTING_NR_TIMEOUT_MS": 300000,
+    "EXISTING_NR_TIMEOUT_MS": 0,
     "DEV_EXISTING_NR_TIMEOUT_MS": 0,
     "PAYMENT_COMPLETION_TIMER_NAME": "paymentCompletionTimer",
     "PAYMENT_COMPLETION_TIMEOUT_MS": 120000,
