@@ -170,9 +170,9 @@ export default class App extends Mixins(SessionTimerMixin) {
   async onTimerModalSessionExtended () {
     const { nrId } = newRequestModule
     const componentName = newRequestModule.displayedComponent
-    if (['SubmissionTabs'].indexOf(componentName) > -1) {
+    if (['SubmissionTabs'].indexOf(componentName) > -1 && this.$NR_COMPLETION_TIMEOUT_MS > 0) {
       await this.startNewNrTimer()
-    } else if (nrId && ['ExistingRequestEdit'].indexOf(componentName) > -1) {
+    } else if (nrId && ['ExistingRequestEdit'].indexOf(componentName) > -1 && this.$EXISTING_NR_TIMEOUT_MS > 0) {
       await this.startExistingNrTimer()
     }
   }
@@ -182,25 +182,29 @@ export default class App extends Mixins(SessionTimerMixin) {
     const componentName = newRequestModule.displayedComponent
     // Only do this for New NRs!!!
     if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
-      // First, clear the NR session timer
-      await timerModule.stopTimer({ id: this.$NR_COMPLETION_TIMER_NAME })
+      if (this.$NR_COMPLETION_TIMEOUT_MS > 0) {
+        // First, clear the NR session timer
+        await timerModule.stopTimer({ id: this.$NR_COMPLETION_TIMER_NAME })
+      }
 
-      // Start a new timer for the payment
-      timerModule.createAndStartTimer({
-        id: this.$PAYMENT_COMPLETION_TIMER_NAME,
-        expirationFn: async () => {
-          const { nrId } = newRequestModule
-          // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-          // Don't await this request, that way there's no lag, fire it off async and don't block I/O
-          // The empty then clause just prevents a linting issue that warns when you don't
-          // await an async function which is not an issue, since we don't want to block I/O
-          newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL }).then(() => {})
-          paymentModule.togglePaymentModal(false)
-          // Direct the user back to the start
-          await this.resetAppState()
-        },
-        timeoutMs: this.$PAYMENT_COMPLETION_TIMEOUT_MS
-      })
+      if (this.$PAYMENT_COMPLETION_TIMEOUT_MS > 0) {
+        // Start a new timer for the payment
+        timerModule.createAndStartTimer({
+          id: this.$PAYMENT_COMPLETION_TIMER_NAME,
+          expirationFn: async () => {
+            const { nrId } = newRequestModule
+            // Cancel the NR using the rollback endpoint if we were processing a NEW NR
+            // Don't await this request, that way there's no lag, fire it off async and don't block I/O
+            // The empty then clause just prevents a linting issue that warns when you don't
+            // await an async function which is not an issue, since we don't want to block I/O
+            newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL }).then(() => {})
+            paymentModule.togglePaymentModal(false)
+            // Direct the user back to the start
+            await this.resetAppState()
+          },
+          timeoutMs: this.$PAYMENT_COMPLETION_TIMEOUT_MS
+        })
+      }
     }
   }
 
