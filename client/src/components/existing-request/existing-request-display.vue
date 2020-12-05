@@ -35,6 +35,7 @@
                   <span>Last Update:</span>
                   &nbsp;{{ lastUpdate }}
                 </v-col>
+
                 <v-col cols="12">
                   <span>Request Status:</span>
                   &nbsp;{{ requestStatusText }}
@@ -47,28 +48,42 @@
                     @click.prevent="showConditionsModal()"
                   >Conditions</a>
                 </v-col>
+
                 <v-col cols="12">
                   <span>Priority Request:</span>
                   &nbsp;{{ isPriorityReq(nr) ? 'Yes' : 'No' }}
                 </v-col>
+
                 <v-col cols="12" v-if="expiryDate">
                   <span>Expiry Date:</span>
                   &nbsp;{{ expiryDate }}
                 </v-col>
+
                 <v-col cols="12">
-                  <span>Expiry Extensions Remaining:</span>
-                  <!-- TODO: add tooltip here -->
-                  &nbsp;{{ extensionsRemainingText }}
+                  <span>Expiry Extensions Remaining:</span>&nbsp;
+                  <v-tooltip right content-class="tooltip">
+                    <template v-slot:activator="{ on, attrs }">
+                      <span v-bind="attrs" v-on="on"
+                        class="dotted-underline app-blue font-weight-regular cursor-help"
+                        >{{ extensionsRemainingText }}</span>
+                    </template>
+                    Once approved, you normally have 56 days to use your Name Request.
+                    However, within 5 days of expiry, you can renew a Name Request two
+                    times for an additional 56 days each time.
+                  </v-tooltip>
                 </v-col>
+
                 <v-col cols="12" v-if="nr.consentFlag && (nr.consentFlag !== 'N')">
                   <span>Consent Rec'd:</span>
                   &nbsp;{{ consentDate }}
                 </v-col>
+
                 <v-col cols="12">
                   <span>Applicant Name:</span>
                   &nbsp;{{ nr.applicants.lastName }},
                   &nbsp;{{ nr.applicants.firstName }}
                 </v-col>
+
                 <v-col cols="12">
                   <span>Address:</span>
                   &nbsp;{{ address }}
@@ -302,7 +317,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   private get extensionsRemainingText (): string {
     const extensions = 2
     // total is # extensions + the original approval
-    return `${extensions + 1 - this.nr.submitCount} / ${extensions}`
+    return `${extensions + 1 - this.nr.submitCount}/${extensions}`
   }
 
   /** The display text for Request Status. */
@@ -347,7 +362,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
 
   /** The NR's (first) approved name object, if any. */
   private get approvedName (): any {
-    return this.nr.names.find(name => [NameState.APPROVED, NameState.CONDITION].includes(name.state))
+    return this.nr.names.find(name => [NameState.APPROVED, NameState.CONDITIONAL].includes(name.state))
   }
 
   /** True if the Approved Name is consumed. */
@@ -437,11 +452,6 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     } else {
       newReqModule.setActiveComponent('InvalidActionMessage')
     }
-  }
-
-  async goBack () {
-    await newReqModule.cancelEditExistingRequest()
-    newReqModule.cancelAnalyzeName('Tabs')
   }
 
   private async refresh (event) {
