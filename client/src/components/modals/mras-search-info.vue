@@ -18,11 +18,12 @@
         <p>{{ resultAct }}</p>
       </v-card-text>
       <NameInput id="name-input-component"
-                 class="mb-n7 pa-0"/>
+                 class="mb-n7 pa-0"
+                  :is-mras-search="!isNameSearch"/>
       <v-card-actions class="justify-center">
         <div class="mt-1 mb-1 text-center">
           <v-btn class="search-btn"
-                 @click="handleSubmit()">{{ showSearch ? 'Search' : 'Close' }}</v-btn>
+                 @click="isNameSearch ? handleSubmit() : clearAndClose()">{{ name ? 'Search' : 'Close' }}</v-btn>
         </div>
       </v-card-actions>
     </v-card>
@@ -53,8 +54,8 @@ export default class MrasSearchInfoModal extends Vue {
       action: 'Please enter the name of your business below:'
     },
     default: {
-      desc: null,
-      action: null
+      desc: 'We were not able to retrieve your information from the home jurisdiction.',
+      action: 'Please enter the name of your business below:'
     }
   }
   get showModal () {
@@ -73,26 +74,28 @@ export default class MrasSearchInfoModal extends Vue {
     return newReqModule.jurisdictionText
   }
   get resultDesc () {
-    return this.resultConfig[newReqModule.mrasSearchResultCode]?.desc
+    return this.resultConfig[newReqModule.mrasSearchResultCode]?.desc || this.resultConfig.default.desc
   }
   get resultAct () {
-    return this.resultConfig[newReqModule.mrasSearchResultCode]?.action
+    return this.resultConfig[newReqModule.mrasSearchResultCode]?.action || this.resultConfig.default.action
   }
-  get showSearch (): boolean {
-    return (this.name || newReqModule.mrasSearchResultCode !== 404)
+  get isNameSearch (): boolean {
+    return (newReqModule.noCorpNum || newReqModule.mrasSearchResultCode !== NOT_FOUND)
   }
   get errors () {
     return newReqModule.errors
   }
   async handleSubmit (): Promise<void> {
     this.showModal = false
+    if (this.name) await newReqModule.startAnalyzeName()
     newReqModule.mutateCorpSearch('')
-    await newReqModule.startAnalyzeName()
+    newReqModule.mutateNoCorpNum(false)
   }
   private clearAndClose (): void {
     this.showModal = false
     newReqModule.mutateName('')
     newReqModule.mutateCorpSearch('')
+    newReqModule.mutateNoCorpNum(false)
   }
 }
 

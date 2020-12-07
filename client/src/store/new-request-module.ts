@@ -2461,7 +2461,7 @@ export class NewRequestModule extends VuexModule {
         this.setErrors(field)
       }
     })
-    if (['CA'].includes(this.location) && !this.request_jurisdiction_cd) {
+    if (['CA'].includes(this.location) && !['MVE'].includes(this.request_action_cd) && !this.request_jurisdiction_cd) {
       this.setErrors('jurisdiction')
       return
     }
@@ -2486,7 +2486,10 @@ export class NewRequestModule extends VuexModule {
           name = sanitizeName(profile?.LegalEntity?.names?.legalName)
           this.mutateName(name)
           this.mutateNRData({ key: 'homeJurisNum', value: this.corpSearch })
-        } else return
+        } else {
+          this.mutateNoCorpNum(true)
+          return
+        }
       }
     }
     let testName = this.name.toUpperCase()
@@ -2561,7 +2564,6 @@ export class NewRequestModule extends VuexModule {
       }
     }).catch(e => {
       this.mutateName('')
-      this.mutateNoCorpNum(true)
       this.mutateMrasSearchResult(e.response.status)
       this.mutateMrasSearchInfoModalVisible(true)
     })

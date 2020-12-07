@@ -33,6 +33,7 @@
 <script lang="ts">
 import newReqModule from '@/store/new-request-module'
 import { Component, Prop, Vue, Watch, Emit } from 'vue-property-decorator'
+import { Location, RequestCode } from '@/enums'
 
 @Component({})
 export default class NameInput extends Vue {
@@ -53,7 +54,11 @@ export default class NameInput extends Vue {
 
   /** Local validator when input is a MRAS corp num. */
   private get isCorpNumValid (): any {
-    return this.isMrasSearch ? this.$refs['nameInput'].valid : true
+    return this.isMrasSearch ? this.$refs['nameInput']?.valid : true
+  }
+
+  get name () {
+    return newReqModule.name
   }
 
   get errors () {
@@ -79,7 +84,7 @@ export default class NameInput extends Vue {
   }
   get nameLabel () {
     if (this.isMrasSearch) return 'Enter the corporate number assigned by the home jurisdiction'
-    return newReqModule.location !== 'BC'
+    return newReqModule.location !== Location.BC && newReqModule.request_action_cd !== RequestCode.MOVE
       ? 'Business\'s full legal name in home jurisdiction'
       : 'Enter a Name'
   }
@@ -89,7 +94,7 @@ export default class NameInput extends Vue {
   handleSubmit (event: KeyboardEvent) {
     if (event.key === 'Enter' && this.isCorpNumValid) {
       event.preventDefault()
-      this.startAnalyzeName()
+      if (this.name) this.startAnalyzeName()
       return
     }
     return event
@@ -97,7 +102,7 @@ export default class NameInput extends Vue {
   async startAnalyzeName () {
     newReqModule.mutateMrasSearchInfoModalVisible(false)
     if (newReqModule.isXproMras) this.$root.$emit('showSpinner', true)
-    await newReqModule.startAnalyzeName()
+    if (this.name) await newReqModule.startAnalyzeName()
     if (newReqModule.isXproMras) this.$root.$emit('showSpinner', false)
   }
   @Watch('isCorpNumValid')
