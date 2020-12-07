@@ -10,36 +10,35 @@
       <v-row no-gutters class="mt-3">
         <NameInput is-search-again="true"/>
       </v-row>
-      <v-row justify="center" class="mt-n7 mb-n3 py-0">
-        <v-col cols="auto">
+      <v-row justify="center" id="analyze-pending-title-row">
+        <v-col cols="auto" id="analyze-pending-title-col">
           Names containing these words: {{ totalNamesAnalyzing }}
         </v-col>
       </v-row>
-      <v-row justify="center">
-        <v-col cols="auto">
+      <v-row justify="center" id="analyze-pending-spinner-row">
+        <v-col cols="auto" id="analyze-pending-spinner-col">
           <v-progress-circular
             id="analyze-pending-spinner"
             :rotate="-90"
             :size="70"
             :width="6.5"
             :value="percentAnalyzed"
-            style="color:#FCBA19; font-size=16px"
           >
-            <b style="color:#495057">{{ percentAnalyzed }}%</b>
+            <b id="analyze-pending-spinner-percent">{{ percentAnalyzed }}%</b>
           </v-progress-circular>
         </v-col>
       </v-row>
-      <v-row justify="center" class="mt-n3">
-        <v-col cols="auto" class="copy-small">
+      <v-row justify="center">
+        <v-col cols="auto" class="copy-small" id="analyze-pending-time-title">
           <b>Estimated Analysis Time:</b>
         </v-col>
       </v-row>
-      <v-row justify="center" class="mt-n3">
-        <v-col cols="auto" class="copy-small">
+      <v-row justify="center">
+        <v-col cols="auto" class="copy-small" id="analyze-pending-time">
           {{ estimatedTime }}
         </v-col>
       </v-row>
-      <v-row justify="center">
+      <v-row justify="center" id=analyze-pending-bottom-btns>
         <v-col cols="auto" class="pb-0 pr-1">
           <v-btn id="analyze-pending-stop-button" @click="startOver">Stop Search</v-btn>
         </v-col>
@@ -120,5 +119,35 @@ export default class AnalyzePending extends Vue {
 </script>
 
 <style lang="scss" scoped>
-
+@import "@/assets/scss/theme.scss";
+#analyze-pending-title-row {
+  padding-top: 0;
+}
+#analyze-pending-title-col {
+  padding: 0;
+  font-size: 1rem;
+}
+#analyze-pending-spinner-row {
+  padding-top: 1.5625rem;
+}
+#analyze-pending-spinner-col {
+  color:$BCgovGold5;
+  font-size: 1rem;
+  padding: 0;
+}
+#analyze-pending-spinner-percent {
+  color:$gray7;
+}
+#analyze-pending-time-title {
+  padding: 0;
+  padding-top: 1.25rem;
+  font-size: 0.875rem;
+}
+#analyze-pending-time {
+  padding: 0;
+  font-size: 0.875rem;
+}
+#analyze-pending-bottom-btns {
+  padding-top: 1.5625rem;
+}
 </style>
