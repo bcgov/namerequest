@@ -2563,7 +2563,6 @@ export class NewRequestModule extends VuexModule {
       }
     }).catch(e => {
       this.mutateName('')
-      // this.mutateCorpSearch('')
       this.mutateMrasSearchResult(e.response.status)
       this.mutateMrasSearchInfoModalVisible(true)
     })

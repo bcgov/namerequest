@@ -80,7 +80,7 @@ export default class MrasSearchInfoModal extends Vue {
     return this.resultConfig[newReqModule.mrasSearchResultCode]?.action || this.resultConfig.default.action
   }
   get isNameSearch (): boolean {
-    return (newReqModule.noCorpNum || newReqModule.mrasSearchResultCode !== 404)
+    return (newReqModule.noCorpNum || newReqModule.mrasSearchResultCode !== NOT_FOUND)
   }
   get errors () {
     return newReqModule.errors
