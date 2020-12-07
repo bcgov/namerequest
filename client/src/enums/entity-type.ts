@@ -1,7 +1,7 @@
 /** Enum for Entity Code. */
 export enum EntityType {
   // BC Entity Types:
-  FR = 'CR',
+  FR = 'FR',
   DBA = 'DBA',
   CR = 'CR',
   UL = 'UL',

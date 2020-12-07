@@ -50,7 +50,7 @@ describe('name-input.vue', () => {
     expect(newReqModule.displayedComponent).toBe('Tabs')
     expect(wrapper.vm.errors).toStrictEqual(['request_action_cd'])
   })
-  it('Resists submission when there is no name entered and detects the correct error type', async () => {
+  it('Resists submission when there is no name entered', async () => {
     newReqModule.mutateEntityType('CR')
     newReqModule.mutateRequestAction('CNV')
 
@@ -58,7 +58,7 @@ describe('name-input.vue', () => {
     button.trigger('click')
     await wrapper.vm.$nextTick()
     expect(newReqModule.displayedComponent).toBe('Tabs')
-    expect(newReqModule.errors).toEqual(['name'])
+    expect(newReqModule.errors).toEqual([])
   })
   it('Resists submission when the name entered is too short and detects the correct error type', async () => {
     wrapper.vm.searchValue = 'ab'

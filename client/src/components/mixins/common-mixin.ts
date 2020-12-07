@@ -14,6 +14,8 @@ export default class CommonMixin extends Vue {
 
   /** Returns entity type text for the the specified code. */
   entityTypeCdToText (cd: EntityType): string {
+    // eslint-disable-next-line no-console
+    console.log(cd)
     switch (cd) {
       // BC Entity Types:
       case EntityType.FR: return 'BC Sole Proprietorship'
