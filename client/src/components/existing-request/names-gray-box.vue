@@ -1,9 +1,11 @@
 <template>
   <div id="names-container" class="bg-light-gray">
-    <div class="px-5 py-4 text-name cursor-help">
-      <v-tooltip right v-for="name of names" :key="name.choice" content-class="tooltip">
+    <div class="px-5 py-4 text-name">
+      <v-tooltip v-for="name of names" :key="name.choice"
+        transition="fade-transition" right content-class="tooltip"
+      >
         <template v-slot:activator="{ on, attrs }">
-          <div v-bind="attrs" v-on="on" :class="getClass(name)">
+          <div v-bind="attrs" v-on="on" :class="getClass(name)" class="cursor-default">
             <span>{{name.choice}}.</span>&nbsp;
             <span class="dotted-underline">{{name.name}}</span>&nbsp;
             <v-icon v-if="getIcon(name)" class="mt-n1" :class="getClass(name)">

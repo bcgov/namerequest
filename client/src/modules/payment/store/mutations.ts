@@ -12,6 +12,9 @@ export default {
   [types.TOGGLE_REFUND_MODAL]: (state, isVisible: boolean) => {
     state[STATE_KEY].isRefundVisible = isVisible || false
   },
+  [types.TOGGLE_CANCEL_MODAL]: (state, isVisible: boolean) => {
+    state[STATE_KEY].isCancelVisible = isVisible || false
+  },
   [types.TOGGLE_UPGRADE_MODAL]: (state, isVisible: boolean) => {
     state[STATE_KEY].isUpgradeVisible = isVisible || false
   },

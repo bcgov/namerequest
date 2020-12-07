@@ -61,10 +61,10 @@
 
                 <v-col cols="12">
                   <span>Expiry Extensions Remaining:</span>&nbsp;
-                  <v-tooltip right content-class="tooltip">
+                  <v-tooltip right transition="fade-transition" content-class="tooltip">
                     <template v-slot:activator="{ on, attrs }">
                       <span v-bind="attrs" v-on="on"
-                        class="dotted-underline app-blue font-weight-regular cursor-help"
+                        class="dotted-underline app-blue font-weight-regular cursor-default"
                         >{{ extensionsRemainingText }}</span>
                     </template>
                     Once approved, you normally have 56 days to use your Name Request.
@@ -196,8 +196,8 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   private furnished = 'notfurnished'
 
   /** The actions list, with some buttons forced to the bottom. */
-  private get actions () {
-    const actions = this.nr.actions || []
+  private get actions (): NrAction[] {
+    const actions = (this.nr.actions || []) as NrAction[]
     // move 'REFUND' or 'CANCEL' action (if present) to bottom of list
     // eg ['EDIT', 'REFUND', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'REFUND']
     // or ['EDIT', 'CANCEL', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'CANCEL']
@@ -404,7 +404,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     }
   }
 
-  private async handleButtonClick (action) {
+  private async handleButtonClick (action: NrAction) {
     let outcome = await newReqModule.confirmAction(action)
     if (outcome) {
       switch (action) {
@@ -441,6 +441,9 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
           break
         case NrAction.REFUND:
           paymentModule.toggleRefundModal(true)
+          break
+        case NrAction.CANCEL:
+          paymentModule.toggleCancelModal(true)
           break
         case NrAction.INCORPORATE:
           await this.affiliateOrLogin()

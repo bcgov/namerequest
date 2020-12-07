@@ -39,6 +39,7 @@ import timerModule from '@/modules/vx-timer'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 import * as types from '@/store/types'
+import { NrAction } from '@/enums'
 
 const qs: any = querystring
 const ANALYSIS_TIMEOUT_MS = 3 * 60 * 1000 // 3 minutes
@@ -2163,7 +2164,7 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
-  async patchNameRequestsByAction (action) {
+  async patchNameRequestsByAction (action: NrAction): Promise<void> {
     try {
       const { nrId } = this
 

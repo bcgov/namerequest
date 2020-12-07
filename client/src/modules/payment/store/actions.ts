@@ -12,6 +12,10 @@ export const toggleRefundModal = ({ commit }, isVisible: boolean) => {
   commit(types.TOGGLE_REFUND_MODAL, isVisible)
 }
 
+export const toggleCancelModal = ({ commit }, isVisible: boolean) => {
+  commit(types.TOGGLE_CANCEL_MODAL, isVisible)
+}
+
 export const toggleUpgradeModal = ({ commit }, isVisible: boolean) => {
   commit(types.TOGGLE_UPGRADE_MODAL, isVisible)
 }

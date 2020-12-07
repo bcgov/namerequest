@@ -6,6 +6,7 @@ export default {
   [types.PAYMENT_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isPaymentVisible,
   [types.PAYMENT_HISTORY_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isPaymentHistoryVisible,
   [types.REFUND_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isRefundVisible,
+  [types.CANCEL_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isCancelVisible,
   [types.UPGRADE_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isUpgradeVisible,
   [types.REAPPLY_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isReapplyVisible,
   [types.PAYMENT_COMPLETE_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isPaymentCompleteVisible,

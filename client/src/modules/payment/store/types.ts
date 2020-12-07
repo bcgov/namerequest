@@ -7,6 +7,9 @@ export const PAYMENT_HISTORY_MODAL_IS_VISIBLE = 'paymentHistoryModalIsVisible'
 export const TOGGLE_REFUND_MODAL = 'toggleRefundModal'
 export const REFUND_MODAL_IS_VISIBLE = 'refundModalIsVisible'
 
+export const TOGGLE_CANCEL_MODAL = 'toggleCancelModal'
+export const CANCEL_MODAL_IS_VISIBLE = 'cancelModalIsVisible'
+
 export const TOGGLE_UPGRADE_MODAL = 'toggleUpgradeModal'
 export const UPGRADE_MODAL_IS_VISIBLE = 'upgradeModalIsVisible'
 
