@@ -61,10 +61,10 @@
 
                 <v-col cols="12">
                   <span>Expiry Extensions Remaining:</span>&nbsp;
-                  <v-tooltip right content-class="tooltip">
+                  <v-tooltip right transition="fade-transition" content-class="tooltip">
                     <template v-slot:activator="{ on, attrs }">
                       <span v-bind="attrs" v-on="on"
-                        class="dotted-underline app-blue font-weight-regular cursor-help"
+                        class="dotted-underline app-blue font-weight-regular cursor-default"
                         >{{ extensionsRemainingText }}</span>
                     </template>
                     Once approved, you normally have 56 days to use your Name Request.
