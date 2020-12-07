@@ -1487,7 +1487,7 @@ export class NewRequestModule extends VuexModule {
       while (choiceIdx <= 3) {
         if (nameChoices[`name${choiceIdx}`] as boolean) {
           let combinedName = nameChoices[`name${choiceIdx}`]
-          if (($designations[this.entity_type_cd].end)) {
+          if (($designations[this.entity_type_cd] && $designations[this.entity_type_cd].end)) {
             let des = nameChoices[`designation${choiceIdx}`]
             if (des && !combinedName.endsWith(des)) {
               combinedName = combinedName + ' ' + des
