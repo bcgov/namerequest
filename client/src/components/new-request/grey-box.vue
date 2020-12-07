@@ -89,8 +89,7 @@
             <template v-else-if="option.type === 'assumed_name'">
               <v-col :id="option.type + '-button-checkbox-col'"
                      class="grey-box-checkbox-button text-center"
-                     v-if="entity_type_cd !== 'XLP' && entity_type_cd !== 'XLL'
-                     && entity_type_cd !== 'XCP' && entity_type_cd !== 'XSO'">
+                     v-if="isAssumedNameEntityType">
                 <transition name="fade" mode="out-in" >
                   <v-checkbox :error="showError"
                               :key="option.type+'-checkbox'"
@@ -190,6 +189,11 @@ export default class GreyBox extends Vue {
       originalName = replaceWord(originalName, word)
     }
     this.originalNameBase = originalName
+  }
+
+  get isAssumedNameEntityType () {
+    return this.entity_type_cd !== 'XLP' && this.entity_type_cd !== 'XLL' &&
+    this.entity_type_cd !== 'XCP' && this.entity_type_cd !== 'XSO'
   }
 
   get allDesignationsStripped () {

@@ -41,16 +41,16 @@
         </v-row>
       </template>
 
-      <v-row :class="editMode ? '' : isAssumedName ? 'mt-3' : 'mt-9' ">
+      <v-row :class="editMode ? '' : isAssumedName ? 'mt-3' : 'mt-9'">
         <v-col cols="12"
                class="h4 mb-3 ml-n1"
                v-if="editMode">Name Choices
         </v-col>
-        <v-col cols="12" v-if="!editMode && isAssumedName" class="text-body-3 mb-4">
+        <v-col cols="12" v-if="!editMode && isAssumedName" class="text-body-3">
               Name in Home Jurisdiction: {{name}}
         </v-col>
       </v-row>
-      <v-row>
+      <v-row :class="!editMode && isAssumedName ? 'mt-4' : ''">
         <v-col cols="2" class="py-0 label-style" align-self="start" key="static-1">
           {{choicesLabelsAndHints[0].label}}
         </v-col>
@@ -122,7 +122,7 @@
                <div class="mt-1">
                  The name of your business must be the same in BC and in your home jurisdiction.
                </div>
-               <div class="mt-5 mb-2">
+               <div class="mt-5">
                  If, after review, your current name is not approved for use in BC you will need to change
                  your business name in your home jurisdiction, and request your new name in BC as well.
                </div>
@@ -206,7 +206,7 @@
         </transition>
       </v-row>
 
-      <v-row class="mt-5">
+      <v-row class="mt-7">
         <v-col cols="7" class="py-0" />
         <ApplicantInfoNav :isValid="isValid" />
       </v-row>
