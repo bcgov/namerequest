@@ -2,6 +2,7 @@ import Vue from 'vue'
 import { Component } from 'vue-property-decorator'
 
 import { NameRequestPaymentResponse } from '@/modules/payment/models'
+import { PaymentAction } from '@/enums'
 
 @Component
 export default class PaymentMixin extends Vue {
@@ -43,7 +44,7 @@ export default class PaymentMixin extends Vue {
    * @param paymentAction A PaymentAction - one of [COMPLETE, UPGRADE, REAPPLY, REFUND]
    * @param paymentResponse
    */
-  savePaymentResponseToSession (paymentAction, paymentResponse: NameRequestPaymentResponse) {
+  savePaymentResponseToSession (paymentAction: PaymentAction, paymentResponse: NameRequestPaymentResponse) {
     const { id, nrId, payment, sbcPayment = { receipts: [] }, token, statusCode, completionDate } = paymentResponse
 
     // TODO: Remove this one, we don't want to set the payment to session once we're done!
