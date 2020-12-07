@@ -39,7 +39,7 @@ import { CreatePaymentParams } from '@/modules/payment/models'
 import * as paymentTypes from '@/modules/payment/store/types'
 import * as filingTypes from '@/modules/payment/filing-types'
 import * as jurisdictions from '@/modules/payment/jurisdictions'
-import * as paymentActions from './payment-actions'
+import { PaymentAction } from '@/enums'
 
 import PaymentMixin from '@/components/payment/payment-mixin'
 import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
@@ -106,7 +106,7 @@ export default class UpgradeModal extends Mixins(
     const onSuccess = (paymentResponse) => {
       const { paymentId, paymentToken } = this
       // Save to session
-      this.savePaymentResponseToSession(paymentActions.UPGRADE, paymentResponse)
+      this.savePaymentResponseToSession(PaymentAction.UPGRADE, paymentResponse)
 
       const baseUrl = getBaseUrl()
       const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${paymentId}`)
@@ -114,7 +114,7 @@ export default class UpgradeModal extends Mixins(
     }
 
     this.createPayment({
-      action: paymentActions.UPGRADE,
+      action: PaymentAction.UPGRADE,
       nrId: nrId,
       filingType: filingTypes.NM606,
       priorityRequest: priorityRequest

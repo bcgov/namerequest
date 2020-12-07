@@ -28,12 +28,12 @@
       <v-card-actions class="justify-center">
         <v-btn
           class="px-6 button-normal"
-          id="refund-confirm-btn"
+          id="cancel-nr-btn"
           :loading="loading"
           @click="confirmRefund()">Cancel this Name Request</v-btn>
         <v-btn
           class="px-6 button-blue"
-          id="refund-cancel-btn"
+          id="keep-nr-btn"
           @click="hideModal()">Keep this Name Request</v-btn>
       </v-card-actions>
 
@@ -48,7 +48,7 @@ import PaymentMixin from '@/components/payment/payment-mixin'
 import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
 import RefundSummary from '@/components/payment/refund-summary.vue'
 import * as PaymentTypes from '@/modules/payment/store/types'
-import * as PaymentActions from './payment-actions'
+import { NrAction } from '@/enums'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
 import NewReqModule from '@/store/new-request-module'
 
@@ -84,7 +84,7 @@ export default class RefundModal extends Mixins(NameRequestMixin, PaymentMixin, 
   /** Called when user clicks "Cancel this NR" button. */
   private async confirmRefund (): Promise<void> {
     this.loading = true
-    await NewReqModule.patchNameRequestsByAction(PaymentActions.REFUND)
+    await NewReqModule.patchNameRequestsByAction(NrAction.REFUND)
     this.loading = false
     this.hideModal() // FUTURE: not needed? will success component be displayed instead?
   }
