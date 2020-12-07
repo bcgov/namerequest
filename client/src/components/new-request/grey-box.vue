@@ -89,7 +89,8 @@
             <template v-else-if="option.type === 'assumed_name'">
               <v-col :id="option.type + '-button-checkbox-col'"
                      class="grey-box-checkbox-button text-center"
-                     v-if="entity_type_cd !== 'XLP' && entity_type_cd !== 'XLL'">
+                     v-if="entity_type_cd !== 'XLP' && entity_type_cd !== 'XLL'
+                     && entity_type_cd !== 'XCP' && entity_type_cd !== 'XSO'">
                 <transition name="fade" mode="out-in" >
                   <v-checkbox :error="showError"
                               :key="option.type+'-checkbox'"

@@ -317,7 +317,8 @@ export default class NamesCapture extends Vue {
 
   get showSecondAndThirdNameChoices () {
     if (this.location !== 'BC') {
-      if (this.entity_type_cd === 'XLP' || this.entity_type_cd === 'XLL') {
+      if (this.entity_type_cd === 'XLP' || this.entity_type_cd === 'XLL' ||
+      this.entity_type_cd === 'XCP' || this.entity_type_cd === 'XSO') {
         return false
       }
     }
