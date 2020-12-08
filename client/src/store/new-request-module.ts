@@ -1060,7 +1060,7 @@ export class NewRequestModule extends VuexModule {
     if (this.entity_type_cd) {
       let list = [...this.entityTypesBC, ...this.entityTypesXPRO]
       let type = list.find(t => t.value === this.entity_type_cd)
-      return type.text
+      return type?.text
     }
     return ''
   }
@@ -2501,8 +2501,7 @@ export class NewRequestModule extends VuexModule {
     }
     if (this.nameIsSlashed) {
       this.mutateName(name)
-      this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
-      this.mutateDisplayedComponent('SubmissionTabs')
+      this.mutateDisplayedComponent('SendToExamination')
       return
     }
     this.mutateName(name)
@@ -2517,6 +2516,10 @@ export class NewRequestModule extends VuexModule {
       return
     } else {
       if (['AML', 'CHG', 'DBA', 'MVE', 'NEW', 'REH', 'REN', 'REST'].includes(this.request_action_cd)) {
+        if (this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
+          this.mutateDisplayedComponent('SendToExamination')
+          return
+        }
         this.getNameAnalysisXPRO()
       }
     }

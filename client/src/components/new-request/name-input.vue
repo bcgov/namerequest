@@ -57,7 +57,7 @@ export default class NameInput extends Vue {
 
   /** Local validator when input is a MRAS corp num. */
   private get isCorpNumValid (): boolean {
-    return this.isMrasSearch ? this.$refs['nameInput'].valid : true
+    return this.isMrasSearch ? this.$refs['nameInput']?.valid : true
   }
 
   get name () {
