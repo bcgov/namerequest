@@ -26,7 +26,7 @@
       </transition>
 
       <transition mode="out-in" name="fade">
-        <v-container class="nr-data pa-0">
+        <div class="nr-data">
           <v-row class="mt-5" :key="refreshCount">
             <!-- labels and values -->
             <v-col cols="9" class="py-0">
@@ -44,7 +44,7 @@
                   </v-icon>
                   <a href="#"
                     class="link-sm ml-1"
-                    v-if="isNrConditional"
+                    v-if="showConditionsLink"
                     @click.prevent="showConditionsModal()"
                   >Conditions</a>
                 </v-col>
@@ -112,13 +112,13 @@
 
           <check-status-gray-box
             class="mt-5"
-            v-if="showCheckStatus"
+            v-if="showCheckStatusGrayBox"
             :nrNum="nr.nrNum"
           />
 
           <nr-approved-gray-box
             class="mt-5"
-            v-if="showNrApproved"
+            v-if="showNrApprovedGrayBox"
             :nrNum="nr.nrNum"
             :approvedName="approvedName && approvedName.name"
             :emailAddress="nr.applicants.emailAddress"
@@ -126,7 +126,7 @@
 
           <nr-not-approved-gray-box
             class="mt-5"
-            v-if="showNrNotApproved"
+            v-if="showNrNotApprovedGrayBox"
             :nrNum="nr.nrNum"
           />
 
@@ -134,7 +134,7 @@
           <div class="mt-5 text-center" v-if="showIncorporateButton">
             <v-btn @click="handleButtonClick(NrAction.INCORPORATE)">Incorporate Using This Name Request</v-btn>
           </div>
-        </v-container>
+        </div>
       </transition>
     </template>
   </MainContainer>
@@ -287,30 +287,37 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     )
   }
 
-  /** True if the Check Status component should be shown. */
-  private get showCheckStatus (): boolean {
+  /** True if the Check Status gray box should be shown. */
+  private get showCheckStatusGrayBox (): boolean {
     return [NrState.DRAFT, NrState.IN_PROGRESS, NrState.ON_HOLD].includes(this.nr.state)
   }
 
-  /** True if the NR Approved component should be shown. */
-  private get showNrApproved (): boolean {
+  /** True if the NR Approved gray box should be shown. */
+  private get showNrApprovedGrayBox (): boolean {
     return (
       !this.isBenefitCompany(this.nr) &&
-      [NrState.APPROVED, NrState.CONDITIONAL, NrState.COND_RESERVED].includes(this.nr.state)
+      this.isNrApprovedOrConditional
     )
   }
 
-  /** True if the NR NotApproved component should be shown. */
-  private get showNrNotApproved (): boolean {
+  /** True if the NR Not Approved gray box should be shown. */
+  private get showNrNotApprovedGrayBox (): boolean {
     return (
       this.isXProCompany(this.nr) &&
       (this.nr.state === NrState.REJECTED)
     )
   }
 
-  /** True if the NR is in a conditional state. */
-  private get isNrConditional (): boolean {
-    return [NrState.CONDITIONAL, NrState.COND_RESERVED].includes(this.nr.state)
+  /** True if the Conditions link should be shown. */
+  private get showConditionsLink (): boolean {
+    // 1. NR is approved or conditional
+    // 2. there is a conditional name
+    // 3. the conditional name has some decision text
+    // (see also Conditions modal)
+    return (
+      this.isNrApprovedOrConditional &&
+      !!this.conditionalName?.decision_text
+    )
   }
 
   /** The display text for Expiry Extensions Remaining. */
@@ -323,46 +330,64 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   /** The display text for Request Status. */
   private get requestStatusText (): string {
     switch (this.nr.state) {
-      case NrState.COMPLETED: {
+      case NrState.APPROVED:
         if (this.isNrConsumed) return `Approved / Used For ${this.approvedName.corpNum}`
         if (this.isNrExpired) return 'Expired'
-        return 'Completed' // should never happen
-      }
-      case NrState.COND_RESERVED: return 'Approved' // show COND_RESERVED as "Approved"
-      case NrState.CONDITIONAL: return 'Approved' // show CONDITIONAL as "Approved"
-      case NrState.ON_HOLD: return 'In Progress' // show ON_HOLD as "In Progress"
+        return 'Approved'
+      case NrState.CANCELLED: return 'Cancelled'
+      case NrState.CONDITIONAL:
+        if (this.isNrConsumed) return `Conditional Approval / Used For ${this.approvedName.corpNum}`
+        if (this.isNrExpired) return 'Expired'
+        return 'Conditional Approval'
+      case NrState.DRAFT: return 'Draft'
+      case NrState.ON_HOLD: return 'In Progress' // show ON HOLD as "In Progress"
       case NrState.IN_PROGRESS: return 'In Progress'
       case NrState.REFUND_REQUESTED: return 'Cancelled, Refund Requested'
-      default: return this.toTitleCase(this.nr.state)
+      case NrState.REJECTED: return 'Rejected'
+      default: return '-' // should never happen
     }
   }
 
   /** True if the NR is consumed. */
   private get isNrConsumed (): boolean {
-    // consumed = NR is completed + a name is approved + approved name is consumed
-    return (this.isNrCompleted &&
+    // 1. NR is approved or conditional
+    // 2. a Name is approved
+    // 3. Approved Name is consumed
+    return (
+      this.isNrApprovedOrConditional &&
       !!this.approvedName &&
-      this.isApprovedNameConsumed)
+      this.isApprovedNameConsumed
+    )
   }
 
   // FUTURE: remove this when EXPIRED state is implemented (ticket #5669)
   /** True if the NR is expired. */
   private get isNrExpired (): boolean {
-    // expired = NR is completed + a name is approved + approved name is not consumed + expiry date has passed
-    return (this.isNrCompleted &&
+    // 1. NR is approved or conditional
+    // 2. a Name is approved
+    // 3. Approved Name is not consumed
+    // 4. Expiration Date has passed
+    return (
+      this.isNrApprovedOrConditional &&
       !!this.approvedName &&
       !this.isApprovedNameConsumed &&
-      this.hasExpirationDatePassed)
+      this.hasExpirationDatePassed
+    )
   }
 
-  /** True if NR is in Completed state. */
-  private get isNrCompleted (): boolean {
-    return (this.nr.state === NrState.COMPLETED)
+  /** True if NR is in Approved or Conditional state. */
+  private get isNrApprovedOrConditional (): boolean {
+    return [NrState.APPROVED, NrState.CONDITIONAL].includes(this.nr.state)
   }
 
   /** The NR's (first) approved name object, if any. */
   private get approvedName (): any {
     return this.nr.names.find(name => [NameState.APPROVED, NameState.CONDITIONAL].includes(name.state))
+  }
+
+  /** The NR's (first) conditional name object, if any. */
+  private get conditionalName (): any {
+    return this.nr.names.find(name => (name.state === NameState.CONDITIONAL))
   }
 
   /** True if the Approved Name is consumed. */
