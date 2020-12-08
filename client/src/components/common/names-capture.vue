@@ -41,7 +41,7 @@
         </v-row>
       </template>
 
-      <v-row :class="editMode ? '' : 'mt-3' ">
+      <v-row :class="editMode ? '' : isAssumedName ? 'mt-3' : 'mt-9'">
         <v-col cols="12"
                class="h4 mb-3 ml-n1"
                v-if="editMode">Name Choices
@@ -50,7 +50,7 @@
               Name in Home Jurisdiction: {{name}}
         </v-col>
       </v-row>
-      <v-row>
+      <v-row :class="!editMode && isAssumedName ? 'mt-4' : ''">
         <v-col cols="2" class="py-0 label-style" align-self="start" key="static-1">
           {{choicesLabelsAndHints[0].label}}
         </v-col>
@@ -58,8 +58,7 @@
           <v-col :key="transitionKey(1)" class="ma-0 pa-0" cols="10">
             <v-row class="ma-0 pa-0" v-if="location === 'BC'">
               <v-col :cols="designationAtEnd ? 8 : 12" class="py-0" >
-                <v-text-field :autofocus="autofocusField === 'name1'"
-                              :error-messages="messages.name1"
+                <v-text-field :error-messages="messages.name1"
                               :hide-details="hide"
                               :value="nameChoices.name1"
                               @blur="handleBlur()"
@@ -69,8 +68,7 @@
                               :label="choicesLabelsAndHints[0].hint"/>
               </v-col>
               <v-col cols="4" class="py-0" v-if="designationAtEnd">
-                <v-select :autofocus="autofocusField === 'des1'"
-                          :error-messages="des1Message"
+                <v-select :error-messages="des1Message"
                           :hide-details="hide"
                           :items="items"
                           :menu-props="props"
@@ -79,13 +77,12 @@
                           @input="editChoices('designation1', $event, true)"
                           filled
                           id="designation-1-select"
-                          placeholder="Designation" />
+                          label="Designation" />
               </v-col>
             </v-row>
             <v-row class="ma-0 pa-0" v-else>
               <v-col :cols="isAssumedName ? 8 : 12" class="py-0" >
-                <v-text-field :autofocus="autofocusField === 'name1'"
-                              :error-messages="messages.name1"
+                <v-text-field :error-messages="messages.name1"
                               :hide-details="hide"
                               :value="xproNameWithoutConflict"
                               @blur="handleBlur()"
@@ -96,8 +93,7 @@
                               :disabled="!isAssumedName"/>
               </v-col>
               <v-col cols="4" class="py-0" v-if="isAssumedName">
-                <v-select :autofocus="autofocusField === 'des1'"
-                          :error-messages="des1Message"
+                <v-select :error-messages="des1Message"
                           :hide-details="hide"
                           :items="items"
                           :menu-props="props"
@@ -106,7 +102,7 @@
                           @input="editChoices('designation1', $event, true)"
                           filled
                           id="designation-1-select"
-                          placeholder="Designation" />
+                          label="Designation" />
               </v-col>
             </v-row>
           </v-col>
@@ -122,10 +118,19 @@
               all <a :href="buildNameURL" target='_blank'>guidelines for how to build a name.</a>
               <v-icon class="launch-icon">mdi-launch</v-icon>
             </span>
+             <span v-else-if="!showSecondAndThirdNameChoices">
+               <div class="mt-1">
+                 The name of your business must be the same in BC and in your home jurisdiction.
+               </div>
+               <div class="mt-5">
+                 If, after review, your current name is not approved for use in BC you will need to change
+                 your business name in your home jurisdiction, and request your new name in BC as well.
+               </div>
+            </span>
             <span v-else>
               You may provide up to two additional assumed names which will be considered at no further cost,
               in the order provided, if the name in the home jurisdiction cannot be approved. Be sure to follow
-              all <a :href="buildNameURL" target='_blank'>for how to build a name.</a>
+              all <a :href="buildNameURL" target='_blank'>guidelines for how to build a name.</a>
               <v-icon class="launch-icon">mdi-launch</v-icon>
             </span>
           </span>
@@ -135,7 +140,7 @@
           </span>
         </v-col>
       </v-row>
-      <v-row class="mt-5">
+      <v-row class="mt-5" v-if="showSecondAndThirdNameChoices">
         <v-col cols="2" class="py-0 label-style" align-self="start" key="static-2">
           {{choicesLabelsAndHints[1].label}}
         </v-col>
@@ -143,8 +148,7 @@
           <v-col :key="transitionKey(2)" class="ma-0 pa-0" cols="10">
             <v-row class="ma-0 pa-0">
               <v-col :cols="designationAtEnd ? 8: 12" class="py-0">
-                <v-text-field :autofocus="autofocusField === 'name2'"
-                              :error-messages="messages.name2"
+                <v-text-field :error-messages="messages.name2"
                               :hide-details="hide"
                               :value="nameChoices.name2"
                               @blur="handleBlur()"
@@ -163,13 +167,13 @@
                           @input="editChoices('designation2', $event, true)"
                           filled
                           id="designation-2-select"
-                          placeholder="Designation" />
+                          label="Designation" />
               </v-col>
             </v-row>
           </v-col>
         </transition>
       </v-row>
-      <v-row no gutters class="mt-5" key="static-3">
+      <v-row no gutters class="mt-5" key="static-3" v-if="showSecondAndThirdNameChoices">
         <v-col cols="2" class="py-0 label-style" align-self="start">
           {{choicesLabelsAndHints[2].label}}
         </v-col>
@@ -195,14 +199,14 @@
                           @input="editChoices('designation3', $event, true)"
                           filled
                           id="designation-3-select"
-                          placeholder="Designation" />
+                          label="Designation" />
               </v-col>
             </v-row>
           </v-col>
         </transition>
       </v-row>
 
-      <v-row class="mt-5">
+      <v-row class="mt-7">
         <v-col cols="7" class="py-0" />
         <ApplicantInfoNav :isValid="isValid" />
       </v-row>
@@ -309,6 +313,16 @@ export default class NamesCapture extends Vue {
         }
       })
     }
+  }
+
+  get showSecondAndThirdNameChoices () {
+    if (this.location !== 'BC') {
+      if (this.entity_type_cd === 'XLP' || this.entity_type_cd === 'XLL' ||
+      this.entity_type_cd === 'XCP' || this.entity_type_cd === 'XSO') {
+        return false
+      }
+    }
+    return true
   }
 
   get autofocusField () {
@@ -587,7 +601,6 @@ export default class NamesCapture extends Vue {
     if (this.entity_type_cd === 'CC') {
       output = this.$designations['CR'].words
     }
-    output.unshift('')
     return output
   }
   get location () {
