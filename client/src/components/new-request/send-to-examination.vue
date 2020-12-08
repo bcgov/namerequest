@@ -1,24 +1,24 @@
 <template>
   <MainContainer id="non-analyze-container">
     <template v-slot:container-header>
-      <v-col cols="auto" class="h6 pt-0 mt-1">
+      <v-col cols="auto" class="h6 pt-0 my-1">
         You are searching for a name for a
         {{ entityText === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }}
         {{ entityText }}
       </v-col>
     </template>
     <template v-slot:content>
-      <v-row class="mt-n2">
-        <NameInput :is-read-only="true"/>
+      <v-row no-gutters>
+        <NameInput :is-read-only="true" class="mb-n2"/>
       </v-row>
-      <v-row class="text-center mt-n8">
+      <v-row no-gutters class="text-center">
         <v-col cols="12" class="h5 text-center">
           <v-icon :class="actionConfig.class">
             {{ actionConfig.icon }}
           </v-icon>
           <span :class="actionConfig.class" >{{ actionConfig.text }}</span>
         </v-col>
-        <v-col cols="12" class="mt-n4">
+        <v-col cols="12" class="py-2">
           <p class="text-center copy-normal">
             This name cannot be analyzed here and must be sent to staff for review.
           </p>

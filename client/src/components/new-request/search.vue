@@ -396,7 +396,9 @@ export default class NewSearch extends Vue {
     return newReqModule.isXproMras
   }
   get jurisdictionOptions () {
-    return this.location === 'CA' ? this.$canJurisdictions.filter(jur => jur.value !== 'BC') : this.$intJurisdictions
+    return this.location === 'CA'
+      ? this.$canJurisdictions.filter(jur => jur.value !== 'BC')
+      : this.$intJurisdictions.filter(jur => jur.value !== 'CA')
   }
   activateNRRModal () {
     newReqModule.mutateNrRequiredModalVisible(true)

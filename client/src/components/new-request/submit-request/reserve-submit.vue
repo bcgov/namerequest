@@ -6,8 +6,9 @@
     <template v-slot:activator="scope">
       <v-btn @click="handleSubmit"
              :class="isContinue ? 'button-normal' : 'button-blue'"
-             class="mt-auto reserve-submit-btn"
+             class="mt-auto"
              v-on="scope.on"
+             id="reserve-submit-btn"
              ref="reserve-submit-button">
         {{ text }}
       </v-btn>
@@ -122,7 +123,7 @@ export default class ReserveSubmitButton extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-.reserve-submit-btn {
+#reserve-submit-btn {
   min-width: 140px !important;
 }
 </style>
