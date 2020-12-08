@@ -206,7 +206,7 @@ export class NewRequestModule extends VuexModule {
     'end_designation_more_than_once'
   ]
   displayedComponent: string = 'Tabs'
-  doNotAnalyzeEntities: string[] = ['PAR', 'CC', 'CP', 'PA', 'FI', 'XCP']
+  doNotAnalyzeEntities: string[] = ['PAR', 'CC', 'CP', 'PA', 'FI', 'XCP', 'SO']
   editMode: boolean = false
   entity_type_cd: string = 'CR'
   entityTypeAddToSelect: SelectOptionsI | null = null
@@ -2513,8 +2513,7 @@ export class NewRequestModule extends VuexModule {
           return
         }
       }
-      this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
-      this.mutateDisplayedComponent('SubmissionTabs')
+      this.mutateDisplayedComponent('SendToExamination')
       return
     } else {
       if (['AML', 'CHG', 'DBA', 'MVE', 'NEW', 'REH', 'REN', 'REST'].includes(this.request_action_cd)) {

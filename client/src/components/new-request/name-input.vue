@@ -8,9 +8,11 @@
                   id="name-input-text-field"
                   ref="nameInput"
                   :rules="isMrasSearch ? mrasRules : []"
-                  :label="nameLabel"
+                  :label="isReadOnly ? '' : nameLabel"
+                  :class="{ 'read-only-mode': isReadOnly }"
+                  :disabled="isReadOnly"
                   v-model="searchValue">
-      <template v-slot:append>
+      <template v-slot:append v-if="!isReadOnly">
         <v-tooltip bottom
                    content-class="bottom-tooltip search-tooltip"
                    transition="fade-transition"
@@ -44,6 +46,7 @@ export default class NameInput extends Vue {
   /** Local Properties */
   @Prop({ default: false }) isSearchAgain: boolean
   @Prop({ default: false }) isMrasSearch: boolean
+  @Prop({ default: false }) isReadOnly: boolean
 
   /** The array of validation rules for the MRAS corp num. */
   private get mrasRules (): Array<Function> {
@@ -53,8 +56,8 @@ export default class NameInput extends Vue {
   }
 
   /** Local validator when input is a MRAS corp num. */
-  private get isCorpNumValid (): any {
-    return this.isMrasSearch ? this.$refs['nameInput']?.valid : true
+  private get isCorpNumValid (): boolean {
+    return this.isMrasSearch ? this.$refs['nameInput'].valid : true
   }
 
   get name () {
@@ -114,9 +117,15 @@ export default class NameInput extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import '@/assets/scss/theme.scss';
+
 .search-tooltip {
   max-width: 100px;
   text-align: center;
   padding: 10px !important;
+}
+
+::v-deep .theme--light.v-input--is-disabled input, .theme--light.v-input--is-disabled textarea {
+  color: $gray9 !important;
 }
 </style>

@@ -40,6 +40,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import AnalyzeCharacters from '@/components/new-request/analyze-characters.vue'
 import AnalyzePending from '@/components/new-request/analyze-pending.vue'
 import AnalyzeResults from '@/components/new-request/analyze-results.vue'
+import SendToExamination from '@/components/new-request/send-to-examination.vue'
 import ExistingRequestDisplay from '@/components/existing-request/existing-request-display.vue'
 import ExistingRequestEdit from '@/components/existing-request/existing-request-edit.vue'
 import LowerContainer from '@/components/lower-info-area/lower-container.vue'
@@ -55,6 +56,7 @@ import newRequestModule from '@/store/new-request-module'
     AnalyzeCharacters,
     AnalyzePending,
     AnalyzeResults,
+    SendToExamination,
     ExistingRequestDisplay,
     ExistingRequestEdit,
     LowerContainer,
