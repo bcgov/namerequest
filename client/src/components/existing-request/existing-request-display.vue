@@ -92,7 +92,7 @@
             </v-col>
 
             <!-- action buttons -->
-            <v-col cols="3" class="py-0" v-if="nr.state !== NrState.CANCELLED">
+            <v-col cols="3" class="py-0">
               <v-row dense>
                 <template v-for="action of actions">
                   <!-- incorporate action is a distinct button below -->
