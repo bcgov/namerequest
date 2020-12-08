@@ -8,13 +8,13 @@
         <v-col cols="12" class="mb-n2">
           <span class="h2 colour-white">Name Request
             <v-tooltip bottom nudge-right="10"
-                       nudge-top="20"
+                       nudge-top="5"
                        content-class="bottom-tooltip"
                        transition="fade-transition"
                        class="test-class"
                        :open-on-hover="false">
               <template v-slot:activator="{ on }">
-                <v-btn class="beta-wrapper-btn pa-0"
+                <v-btn class="beta-wrapper-btn ml-n2 mb-n2 pa-0"
                        @click="on.click"
                        @blur="on.blur"
                        :ripple="false"
@@ -129,6 +129,8 @@ export default class Landing extends Vue {
 .beta-wrapper-btn {
   background-color: inherit !important;
   box-shadow: unset !important;
+  font: inherit !important;
+  height: inherit !important;
   &:before {
     background-color: inherit !important;
   }
