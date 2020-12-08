@@ -247,16 +247,11 @@ export default class NewSearch extends Vue {
   private corpNumValid: boolean = true
   private corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
 
+  /** Reset search values when location changes */
   @Watch('location')
-  watchLocation (newVal, oldVal) {
-    if (newVal === 'INFO') {
-      let type = this.entity_type_cd
-      newReqModule.mutateLocationInfoModalVisible(true)
-      this.$nextTick(function () {
-        this.location = oldVal
-        this.entity_type_cd = type
-      })
-    }
+  watchLocation () {
+    newReqModule.mutateName('')
+    newReqModule.mutateCorpSearch('')
   }
   @Watch('request_action_cd')
   watchRequestActionCd (newVal) {

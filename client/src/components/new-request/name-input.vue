@@ -7,7 +7,7 @@
                   filled
                   id="name-input-text-field"
                   ref="nameInput"
-                  :rules="isMrasSearch ? mrasRules : []"
+                  :rules="(searchValue && isMrasSearch) ? mrasRules : []"
                   :label="isReadOnly ? '' : nameLabel"
                   :class="{ 'read-only-mode': isReadOnly }"
                   :disabled="isReadOnly"
@@ -97,7 +97,7 @@ export default class NameInput extends Vue {
   handleSubmit (event: KeyboardEvent) {
     if (event.key === 'Enter' && this.isCorpNumValid) {
       event.preventDefault()
-      if (this.name) this.startAnalyzeName()
+      if (this.searchValue) this.startAnalyzeName()
       return
     }
     return event
@@ -105,7 +105,7 @@ export default class NameInput extends Vue {
   async startAnalyzeName () {
     newReqModule.mutateMrasSearchInfoModalVisible(false)
     if (newReqModule.isXproMras) this.$root.$emit('showSpinner', true)
-    if (this.name) await newReqModule.startAnalyzeName()
+    if (this.searchValue) await newReqModule.startAnalyzeName()
     if (newReqModule.isXproMras) this.$root.$emit('showSpinner', false)
   }
   @Watch('isCorpNumValid')
