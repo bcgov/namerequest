@@ -8,15 +8,23 @@
         <v-col cols="12" class="mb-n2">
           <span class="h2 colour-white">Name Request
             <v-tooltip bottom nudge-right="10"
+                       nudge-top="20"
                        content-class="bottom-tooltip"
                        transition="fade-transition"
-                       close-delay="1200">
+                       class="test-class"
+                       :open-on-hover="false">
               <template v-slot:activator="{ on }">
-                <sup class="beta-tag" v-on="on">Beta</sup>
+                <v-btn class="beta-wrapper-btn pa-0"
+                       @click="on.click"
+                       @blur="on.blur"
+                       :ripple="false"
+                       retain-focus-on-click>
+                  <sup class="beta-tag">Beta</sup>
+                </v-btn>
               </template>
               <p>The Name Request website is available as a Beta version. Name Requests obtained through the Beta are
                 official name requests and can be used in the province of British Columbia.</p>
-              <p>As part of a new
+              <p class="mb-0">As part of a new
                 <a class="white--text" :href="agileUrl" target="_blank">agile software development process</a>,
                 the Name Request website will be continually updated and improved based on feedback from citizens and
                 businesses in BC.</p>
@@ -115,7 +123,14 @@ export default class Landing extends Vue {
   font-weight: bold;
   text-transform: uppercase;
   &:hover {
-    cursor: default;
+    cursor: pointer;
+  }
+}
+.beta-wrapper-btn {
+  background-color: inherit !important;
+  box-shadow: unset !important;
+  &:before {
+    background-color: inherit !important;
   }
 }
 .v-tooltip__content {
