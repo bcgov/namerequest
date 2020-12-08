@@ -26,7 +26,7 @@
       </transition>
 
       <transition mode="out-in" name="fade">
-        <v-container class="nr-data pa-0">
+        <div class="nr-data">
           <v-row class="mt-5" :key="refreshCount">
             <!-- labels and values -->
             <v-col cols="9" class="py-0">
@@ -134,7 +134,7 @@
           <div class="mt-5 text-center" v-if="showIncorporateButton">
             <v-btn @click="handleButtonClick(NrAction.INCORPORATE)">Incorporate Using This Name Request</v-btn>
           </div>
-        </v-container>
+        </div>
       </transition>
     </template>
   </MainContainer>

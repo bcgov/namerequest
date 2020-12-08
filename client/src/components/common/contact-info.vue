@@ -44,6 +44,8 @@ export default class ContactInfo extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/theme";
+
 .contact-info {
   display: flex;
   justify-content: space-between;
@@ -56,8 +58,10 @@ export default class ContactInfo extends Vue {
   column-gap: 0.5rem;
   min-width: 12rem;
 }
+
 .contact-icon {
   font-size: 1.25rem;
+  color: $non-clickable-blue;
 }
 
 .contact-key {
