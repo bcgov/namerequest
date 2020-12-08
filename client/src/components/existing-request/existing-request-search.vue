@@ -1,6 +1,6 @@
 <template>
   <v-form v-model="isValid" lazy-validation @submit="handleSubmit" class="pa-10">
-    <v-row class="mx-0 copy-normal">
+    <v-row class="ml-5 copy-normal">
       <!-- FIRST LINE -->
       <v-col cols="12" class="mt-0">
         Enter the NR Number or Business Name and either the Applicant's Phone or Email:
@@ -10,50 +10,53 @@
       <v-col cols="12" class="red--text" v-if="errorMessage">{{ errorMessage }}</v-col>
 
       <!-- THIRD LINE -->
-      <v-col cols="1" class="ml-n4 mr-4 max-height">
-        <v-img src="../../assets/images/one-icon.png" contain height="60" />
+    </v-row>
+    <v-row align="center" class="mr-4" dense>
+      <v-col cols="1" class="mr-n3">
+        <v-img src="../../assets/images/one-icon.png" contain height="34" />
       </v-col>
       <v-col cols="11" class="max-height">
         <v-text-field :value="existingRequestSearch.nrNum"
-                       @input="setExistingRequestSearch('nrNum', $event)"
-                       filled
-                       validate-on-blur
-                       :rules="nrRules"
-                       placeholder="Business Name or NR Number"
-                       id="nr-num-text-field" />
-      </v-col>
-
-      <!-- FOURTH LINE -->
-      <v-col cols="1" class="ml-n4 mr-4 max-height">
-        <v-img src="../../assets/images/two-icon.png" contain height="60" />
-      </v-col>
-      <v-col class="max-height">
-        <v-text-field :value="existingRequestSearch.phoneNumber"
-                      @input="setExistingRequestSearch('phoneNumber', $event)"
+                      @input="setExistingRequestSearch('nrNum', $event)"
+                      class="copy-normal"
                       filled
-                      :validate-on-blur="validatePhoneOnBlur"
-                      :rules="phoneRules"
-                      id="phone-number-text-field"
-                      placeholder="Applicant's Phone Number" />
-      </v-col>
-      <v-col class="pt-4 px-6 max-height shrink">or</v-col>
-      <v-col class="max-height">
-        <v-text-field :value="existingRequestSearch.emailAddress"
-                      :rules="emailRules"
-                      @input="setExistingRequestSearch('emailAddress', $event)"
                       validate-on-blur
-                      filled
-                      placeholder="Applicant's Notification Email"
-                      id="email-address-text-field" />
+                      :rules="nrRules"
+                      label="NR Number"
+                      id="nr-num-text-field" />
       </v-col>
-
+    </v-row>
+    <v-row align="center" dense class="mr-7">
+      <!-- FOURTH LINE -->
+      <v-col cols="1" class="mr-n3">
+        <v-img src="../../assets/images/two-icon.png" contain height="34" />
+      </v-col>
+      <v-col class="max-height">
+        <v-text-field :rules="phoneRules"
+                      :validate-on-blur="validatePhoneOnBlur"
+                      :value="existingRequestSearch.phoneNumber"
+                      @input="setExistingRequestSearch('phoneNumber', $event)"
+                      class="copy-normal"
+                      filled
+                      id="phone-number-text-field"
+                      label="Applicant's Phone Number" />
+      </v-col>
+      <v-col class="copy-normal text-center px-6 shrink">or</v-col>
+      <v-col class="max-height">
+        <v-text-field :rules="emailRules"
+                      :value="existingRequestSearch.emailAddress"
+                      @input="setExistingRequestSearch('emailAddress', $event)"
+                      class="copy-normal"
+                      filled
+                      id="email-address-text-field"
+                      label="Applicant's Notification Email"
+                      validate-on-blur />
+      </v-col>
+    </v-row>
+    <v-row class="text-center">
       <!-- FIFTH LINE -->
-      <v-col cols="12">
-        <div style="display: flex; width: 100%;">
-          <div style="margin-left: auto" class="colour-link">
-            <v-btn @click="handleSubmit" :disabled="!allowSubmit || !isValid">Submit</v-btn>
-          </div>
-        </div>
+      <v-col>
+        <v-btn @click="handleSubmit" :disabled="!allowSubmit || !isValid">Retrieve Name Request</v-btn>
       </v-col>
     </v-row>
   </v-form>
