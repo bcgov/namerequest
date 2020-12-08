@@ -7,7 +7,10 @@
         </v-col>
         <v-col cols="12" class="mb-n2">
           <span class="h2 colour-white">Name Request
-            <v-tooltip bottom nudge-right="10" content-class="bottom-tooltip" transition="fade-transition" close-delay="1200">
+            <v-tooltip bottom nudge-right="10"
+                       content-class="bottom-tooltip"
+                       transition="fade-transition"
+                       close-delay="1200">
               <template v-slot:activator="{ on }">
                 <sup class="beta-tag" v-on="on">Beta</sup>
               </template>
