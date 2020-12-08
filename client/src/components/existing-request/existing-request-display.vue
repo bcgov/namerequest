@@ -398,6 +398,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
 
   /** True if the NR's expiration date has passed. */
   private get hasExpirationDatePassed (): boolean {
+    if (!this.nr.expirationDate) return false
     const expireDays = this.daysFromToday(this.nr.expirationDate)
     // 0 means today (which means it's expired)
     return (isNaN(expireDays) || expireDays < 1)
