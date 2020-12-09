@@ -832,7 +832,8 @@ export class NewRequestModule extends VuexModule {
     return (!this.editMode && this.nrState === 'DRAFT') || (!this.editMode && this.submissionType === 'examination')
   }
   get showCorpNum (): 'colin' | 'mras' | false {
-    if ($colinRequestActions.includes(this.request_action_cd) || this.entity_type_cd === 'DBA') {
+    if (($colinRequestActions.includes(this.request_action_cd) && this.location === 'BC') ||
+      this.entity_type_cd === 'DBA') {
       return 'colin'
     }
     if (this.location === 'BC' && this.request_action_cd === 'CNV') {
