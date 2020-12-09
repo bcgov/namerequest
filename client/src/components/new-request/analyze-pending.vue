@@ -12,8 +12,8 @@
       </v-row>
       <v-row justify="center" class="mt-n7 mb-n3 py-0">
         <v-col cols="12" class="text-center text-body-2">
-          <b>This could take several minutes.</b>
-          <p>Analysis of long names or names that use common words can take significantly longer.</p>
+          <b>We are attempting to find businesses using a similar name before you send this name for review.</b>
+          <p>This search will run for up to two minutes. Note: We may not obtain results for search certain names.</p>
         </v-col>
       </v-row>
       <v-row justify="center">
