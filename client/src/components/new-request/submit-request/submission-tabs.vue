@@ -1,7 +1,7 @@
 <template>
   <MainContainer>
     <template v-slot:container-header>
-      <v-col cols="auto" class="font-weight-bold h5 py-0 mt-2">
+      <v-col cols="auto" class="font-weight-bold h5 py-0">
         <span v-if="submissionTabNumber === 1">Submit Name Request for Examination</span>
         <span v-if="submissionTabNumber > 1">Submission Details</span>
       </v-col>

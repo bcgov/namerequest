@@ -1,8 +1,8 @@
 <template>
   <v-form v-model="isValid" ref="step3" id="applicant-info-3-form">
-    <v-container fluid class="pa-0 pt-2">
+    <v-container fluid class="pa-0 mt-5" id="applicant-info-3">
       <v-row>
-        <v-col cols="2" class="h6">Contact Info</v-col>
+        <v-col cols="2" class="h6 align-self-start pt-0">Contact Info</v-col>
         <v-col cols="5" class="py-0">
           <v-text-field :messages="messages['contact']"
                         :value="applicant.contact"
@@ -25,6 +25,7 @@
                         placeholder="Email Address (for notifications)" />
         </v-col>
       </v-row>
+
       <v-row>
         <v-col cols="2" />
         <v-col cols="5">
@@ -99,6 +100,7 @@
                       rows="3" />
         </v-col>
       </v-row>
+
       <v-row>
         <v-col cols="2" />
         <v-col cols="5" v-if="showCorpNum">

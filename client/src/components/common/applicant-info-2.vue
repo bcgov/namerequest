@@ -1,8 +1,8 @@
 <template>
   <v-form v-model="isValid" ref="step2" id="applicant-info-2-form">
-    <v-container fluid class="pa-0 pt-2">
+    <v-container fluid class="pa-0 mt-5" id="applicant-info-2">
       <v-row>
-        <v-col cols="2" class="h6">Contact Info</v-col>
+        <v-col cols="2" class="h6 align-self-start pt-0">Contact Info</v-col>
         <v-col cols="5" class="py-0">
           <label for="emailAddress" class="hidden">Email Address (for notifications)</label>
           <v-text-field :messages="messages['email']"
@@ -17,8 +17,9 @@
                         hide-details="auto"
                         placeholder="Email Address (for notifications)" />
         </v-col>
-        <v-col cols="5" class=py-0 />
+        <v-col cols="5" class="py-0" />
       </v-row>
+
       <v-row>
         <v-col cols="2" />
         <v-col cols="5">

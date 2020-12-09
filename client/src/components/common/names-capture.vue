@@ -41,17 +41,17 @@
         </v-row>
       </template>
 
-      <v-row :class="editMode ? '' : isAssumedName ? 'mt-3' : 'mt-9'">
+      <v-row :class="editMode ? '' : 'mt-5'">
         <v-col cols="12"
                class="h4 mb-3 ml-n1"
                v-if="editMode">Name Choices
         </v-col>
-        <v-col cols="12" v-if="!editMode && isAssumedName" class="text-body-3">
+        <v-col cols="12" v-if="!editMode && isAssumedName" class="text-body-3 py-0">
               Name in Home Jurisdiction: {{name}}
         </v-col>
       </v-row>
-      <v-row :class="!editMode && isAssumedName ? 'mt-4' : ''">
-        <v-col cols="2" class="py-0 label-style" align-self="start" key="static-1">
+      <v-row :class="!editMode && isAssumedName ? 'mt-5' : ''">
+        <v-col cols="2" class="label-style align-self-start pt-0" key="static-1">
           {{choicesLabelsAndHints[0].label}}
         </v-col>
         <transition name="fade" mode="out-in">
@@ -108,6 +108,7 @@
           </v-col>
         </transition>
       </v-row>
+
       <v-row v-if="!editMode" class="my-1 py-0 colour-text mt-5">
         <v-col cols="2" class="py-0"></v-col>
         <v-col cols="10" class="py-0 text-body-3">
@@ -140,8 +141,9 @@
           </span>
         </v-col>
       </v-row>
+
       <v-row class="mt-5" v-if="showSecondAndThirdNameChoices">
-        <v-col cols="2" class="py-0 label-style" align-self="start" key="static-2">
+        <v-col cols="2" class="label-style align-self-start pt-0" key="static-2">
           {{choicesLabelsAndHints[1].label}}
         </v-col>
         <transition name="fade" mode="out-in">
@@ -173,8 +175,9 @@
           </v-col>
         </transition>
       </v-row>
+
       <v-row no gutters class="mt-5" key="static-3" v-if="showSecondAndThirdNameChoices">
-        <v-col cols="2" class="py-0 label-style" align-self="start">
+        <v-col cols="2" class="label-style align-self-start pt-0">
           {{choicesLabelsAndHints[2].label}}
         </v-col>
         <transition name="fade" mode="out-in">
