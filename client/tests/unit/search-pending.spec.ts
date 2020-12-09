@@ -13,7 +13,7 @@ describe('search-pending.vue', () => {
     vuetify
   })
   it('renders a spinner', () => {
-    expect(wrapper.find('#analyze-pending-spinner').exists()).toBe(true)
+    expect(wrapper.find('#search-pending-spinner').exists()).toBe(true)
   })
   it('does not render a stop button', () => {
     expect(wrapper.find('#analyze-pending-stop-button').exists()).toBe(false)
