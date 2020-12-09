@@ -41,7 +41,7 @@
         </v-row>
       </template>
 
-      <v-row clas="mt-5" v-if="editMode || isAssumedName">
+      <v-row class="mt-5" v-if="editMode || isAssumedName">
         <v-col cols="12" class="h4 py-0" v-if="editMode">Name Choices</v-col>
         <v-col cols="12" class="text-body-3 py-0" v-if="!editMode && isAssumedName">
           Name in Home Jurisdiction: {{name}}
