@@ -1258,7 +1258,12 @@ let jurisdictionsSorted = jurisdictions.sort((a, b) => {
   }
 })
 
-let usa = [
+let canUSA = [
+  {
+    "value": "CA",
+    "SHORT_DESC": "CANADA",
+    "text": "CANADA"
+  },
   {
     "value": "US",
     "SHORT_DESC": "UNITED STATES",
@@ -1266,6 +1271,6 @@ let usa = [
   }
 ]
 
-jurisdictionsSorted = usa.concat(jurisdictionsSorted)
+jurisdictionsSorted = canUSA.concat(jurisdictionsSorted)
 
 export default jurisdictionsSorted

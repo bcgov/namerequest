@@ -8,6 +8,7 @@
              :class="isContinue ? 'button-normal' : 'button-blue'"
              class="mt-auto"
              v-on="scope.on"
+             id="reserve-submit-btn"
              ref="reserve-submit-button">
         {{ text }}
       </v-btn>
@@ -19,7 +20,6 @@
 </template>
 
 <script lang="ts">
-import { xproMapping } from '@/store/list-data/request-action-mapping'
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
@@ -122,3 +122,8 @@ export default class ReserveSubmitButton extends Vue {
   }
 }
 </script>
+<style lang="scss" scoped>
+#reserve-submit-btn {
+  min-width: 140px !important;
+}
+</style>

@@ -206,7 +206,7 @@ export class NewRequestModule extends VuexModule {
     'end_designation_more_than_once'
   ]
   displayedComponent: string = 'Tabs'
-  doNotAnalyzeEntities: string[] = ['PAR', 'CC', 'CP', 'PA', 'FI', 'XCP']
+  doNotAnalyzeEntities: string[] = ['PAR', 'CC', 'CP', 'PA', 'FI', 'XCP', 'SO']
   editMode: boolean = false
   entity_type_cd: string = 'CR'
   entityTypeAddToSelect: SelectOptionsI | null = null
@@ -1060,7 +1060,7 @@ export class NewRequestModule extends VuexModule {
     if (this.entity_type_cd) {
       let list = [...this.entityTypesBC, ...this.entityTypesXPRO]
       let type = list.find(t => t.value === this.entity_type_cd)
-      return type.text
+      return type?.text
     }
     return ''
   }
@@ -2501,8 +2501,7 @@ export class NewRequestModule extends VuexModule {
     }
     if (this.nameIsSlashed) {
       this.mutateName(name)
-      this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
-      this.mutateDisplayedComponent('SubmissionTabs')
+      this.mutateDisplayedComponent('SendToExamination')
       return
     }
     this.mutateName(name)
@@ -2518,11 +2517,14 @@ export class NewRequestModule extends VuexModule {
           }
         }
       }
-      this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
-      this.mutateDisplayedComponent('SubmissionTabs')
+      this.mutateDisplayedComponent('SendToExamination')
       return
     } else {
       if (['AML', 'CHG', 'DBA', 'MVE', 'NEW', 'REH', 'REN', 'REST'].includes(this.request_action_cd)) {
+        if (this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
+          this.mutateDisplayedComponent('SendToExamination')
+          return
+        }
         this.getNameAnalysisXPRO()
       }
     }

@@ -247,16 +247,11 @@ export default class NewSearch extends Vue {
   private corpNumValid: boolean = true
   private corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
 
+  /** Reset search values when location changes */
   @Watch('location')
-  watchLocation (newVal, oldVal) {
-    if (newVal === 'INFO') {
-      let type = this.entity_type_cd
-      newReqModule.mutateLocationInfoModalVisible(true)
-      this.$nextTick(function () {
-        this.location = oldVal
-        this.entity_type_cd = type
-      })
-    }
+  watchLocation () {
+    newReqModule.mutateName('')
+    newReqModule.mutateCorpSearch('')
   }
   @Watch('request_action_cd')
   watchRequestActionCd (newVal) {
@@ -401,7 +396,9 @@ export default class NewSearch extends Vue {
     return newReqModule.isXproMras
   }
   get jurisdictionOptions () {
-    return this.location === 'CA' ? this.$canJurisdictions.filter(jur => jur.value !== 'BC') : this.$intJurisdictions
+    return this.location === 'CA'
+      ? this.$canJurisdictions.filter(jur => jur.value !== 'BC')
+      : this.$intJurisdictions.filter(jur => jur.value !== 'CA')
   }
   activateNRRModal () {
     newReqModule.mutateNrRequiredModalVisible(true)

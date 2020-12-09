@@ -7,10 +7,12 @@
                   filled
                   id="name-input-text-field"
                   ref="nameInput"
-                  :rules="isMrasSearch ? mrasRules : []"
-                  :label="nameLabel"
+                  :rules="(searchValue && isMrasSearch) ? mrasRules : []"
+                  :label="isReadOnly ? '' : nameLabel"
+                  :class="{ 'read-only-mode': isReadOnly }"
+                  :disabled="isReadOnly"
                   v-model="searchValue">
-      <template v-slot:append>
+      <template v-slot:append v-if="!isReadOnly">
         <v-tooltip bottom
                    content-class="bottom-tooltip search-tooltip"
                    transition="fade-transition"
@@ -44,6 +46,7 @@ export default class NameInput extends Vue {
   /** Local Properties */
   @Prop({ default: false }) isSearchAgain: boolean
   @Prop({ default: false }) isMrasSearch: boolean
+  @Prop({ default: false }) isReadOnly: boolean
 
   /** The array of validation rules for the MRAS corp num. */
   private get mrasRules (): Array<Function> {
@@ -53,7 +56,7 @@ export default class NameInput extends Vue {
   }
 
   /** Local validator when input is a MRAS corp num. */
-  private get isCorpNumValid (): any {
+  private get isCorpNumValid (): boolean {
     return this.isMrasSearch ? this.$refs['nameInput']?.valid : true
   }
 
@@ -94,7 +97,7 @@ export default class NameInput extends Vue {
   handleSubmit (event: KeyboardEvent) {
     if (event.key === 'Enter' && this.isCorpNumValid) {
       event.preventDefault()
-      if (this.name) this.startAnalyzeName()
+      if (this.searchValue) this.startAnalyzeName()
       return
     }
     return event
@@ -102,7 +105,7 @@ export default class NameInput extends Vue {
   async startAnalyzeName () {
     newReqModule.mutateMrasSearchInfoModalVisible(false)
     if (newReqModule.isXproMras) this.$root.$emit('showSpinner', true)
-    if (this.name) await newReqModule.startAnalyzeName()
+    if (this.searchValue) await newReqModule.startAnalyzeName()
     if (newReqModule.isXproMras) this.$root.$emit('showSpinner', false)
   }
   @Watch('isCorpNumValid')
@@ -114,9 +117,15 @@ export default class NameInput extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import '@/assets/scss/theme.scss';
+
 .search-tooltip {
   max-width: 100px;
   text-align: center;
   padding: 10px !important;
+}
+
+::v-deep .theme--light.v-input--is-disabled input, .theme--light.v-input--is-disabled textarea {
+  color: $gray9 !important;
 }
 </style>
