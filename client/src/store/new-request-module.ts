@@ -1825,8 +1825,8 @@ export class NewRequestModule extends VuexModule {
     } catch (error) {
       if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
         this.mutateNameAnalysisTimedOut(true)
-        this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
-        this.mutateDisplayedComponent('SubmissionTabs')
+        this.mutateName(this.name)
+        this.mutateDisplayedComponent('SendToExamination')
         return
       }
       if (this.userCancelledAnalysis) {
@@ -1871,12 +1871,10 @@ export class NewRequestModule extends VuexModule {
       }
       this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
-      // eslint-disable-next-line
-      console.log(error)
-      if (error.code === 'ECONNABORTED') {
+      if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
         this.mutateNameAnalysisTimedOut(true)
-        this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
-        this.mutateDisplayedComponent('SubmissionTabs')
+        this.mutateName(this.name)
+        this.mutateDisplayedComponent('SendToExamination')
         return
       }
       if (this.userCancelledAnalysis) {

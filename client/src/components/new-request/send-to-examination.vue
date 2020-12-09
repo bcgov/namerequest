@@ -49,7 +49,7 @@ export default class SendToExamination extends Vue {
   private actionConfig = {
     class: 'rejected',
     icon: 'mdi-star-circle',
-    text: 'Further Action Required',
+    text: 'Further Review Required',
     showNextLines: true
   }
   get entityText () {
