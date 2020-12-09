@@ -1230,6 +1230,17 @@ export class NewRequestModule extends VuexModule {
     }
     return false
   }
+
+  get hasNameMoreThanThreeWords () {
+    if (this.name) {
+      let { name } = this
+      if (name.split(' ').length > 3) {
+        return true
+      }
+    }
+    return false
+  }
+
   get nrId () {
     const { nr } = this
     let nrId
@@ -1812,9 +1823,7 @@ export class NewRequestModule extends VuexModule {
       }
       this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
-      // eslint-disable-next-line
-      console.log(error)
-      if (error.code === 'ECONNABORTED') {
+      if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
         this.mutateNameAnalysisTimedOut(true)
         this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
         this.mutateDisplayedComponent('SubmissionTabs')
@@ -2499,7 +2508,7 @@ export class NewRequestModule extends VuexModule {
       this.mutateName(name)
       return
     }
-    if (this.nameIsSlashed) {
+    if (this.nameIsSlashed || this.hasNameMoreThanThreeWords) {
       this.mutateName(name)
       this.mutateDisplayedComponent('SendToExamination')
       return
