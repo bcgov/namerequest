@@ -2,17 +2,17 @@
   <v-form @keydown="validate" id="send-to-examination-form">
     <v-container fluid class="pa-0" id="send-to-examination-container">
       <template v-if="editMode">
-        <v-row justify="end" class="mt-n3 mb-n5">
-          <v-col cols="6" class="font-weight-bold">I need a name to:</v-col>
-          <v-col cols="6" style="display: flex; justify-content: flex-end">
-            <button class="link-std"
-                    id="help-me-choose-activator"
-                    @change="activateHMCModal()">Help Me Choose
-            </button>
+        <v-row class="mt-5">
+          <v-col cols="6" class="font-weight-bold py-0">I need a name to:</v-col>
+          <v-col cols="6" class="d-flex justify-end py-0">
+            <button id="help-me-choose-activator"
+                    class="link-std"
+                    @change="activateHMCModal()">Help Me Choose</button>
           </v-col>
         </v-row>
-        <v-row>
-          <v-col cols="5">
+
+        <v-row class="mt-3">
+          <v-col cols="5" class="py-0">
             <v-select :error-messages="errors.includes('request_action_cd') ? 'Please select a type' : ''"
                       :hide-details="!errors.includes('request_action_cd')"
                       :items="requestTypeOptions"
@@ -21,7 +21,7 @@
                       id="search-type-options-select"
                       v-model="request_action_cd" />
           </v-col>
-          <v-col cols="2">
+          <v-col cols="2" class="py-0">
             <v-select :error-messages="errors.includes('location') ? 'Please select a location' : ''"
                       :hide-details="!errors.includes('location')"
                       :items="locationOptions"
@@ -29,7 +29,7 @@
                       id="location-options-select"
                       v-model="location" />
           </v-col>
-          <v-col cols="5">
+          <v-col cols="5" class="py-0">
             <v-select :error-messages="errors.includes('entity_type_cd') ? 'Please select a type' : ''"
                       :hide-details="!errors.includes('entity_type_cd')"
                       :items="entityTypeOptions"
@@ -41,16 +41,14 @@
         </v-row>
       </template>
 
-      <v-row :class="editMode ? '' : 'mt-5'">
-        <v-col cols="12"
-               class="h4 mb-3 ml-n1"
-               v-if="editMode">Name Choices
-        </v-col>
-        <v-col cols="12" v-if="!editMode && isAssumedName" class="text-body-3 py-0">
-              Name in Home Jurisdiction: {{name}}
+      <v-row clas="mt-5" v-if="editMode || isAssumedName">
+        <v-col cols="12" class="h4 py-0" v-if="editMode">Name Choices</v-col>
+        <v-col cols="12" class="text-body-3 py-0" v-if="!editMode && isAssumedName">
+          Name in Home Jurisdiction: {{name}}
         </v-col>
       </v-row>
-      <v-row :class="!editMode && isAssumedName ? 'mt-5' : ''">
+
+      <v-row class="mt-5">
         <v-col cols="2" class="label-style align-self-start pt-0" key="static-1">
           {{choicesLabelsAndHints[0].label}}
         </v-col>
