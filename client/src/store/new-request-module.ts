@@ -739,6 +739,7 @@ export class NewRequestModule extends VuexModule {
   pendingLastProgressUpdate: number = 0
   pendingProcessed: number = 0
   pendingStartTime: number = 0
+  pendingTimeLeft: number
   pendingTotal: number = 0
   pickEntityModalVisible: boolean = false
   pickRequestTypeModalVisible: boolean = false
@@ -1799,42 +1800,27 @@ export class NewRequestModule extends VuexModule {
     try {
       let { CancelToken } = axios
       source = CancelToken.source()
-      // let url = 'name-analysis-v2'
-      let url = 'name-analysis'
+      let url = 'name-analysis-v2'
       let resp = null
-      // if (uuid) {
-      //   url = url.concat('/', uuid)
-      resp = await axios.get(url, {
-        params,
-        cancelToken: source.token,
-        timeout: ANALYSIS_TIMEOUT_MS
-      })
-      // } else {
-      //   resp = await axios.post(url, {
-      //     params,
-      //     cancelToken: source.token,
-      //     timeout: ANALYSIS_TIMEOUT_MS
-      //   })
-      // }
-      let json = resp.data
-      json.header = {
-        'uuid': 10,
-        'state': 'running',
-        'processed': 0,
-        'total': 200
-      }
       if (uuid) {
-        json.header.uuid = uuid
-        json.header.processed = json.header.uuid
-        json.header.uuid += 10
-        if (json.header.processed === json.header.total) {
-          json.header.uuid = 10
-        }
+        url = url.concat('/', uuid)
+        resp = await axios.get(url, {
+          params,
+          cancelToken: source.token,
+          timeout: ANALYSIS_TIMEOUT_MS
+        })
+      } else {
+        resp = await axios.post(url, {
+          params,
+          cancelToken: source.token,
+          timeout: ANALYSIS_TIMEOUT_MS
+        })
       }
+      let json = resp.data
       // repeatedly call every 1 second until cancelled or returns complete
       if (json.header.state === 'running') {
         // if state is running and it's the first call mutate display for analyzePending
-        if (this.pendingTotal === 0) {
+        if (!this.analyzePending) {
           this.mutateDisplayedComponent('AnalyzePending')
         }
         // update progress
@@ -1850,15 +1836,15 @@ export class NewRequestModule extends VuexModule {
           }
         }, 1000)
       } else {
-        // if (!uuid) {
-        //   uuid = json.header.uuid
-        // }
-        // url = 'name-analysis-v2'.concat('/', uuid)
-        // resp = await axios.delete(url, {
-        //   params,
-        //   cancelToken: source.token,
-        //   timeout: ANALYSIS_TIMEOUT_MS
-        // })
+        if (!uuid) {
+          uuid = json.header.uuid
+        }
+        url = 'name-analysis-v2'.concat('/', uuid)
+        resp = await axios.delete(url, {
+          params,
+          cancelToken: source.token,
+          timeout: ANALYSIS_TIMEOUT_MS
+        })
         this.updateAnalyzePending(false)
         let analysis = json
         this.mutateAnalysisJSON(analysis)
