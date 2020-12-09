@@ -1,14 +1,12 @@
 <template>
   <v-form v-model="isValid" ref="step1" id="applicant-info-1-form">
-    <v-container fluid class="pa-0" id="applicant-info-1">
+    <v-container fluid class="pa-0 mt-5" id="applicant-info-1">
       <v-row>
-        <v-col cols="2" align-self="start" class="h6">
-          Applicant
-        </v-col>
+        <v-col cols="2" class="h6 align-self-start pt-0">Applicant</v-col>
         <v-col cols="10" class="py-0">
           <!--FIRST NAME, LAST NAME, MIDDLE NAME-->
           <v-row>
-            <v-col cols="4">
+            <v-col cols="4" class="pt-0">
               <label for="lastname" class="hidden">Last Name</label>
               <v-text-field :messages="messages['lastName']"
                             :rules="requiredRules"
@@ -24,7 +22,7 @@
                             name="lastname"
                             placeholder="Last Name" />
             </v-col>
-            <v-col cols="4" >
+            <v-col cols="4" class="pt-0">
               <label for="firstname" class="hidden">First Name</label>
               <v-text-field :messages="messages['firstName']"
                             :rules="requiredRules"
@@ -40,7 +38,7 @@
                             name="firstname"
                             placeholder="First Name" />
             </v-col>
-            <v-col cols="4">
+            <v-col cols="4" class="pt-0">
               <label for="middlename" class="hidden">Middle Name (Optional)</label>
               <v-text-field :messages="messages['middleName']"
                             :value="applicant.middleName"
@@ -286,6 +284,7 @@
                             placeholder="Postal/Zip Code" />
             </v-col>
           </v-row>
+
           <v-row class="mt-2" v-if="showXproJurisdiction && showAllFields && editMode">
             <v-col cols="6" class="py-0 my-0">
               <label for="xprojurisdiction" class="hidden">Business Jurisdiction</label>

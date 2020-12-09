@@ -74,7 +74,7 @@
                 </v-col>
 
                 <v-col cols="12" v-if="nr.consentFlag && (nr.consentFlag !== 'N')">
-                  <span>Consent Rec'd:</span>
+                  <span>Consent Status:</span>
                   &nbsp;{{ consentDate }}
                 </v-col>
 

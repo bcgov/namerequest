@@ -1,7 +1,7 @@
 <template>
   <MainContainer>
     <template v-slot:container-header>
-      <v-col cols="auto" class="h4 mb-n9">
+      <v-col cols="auto" class="h4 py-0">
        {{ editModeHeader }}
       </v-col>
     </template>
