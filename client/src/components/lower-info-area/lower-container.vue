@@ -27,9 +27,9 @@
                 <v-col class="text-center copy-small">
                   See if your name may be in use outside of BC,
                   <a href="https://www.ic.gc.ca/app/opic-cipo/trdmrks/srch/home?lang=eng" target="_blank">
-                    search for Canadian trademarked names
+                    search for Canadian trademarked names.
+                    <v-icon class="launch-icon">mdi-launch</v-icon>
                   </a>
-                  <v-icon class="launch-icon pl-1">mdi-launch</v-icon>
                 </v-col>
               </v-row>
             </v-container>
@@ -172,7 +172,8 @@ li {
     box-shadow: 2px 2px 4px 0 darkgray; // FUTURE: should be $border?
 
     .launch-icon {
-      font-size: 1rem;
+      display: inline-block;
+      font-size: 0.875rem;
       color: $app-blue;
     }
   }
