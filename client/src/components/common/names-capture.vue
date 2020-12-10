@@ -803,4 +803,8 @@ export default class NamesCapture extends Vue {
   font-size: 1rem;
   color: $app-blue;
 }
+
+::v-deep .theme--light.v-input--is-disabled input, .theme--light.v-input--is-disabled textarea {
+  color: $gray9 !important;
+}
 </style>
