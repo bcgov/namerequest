@@ -65,9 +65,13 @@ export function getConfig (): Promise<EnvConfigI> {
      * authConfig is a workaround to fix the user settings call as it expects a URL with no trailing slash.
      * This will be removed when a fix is made to sbc-common-components to handle this
      */
+    const nameRequestUrl = response.data[0]['NAME_REQUEST_URL']
+    const nroUrl = response.data[0]['NRO_URL']
     const authConfig = {
       'AUTH_URL': businessUrl,
-      'VUE_APP_PAY_ROOT_API': authPayUrl
+      'VUE_APP_PAY_ROOT_API': authPayUrl,
+      'NAME_REQUEST_URL': nameRequestUrl,
+      'NRO_URL': nroUrl
     }
     const authConfigString = JSON.stringify(authConfig)
     sessionStorage.setItem('AUTH_API_CONFIG', authConfigString)
