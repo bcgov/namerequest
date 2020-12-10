@@ -2516,13 +2516,8 @@ export class NewRequestModule extends VuexModule {
     if (this.location === 'BC') {
       if (this.nameIsEnglish && !this.isPersonsName && !this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
         if (['NEW', 'DBA', 'CHG'].includes(this.request_action_cd)) {
-          if (['DBA', 'FR', 'GP', 'LLP', 'LP'].includes(this.entity_type_cd)) {
-            this.getNameAnalysisXPRO()
-            return
-          } else {
-            this.getNameAnalysis()
-            return
-          }
+          this.getNameAnalysis()
+          return
         }
       }
       this.mutateDisplayedComponent('SendToExamination')
