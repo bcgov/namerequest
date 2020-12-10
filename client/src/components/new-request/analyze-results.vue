@@ -756,6 +756,7 @@ export default class AnalyzeResults extends Vue {
       (this.quill as any).setContents([
         { insert: text }
       ])
+      this.handleSubmit(event)
     } catch {
       return
     }
