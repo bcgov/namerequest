@@ -31,7 +31,6 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import '../plugins/vuetify'
 
 @Component({})
 export default class Invoice extends Vue {
