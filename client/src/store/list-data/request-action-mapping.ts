@@ -19,4 +19,4 @@ export const xproMapping: RequestActionMappingI = {
   AML: ['XCR', 'XCP']
 }
 
-export const $colinRequestActions = ['AML', 'CHG', 'REH', 'REN']
+export const $colinRequestActions = ['CHG', 'REN']
