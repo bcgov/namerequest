@@ -2386,7 +2386,9 @@ export class NewRequestModule extends VuexModule {
       this.mutateUserCancelledAnalysis(false)
     }
     this.setActiveComponent(destination)
-    this.resetAnalyzeName()
+    if (destination !== 'NamesCapture') {
+      this.resetAnalyzeName()
+    }
   }
   @Action
   async cancelEditExistingRequest () {
