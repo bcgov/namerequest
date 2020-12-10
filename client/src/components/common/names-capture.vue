@@ -5,9 +5,10 @@
         <v-row class="mt-5">
           <v-col cols="6" class="font-weight-bold py-0">I need a name to:</v-col>
           <v-col cols="6" class="d-flex justify-end py-0">
-            <button id="help-me-choose-activator"
+            <!-- REMOVED FOR MVP: -->
+            <!-- <button id="help-me-choose-activator"
                     class="link-std"
-                    @change="activateHMCModal()">Help Me Choose</button>
+                    @change="activateHMCModal()">Help Me Choose</button> -->
           </v-col>
         </v-row>
 
@@ -112,30 +113,32 @@
         <v-col cols="10" class="py-0 text-body-3">
           <span v-if="location!=='BC'">
             <span v-if="isAssumedName">
-              You may provide up to two additional assumed names which will be considered at no further cost,
-              in the order provided, if your first choice cannot be approved. Be sure to follow
-              all <a :href="buildNameURL" target='_blank'>guidelines for how to build a name.</a>
+              You may provide up to two additional assumed names which will be considered at no further
+              cost, in the order provided, if your first choice cannot be approved. Be sure to follow all
+              <a :href="buildNameURL" target="_blank">guidelines for how to build a name.</a>
               <v-icon class="launch-icon">mdi-launch</v-icon>
             </span>
-             <span v-else-if="!showSecondAndThirdNameChoices">
-               <div class="mt-1">
-                 The name of your business must be the same in BC and in your home jurisdiction.
-               </div>
-               <div class="mt-5">
-                 If, after review, your current name is not approved for use in BC you will need to change
-                 your business name in your home jurisdiction, and request your new name in BC as well.
-               </div>
+            <span v-else-if="!showSecondAndThirdNameChoices">
+              <div class="mt-1">
+                The name of your business must be the same in BC and in your home jurisdiction.
+              </div>
+              <div class="mt-5">
+                If, after review, your current name is not approved for use in BC you will need to change
+                your business name in your home jurisdiction, and request your new name in BC as well.
+              </div>
             </span>
             <span v-else>
-              You may provide up to two additional assumed names which will be considered at no further cost,
-              in the order provided, if the name in the home jurisdiction cannot be approved. Be sure to follow
-              all <a :href="buildNameURL" target='_blank'>guidelines for how to build a name.</a>
+              You may provide up to two additional assumed names which will be considered at no further cost, in
+              the order provided, if the name in the home jurisdiction cannot be approved. Be sure to follow all
+              <a :href="buildNameURL" target="_blank">guidelines for how to build a name.</a>
               <v-icon class="launch-icon">mdi-launch</v-icon>
             </span>
           </span>
           <span v-else>
-            You may provide up to two additional names which will be considered at no further cost, in the
-            order provided, only if your First Choice cannot be approved.`
+            You may provide up to two additional names which will be considered at no further cost, in
+            the order provided, only if your first choice cannot be approved. Be sure to follow all
+            <a :href="buildNameURL" target="_blank">guidelines for how to build a name.</a>
+            <v-icon class="launch-icon">mdi-launch</v-icon>
           </span>
         </v-col>
       </v-row>
