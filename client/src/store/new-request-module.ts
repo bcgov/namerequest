@@ -1232,16 +1232,6 @@ export class NewRequestModule extends VuexModule {
     return false
   }
 
-  get hasNameMoreThanThreeWords () {
-    if (this.name) {
-      let { name } = this
-      if (name.split(' ').length > 3) {
-        return true
-      }
-    }
-    return false
-  }
-
   get nrId () {
     const { nr } = this
     let nrId
@@ -2507,7 +2497,7 @@ export class NewRequestModule extends VuexModule {
       this.mutateName(name)
       return
     }
-    if (this.nameIsSlashed || this.hasNameMoreThanThreeWords) {
+    if (this.nameIsSlashed) {
       this.mutateName(name)
       this.mutateDisplayedComponent('SendToExamination')
       return
