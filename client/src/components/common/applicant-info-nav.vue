@@ -40,7 +40,7 @@ export default class ApplicantInfoNav extends Vue {
       if (this.editMode) {
         return 'Submit Changes'
       }
-      return 'Continue To Payment'
+      return 'Review and Confirm'
     }
     if (this.editMode) {
       return 'Next'

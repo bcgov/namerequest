@@ -1,11 +1,12 @@
 <template>
-  <v-dialog max-width="40%" :value="isVisible" persistent>
-    <v-card class="pa-9">
-      <v-card-text class="h3">
-        Confirm Name Request
+  <v-dialog max-width="50%" :value="isVisible" persistent>
+    <v-card>
+      <v-card-title class="d-flex justify-space-between">
+        <div>Confirm Name Request</div>
         <countdown-timer :timerName="timerName" colorString="#003366" bgColorString="#efefef" style="float: right"/>
-      </v-card-text>
-      <v-card-text class="copy-normal">
+      </v-card-title>
+
+      <v-card-text class="copy-normal pt-0">
         <request-details
           :applicant="applicant"
           :name="name"
@@ -17,9 +18,11 @@
         />
       </v-card-text>
       <v-card-actions>
+        <v-btn v-if="allowCancel"
+          @click="cancelPayment()" id="payment-cancel-btn" class="error" text>Cancel Name Request</v-btn>
         <v-spacer></v-spacer>
-        <v-btn @click="confirmPayment" id="payment-pay-btn" class="primary" text>Accept</v-btn>
-        <v-btn @click="cancelPayment" id="payment-close-btn" class="normal" text>Cancel</v-btn>
+        <v-btn @click="confirmPayment()" id="payment-pay-btn" class="primary" text>Continue to Payment</v-btn>
+        <v-btn @click="hideModal()" id="payment-close-btn" class="normal" text>Close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -79,6 +82,10 @@ export default class PaymentModal extends Mixins(
     return this.$PAYMENT_COMPLETION_TIMER_NAME
   }
 
+  get allowCancel (): boolean {
+    return (typeof this.$props.onCancel === 'function')
+  }
+
   @Watch('isVisible')
   async onModalShow (val: boolean, oldVal: string): Promise<void> {
     if (val) {
@@ -126,11 +133,7 @@ export default class PaymentModal extends Mixins(
   }
 
   async cancelPayment () {
-    const { onCancel } = this.$props
-    if (typeof onCancel === 'function') {
-      onCancel()
-    }
-
+    this.$props.onCancel()
     this.hideModal()
   }
 }

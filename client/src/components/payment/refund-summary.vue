@@ -10,12 +10,8 @@
       <template v-for="item in lineItems">
         <ul class="fee-list" :key="item.id">
           <li class="fee-list__item text-body-1" v-if="item.filingFees > 0">
-            <div class="fee-list__item-name">{{mapItemName(item)}}</div>
+            <div class="fee-list__item-name">{{feeDescription(item)}}</div>
             <div class="fee-list__item-value">${{item.filingFees.toFixed(2)}}</div>
-          </li>
-          <li class="fee-list__item text-body-1" v-if="item.priorityFees > 0">
-            <div class="fee-list__item-name">Priority Request fee</div>
-            <div class="fee-list__item-value">${{item.priorityFees.toFixed(2)}}</div>
           </li>
           <li class="fee-list__item text-body-1" v-if="item.serviceFees > 0">
             <div class="fee-list__item-name">Service fee</div>
@@ -34,10 +30,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Mixins } from 'vue-property-decorator'
+import ReceiptMixin from '@/components/mixins/receipt-mixin'
 
 @Component({})
-export default class RefundSummary extends Vue {
+export default class RefundSummary extends Mixins(ReceiptMixin) {
   @Prop({ default: () => [] })
   readonly payments: any[]
 
@@ -56,13 +53,9 @@ export default class RefundSummary extends Vue {
     return total
   }
 
-  /** Returns the line item description mapped to a user-friendly name. */
-  private mapItemName (item: any): string {
-    switch (item.description) {
-      case 'Reg. Submission Online': return 'Name Request fee'
-      case 'Upgrade to Priority': return 'Priority Request fee'
-      default: return item.description
-    }
+  private feeDescription (item): string {
+    const name = this.rcptDescToName(item.description)
+    return `${name} fee`
   }
 }
 </script>

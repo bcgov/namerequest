@@ -832,7 +832,8 @@ export class NewRequestModule extends VuexModule {
     return (!this.editMode && this.nrState === 'DRAFT') || (!this.editMode && this.submissionType === 'examination')
   }
   get showCorpNum (): 'colin' | 'mras' | false {
-    if ($colinRequestActions.includes(this.request_action_cd) || this.entity_type_cd === 'DBA') {
+    if (($colinRequestActions.includes(this.request_action_cd) && this.location === 'BC') ||
+      this.entity_type_cd === 'DBA') {
       return 'colin'
     }
     if (this.location === 'BC' && this.request_action_cd === 'CNV') {
@@ -1230,6 +1231,17 @@ export class NewRequestModule extends VuexModule {
     }
     return false
   }
+
+  get hasNameMoreThanThreeWords () {
+    if (this.name) {
+      let { name } = this
+      if (name.split(' ').length > 3) {
+        return true
+      }
+    }
+    return false
+  }
+
   get nrId () {
     const { nr } = this
     let nrId
@@ -1812,12 +1824,10 @@ export class NewRequestModule extends VuexModule {
       }
       this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
-      // eslint-disable-next-line
-      console.log(error)
-      if (error.code === 'ECONNABORTED') {
+      if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
         this.mutateNameAnalysisTimedOut(true)
-        this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
-        this.mutateDisplayedComponent('SubmissionTabs')
+        this.mutateName(this.name)
+        this.mutateDisplayedComponent('SendToExamination')
         return
       }
       if (this.userCancelledAnalysis) {
@@ -1862,12 +1872,10 @@ export class NewRequestModule extends VuexModule {
       }
       this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
-      // eslint-disable-next-line
-      console.log(error)
-      if (error.code === 'ECONNABORTED') {
+      if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
         this.mutateNameAnalysisTimedOut(true)
-        this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
-        this.mutateDisplayedComponent('SubmissionTabs')
+        this.mutateName(this.name)
+        this.mutateDisplayedComponent('SendToExamination')
         return
       }
       if (this.userCancelledAnalysis) {
@@ -2499,7 +2507,7 @@ export class NewRequestModule extends VuexModule {
       this.mutateName(name)
       return
     }
-    if (this.nameIsSlashed) {
+    if (this.nameIsSlashed || this.hasNameMoreThanThreeWords) {
       this.mutateName(name)
       this.mutateDisplayedComponent('SendToExamination')
       return
