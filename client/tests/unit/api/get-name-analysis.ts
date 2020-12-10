@@ -339,7 +339,7 @@ const testData = [
         },
         {
           "line1": "The \u003cb\u003eL.L.C.\u003c/b\u003e designation(s) cannot be used with selected entity type of" +
-          " Corporation \u003c/b\u003e.",
+          " Corporation\u003c/b\u003e.",
           "designations": [
             "INCORPORATED",
             "CORPORATION",
@@ -482,7 +482,7 @@ const testData = [
         },
         {
           "line1": "The \u003cb\u003eCOOP\u003c/b\u003e designation(s) cannot be used with selected entity type of" +
-          " Corporation \u003c/b\u003e.",
+          " Corporation\u003c/b\u003e.",
           "designations": [
             "INCORPORATED",
             "CORPORATION",
@@ -619,7 +619,7 @@ const testData = [
         },
         {
           "line1": "The \u003cb\u003eCOOP, L.L.C.\u003c/b\u003e designation(s) cannot be used with selected entity" +
-          "  type of Corporation \u003c/b\u003e.",
+          "  type of Corporation\u003c/b\u003e.",
           "designations": [
             "INCORPORATED",
             "CORPORATION",
@@ -762,7 +762,7 @@ const testData = [
         },
         {
           "line1": "The \u003cb\u003eLTD\u003c/b\u003e designation(s) cannot be used with selected entity type of" +
-          " Corporation \u003c/b\u003e.",
+          " Corporation\u003c/b\u003e.",
           "designations": [
             "INCORPORATED",
             "CORPORATION",
@@ -905,7 +905,7 @@ const testData = [
         },
         {
           "line1": "The \u003cb\u003eCOOP\u003c/b\u003e designation(s) cannot be used with selected entity type of" +
-          " Corporation \u003c/b\u003e.",
+          " Corporation\u003c/b\u003e.",
           "designations": [
             "INCORPORATED",
             "CORPORATION",
@@ -1541,7 +1541,7 @@ const testData = [
         },
         {
           "line1": "The \u003cb\u003eL.L.C.\u003c/b\u003e designation(s) cannot be used with selected entity type of" +
-          " Corporation \u003c/b\u003e.",
+          " Corporation\u003c/b\u003e.",
           "designations": [
             "INCORPORATED",
             "CORPORATION",
@@ -1682,7 +1682,7 @@ const testData = [
         },
         {
           "line1": "The \u003cb\u003eL.L.C.\u003c/b\u003e designation(s) cannot be used with selected entity type of" +
-          " Corporation \u003c/b\u003e.",
+          " Corporation\u003c/b\u003e.",
           "designations": [
             "INCORPORATED",
             "CORPORATION",
