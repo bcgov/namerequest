@@ -2,5 +2,5 @@
 export enum PaymentAction {
   COMPLETE = 'COMPLETE',
   REAPPLY= 'REAPPLY',
-  UPGRADE = 'CONDITIONAL',
+  UPGRADE = 'UPGRADE',
 }

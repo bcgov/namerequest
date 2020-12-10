@@ -111,7 +111,7 @@
             <template v-else>
               <v-col :id="option.type + '-button-checkbox-col'"
                      v-if="i !== 0"
-                     class="grey-box-checkbox-button my-0 py-0 text-center">
+                     class="grey-box-checkbox-button mt-2 pa-0 text-center">
                 <transition name="fade" mode="out-in" >
                   <v-checkbox :error="showError"
                               :key="option.type+'-checkbox'"
@@ -124,7 +124,6 @@
                               v-model="boxIsChecked" />
                   <ReserveSubmit :key="option.type+'-reserve-submit'"
                                  :setup="reserveSubmitConfig"
-                                 class="my-0 py-0 reserve-submit-btn"
                                  v-if="showCheckBoxOrButton === 'button'" />
                 </transition>
               </v-col>

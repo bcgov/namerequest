@@ -51,8 +51,6 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import '../../plugins/vuetify'
-
 import RequestDetails from '@/components/common/request-details.vue'
 import { ApplicantI } from '@/models'
 

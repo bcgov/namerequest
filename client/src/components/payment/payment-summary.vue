@@ -1,70 +1,53 @@
 <template>
-  <v-card v-if="summary" class="payment-summary">
-
-    <header class="font-weight-bold pa-3">
-      <span>
-        <small>{{receipt.receiptDate}}</small>
-      </span>
-      <span style="float: right" v-if="receipt">
-        <small><small>Receipt No.</small></small> {{receipt.receiptNumber}}
-      </span>
-    </header>
-
-    <div v-show="fetchError">
-      <v-alert color="error" icon="mdi-alert" outlined>{{fetchError}}</v-alert>
-    </div>
-
-    <ul class="fee-list" v-show="!fetchError">
-      <li class="container fee-list__item" v-if="receipt">
-        <div class="fee-list__item-name">Amount</div>
-        <div class="fee-list__item-value">${{receipt.receiptAmount.toFixed(2)}} CAD</div>
-      </li>
-      <li class="container fee-list__item" v-if="summary">
-        <div class="fee-list__item-name">Status</div>
-        <div class="fee-list__item-value">{{summary.statusCode}}</div>
-      </li>
-      <li class="container fee-list__item">
-        <div class="fee-list__item-name">Receipt</div>
-        <div class="fee-list__item-value">
-          <v-btn text small class="primary download-receipt-btn"
-            :loading="loading" @click="downloadReceipt()">Download PDF</v-btn>
+  <v-expand-transition>
+    <!-- do not display until payments are fetched -->
+    <section class="payment-summary" v-if="summary">
+      <v-row class="py-5" no-gutters>
+        <div class="col1 align-self-center">{{receiptNumber}}</div>
+        <div class="col2 align-self-center">{{receiptDate}}</div>
+        <div class="col3 align-self-center">{{receiptDescription}}</div>
+        <div class="col4 align-self-center">${{receiptAmount}}</div>
+        <div class="col5 align-self-center">
+          <v-btn class="download-receipt-btn float-right" :loading="loading"
+            @click="downloadReceipt()">Download PDF</v-btn>
         </div>
-      </li>
-    </ul>
-
-  </v-card>
+      </v-row>
+    </section>
+  </v-expand-transition>
 </template>
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
-import '../../plugins/vuetify'
-
-import { NameRequestPaymentResponse } from '@/modules/payment/models'
-
-import RequestDetails from '@/components/common/request-details.vue'
 import PaymentMixin from '@/components/payment/payment-mixin'
+import ReceiptMixin from '@/components/mixins/receipt-mixin'
 
-@Component({
-  components: {
-    RequestDetails
-  }
-})
-export default class PaymentSummary extends Mixins(PaymentMixin) {
-  @Prop(Number)
-  readonly id: number
-
+@Component({})
+export default class PaymentSummary extends Mixins(PaymentMixin, ReceiptMixin) {
   @Prop(Object)
   readonly summary: any
 
-  @Prop(Object)
-  readonly receipt: any
-
-  protected fetchError = ''
-
+  /** Used to show loading state on button. */
   private loading = false
 
-  async downloadReceipt () {
-    const { id } = this
+  private get receiptNumber (): string {
+    return `Receipt No. ${this.summary?.receipt.receiptNumber}`
+  }
+
+  private get receiptDate (): string {
+    return this.summary?.receipt.receiptDate
+  }
+
+  private get receiptDescription (): string {
+    const lineItem = this.summary?.payment.sbcPayment.lineItems[0] // just look at first one
+    return this.rcptDescToName(lineItem?.description)
+  }
+
+  private get receiptAmount (): string {
+    return `${this.summary?.receipt.receiptAmount.toFixed(2)} CAD`
+  }
+
+  public async downloadReceipt () {
+    const id = this.summary?.id
     this.loading = true
     await this.downloadReceiptPdf(id)
     this.loading = false
@@ -75,21 +58,30 @@ export default class PaymentSummary extends Mixins(PaymentMixin) {
 <style lang="scss" scoped>
 @import "@/assets/scss/theme";
 
-header {
-  color: white;
-  background: $BCgovBlue5;
-}
-
-.container.fee-list__item {
-  display: flex;
-  flex-flow: row nowrap;
-  line-height: 1.2rem;
-  font-size: 0.875rem;
-  justify-content: space-between;
-  border-bottom: 1px dotted grey;
-}
-
-.fee-list__item-name {
+.col1 {
+  flex: 0 0 23.75%;
+  max-width: 23.75%;
   font-weight: bold;
+}
+
+.col2 {
+  flex: 0 0 20%;
+  max-width: 20%;
+}
+
+.col3 {
+  flex: 0 0 18.75%;
+  max-width: 18.75%;
+}
+
+.col4 {
+  flex: 0 0 16.25%;
+  max-width: 16.25%;
+  text-align: right;
+}
+
+.col5 {
+  flex: 0 0 21.25%;
+  max-width: 21.25%;
 }
 </style>

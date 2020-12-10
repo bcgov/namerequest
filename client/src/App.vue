@@ -42,7 +42,7 @@
     <UpgradeModal />
     <ReapplyModal />
     <PaymentCompleteModal />
-    <PaymentHistoryModal />
+    <ReceiptsModal />
     <RefundModal />
     <CancelModal />
     <AffiliationErrorModal />
@@ -67,7 +67,7 @@ import NrNotRequired from '@/components/modals/nr-not-required.vue'
 import PickEntityOrConversion from '@/components/modals/pick-entity-or-conversion.vue'
 import PickRequestType from '@/components/modals/pick-request-type.vue'
 import PaymentModal from '@/components/payment/payment-modal.vue'
-import PaymentHistoryModal from '@/components/payment/payment-history-modal.vue'
+import ReceiptsModal from '@/components/payment/receipts-modal.vue'
 import RefundModal from '@/components/payment/refund-modal.vue'
 import CancelModal from '@/components/payment/cancel-modal.vue'
 import UpgradeModal from '@/components/payment/upgrade-modal.vue'
@@ -106,7 +106,7 @@ import paymentModule from '@/modules/payment'
     UpgradeModal,
     ReapplyModal,
     PaymentCompleteModal,
-    PaymentHistoryModal,
+    ReceiptsModal,
     RefundModal,
     CancelModal,
     AffiliationErrorModal,

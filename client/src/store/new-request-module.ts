@@ -832,7 +832,8 @@ export class NewRequestModule extends VuexModule {
     return (!this.editMode && this.nrState === 'DRAFT') || (!this.editMode && this.submissionType === 'examination')
   }
   get showCorpNum (): 'colin' | 'mras' | false {
-    if ($colinRequestActions.includes(this.request_action_cd) || this.entity_type_cd === 'DBA') {
+    if (($colinRequestActions.includes(this.request_action_cd) && this.location === 'BC') ||
+      this.entity_type_cd === 'DBA') {
       return 'colin'
     }
     if (this.location === 'BC' && this.request_action_cd === 'CNV') {
@@ -1230,6 +1231,7 @@ export class NewRequestModule extends VuexModule {
     }
     return false
   }
+
   get nrId () {
     const { nr } = this
     let nrId
@@ -1812,12 +1814,10 @@ export class NewRequestModule extends VuexModule {
       }
       this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
-      // eslint-disable-next-line
-      console.log(error)
-      if (error.code === 'ECONNABORTED') {
+      if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
         this.mutateNameAnalysisTimedOut(true)
-        this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
-        this.mutateDisplayedComponent('SubmissionTabs')
+        this.mutateName(this.name)
+        this.mutateDisplayedComponent('SendToExamination')
         return
       }
       if (this.userCancelledAnalysis) {
@@ -1862,12 +1862,10 @@ export class NewRequestModule extends VuexModule {
       }
       this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
-      // eslint-disable-next-line
-      console.log(error)
-      if (error.code === 'ECONNABORTED') {
+      if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
         this.mutateNameAnalysisTimedOut(true)
-        this.mutateSubmissionTabComponent('EntityNotAutoAnalyzed')
-        this.mutateDisplayedComponent('SubmissionTabs')
+        this.mutateName(this.name)
+        this.mutateDisplayedComponent('SendToExamination')
         return
       }
       if (this.userCancelledAnalysis) {
@@ -2508,13 +2506,8 @@ export class NewRequestModule extends VuexModule {
     if (this.location === 'BC') {
       if (this.nameIsEnglish && !this.isPersonsName && !this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
         if (['NEW', 'DBA', 'CHG'].includes(this.request_action_cd)) {
-          if (['DBA', 'FR', 'GP', 'LLP', 'LP'].includes(this.entity_type_cd)) {
-            this.getNameAnalysisXPRO()
-            return
-          } else {
-            this.getNameAnalysis()
-            return
-          }
+          this.getNameAnalysis()
+          return
         }
       }
       this.mutateDisplayedComponent('SendToExamination')
