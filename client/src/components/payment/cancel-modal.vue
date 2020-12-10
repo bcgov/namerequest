@@ -47,9 +47,6 @@ import NewReqModule from '@/store/new-request-module'
 
 @Component({})
 export default class CancelModal extends Mixins(NameRequestMixin, PaymentMixin) {
-  /** Used to display a fetch error, if any. */
-  protected fetchError = ''
-
   /** Used to show loading state on button. */
   private loading = false
 

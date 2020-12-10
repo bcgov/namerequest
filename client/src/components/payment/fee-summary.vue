@@ -70,7 +70,6 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { FilingData } from 'sbc-common-components/src/models'
-import '../../plugins/vuetify'
 
 @Component({})
 export default class FeeSummary extends Vue {
