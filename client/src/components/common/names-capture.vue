@@ -5,9 +5,10 @@
         <v-row class="mt-5">
           <v-col cols="6" class="font-weight-bold py-0">I need a name to:</v-col>
           <v-col cols="6" class="d-flex justify-end py-0">
-            <button id="help-me-choose-activator"
+            <!-- REMOVED FOR MVP: -->
+            <!-- <button id="help-me-choose-activator"
                     class="link-std"
-                    @change="activateHMCModal()">Help Me Choose</button>
+                    @change="activateHMCModal()">Help Me Choose</button> -->
           </v-col>
         </v-row>
 
