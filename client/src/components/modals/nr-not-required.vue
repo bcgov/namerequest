@@ -54,10 +54,10 @@ export default class NrNotRequired extends Vue {
 </script>
 
 <style lang="scss" scoped>
-  #nr-required-close-btn {
-    width: 6.375rem;
-  }
-  a {
-    text-decoration: underline;
-  }
+#nr-required-close-btn {
+  width: 6.375rem;
+}
+a {
+  text-decoration: underline;
+}
 </style>
