@@ -328,6 +328,7 @@
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
+import { Location } from '@/enums'
 
 const _debounce = require('lodash/debounce')
 
@@ -403,10 +404,9 @@ export default class ApplicantInfo1 extends Vue {
     return newReqModule.editMode
   }
   get jurisdictionOptions () {
-    if (this.location === 'IN') {
-      return this.$intJurisdictions.map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
-    }
-    return this.$canJurisdictions.map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
+    return this.location === Location.Canadian
+      ? this.$canJurisdictions.filter(jur => jur.value !== Location.BC)
+      : this.$intJurisdictions.filter(jur => jur.value !== Location.Canadian)
   }
   get location () {
     return newReqModule.location
