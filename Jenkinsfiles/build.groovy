@@ -1,76 +1,99 @@
-// Edit your app's name below
+#!/usr/bin/env groovy
+// Copyright © 2018 Province of British Columbia
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+//JENKINS DEPLOY ENVIRONMENT VARIABLES:
+// - JENKINS_JAVA_OVERRIDES  -Dhudson.model.DirectoryBrowserSupport.CSP= -Duser.timezone=America/Vancouver
+//   -> user.timezone : set the local timezone so logfiles report correxct time
+//   -> hudson.model.DirectoryBrowserSupport.CSP : removes restrictions on CSS file load, thus html pages of test reports are displayed pretty
+//   See: https://docs.openshift.com/container-platform/3.9/using_images/other_images/jenkins.html for a complete list of JENKINS env vars
+
+import groovy.json.*
+
+// define constants - values sent in as env vars from whatever calls this pipeline
 def APP_NAME = 'namerequest-ui'
+def DESTINATION_TAG = 'dev'
+def TOOLS_TAG = 'tools'
+def NAMESPACE_BUILD = 'servicebc-ne-tools'
+def NAMESPACE_DEPLOY = '1rdehl-dev'
 
-// Edit your environment TAG name below (this service will tag an image for this environment from this build)
-def DEPLOY_TAG = 'dev'
+def ROCKETCHAT_DEVELOPER_CHANNEL='#registries-bot'
 
-// You shouldn't have to edit these if you're following the conventions
-def BUILD_CONFIG = "${APP_NAME}-inter"
+// post a notification to rocketchat
+def rocketChatNotification(token, channel, comments) {
+  def payload = JsonOutput.toJson([text: comments, channel: channel])
+  def rocketChatUrl = "https://chat.pathfinder.gov.bc.ca/hooks/" + "${token}"
 
-//EDIT LINE BELOW (Change `IMAGESTREAM_NAME` so it matches the name of your *output*/deployable image stream.)
-def IMAGESTREAM_NAME = APP_NAME
-
-// you'll need to change this to point to your application component's folder within your repository
-def CONTEXT_DIRECTORY = './client'
-
-// EDIT LINE BELOW (Add a reference to the CHAINED_BUILD_CONFIG)
-def CHAINED_BUILD_CONFIG = APP_NAME
-
-// The name of your deployment configuration; used to verify the deployment
-def DEPLOYMENT_CONFIG_NAME = APP_NAME
-
+  sh(returnStdout: true,
+     script: "curl -X POST -H 'Content-Type: application/json' --data \'${payload}\' ${rocketChatUrl}")
+}
 
 @NonCPS
 boolean triggerBuild(String contextDirectory) {
-  // Determine if code has changed within the source context directory.
-  def changeLogSets = currentBuild.changeSets
-  def filesChangeCnt = 0
-  for (int i = 0; i < changeLogSets.size(); i++) {
-    def entries = changeLogSets[i].items
-    for (int j = 0; j < entries.length; j++) {
-      def entry = entries[j]
-      def files = new ArrayList(entry.affectedFiles)
-      for (int k = 0; k < files.size(); k++) {
-        def file = files[k]
-        def filePath = file.path
-        if (filePath.contains(contextDirectory)) {
-          filesChangeCnt = 1
-          k = files.size()
-          j = entries.length
+    // Determine if code has changed within the source context directory.
+    def changeLogSets = currentBuild.changeSets
+    def filesChangeCnt = 0
+    for (int i = 0; i < changeLogSets.size(); i++) {
+        def entries = changeLogSets[i].items
+        for (int j = 0; j < entries.length; j++) {
+            def entry = entries[j]
+            //echo "${entry.commitId} by ${entry.author} on ${new Date(entry.timestamp)}: ${entry.msg}"
+            def files = new ArrayList(entry.affectedFiles)
+            for (int k = 0; k < files.size(); k++) {
+                def file = files[k]
+                def filePath = file.path
+                //echo ">> ${file.path}"
+                if (filePath.contains(contextDirectory)) {
+                    filesChangeCnt = 1
+                    k = files.size()
+                    j = entries.length
+                }
+            }
         }
-      }
     }
-  }
 
-  if ( filesChangeCnt < 1 ) {
-    echo('The changes do not require a build.')
-    return false
-  }
-  else {
-    echo('The changes require a build.')
-    return true
-  }
+    if ( filesChangeCnt < 1 ) {
+        echo('The changes do not require a build.')
+        return false
+    } else {
+        echo('The changes require a build.')
+        return true
+    }
 }
 
 // Get an image's hash tag
 String getImageTagHash(String imageName, String tag = "") {
 
-  if(!tag?.trim()) {
-    tag = "latest"
-  }
+    if(!tag?.trim()) {
+        tag = "latest"
+    }
 
-  def istag = openshift.raw("get istag ${imageName}:${tag} -o template --template='{{.image.dockerImageReference}}'")
-  return istag.out.tokenize('@')[1].trim()
+    def istag = openshift.raw("get istag ${imageName}:${tag} -o template --template='{{.image.dockerImageReference}}'")
+    return istag.out.tokenize('@')[1].trim()
 }
+
+// define job properties - keep 10 builds only
+properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10']]])
 
 def run_pipeline = true
 
 // build wasn't triggered by changes so check with user
-if( !triggerBuild(CONTEXT_DIRECTORY) ) {
+if( !triggerBuild(APP_NAME) ) {
     stage('No changes. Run pipeline?') {
         try {
             timeout(time: 1, unit: 'DAYS') {
-                input message: "Run pipeline?", id: "1234"//, submitter: 'admin,ljtrent-admin,thorwolpert-admin,rarmitag-admin,kialj876-admin,katiemcgoff-admin,waltermoar-admin'
+                input message: "Run pipeline?", id: "1234"//, submitter: 'admin'
             }
         } catch (Exception e) {
             run_pipeline = false;
@@ -79,125 +102,105 @@ if( !triggerBuild(CONTEXT_DIRECTORY) ) {
 }
 
 if( run_pipeline ) {
-    // create NodeJS pod to run verification steps
-    def nodejs_label = "jenkins-nodejs-${UUID.randomUUID().toString()}"
-    podTemplate(label: nodejs_label, name: nodejs_label, serviceAccount: 'jenkins', cloud: 'openshift', containers: [
-        containerTemplate(
-            name: 'jnlp',
-            image: '172.50.0.2:5000/openshift/jenkins-slave-nodejs:8',
-            resourceRequestCpu: '500m',
-            resourceLimitCpu: '1000m',
-            resourceRequestMemory: '1Gi',
-            resourceLimitMemory: '2Gi',
-            workingDir: '/tmp',
-            command: '',
-            args: '${computer.jnlpmac} ${computer.name}'
-        )
-    ])
-    {
-        node (nodejs_label) {
-            checkout scm
-            dir(CONTEXT_DIRECTORY) {
-                try {
-                    sh '''
-                        node -v
-                        npm install
-                    '''
-                    /* TODO - these do not run correctly in pipeline
-                    stage("Run Jest tests") {
-                        def testResults = sh(script: "npm run test:unit", returnStatus: true)
+    node {
+        def build_ok = true
+        def old_version
 
-                        echo "Unit tests ran, returned ${testResults}"
-                        if (testResults != 0) {
+        try {
+            stage("Build ${APP_NAME}") {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject("${NAMESPACE_BUILD}") {
+                            echo "Building ${APP_NAME} ..."
+                            def build = openshift.selector("bc", "${APP_NAME}").startBuild()
+                            build.untilEach {
+                                return it.object().status.phase == "Running"
+                            }
+                            build.logs('-f')
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            echo e.getMessage()
+            build_ok = false
+        }
+
+        if (build_ok) {
+            stage("Tag ${APP_NAME}:${DESTINATION_TAG}") {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject("${NAMESPACE_DEPLOY}") {
+                            old_version = openshift.selector('dc', "${APP_NAME}-${DESTINATION_TAG}").object().status.latestVersion
+                        }
+                    }
+                    openshift.withCluster() {
+                        openshift.withProject("${NAMESPACE_BUILD}") {
                             try {
-                                timeout(time: 1, unit: 'DAYS') {
-                                    input message: "Unit tests failed. Continue?", id: "1"
-                                }
+                                echo "Tagging ${APP_NAME} for deployment to ${DESTINATION_TAG} ..."
+
+                                // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
+                                // Tag the images for deployment based on the image's hash
+                                def IMAGE_HASH = getImageTagHash("${APP_NAME}")
+                                echo "IMAGE_HASH: ${IMAGE_HASH}"
+                                openshift.tag("${APP_NAME}@${IMAGE_HASH}", "${APP_NAME}:${DESTINATION_TAG}")
                             } catch (Exception e) {
-                                error('Abort')
+                                echo e.getMessage()
+                                build_ok = false
                             }
                         }
                     }
-                    */
-                    stage("Check code quality (lint)") {
-                        def lintResults = sh(script: "npm run lint:nofix", returnStatus: true)
-
-                        echo "Linter ran, returned ${lintResults}"
-                        // uncomment to pause pipeline on failed linter
-                        // if (lintResults > 0) {
-                        //     try {
-                        //         timeout(time: 1, unit: 'DAYS') {
-                        //             input message: "Linter failed. Continue?", id: "2"
-                        //         }
-                        //     } catch (Exception e) {
-                        //         error('Abort')
-                        //     }
-                        // }
-                    }
-
-                } catch (Exception e) {
-                    error('Failure')
                 }
             }
         }
-    }
 
-  node {
+        if (build_ok) {
+            stage("Deploy ${APP_NAME}-${DESTINATION_TAG}") {
+                sleep 10
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject("${NAMESPACE_DEPLOY}") {
+                            try {
+                                def new_version = openshift.selector('dc', "${APP_NAME}-${DESTINATION_TAG}").object().status.latestVersion
+                                if (new_version == old_version) {
+                                    echo "New deployment was not triggered."
+                                }
 
-    stage("Build ${BUILD_CONFIG}") {
-      script {
-        openshift.withCluster() {
-          openshift.withProject() {
-
-            echo "Building the application artifacts ..."
-            def build = openshift.selector("bc", "${BUILD_CONFIG}")
-            build.startBuild("--wait=true").logs("-f")
-          }
+                                def pod_selector = openshift.selector('pod', [ app:"${APP_NAME}-${DESTINATION_TAG}" ])
+                                pod_selector.untilEach {
+                                    deployment = it.objects()[0].metadata.labels.deployment
+                                    echo deployment
+                                    if (deployment == "${APP_NAME}-${DESTINATION_TAG}-${new_version}" && it.objects()[0].status.phase == 'Running' && it.objects()[0].status.containerStatuses[0].ready) {
+                                        return true
+                                    } else {
+                                        echo "Pod for new deployment not ready"
+                                        sleep 5
+                                        return false
+                                    }
+                                }
+                            } catch (Exception e) {
+                                echo e.getMessage()
+                                build_ok = false
+                            }
+                        }
+                    }
+                }
+            }
         }
-      }
-    }
 
-    stage("Build ${CHAINED_BUILD_CONFIG}") {
-      script {
-        openshift.withCluster() {
-          openshift.withProject() {
+        stage("Notify on RocketChat") {
+            if(build_ok) {
+                currentBuild.result = "SUCCESS"
+            } else {
+                currentBuild.result = "FAILURE"
+            }
 
-            echo "Building the ${IMAGESTREAM_NAME} image ..."
-            def build = openshift.selector("bc", "${CHAINED_BUILD_CONFIG}")
-            build.startBuild("--wait=true").logs("-f")
+            ROCKETCHAT_TOKEN = sh (
+                    script: """oc get secret/apitest-secrets -n ${NAMESPACE_BUILD} -o template --template="{{.data.ROCKETCHAT_TOKEN}}" | base64 --decode""",
+                        returnStdout: true).trim()
 
-            def IMAGE_HASH_DEBUG = getImageTagHash("${IMAGESTREAM_NAME}")
-            echo "Completed build, image is: ${IMAGE_HASH_DEBUG}"
-          }
+            rocketChatNotification("${ROCKETCHAT_TOKEN}", "${ROCKETCHAT_DEVELOPER_CHANNEL}", "${APP_NAME} build and deploy to ${DESTINATION_TAG} ${currentBuild.result}!")
         }
-      }
-    }
-
-
-    stage("Deploy ${DEPLOY_TAG}") {
-      script {
-        openshift.withCluster() {
-          openshift.withProject() {
-
-            echo "Tagging ${IMAGESTREAM_NAME} for deployment to ${DEPLOY_TAG} ..."
-
-            // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
-            // Tag the images for deployment based on the image's hash
-            def IMAGE_HASH = getImageTagHash("${IMAGESTREAM_NAME}")
-            echo "IMAGE_HASH: ${IMAGE_HASH}"
-            openshift.tag("${IMAGESTREAM_NAME}@${IMAGE_HASH}", "${IMAGESTREAM_NAME}:${DEPLOY_TAG}")
-          }
-
-          echo "Deployment Complete."
-        }
-      }
-    }
-
-  }
-}
-else {
-    stage('No Changes') {
-      echo "No changes ..."
-      currentBuild.result = 'SUCCESS'
     }
 }
+
