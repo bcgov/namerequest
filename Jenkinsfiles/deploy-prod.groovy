@@ -28,7 +28,7 @@ def DESTINATION_TAG = 'prod'
 def TOOLS_TAG = 'tools'
 
 def NAMESPACE_BUILD = 'servicebc-ne-tools'
-def NAMESPACE_DEPLOY = '1rdehl-test'
+def NAMESPACE_DEPLOY = '1rdehl-prod'
 
 def ROCKETCHAT_DEVELOPER_CHANNEL='#registries-bot'
 
