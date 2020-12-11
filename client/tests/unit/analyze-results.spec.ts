@@ -27,6 +27,7 @@ describe('AnalyzeResults', () => {
   for (let iTestData = 0; iTestData < lengthTestData; iTestData++) {
     let data = testData[iTestData]
     let { name } = data
+    let { corrected } = data
     let lengthIssues = data.analysisJSON.issues.length
 
     describe(`Testing name-analysis with location=BC, request_action=NEW, and entity_type=CR`, () => {
@@ -91,16 +92,20 @@ describe('AnalyzeResults', () => {
           await wrapper.vm.$nextTick()
           done()
         })
-        test('Further Action required message to be displayed', async () => {
-          expect(wrapper.text()).toContain('Further Action Required')
+        // These tests only check conditions after correcting all the Issues..
+        test('Name Ready for review after resoling all issues', async () => {
+          expect(wrapper.text()).toContain('Name Ready for Review')
         })
         test(`this.name === ${data.corrected}`, () => {
           expect(wrapper.vm.name).toBe(data.corrected)
         })
-        test('Altering the name causes the component to resist submission', async () => {
+        test('Cannot alter the name once issues are corrected', async () => {
+          expect(wrapper.find('#name-search-bar').text()).toBe(`${corrected}`)
           wrapper.vm.name = 'ALTERED NAME'
+
           await wrapper.vm.$nextTick()
-          expect(wrapper.text()).toContain('Further Action Required')
+          expect(wrapper.find('#name-search-bar').text()).toBe(`${corrected}`)
+          expect(wrapper.text()).toContain('Name Ready for Review')
         })
       })
     })

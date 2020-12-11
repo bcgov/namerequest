@@ -115,8 +115,10 @@
             <span v-if="isAssumedName">
               You may provide up to two additional assumed names which will be considered at no further
               cost, in the order provided, if your first choice cannot be approved. Be sure to follow all
-              <a :href="buildNameURL" target="_blank">guidelines for how to build a name.</a>
-              <v-icon class="launch-icon">mdi-launch</v-icon>
+              <a :href="buildNameURL" target="_blank">
+                guidelines for how to build a name.
+                <v-icon class="launch-icon">mdi-launch</v-icon>
+              </a>
             </span>
             <span v-else-if="!showSecondAndThirdNameChoices">
               <div class="mt-1">
@@ -130,15 +132,19 @@
             <span v-else>
               You may provide up to two additional assumed names which will be considered at no further cost, in
               the order provided, if the name in the home jurisdiction cannot be approved. Be sure to follow all
-              <a :href="buildNameURL" target="_blank">guidelines for how to build a name.</a>
-              <v-icon class="launch-icon">mdi-launch</v-icon>
+              <a :href="buildNameURL" target="_blank">
+                guidelines for how to build a name.
+                <v-icon class="launch-icon">mdi-launch</v-icon>
+              </a>
             </span>
           </span>
           <span v-else>
             You may provide up to two additional names which will be considered at no further cost, in
             the order provided, only if your first choice cannot be approved. Be sure to follow all
-            <a :href="buildNameURL" target="_blank">guidelines for how to build a name.</a>
-            <v-icon class="launch-icon">mdi-launch</v-icon>
+            <a :href="buildNameURL" target="_blank">
+              guidelines for how to build a name.
+              <v-icon class="launch-icon">mdi-launch</v-icon>
+            </a>
           </span>
         </v-col>
       </v-row>
@@ -803,7 +809,8 @@ export default class NamesCapture extends Vue {
 }
 
 .launch-icon {
-  font-size: 1rem;
+  display: inline-block;
+  font-size: 0.875rem;
   color: $app-blue;
 }
 

@@ -277,6 +277,10 @@ export default class AnalyzeResults extends Vue {
     if (newVal) {
       this.finalName = this.name
       this.showActualInput = true
+
+      // Once the name is fixed, inform the UI that no further analysis is required
+      this.json.status = 'Available'
+      this.json.issues = []
     }
   }
 
@@ -485,7 +489,7 @@ export default class AnalyzeResults extends Vue {
     return false
   }
   get headerProps () {
-    if (this.json.status === 'Available') {
+    if (this.isApproved) {
       return {
         class: 'approved',
         icon: 'mdi-check-circle',
@@ -498,7 +502,7 @@ export default class AnalyzeResults extends Vue {
       return {
         class: 'rejected',
         icon: 'mdi-star-circle',
-        text: 'Further Action Required',
+        text: this.headerText,
         showNextLines: true
       }
     }
@@ -518,6 +522,11 @@ export default class AnalyzeResults extends Vue {
       text: 'Further Action Required',
       showNextLines: true
     }
+  }
+  get headerText () {
+    let issues = this.json.issues
+    return issues.length === 1 && issues[0].issue_type === 'excess_words' ? 'Further Review Required'
+      : 'Further Action Required'
   }
   get isApproved () {
     return (this.json.status === 'Available')
