@@ -2479,7 +2479,7 @@ export class NewRequestModule extends VuexModule {
       return
     }
     if (this.isXproMras) {
-      this.mutateNRData({ key: 'xproJurisdiction', value: this.request_jurisdiction_cd })
+      this.mutateNRData({ key: 'xproJurisdiction', value: this.jurisdictionText })
       if (!this.noCorpNum) {
         const profile = await this.fetchMRASProfile()
         if (profile) {
