@@ -1,11 +1,9 @@
 <template>
   <!-- NB: dummy modal attach point so unit tests can see it -->
   <v-dialog v-model="showModal" width="50rem" attach="">
-    <v-card class="pa-9 nr-not-required-dialog">
-      <v-card-title>
-        <span>
-          <slot name="title">You don't need a Name Request if...</slot>
-        </span>
+    <v-card>
+      <v-card-title class="d-flex justify-space-between">
+        <div>You don't need a Name Request if...</div>
       </v-card-title>
       <v-card-text class="copy-normal">
         <ol>
@@ -29,7 +27,7 @@
           </li>
         </ol>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions class="justify-center">
         <v-btn text id="nr-required-close-btn" @click="showModal = false">Close</v-btn>
       </v-card-actions>
     </v-card>
@@ -56,9 +54,6 @@ export default class NrNotRequired extends Vue {
 </script>
 
 <style lang="scss" scoped>
-  .nr-not-required-dialog .v-card__actions {
-    justify-content: center;
-  }
   #nr-required-close-btn {
     width: 6.375rem;
   }
