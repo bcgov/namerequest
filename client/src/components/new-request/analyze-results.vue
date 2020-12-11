@@ -5,6 +5,7 @@
         You are searching for a name for a
         {{ entityText === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }}
         {{ entityText }}
+        {{json.status}}
       </v-col>
     </template>
     <template v-slot:content>
@@ -277,6 +278,10 @@ export default class AnalyzeResults extends Vue {
     if (newVal) {
       this.finalName = this.name
       this.showActualInput = true
+
+      // Once the name is fixed, inform the UI that no further analysis is required
+      this.json.status = 'Available'
+      this.json.issues = []
     }
   }
 
@@ -485,7 +490,7 @@ export default class AnalyzeResults extends Vue {
     return false
   }
   get headerProps () {
-    if (this.json.status === 'Available') {
+    if (this.isApproved) {
       return {
         class: 'approved',
         icon: 'mdi-check-circle',
@@ -756,7 +761,6 @@ export default class AnalyzeResults extends Vue {
       (this.quill as any).setContents([
         { insert: text }
       ])
-      this.handleSubmit(event)
     } catch {
       return
     }
