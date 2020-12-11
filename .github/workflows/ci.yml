@@ -6,14 +6,15 @@ on:
 
 jobs:
   name-request-ui-ci:
-    runs-on: ubuntu-latest
-
-    env:
-      working-directory: ./client
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./client
 
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.15.1]
 
     steps:
       - uses: actions/checkout@v2
@@ -21,22 +22,19 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: install
-        working-directory: ${{env.working-directory}}
+      - name: Install
         run: |
-          npm ci
+          make setup
         env:
           CI: true
-      - name: lint
-        working-directory: ${{env.working-directory}}
+      - name: Run Lint
         run: |
-          npm run lint
+          make lint
         env:
           CI: true
-      - name: unit test
-        working-directory: ${{env.working-directory}}
+      - name: Run Unit Tests
         run: |
-          npm run test
+          make test
         env:
           CI: true
       - name: Upload coverage to Codecov
@@ -44,9 +42,8 @@ jobs:
         with:
           name: codecov-name-request
           fail_ci_if_error: true
-      - name: build to check strictness
-        working-directory: ${{env.working-directory}}
+      - name: Run build
         run: |
-          npm run build
+          make build-nc
         env:
           CI: true
