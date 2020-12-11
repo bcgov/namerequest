@@ -5,7 +5,6 @@
         You are searching for a name for a
         {{ entityText === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }}
         {{ entityText }}
-        {{json.status}}
       </v-col>
     </template>
     <template v-slot:content>
