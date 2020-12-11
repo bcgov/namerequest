@@ -55,31 +55,4 @@ node {
             }
         }
     }
-    stage("Verify deployment") {
-        sleep 10
-        script {
-            openshift.withCluster() {
-                openshift.withProject("${NAMESPACE}-${DEPLOY_TAG}") {
-                    def new_version = openshift.selector('dc', "${COMPONENT_NAME}").object().status.latestVersion
-                    if (new_version == old_version) {
-                        echo "New deployment was not triggered."
-                        currentBuild.result = "FAILURE"
-                        return
-                    }
-                    def pod_selector = openshift.selector('pod', [ app:"${COMPONENT_NAME}-${DEPLOY_TAG}" ])
-                    pod_selector.untilEach {
-                        deployment = it.objects()[0].metadata.labels.deployment
-                        echo deployment
-                        if (deployment ==  "${COMPONENT_NAME}-${DEPLOY_TAG}-${new_version}" && it.objects()[0].status.phase == 'Running' && it.objects()[0].status.containerStatuses[0].ready) {
-                            return true
-                        } else {
-                            echo "Pod for new deployment not ready"
-                            sleep 5
-                            return false
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
