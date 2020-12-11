@@ -240,18 +240,6 @@ describe('reserve-submit', () => {
             expect(newReqModule.postNameRequests.calledOnce).toBeFalsy()
             newReqModule.mutateRequestAction('NEW')
           })
-          test('request_action_cd is set to "ASSUMED"', async () => {
-            newReqModule.mutateRequestAction('NEW')
-            wrapper.vm.handleSubmit()
-            await wrapper.vm.$nextTick()
-            expect(newReqModule.request_action_cd === 'ASSUMED').toBeTruthy()
-          })
-          test(`requestActionOriginal is set to the original request type`, async () => {
-            newReqModule.mutateRequestAction('NEW')
-            wrapper.vm.handleSubmit()
-            await wrapper.vm.$nextTick()
-            expect(newReqModule.requestActionOriginal === 'NEW').toBeTruthy()
-          })
           test(`assumedNameOriginal is set to newReqModule.name`, async () => {
             wrapper.vm.handleSubmit()
             await wrapper.vm.$nextTick()
@@ -276,22 +264,6 @@ describe('reserve-submit', () => {
     describe('If the entity_type_cd is not one that can be ASSUMED', () => {
       newReqModule.mutateLocation('CA')
       newReqModule.mutateName('Another Test Name Ltd.')
-      test('requestActionOriginal is not set', async () => {
-        newReqModule.mutateEntityType('XCP')
-        newReqModule.mutateRequestActionOriginal('')
-        await wrapper.vm.$nextTick()
-        wrapper.vm.handleSubmit()
-        await wrapper.vm.$nextTick()
-        expect(newReqModule.requestActionOriginal).toBeFalsy()
-      })
-      test('request_action_cd !== "ASSUMED"', async () => {
-        newReqModule.mutateEntityType('XCP')
-        newReqModule.mutateRequestAction('NEW')
-        await wrapper.vm.$nextTick()
-        wrapper.vm.handleSubmit()
-        await wrapper.vm.$nextTick()
-        expect(newReqModule.request_action_cd === 'ASSUMED').toBeFalsy()
-      })
       test('assumedNameOriginal is set to newRequestModule.name', async () => {
         expect(newReqModule.assumedNameOriginal === newReqModule.name).toBeTruthy()
       })
