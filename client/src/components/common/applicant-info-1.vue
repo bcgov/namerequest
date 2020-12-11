@@ -404,9 +404,12 @@ export default class ApplicantInfo1 extends Vue {
     return newReqModule.editMode
   }
   get jurisdictionOptions () {
+    const canJurisdiction = this.$canJurisdictions.filter(jur => jur.value !== Location.BC)
+    const intJurisdiction = this.$intJurisdictions.filter(jur => jur.value !== Location.Canadian)
+
     return this.location === Location.Canadian
-      ? this.$canJurisdictions.filter(jur => jur.value !== Location.BC)
-      : this.$intJurisdictions.filter(jur => jur.value !== Location.Canadian)
+      ? canJurisdiction.map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
+      : intJurisdiction.map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
   }
   get location () {
     return newReqModule.location
