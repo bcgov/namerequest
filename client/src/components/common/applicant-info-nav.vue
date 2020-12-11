@@ -84,13 +84,14 @@ export default class ApplicantInfoNav extends Vue {
     }
     newReqModule.mutateSubmissionTabNumber(this.tab + 1)
   }
+
   async submit () {
     const { nrId } = this
     if (this.editMode) {
       await newReqModule.patchNameRequests()
       await newReqModule.checkinNameRequest()
       timerModule.stopTimer({ id: this.$EXISTING_NR_TIMER_NAME })
-      this.fetchNr(nrId).then(() => {})
+      await this.fetchNr(+nrId)
     } else {
       if (!nrId) {
         await newReqModule.postNameRequests('draft')
@@ -110,10 +111,16 @@ export default class ApplicantInfoNav extends Vue {
     }
     this.isloadingSubmission = false
   }
-  async fetchNr (nrId) {
-    const existingNr = await newReqModule.getNameRequest(nrId)
-    await newReqModule.loadExistingNameRequest(existingNr)
+
+  async fetchNr (nrId: number): Promise<boolean> {
+    try {
+      const nrData = await newReqModule.getNameRequest(nrId)
+      await newReqModule.loadExistingNameRequest(nrData)
+      return true
+    } catch (e) {
+      // FUTURE: handle error?
+      return false
+    }
   }
 }
-
 </script>

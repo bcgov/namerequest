@@ -84,17 +84,23 @@ export default class Landing extends Vue {
   private agileUrl = 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business' +
     '/permits-licences/news-updates/modernization'
 
-  mounted () {
+  async mounted () {
     const { id } = this
     // If the ID prop is set, load the existing NR
     if (id) {
-      this.fetchNr(id)
+      await this.fetchNr(+id)
     }
   }
 
-  async fetchNr (nrId) {
-    const existingNr = await newRequestModule.getNameRequest(nrId)
-    await newRequestModule.loadExistingNameRequest(existingNr)
+  async fetchNr (nrId: number): Promise<boolean> {
+    try {
+      const nrData = await newRequestModule.getNameRequest(nrId)
+      await newRequestModule.loadExistingNameRequest(nrData)
+      return true
+    } catch (e) {
+      // FUTURE: handle error?
+      return false
+    }
   }
 
   get displayedComponent () {

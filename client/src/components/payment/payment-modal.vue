@@ -77,11 +77,6 @@ import { getBaseUrl } from './payment-utils'
       type: Function,
       default: async () => {}
     }
-  },
-  computed: {
-    isVisible: () => {
-      return paymentModule[paymentTypes.PAYMENT_MODAL_IS_VISIBLE]
-    }
   }
 })
 export default class PaymentModal extends Mixins(
@@ -91,16 +86,21 @@ export default class PaymentModal extends Mixins(
   DisplayedComponentMixin
 ) {
   private isLoadingPayment: boolean = false
-  get timerName () {
+
+  private get timerName () {
     return this.$PAYMENT_COMPLETION_TIMER_NAME
   }
 
-  get allowCancel (): boolean {
+  private get allowCancel (): boolean {
     return (typeof this.$props.onCancel === 'function')
   }
 
+  private get isVisible (): boolean {
+    return paymentModule[paymentTypes.PAYMENT_MODAL_IS_VISIBLE]
+  }
+
   @Watch('isVisible')
-  async onModalShow (val: boolean, oldVal: string): Promise<void> {
+  async onModalVisible (val: boolean, oldVal: string): Promise<void> {
     if (val) {
       const paymentConfig = {
         filingType: filingTypes.NM620,
@@ -114,6 +114,7 @@ export default class PaymentModal extends Mixins(
       }
 
       await this.fetchFees(paymentConfig)
+      // *** TODO: hide modal on error (if other code already displays errors)?
     }
   }
 
@@ -126,7 +127,7 @@ export default class PaymentModal extends Mixins(
     await paymentModule.togglePaymentModal(false)
   }
 
-  async confirmPayment () {
+  private async confirmPayment () {
     this.isLoadingPayment = true
     const { nrId, priorityRequest } = this
     const onSuccess = (paymentResponse) => {

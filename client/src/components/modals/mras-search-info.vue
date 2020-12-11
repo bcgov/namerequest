@@ -98,8 +98,8 @@ export default class MrasSearchInfoModal extends Vue {
     newReqModule.mutateNoCorpNum(false)
   }
 }
-
 </script>
+
 <style lang="scss" scoped>
 .search-btn {
   min-width: 160px !important;

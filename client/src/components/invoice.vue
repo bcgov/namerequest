@@ -34,7 +34,6 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 
 @Component({})
 export default class Invoice extends Vue {
-  /* class properties */
   @Prop({ default: {
     reference_number: null,
     created_on: null,
@@ -58,7 +57,7 @@ export default class Invoice extends Vue {
   } })
   protected receipt: any
 
-  protected fetchError: string = ''
+  protected fetchError = ''
 }
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <v-form v-model="isValid" lazy-validation @submit="handleSubmit" class="mx-4 px-10 mb-9" ref="existing-nr-form">
+  <v-form v-model="isValid" lazy-validation @submit="handleSubmit()" class="mx-4 px-10 mb-9" ref="existing-nr-form">
     <v-row class="copy-normal mt-2">
       <!-- FIRST LINE -->
       <v-col cols="12">
@@ -56,7 +56,7 @@
     <v-row class="text-center mt-2">
       <!-- FIFTH LINE -->
       <v-col>
-        <v-btn @click="handleSubmit">Retrieve Name Request</v-btn>
+        <v-btn @click="handleSubmit()">Retrieve Name Request</v-btn>
       </v-col>
     </v-row>
   </v-form>
@@ -65,6 +65,7 @@
 <script lang="ts">
 import ForgotNrModal from '@/components/modals/forgot-nr.vue'
 import newReqModule from '@/store/new-request-module'
+import ErrorModule from '@/modules/error'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { NameRequestI, SearchDataI, NrDataResponseT, NrDataT } from '@/models'
 
@@ -105,11 +106,17 @@ export default class ExistingRequestSearch extends Vue {
   get allowSubmit () {
     return (this.search.nrNum && (this.search.emailAddress || this.search.phoneNumber))
   }
-  async handleSubmit () {
+  async handleSubmit (): Promise<boolean> {
     this.$refs['existing-nr-form']['validate']()
     await this.$nextTick()
     if (this.isValid) {
-      newReqModule.findNameRequest()
+      try {
+        await newReqModule.findNameRequest()
+        return true
+      } catch (e) {
+        // FUTURE: handle error?
+        return false
+      }
     }
   }
   setExistingRequestSearch (key, value) {

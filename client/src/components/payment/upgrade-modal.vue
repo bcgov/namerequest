@@ -53,13 +53,6 @@ import { getBaseUrl } from './payment-utils'
     RequestDetails,
     FeeSummary,
     CountdownTimer
-  },
-  data: () => ({
-  }),
-  computed: {
-    isVisible: () => {
-      return paymentModule[paymentTypes.UPGRADE_MODAL_IS_VISIBLE]
-    }
   }
 })
 export default class UpgradeModal extends Mixins(
@@ -72,16 +65,20 @@ export default class UpgradeModal extends Mixins(
    * Optionally display the countdown timer.
    * This could be turned into a prop for easier configuration.
    */
-  get displayTimer () {
+  private get displayTimer () {
     return false
   }
 
-  get timerName () {
+  private get timerName () {
     return this.$PAYMENT_COMPLETION_TIMER_NAME
   }
 
+  private get isVisible (): boolean {
+    return paymentModule[paymentTypes.UPGRADE_MODAL_IS_VISIBLE]
+  }
+
   @Watch('isVisible')
-  onModalShow (val: boolean, oldVal: string): void {
+  async onModalVisible (val: boolean, oldVal: string): Promise<void> {
     if (val) {
       const paymentConfig = {
         filingType: filingTypes.NM606,
@@ -89,7 +86,8 @@ export default class UpgradeModal extends Mixins(
         priorityRequest: this.priorityRequest || false
       }
 
-      this.fetchFees(paymentConfig)
+      await this.fetchFees(paymentConfig)
+      // *** TODO: hide modal on error (if other code already displays errors)?
     }
   }
 
@@ -101,7 +99,7 @@ export default class UpgradeModal extends Mixins(
     await paymentModule.toggleUpgradeModal(false)
   }
 
-  async confirmPayment () {
+  private async confirmPayment () {
     const { nrId, priorityRequest } = this
     const onSuccess = (paymentResponse) => {
       const { paymentId, paymentToken } = this

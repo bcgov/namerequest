@@ -36,7 +36,6 @@ import canadaPostAPIKey from './config'
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
 import { NameRequestPayment } from '@/modules/payment/models'
 
-import timerModule from '@/modules/vx-timer'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 import * as types from '@/store/types'
@@ -52,10 +51,15 @@ function isAxiosError (err: AxiosError | Error): err is AxiosError {
   return (err as AxiosError).isAxiosError !== undefined
 }
 
+/**
+ * Throws an error with error message extracted and formatted.
+ * @param err error object from the catch statement
+ * @param defaultMessage optional fallback message
+ */
 async function handleApiError (err, defaultMessage = '') {
   if (isAxiosError(err)) {
-    let message
-    const responseData = (err && err.response && err.response.data)
+    let message = ''
+    const responseData = err?.response?.data
     const hasResponseData = !!responseData
     if (hasResponseData && responseData instanceof Blob) {
       // Handle any cases where the API error response is a Blob (eg. request for PDF receipt fails)
@@ -65,11 +69,13 @@ async function handleApiError (err, defaultMessage = '') {
         message = errorJson.message
       }
     } else if (hasResponseData && responseData instanceof String) {
-      message = responseData
+      message = responseData.toString()
       // Handle any cases where the API error response is a string
     } else if (hasResponseData && responseData.message) {
       // Handle API errors, they will be supplied as an object { message: 'Ipsum lorem dolor' }
       message = responseData.message
+    } else {
+      message = defaultMessage
     }
 
     // Clean the error message, replace line breaks with HTML breaks
@@ -1815,6 +1821,9 @@ export class NewRequestModule extends VuexModule {
       }
       this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
+      console.error('getNameAnalysis() =', error) // eslint-disable-line no-console
+      // FUTURE: fix error handling in case of network error (#5898)
+      // (should not display "send to examination")
       if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
         this.mutateNameAnalysisTimedOut(true)
         this.mutateName(this.name)
@@ -1863,6 +1872,9 @@ export class NewRequestModule extends VuexModule {
       }
       this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
+      console.error('getNameAnalysisXPRO() =', error) // eslint-disable-line no-console
+      // FUTURE: fix error handling in case of network error (#5898)
+      // (should not display "send to examination")
       if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
         this.mutateNameAnalysisTimedOut(true)
         this.mutateName(this.name)
@@ -1876,26 +1888,28 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('Tabs')
     }
   }
+
+  /**
+   * Confirms whether the specified action is allowed.
+   * @param action the action to confirm
+   * @returns True if confirmed, otherwise False
+   */
   @Action
-  async confirmAction (action: string) {
+  async confirmAction (action: string): Promise<boolean> {
     try {
-      let resp = await this.getNameRequest(this.nr.id)
-      this.setNrResponse(resp)
-      if (!resp.actions.includes(action)) {
-        return false
-      }
-      return true
+      const nrData = await this.getNameRequest(this.nr.id)
+      if (!nrData) throw new Error('Got error from getNameRequest()')
+      this.setNrResponse(nrData)
+      return Boolean(nrData.actions.includes(action))
     } catch (error) {
-      if (error instanceof ApiError) {
-        await errorModule.setAppError({ id: 'get-name-requests-api-error', error: error.message } as ErrorI)
-      } else {
-        await errorModule.setAppError({ id: 'get-name-requests-error', error: error.message } as ErrorI)
-      }
-      // eslint-disable-next-line
-      console.log(error)
+      console.error('confirmAction() =', error) // eslint-disable-line no-console
+      await errorModule.setAppError(
+        { id: 'confirm-action-error', error: 'Could not confirm action' }
+      )
       return false
     }
   }
+
   @Action
   async findNameRequest () {
     this.resetAnalyzeName()
@@ -1915,11 +1929,14 @@ export class NewRequestModule extends VuexModule {
         params,
         cancelToken: source.token
       })
-      if (!resp.data || resp.data.length === 0) {
+      if (!resp || !resp.data || resp.data.length === 0) {
+        // FOR DEBUGGING - REMOVE BEFORE MERGING
+        console.info('findNameRequest() no data') // eslint-disable-line no-console
+        // *** TODO: display this error!
         this.mutateNameRequest(
           {
-            text: 'There were no records found that match the information you have entered.  Please verify the NR  ' +
-              'Number and the phone / email and try again.',
+            text: 'There were no records found that match the information you have entered. ' +
+            'Please verify the NR Number and the phone / email and try again.',
             failed: true
           }
         )
@@ -1929,6 +1946,7 @@ export class NewRequestModule extends VuexModule {
       this.mutateNameRequest(resp.data)
       this.mutateDisplayedComponent('ExistingRequestDisplay')
     } catch (error) {
+      console.error('findNameRequest(), error =', error) // eslint-disable-line no-console
       if (error.response.status === 400) {
         this.mutateNameRequest(
           {
@@ -1973,45 +1991,40 @@ export class NewRequestModule extends VuexModule {
       return data
     }
   }
+
   /**
-   * Grabs an existing NR from the API. To load the returned NR into app state, use loadExistingNameRequest.
-   * @param nrId
+   * Fetches an existing NR from the API.
+   * NB: To store the returned NR object into app state, use loadExistingNameRequest().
+   * @param nrId the NR id
+   * @returns the NR object (or null in case of error)
    */
   @Action
-  async getNameRequest (nrId) {
+  async getNameRequest (nrId: number): Promise<any> {
     try {
-      let response
-      try {
-        response = await axios.get(`/namerequests/${nrId}`, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-      } catch (err) {
-        await handleApiError(err, 'Could not retrieve the name request')
-      }
-
+      const response = await axios.get(`/namerequests/${nrId}`, {
+        headers: { 'Content-Type': 'application/json' }
+      })
       return response.data
     } catch (error) {
-      if (error instanceof ApiError) {
-        await errorModule.setAppError({ id: 'get-name-requests-api-error', error: error.message } as ErrorI)
-      } else {
-        await errorModule.setAppError({ id: 'get-name-requests-error', error: error.message } as ErrorI)
-      }
-
-      // eslint-disable-next-line
-      console.log(error)
+      console.error('getNameRequest() =', error) // eslint-disable-line no-console
+      await errorModule.setAppError(
+        { id: 'fetch-name-request-error', error: 'Could not fetch name request' }
+      )
+      return null
     }
   }
 
   /**
-   * Load an existing NR into app state, and display the ExistingRequestDisplay component.
-   * Use getNameRequest to grab the NR from the API.
-   * @param existingNr
+   * Stores NR data into app state and displays the ExistingRequestDisplay component.
+   * NB: To fetch the NR from the API, use getNameRequest().
+   * @param nrData the NR data object
    */
   @Action
-  async loadExistingNameRequest (existingNr) {
+  async loadExistingNameRequest (nrData: any) {
     const handleEmptyResults = () => {
+      // FOR DEBUGGING - REMOVE BEFORE MERGING
+      console.info('loadExistingNameRequest() empty results') // eslint-disable-line no-console
+      // *** TODO: display this error!
       this.mutateNameRequest(
         {
           text: 'There were no records found that match the information you have entered. Please verify the NR' +
@@ -2032,20 +2045,20 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('ExistingRequestDisplay')
     }
 
-    if (!existingNr) {
+    if (!nrData) {
       handleEmptyResults()
     } else {
-      handleResults(existingNr)
+      handleResults(nrData)
     }
   }
+
   @Action
   async getStats () {
     try {
       let resp = await axios.get('/statistics')
       this.mutateStats(resp.data)
     } catch (error) {
-      // eslint-disable-next-line
-      console.log(error)
+      console.error('getStats() =', error) // eslint-disable-line no-console
     }
   }
   @Action
@@ -2079,18 +2092,17 @@ export class NewRequestModule extends VuexModule {
         sessionStorage.setItem('checkedOutDt', data.checkedOutDt)
         return true
       } catch (err) {
+        console.error('checkoutNameRequest() =', err) // eslint-disable-line no-console
         await handleApiError(err, 'Could not check out the name request')
         return false
       }
     } catch (error) {
+      console.error('checkoutNameRequest() =', error) // eslint-disable-line no-console
       if (error instanceof ApiError) {
         await errorModule.setAppError({ id: 'checkout-name-requests-api-error', error: error.message } as ErrorI)
       } else {
         await errorModule.setAppError({ id: 'checkout-name-requests-error', error: error.message } as ErrorI)
       }
-
-      // eslint-disable-next-line
-      console.log(error)
     }
   }
   @Action
@@ -2117,18 +2129,17 @@ export class NewRequestModule extends VuexModule {
           return true
         }
       } catch (err) {
+        console.error('checkinNameRequest() =', err) // eslint-disable-line no-console
         await handleApiError(err, 'Could not check in the name request')
         return false
       }
     } catch (error) {
+      console.error('checkinNameRequest() =', error) // eslint-disable-line no-console
       if (error instanceof ApiError) {
         await errorModule.setAppError({ id: 'checkin-name-requests-api-error', error: error.message } as ErrorI)
       } else {
         await errorModule.setAppError({ id: 'checkin-name-requests-error', error: error.message } as ErrorI)
       }
-
-      // eslint-disable-next-line
-      console.log(error)
     }
   }
   @Action
@@ -2149,17 +2160,16 @@ export class NewRequestModule extends VuexModule {
         this.mutateNameRequest(response.data)
         this.mutateDisplayedComponent('Success')
       } catch (err) {
+        console.error('patchNameRequests() =', err) // eslint-disable-line no-console
         await handleApiError(err, 'Could not update the name request')
       }
     } catch (error) {
+      console.error('patchNameRequests() =', error) // eslint-disable-line no-console
       if (error instanceof ApiError) {
         await errorModule.setAppError({ id: 'patch-name-requests-api-error', error: error.message } as ErrorI)
       } else {
         await errorModule.setAppError({ id: 'patch-name-requests-error', error: error.message } as ErrorI)
       }
-
-      // eslint-disable-next-line
-      console.log(error)
     }
   }
   @Action
@@ -2177,21 +2187,20 @@ export class NewRequestModule extends VuexModule {
         this.mutateNameRequest(response.data)
         this.mutateDisplayedComponent('Success')
       } catch (err) {
+        console.error('patchNameRequestsByAction() =', err) // eslint-disable-line no-console
         await handleApiError(err, 'Could not update the name request')
       }
     } catch (error) {
+      console.error('patchNameRequestsByAction() =', error) // eslint-disable-line no-console
       if (error instanceof ApiError) {
         await errorModule.setAppError({ id: 'patch-name-requests-by-action-api-error', error: error.message } as ErrorI)
       } else {
         await errorModule.setAppError({ id: 'patch-name-requests-by-action-error', error: error.message } as ErrorI)
       }
-
-      // eslint-disable-next-line
-      console.log(error)
     }
   }
   @Action({ root: true })
-  async postNameRequests (type: string) {
+  async postNameRequests (type: string): Promise<boolean> {
     if (this.isAssumedName) type = 'assumed'
     try {
       let data: any
@@ -2223,18 +2232,19 @@ export class NewRequestModule extends VuexModule {
         await dispatch(types.SET_ROLLBACK_ON_EXPIRE, true)
         // Check in on expire is for existing NRs, make sure it isn't set!
         await dispatch(types.SET_CHECK_IN_ON_EXPIRE, false)
+        return true
       } catch (err) {
+        console.error('postNameRequests() =', err) // eslint-disable-line no-console
         await handleApiError(err, 'Could not create the name request')
       }
     } catch (error) {
+      console.error('postNameRequests() =', error) // eslint-disable-line no-console
       if (error instanceof ApiError) {
         await errorModule.setAppError({ id: 'post-name-requests-api-error', error: error.message } as ErrorI)
       } else {
         await errorModule.setAppError({ id: 'post-name-requests-error', error: error.message } as ErrorI)
       }
-
-      // eslint-disable-next-line
-      console.log(error)
+      return false
     }
   }
   @Action
@@ -2270,26 +2280,25 @@ export class NewRequestModule extends VuexModule {
             'Content-Type': 'application/json'
           }
         })
-
         this.setNrResponse(response.data)
+        return true
       } catch (err) {
+        console.error('putNameReservation() =', err) // eslint-disable-line no-console
         await handleApiError(err, 'Could not update the name request')
       }
     } catch (error) {
+      console.error('putNameReservation() =', error) // eslint-disable-line no-console
       if (error instanceof ApiError) {
         await errorModule.setAppError({ id: 'put-name-requests-api-error', error: error.message } as ErrorI)
       } else {
         await errorModule.setAppError({ id: 'put-name-requests-error', error: error.message } as ErrorI)
       }
-
-      // eslint-disable-next-line
-      console.log(error)
+      return false
     }
   }
   @Action
   async completePayment ({ nrId, paymentId, action }): Promise<NameRequestPayment> {
     // TODO: Type the param!
-    // TODO: Throw an error if params are missing
     // TODO: In completePayment, generate a temp UUID or nonce
     //  that gets passed to the NR Payment API
 
@@ -2340,7 +2349,7 @@ export class NewRequestModule extends VuexModule {
       })
 
       if (response.status !== 200) {
-        throw new ApiError('Could not roll back / cancel the name request')
+        throw new ApiError('Could not rollback or cancel the name request')
       }
     } catch (error) {
       if (error instanceof ApiError) {
@@ -2567,9 +2576,10 @@ export class NewRequestModule extends VuexModule {
       if (response?.status === 200) {
         return response?.data
       }
-    }).catch(e => {
+    }).catch(error => {
+      console.error('fetchMRASProfile() =', error) // eslint-disable-line no-console
       this.mutateName('')
-      this.mutateMrasSearchResult(e.response.status)
+      this.mutateMrasSearchResult(error.response.status)
       this.mutateMrasSearchInfoModalVisible(true)
     })
     return response
@@ -2760,6 +2770,8 @@ export class NewRequestModule extends VuexModule {
   }
   @Mutation
   mutateNameRequest (nr) {
+    // FOR DEBUGGING - REMOVE BEFORE MERGING
+    console.info('mutateNameRequest(), nr =', nr) // eslint-disable-line no-console
     this.nr = nr
   }
   @Mutation
@@ -2909,23 +2921,28 @@ export class NewRequestModule extends VuexModule {
     this.errors = [value]
   }
   @Mutation
-  setNrResponse (value) {
-    this.nr = value
+  setNrResponse (data: any) {
+    try {
+      this.nr = data
 
-    const { nr } = this
-    const { applicants = [] } = nr
+      const { nr } = this
+      const { applicants = [] } = nr
 
-    const setApplicantDetails = (applicant) => {
-      const data = Object.assign({}, applicant) as ApplicantI
-      Object.keys(data as ApplicantI).forEach(key => {
-        this.applicant[key] = data[key]
-      })
-    }
+      const setApplicantDetails = (applicant) => {
+        const data = Object.assign({}, applicant) as ApplicantI
+        Object.keys(data as ApplicantI).forEach(key => {
+          this.applicant[key] = data[key]
+        })
+      }
 
-    if (applicants instanceof Array) {
-      setApplicantDetails(applicants[0])
-    } else if (applicants) {
-      setApplicantDetails(applicants)
+      if (applicants instanceof Array) {
+        setApplicantDetails(applicants[0])
+      } else if (applicants) {
+        setApplicantDetails(applicants)
+      }
+      // else applicants is null/undefined
+    } catch (error) {
+      console.log('setNrResponse() =', error) // eslint-disable-line no-console
     }
   }
   @Mutation

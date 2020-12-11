@@ -69,24 +69,8 @@ export default class PaymentConfirm extends Vue {
     required: false
   }
   @Prop(String) name: string
-  // @Prop(Boolean) priorityRequest: boolean
-  // @Prop(Object) payment: any
-  @Prop({ default: {
-    receipt: {
-      created_on: '',
-      total: 0.00,
-      references: [{
-        receipt_number: '',
-        status_code: ''
-      }]
-    },
-    summary: {
-      completionDate: '',
-      statusCode: ''
-    }
-  } })
 
-  protected fetchError: string = ''
+  protected fetchError = ''
 }
 </script>
 

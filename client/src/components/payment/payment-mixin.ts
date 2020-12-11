@@ -1,7 +1,4 @@
-import Vue from 'vue'
-import { Component } from 'vue-property-decorator'
-
-import * as jurisdictions from '@/modules/payment/jurisdictions'
+import { Component, Vue } from 'vue-property-decorator'
 import * as paymentTypes from '@/modules/payment/store/types'
 import * as paymentService from '@/modules/payment/services'
 import paymentModule from '@/modules/payment'
@@ -81,12 +78,10 @@ export default class PaymentMixin extends Vue {
     return summaries
   }
 
-  /**
-   * This uses snake_case GET params
-   */
-  async fetchFees (paymentConfig) {
+  async fetchFees (paymentConfig): Promise<boolean> {
     const { corpType, filingType, jurisdiction, priorityRequest } = paymentConfig
     try {
+      // NB: params uses snake_case
       const response = await paymentService.getPaymentFees({
         'corp_type': corpType,
         'filing_type_code': filingType,
@@ -95,12 +90,17 @@ export default class PaymentMixin extends Vue {
         'priority': priorityRequest
       })
       await paymentModule.setPaymentFees(response)
+      return true
     } catch (error) {
+      console.error('fetchFees() =', error) // eslint-disable-line no-console
+      // *** TODO: do we need to set app error here?
+      // or is handleApiError (in getPaymentFees) sufficient?
       if (error instanceof PaymentApiError) {
         await errorModule.setAppError({ id: 'payment-api-error', error: error.message } as ErrorI)
       } else {
         await errorModule.setAppError({ id: 'fetch-fees-error', error: error.message } as ErrorI)
       }
+      return false
     }
   }
 
@@ -220,15 +220,29 @@ export default class PaymentMixin extends Vue {
     }
   }
 
-  async fetchNr (nrId) {
-    const existingNr = await newRequestModule.getNameRequest(nrId)
-    await newRequestModule.loadExistingNameRequest(existingNr)
+  // *** TODO: check all code that calls this
+  async fetchNr (nrId: number): Promise<boolean> {
+    try {
+      const nrData = await newRequestModule.getNameRequest(nrId)
+      await newRequestModule.loadExistingNameRequest(nrData)
+      return true
+    } catch (e) {
+      // FUTURE: handle error?
+      return false
+    }
   }
 
-  async fetchNrPayment (nrId, paymentId) {
+  /**
+   * Fetches the specified NR payment.
+   * @param nrId the NR id
+   * @param paymentId the payment id
+   * @returns True if successful, otherwise False
+   */
+  async fetchNrPayment (nrId: number, paymentId: number): Promise<boolean> {
     try {
-      const paymentResponse: NameRequestPaymentResponse =
-        await paymentService.getNameRequestPayment(nrId, paymentId, {})
+      const paymentResponse = await paymentService.getNameRequestPayment(nrId, paymentId, {})
+      if (!paymentResponse) throw new Error('Got error from getNameRequestPayment()')
+
       const { payment, sbcPayment =
       { receipts: [], status_code: '' }, token, statusCode, completionDate } = paymentResponse
 
@@ -240,25 +254,34 @@ export default class PaymentMixin extends Vue {
         const receipt = sbcPayment.receipts[0]
         await paymentModule.setPaymentReceipt(receipt)
       }
+      return true
     } catch (error) {
-      if (error instanceof PaymentApiError) {
-        await errorModule.setAppError({ id: 'payment-api-error', error: error.message } as ErrorI)
-      } else {
-        await errorModule.setAppError({ id: 'fetch-nr-payment-error', error: error.message } as ErrorI)
-      }
+      console.error('fetchNrPayment() =', error) // eslint-disable-line no-console
+      await errorModule.setAppError(
+        { id: 'fetch-nr-payment-error', error: 'Could not fetch payment' }
+      )
+      return false
     }
   }
 
-  async fetchNrPayments (nrId) {
+  /**
+   * Fetches all payments for the specified NR.
+   * @param nrId the NR id
+   * @returns True if successful, otherwise False
+   */
+  async fetchNrPayments (nrId: number): Promise<boolean> {
     try {
-      const paymentsResponse: NameRequestPaymentResponse[] = await paymentService.getNameRequestPayments(nrId, {})
+      const paymentsResponse = await paymentService.getNameRequestPayments(nrId, {})
+      if (!paymentsResponse) throw new Error('Got error from getNameRequestPayments()')
+
       await paymentModule.setPayments(paymentsResponse)
+      return true
     } catch (error) {
-      if (error instanceof PaymentApiError) {
-        await errorModule.setAppError({ id: 'payment-api-error', error: error.message } as ErrorI)
-      } else {
-        await errorModule.setAppError({ id: 'fetch-nr-payments-error', error: error.message } as ErrorI)
-      }
+      console.error('fetchNrPayments() =', error) // eslint-disable-line no-console
+      await errorModule.setAppError(
+        { id: 'fetch-nr-payments-error', error: 'Could not fetch payments' }
+      )
+      return false
     }
   }
 }

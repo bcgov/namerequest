@@ -75,7 +75,8 @@ import { FilingData } from 'sbc-common-components/src/models'
 export default class FeeSummary extends Vue {
   @Prop({ default: () => [] }) filingData!: Array<FilingData>
   @Prop({ default: () => [] }) fees: any[]
-  protected fetchError: string = ''
+
+  protected fetchError = ''
 
   protected get totalFees (): number {
     return this.fees instanceof Array ? this.fees.reduce((feeTotal: number, item: any) => {
