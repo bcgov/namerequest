@@ -1,5 +1,5 @@
 <template>
-  <v-form v-model="isValid" lazy-validation @submit="handleSubmit" class="mx-5 px-10 mb-9" ref="existing-nr-form">
+  <v-form v-model="isValid" lazy-validation @submit="handleSubmit" class="mx-4 px-10 mb-9" ref="existing-nr-form">
     <v-row class="copy-normal mt-2">
       <!-- FIRST LINE -->
       <v-col cols="12">
