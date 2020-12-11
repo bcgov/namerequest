@@ -1,9 +1,9 @@
 <template>
-  <v-form v-model="isValid" lazy-validation @submit="handleSubmit" class="pa-10">
-    <v-row class="ml-5 copy-normal">
+  <v-form v-model="isValid" lazy-validation @submit="handleSubmit" class="mx-5 px-10 mb-9" ref="existing-nr-form">
+    <v-row class="copy-normal mt-2">
       <!-- FIRST LINE -->
-      <v-col cols="12" class="mt-0">
-        Enter the NR Number or Business Name and either the Applicant's Phone or Email:
+      <v-col cols="12">
+        Enter the Name Request (NR) Number and either the Applicant's Phone Number or Email:
       </v-col>
 
       <!-- SECOND LINE -->
@@ -11,40 +11,40 @@
 
       <!-- THIRD LINE -->
     </v-row>
-    <v-row align="center" class="mr-4" dense>
-      <v-col cols="1" class="mr-n3">
+    <v-row align="center" class="ml-n9" dense>
+      <v-col cols="1" class="mr-n4">
         <v-img src="../../assets/images/one-icon.png" contain height="34" />
       </v-col>
-      <v-col cols="11" class="max-height">
-        <v-text-field :value="existingRequestSearch.nrNum"
+      <v-col class="max-height">
+        <v-text-field :rules="nrRules"
+                      :value="search.nrNum"
                       @input="setExistingRequestSearch('nrNum', $event)"
                       class="copy-normal"
                       filled
-                      validate-on-blur
-                      :rules="nrRules"
+                      id="nr-num-text-field"
                       label="NR Number"
-                      id="nr-num-text-field" />
+                      validate-on-blur />
       </v-col>
     </v-row>
-    <v-row align="center" dense class="mr-7">
+    <v-row align="center" class="ml-n9 mt-2" dense>
       <!-- FOURTH LINE -->
-      <v-col cols="1" class="mr-n3">
+      <v-col cols="1" class="mr-n4">
         <v-img src="../../assets/images/two-icon.png" contain height="34" />
       </v-col>
       <v-col class="max-height">
         <v-text-field :rules="phoneRules"
                       :validate-on-blur="validatePhoneOnBlur"
-                      :value="existingRequestSearch.phoneNumber"
+                      :value="search.phoneNumber"
                       @input="setExistingRequestSearch('phoneNumber', $event)"
                       class="copy-normal"
                       filled
                       id="phone-number-text-field"
                       label="Applicant's Phone Number" />
       </v-col>
-      <v-col class="copy-normal text-center px-6 shrink">or</v-col>
+      <v-col class="copy-normal text-center shrink mx-4"> or </v-col>
       <v-col class="max-height">
         <v-text-field :rules="emailRules"
-                      :value="existingRequestSearch.emailAddress"
+                      :value="search.emailAddress"
                       @input="setExistingRequestSearch('emailAddress', $event)"
                       class="copy-normal"
                       filled
@@ -53,10 +53,10 @@
                       validate-on-blur />
       </v-col>
     </v-row>
-    <v-row class="text-center">
+    <v-row class="text-center mt-2">
       <!-- FIFTH LINE -->
       <v-col>
-        <v-btn @click="handleSubmit" :disabled="!allowSubmit || !isValid">Retrieve Name Request</v-btn>
+        <v-btn @click="handleSubmit">Retrieve Name Request</v-btn>
       </v-col>
     </v-row>
   </v-form>
@@ -73,7 +73,10 @@ const NR_REGEX = /^(NR\ ?L?|L?)?([\d]{6,8})$/
   components: { ForgotNrModal }
 })
 export default class ExistingRequestSearch extends Vue {
-  emailRules = [ v => v === '' || /.+@.+\..+/.test(v) || 'Please be sure to enter a valid email' ]
+  emailRules = [
+    v => (!!v || !!this.search.phoneNumber) || 'Please enter either the phone or the email',
+    v => !!this.search.phoneNumber || (!!v && /.+@.+\..+/.test(v)) || 'Please be sure to enter a valid email'
+  ]
   nrRules = [ v => NR_REGEX.test(v) || 'Please enter a valid NR number' ]
   errorMessage: string = ''
   phoneRules = [ v => v === '' || /^[\d ()\+-]+$/.test(v) || 'Please enter a numeric value' ]
@@ -96,17 +99,21 @@ export default class ExistingRequestSearch extends Vue {
   get nr () {
     return newReqModule.nr
   }
-  get existingRequestSearch () {
+  get search () {
     return newReqModule.existingRequestSearch
   }
   get allowSubmit () {
-    let data = this.existingRequestSearch
-    return (data.nrNum && (data.emailAddress || data.phoneNumber))
+    return (this.search.nrNum && (this.search.emailAddress || this.search.phoneNumber))
   }
-  handleSubmit () {
-    newReqModule.findNameRequest()
+  async handleSubmit () {
+    this.$refs['existing-nr-form']['validate']()
+    await this.$nextTick()
+    if (this.isValid) {
+      newReqModule.findNameRequest()
+    }
   }
   setExistingRequestSearch (key, value) {
+    this.$refs['existing-nr-form']['resetValidation']()
     newReqModule.mutateExistingRequestSearch({ key, value })
     if (this.errorMessage) {
       this.errorMessage = ''
