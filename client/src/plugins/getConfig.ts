@@ -58,9 +58,6 @@ export function getConfig (): Promise<EnvConfigI> {
     const legalApiUrl = response.data[0]['LEGAL_API_URL']
     sessionStorage.setItem('LEGAL_API_URL', legalApiUrl)
 
-    const nameRequestUrl = response.data[0]['NAME_REQUEST_URL']
-    sessionStorage.setItem('NAME_REQUEST_URL', nameRequestUrl)
-
     const ldClientId: string = response.data[0]['LD_CLIENT_ID'];
     (<any>window).ldClientId = ldClientId
 
