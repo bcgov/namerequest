@@ -2,7 +2,7 @@
     "kind": "Template",
     "apiVersion": "v1",
     "metadata": {
-        "name": "namerequest-ui",
+        "name": "${NAME}",
         "creationTimestamp": null
     },
     "objects": [
@@ -10,62 +10,49 @@
             "kind": "BuildConfig",
             "apiVersion": "v1",
             "metadata": {
-                "name": "namerequest-ui",
+                "name": "${NAME}",
                 "creationTimestamp": null,
                 "labels": {
-                    "app": "namerequest-ui"
+                    "app": "${NAME}"
                 }
             },
             "spec": {
-                "triggers": [
-                    {
-                        "type": "ImageChange",
-                        "imageChange": {}
-                    },
-                    {
-                        "type": "ConfigChange"
-                    }
-                ],
-                "runPolicy": "Serial",
-                "source": {
-                    "type": "Dockerfile",
-                    "dockerfile": "FROM bcgov-s2i-caddy\nRUN mkdir /var/www/html/${WEB_APP_CONTEXT_PATH} \nCOPY dist /var/www/html/${WEB_APP_CONTEXT_PATH}",
-                    "images": [
-                        {
-                            "from": {
-                                "kind": "ImageStreamTag",
-                                "name": "namerequest-ui-inter:dev"
-                            },
-                            "paths": [
-                                {
-                                    "sourcePath": "/opt/app-root/src/dist",
-                                    "destinationDir": "./"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                "strategy": {
-                    "type": "Docker",
-                    "dockerStrategy": {
-                        "from": {
-                            "kind": "ImageStreamTag",
-                            "namespace": "openshift",
-                            "name": "bcgov-s2i-caddy:latest"
-                        }
-                    }
-                },
+                "failedBuildsHistoryLimit": 5,
+                "nodeSelector": null,
                 "output": {
                     "to": {
                         "kind": "ImageStreamTag",
-                        "name": "namerequest-ui:dev"
+                        "name": "${NAME}:latest"
                     }
                 },
-                "resources": {},
                 "postCommit": {},
-                "nodeSelector": null,
+                "resources": {
+                    "limits": {
+                        "cpu": "2",
+                        "memory": "4Gi"
+                    },
+                    "requests": {
+                        "cpu": "100m",
+                        "memory": "256Mi"
+                    }
+                },
+                "runPolicy": "Serial",
+                "source": {
+                    "contextDir": "${GIT_REPO_CONTETXT_DIR}",
+                    "git": {
+                        "uri": "${GIT_REPO_URL}",
+                        "ref": "${GIT_REF}"
+                    },
+                    "type": "Git"
+                },
+                "strategy": {
+                    "dockerStrategy": {
+                        "dockerfilePath": "Dockerfile"
+                    },
+                    "type": "Docker"
+                },
                 "successfulBuildsHistoryLimit": 5,
-                "failedBuildsHistoryLimit": 5
+                "triggers": []
             },
             "status": {
                 "lastVersion": 0
@@ -79,6 +66,34 @@
             "description": "The path at which web application is deployed.Context root for the web applicaton",
             "required": true,
             "value": "namerequest"
+        },
+        {
+            "name": "NAME",
+            "displayName": "Name",
+            "description": "The name assigned to all of the resources defined in this template.",
+            "required": true,
+            "value": "namerequest-ui"
+        },
+        {
+            "name": "GIT_REPO_URL",
+            "displayName": "Git Repo URL",
+            "description": "The URL to your GIT repo.",
+            "required": true,
+            "value": "https://github.com/bcgov/namerequest.git"
+        },
+        {
+            "name": "GIT_REF",
+            "displayName": "Git Reference",
+            "description": "The git reference or branch.",
+            "required": true,
+            "value": "master"
+        },
+        {
+            "name": "GIT_REPO_CONTETXT_DIR",
+            "displayName": "Git repo context folder",
+            "description": "The git rrepo context folder.",
+            "required": true,
+            "value": "client"
         }
     ]
 }
