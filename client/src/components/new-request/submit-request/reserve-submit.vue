@@ -96,10 +96,6 @@ export default class ReserveSubmitButton extends Vue {
 
     switch (setup) {
       case 'assumed':
-        if (this.$xproMapping['ASSUMED'].includes(entity_type_cd)) {
-          newReqModule.mutateRequestActionOriginal(request_action_cd)
-          newReqModule.mutateRequestAction('ASSUMED')
-        }
         newReqModule.mutateAssumedNameOriginal()
         goToNames()
         return
