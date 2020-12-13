@@ -23,8 +23,8 @@ import groovy.json.*
 
 // define constants - values sent in as env vars from whatever calls this pipeline
 def APP_NAME = 'namerequest-ui'
+def SOURCE_TAG = 'dev'
 def DESTINATION_TAG = 'test'
-def TOOLS_TAG = 'tools'
 
 def NAMESPACE_BUILD = 'servicebc-ne-tools'
 def NAMESPACE_DEPLOY = '1rdehl-test'
@@ -40,6 +40,51 @@ def rocketChatNotification(token, channel, comments) {
      script: "curl -X POST -H 'Content-Type: application/json' --data \'${payload}\' ${rocketChatUrl}")
 }
 
+
+@NonCPS
+boolean triggerBuild(String contextDirectory) {
+    // Determine if code has changed within the source context directory.
+    def changeLogSets = currentBuild.changeSets
+    def filesChangeCnt = 0
+    for (int i = 0; i < changeLogSets.size(); i++) {
+        def entries = changeLogSets[i].items
+        for (int j = 0; j < entries.length; j++) {
+            def entry = entries[j]
+            //echo "${entry.commitId} by ${entry.author} on ${new Date(entry.timestamp)}: ${entry.msg}"
+            def files = new ArrayList(entry.affectedFiles)
+            for (int k = 0; k < files.size(); k++) {
+                def file = files[k]
+                def filePath = file.path
+                //echo ">> ${file.path}"
+                if (filePath.contains(contextDirectory)) {
+                    filesChangeCnt = 1
+                    k = files.size()
+                    j = entries.length
+                }
+            }
+        }
+    }
+
+    if ( filesChangeCnt < 1 ) {
+        echo('The changes do not require a build.')
+        return false
+    } else {
+        echo('The changes require a build.')
+        return true
+    }
+}
+
+// Get an image's hash tag
+String getImageTagHash(String imageName, String tag = "") {
+
+    if(!tag?.trim()) {
+        tag = "latest"
+    }
+
+    def istag = openshift.raw("get istag ${imageName}:${tag} -o template --template='{{.image.dockerImageReference}}'")
+    return istag.out.tokenize('@')[1].trim()
+}
+
 node {
     properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10']]])
 
@@ -47,16 +92,22 @@ node {
     def old_version
 
     try {
-        stage("Build ${APP_NAME}-${DESTINATION_TAG}") {
+        stage("Tag ${APP_NAME}:${DESTINATION_TAG}") {
             script {
                 openshift.withCluster() {
+                    openshift.withProject("${NAMESPACE_DEPLOY}") {
+                        old_version = openshift.selector('dc', "${APP_NAME}-${DESTINATION_TAG}").object().status.latestVersion
+                    }
+                }
+                openshift.withCluster() {
                     openshift.withProject("${NAMESPACE_BUILD}") {
-                        echo "Building ${APP_NAME}-${DESTINATION_TAG} ..."
-                        def build = openshift.selector("bc", "${APP_NAME}-${DESTINATION_TAG}").startBuild()
-                        build.untilEach {
-                            return it.object().status.phase == "Running"
-                        }
-                        build.logs('-f')
+                        echo "Tagging ${APP_NAME}:${DESTINATION_TAG}-previous ..."
+                        def IMAGE_HASH = getImageTagHash("${APP_NAME}", "${DESTINATION_TAG}")
+                        echo "IMAGE_HASH: ${IMAGE_HASH}"
+                        openshift.tag("${APP_NAME}@${IMAGE_HASH}", "${APP_NAME}:${DESTINATION_TAG}-previous")
+
+                        echo "Tagging ${APP_NAME} for deployment to ${DESTINATION_TAG} ..."
+						openshift.tag("${APP_NAME}:${SOURCE_TAG}", "${APP_NAME}:${DESTINATION_TAG}")
                     }
                 }
             }
@@ -106,12 +157,12 @@ node {
             currentBuild.result = "SUCCESS"
         } else {
             currentBuild.result = "FAILURE"
+
+            ROCKETCHAT_TOKEN = sh (
+                    script: """oc get secret/apitest-secrets -n ${NAMESPACE_BUILD} -o template --template="{{.data.ROCKETCHAT_TOKEN}}" | base64 --decode""",
+                        returnStdout: true).trim()
+
+            rocketChatNotification("${ROCKETCHAT_TOKEN}", "${ROCKETCHAT_DEVELOPER_CHANNEL}", "${APP_NAME} build and deploy to ${DESTINATION_TAG} ${currentBuild.result}!")
         }
-
-        ROCKETCHAT_TOKEN = sh (
-                script: """oc get secret/apitest-secrets -n ${NAMESPACE_BUILD} -o template --template="{{.data.ROCKETCHAT_TOKEN}}" | base64 --decode""",
-                    returnStdout: true).trim()
-
-        rocketChatNotification("${ROCKETCHAT_TOKEN}", "${ROCKETCHAT_DEVELOPER_CHANNEL}", "${APP_NAME} build and deploy to ${DESTINATION_TAG} ${currentBuild.result}!")
     }
 }
