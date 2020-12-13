@@ -21,7 +21,11 @@
         <v-btn v-if="allowCancel"
           @click="cancelPayment()" id="payment-cancel-btn" class="error" text>Cancel Name Request</v-btn>
         <v-spacer></v-spacer>
-        <v-btn @click="confirmPayment()" id="payment-pay-btn" class="primary" text>Continue to Payment</v-btn>
+        <v-btn @click="confirmPayment()"
+               id="payment-pay-btn"
+               class="primary"
+               text
+               :loading="isLoadingPayment">Continue to Payment</v-btn>
         <v-btn @click="hideModal()" id="payment-close-btn" class="normal" text>Close</v-btn>
       </v-card-actions>
     </v-card>
@@ -78,6 +82,7 @@ export default class PaymentModal extends Mixins(
   PaymentSessionMixin,
   DisplayedComponentMixin
 ) {
+  private isLoadingPayment: boolean = false
   get timerName () {
     return this.$PAYMENT_COMPLETION_TIMER_NAME
   }
@@ -113,6 +118,7 @@ export default class PaymentModal extends Mixins(
   }
 
   async confirmPayment () {
+    this.isLoadingPayment = true
     const { nrId, priorityRequest } = this
     const onSuccess = (paymentResponse) => {
       const { paymentId, paymentToken } = this
