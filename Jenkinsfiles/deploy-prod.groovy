@@ -25,7 +25,6 @@ import groovy.json.*
 def APP_NAME = 'namerequest-ui'
 def SOURCE_TAG = 'test'
 def DESTINATION_TAG = 'prod'
-def TOOLS_TAG = 'tools'
 
 def NAMESPACE_BUILD = 'servicebc-ne-tools'
 def NAMESPACE_DEPLOY = '1rdehl-prod'
@@ -158,12 +157,12 @@ node {
             currentBuild.result = "SUCCESS"
         } else {
             currentBuild.result = "FAILURE"
+
+            ROCKETCHAT_TOKEN = sh (
+                    script: """oc get secret/apitest-secrets -n ${NAMESPACE_BUILD} -o template --template="{{.data.ROCKETCHAT_TOKEN}}" | base64 --decode""",
+                        returnStdout: true).trim()
+
+            rocketChatNotification("${ROCKETCHAT_TOKEN}", "${ROCKETCHAT_DEVELOPER_CHANNEL}", "${APP_NAME} build and deploy to ${DESTINATION_TAG} ${currentBuild.result}!")
         }
-
-        ROCKETCHAT_TOKEN = sh (
-                script: """oc get secret/apitest-secrets -n ${NAMESPACE_BUILD} -o template --template="{{.data.ROCKETCHAT_TOKEN}}" | base64 --decode""",
-                    returnStdout: true).trim()
-
-        rocketChatNotification("${ROCKETCHAT_TOKEN}", "${ROCKETCHAT_DEVELOPER_CHANNEL}", "${APP_NAME} build and deploy to ${DESTINATION_TAG} ${currentBuild.result}!")
     }
 }

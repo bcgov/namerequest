@@ -26,7 +26,8 @@ import {
 } from '@/models'
 
 import store from '@/store'
-import { bcMapping, xproMapping, $colinRequestActions } from '@/store/list-data/request-action-mapping'
+import { bcMapping, xproMapping, $colinRequestActions, $colinRequestTypes, $xproColinRequestTypes }
+  from '@/store/list-data/request-action-mapping'
 import $canJurisdictions, { $mrasJurisdictions } from './list-data/canada-jurisdictions'
 import $designations from './list-data/designations'
 import $intJurisdictions from './list-data/intl-jurisdictions'
@@ -832,11 +833,11 @@ export class NewRequestModule extends VuexModule {
     return (!this.editMode && this.nrState === 'DRAFT') || (!this.editMode && this.submissionType === 'examination')
   }
   get showCorpNum (): 'colin' | 'mras' | false {
-    if (($colinRequestActions.includes(this.request_action_cd) && this.location === 'BC') ||
+    if (($colinRequestActions.includes(this.request_action_cd) && $colinRequestTypes.includes(this.entity_type_cd)) ||
       this.entity_type_cd === 'DBA') {
       return 'colin'
     }
-    if (this.location === 'BC' && this.request_action_cd === 'CNV') {
+    if ($colinRequestActions.includes(this.request_action_cd) && $xproColinRequestTypes.includes(this.entity_type_cd)) {
       return 'colin'
     }
     let mrasEntities = ['XCR', 'XLP', 'UL', 'CR', 'CP', 'BC', 'CC']
@@ -2544,7 +2545,9 @@ export class NewRequestModule extends VuexModule {
   }
   @Action
   checkCOLIN (corpNum: string) {
-    let url = `colin/${corpNum}`
+    // Remove BC prefix as Colin only supports base number with no prefix for BC's
+    const cleanedCorpNum = corpNum.replace(/^BC+/i, '')
+    let url = `colin/${cleanedCorpNum}`
     return axios.post(url, {})
   }
   @Action

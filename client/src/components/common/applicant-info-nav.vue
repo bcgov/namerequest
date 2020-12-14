@@ -10,6 +10,7 @@
     <v-btn x-large
            @click="next"
            :disabled="!isValid"
+           :loading="isloadingSubmission"
            :id="`submit-continue-btn-${isValid}`">
       {{ nextText }}
     </v-btn>
@@ -25,6 +26,7 @@ import timerModule from '@/modules/vx-timer'
 @Component({})
 export default class ApplicantInfoNav extends Vue {
   @Prop(Boolean) isValid: boolean
+  private isloadingSubmission: boolean = false
 
   get backText () {
     if (this.editMode) {
@@ -74,9 +76,10 @@ export default class ApplicantInfoNav extends Vue {
   back () {
     newReqModule.mutateSubmissionTabNumber(this.tab - 1)
   }
-  next () {
+  async next () {
     if (this.tab === 3) {
-      this.submit()
+      this.isloadingSubmission = true
+      await this.submit()
       return
     }
     newReqModule.mutateSubmissionTabNumber(this.tab + 1)
@@ -96,6 +99,7 @@ export default class ApplicantInfoNav extends Vue {
           let request = await newReqModule.getNameRequest(nrId)
           if (request.stateCd === 'CANCELLED') {
             newReqModule.setActiveComponent('Timeout')
+            this.isloadingSubmission = false
             return
           }
         }
@@ -104,6 +108,7 @@ export default class ApplicantInfoNav extends Vue {
       }
       await paymentModule.togglePaymentModal(true)
     }
+    this.isloadingSubmission = false
   }
   async fetchNr (nrId) {
     const existingNr = await newReqModule.getNameRequest(nrId)
