@@ -76,10 +76,10 @@ export default class ApplicantInfoNav extends Vue {
   back () {
     newReqModule.mutateSubmissionTabNumber(this.tab - 1)
   }
-  next () {
+  async next () {
     if (this.tab === 3) {
       this.isloadingSubmission = true
-      this.submit()
+      await this.submit()
       return
     }
     newReqModule.mutateSubmissionTabNumber(this.tab + 1)

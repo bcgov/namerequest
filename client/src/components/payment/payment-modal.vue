@@ -19,14 +19,22 @@
       </v-card-text>
       <v-card-actions>
         <v-btn v-if="allowCancel"
-          @click="cancelPayment()" id="payment-cancel-btn" class="error" text>Cancel Name Request</v-btn>
+               @click="cancelPayment()"
+               id="payment-cancel-btn"
+               class="error"
+               text
+               :disabled="isLoadingPayment">Cancel Name Request</v-btn>
         <v-spacer></v-spacer>
         <v-btn @click="confirmPayment()"
                id="payment-pay-btn"
                class="primary"
                text
                :loading="isLoadingPayment">Continue to Payment</v-btn>
-        <v-btn @click="hideModal()" id="payment-close-btn" class="normal" text>Close</v-btn>
+        <v-btn @click="hideModal()"
+               id="payment-close-btn"
+               class="normal"
+               text
+               :disabled="isLoadingPayment">Close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -114,6 +122,7 @@ export default class PaymentModal extends Mixins(
   }
 
   async hideModal () {
+    this.isLoadingPayment = false
     await paymentModule.togglePaymentModal(false)
   }
 
