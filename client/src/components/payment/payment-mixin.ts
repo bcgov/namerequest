@@ -6,7 +6,6 @@ import { NameRequestPaymentResponse, CreatePaymentParams } from '@/modules/payme
 import { PaymentApiError } from '@/modules/payment/services'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
-import newRequestModule from "@/store/new-request-module"
 
 @Component
 export default class PaymentMixin extends Vue {
@@ -93,8 +92,6 @@ export default class PaymentMixin extends Vue {
       return true
     } catch (error) {
       console.error('fetchFees() =', error) // eslint-disable-line no-console
-      // *** TODO: do we need to set app error here?
-      // or is handleApiError (in getPaymentFees) sufficient?
       if (error instanceof PaymentApiError) {
         await errorModule.setAppError({ id: 'payment-api-error', error: error.message } as ErrorI)
       } else {
@@ -104,7 +101,7 @@ export default class PaymentMixin extends Vue {
     }
   }
 
-  async createPayment (params: CreatePaymentParams, onSuccess: (paymentResponse) => void) {
+  async createPayment (params: CreatePaymentParams, onSuccess: (paymentResponse) => void): Promise<boolean> {
     const { nrId, filingType, priorityRequest, action } = params
     // Comment this out to use direct pay
     // const methodOfPayment = 'CC' // We may need to handle more than one type at some point?
@@ -112,7 +109,7 @@ export default class PaymentMixin extends Vue {
     if (!nrId) {
       // eslint-disable-next-line no-console
       console.warn('NR ID is not present in NR, cannot continue!')
-      return
+      return false
     }
 
     // This is the minimum required to make a payment!
@@ -135,7 +132,7 @@ export default class PaymentMixin extends Vue {
     }
 
     try {
-      const paymentResponse: NameRequestPaymentResponse = await paymentService.createPaymentRequest(nrId, action, req)
+      const paymentResponse = await paymentService.createPaymentRequest(nrId, action, req)
       const { payment, sbcPayment = { receipts: [] } } = paymentResponse
 
       await paymentModule.setPayment(payment)
@@ -146,12 +143,14 @@ export default class PaymentMixin extends Vue {
         // Execute callback
         onSuccess(paymentResponse)
       }
+      return true
     } catch (error) {
       if (error instanceof PaymentApiError) {
         await errorModule.setAppError({ id: 'payment-api-error', error: error.message } as ErrorI)
       } else {
         await errorModule.setAppError({ id: 'create-payment-error', error: error.message } as ErrorI)
       }
+      return false
     }
   }
 
@@ -217,18 +216,6 @@ export default class PaymentMixin extends Vue {
       } else {
         await errorModule.setAppError({ id: 'fetch-receipt-pdf-error', error: error.message } as ErrorI)
       }
-    }
-  }
-
-  // *** TODO: check all code that calls this
-  async fetchNr (nrId: number): Promise<boolean> {
-    try {
-      const nrData = await newRequestModule.getNameRequest(nrId)
-      await newRequestModule.loadExistingNameRequest(nrData)
-      return true
-    } catch (e) {
-      // FUTURE: handle error?
-      return false
     }
   }
 

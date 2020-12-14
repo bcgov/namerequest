@@ -4,11 +4,11 @@
            :id="`submit-back-btn-${isValid}`"
            class="mr-3"
            v-if="showBack"
-           @click="back">
+           @click="back()">
       {{ backText }}
     </v-btn>
     <v-btn x-large
-           @click="next"
+           @click="next()"
            :disabled="!isValid"
            :loading="isloadingSubmission"
            :id="`submit-continue-btn-${isValid}`">
@@ -86,6 +86,7 @@ export default class ApplicantInfoNav extends Vue {
   }
 
   async submit () {
+    // FUTURE: fix error handling in case of newReqModule (app or api) error (#5899)
     const { nrId } = this
     if (this.editMode) {
       await newReqModule.patchNameRequests()
@@ -97,8 +98,8 @@ export default class ApplicantInfoNav extends Vue {
         await newReqModule.postNameRequests('draft')
       } else {
         if (!this.editMode && ['COND-RESERVE', 'RESERVED'].includes(this.nrState)) {
-          let request = await newReqModule.getNameRequest(nrId)
-          if (request.stateCd === 'CANCELLED') {
+          const request = await newReqModule.getNameRequest(nrId)
+          if (request?.stateCd === 'CANCELLED') {
             newReqModule.setActiveComponent('Timeout')
             this.isloadingSubmission = false
             return
@@ -112,15 +113,9 @@ export default class ApplicantInfoNav extends Vue {
     this.isloadingSubmission = false
   }
 
-  async fetchNr (nrId: number): Promise<boolean> {
-    try {
-      const nrData = await newReqModule.getNameRequest(nrId)
-      await newReqModule.loadExistingNameRequest(nrData)
-      return true
-    } catch (e) {
-      // FUTURE: handle error?
-      return false
-    }
+  async fetchNr (nrId: number): Promise<void> {
+    const nrData = await newReqModule.getNameRequest(nrId)
+    await newReqModule.loadExistingNameRequest(nrData)
   }
 }
 </script>

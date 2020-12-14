@@ -2,14 +2,14 @@
   <v-dialog v-model="showModal" max-width="40%">
     <v-card>
       <v-card-title class="d-flex justify-space-between">
-        <div>Error</div>
+        <div>Error(s) occurred</div>
         <v-btn icon large class="dialog-close" @click="hideModal()">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
 
       <v-card-text class="copy-normal">
-        <ul v-if="hasErrors" style="list-style: none" class="ma-0 pa-0">
+        <ul v-if="hasErrors">
           <li v-for="error in errors" :key="error.id" v-html="error.error" />
         </ul>
       </v-card-text>

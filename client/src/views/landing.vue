@@ -92,15 +92,9 @@ export default class Landing extends Vue {
     }
   }
 
-  async fetchNr (nrId: number): Promise<boolean> {
-    try {
-      const nrData = await newRequestModule.getNameRequest(nrId)
-      await newRequestModule.loadExistingNameRequest(nrData)
-      return true
-    } catch (e) {
-      // FUTURE: handle error?
-      return false
-    }
+  async fetchNr (nrId: number): Promise<void> {
+    const nrData = await newRequestModule.getNameRequest(nrId)
+    await newRequestModule.loadExistingNameRequest(nrData)
   }
 
   get displayedComponent () {

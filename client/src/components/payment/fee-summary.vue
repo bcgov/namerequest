@@ -4,9 +4,7 @@
       <slot name="header">Payment Details</slot>
     </header>
 
-    <div v-show="fetchError">
-      <v-alert color="error" icon="warning" outlined>{{fetchError}}</v-alert>
-    </div>
+    <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
 
     <v-slide-y-transition group tag="ul" class="fee-list" v-show="!fetchError">
       <template
@@ -46,6 +44,7 @@
         </v-slide-y-reverse-transition>
       </div>
     </div>
+
     <div class="container fee-total tax-total" v-show="!fetchError">
       <div class="fee-total__name">Tax</div>
       <!--<div class="fee-total__currency">CAD</div>-->
@@ -55,6 +54,7 @@
         </v-slide-y-reverse-transition>
       </div>
     </div>
+
     <div class="container fee-total payment-total" v-show="!fetchError">
       <div class="fee-total__name">Total</div>
       <!--<div class="fee-total__currency">CAD</div>-->

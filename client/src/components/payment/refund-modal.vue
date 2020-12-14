@@ -15,9 +15,7 @@
       </v-card-text>
 
       <v-card-text>
-        <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0">
-          {{fetchError}}
-        </v-alert>
+        <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
         <refund-summary v-else :payments="payments" />
       </v-card-text>
 
@@ -78,6 +76,11 @@ export default class RefundModal extends Mixins(NameRequestMixin, PaymentMixin, 
     return PaymentModule[PaymentTypes.REFUND_MODAL_IS_VISIBLE]
   }
 
+  /** Clears store property to hide this modal. */
+  private async hideModal (): Promise<void> {
+    await PaymentModule.toggleRefundModal(false)
+  }
+
   /** Depending on value, fetches data and makes this modal visible or hides it. */
   @Watch('showModal')
   private async onShowModal (val: boolean) {
@@ -101,19 +104,15 @@ export default class RefundModal extends Mixins(NameRequestMixin, PaymentMixin, 
     this.hideModal() // FUTURE: not needed? will success component be displayed instead?
   }
 
-  /** Clears store property to hide this modal. */
-  private async hideModal (): Promise<void> {
-    await PaymentModule.toggleRefundModal(false)
-  }
-
   /**
    * Fetches the NR's payments.
    * @returns True if successful, otherwise False
    */
   private async fetchData (): Promise<boolean> {
     const { nrId } = this
-    // NB: error is handled by PaymentMixin
-    return !!nrId && this.fetchNrPayments(nrId)
+    if (!nrId) return false
+    // NB: errors are handled by PaymentMixin
+    return this.fetchNrPayments(nrId)
   }
 }
 </script>

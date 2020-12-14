@@ -1788,27 +1788,27 @@ export class NewRequestModule extends VuexModule {
   }
   @Action
   async getNameAnalysis () {
-    this.mutateDisplayedComponent('AnalyzePending')
-    this.resetRequestExaminationOrProvideConsent()
-
-    let params: NewRequestNameSearchI = {
-      name: this.name,
-      location: this.location,
-      // @ts-ignore TODO: This is not typed correctly!
-      entity_type_cd: this.entity_type_cd,
-      request_action_cd: this.request_action_cd
-    }
-
     try {
-      let { CancelToken } = axios
-      source = CancelToken.source()
+      this.mutateDisplayedComponent('AnalyzePending')
+      this.resetRequestExaminationOrProvideConsent()
 
-      let resp = await axios.get('name-analysis', {
+      const params: NewRequestNameSearchI = {
+        name: this.name,
+        location: this.location,
+        // @ts-ignore TODO: This is not typed correctly!
+        entity_type_cd: this.entity_type_cd,
+        request_action_cd: this.request_action_cd
+      }
+      const { CancelToken } = axios
+      const source = CancelToken.source()
+
+      const resp = await axios.get('name-analysis', {
         params,
         cancelToken: source.token,
         timeout: ANALYSIS_TIMEOUT_MS
       })
-      let json = resp.data
+
+      const json = resp.data
       this.mutateAnalysisJSON(json)
       if (Array.isArray(json.issues) && json.issues.length > 0) {
         let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
@@ -1824,7 +1824,7 @@ export class NewRequestModule extends VuexModule {
       console.error('getNameAnalysis() =', error) // eslint-disable-line no-console
       // FUTURE: fix error handling in case of network error (#5898)
       // (should not display "send to examination")
-      if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
+      if (error?.code === 'ECONNABORTED' || error?.message === 'Network Error') {
         this.mutateNameAnalysisTimedOut(true)
         this.mutateName(this.name)
         this.mutateDisplayedComponent('SendToExamination')
@@ -1839,27 +1839,27 @@ export class NewRequestModule extends VuexModule {
   }
   @Action
   async getNameAnalysisXPRO () {
-    this.mutateDisplayedComponent('AnalyzePending')
-    this.resetRequestExaminationOrProvideConsent()
-
-    let params: NewRequestNameSearchI = {
-      name: this.name,
-      location: this.location,
-      // @ts-ignore TODO: This is not typed correctly!
-      entity_type_cd: this.entity_type_cd,
-      request_action_cd: this.request_action_cd
-    }
-
     try {
-      let { CancelToken } = axios
-      source = CancelToken.source()
+      this.mutateDisplayedComponent('AnalyzePending')
+      this.resetRequestExaminationOrProvideConsent()
 
-      let resp = await axios.get('/xpro-name-analysis', {
+      const params: NewRequestNameSearchI = {
+        name: this.name,
+        location: this.location,
+        // @ts-ignore TODO: This is not typed correctly!
+        entity_type_cd: this.entity_type_cd,
+        request_action_cd: this.request_action_cd
+      }
+      const { CancelToken } = axios
+      const source = CancelToken.source()
+
+      const resp = await axios.get('/xpro-name-analysis', {
         params,
         cancelToken: source.token,
         timeout: ANALYSIS_TIMEOUT_MS
       })
-      let json = resp.data
+
+      const json = resp.data
       this.mutateAnalysisJSON(json)
       if (Array.isArray(json.issues) && json.issues.length > 0) {
         let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
@@ -1875,7 +1875,7 @@ export class NewRequestModule extends VuexModule {
       console.error('getNameAnalysisXPRO() =', error) // eslint-disable-line no-console
       // FUTURE: fix error handling in case of network error (#5898)
       // (should not display "send to examination")
-      if (error.code === 'ECONNABORTED' || error.message === 'Network Error') {
+      if (error?.code === 'ECONNABORTED' || error?.message === 'Network Error') {
         this.mutateNameAnalysisTimedOut(true)
         this.mutateName(this.name)
         this.mutateDisplayedComponent('SendToExamination')
@@ -1911,35 +1911,33 @@ export class NewRequestModule extends VuexModule {
   }
 
   @Action
-  async findNameRequest () {
-    this.resetAnalyzeName()
-    this.mutateDisplayedComponent('SearchPending')
-
-    let params = {
-      nrNum: this.existingRequestSearch.nrNum,
-      phoneNumber: this.existingRequestSearch.phoneNumber,
-      emailAddress: this.existingRequestSearch.emailAddress
-    }
-
+  async findNameRequest (): Promise<void> {
     try {
-      let { CancelToken } = axios
-      source = CancelToken.source()
+      this.resetAnalyzeName()
+      this.mutateDisplayedComponent('SearchPending')
 
-      let resp = await axios.get('/namerequests', {
+      const params: ExistingRequestSearchI = {
+        nrNum: this.existingRequestSearch.nrNum,
+        phoneNumber: this.existingRequestSearch.phoneNumber,
+        emailAddress: this.existingRequestSearch.emailAddress
+      }
+      const { CancelToken } = axios
+      const source = CancelToken.source()
+
+      const resp = await axios.get('/namerequests', {
         params,
         cancelToken: source.token
       })
+
       if (!resp || !resp.data || resp.data.length === 0) {
-        // FOR DEBUGGING - REMOVE BEFORE MERGING
-        console.info('findNameRequest() no data') // eslint-disable-line no-console
-        // *** TODO: display this error!
         this.mutateNameRequest(
           {
-            text: 'There were no records found that match the information you have entered. ' +
-            'Please verify the NR Number and the phone / email and try again.',
+            text: 'No records were found that match the information you entered.<br>' +
+              'Please verify the NR Number and the phone / email and try again.',
             failed: true
           }
         )
+        // go back to calling page
         this.mutateDisplayedComponent('Tabs')
         return
       }
@@ -1947,18 +1945,17 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('ExistingRequestDisplay')
     } catch (error) {
       console.error('findNameRequest(), error =', error) // eslint-disable-line no-console
-      if (error.response.status === 400) {
-        this.mutateNameRequest(
-          {
-            text: 'Please verify that you are entering a valid NR number.',
-            failed: true
-          }
-        )
-      }
+      this.mutateNameRequest(
+        {
+          text: 'A network error occurred. Please check your network connection and try again.',
+          failed: true
+        }
+      )
+      // go back to calling page
       this.mutateDisplayedComponent('Tabs')
-      return
     }
   }
+
   @Action
   addRequestActionComment (data) {
     try {
@@ -2022,13 +2019,10 @@ export class NewRequestModule extends VuexModule {
   @Action
   async loadExistingNameRequest (nrData: any) {
     const handleEmptyResults = () => {
-      // FOR DEBUGGING - REMOVE BEFORE MERGING
-      console.info('loadExistingNameRequest() empty results') // eslint-disable-line no-console
-      // *** TODO: display this error!
       this.mutateNameRequest(
         {
-          text: 'There were no records found that match the information you have entered. Please verify the NR' +
-            ' Number  and the phone / email and try again.',
+          text: 'No records were found that match the information you entered.<br>' +
+            'Please verify the NR Number and the phone / email and try again.',
           failed: true
         }
       )
@@ -2061,144 +2055,151 @@ export class NewRequestModule extends VuexModule {
       console.error('getStats() =', error) // eslint-disable-line no-console
     }
   }
+
   @Action
   async checkoutNameRequest (): Promise<boolean> {
     try {
       const { nrId } = this
-      try {
-        const checkedOutBy = sessionStorage.getItem('checkedOutBy')
-        const checkedOutDt = sessionStorage.getItem('checkedOutDt')
+      const checkedOutBy = sessionStorage.getItem('checkedOutBy')
+      const checkedOutDt = sessionStorage.getItem('checkedOutDt')
 
-        let response
-        if (checkedOutBy) {
-          response = await axios.patch(`/namerequests/${nrId}/checkout`, {
-            checkedOutBy: checkedOutBy,
-            checkedOutDt: checkedOutDt
-          }, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          })
-        } else {
-          response = await axios.patch(`/namerequests/${nrId}/checkout`, {}, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          })
-        }
-
-        const data = response.data || { checkedOutBy: null, checkedOutDt: null }
-        sessionStorage.setItem('checkedOutBy', data.checkedOutBy)
-        sessionStorage.setItem('checkedOutDt', data.checkedOutDt)
-        return true
-      } catch (err) {
-        console.error('checkoutNameRequest() =', err) // eslint-disable-line no-console
-        await handleApiError(err, 'Could not check out the name request')
-        return false
-      }
-    } catch (error) {
-      console.error('checkoutNameRequest() =', error) // eslint-disable-line no-console
-      if (error instanceof ApiError) {
-        await errorModule.setAppError({ id: 'checkout-name-requests-api-error', error: error.message } as ErrorI)
+      let response: any
+      if (checkedOutBy) {
+        response = await axios.patch(`/namerequests/${nrId}/checkout`, {
+          checkedOutBy: checkedOutBy,
+          checkedOutDt: checkedOutDt
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
       } else {
-        await errorModule.setAppError({ id: 'checkout-name-requests-error', error: error.message } as ErrorI)
+        response = await axios.patch(`/namerequests/${nrId}/checkout`, {}, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
       }
+
+      const data = response.data || { checkedOutBy: null, checkedOutDt: null }
+      sessionStorage.setItem('checkedOutBy', data.checkedOutBy)
+      sessionStorage.setItem('checkedOutDt', data.checkedOutDt)
+      return true
+    } catch (err) {
+      console.error('checkoutNameRequest() =', err) // eslint-disable-line no-console
+      await handleApiError(err, 'Could not check out the name request').catch(async error => {
+        if (error instanceof ApiError) {
+          await errorModule.setAppError(
+            { id: 'checkout-name-requests-api-error', error: error.message } as ErrorI
+          )
+        } else {
+          await errorModule.setAppError(
+            { id: 'checkout-name-requests-error', error: error.message } as ErrorI
+          )
+        }
+      })
+      return false
     }
   }
+
   @Action
   async checkinNameRequest (): Promise<boolean> {
     try {
       const { nrId } = this
-      try {
-        const checkedOutBy = sessionStorage.getItem('checkedOutBy')
-        const checkedOutDt = sessionStorage.getItem('checkedOutDt')
+      const checkedOutBy = sessionStorage.getItem('checkedOutBy')
+      const checkedOutDt = sessionStorage.getItem('checkedOutDt')
 
-        if (checkedOutBy) {
-          await axios.patch(`/namerequests/${nrId}/checkin`, {
-            checkedOutBy: checkedOutBy,
-            checkedOutDt: checkedOutDt
-          }, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          })
+      if (checkedOutBy) {
+        await axios.patch(`/namerequests/${nrId}/checkin`, {
+          checkedOutBy: checkedOutBy,
+          checkedOutDt: checkedOutDt
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
 
-          sessionStorage.removeItem('checkedOutBy')
-          sessionStorage.removeItem('checkedOutDt')
+        sessionStorage.removeItem('checkedOutBy')
+        sessionStorage.removeItem('checkedOutDt')
 
-          return true
+        return true
+      }
+    } catch (err) {
+      console.error('checkinNameRequest() =', err) // eslint-disable-line no-console
+      await handleApiError(err, 'Could not check in the name request').catch(async error => {
+        if (error instanceof ApiError) {
+          await errorModule.setAppError(
+            { id: 'checkin-name-requests-api-error', error: error.message } as ErrorI
+          )
+        } else {
+          await errorModule.setAppError(
+            { id: 'checkin-name-requests-error', error: error.message } as ErrorI
+          )
         }
-      } catch (err) {
-        console.error('checkinNameRequest() =', err) // eslint-disable-line no-console
-        await handleApiError(err, 'Could not check in the name request')
-        return false
-      }
-    } catch (error) {
-      console.error('checkinNameRequest() =', error) // eslint-disable-line no-console
-      if (error instanceof ApiError) {
-        await errorModule.setAppError({ id: 'checkin-name-requests-api-error', error: error.message } as ErrorI)
-      } else {
-        await errorModule.setAppError({ id: 'checkin-name-requests-error', error: error.message } as ErrorI)
-      }
+      })
+      return false
     }
   }
+
   @Action
-  async patchNameRequests () {
+  async patchNameRequests (): Promise<boolean> {
     try {
       const { nrId } = this
-
       const nr = this.editNameReservation
       const requestData = await this.addRequestActionComment(nr)
 
-      try {
-        const response = await axios.patch(`/namerequests/${nrId}/edit`, requestData, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
+      const response = await axios.patch(`/namerequests/${nrId}/edit`, requestData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
 
-        this.mutateNameRequest(response.data)
-        this.mutateDisplayedComponent('Success')
-      } catch (err) {
-        console.error('patchNameRequests() =', err) // eslint-disable-line no-console
-        await handleApiError(err, 'Could not update the name request')
-      }
-    } catch (error) {
-      console.error('patchNameRequests() =', error) // eslint-disable-line no-console
-      if (error instanceof ApiError) {
-        await errorModule.setAppError({ id: 'patch-name-requests-api-error', error: error.message } as ErrorI)
-      } else {
-        await errorModule.setAppError({ id: 'patch-name-requests-error', error: error.message } as ErrorI)
-      }
+      this.mutateNameRequest(response.data)
+      this.mutateDisplayedComponent('Success')
+      return true
+    } catch (err) {
+      console.error('patchNameRequests() =', err) // eslint-disable-line no-console
+      await handleApiError(err, 'Could not update the name request').catch(async error => {
+        if (error instanceof ApiError) {
+          await errorModule.setAppError({ id: 'patch-name-requests-api-error', error: error.message } as ErrorI)
+        } else {
+          await errorModule.setAppError({ id: 'patch-name-requests-error', error: error.message } as ErrorI)
+        }
+      })
+      return false
     }
   }
+
   @Action
-  async patchNameRequestsByAction (action: NrAction): Promise<void> {
+  async patchNameRequestsByAction (action: NrAction): Promise<boolean> {
     try {
       const { nrId } = this
+      const response = await axios.patch(`/namerequests/${nrId}/${action}`, {}, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
 
-      try {
-        const response = await axios.patch(`/namerequests/${nrId}/${action}`, {}, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-
-        this.mutateNameRequest(response.data)
-        this.mutateDisplayedComponent('Success')
-      } catch (err) {
-        console.error('patchNameRequestsByAction() =', err) // eslint-disable-line no-console
-        await handleApiError(err, 'Could not update the name request')
-      }
-    } catch (error) {
-      console.error('patchNameRequestsByAction() =', error) // eslint-disable-line no-console
-      if (error instanceof ApiError) {
-        await errorModule.setAppError({ id: 'patch-name-requests-by-action-api-error', error: error.message } as ErrorI)
-      } else {
-        await errorModule.setAppError({ id: 'patch-name-requests-by-action-error', error: error.message } as ErrorI)
-      }
+      this.mutateNameRequest(response.data)
+      this.mutateDisplayedComponent('Success')
+      return true
+    } catch (err) {
+      console.error('patchNameRequestsByAction() =', err) // eslint-disable-line no-console
+      await handleApiError(err, 'Could not update the name request').catch(async error => {
+        if (error instanceof ApiError) {
+          await errorModule.setAppError(
+            { id: 'patch-name-requests-by-action-api-error', error: error.message } as ErrorI
+          )
+        } else {
+          await errorModule.setAppError(
+            { id: 'patch-name-requests-by-action-error', error: error.message } as ErrorI
+          )
+        }
+      })
+      return false
     }
   }
+
   @Action({ root: true })
   async postNameRequests (type: string): Promise<boolean> {
     if (this.isAssumedName) type = 'assumed'
@@ -2272,7 +2273,7 @@ export class NewRequestModule extends VuexModule {
         data['corpNum'] = this.corpNum
       }
 
-      const requestData: any = await this.addRequestActionComment(data)
+      const requestData = await this.addRequestActionComment(data)
 
       try {
         const response = await axios.put(`/namerequests/${nrId}`, requestData, {
@@ -2770,8 +2771,6 @@ export class NewRequestModule extends VuexModule {
   }
   @Mutation
   mutateNameRequest (nr) {
-    // FOR DEBUGGING - REMOVE BEFORE MERGING
-    console.info('mutateNameRequest(), nr =', nr) // eslint-disable-line no-console
     this.nr = nr
   }
   @Mutation
@@ -2942,7 +2941,7 @@ export class NewRequestModule extends VuexModule {
       }
       // else applicants is null/undefined
     } catch (error) {
-      console.log('setNrResponse() =', error) // eslint-disable-line no-console
+      console.error('setNrResponse() =', error) // eslint-disable-line no-console
     }
   }
   @Mutation

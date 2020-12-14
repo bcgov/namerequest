@@ -479,22 +479,21 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
           break
       }
     }
-    // else do nothing -- error is handled by newReqModule
+    // else do nothing -- errors are handled by newReqModule
   }
 
   private async refresh (event) {
     this.refreshCount += 1
     this.checking = true
     try {
-      let resp = await newReqModule.getNameRequest(this.nr.id)
-      // *** TODO: other code should display error
-      // but at least don't use "resp" if it's empty
+      const resp = await newReqModule.getNameRequest(this.nr.id)
       this.checking = false
-      if (resp.furnished === 'Y') {
+      if (resp?.furnished === 'Y') {
         this.furnished = 'furnished'
         newReqModule.setNrResponse(resp)
       }
     } catch (error) {
+      // NB: errors are handled by newReqModule
       this.checking = false
     }
   }
