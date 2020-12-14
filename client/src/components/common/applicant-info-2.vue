@@ -9,13 +9,12 @@
                         :rules="emailRules"
                         :value="applicant.emailAddress"
                         @blur="messages = {}"
-                        @focus="messages['email'] = 'Notification Email'"
                         @input="mutateApplicant('emailAddress', $event)"
                         id="emailAddress"
                         name="emailAddress"
                         filled
                         hide-details="auto"
-                        placeholder="Email Address (for notifications)" />
+                        label="Email Address (for notifications)" />
         </v-col>
         <v-col cols="5" class="py-0" />
       </v-row>
@@ -27,26 +26,24 @@
           <v-text-field :messages="messages['phone']"
                         :value="applicant.phoneNumber"
                         @blur="messages = {}"
-                        @focus="messages['phone'] = 'Phone Number (Optional)'"
                         @input="mutateApplicant('phoneNumber', $event)"
                         id="phoneNumber"
                         name="phoneNumber"
                         filled
                         hide-details="auto"
-                        placeholder="Phone Number (Optional)" />
+                        label="Phone Number (Optional)" />
         </v-col>
         <v-col cols="5">
           <label for="faxNumber" class="hidden">Fax Number (Optional)</label>
           <v-text-field :messages="messages['fax']"
                         :value="applicant.faxNumber"
                         @blur="messages = {}"
-                        @focus="messages['fax'] = 'Fax Number (Optional)'"
                         @input="mutateApplicant('faxNumber', $event)"
                         id="faxNumber"
                         name="faxNumber"
                         filled
                         hide-details="auto"
-                        placeholder="Fax Number (Optional)" />
+                        label="Fax Number (Optional)" />
         </v-col>
       </v-row>
 
@@ -58,13 +55,12 @@
                       :rules="requiredRule"
                       :value="nrData.natureBusinessInfo"
                       @blur="messages = {}"
-                      @focus="messages['nature'] = 'Nature of Business'"
                       @input="mutateNRData('natureBusinessInfo', $event)"
                       id="natureBusinessInfo"
                       name="natureBusinessInfo"
                       filled
                       hide-details="auto"
-                      placeholder="Nature of Business"
+                      label="Nature of Business"
                       rows="3" />
         </v-col>
         <v-col cols="5" align-self="start">
@@ -72,13 +68,12 @@
           <v-textarea :messages="messages['additional']"
                       :value="nrData.additionalInfo"
                       @blur="messages = {}"
-                      @focus="messages['additional'] = 'Additional Info'"
                       @input="mutateNRData('additionalInfo', $event)"
                       id="additionalInfo"
                       name="additionalInfo"
                       filled
                       hide-details="auto"
-                      placeholder="Additional Business Info (Optional)"
+                      label="Additional Business Info (Optional)"
                       rows="3" />
         </v-col>
         <v-col cols="2" />
@@ -94,10 +89,9 @@
                         id="corpNum"
                         name="corpNum"
                         filled
-                        placeholder="Incorporation Number (required)"
+                        label="Incorporation Number (required)"
                         v-model="corpNum"
-                        v-on:update:error="setError"
-                        validate-on-blur>
+                        v-on:update:error="setError">
             <template v-slot:append>
               <v-icon :class="error || corpNumError || corpNumDirty ? 'red--text' : 'green--text'"
                       v-if="hideCorpNum === 'auto' && !isEditingCorpNum && !loading">
@@ -110,13 +104,12 @@
           <v-text-field :messages="messages['tradeMark']"
                         :value="nrData.tradeMark"
                         @blur="messages = {}"
-                        @focus="messages['tradeMark'] = 'Registered Trademark (Optional)'"
                         @input="mutateNRData('tradeMark', $event)"
                         id="tradeMark"
                         name="tradeMark"
                         filled
                         hide-details="auto"
-                        placeholder="Registered Trademark (Optional)" />
+                        label="Registered Trademark (Optional)" />
         </v-col>
       </v-row>
 
