@@ -11,9 +11,10 @@
                         @blur="messages = {}"
                         @input="mutateApplicant('emailAddress', $event)"
                         id="emailAddress"
-                        name="emailAddress"
                         filled
                         hide-details="auto"
+                        :name="Math.random()"
+                        autocomplete="chrome-off"
                         label="Email Address (for notifications)" />
         </v-col>
         <v-col cols="5" class="py-0" />
@@ -28,7 +29,8 @@
                         @blur="messages = {}"
                         @input="mutateApplicant('phoneNumber', $event)"
                         id="phoneNumber"
-                        name="phoneNumber"
+                        :name="Math.random()"
+                        autocomplete="chrome-off"
                         filled
                         hide-details="auto"
                         label="Phone Number (Optional)" />
@@ -40,7 +42,8 @@
                         @blur="messages = {}"
                         @input="mutateApplicant('faxNumber', $event)"
                         id="faxNumber"
-                        name="faxNumber"
+                        :name="Math.random()"
+                        autocomplete="chrome-off"
                         filled
                         hide-details="auto"
                         label="Fax Number (Optional)" />
@@ -87,7 +90,8 @@
                         @blur="messages = {}; isEditingCorpNum = false"
                         @focus="messages['corpNum'] = 'Incorporation Number (required)'; isEditingCorpNum = true"
                         id="corpNum"
-                        name="corpNum"
+                        :name="Math.random()"
+                        autocomplete="chrome-off"
                         filled
                         label="Incorporation Number (required)"
                         v-model="corpNum"
@@ -106,7 +110,8 @@
                         @blur="messages = {}"
                         @input="mutateNRData('tradeMark', $event)"
                         id="tradeMark"
-                        name="tradeMark"
+                        :name="Math.random()"
+                        autocomplete="chrome-off"
                         filled
                         hide-details="auto"
                         label="Registered Trademark (Optional)" />

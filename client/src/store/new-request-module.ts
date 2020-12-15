@@ -1445,6 +1445,32 @@ export class NewRequestModule extends VuexModule {
         data['additionalInfo'] += ' ' + notice
       }
     }
+    for (let step in this.requestExaminationOrProvideConsent) {
+      if (this.requestExaminationOrProvideConsent[step].obtain_consent ||
+        this.requestExaminationOrProvideConsent[step].conflict_self_consent) {
+        if (!data['additionalInfo']) {
+          data['additionalInfo'] = ''
+        }
+        if (!data['additionalInfo'].includes('*** Consent will be supplied')) {
+          data['additionalInfo'] += '\n\n'
+          let notice = `*** Consent will be supplied ***`
+          data['additionalInfo'] += ' ' + notice
+        }
+      }
+      if (this.location !== 'BC') {
+        if (this.requestExaminationOrProvideConsent[step].obtain_consent ||
+          this.requestExaminationOrProvideConsent[step].send_to_examiner) {
+          if (!data['additionalInfo']) {
+            data['additionalInfo'] = ''
+          }
+          if (!data['additionalInfo'].includes('*** Legal Name:')) {
+            data['additionalInfo'] += '\n\n'
+            let notice = `*** Legal Name: ${this.nameChoices.name1} ***`
+            data['additionalInfo'] += ' ' + notice
+          }
+        }
+      }
+    }
     return data
   }
   get editNameReservation () {

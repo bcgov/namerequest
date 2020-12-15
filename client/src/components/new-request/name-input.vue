@@ -3,7 +3,7 @@
     <v-text-field :error-messages="message"
                   @input="clearErrors()"
                   @keydown.enter="handleSubmit"
-                  autocomplete="off"
+                  autocomplete="chrome-off"
                   filled
                   id="name-input-text-field"
                   ref="nameInput"
