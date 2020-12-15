@@ -1,13 +1,16 @@
 <template>
   <v-container fluid id="new-request-container" class="copy-normal pa-10">
-    <v-row cols="12">
+    <v-row no-gutters>
       <v-col cols="6" class="pt-0 font-weight-bold h6"><span>I need a name to:</span></v-col>
       <v-col cols="6" class="pt-0">
         <span id="nr-required-activator"
               class="link-std d-flex justify-end"
               @click="activateNRRModal()">Check to see if you need to file a Name Request</span>
       </v-col>
-      <v-col cols="5" class="mt-n1">
+    </v-row>
+
+    <v-row class="mt-4" no-gutters>
+      <v-col cols="5">
         <!--request_action_cd-->
         <v-tooltip top
                    id="search-type-options-select"
@@ -36,7 +39,7 @@
           <span>{{requestText}}</span>
         </v-tooltip>
       </v-col>
-      <v-col cols="2" class="px-0 mt-n1">
+      <v-col cols="2" class="px-3">
         <!--location-->
         <v-tooltip id="location-options-select"
                    top
@@ -70,7 +73,7 @@
           <span>{{ locationText }}</span>
         </v-tooltip>
       </v-col>
-      <v-col cols="5" class="mt-n1">
+      <v-col cols="5">
         <!--entityConversionType-->
         <v-tooltip id="entity-type-options-select"
                    top
@@ -116,30 +119,28 @@
       </v-col>
     </v-row>
 
-    <v-row>
-      <v-col cols="5" class="pt-1 mr-n3" v-if="isXproMras">
+    <v-row class="mt-4" no-gutters>
+      <v-col cols="5" v-if="isXproMras">
         <v-select :error-messages="errors.includes('jurisdiction') ? 'Please select a jurisdiction' : ''"
                   :hide-details="!errors.includes('jurisdiction')"
                   :items="jurisdictionOptions"
-                  class="mb-n7 pa-0"
                   label="Select business's home jurisdiction"
                   @change="clearErrors()"
                   filled
                   v-model="jurisdiction">
           <template slot="item" slot-scope="data">
-            <span class="list-item"
-                  :class="{ 'last-select-item': data.item.value === 'FD' }">
+            <span class="list-item" :class="{ 'last-select-item': data.item.value === 'FD' }">
               {{ data.item.text }}
             </span>
           </template>
         </v-select>
       </v-col>
-      <v-col :cols="isXproMras ? 7 : 12" :class="{ 'pr-0': (isXproMras && !isFederal) }">
+      <v-col :cols="isXproMras ? 7 : 12" class="mt-2" :class="{ 'pl-3': (isXproMras && !isFederal) }">
         <NameInput v-if="!isFederal"
                    :class="inputCompClass"
                    :is-mras-search="(isXproMras && !noCorpNum)"
                    id="name-input-component"
-                   class="mb-n7 pa-0"
+                   class="pa-0"
                    @emit-corp-num-validity="corpNumValid = $event"/>
         <p v-else class="pl-3 mt-n2 text-body-2">Federally incorporated businesses do not need a Name Request. You may
           register  your extraprovincial business immediately using its existing name at Corporate Online.</p>
@@ -147,14 +148,15 @@
     </v-row>
 
     <!-- Person name and english checkboxes, render when location is NOT XPro Canada -->
-    <v-row v-if="!isXproMras" class="mt-n3" no-gutters>
-      <v-col>
+    <v-row v-if="!isXproMras" no-gutters>
+      <v-col cols="4">
         <v-tooltip top content-class="top-tooltip" transition="fade-transition" open-delay="200">
           <template v-slot:activator="{ on }">
             <v-checkbox
                     v-model="isPersonsName"
                     id="person-checkbox"
-                    class="copy-small mr-5"
+                    class="copy-small mt-0 pt-0"
+                    hide-details
                     v-slot:label v-on="on">
               <template>
                 <span v-on="on" class="copy-small">Name is a person's name</span>
@@ -168,7 +170,7 @@
           </ul>
         </v-tooltip>
       </v-col>
-      <v-col cols="4" class="ml-n8">
+      <v-col cols="4">
         <v-tooltip top content-class="top-tooltip" transition="fade-transition" open-delay="200">
           <template v-slot:activator="{ on }">
             <v-checkbox
@@ -176,7 +178,8 @@
                     id="name-checkbox"
                     :false-value="true"
                     :true-value="false"
-                    class="copy-small"
+                    class="copy-small mt-0 pt-0"
+                    hide-details
                     v-slot:label v-on="on">
               <template>
                 <span v-on="on" class="copy-small">Name contains no English words</span>
@@ -186,26 +189,25 @@
           <p>This refers to the language of the words in your name.</p>
           <ul>
             <li>Check this box if your name is written <b>entirely</b> in another language and does <b>not</b> contain
-            any English
-            </li>
+              any English</li>
             <li>Leave this box unchecked if your name contains <b>only</b> English or a mix of English and another
-              language.
-            </li>
+              language.</li>
           </ul>
         </v-tooltip>
       </v-col>
-      <v-col cols="5"></v-col>
+      <v-col cols="4" />
     </v-row>
 
     <!-- Corporate number checkbox, only for XPro Canadian Locations -->
-    <v-row v-else-if="!isFederal" class="mt-n3" no-gutters>
+    <v-row v-else-if="!isFederal" no-gutters>
       <v-col class="d-flex justify-end">
         <v-tooltip top min-width="390" content-class="top-tooltip" transition="fade-transition">
           <template v-slot:activator="{ on }">
             <v-checkbox
                     v-model="noCorpNum"
                     id="corp-num-checkbox"
-                    class="copy-small"
+                    class="copy-small mt-0 pt-0"
+                    hide-details
                     v-slot:label v-on="on">
               <template>
                 <span v-on="on" class="copy-small">I don't have a corporate number</span>
@@ -219,16 +221,14 @@
         </v-tooltip>
       </v-col>
     </v-row>
-    <v-row>
 
-    </v-row>
-    <div v-if="!isFederal" class="mt-1 text-center">
-      <v-btn class="search-name-btn"
-             :disabled="!corpNumValid"
-              @click="handleSubmit()">{{ isXproMras ? 'Search' : 'Search Name'}}</v-btn>
+    <div v-if="!isFederal" class="mt-6 text-center">
+      <v-btn id="search-name-btn" :disabled="!corpNumValid" @click="handleSubmit()">
+        {{ isXproMras ? 'Search' : 'Search Name'}}
+      </v-btn>
     </div>
-    <div v-else class="mt-6 mb-n2 text-center">
-      <v-btn class="goto-corporate-btn" :href="corpOnlineLink" target="_blank">
+    <div v-else class="mt-6 text-center">
+      <v-btn id="goto-corporate-btn" :href="corpOnlineLink" target="_blank">
         Go to Corporate Online to Register <v-icon small class="ml-1">mdi-open-in-new</v-icon>
       </v-btn>
     </div>
@@ -433,15 +433,14 @@ export default class NewSearch extends Vue {
 .list-item:hover {
   color: $app-blue;
 }
-.search-name-btn {
+#search-name-btn {
   min-height: 45px !important;
-  width: 200px !important;
-  padding: 0 50px 0 50px !important;
+  padding: 0 50px !important;
 }
-.goto-corporate-btn {
+#goto-corporate-btn {
   min-height: 45px !important;
 }
-/*Deep Vuetify overrides*/
+/* Deep Vuetify overrides */
 ::v-deep {
   .theme--light.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
     background-color: RGBA(22,105,187,.6) !important;
@@ -449,6 +448,10 @@ export default class NewSearch extends Vue {
   }
   .v-select:not(.v-select--is-multi).v-text-field--single-line .v-select__selections{
     line-height: 2;
+  }
+  /* remove bottom margin from checkboxes */
+  .v-input--checkbox > .v-input__slot {
+    margin-bottom: 0 !important;
   }
 }
 </style>

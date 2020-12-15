@@ -1,19 +1,21 @@
 <template>
-  <v-form v-model="isValid" lazy-validation @submit="handleSubmit()" class="mx-4 px-10 mb-9" ref="existing-nr-form">
-    <v-row class="copy-normal mt-2">
+  <v-form v-model="isValid" lazy-validation @submit="handleSubmit()" class="pa-10" ref="existing-nr-form">
+    <v-row no-gutters>
       <!-- FIRST LINE -->
-      <v-col cols="12">
+      <v-col cols="12" class="h6 font-weight-regular">
         Enter the Name Request (NR) Number and either the Applicant's Phone Number or Email:
       </v-col>
-
-      <!-- SECOND LINE -->
-      <v-col cols="12" class="red--text" v-if="errorMessage" v-html="errorMessage" />
-
-      <!-- THIRD LINE -->
     </v-row>
-    <v-row align="center" class="ml-n9" dense>
-      <v-col cols="1" class="mr-n4">
-        <v-img src="../../assets/images/one-icon.png" contain height="34" />
+
+    <!-- SECOND LINE -->
+    <v-row class="mt-5" no-gutters v-if="errorMessage">
+      <v-col cols="12" class="red--text" v-html="errorMessage" />
+    </v-row>
+
+    <!-- THIRD LINE -->
+    <v-row class="mt-5" no-gutters align="center">
+      <v-col cols="1" class="max-width">
+        <v-img src="../../assets/images/one-icon.png" contain width="34" height="34" />
       </v-col>
       <v-col class="max-height">
         <v-text-field :rules="nrRules"
@@ -26,10 +28,11 @@
                       validate-on-blur />
       </v-col>
     </v-row>
-    <v-row align="center" class="ml-n9 mt-2" dense>
-      <!-- FOURTH LINE -->
-      <v-col cols="1" class="mr-n4">
-        <v-img src="../../assets/images/two-icon.png" contain height="34" />
+
+    <!-- FOURTH LINE -->
+    <v-row class="mt-5" no-gutters align="center">
+      <v-col cols="1" class="max-width">
+        <v-img src="../../assets/images/two-icon.png" contain width="34" height="34" />
       </v-col>
       <v-col class="max-height">
         <v-text-field :rules="phoneRules"
@@ -53,10 +56,11 @@
                       validate-on-blur />
       </v-col>
     </v-row>
-    <v-row class="text-center mt-2">
-      <!-- FIFTH LINE -->
-      <v-col>
-        <v-btn @click="handleSubmit()">Retrieve Name Request</v-btn>
+
+    <!-- FIFTH LINE -->
+    <v-row class="mt-8" no-gutters>
+      <v-col class="text-center">
+        <v-btn id="retrieve-name-btn" @click="handleSubmit()">Retrieve Name Request</v-btn>
       </v-col>
     </v-row>
   </v-form>
@@ -145,21 +149,17 @@ export default class ExistingRequestSearch extends Vue {
 }
 </script>
 
-<style lang="sass" scoped>
-.col
-  padding: 0
-  margin-top: 1.5rem
+<style lang="scss" scoped>
+.col.max-width {
+  max-width: 3rem;
+}
 
-.forgot-nr-link
-  text-decoration: underline
-  cursor: pointer !important
+.col.max-height {
+  max-height: 60px;
+}
 
-.max-height
-  max-height: 60px
-
-.no-style-button
-  background-color: unset !important
-  border: 0 !important
-  border-radius: 0 !important
-  box-shadow: unset !important
+#retrieve-name-btn {
+  min-height: 45px !important;
+  padding: 0 50px !important;
+}
 </style>
