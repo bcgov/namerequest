@@ -1,6 +1,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](../LICENSE)
 [![codecov](https://codecov.io/gh/bcgov/namerequest/branch/master/graph/badge.svg)](https://codecov.io/gh/bcgov/namerequest)
+![Lifecycle](https://img.shields.io/badge/Lifecycle-Stable-97ca00)
 
 ---
 description: NameRequest readme
