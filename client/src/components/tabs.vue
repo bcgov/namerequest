@@ -1,37 +1,34 @@
 <template>
   <v-container height="400" id="tabs-landing-comp">
-    <v-row no-gutters>
-      <v-tabs v-model="tabNumber"
-              background-color="#003366"
-              active-class="active-tab"
-              style="border-radius: 5px 5px 0 0"
-              :show-arrows="false"
-              hide-slider
-              height="64"
-              centered
-              grow>
-        <v-tab :ripple="false"
-               style="min-height: 64px"
-               id="new-tab"
-               class="upper-left-border"
-               tabindex="0"><span
-               :class="tabNumber !== 1 ? 'h5' : 'h5-lt'">New Name Search</span></v-tab>
-        <v-tab :ripple="false"
-               style="min-height: 64px"
-               id="existing-tab"
-               class="upper-right-border"
-               tabindex="1"><span
-               :class="tabNumber === 1 ? 'h5' : 'h5-lt'">Existing Name Request</span></v-tab>
-        <v-tabs-items class="rounded-b tab-items" v-model="tabNumber">
-          <v-tab-item>
-            <NewSearch />
-          </v-tab-item>
-          <v-tab-item>
-            <ExistingRequestSearch/>
-          </v-tab-item>
-        </v-tabs-items>
-      </v-tabs>
-    </v-row>
+    <v-tabs v-model="tabNumber"
+            background-color="#003366"
+            active-class="active-tab"
+            style="border-radius: 4px 4px 0 0"
+            hide-slider
+            height="64"
+            centered
+            grow>
+      <v-tab ripple="false"
+              id="new-tab"
+              class="upper-left-border"
+              tabindex="0">
+        <span :class="tabNumber === 0 ? 'h5' : 'h5-lt'">New Name Search</span>
+      </v-tab>
+      <v-tab ripple="false"
+              id="existing-tab"
+              class="upper-right-border"
+              tabindex="1">
+        <span :class="tabNumber === 1 ? 'h5' : 'h5-lt'">Existing Name Request</span>
+      </v-tab>
+      <v-tabs-items class="rounded-b tab-items" v-model="tabNumber">
+        <v-tab-item>
+          <NewSearch />
+        </v-tab-item>
+        <v-tab-item>
+          <ExistingRequestSearch/>
+        </v-tab-item>
+      </v-tabs-items>
+    </v-tabs>
   </v-container>
 </template>
 
@@ -64,19 +61,16 @@ export default class Tabs extends Vue {
   max-width: 1140px !important;
   padding: 0 !important;
 }
-.tab-items {
-  border-radius: 6px !important;
-}
-.active-tab {
-  background-color: $BCgovBlue5;
+#new-tab, #existing-tab {
+  min-height: 64px;
 }
 .upper-left-border {
-  border-top-left-radius: 6px;
+  border-top-left-radius: 4px;
   min-height: 58px;
   max-height: 58px;
 }
 .upper-right-border {
-  border-top-right-radius: 6px;
+  border-top-right-radius: 4px;
   min-height: 58px;
   max-height: 58px;
 }
