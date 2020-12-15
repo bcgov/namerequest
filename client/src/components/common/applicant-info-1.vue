@@ -19,7 +19,7 @@
                             height="50"
                             hide-details="auto"
                             id="lastname"
-                            name="lastname"
+                            :name="Math.random()"
                             placeholder="Last Name" />
             </v-col>
             <v-col cols="4" class="pt-0">
@@ -35,7 +35,7 @@
                             height="50"
                             hide-details="auto"
                             id="firstname"
-                            name="firstname"
+                            :name="Math.random()"
                             placeholder="First Name" />
             </v-col>
             <v-col cols="4" class="pt-0">
@@ -50,7 +50,7 @@
                             height="50"
                             hide-details="auto"
                             id="middlename"
-                            name="middlename"
+                            :name="Math.random()"
                             placeholder="Middle Name (Optional)" />
             </v-col>
           </v-row>
@@ -79,7 +79,7 @@
                                 height="50"
                                 hide-details="auto"
                                 id="line1"
-                                name="Street Address"
+                                :name="Math.random()"
                                 placeholder="Start typing an address here..."
                                 ref="Line1"
                                 single-line />
@@ -149,7 +149,7 @@
                             height="50"
                             hide-details="auto"
                             id="1ine2"
-                            name="line2"
+                            :name="Math.random()"
                             placeholder="Additional Street Address (Optional)"
                             ref="Line2" />
             </v-col>
@@ -168,7 +168,7 @@
                             height="50"
                             hide-details="auto"
                             id="line3"
-                            name="line3"
+                            :name="Math.random()"
                             placeholder="Additional Street Address (Optional)"
                             ref="Line3" />
             </v-col>
@@ -188,7 +188,7 @@
                             height="50"
                             hide-details="auto"
                             id="city"
-                            name="city"
+                            :name="Math.random()"
                             placeholder="City"
                             ref="City"
               />
@@ -207,7 +207,7 @@
                         height="50"
                         hide-details="auto"
                         id="province"
-                        name="province"
+                        :name="Math.random()"
                         placeholder="Province"
                         ref="Province" />
             </v-col>
@@ -242,7 +242,7 @@
                             height="50"
                             hide-details="auto"
                             id="state"
-                            name="state"
+                            :name="Math.random()"
                             placeholder="Province/State (Optional, 2 letters max)"
                             ref="state" />
             </v-col>
@@ -280,7 +280,7 @@
                             height="50"
                             hide-details="auto"
                             id="postalcode"
-                            name="postalcode"
+                            :name="Math.random()"
                             placeholder="Postal/Zip Code" />
             </v-col>
           </v-row>
