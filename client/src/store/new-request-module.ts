@@ -1311,7 +1311,13 @@ export class NewRequestModule extends VuexModule {
       options.push(this.extendedRequestType)
       n = 3
     }
+    let { requestTypeCd } = this.nr
+    if (this.editMode && ['AS', 'AL', 'XASO', 'XCASO', 'UA'].includes(requestTypeCd)) {
+      options.push({ text: 'Assume an', value: 'ASSUMED', rank: n })
+      n++
+    }
     options.push({ text: 'View All Request Actions', value: 'INFO', rank: n })
+
     return options.sort((a, b) => {
       if (a.rank < b.rank) {
         return -1
@@ -2433,7 +2439,10 @@ export class NewRequestModule extends VuexModule {
         : this.entityTypesXPRO.find(entity => entity.value === entity_type_cd)
       this.mutateEntityTypeAddToSelect(obj)
     }
-    let { request_action_cd } = this.nr
+    let { requestTypeCd, request_action_cd } = this.nr
+    if (['AS', 'AL', 'XASO', 'XCASO', 'UA'].includes(requestTypeCd)) {
+      request_action_cd = 'ASSUMED'
+    }
     if (request_action_cd !== 'NEW') {
       this.mutateRequestAction(request_action_cd)
       let reqObj = this.requestActions.find(type => type.value === request_action_cd)
