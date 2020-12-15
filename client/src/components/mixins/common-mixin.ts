@@ -32,13 +32,13 @@ export default class CommonMixin extends Vue {
       case EntityType.PAR: return 'BC Parish'
 
       // XPRO Entity Types:
-      case EntityType.XCR: return 'XPRO Limited Company'
-      case EntityType.XUL: return 'XPRO Unlimited Liability Company'
-      case EntityType.RLC: return 'XPRO Limited Liability Company'
-      case EntityType.XLP: return 'XPRO Limited Partnership'
-      case EntityType.XLL: return 'XPRO Limited Liability Partnership'
-      case EntityType.XCP: return 'XPRO Cooperative Association'
-      case EntityType.XSO: return 'XPRO Social Enterprise'
+      case EntityType.XCR: return 'Extraprovincial Limited Company'
+      case EntityType.XUL: return 'Extraprovincial Unlimited Liability Company'
+      case EntityType.RLC: return 'Extraprovincial Limited Liability Company'
+      case EntityType.XLP: return 'Extraprovincial Limited Partnership'
+      case EntityType.XLL: return 'Extraprovincial Limited Liability Partnership'
+      case EntityType.XCP: return 'Extraprovincial Cooperative Association'
+      case EntityType.XSO: return 'Extraprovincial Social Enterprise'
 
       default: return cd
     }

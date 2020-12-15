@@ -64,7 +64,8 @@
                               @input="editChoices('name1', $event, true)"
                               filled
                               id="choice-1-text-field"
-                              :label="choicesLabelsAndHints[0].hint"/>
+                              :label="choicesLabelsAndHints[0].hint"
+                              :name="Math.random()"/>
               </v-col>
               <v-col cols="4" class="py-0" v-if="designationAtEnd">
                 <v-select :error-messages="des1Message"
@@ -89,7 +90,8 @@
                               :filled="isAssumedName"
                               id="choice-1-text-field"
                               :label="choicesLabelsAndHints[0].hint"
-                              :disabled="!isAssumedName"/>
+                              :disabled="!isAssumedName"
+                              :name="Math.random()"/>
               </v-col>
               <v-col cols="4" class="py-0" v-if="isAssumedName">
                 <v-select :error-messages="des1Message"
@@ -164,7 +166,8 @@
                               @input="editChoices('name2', $event, true)"
                               filled
                               id="choice-2-text-field"
-                              :label="choicesLabelsAndHints[1].hint" />
+                              :label="choicesLabelsAndHints[1].hint"
+                              :name="Math.random()" />
               </v-col>
               <v-col cols="4" class="py-0" v-if="designationAtEnd">
                 <v-select :error-messages="des2Message"
@@ -198,7 +201,8 @@
                               @input="editChoices('name3', $event)"
                               filled
                               id="choice-3-text-field"
-                              :label="choicesLabelsAndHints[2].hint" />
+                              :label="choicesLabelsAndHints[2].hint"
+                              :name="Math.random()" />
               </v-col>
               <v-col cols="4" class="py-0" style="height: 60px" v-if="designationAtEnd">
                 <v-select :error-messages="des3Message"
