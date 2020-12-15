@@ -110,7 +110,7 @@
             <!-- ALL OTHER TYPES OF OPTION BOXES -->
             <template v-else>
               <v-col :id="option.type + '-button-checkbox-col'"
-                     v-if="i !== 0"
+                     v-if="i !== 0 || isSendForReview(option.header)"
                      class="grey-box-checkbox-button mt-2 pa-0 text-center">
                 <transition name="fade" mode="out-in" >
                   <v-checkbox :error="showError"
@@ -280,6 +280,9 @@ export default class GreyBox extends Vue {
       return this.issue.issue_type
     }
     return ''
+  }
+  isSendForReview (header: string) {
+    return header === 'Send for Review'
   }
   get lastIndex () {
     return this.issueLength - 1
