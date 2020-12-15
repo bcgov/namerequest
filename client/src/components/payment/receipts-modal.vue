@@ -10,7 +10,7 @@
       </v-card-title>
 
       <v-card-text>
-        <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined>{{fetchError}}</v-alert>
+        <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
         <payment-summary v-else v-for="summary in paymentSummaries"
           :key="summary.id"
           :summary="summary"
@@ -33,39 +33,49 @@ import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
 @Component({
   components: {
     PaymentSummary
-  },
-  computed: {
-    isVisible: () => PaymentModule[PaymentTypes.PAYMENT_HISTORY_MODAL_IS_VISIBLE]
   }
 })
 export default class ReceiptsModal extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
   /** Used to display a fetch error, if any. */
   protected fetchError = ''
 
-  @Watch('isVisible')
-  onModalShow (val: boolean, oldVal: string): void {
-    this.fetchData()
-      .then(() => {
-      })
+  /** The model value for the dialog component. */
+  private isVisible = false
+
+  /** Whether this modal should be shown (per store property). */
+  private get showModal (): boolean {
+    return PaymentModule[PaymentTypes.PAYMENT_HISTORY_MODAL_IS_VISIBLE]
   }
 
-  async showModal () {
-    await PaymentModule.togglePaymentHistoryModal(true)
-  }
-
-  async hideModal () {
+  /** Clears store property to hide this modal. */
+  private async hideModal () {
     await PaymentModule.togglePaymentHistoryModal(false)
   }
 
-  /**
-   * NOTE: This method makes use of the PaymentSectionMixin class!
-   */
-  async fetchData () {
-    const { nrId } = this
-    if (nrId) {
-      // Get the payments if an NR ID has been set!
-      await this.fetchNrPayments(nrId)
+  /** Depending on value, fetches data and makes this modal visible or hides it. */
+  @Watch('showModal')
+  private async onShowModal (val: boolean) {
+    if (val) {
+      // only make visible on success, otherwise hide it
+      if (await this.fetchData()) {
+        this.isVisible = true
+      } else {
+        await this.hideModal()
+      }
+    } else {
+      this.isVisible = false
     }
+  }
+
+  /**
+   * Fetches the NR's payments.
+   * @returns True if successful, otherwise False
+   */
+  private async fetchData (): Promise<boolean> {
+    const { nrId } = this
+    if (!nrId) return false
+    // NB: errors are handled by PaymentMixin
+    return this.fetchNrPayments(nrId)
   }
 }
 </script>

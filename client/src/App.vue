@@ -46,7 +46,7 @@
     <RefundModal />
     <CancelModal />
     <AffiliationErrorModal />
-    <ApiErrorModal />
+    <ErrorModal />
     <TimeoutModal
       :show="showNrSessionExpiryModal"
       :onTimerExpired="this.onTimerModalExpired"
@@ -74,7 +74,7 @@ import UpgradeModal from '@/components/payment/upgrade-modal.vue'
 import ReapplyModal from '@/components/payment/reapply-modal.vue'
 import PaymentCompleteModal from '@/components/payment/payment-complete-modal.vue'
 import AffiliationErrorModal from '@/components/modals/affiliation-error.vue'
-import ApiErrorModal from '@/components/common/error/modal.vue'
+import ErrorModal from '@/components/common/error-modal.vue'
 import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
 
 import { Component, Mixins } from 'vue-property-decorator'
@@ -110,7 +110,7 @@ import paymentModule from '@/modules/payment'
     RefundModal,
     CancelModal,
     AffiliationErrorModal,
-    ApiErrorModal,
+    ErrorModal,
     SbcAuthenticationOptionsDialog
   },
   computed: {

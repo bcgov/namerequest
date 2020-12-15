@@ -3,7 +3,7 @@
     <div style="display: flex; justify-content: space-between; flex-flow: row wrap; margin-bottom: 15px">
       <div style="margin: 30px 30px 0">
         <h4>Requested Name <span v-if="nameChoices && nameChoices.length > 0">Choices</span></h4>
-        <ul style="list-style: none; padding-left: 0">
+        <ul style="list-style: none" class="pl-0">
           <li v-if="nameChoices && nameChoices.length === 0">{{name}}</li>
           <li v-if="nameChoices[0]">
             <span class="choice-indicator" v-if="nameChoices && nameChoices.length > 0">1</span>{{nameChoices[0]}}
@@ -19,16 +19,16 @@
     </div>
     <div style="display: flex; justify-content: space-between; flex-flow: row wrap; margin-bottom: 15px">
       <div style="margin: 15px 30px 15px">
-        <ul style="list-style: none; padding-left: 0">
+        <ul style="list-style: none" class="pl-0">
           <li v-if="client">
             <h4>Client Name</h4>
-            <ul style="list-style: none; padding-left: 0">
+            <ul style="list-style: none" class="pl-0">
               <li>{{`${client}`}}</li>
             </ul>
           </li>
           <li v-if="contactPerson">
             <h4>Primary Contact</h4>
-            <ul style="list-style: none; padding-left: 0">
+            <ul style="list-style: none" class="pl-0">
               <li>{{`${contactPerson}`}}</li>
               <li>{{applicant.emailAddress}}</li>
               <li>{{applicant.phoneNumber}}</li>
@@ -36,7 +36,7 @@
           </li>
           <li v-if="!contactPerson">
             <h4>Primary Contact</h4>
-            <ul style="list-style: none; padding-left: 0">
+            <ul style="list-style: none" class="pl-0">
               <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
               <li>{{`${applicantName}`}}</li>
               <li>{{applicant.emailAddress}}</li>
@@ -47,7 +47,7 @@
       </div>
       <div style="margin: 15px 30px 15px">
         <h4>Applicant Info</h4>
-        <ul style="list-style: none; padding-left: 0">
+        <ul style="list-style: none" class="pl-0">
           <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
           <li >{{`${applicantName}`}}</li>
           <li>

@@ -115,6 +115,7 @@
         </v-tooltip>
       </v-col>
     </v-row>
+
     <v-row>
       <v-col cols="5" class="pt-1 mr-n3" v-if="isXproMras">
         <v-select :error-messages="errors.includes('jurisdiction') ? 'Please select a jurisdiction' : ''"
@@ -144,6 +145,7 @@
           register  your extraprovincial business immediately using its existing name at Corporate Online.</p>
       </v-col>
     </v-row>
+
     <!-- Person name and english checkboxes, render when location is NOT XPro Canada -->
     <v-row v-if="!isXproMras" class="mt-n3" no-gutters>
       <v-col>
@@ -194,6 +196,7 @@
       </v-col>
       <v-col cols="5"></v-col>
     </v-row>
+
     <!-- Corporate number checkbox, only for XPro Canadian Locations -->
     <v-row v-else-if="!isFederal" class="mt-n3" no-gutters>
       <v-col class="d-flex justify-end">
