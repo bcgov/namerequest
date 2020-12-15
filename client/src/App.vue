@@ -23,6 +23,7 @@
         :redirectOnLoginSuccess="getNameRequestUrl"
         :redirect-on-login-fail="getNameRequestUrl"
         :redirect-on-logout="getNameRequestUrl"
+        :show-actions="false"
       />
       <router-view />
       <sbc-footer />

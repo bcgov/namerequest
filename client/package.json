@@ -1,6 +1,6 @@
 {
   "name": "name-request",
-  "version": "0.1.6",
+  "version": "0.2.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -19,7 +19,7 @@
     "http-status-codes": "^1.4.0",
     "moment": "^2.27.0",
     "remove-accents": "^0.4.2",
-    "sbc-common-components": "2.4.5",
+    "sbc-common-components": "2.4.6",
     "style-loader": "^1.2.1",
     "vue": "^2.6.11",
     "vue-contenteditable": "^1.0.2",
