@@ -272,8 +272,8 @@ export default class ApplicantInfo3 extends Vue {
         await newReqModule.postNameRequests('draft')
       } else {
         if (!this.editMode && ['COND-RESERVE', 'RESERVED'].includes(this.nrState)) {
-          let request = await newReqModule.getNameRequest(nrId)
-          if (request.stateCd === 'CANCELLED') {
+          const request = await newReqModule.getNameRequest(nrId)
+          if (request?.stateCd === 'CANCELLED') {
             newReqModule.setActiveComponent('Timeout')
             return
           }

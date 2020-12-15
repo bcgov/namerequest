@@ -4,9 +4,7 @@
       <slot name="header">Payment Details</slot>
     </header>-->
 
-    <div v-show="fetchError">
-      <v-alert color="error" icon="warning" outlined>{{fetchError}}</v-alert>
-    </div>
+    <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
 
     <ul class="fee-list" v-show="!fetchError">
       <li class="container fee-list__item">
@@ -69,24 +67,8 @@ export default class PaymentConfirm extends Vue {
     required: false
   }
   @Prop(String) name: string
-  // @Prop(Boolean) priorityRequest: boolean
-  // @Prop(Object) payment: any
-  @Prop({ default: {
-    receipt: {
-      created_on: '',
-      total: 0.00,
-      references: [{
-        receipt_number: '',
-        status_code: ''
-      }]
-    },
-    summary: {
-      completionDate: '',
-      statusCode: ''
-    }
-  } })
 
-  protected fetchError: string = ''
+  protected fetchError = ''
 }
 </script>
 

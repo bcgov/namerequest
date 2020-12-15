@@ -53,9 +53,8 @@ export default class NrAffiliationMixin extends Vue {
           )
         } else throw new Error('Business creation error: invalid api response ')
       } else throw new Error('Affiliation error: invalid api response ')
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e)
+    } catch (error) {
+      console.error('createAffiliation() =', error) // eslint-disable-line no-console
       // clear spinner on error
       this.$root.$emit('showSpinner', false)
 

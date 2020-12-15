@@ -431,8 +431,8 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   }
 
   private async handleButtonClick (action: NrAction) {
-    let outcome = await newReqModule.confirmAction(action)
-    if (outcome) {
+    const confirmed = await newReqModule.confirmAction(action)
+    if (confirmed) {
       switch (action) {
         case NrAction.EDIT:
           // eslint-disable-next-line no-case-declarations
@@ -478,22 +478,22 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
           await newReqModule.patchNameRequestsByAction(action)
           break
       }
-    } else {
-      newReqModule.setActiveComponent('InvalidActionMessage')
     }
+    // else do nothing -- errors are handled by newReqModule
   }
 
   private async refresh (event) {
     this.refreshCount += 1
     this.checking = true
     try {
-      let resp = await newReqModule.getNameRequest(this.nr.id)
+      const resp = await newReqModule.getNameRequest(this.nr.id)
       this.checking = false
-      if (resp.furnished === 'Y') {
+      if (resp?.furnished === 'Y') {
         this.furnished = 'furnished'
         newReqModule.setNrResponse(resp)
       }
     } catch (error) {
+      // NB: errors are handled by newReqModule
       this.checking = false
     }
   }

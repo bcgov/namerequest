@@ -1,8 +1,9 @@
 <template>
-  <v-dialog max-width='40%' :value='isVisible' persistent>
-    <v-card class='pa-9'>
-      <v-card-text class='h3'>
-        Re-apply for Name
+  <v-dialog max-width="40%" :value="isVisible" persistent>
+    <v-card>
+
+      <v-card-title class="d-flex justify-space-between">
+        <div>Re-apply for Name</div>
         <countdown-timer
           v-if="displayTimer"
           :timerName="timerName"
@@ -10,42 +11,40 @@
           bgColorString="#efefef"
           style="float: right"
         />
-      </v-card-text>
-      <v-card-text class='copy-normal'>
+      </v-card-title>
+
+      <v-card-text class="copy-normal">
         <fee-summary
-          v-bind:filingData='[...paymentDetails]'
-          v-bind:fees='[...paymentFees]'
+          :filingData="[...paymentDetails]"
+          :fees="[...paymentFees]"
         />
       </v-card-text>
+
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click='confirmPayment' id='payment-pay-btn' class='primary' text>Accept</v-btn>
-        <v-btn @click='hideModal' id='payment-close-btn' class='normal' text>Cancel</v-btn>
+        <v-btn @click="confirmPayment()" id="payment-pay-btn" class="primary" text>Accept</v-btn>
+        <v-btn @click="hideModal()" id="payment-close-btn" class="normal" text>Cancel</v-btn>
       </v-card-actions>
+
     </v-card>
   </v-dialog>
 </template>
 
 <script lang='ts'>
 import { Component, Mixins, Watch } from 'vue-property-decorator'
-
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 import CountdownTimer from '@/components/session-timer/countdown-timer.vue'
-
-import paymentModule from '@/modules/payment'
+import PaymentModule from '@/modules/payment'
 import { CreatePaymentParams } from '@/modules/payment/models'
-
-import * as paymentTypes from '@/modules/payment/store/types'
-import * as filingTypes from '@/modules/payment/filing-types'
-import * as jurisdictions from '@/modules/payment/jurisdictions'
+import * as PaymentTypes from '@/modules/payment/store/types'
+import * as FilingTypes from '@/modules/payment/filing-types'
+import * as Jurisdictions from '@/modules/payment/jurisdictions'
 import { PaymentAction } from '@/enums'
-
 import PaymentMixin from '@/components/payment/payment-mixin'
 import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
 import DisplayedComponentMixin from '@/components/mixins/displayed-component-mixin'
-
 import { getBaseUrl } from './payment-utils'
 
 @Component({
@@ -53,13 +52,6 @@ import { getBaseUrl } from './payment-utils'
     RequestDetails,
     FeeSummary,
     CountdownTimer
-  },
-  data: () => ({
-  }),
-  computed: {
-    isVisible: () => {
-      return paymentModule[paymentTypes.REAPPLY_MODAL_IS_VISIBLE]
-    }
   }
 })
 export default class ReapplyModal extends Mixins(
@@ -68,44 +60,58 @@ export default class ReapplyModal extends Mixins(
   PaymentSessionMixin,
   DisplayedComponentMixin
 ) {
+  /** The model value for the dialog component. */
+  private isVisible = false
+
   /**
    * Optionally display the countdown timer.
    * This could be turned into a prop for easier configuration.
    */
-  get displayTimer () {
+  private get displayTimer () {
     return false
   }
 
-  get timerName () {
+  private get timerName () {
     return this.$PAYMENT_COMPLETION_TIMER_NAME
   }
 
-  @Watch('isVisible')
-  onModalShow (val: boolean, oldVal: string): void {
+  /** Whether this modal should be shown (per store property). */
+  private get showModal (): boolean {
+    return PaymentModule[PaymentTypes.REAPPLY_MODAL_IS_VISIBLE]
+  }
+
+  /** Clears store property to hide this modal. */
+  async hideModal () {
+    await PaymentModule.toggleReapplyModal(false)
+  }
+
+  /** Depending on value, fetches fees and makes this modal visible or hides it. */
+  @Watch('showModal')
+  async onShowModal (val: boolean): Promise<void> {
     if (val) {
       const paymentConfig = {
-        filingType: filingTypes.NM620,
-        jurisdiction: jurisdictions.BC,
+        filingType: FilingTypes.NM620,
+        jurisdiction: Jurisdictions.BC,
         priorityRequest: this.priorityRequest || false
       }
 
-      this.fetchFees(paymentConfig)
+      // only make visible on success, otherwise hide it
+      if (await this.fetchFees(paymentConfig)) {
+        this.isVisible = true
+      } else {
+        await this.hideModal()
+      }
+    } else {
+      this.isVisible = false
     }
   }
 
-  async showModal () {
-    await paymentModule.toggleReapplyModal(true)
-  }
-
-  async hideModal () {
-    await paymentModule.toggleReapplyModal(false)
-  }
-
-  async confirmPayment () {
+  /** Called when user clicks "Accept" button. */
+  private async confirmPayment () {
     const { nrId, priorityRequest } = this
     const onSuccess = (paymentResponse) => {
       const { paymentId, paymentToken } = this
-      // Save to session
+      // Save response to session
       this.savePaymentResponseToSession(PaymentAction.REAPPLY, paymentResponse)
 
       const baseUrl = getBaseUrl()
@@ -113,12 +119,17 @@ export default class ReapplyModal extends Mixins(
       this.redirectToPaymentPortal(paymentId, paymentToken, redirectUrl)
     }
 
-    this.createPayment({
+    const success = await this.createPayment({
       action: PaymentAction.REAPPLY,
       nrId: nrId,
-      filingType: filingTypes.NM620,
+      filingType: FilingTypes.NM620,
       priorityRequest: priorityRequest
     } as CreatePaymentParams, onSuccess)
+
+    // on error, close this modal so error modal is visible
+    if (!success) {
+      this.hideModal()
+    }
   }
 }
 </script>

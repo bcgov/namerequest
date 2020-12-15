@@ -1,5 +1,5 @@
 <template>
-  <v-form v-model="isValid" lazy-validation @submit="handleSubmit" class="mx-4 px-10 mb-9" ref="existing-nr-form">
+  <v-form v-model="isValid" lazy-validation @submit="handleSubmit()" class="mx-4 px-10 mb-9" ref="existing-nr-form">
     <v-row class="copy-normal mt-2">
       <!-- FIRST LINE -->
       <v-col cols="12">
@@ -7,7 +7,7 @@
       </v-col>
 
       <!-- SECOND LINE -->
-      <v-col cols="12" class="red--text" v-if="errorMessage">{{ errorMessage }}</v-col>
+      <v-col cols="12" class="red--text" v-if="errorMessage" v-html="errorMessage" />
 
       <!-- THIRD LINE -->
     </v-row>
@@ -56,7 +56,7 @@
     <v-row class="text-center mt-2">
       <!-- FIFTH LINE -->
       <v-col>
-        <v-btn @click="handleSubmit">Retrieve Name Request</v-btn>
+        <v-btn @click="handleSubmit()">Retrieve Name Request</v-btn>
       </v-col>
     </v-row>
   </v-form>
@@ -65,6 +65,7 @@
 <script lang="ts">
 import ForgotNrModal from '@/components/modals/forgot-nr.vue'
 import newReqModule from '@/store/new-request-module'
+import ErrorModule from '@/modules/error'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { NameRequestI, SearchDataI, NrDataResponseT, NrDataT } from '@/models'
 
@@ -73,14 +74,8 @@ const NR_REGEX = /^(NR\ ?L?|L?)?([\d]{6,8})$/
   components: { ForgotNrModal }
 })
 export default class ExistingRequestSearch extends Vue {
-  emailRules = [
-    v => (!!v || !!this.search.phoneNumber) || 'Please enter either the phone or the email',
-    v => !!this.search.phoneNumber || (!!v && /.+@.+\..+/.test(v)) || 'Please be sure to enter a valid email'
-  ]
-  nrRules = [ v => NR_REGEX.test(v) || 'Please enter a valid NR number' ]
-  errorMessage: string = ''
-  phoneRules = [ v => v === '' || /^[\d ()\+-]+$/.test(v) || 'Please enter a numeric value' ]
-  isValid: boolean = false
+  private errorMessage = ''
+  private isValid = false
 
   mounted () {
     if (this.nr && this.nr.failed) {
@@ -93,26 +88,54 @@ export default class ExistingRequestSearch extends Vue {
       newReqModule.mutateExistingRequestSearch({ key, value })
     }
   }
-  get validatePhoneOnBlur () {
+
+  private emailRules = [
+    v => (!!v || !!this.search.phoneNumber) || 'Please enter either the phone or the email',
+    v => !!this.search.phoneNumber || (!!v && /.+@.+\..+/.test(v)) || 'Please be sure to enter a valid email'
+  ]
+  private nrRules = [
+    v => NR_REGEX.test(v) || 'Please enter a valid NR number'
+  ]
+  private phoneRules = [
+    v => v === '' || /^[\d ()\+-]+$/.test(v) || 'Please enter a numeric value'
+  ]
+
+  private get validatePhoneOnBlur () {
     return /^[\d ()-]+$/.test(this.nr.phoneNumber)
   }
-  get nr () {
+
+  private get nr () {
     return newReqModule.nr
   }
-  get search () {
+
+  private get search () {
     return newReqModule.existingRequestSearch
   }
-  get allowSubmit () {
+
+  private get allowSubmit () {
     return (this.search.nrNum && (this.search.emailAddress || this.search.phoneNumber))
   }
-  async handleSubmit () {
+
+  private async handleSubmit (): Promise<void> {
     this.$refs['existing-nr-form']['validate']()
     await this.$nextTick()
     if (this.isValid) {
-      newReqModule.findNameRequest()
+      await newReqModule.findNameRequest()
+      if (this.nr?.failed) {
+        // capture error text and then clear out the NR data
+        this.errorMessage = this.nr.text
+        newReqModule.mutateNameRequest({})
+        return
+      }
+      // FUTURE: clear out applicant's phone and email ?
+      // for (let key of ['emailAddress', 'phoneNumber']) {
+      //   let value = ''
+      //   newReqModule.mutateExistingRequestSearch({ key, value })
+      // }
     }
   }
-  setExistingRequestSearch (key, value) {
+
+  private setExistingRequestSearch (key, value) {
     this.$refs['existing-nr-form']['resetValidation']()
     newReqModule.mutateExistingRequestSearch({ key, value })
     if (this.errorMessage) {

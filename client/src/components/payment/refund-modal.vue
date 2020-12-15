@@ -15,7 +15,7 @@
       </v-card-text>
 
       <v-card-text>
-        <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined>{{fetchError}}</v-alert>
+        <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
         <refund-summary v-else :payments="payments" />
       </v-card-text>
 
@@ -64,21 +64,36 @@ export default class RefundModal extends Mixins(NameRequestMixin, PaymentMixin, 
   /** Used to show loading state on button. */
   private loading = false
 
+  /** The model value for the dialog component. */
+  private isVisible = false
+
   private get emailAddress (): string {
     return this.applicant?.emailAddress
   }
 
-  private get isVisible (): boolean {
+  /** Whether this modal should be shown (per store property). */
+  private get showModal (): boolean {
     return PaymentModule[PaymentTypes.REFUND_MODAL_IS_VISIBLE]
   }
 
-  @Watch('isVisible')
-  async onModalShow (val: boolean, oldVal: string): Promise<void> {
-    await this.fetchData()
+  /** Clears store property to hide this modal. */
+  private async hideModal (): Promise<void> {
+    await PaymentModule.toggleRefundModal(false)
   }
 
-  async showModal (): Promise<void> {
-    await PaymentModule.toggleRefundModal(true)
+  /** Depending on value, fetches data and makes this modal visible or hides it. */
+  @Watch('showModal')
+  private async onShowModal (val: boolean) {
+    if (val) {
+      // only make visible on success, otherwise hide it
+      if (await this.fetchData()) {
+        this.isVisible = true
+      } else {
+        await this.hideModal()
+      }
+    } else {
+      this.isVisible = false
+    }
   }
 
   /** Called when user clicks "Cancel this NR" button. */
@@ -89,18 +104,15 @@ export default class RefundModal extends Mixins(NameRequestMixin, PaymentMixin, 
     this.hideModal() // FUTURE: not needed? will success component be displayed instead?
   }
 
-  /** Called when user clicks "Keep this NR" button. */
-  private async hideModal (): Promise<void> {
-    await PaymentModule.toggleRefundModal(false)
-  }
-
-  /** NOTE: This method makes use of the PaymentSectionMixin class! */
-  private async fetchData (): Promise<void> {
+  /**
+   * Fetches the NR's payments.
+   * @returns True if successful, otherwise False
+   */
+  private async fetchData (): Promise<boolean> {
     const { nrId } = this
-    if (nrId) {
-      // Get the payments if an NR ID has been set.
-      await this.fetchNrPayments(nrId)
-    }
+    if (!nrId) return false
+    // NB: errors are handled by PaymentMixin
+    return this.fetchNrPayments(nrId)
   }
 }
 </script>

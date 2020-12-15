@@ -4,9 +4,7 @@
       <slot name="header">Invoice Details</slot>
     </header>
 
-    <div v-show="fetchError">
-      <v-alert color="error" icon="warning" outlined>{{fetchError}}</v-alert>
-    </div>
+    <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
 
     <ul class="fee-list" v-show="!fetchError && receipt">
       <li class="container fee-list__item">
@@ -34,7 +32,6 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 
 @Component({})
 export default class Invoice extends Vue {
-  /* class properties */
   @Prop({ default: {
     reference_number: null,
     created_on: null,
@@ -58,7 +55,7 @@ export default class Invoice extends Vue {
   } })
   protected receipt: any
 
-  protected fetchError: string = ''
+  protected fetchError = ''
 }
 </script>
 

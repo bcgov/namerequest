@@ -13,7 +13,6 @@
         />
       </v-card-text>
       <v-card-actions>
-        <!--<span>Time Remaining - 10:00</span>-->
         <v-spacer></v-spacer>
         <v-btn @click="hideModal" id="receipt-close-btn" class="normal" text>Done</v-btn>
         <v-btn @click="downloadReceipt" class="primary download-receipt-btn" text>Download Receipt</v-btn>
@@ -40,9 +39,6 @@ import { PaymentAction } from '@/enums'
 import PaymentMixin from '@/components/payment/payment-mixin'
 import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
-
-// TODO: Finish the message component
-// import message from "@/components/common/error/message.vue"
 
 /**
  * Makes debugging the receipt easier.
@@ -101,23 +97,19 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
     }
   }
 
-  @Watch('isVisible')
-  onModalShow (val: boolean, oldVal: string): void {
-  }
-
   async showModal () {
     await paymentModule.toggleReceiptModal(true)
   }
 
   async hideModal () {
     const { nrId } = this
-    await this.fetchNr(nrId)
+    await this.fetchNr(+nrId)
     await paymentModule.toggleReceiptModal(false)
   }
 
-  async fetchNr (nrId) {
-    const existingNr = await newRequestModule.getNameRequest(nrId)
-    await newRequestModule.loadExistingNameRequest(existingNr)
+  async fetchNr (nrId: number): Promise<void> {
+    const nrData = await newRequestModule.getNameRequest(nrId)
+    await newRequestModule.loadExistingNameRequest(nrData)
   }
 
   /**
@@ -140,21 +132,15 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
 
     if (sessionNrId && sessionPaymentId) {
       // Get the payment
-      await this.fetchNr(sessionNrId)
+      await this.fetchNr(+sessionNrId)
       // Get the payment
-      await this.fetchNrPayment(sessionNrId, sessionPaymentId)
+      await this.fetchNrPayment(+sessionNrId, sessionPaymentId)
     }
   }
 
   async completePayment (nrId: number, paymentId: number, action: string) {
     const result: NameRequestPayment = await newRequestModule.completePayment({ nrId, paymentId, action })
     const paymentSuccess = result.paymentSuccess
-
-    // TODO: Remove this when done implementing tests
-    /* const paymentSuccess = false
-    result.paymentErrors = [
-      { id: 'payment-error', error: 'Something went wrong with the payment, cancelling the Name Request!' }
-    ] */
 
     if (paymentSuccess) {
       paymentModule.toggleReceiptModal(true)
