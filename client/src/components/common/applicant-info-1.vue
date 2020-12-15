@@ -20,7 +20,8 @@
                             hide-details="auto"
                             id="lastname"
                             :name="Math.random()"
-                            placeholder="Last Name" />
+                            autocomplete="chrome-off"
+                            label="Last Name" />
             </v-col>
             <v-col cols="4" class="pt-0">
               <label for="firstname" class="hidden">First Name</label>
@@ -36,7 +37,8 @@
                             hide-details="auto"
                             id="firstname"
                             :name="Math.random()"
-                            placeholder="First Name" />
+                            autocomplete="chrome-off"
+                            label="First Name" />
             </v-col>
             <v-col cols="4" class="pt-0">
               <label for="middlename" class="hidden">Middle Name (Optional)</label>
@@ -51,7 +53,8 @@
                             hide-details="auto"
                             id="middlename"
                             :name="Math.random()"
-                            placeholder="Middle Name (Optional)" />
+                            autocomplete="chrome-off"
+                            label="Middle Name (Optional)" />
             </v-col>
           </v-row>
 
@@ -72,7 +75,6 @@
                                 :value="applicant.addrLine1"
                                 @blur="blurAddress1"
                                 @input="updateApplicant('addrLine1', $event)"
-                                autocomplete="off"
                                 class="pa-0"
                                 dense
                                 filled
@@ -80,6 +82,7 @@
                                 hide-details="auto"
                                 id="line1"
                                 :name="Math.random()"
+                                autocomplete="chrome-off"
                                 placeholder="Start typing an address here..."
                                 ref="Line1"
                                 single-line />
@@ -150,7 +153,8 @@
                             hide-details="auto"
                             id="1ine2"
                             :name="Math.random()"
-                            placeholder="Additional Street Address (Optional)"
+                            autocomplete="chrome-off"
+                            label="Additional Street Address (Optional)"
                             ref="Line2" />
             </v-col>
           </v-row>
@@ -169,7 +173,8 @@
                             hide-details="auto"
                             id="line3"
                             :name="Math.random()"
-                            placeholder="Additional Street Address (Optional)"
+                            autocomplete="chrome-off"
+                            label="Additional Street Address (Optional)"
                             ref="Line3" />
             </v-col>
           </v-row>
@@ -189,7 +194,8 @@
                             hide-details="auto"
                             id="city"
                             :name="Math.random()"
-                            placeholder="City"
+                            autocomplete="chrome-off"
+                            label="City"
                             ref="City"
               />
             </v-col>
@@ -208,7 +214,8 @@
                         hide-details="auto"
                         id="province"
                         :name="Math.random()"
-                        placeholder="Province"
+                        autocomplete="chrome-off"
+                        label="Province"
                         ref="Province" />
             </v-col>
             <v-col cols="6" class="py-0 my-0" v-else-if="applicant.countryTypeCd === 'US'">
@@ -243,7 +250,8 @@
                             hide-details="auto"
                             id="state"
                             :name="Math.random()"
-                            placeholder="Province/State (Optional, 2 letters max)"
+                            autocomplete="chrome-off"
+                            label="Province/State (Optional, 2 letters max)"
                             ref="state" />
             </v-col>
           </v-row>
@@ -281,7 +289,8 @@
                             hide-details="auto"
                             id="postalcode"
                             :name="Math.random()"
-                            placeholder="Postal/Zip Code" />
+                            autocomplete="chrome-off"
+                            label="Postal/Zip Code" />
             </v-col>
           </v-row>
 
