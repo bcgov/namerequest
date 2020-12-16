@@ -149,7 +149,7 @@
 
     <!-- Person name and english checkboxes, render when location is NOT XPro Canada -->
     <v-row v-if="!isXproMras" no-gutters>
-      <v-col cols="4">
+      <v-col cols="3">
         <v-tooltip top content-class="top-tooltip" transition="fade-transition" open-delay="200">
           <template v-slot:activator="{ on }">
             <v-checkbox
@@ -170,7 +170,7 @@
           </ul>
         </v-tooltip>
       </v-col>
-      <v-col cols="4">
+      <v-col class="ml-n2">
         <v-tooltip top content-class="top-tooltip" transition="fade-transition" open-delay="200">
           <template v-slot:activator="{ on }">
             <v-checkbox
