@@ -161,7 +161,7 @@ export default class ApplicantInfo2 extends Vue {
   ]
   emailRules = [
     v => !!v || 'Required field',
-    v => /.+@.+/.test(v) || 'Not a valid email'
+    v => /.+@.+\..+/.test(v) || 'Not a valid email'
   ]
   error: boolean = false
   isEditingCorpNum: boolean = false

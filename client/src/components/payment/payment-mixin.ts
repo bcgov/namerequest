@@ -145,6 +145,7 @@ export default class PaymentMixin extends Vue {
       }
       return true
     } catch (error) {
+      console.error('createPayment() =', error) // eslint-disable-line no-console
       if (error instanceof PaymentApiError) {
         await errorModule.setAppError({ id: 'payment-api-error', error: error.message } as ErrorI)
       } else {
@@ -184,6 +185,7 @@ export default class PaymentMixin extends Vue {
       document.body.appendChild(link)
       link.click()
     } catch (error) {
+      console.error('fetchReceiptPdf() =', error) // eslint-disable-line no-console
       if (error instanceof PaymentApiError) {
         await errorModule.setAppError({ id: 'fetch-receipt-pdf-api-error', error: error.message } as ErrorI)
       } else {
@@ -211,6 +213,7 @@ export default class PaymentMixin extends Vue {
       document.body.appendChild(link)
       link.click()
     } catch (error) {
+      console.error('downloadReceiptPdf() =', error) // eslint-disable-line no-console
       if (error instanceof PaymentApiError) {
         await errorModule.setAppError({ id: 'fetch-receipt-pdf-api-error', error: error.message } as ErrorI)
       } else {
