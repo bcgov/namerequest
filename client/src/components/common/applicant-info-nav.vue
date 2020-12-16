@@ -86,6 +86,7 @@ export default class ApplicantInfoNav extends Vue {
   }
 
   async submit () {
+    let request
     // FUTURE: fix error handling in case of newReqModule (app or api) error (#5899)
     const { nrId } = this
     if (this.editMode) {
@@ -95,20 +96,20 @@ export default class ApplicantInfoNav extends Vue {
       await this.fetchNr(+nrId)
     } else {
       if (!nrId) {
-        await newReqModule.postNameRequests('draft')
+        request = await newReqModule.postNameRequests('draft')
       } else {
         if (!this.editMode && ['COND-RESERVE', 'RESERVED'].includes(this.nrState)) {
-          const request = await newReqModule.getNameRequest(nrId)
+          request = await newReqModule.getNameRequest(nrId)
           if (request?.stateCd === 'CANCELLED') {
             newReqModule.setActiveComponent('Timeout')
             this.isloadingSubmission = false
             return
           }
         }
-        await newReqModule.putNameReservation(nrId)
+        request = await newReqModule.putNameReservation(nrId)
         timerModule.stopTimer({ id: this.$NR_COMPLETION_TIMER_NAME })
       }
-      await paymentModule.togglePaymentModal(true)
+      if (request) await paymentModule.togglePaymentModal(true)
     }
     this.isloadingSubmission = false
   }
