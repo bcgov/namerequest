@@ -44,11 +44,10 @@
               <v-row no-gutters justify="center"
                      class="mt-n4"
                      :key="headerProps.text">
-                <v-col cols="auto" :class="headerProps.class" class="h4">
-                  <v-icon :class="headerProps.class">
-                    {{ headerProps.icon }}
-                  </v-icon>
-                  {{ headerProps.text }}
+                <v-col cols="auto" class="h4">
+                  <v-icon class="header-icon" :class="headerProps.class">{{ headerProps.icon }}</v-icon>
+                  &nbsp;
+                  <span :class="headerProps.class">{{ headerProps.text }}</span>
                 </v-col>
               </v-row>
             </transition>
@@ -538,7 +537,8 @@ export default class AnalyzeResults extends Vue {
   }
   get headerText () {
     let issues = this.json.issues
-    return issues.length === 1 && issues[0].issue_type === 'excess_words' ? 'Further Review Required'
+    return (issues.length === 1 && issues[0].issue_type === 'excess_words')
+      ? 'Further Review Required'
       : 'Further Action Required'
   }
   get isApproved () {
@@ -783,6 +783,9 @@ export default class AnalyzeResults extends Vue {
 <style scoped lang="scss">
 @import '@/assets/scss/theme.scss';
 
+.header-icon {
+  margin-top: -2px;
+}
 #analyze-results-container {
   max-width: 1140px;
 }
