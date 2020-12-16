@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showModal" max-width="40%">
+  <v-dialog v-model="showModal">
     <v-card>
       <v-card-title class="d-flex justify-space-between">
         <div>Name Request Encountered an Error</div>
@@ -46,3 +46,10 @@ export default class ErrorModal extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+::v-deep .v-dialog {
+  width: 40rem;
+  min-width: 36rem;
+}
+</style>
