@@ -5,7 +5,9 @@ import store from './store'
 import { EnvConfigI, getConfig } from '@/plugins/getConfig'
 import vuetify from '@/plugins/vuetify'
 import { featureFlags, initLDClient } from '@/plugins/featureFlags'
-import KeyCloakService from 'sbc-common-components/src/services/keycloak.services'
+import KeycloakService from 'sbc-common-components/src/services/keycloak.services'
+import * as Sentry from '@sentry/browser'
+import * as Integrations from '@sentry/integrations'
 
 // NB: order matters - do not change
 import 'quill/dist/quill.core.css'
@@ -56,7 +58,7 @@ function setVuexEnvironment (store, config: EnvConfigI): void {
 }
 
 async function startVue () {
-  // Grab the configuration
+  // Fetch the configuration
   const envConfig: EnvConfigI = await getConfig()
   setVueEnvironment(envConfig)
   setVuexEnvironment(store, envConfig)
@@ -68,27 +70,47 @@ async function startVue () {
   Vue.prototype.$USAStateCodes = USAStateCodes
   Vue.prototype.$xproMapping = mapping.xproMapping
 
+  // Initialize Sentry
+  if (window['sentryDsn']) {
+    console.info('Initializing Sentry...') // eslint-disable-line no-console
+    Sentry.init({
+      dsn: window['sentryDsn'],
+      integrations: [
+        // new Integrations.Vue({ Vue, attachProps: true }), // FUTURE maybe
+        new Integrations.CaptureConsole({ levels: ['error'] })
+      ]
+    })
+  }
+
   // Initialize Launch Darkly
   if (window['ldClientId']) {
+    console.info('Initializing Launch Darkly...') // eslint-disable-line no-console
     await initLDClient()
   }
 
   // Check app feature flag
-  if (featureFlags.getFlag('namerequest-ui-enabled')) {
-    // configure Keycloak Service
-    console.info('Starting Keycloak service...') // eslint-disable-line no-console
-    await KeyCloakService.setKeycloakConfigUrl(sessionStorage.getItem('KEYCLOAK_CONFIG_PATH'))
-
-    // Start Vue application
-    new Vue({
-      vuetify: vuetify,
-      router: getVueRouter(),
-      store,
-      render: h => h(App)
-    }).$mount('#app')
-  } else {
-    alert('Sorry, the Name Request web app is temporarily disabled.')
+  if (!featureFlags.getFlag('namerequest-ui-enabled')) {
+    alert('Sorry, the Name Request web app is temporarily disabled.\n' +
+      'Please try again later.')
+    return
   }
+
+  // Initialize Keyloak Service
+  console.info('Starting Keycloak service...') // eslint-disable-line no-console
+  await KeycloakService.setKeycloakConfigUrl(sessionStorage.getItem('KEYCLOAK_CONFIG_PATH'))
+
+  // Start Vue application
+  console.info('Starting app...') // eslint-disable-line no-console
+  new Vue({
+    vuetify: vuetify,
+    router: getVueRouter(),
+    store,
+    render: h => h(App)
+  }).$mount('#app')
 }
 
-startVue().then() // The .then() makes sure linter doesn't pick up on an un-awaited promise
+// NB: the .then() makes sure linter doesn't pick up on an un-awaited promise
+startVue().then().catch(error => {
+  Sentry.captureException(error)
+  console.error('main =', error) // eslint-disable-line no-console
+})

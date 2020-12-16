@@ -89,11 +89,9 @@
                 </template>
                 <v-list class="ma-0 pa-0" style="border-radius: 0">
                   <v-list-item dense v-if="!addressSuggestions && applicant.addrLine1" class="pa-2">
-                    <v-progress-circular color="orange"
-                                         id="address-suggest-spinner"
-                                         indeterminate
-                                         size="25" />
-                    Searching...</v-list-item>
+                    <v-progress-circular color="orange" id="address-suggest-spinner" indeterminate size="25" />
+                    <span class="pl-2">Searching...</span>
+                  </v-list-item>
                   <v-list-item class="pa-2"
                                dense
                                v-if="!addressSuggestions && !applicant.addrLine1">

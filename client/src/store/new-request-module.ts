@@ -1018,8 +1018,7 @@ export class NewRequestModule extends VuexModule {
       }
       return this.entityTypesBCData
     } catch (error) {
-      // eslint-disable-next-line
-      console.log(error)
+      console.error('entityTypesBC() =', error) // eslint-disable-line no-console
       return this.entityTypesBCData
     }
   }
@@ -1066,8 +1065,7 @@ export class NewRequestModule extends VuexModule {
       }
       return entityTypesXPROData
     } catch (error) {
-      // eslint-disable-next-line
-      console.log(error)
+      console.error('entityTypesXPRO() =', error) // eslint-disable-line no-console
       return entityTypesXPROData
     }
   }
@@ -1791,8 +1789,7 @@ export class NewRequestModule extends VuexModule {
       }
       return
     } catch (error) {
-      // eslint-disable-next-line
-      console.log(error)
+      console.log('getAddressDetails() =', error) // eslint-disable-line no-console
     }
   }
   @Action
@@ -1821,8 +1818,7 @@ export class NewRequestModule extends VuexModule {
       this.mutateAddressSuggestions(null)
       return
     } catch (error) {
-      // eslint-disable-next-line
-      console.log(error)
+      console.log('getAddressSuggestions() =', error) // eslint-disable-line no-console
     }
   }
   @Action
@@ -2021,9 +2017,8 @@ export class NewRequestModule extends VuexModule {
       // if there is no previous request_action message then we just preserve whatever text there is and append msg
       data['additionalInfo'] += ` \n\n ${msg}`
       return data
-    } catch (err) {
-      // eslint-disable-next-line
-      console.log(err)
+    } catch (error) {
+      console.error('addRequestActionComment() =', error) // eslint-disable-line no-console
       return data
     }
   }
@@ -2364,14 +2359,12 @@ export class NewRequestModule extends VuexModule {
 
       return paymentResponse
     } catch (error) {
+      console.error('completePayment() =', error) // eslint-disable-line no-console
       if (error instanceof ApiError) {
         await errorModule.setAppError({ id: 'complete-payment-api-error', error: error.message } as ErrorI)
       } else {
         await errorModule.setAppError({ id: 'complete-payment-error', error: error.message } as ErrorI)
       }
-
-      // eslint-disable-next-line
-      console.log(error)
     }
   }
   @Action
@@ -2392,14 +2385,12 @@ export class NewRequestModule extends VuexModule {
         throw new ApiError('Could not rollback or cancel the name request')
       }
     } catch (error) {
+      console.error('rollbackNameRequest() =', error) // eslint-disable-line no-console
       if (error instanceof ApiError) {
         await errorModule.setAppError({ id: 'rollback-name-request-api-error', error: error.message } as ErrorI)
       } else {
         await errorModule.setAppError({ id: 'rollback-name-request-error', error: error.message } as ErrorI)
       }
-
-      // eslint-disable-next-line
-      console.log(error)
     }
   }
   @Action

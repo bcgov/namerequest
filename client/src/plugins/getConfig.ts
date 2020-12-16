@@ -61,6 +61,9 @@ export function getConfig (): Promise<EnvConfigI> {
     const ldClientId: string = response.data[0]['LD_CLIENT_ID'];
     (<any>window).ldClientId = ldClientId
 
+    const sentryDsn: string = response.data[0]['SENTRY_DSN'];
+    (<any>window).sentryDsn = sentryDsn
+
     /**
      * authConfig is a workaround to fix the user settings call as it expects a URL with no trailing slash.
      * This will be removed when a fix is made to sbc-common-components to handle this
