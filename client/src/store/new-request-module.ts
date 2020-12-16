@@ -45,6 +45,7 @@ import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 import * as types from '@/store/types'
 import { NrAction } from '@/enums'
+import { featureFlags } from '@/plugins/featureFlags'
 
 const qs: any = querystring
 const ANALYSIS_TIMEOUT_MS = 3 * 60 * 1000 // 3 minutes
@@ -2561,7 +2562,9 @@ export class NewRequestModule extends VuexModule {
     if (this.location === 'BC') {
       if (this.nameIsEnglish && !this.isPersonsName && !this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
         if (['NEW', 'DBA', 'CHG'].includes(this.request_action_cd)) {
-          this.getNameAnalysis()
+          featureFlags.getFlag('disable-analysis')
+            ? this.mutateDisplayedComponent('SendToExamination')
+            : this.getNameAnalysis()
           return
         }
       }
@@ -2573,7 +2576,9 @@ export class NewRequestModule extends VuexModule {
           this.mutateDisplayedComponent('SendToExamination')
           return
         }
-        this.getNameAnalysisXPRO()
+        featureFlags.getFlag('disable-analysis')
+          ? this.mutateDisplayedComponent('SendToExamination')
+          : this.getNameAnalysisXPRO()
       }
     }
   }
