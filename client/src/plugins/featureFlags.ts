@@ -1,6 +1,6 @@
 import { initialize, LDFlagSet } from 'launchdarkly-js-client-sdk'
 
-const defaultFlagSet = { 'namerequest-ui-enabled': true }
+const defaultFlagSet = { 'namerequest-ui-enabled': true, 'disable-analysis': false }
 
 class FeatureFlags {
     private static instance: FeatureFlags
