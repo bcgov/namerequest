@@ -2,7 +2,7 @@
   <v-dialog v-model="showModal" max-width="40%">
     <v-card>
       <v-card-title class="d-flex justify-space-between">
-        <div>Error(s) occurred</div>
+        <div>Name Request Encountered an Error</div>
         <v-btn icon large class="dialog-close" @click="hideModal()">
           <v-icon>mdi-close</v-icon>
         </v-btn>
@@ -14,8 +14,7 @@
         </ul>
       </v-card-text>
 
-      <v-card-actions>
-        <v-spacer></v-spacer>
+      <v-card-actions class="justify-center">
         <v-btn text @click="hideModal()">Close</v-btn>
       </v-card-actions>
     </v-card>
