@@ -7,16 +7,17 @@
         {{ entityText }}
       </v-col>
     </template>
+
     <template v-slot:content>
       <v-row no-gutters>
         <NameInput :is-read-only="true" class="mb-n2"/>
       </v-row>
-      <v-row no-gutters class="text-center">
-        <v-col cols="12" class="h5 text-center">
-          <v-icon :class="actionConfig.class">
-            {{ actionConfig.icon }}
-          </v-icon>
-          <span :class="actionConfig.class" >{{ actionConfig.text }}</span>
+
+      <v-row no-gutters justify="center">
+        <v-col cols="auto" class="h5">
+          <v-icon class="action-icon" :class="actionConfig.class">{{ actionConfig.icon }}</v-icon>
+          &nbsp;
+          <span :class="actionConfig.class">{{ actionConfig.text }}</span>
         </v-col>
         <v-col cols="12" class="py-2">
           <p class="text-center copy-normal">
@@ -24,6 +25,7 @@
           </p>
         </v-col>
       </v-row>
+
       <v-row class="text-center justify-center mt-n1 mb-n2">
         <ReserveSubmit />
       </v-row>
@@ -69,3 +71,9 @@ export default class SendToExamination extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.action-icon {
+  margin-top: -2px;
+}
+</style>
