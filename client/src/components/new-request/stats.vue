@@ -50,6 +50,7 @@
 import newReqModule from '@/store/new-request-module'
 import { StatsI } from '@/models'
 import { Vue, Component } from 'vue-property-decorator'
+import { featureFlags } from '@/plugins/featureFlags'
 
 @Component({})
 export default class Stats extends Vue {
@@ -63,11 +64,21 @@ export default class Stats extends Vue {
   get autoApprovedCount (): string | number {
     return (this.stats || {}).auto_approved_count || '0'
   }
+  /** The regular wait time, in days. */
   get regularWaitTime (): string | number {
-    return (this.stats || {}).regular_wait_time || '-'
+    if (featureFlags.getFlag('hardcode-wait-times')) {
+      return 5
+    } else {
+      return (this.stats || {}).regular_wait_time || '-'
+    }
   }
+  /** The priority wait time, in hours. */
   get priorityWaitTime (): string | number {
-    return (this.stats || {}).priority_wait_time || '-'
+    if (featureFlags.getFlag('hardcode-wait-times')) {
+      return 24
+    } else {
+      return (this.stats || {}).priority_wait_time || '-'
+    }
   }
 }
 
