@@ -86,6 +86,8 @@ async function startVue () {
       store,
       render: h => h(App)
     }).$mount('#app')
+  } else {
+    alert('Sorry, the Name Request web app is temporarily disabled.')
   }
 }
 
