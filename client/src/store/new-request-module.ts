@@ -26,8 +26,13 @@ import {
 } from '@/models'
 
 import store from '@/store'
-import { bcMapping, xproMapping, $colinRequestActions, $colinRequestTypes, $xproColinRequestTypes }
-  from '@/store/list-data/request-action-mapping'
+import {
+  $colinRequestActions,
+  $colinRequestTypes,
+  $xproColinRequestTypes,
+  bcMapping,
+  xproMapping
+} from '@/store/list-data/request-action-mapping'
 import $canJurisdictions, { $mrasJurisdictions } from './list-data/canada-jurisdictions'
 import $designations from './list-data/designations'
 import $intJurisdictions from './list-data/intl-jurisdictions'
@@ -709,6 +714,7 @@ export class NewRequestModule extends VuexModule {
   mrasSearchInfoModalVisible: boolean = false
   mrasSearchResultCode: number = null
   name: string = ''
+  nameOriginal: string = ''
   nameChoices = {
     name1: '',
     designation1: '',
@@ -2425,7 +2431,7 @@ export class NewRequestModule extends VuexModule {
       source = null
     }
     if (destination === 'Tabs') {
-      this.mutateName('')
+      this.mutateName(this.nameOriginal)
       this.mutateUserCancelledAnalysis(false)
     }
     this.setActiveComponent(destination)
@@ -2524,6 +2530,7 @@ export class NewRequestModule extends VuexModule {
     if (this.errors.length > 0) {
       return
     }
+    this.mutateNameOriginal(name) // Set original name for reset baseline
     if (this.isXproMras) {
       this.mutateNRData({ key: 'xproJurisdiction', value: this.jurisdictionText })
       if (!this.noCorpNum) {
@@ -2606,9 +2613,9 @@ export class NewRequestModule extends VuexModule {
 
   /** Fetch the MRAS Profile and handle varied responses */
   @Action
-  async fetchMRASProfile (): Promise<any> {
+  fetchMRASProfile (): Promise<any> {
     let url = `mras-profile/${this.request_jurisdiction_cd}/${this.corpSearch}`
-    const response = await axios.get(url).then(response => {
+    return axios.get(url).then(response => {
       if (response?.status === 200) {
         return response?.data
       }
@@ -2618,7 +2625,6 @@ export class NewRequestModule extends VuexModule {
       this.mutateMrasSearchResult(error.response.status)
       this.mutateMrasSearchInfoModalVisible(true)
     })
-    return response
   }
 
   @Mutation
@@ -2776,6 +2782,10 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateName (name: string) {
     this.name = name
+  }
+  @Mutation
+  mutateNameOriginal (name: string) {
+    this.nameOriginal = name
   }
   @Mutation
   mutateNoCorpNum (noCorpNum: boolean) {
