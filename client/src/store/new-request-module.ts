@@ -1992,7 +1992,7 @@ export class NewRequestModule extends VuexModule {
   }
 
   @Action
-  addRequestActionComment (data) {
+  async addRequestActionComment (data) {
     try {
       let requestAction = this.requestActionOriginal || this.request_action_cd
       let { shortDesc } = this.requestActions.find(request => request.value === requestAction)
@@ -2007,7 +2007,7 @@ export class NewRequestModule extends VuexModule {
         return data
       }
       // by here we know there is some text in additionalInfo but it does not contain the exact msg we must add
-      // so we check if there is a previous requet_action message which no longer matches msg because we are editing
+      // so we check if there is a previous request_action message which no longer matches msg because we are editing
       let allShortDescs = this.requestActions.map(request => `*** ${request.shortDesc} ***`)
       if (allShortDescs.some(desc => data['additionalInfo'].includes(desc))) {
         let desc = allShortDescs.find(sd => data['additionalInfo'].includes(sd))
@@ -2019,7 +2019,10 @@ export class NewRequestModule extends VuexModule {
       return data
     } catch (error) {
       console.error('addRequestActionComment() =', error) // eslint-disable-line no-console
-      return data
+      await errorModule.setAppError(
+        { id: 'add-request-action-error', error: 'An error occurred when building the name request' }
+      )
+      return null
     }
   }
 
@@ -2180,9 +2183,9 @@ export class NewRequestModule extends VuexModule {
     try {
       const { nrId } = this
       const nr = this.editNameReservation
-      const requestData = await this.addRequestActionComment(nr)
+      const requestData = nr && await this.addRequestActionComment(nr)
 
-      const response = await axios.patch(`/namerequests/${nrId}/edit`, requestData, {
+      const response = requestData && await axios.patch(`/namerequests/${nrId}/edit`, requestData, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -2253,9 +2256,9 @@ export class NewRequestModule extends VuexModule {
           break
       }
 
-      const requestData: any = await this.addRequestActionComment(data)
+      const requestData: any = data && await this.addRequestActionComment(data)
       try {
-        const response: AxiosResponse = await axios.post(`/namerequests`, requestData, {
+        const response: AxiosResponse = requestData && await axios.post(`/namerequests`, requestData, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -2271,6 +2274,7 @@ export class NewRequestModule extends VuexModule {
       } catch (err) {
         console.error('postNameRequests() =', err) // eslint-disable-line no-console
         await handleApiError(err, 'Could not create the name request')
+        return false
       }
     } catch (error) {
       console.error('postNameRequests() =', error) // eslint-disable-line no-console
@@ -2307,10 +2311,10 @@ export class NewRequestModule extends VuexModule {
         data['corpNum'] = this.corpNum
       }
 
-      const requestData = await this.addRequestActionComment(data)
+      const requestData = data && await this.addRequestActionComment(data)
 
       try {
-        const response = await axios.put(`/namerequests/${nrId}`, requestData, {
+        const response = requestData && await axios.put(`/namerequests/${nrId}`, requestData, {
           headers: {
             'Content-Type': 'application/json'
           }
