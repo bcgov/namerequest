@@ -31,6 +31,7 @@
         <v-col cols="5">
           <v-text-field :messages="messages['phone']"
                         :value="applicant.phoneNumber"
+                        :rules="phoneFaxRules"
                         @blur="messages = {}"
                         @focus="messages['phone'] = 'Phone Number (Optional)'"
                         @input="mutateApplicant('phoneNumber', $event)"
@@ -41,6 +42,7 @@
         <v-col cols="5">
           <v-text-field :messages="messages['fax']"
                         :value="applicant.faxNumber"
+                        :rules="phoneFaxRules"
                         @blur="messages = {}"
                         @focus="messages['fax'] = 'Fax Number (Optional)'"
                         @input="mutateApplicant('faxNumber', $event)"
@@ -91,6 +93,7 @@
         <v-col cols="5" align-self="start">
           <v-textarea :messages="messages['additional']"
                       :value="nrData.additionalInfo"
+                      :rules="additionalInfoRules"
                       @blur="messages = {}"
                       @focus="messages['additional'] = 'Additional Info'"
                       @input="mutateNRData('additionalInfo', $event)"
@@ -126,6 +129,7 @@
         <v-col cols="5">
           <v-text-field :messages="messages['tradeMark']"
                         :value="nrData.tradeMark"
+                        :rules="trademarkRules"
                         @blur="messages = {}"
                         @focus="messages['tradeMark'] = 'Registered Trademark (Optional)'"
                         @input="mutateNRData('tradeMark', $event)"
@@ -176,6 +180,15 @@ export default class ApplicantInfo3 extends Vue {
   emailRules = [
     v => !!v || 'Required field',
     v => /.+@.+\..+/.test(v) || 'Not a valid email'
+  ]
+  additionalInfoRules = [
+    v => (!v || v.length <= 120) || 'Cannot exceed 120 characters'
+  ]
+  phoneFaxRules = [
+    v => (!v || v.length <= 30) || 'Cannot exceed 30 characters'
+  ]
+  trademarkRules = [
+    v => (!v || v.length <= 100) || 'Cannot exceed 100 characters'
   ]
   error: boolean = false
   isValid: boolean = false
