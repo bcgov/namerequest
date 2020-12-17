@@ -1993,7 +1993,6 @@ export class NewRequestModule extends VuexModule {
 
   @Action
   async addRequestActionComment (data) {
-    data = undefined
     try {
       let requestAction = this.requestActionOriginal || this.request_action_cd
       let { shortDesc } = this.requestActions.find(request => request.value === requestAction)
