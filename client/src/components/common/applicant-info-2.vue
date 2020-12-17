@@ -26,6 +26,7 @@
           <label for="faxNumber" class="hidden">Phone Number (Optional)</label>
           <v-text-field :messages="messages['phone']"
                         :value="applicant.phoneNumber"
+                        :rules="phoneFaxRules"
                         @blur="messages = {}"
                         @input="mutateApplicant('phoneNumber', $event)"
                         id="phoneNumber"
@@ -39,6 +40,7 @@
           <label for="faxNumber" class="hidden">Fax Number (Optional)</label>
           <v-text-field :messages="messages['fax']"
                         :value="applicant.faxNumber"
+                        :rules="phoneFaxRules"
                         @blur="messages = {}"
                         @input="mutateApplicant('faxNumber', $event)"
                         id="faxNumber"
@@ -70,6 +72,7 @@
           <label for="additionalInfo" class="hidden">Additional Business Info (Optional)</label>
           <v-textarea :messages="messages['additional']"
                       :value="nrData.additionalInfo"
+                      :rules="additionalInfoRules"
                       @blur="messages = {}"
                       @input="mutateNRData('additionalInfo', $event)"
                       id="additionalInfo"
@@ -107,6 +110,7 @@
           <label for="tradeMark" class="hidden">Registered Trademark (Optional)</label>
           <v-text-field :messages="messages['tradeMark']"
                         :value="nrData.tradeMark"
+                        :rules="trademarkRules"
                         @blur="messages = {}"
                         @input="mutateNRData('tradeMark', $event)"
                         id="tradeMark"
@@ -162,6 +166,15 @@ export default class ApplicantInfo2 extends Vue {
   emailRules = [
     v => !!v || 'Required field',
     v => /.+@.+\..+/.test(v) || 'Not a valid email'
+  ]
+  additionalInfoRules = [
+    v => (!v || v.length <= 120) || 'Cannot exceed 120 characters'
+  ]
+  phoneFaxRules = [
+    v => (!v || v.length <= 30) || 'Cannot exceed 30 characters'
+  ]
+  trademarkRules = [
+    v => (!v || v.length <= 100) || 'Cannot exceed 100 characters'
   ]
   error: boolean = false
   isEditingCorpNum: boolean = false
