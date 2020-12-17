@@ -25,6 +25,13 @@
         :redirect-on-logout="getNameRequestUrl"
         :show-actions="false"
       />
+      <v-alert
+        tile dense
+        type="warning"
+        class="mb-0 text-center colour-dk-text"
+        v-if="bannerText"
+        v-html="bannerText"
+      />
       <router-view />
       <sbc-footer />
     </div>
@@ -80,6 +87,7 @@ import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components
 
 import { Component, Mixins } from 'vue-property-decorator'
 import { mapState, mapGetters } from 'vuex'
+import { featureFlags } from '@/plugins/featureFlags'
 
 import TimeoutModal from '@/components/session-timer/timeout-modal.vue'
 import SessionTimerMixin from '@/components/session-timer/session-timer-mixin'
@@ -128,6 +136,12 @@ export default class App extends Mixins(SessionTimerMixin) {
   checkInOnExpire: boolean
   readonly getNameRequestUrl!: string
   private showSpinner = false
+
+  get bannerText (): string | null {
+    const bannerText: string = featureFlags.getFlag('banner-text')
+    // remove spaces so that " " becomes falsy
+    return bannerText?.trim()
+  }
 
   get showAuthModal () {
     return newRequestModule.incorporateLoginModalVisible
