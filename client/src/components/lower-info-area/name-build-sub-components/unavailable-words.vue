@@ -6,7 +6,7 @@
         <v-col cols="12" sm="6">
           <v-list-item
                   v-for="(item, i) in listItems1"
-                  :key="i"
+                  :key="'list1-' + i"
                   class="unavailable-words-list-item"
           >
             <p class="mb-0" v-html="item"></p>
@@ -15,7 +15,7 @@
         <v-col cols="12" sm="6">
           <v-list-item
                   v-for="(item, i) in listItems2"
-                  :key="i"
+                  :key="'list2-' + i"
                   class="unavailable-words-list-item"
           >
             <p class="mb-0" v-html="item"></p>
