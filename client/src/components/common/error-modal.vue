@@ -2,14 +2,11 @@
   <v-dialog v-model="showModal">
     <v-card>
       <v-card-title class="d-flex justify-space-between">
-        <div>Name Request Encountered an Error</div>
-        <v-btn icon large class="dialog-close" @click="hideModal()">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
+        <div>Name Request encountered an error</div>
       </v-card-title>
 
       <v-card-text class="copy-normal">
-        <ul v-if="hasErrors">
+        <ul v-if="hasErrors" class="ml-n1">
           <li v-for="error in errors" :key="error.id" v-html="error.error" />
         </ul>
       </v-card-text>

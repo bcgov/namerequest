@@ -1931,6 +1931,8 @@ export class NewRequestModule extends VuexModule {
    */
   @Action
   async confirmAction (action: string): Promise<boolean> {
+    // eslint-disable-next-line no-console
+    console.log('NetWork Call 1 ')
     try {
       const nrData = await this.getNameRequest(this.nr.id)
       if (!nrData) throw new Error('Got error from getNameRequest()')
@@ -2007,7 +2009,7 @@ export class NewRequestModule extends VuexModule {
         return data
       }
       // by here we know there is some text in additionalInfo but it does not contain the exact msg we must add
-      // so we check if there is a previous requet_action message which no longer matches msg because we are editing
+      // so we check if there is a previous request_action message which no longer matches msg because we are editing
       let allShortDescs = this.requestActions.map(request => `*** ${request.shortDesc} ***`)
       if (allShortDescs.some(desc => data['additionalInfo'].includes(desc))) {
         let desc = allShortDescs.find(sd => data['additionalInfo'].includes(sd))
@@ -2019,7 +2021,7 @@ export class NewRequestModule extends VuexModule {
       return data
     } catch (error) {
       console.error('addRequestActionComment() =', error) // eslint-disable-line no-console
-      return data
+      throw new Error(`addRequestActionComment() = ${error}`)
     }
   }
 
@@ -2271,6 +2273,7 @@ export class NewRequestModule extends VuexModule {
       } catch (err) {
         console.error('postNameRequests() =', err) // eslint-disable-line no-console
         await handleApiError(err, 'Could not create the name request')
+        return false
       }
     } catch (error) {
       console.error('postNameRequests() =', error) // eslint-disable-line no-console
