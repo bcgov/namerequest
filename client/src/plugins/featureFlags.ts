@@ -1,6 +1,11 @@
 import { initialize, LDFlagSet } from 'launchdarkly-js-client-sdk'
 
-const defaultFlagSet = { 'namerequest-ui-enabled': true }
+const defaultFlagSet = {
+  'namerequest-ui-enabled': true,
+  'disable-analysis': false,
+  'hardcode-wait-times': false,
+  'banner-text': ''
+}
 
 class FeatureFlags {
     private static instance: FeatureFlags
@@ -49,11 +54,11 @@ export const initLDClient = () : Promise<any> => {
   return new Promise((resolve) => {
     ldClient.on('initialized', () => {
       featureFlags.setFlags(ldClient.allFlags())
-      resolve()
+      resolve(null)
     })
     ldClient.on('failed', () => {
       featureFlags.setFlags(defaultFlagSet)
-      resolve()
+      resolve(null)
     })
   })
 }

@@ -50,27 +50,42 @@
 import newReqModule from '@/store/new-request-module'
 import { StatsI } from '@/models'
 import { Vue, Component } from 'vue-property-decorator'
+import { featureFlags } from '@/plugins/featureFlags'
 
 @Component({})
 export default class Stats extends Vue {
   created (): void {
-    newReqModule.getStats()
+    if (!featureFlags.getFlag('hardcode-wait-times')) {
+      newReqModule.getStats()
+    }
   }
 
   get stats (): StatsI {
     return newReqModule.stats
   }
+
   get autoApprovedCount (): string | number {
-    return (this.stats || {}).auto_approved_count || '0'
+    return (this.stats?.auto_approved_count || '0')
   }
+
+  /** The regular wait time, in days. */
   get regularWaitTime (): string | number {
-    return (this.stats || {}).regular_wait_time || '-'
+    if (featureFlags.getFlag('hardcode-wait-times')) {
+      return 5
+    } else {
+      return (this.stats?.regular_wait_time || '-')
+    }
   }
+
+  /** The priority wait time, in hours. */
   get priorityWaitTime (): string | number {
-    return (this.stats || {}).priority_wait_time || '-'
+    if (featureFlags.getFlag('hardcode-wait-times')) {
+      return 24
+    } else {
+      return (this.stats?.priority_wait_time || '-')
+    }
   }
 }
-
 </script>
 
 <style lang="sass" scoped>
@@ -117,5 +132,4 @@ export default class Stats extends Vue {
   padding: 15px 0 0 0 !important
   text-align: center
   max-width: 160px
-
 </style>

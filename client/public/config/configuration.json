@@ -10,6 +10,7 @@
     "NAME_REQUEST_URL": "https://dev.bcregistry.ca/namerequest",
     "NRO_URL": "https://dev.bcregistrynames.gov.bc.ca/nro/",
     "LD_CLIENT_ID": "",
+    "SENTRY_DSN": "",
     "NR_COMPLETION_TIMER_NAME": "nrCompletionTimer",
     "NR_COMPLETION_TIMEOUT_MS": 0,
     "DEV_NR_COMPLETION_TIMEOUT_MS": 0,

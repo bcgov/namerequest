@@ -149,53 +149,49 @@
 
     <!-- Person name and english checkboxes, render when location is NOT XPro Canada -->
     <v-row v-if="!isXproMras" no-gutters>
-      <v-col cols="4">
-        <v-tooltip top content-class="top-tooltip" transition="fade-transition" open-delay="200">
-          <template v-slot:activator="{ on }">
-            <v-checkbox
-                    v-model="isPersonsName"
-                    id="person-checkbox"
-                    class="copy-small mt-0 pt-0"
-                    hide-details
-                    v-slot:label v-on="on">
-              <template>
-                <span v-on="on" class="copy-small">Name is a person's name</span>
-              </template>
-            </v-checkbox>
-          </template>
-          <p>Check this box if you are...</p>
-          <ul>
-            <li>Incorporating under your own name (eg. DR. JOE SMITH INC.)</li>
-            <li>The name contains one or more names. (eg. BLAKE, CHAN &amp; DOUGLAS INC.)</li>
-          </ul>
-        </v-tooltip>
-      </v-col>
-      <v-col cols="4">
-        <v-tooltip top content-class="top-tooltip" transition="fade-transition" open-delay="200">
-          <template v-slot:activator="{ on }">
-            <v-checkbox
-                    v-model="nameIsEnglish"
-                    id="name-checkbox"
-                    :false-value="true"
-                    :true-value="false"
-                    class="copy-small mt-0 pt-0"
-                    hide-details
-                    v-slot:label v-on="on">
-              <template>
-                <span v-on="on" class="copy-small">Name contains no English words</span>
-              </template>
-            </v-checkbox>
-          </template>
-          <p>This refers to the language of the words in your name.</p>
-          <ul>
-            <li>Check this box if your name is written <b>entirely</b> in another language and does <b>not</b> contain
-              any English</li>
-            <li>Leave this box unchecked if your name contains <b>only</b> English or a mix of English and another
-              language.</li>
-          </ul>
-        </v-tooltip>
-      </v-col>
-      <v-col cols="4" />
+      <v-tooltip top content-class="top-tooltip" transition="fade-transition" open-delay="200">
+        <template v-slot:activator="{ on }">
+          <v-checkbox
+                  v-model="isPersonsName"
+                  id="person-checkbox"
+                  class="copy-small mt-0 pt-0"
+                  hide-details
+                  v-slot:label v-on="on">
+            <template>
+              <span v-on="on" class="copy-small">Name is a person's name</span>
+            </template>
+          </v-checkbox>
+        </template>
+        <p>Check this box if you are...</p>
+        <ul>
+          <li>Incorporating under your own name (eg. DR. JOE SMITH INC.)</li>
+          <li>The name contains one or more names. (eg. BLAKE, CHAN &amp; DOUGLAS INC.)</li>
+        </ul>
+      </v-tooltip>
+
+      <v-tooltip top content-class="top-tooltip" transition="fade-transition" open-delay="200">
+        <template v-slot:activator="{ on }">
+          <v-checkbox
+                  v-model="nameIsEnglish"
+                  id="name-checkbox"
+                  :false-value="true"
+                  :true-value="false"
+                  class="copy-small mt-0 pt-0 ml-4"
+                  hide-details
+                  v-slot:label v-on="on">
+            <template>
+              <span v-on="on" class="copy-small">Name contains no English words</span>
+            </template>
+          </v-checkbox>
+        </template>
+        <p>This refers to the language of the words in your name.</p>
+        <ul>
+          <li>Check this box if your name is written <b>entirely</b> in another language and does <b>not</b> contain
+            any English</li>
+          <li>Leave this box unchecked if your name contains <b>only</b> English or a mix of English and another
+            language.</li>
+        </ul>
+      </v-tooltip>
     </v-row>
 
     <!-- Corporate number checkbox, only for XPro Canadian Locations -->
@@ -284,7 +280,7 @@ export default class NewSearch extends Vue {
     'CHG'
   ]
   entityBlurbs (entity_type_cd: string) {
-    return newReqModule.entityBlurbs.find(type => type.value === entity_type_cd)?.blurbs
+    return newReqModule.entityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || ''
   }
   get isScreenLg () {
     return this.$vuetify.breakpoint.lgAndUp

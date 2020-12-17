@@ -8,13 +8,13 @@
             height="64"
             centered
             grow>
-      <v-tab ripple="false"
+      <v-tab :ripple="false"
               id="new-tab"
               class="upper-left-border"
               tabindex="0">
         <span :class="tabNumber === 0 ? 'h5' : 'h5-lt'">New Name Search</span>
       </v-tab>
-      <v-tab ripple="false"
+      <v-tab :ripple="false"
               id="existing-tab"
               class="upper-right-border"
               tabindex="1">

@@ -44,11 +44,10 @@
               <v-row no-gutters justify="center"
                      class="mt-n4"
                      :key="headerProps.text">
-                <v-col cols="auto" :class="headerProps.class" class="h4">
-                  <v-icon :class="headerProps.class">
-                    {{ headerProps.icon }}
-                  </v-icon>
-                  {{ headerProps.text }}
+                <v-col cols="auto" class="h4">
+                  <v-icon class="header-icon" :class="headerProps.class">{{ headerProps.icon }}</v-icon>
+                  &nbsp;
+                  <span :class="headerProps.class">{{ headerProps.text }}</span>
                 </v-col>
               </v-row>
             </transition>
@@ -215,41 +214,54 @@ export default class AnalyzeResults extends Vue {
   created () {
     this.originalName = newReqModule.name
   }
+
   mounted () {
     this.$root.$on('updatecontents', (name) => { this.updateContents(name) })
     this.$root.$on('show-original-name', () => { this.name = this.originalName })
     document.addEventListener('keydown', this.handleEnterKey)
-    this.$nextTick(function () {
+
+    this.$nextTick(() => {
+      // initialize editor contents
       this.quill.setContents([])
-      let ops: QuillOpsI[] = this.getBaseNameOps()
-      if (!this.hasNameActions) {
-        this.quill.setContents(ops)
-        this.originalOps = ops
-        return
-      }
-      let { length } = this.chunkedName
-      this.nameActions.forEach(action => {
-        if (action.index < length) {
-          if (action.type === 'brackets') {
-            let op: QuillOpsI = { insert: ` [${action.message}]`, attributes: { color: 'red' } }
-            if (action.position === 'start') {
-              ops.splice(action.index, 0, op)
-            } else if (action.position === 'end') {
-              ops.splice(action.index + 1, 0, op)
-            }
-          }
-          if (action.type === 'highlight') {
-            ops[action.index] = { ...ops[action.index], attributes: { color: 'red' } }
-          }
-          if (action.type === 'strike') {
-            ops[action.index] = { ...ops[action.index], attributes: { color: 'red', strike: true } }
-          }
-        }
-      })
-      this.quill.setContents(ops)
-      this.originalOps = ops
+      // load first issue
+      this.loadNameActions()
     })
   }
+
+  // reload name actions when index changes
+  @Watch('issueIndex')
+  loadNameActions () {
+    let ops: QuillOpsI[] = this.getBaseNameOps()
+
+    if (!this.hasNameActions) {
+      this.quill.setContents(ops)
+      this.originalOps = ops
+      return
+    }
+
+    let { length } = this.chunkedName
+    this.nameActions.forEach(action => {
+      if (action.index < length) {
+        if (action.type === 'brackets') {
+          let op: QuillOpsI = { insert: ` [${action.message}]`, attributes: { color: 'red' } }
+          if (action.position === 'start') {
+            ops.splice(action.index, 0, op)
+          } else if (action.position === 'end') {
+            ops.splice(action.index + 1, 0, op)
+          }
+        }
+        if (action.type === 'highlight') {
+          ops[action.index] = { ...ops[action.index], attributes: { color: 'red' } }
+        }
+        if (action.type === 'strike') {
+          ops[action.index] = { ...ops[action.index], attributes: { color: 'red', strike: true } }
+        }
+      }
+    })
+    this.quill.setContents(ops)
+    this.originalOps = ops
+  }
+
   beforeDestroy () {
     document.removeEventListener('keydown', this.handleEnterKey)
   }
@@ -525,7 +537,8 @@ export default class AnalyzeResults extends Vue {
   }
   get headerText () {
     let issues = this.json.issues
-    return issues.length === 1 && issues[0].issue_type === 'excess_words' ? 'Further Review Required'
+    return (issues.length === 1 && issues[0].issue_type === 'excess_words')
+      ? 'Further Review Required'
       : 'Further Action Required'
   }
   get isApproved () {
@@ -765,12 +778,14 @@ export default class AnalyzeResults extends Vue {
     }
   }
 }
-
 </script>
 
 <style scoped lang="scss">
 @import '@/assets/scss/theme.scss';
 
+.header-icon {
+  margin-top: -2px;
+}
 #analyze-results-container {
   max-width: 1140px;
 }
