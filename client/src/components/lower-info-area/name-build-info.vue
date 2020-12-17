@@ -5,7 +5,7 @@
       <v-col cols="12" sm="6" class="my-9">
         <v-card class="my-9 ml-6 mr-0" flat>
           <v-list class="name-build-list">
-            <v-list-item-group v-model="itemIndex" color="primary">
+            <v-list-item-group color="primary">
               <v-list-item
                       v-for="(item, i) in items"
                       :key="i"

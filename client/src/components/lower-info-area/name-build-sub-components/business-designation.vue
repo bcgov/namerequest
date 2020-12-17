@@ -4,7 +4,7 @@
     <v-list class="business-designation-list">
       <v-row>
         <v-col cols="12" sm="6">
-          <v-list-item-group v-model="itemIndex" color="primary">
+          <v-list-item-group color="primary">
             <v-list-item
                     v-for="(item, i) in items"
                     :key="i"
@@ -80,11 +80,10 @@ export default class BusinessDesignation extends Vue {
   ]
 
   /** Check if current tab is active */
-  private isActiveTab (index: number) {
-    return this.itemIndex === index
+  private isActiveTab (index: number): boolean {
+    return (this.itemIndex === index)
   }
 }
-
 </script>
 
 <style scoped lang="sass">
@@ -116,5 +115,4 @@ export default class BusinessDesignation extends Vue {
       .business-designation-list-item-title-active
         font-weight: bolder
         text-decoration: none
-
 </style>
