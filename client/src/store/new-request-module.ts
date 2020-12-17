@@ -1931,8 +1931,6 @@ export class NewRequestModule extends VuexModule {
    */
   @Action
   async confirmAction (action: string): Promise<boolean> {
-    // eslint-disable-next-line no-console
-    console.log('NetWork Call 1 ')
     try {
       const nrData = await this.getNameRequest(this.nr.id)
       if (!nrData) throw new Error('Got error from getNameRequest()')
