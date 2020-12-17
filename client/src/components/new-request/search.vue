@@ -280,7 +280,7 @@ export default class NewSearch extends Vue {
     'CHG'
   ]
   entityBlurbs (entity_type_cd: string) {
-    return newReqModule.entityBlurbs.find(type => type.value === entity_type_cd)?.blurbs
+    return newReqModule.entityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || ''
   }
   get isScreenLg () {
     return this.$vuetify.breakpoint.lgAndUp
