@@ -539,9 +539,6 @@ export default class ApplicantInfo1 extends Vue {
     newReqModule.getAddressDetails(id)
   }
   updateApplicant (key, value) {
-    // eslint-disable-next-line no-console
-    console.log('inside updateApplicant')
-    // this.clearValidation()
     newReqModule.updateApplicantDetails({ key, value })
     if (key === 'addrLine1') {
       this.showAddressMenu = true
