@@ -539,6 +539,7 @@ export default class ApplicantInfo1 extends Vue {
     newReqModule.getAddressDetails(id)
   }
   updateApplicant (key, value) {
+    this.clearValidation()
     newReqModule.updateApplicantDetails({ key, value })
     if (key === 'addrLine1') {
       this.showAddressMenu = true
