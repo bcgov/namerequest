@@ -64,6 +64,15 @@ export function getConfig (): Promise<EnvConfigI> {
     const sentryDsn: string = response.data[0]['SENTRY_DSN'];
     (<any>window).sentryDsn = sentryDsn
 
+    const authTokenUrl: string = response.data[0]['AUTH_TOKEN_URL'];
+    (<any>window).authTokenUrl = authTokenUrl
+
+    const quickSearchPublicId: string = response.data[0]['QUICK_SEARCH_PUBLIC_ID'];
+    (<any>window).quickSearchPublicId = quickSearchPublicId
+
+    const quickSearchPublicSecret: string = response.data[0]['QUICK_SEARCH_PUBLIC_SECRET'];
+    (<any>window).quickSearchPublicSecret = quickSearchPublicSecret
+
     /**
      * authConfig is a workaround to fix the user settings call as it expects a URL with no trailing slash.
      * This will be removed when a fix is made to sbc-common-components to handle this

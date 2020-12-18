@@ -135,6 +135,7 @@ export class NewRequestModule extends VuexModule {
   addressSuggestions: object | null = null
   allowAutoApprove: boolean = false
   analysisJSON: AnalysisJSONI | null = null
+  analyzePending: Boolean = false
   applicant: ApplicantI = {
     addrLine1: '',
     addrLine2: '',
@@ -737,6 +738,8 @@ export class NewRequestModule extends VuexModule {
   pickEntityModalVisible: boolean = false
   pickRequestTypeModalVisible: boolean = false
   priorityRequest: boolean = false
+  quickSearch: boolean = true
+  quickSearchNames: Array<object> = []
   request_action_cd: string = 'NEW'
   request_jurisdiction_cd: string = ''
   requestExaminationOrProvideConsent = {
@@ -1722,6 +1725,8 @@ export class NewRequestModule extends VuexModule {
      "ExistingRequestDisplay",
      "ExistingRequestEdit",
      "LowerContainer",
+     "QuickSearchPending",
+     "QuickSearchResults"
      "SearchPending",
      "Stats",
      "Success"
@@ -1818,6 +1823,7 @@ export class NewRequestModule extends VuexModule {
   @Action
   async getNameAnalysis () {
     try {
+      this.mutateAnalyzePending(true)
       this.mutateDisplayedComponent('AnalyzePending')
       this.resetRequestExaminationOrProvideConsent()
 
@@ -1836,19 +1842,21 @@ export class NewRequestModule extends VuexModule {
         cancelToken: source.token,
         timeout: ANALYSIS_TIMEOUT_MS
       })
-
-      const json = resp.data
-      this.mutateAnalysisJSON(json)
-      if (Array.isArray(json.issues) && json.issues.length > 0) {
-        let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
-        if (corpConflict && Array.isArray(corpConflict.conflicts) && corpConflict.conflicts.length > 0) {
-          let firstConflict = corpConflict.conflicts[0]
-          if (firstConflict.id) {
-            this.mutateConflictId(firstConflict.id)
+      if (this.analyzePending) {
+        const json = resp.data
+        this.mutateAnalysisJSON(json)
+        if (Array.isArray(json.issues) && json.issues.length > 0) {
+          let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
+          if (corpConflict && Array.isArray(corpConflict.conflicts) && corpConflict.conflicts.length > 0) {
+            let firstConflict = corpConflict.conflicts[0]
+            if (firstConflict.id) {
+              this.mutateConflictId(firstConflict.id)
+            }
           }
         }
+        this.mutateAnalyzePending(false)
+        this.mutateDisplayedComponent('AnalyzeResults')
       }
-      this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
       console.error('getNameAnalysis() =', error) // eslint-disable-line no-console
       // FUTURE: fix error handling in case of network error (#5898)
@@ -1869,6 +1877,7 @@ export class NewRequestModule extends VuexModule {
   @Action
   async getNameAnalysisXPRO () {
     try {
+      this.mutateAnalyzePending(true)
       this.mutateDisplayedComponent('AnalyzePending')
       this.resetRequestExaminationOrProvideConsent()
 
@@ -1887,19 +1896,21 @@ export class NewRequestModule extends VuexModule {
         cancelToken: source.token,
         timeout: ANALYSIS_TIMEOUT_MS
       })
-
-      const json = resp.data
-      this.mutateAnalysisJSON(json)
-      if (Array.isArray(json.issues) && json.issues.length > 0) {
-        let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
-        if (corpConflict && Array.isArray(corpConflict.conflicts) && corpConflict.conflicts.length > 0) {
-          let firstConflict = corpConflict.conflicts[0]
-          if (firstConflict.id) {
-            this.mutateConflictId(firstConflict.id)
+      if (this.analyzePending) {
+        const json = resp.data
+        this.mutateAnalysisJSON(json)
+        if (Array.isArray(json.issues) && json.issues.length > 0) {
+          let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
+          if (corpConflict && Array.isArray(corpConflict.conflicts) && corpConflict.conflicts.length > 0) {
+            let firstConflict = corpConflict.conflicts[0]
+            if (firstConflict.id) {
+              this.mutateConflictId(firstConflict.id)
+            }
           }
         }
+        this.mutateAnalyzePending(false)
+        this.mutateDisplayedComponent('AnalyzeResults')
       }
-      this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
       console.error('getNameAnalysisXPRO() =', error) // eslint-disable-line no-console
       // FUTURE: fix error handling in case of network error (#5898)
@@ -2427,9 +2438,12 @@ export class NewRequestModule extends VuexModule {
     this.resetNameChoices()
     this.mutateNameRequest({})
     this.mutateNameAnalysisTimedOut(false)
+    this.mutateQuickSearch(true)
+    this.mutateAnalyzePending(false)
   }
   @Action
   cancelAnalyzeName (destination: string) {
+    this.mutateAnalyzePending(false)
     if (source && source.cancel) {
       source.cancel()
       source = null
@@ -2504,8 +2518,103 @@ export class NewRequestModule extends VuexModule {
     }
     this.mutateDisplayedComponent('ExistingRequestEdit')
   }
+  @Action
+  async parseExactNames (json: { names: [string] }) {
+    let nameObjs = json.names
+    let names = []
+    for (let i = 0; i < nameObjs.length; i++) {
+      names.push({ name: `${nameObjs[i]['name']}`, type: 'exact' })
+    }
+    return names
+  }
+  @Action
+  async parseSynonymNames (json: { names: [string], exactNames: [{ name: string, type: string }] }) {
+    let duplicateNames = []
+    for (let i = 0; i < json.exactNames.length; i++) {
+      duplicateNames.push(json.exactNames[i].name)
+    }
+    let nameObjs = json.names
+    let names = []
+    for (let i = 0; i < nameObjs.length; i++) {
+      if (nameObjs[i]['name_info']['id']) {
+        let name = nameObjs[i]['name_info']['name']
+        if (!duplicateNames.includes(name)) {
+          names.push({ name: name, type: 'synonym' })
+        }
+      }
+    }
+    return names
+  }
+  @Action
+  async getQuickSearch (cleanedName: {exactMatch: string, synonymMatch: string}) {
+    try {
+      this.mutateDisplayedComponent('QuickSearchPending')
+      let encodedAuth = btoa(`${window['quickSearchPublicId']}:${window['quickSearchPublicSecret']}`)
+      const tokenResp = await axios.post(window['authTokenUrl'], 'grant_type=client_credentials', {
+        headers: { Authorization: `Basic ${encodedAuth}`, 'content-type': 'application/x-www-form-urlencoded' }
+      })
+      let token = tokenResp.data.access_token
+      const exactResp = await axios.get('/exact-match?query=' + cleanedName.exactMatch, {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+      })
+      const synonymResp = await axios.get('/requests/synonymbucket/' + cleanedName.synonymMatch + '/*', {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+      })
+
+      const exactNames = await this.parseExactNames(exactResp.data)
+      // pass in exactNames so that we can check for duplicates
+      synonymResp.data.exactNames = exactNames
+      const synonymNames = await this.parseSynonymNames(synonymResp.data)
+      this.mutateQuickSearchNames(exactNames.concat(synonymNames))
+      // check if they skipped
+      if (this.quickSearch) {
+        this.mutateDisplayedComponent('QuickSearchResults')
+      }
+    } catch (error) {
+      // handle silently and move on to detailed search
+      console.error('quick search failed: ', error) // eslint-disable-line no-console
+      this.mutateQuickSearch(false)
+      this.startAnalyzeName()
+    }
+  }
+  @Action
+  async startQuickSearch () {
+    if (this.name) {
+      let name = this.name
+      let exactMatchName = name.replace(' \/', '\/')
+        .replace(/(^|\s+)(\$+(\s|$)+)+/g, '$1DOLLAR$3')
+        .replace(/(^|\s+)(¢+(\s|$)+)+/g, '$1CENT$3')
+        .replace(/\$/g, 'S')
+        .replace(/¢/g, 'C')
+        .replace(/\\/g, '')
+        .replace(/\//g, '')
+        .replace(/(`|~|!|\||\(|\)|\[|\]|\{|\}|:|"|\^|#|%|\?)/g, '')
+        .replace(/[\+\-]{2,}/g, '')
+        .replace(/\s[\+\-]$/, '')
+      exactMatchName = exactMatchName.substring(0, 1) === '+' ? exactMatchName.substring(1) : exactMatchName
+      exactMatchName = encodeURIComponent(exactMatchName)
+
+      let synonymsName = name.replace(/\//g, ' ')
+        .replace(/\\/g, ' ')
+        .replace(/&/g, ' ')
+        .replace(/\+/g, ' ')
+        .replace(/\-/g, ' ')
+        .replace(/(^| )(\$+(\s|$)+)+/g, '$1DOLLAR$3')
+        .replace(/(^| )(¢+(\s|$)+)+/g, '$1CENT$3')
+        .replace(/\$/g, 'S')
+        .replace(/¢/g, 'C')
+        .replace(/(`|~|!|\||\(|\)|\[|\]|\{|\}|:|"|\^|#|%|\?|,)/g, '')
+
+      this.getQuickSearch({ 'exactMatch': exactMatchName, 'synonymMatch': synonymsName })
+    }
+    return
+  }
   @Action({ rawError: true })
   async startAnalyzeName () {
+    if (this.quickSearch) {
+      this.startQuickSearch()
+      return
+    }
     this.resetAnalyzeName()
     this.mutateUserCancelledAnalysis(false)
     let name
@@ -3047,6 +3156,18 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateUserCancelledAnalysis (value: boolean) {
     this.userCancelledAnalysis = value
+  }
+  @Mutation
+  mutateQuickSearch (value: boolean) {
+    this.quickSearch = value
+  }
+  @Mutation
+  mutateQuickSearchNames (value: Array<object>) {
+    this.quickSearchNames = value
+  }
+  @Mutation
+  mutateAnalyzePending (value: Boolean) {
+    this.analyzePending = value
   }
 }
 
