@@ -292,12 +292,6 @@ export default class ApplicantInfo2 extends Vue {
       await paymentModule.togglePaymentModal(true)
     }
   }
-  clearValidation () {
-    if (this.$refs.step2 as Vue) {
-      (this.$refs.step2 as any).resetValidation()
-    }
-    this.corpNumError = ''
-  }
   async getCorpNum (num) {
     this.isEditingCorpNum = false
     if (!num) {
@@ -329,9 +323,6 @@ export default class ApplicantInfo2 extends Vue {
   }
   setError (error) {
     this.error = error
-  }
-  showPreviousTab () {
-    newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
   }
   validate () {
     if (this.hideCorpNum !== 'auto') {

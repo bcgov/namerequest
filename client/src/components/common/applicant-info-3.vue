@@ -337,9 +337,6 @@ export default class ApplicantInfo3 extends Vue {
   setError (error) {
     this.error = error
   }
-  showPreviousTab () {
-    newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
-  }
   validate () {
     if (this.hideCorpNum !== 'auto') {
       this.hideCorpNum = 'auto'
