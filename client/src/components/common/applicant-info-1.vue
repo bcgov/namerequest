@@ -13,6 +13,7 @@
                             :value="applicant.lastName"
                             @blur="messages = {}"
                             @input="mutateApplicant('lastName', $event)"
+                            dense
                             filled
                             height="50"
                             hide-details="auto"
