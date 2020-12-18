@@ -12,11 +12,11 @@
       </v-row>
       <v-row justify="center" class="mt-n7 mb-n3 py-0">
         <v-col cols="12" class="detailed-search-title">
-          <b>Detailed Search</b>
+          <b>Detailed Analysis</b>
         </v-col>
         <v-col cols="12" class="text-center text-body-2">
           We are attempting a detailed analysis of this name before you send it for review.
-          <p>This search will run for up to two minutes. Note: We might not obtain results for certain names.</p>
+          <p>This analysis will run for up to two minutes. Note: We might not obtain results for certain names.</p>
         </v-col>
       </v-row>
       <v-row justify="center">
