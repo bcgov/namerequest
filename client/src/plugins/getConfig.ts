@@ -88,11 +88,11 @@ export function getConfig (): Promise<EnvConfigI> {
       $APP_IS_RUNNING_LOCALLY: appIsRunningLocally,
       $PAYMENT_PORTAL_URL: paymentUrl,
       $NR_COMPLETION_TIMER_NAME: nrCompletionTimerName,
-      $NR_COMPLETION_TIMEOUT_MS: !appIsRunningLocally ? nrCompletionTimeoutMs : nrCompletionTimeoutMs_dev,
+      $NR_COMPLETION_TIMEOUT_MS: appIsRunningLocally ? nrCompletionTimeoutMs_dev : nrCompletionTimeoutMs,
       $EXISTING_NR_TIMER_NAME: existingNrTimerName,
-      $EXISTING_NR_TIMEOUT_MS: !appIsRunningLocally ? existingNrTimeoutMs : existingNrTimeoutMs_dev,
+      $EXISTING_NR_TIMEOUT_MS: appIsRunningLocally ? existingNrTimeoutMs_dev : existingNrTimeoutMs,
       $PAYMENT_COMPLETION_TIMER_NAME: paymentCompletionTimerName,
-      $PAYMENT_COMPLETION_TIMEOUT_MS: appIsRunningLocally ? paymentCompletionTimeoutMs : paymentCompletionTimeoutMs_dev
+      $PAYMENT_COMPLETION_TIMEOUT_MS: appIsRunningLocally ? paymentCompletionTimeoutMs_dev : paymentCompletionTimeoutMs
     }
     resolve(config)
   })
