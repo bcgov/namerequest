@@ -442,9 +442,11 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
           if (doCheckout) {
             const { dispatch } = this.$store
             // Disable rollback on expire, it's only for new NRs
-            await dispatch(types.SET_ROLLBACK_ON_EXPIRE, false)
+            // await dispatch(types.SET_ROLLBACK_ON_EXPIRE, false) // NOT USED
+
             // Set check in on expire
-            await dispatch(types.SET_CHECK_IN_ON_EXPIRE, true)
+            // await dispatch(types.SET_CHECK_IN_ON_EXPIRE, true) // NOT USED
+
             // Check out the NR - this sets the INPROGRESS lock on the NR
             // and needs to be done before you can edit the Name Request
             success = await newReqModule.checkoutNameRequest()

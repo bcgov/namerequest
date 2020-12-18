@@ -1788,8 +1788,8 @@ export class NewRequestModule extends VuexModule {
           }
         }
       }
-      return
     } catch (error) {
+      // AddressComplete problem - use console.log not console.error
       console.log('getAddressDetails() =', error) // eslint-disable-line no-console
     }
   }
@@ -1817,8 +1817,8 @@ export class NewRequestModule extends VuexModule {
         return
       }
       this.mutateAddressSuggestions(null)
-      return
     } catch (error) {
+      // AddressComplete problem - use console.log not console.error
       console.log('getAddressSuggestions() =', error) // eslint-disable-line no-console
     }
   }
@@ -1995,9 +1995,10 @@ export class NewRequestModule extends VuexModule {
   @Action
   async addRequestActionComment (data) {
     try {
-      let requestAction = this.requestActionOriginal || this.request_action_cd
-      let { shortDesc } = this.requestActions.find(request => request.value === requestAction)
-      let msg = `*** ${shortDesc} ***`
+      const requestAction = this.requestActionOriginal || this.request_action_cd
+      const action = this.requestActions.find(request => request.value === requestAction)
+      const { shortDesc } = action || { shortDesc: 'action not found' }
+      const msg = `*** ${shortDesc} ***`
       if (!data['additionalInfo']) {
         // if data.additionalInfo is empty, just assign it to message
         data['additionalInfo'] = msg
@@ -2107,21 +2108,18 @@ export class NewRequestModule extends VuexModule {
           checkedOutBy: checkedOutBy,
           checkedOutDt: checkedOutDt
         }, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          headers: { 'Content-Type': 'application/json' }
         })
       } else {
         response = await axios.patch(`/namerequests/${nrId}/checkout`, {}, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          headers: { 'Content-Type': 'application/json' }
         })
       }
 
       const data = response.data || { checkedOutBy: null, checkedOutDt: null }
       sessionStorage.setItem('checkedOutBy', data.checkedOutBy)
       sessionStorage.setItem('checkedOutDt', data.checkedOutDt)
+
       return true
     } catch (err) {
       console.error('checkoutNameRequest() =', err) // eslint-disable-line no-console
@@ -2152,9 +2150,7 @@ export class NewRequestModule extends VuexModule {
           checkedOutBy: checkedOutBy,
           checkedOutDt: checkedOutDt
         }, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          headers: { 'Content-Type': 'application/json' }
         })
 
         sessionStorage.removeItem('checkedOutBy')
@@ -2187,14 +2183,18 @@ export class NewRequestModule extends VuexModule {
       const requestData = nr && await this.addRequestActionComment(nr)
 
       const response = requestData && await axios.patch(`/namerequests/${nrId}/edit`, requestData, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' }
       })
 
-      this.mutateNameRequest(response.data)
-      this.mutateDisplayedComponent('Success')
-      return true
+      if (response?.data) {
+        this.mutateNameRequest(response.data)
+        this.mutateDisplayedComponent('Success')
+        return true
+      } else {
+        // eslint-disable-next-line no-console
+        console.log('patchNameRequests(), invalid response =', response)
+        throw new ApiError('Could not PATCH the name request')
+      }
     } catch (err) {
       console.error('patchNameRequests() =', err) // eslint-disable-line no-console
       await handleApiError(err, 'Could not update the name request').catch(async error => {
@@ -2213,9 +2213,7 @@ export class NewRequestModule extends VuexModule {
     try {
       const { nrId } = this
       const response = await axios.patch(`/namerequests/${nrId}/${action}`, {}, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' }
       })
 
       this.mutateNameRequest(response.data)
@@ -2257,26 +2255,34 @@ export class NewRequestModule extends VuexModule {
           break
       }
 
-      const requestData: any = data && await this.addRequestActionComment(data)
+      const requestData = data && await this.addRequestActionComment(data)
       try {
-        const response: AxiosResponse = requestData && await axios.post(`/namerequests`, requestData, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+        const response = requestData && await axios.post(`/namerequests`, requestData, {
+          headers: { 'Content-Type': 'application/json' }
         })
-        this.setNrResponse(response.data)
 
-        const { dispatch } = this.context
-        // Set rollback on expire for new NRs
-        await dispatch(types.SET_ROLLBACK_ON_EXPIRE, true)
-        // Check in on expire is for existing NRs, make sure it isn't set!
-        await dispatch(types.SET_CHECK_IN_ON_EXPIRE, false)
-        return true
+        if (response?.data) {
+          this.setNrResponse(response.data)
+
+          const { dispatch } = this.context
+          // Set rollback on expire for new NRs
+          // await dispatch(types.SET_ROLLBACK_ON_EXPIRE, true) // NOT USED
+
+          // Check in on expire is for existing NRs, make sure it isn't set!
+          // await dispatch(types.SET_CHECK_IN_ON_EXPIRE, false) // NOT USED
+
+          return true
+        } else {
+          // eslint-disable-next-line no-console
+          console.log('postNameRequests(), invalid response =', response)
+          throw new ApiError('Could not POST the name request')
+        }
       } catch (err) {
+        // *** TODO: don't generate 2 console.error !
         console.error('postNameRequests() =', err) // eslint-disable-line no-console
         await handleApiError(err, 'Could not create the name request')
-        return false
       }
+      return false
     } catch (error) {
       console.error('postNameRequests() =', error) // eslint-disable-line no-console
       if (error instanceof ApiError) {
@@ -2316,13 +2322,19 @@ export class NewRequestModule extends VuexModule {
 
       try {
         const response = requestData && await axios.put(`/namerequests/${nrId}`, requestData, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          headers: { 'Content-Type': 'application/json' }
         })
-        this.setNrResponse(response.data)
-        return true
+
+        if (response?.data) {
+          this.setNrResponse(response.data)
+          return true
+        } else {
+          // eslint-disable-next-line no-console
+          console.log('putNameReservation(), invalid response =', response)
+          throw new ApiError('Could not PUT the name reservation')
+        }
       } catch (err) {
+        // *** TODO: don't generate 2 console.error !
         console.error('putNameReservation() =', err) // eslint-disable-line no-console
         await handleApiError(err, 'Could not update the name request')
       }
@@ -2348,9 +2360,7 @@ export class NewRequestModule extends VuexModule {
 
     try {
       const response = await axios.patch(`/payments/${nrId}/payment/${paymentId}/${action}`, {}, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' }
       })
 
       if (response?.status === OK) {
@@ -2358,7 +2368,8 @@ export class NewRequestModule extends VuexModule {
         paymentResponse.httpStatusCode = response.status.toString()
         paymentResponse.paymentSuccess = true
       } else {
-        console.log('completePayment(), unexpected response =', response) // eslint-disable-line no-console
+        // eslint-disable-next-line no-console
+        console.log('completePayment(), status was not 200, response =', response)
         paymentResponse.httpStatusCode = response.status.toString()
         paymentResponse.paymentSuccess = false
       }
@@ -2391,9 +2402,7 @@ export class NewRequestModule extends VuexModule {
       }
 
       const response = await axios.patch(`/namerequests/${nrId}/rollback/${action}`, {}, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' }
       })
 
       if (!response || response.status !== OK) {
