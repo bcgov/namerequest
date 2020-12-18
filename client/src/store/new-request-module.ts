@@ -2193,11 +2193,11 @@ export class NewRequestModule extends VuexModule {
       } else {
         // eslint-disable-next-line no-console
         console.log('patchNameRequests(), invalid response =', response)
-        throw new ApiError('Could not PATCH the name request')
+        throw new ApiError()
       }
     } catch (err) {
       console.error('patchNameRequests() =', err) // eslint-disable-line no-console
-      await handleApiError(err, 'Could not update the name request').catch(async error => {
+      await handleApiError(err, 'Could not patch the name requests').catch(async error => {
         if (error instanceof ApiError) {
           await errorModule.setAppError({ id: 'patch-name-requests-api-error', error: error.message } as ErrorI)
         } else {
@@ -2221,7 +2221,7 @@ export class NewRequestModule extends VuexModule {
       return true
     } catch (err) {
       console.error('patchNameRequestsByAction() =', err) // eslint-disable-line no-console
-      await handleApiError(err, 'Could not update the name request').catch(async error => {
+      await handleApiError(err, 'Could not patch the name requests by action').catch(async error => {
         if (error instanceof ApiError) {
           await errorModule.setAppError(
             { id: 'patch-name-requests-by-action-api-error', error: error.message } as ErrorI
@@ -2256,40 +2256,35 @@ export class NewRequestModule extends VuexModule {
       }
 
       const requestData = data && await this.addRequestActionComment(data)
-      try {
-        const response = requestData && await axios.post(`/namerequests`, requestData, {
-          headers: { 'Content-Type': 'application/json' }
-        })
+      const response = requestData && await axios.post(`/namerequests`, requestData, {
+        headers: { 'Content-Type': 'application/json' }
+      })
 
-        if (response?.data) {
-          this.setNrResponse(response.data)
+      if (response?.data) {
+        this.setNrResponse(response.data)
 
-          const { dispatch } = this.context
-          // Set rollback on expire for new NRs
-          // await dispatch(types.SET_ROLLBACK_ON_EXPIRE, true) // NOT USED
+        const { dispatch } = this.context
+        // Set rollback on expire for new NRs
+        // await dispatch(types.SET_ROLLBACK_ON_EXPIRE, true) // NOT USED
 
-          // Check in on expire is for existing NRs, make sure it isn't set!
-          // await dispatch(types.SET_CHECK_IN_ON_EXPIRE, false) // NOT USED
+        // Check in on expire is for existing NRs, make sure it isn't set!
+        // await dispatch(types.SET_CHECK_IN_ON_EXPIRE, false) // NOT USED
 
-          return true
-        } else {
-          // eslint-disable-next-line no-console
-          console.log('postNameRequests(), invalid response =', response)
-          throw new ApiError('Could not POST the name request')
-        }
-      } catch (err) {
-        // *** TODO: don't generate 2 console.error !
-        console.error('postNameRequests() =', err) // eslint-disable-line no-console
-        await handleApiError(err, 'Could not create the name request')
-      }
-      return false
-    } catch (error) {
-      console.error('postNameRequests() =', error) // eslint-disable-line no-console
-      if (error instanceof ApiError) {
-        await errorModule.setAppError({ id: 'post-name-requests-api-error', error: error.message } as ErrorI)
+        return true
       } else {
-        await errorModule.setAppError({ id: 'post-name-requests-error', error: error.message } as ErrorI)
+        // eslint-disable-next-line no-console
+        console.log('postNameRequests(), invalid response =', response)
+        throw new ApiError()
       }
+    } catch (err) {
+      console.error('postNameRequests() =', err) // eslint-disable-line no-console
+      await handleApiError(err, 'Could not create the name requests').catch(async error => {
+        if (error instanceof ApiError) {
+          await errorModule.setAppError({ id: 'post-name-requests-api-error', error: error.message } as ErrorI)
+        } else {
+          await errorModule.setAppError({ id: 'post-name-requests-error', error: error.message } as ErrorI)
+        }
+      })
       return false
     }
   }
@@ -2319,32 +2314,27 @@ export class NewRequestModule extends VuexModule {
       }
 
       const requestData = data && await this.addRequestActionComment(data)
+      const response = requestData && await axios.put(`/namerequests/${nrId}`, requestData, {
+        headers: { 'Content-Type': 'application/json' }
+      })
 
-      try {
-        const response = requestData && await axios.put(`/namerequests/${nrId}`, requestData, {
-          headers: { 'Content-Type': 'application/json' }
-        })
-
-        if (response?.data) {
-          this.setNrResponse(response.data)
-          return true
-        } else {
-          // eslint-disable-next-line no-console
-          console.log('putNameReservation(), invalid response =', response)
-          throw new ApiError('Could not PUT the name reservation')
-        }
-      } catch (err) {
-        // *** TODO: don't generate 2 console.error !
-        console.error('putNameReservation() =', err) // eslint-disable-line no-console
-        await handleApiError(err, 'Could not update the name request')
-      }
-    } catch (error) {
-      console.error('putNameReservation() =', error) // eslint-disable-line no-console
-      if (error instanceof ApiError) {
-        await errorModule.setAppError({ id: 'put-name-requests-api-error', error: error.message } as ErrorI)
+      if (response?.data) {
+        this.setNrResponse(response.data)
+        return true
       } else {
-        await errorModule.setAppError({ id: 'put-name-requests-error', error: error.message } as ErrorI)
+        // eslint-disable-next-line no-console
+        console.log('putNameReservation(), invalid response =', response)
+        throw new ApiError()
       }
+    } catch (err) {
+      console.error('putNameReservation() =', err) // eslint-disable-line no-console
+      await handleApiError(err, 'Could not update the name reservation').catch(async error => {
+        if (error instanceof ApiError) {
+          await errorModule.setAppError({ id: 'put-name-reservation-api-error', error: error.message } as ErrorI)
+        } else {
+          await errorModule.setAppError({ id: 'put-name-reservation-error', error: error.message } as ErrorI)
+        }
+      })
       return false
     }
   }
