@@ -27,7 +27,6 @@
                             :rules="firstLastNameRules"
                             :value="applicant.firstName"
                             @blur="messages = {}"
-                            @focus="handleFocus('firstName', 'First Name')"
                             @input="mutateApplicant('firstName', $event)"
                             dense
                             filled
@@ -437,12 +436,6 @@ export default class ApplicantInfo1 extends Vue {
   get provinceOptions () {
     return this.$canJurisdictions.map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
   }
-  get provinceStateOptions () {
-    if (this.location === 'IN') {
-      return null
-    }
-    return this.$canJurisdictions
-  }
   get showAllFields () {
     return (!this.editMode || this.nrState === 'DRAFT')
   }
@@ -544,12 +537,6 @@ export default class ApplicantInfo1 extends Vue {
   }
   queryAddress (id) {
     newReqModule.getAddressDetails(id)
-  }
-  showNextTab () {
-    newReqModule.mutateSubmissionTabComponent('ApplicantInfo2')
-  }
-  showPreviousTab () {
-    newReqModule.mutateSubmissionTabComponent('NamesCapture')
   }
   updateApplicant (key, value) {
     // eslint-disable-next-line no-console
