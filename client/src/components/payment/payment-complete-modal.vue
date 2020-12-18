@@ -89,7 +89,7 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
 
         if (sessionPaymentAction && sessionPaymentAction === PaymentAction.COMPLETE) {
           // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-          await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
+          await newRequestModule.rollbackNameRequest(nrId, rollbackActions.CANCEL)
           // Call fetchData to load the NR and the payment
           await this.fetchData(!DEBUG_RECEIPT)
         }
@@ -140,17 +140,19 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
 
   async completePayment (nrId: number, paymentId: number, action: string) {
     const result: NameRequestPayment = await newRequestModule.completePayment({ nrId, paymentId, action })
-    const paymentSuccess = result.paymentSuccess
+    const paymentSuccess = result?.paymentSuccess
 
     if (paymentSuccess) {
       paymentModule.toggleReceiptModal(true)
-    } else if (!paymentSuccess && result.paymentErrors) {
+    } else if (!paymentSuccess && result?.paymentErrors) {
       // Setting the errors to state will update any subscribing components, like the main ErrorModal
       await errorModule.setAppErrors(result.paymentErrors)
       if (action && action === PaymentAction.COMPLETE) {
         // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-        await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
+        await newRequestModule.rollbackNameRequest(nrId, rollbackActions.CANCEL)
       }
+    } else {
+      console.log('completePayment(), unhandled scenario, result =', result) // eslint-disable-line no-console
     }
   }
 

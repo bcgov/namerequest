@@ -2353,11 +2353,12 @@ export class NewRequestModule extends VuexModule {
         }
       })
 
-      if (response.status === OK) {
+      if (response?.status === OK) {
         paymentResponse.payment = response.data
         paymentResponse.httpStatusCode = response.status.toString()
         paymentResponse.paymentSuccess = true
       } else {
+        console.log('completePayment(), unexpected response =', response) // eslint-disable-line no-console
         paymentResponse.httpStatusCode = response.status.toString()
         paymentResponse.paymentSuccess = false
       }
@@ -2370,25 +2371,38 @@ export class NewRequestModule extends VuexModule {
       } else {
         await errorModule.setAppError({ id: 'complete-payment-error', error: error.message } as ErrorI)
       }
+      return null
     }
   }
   @Action
-  async rollbackNameRequest ({ nrId, action }): Promise<any> {
+  async rollbackNameRequest (nrId: number, action: string): Promise<boolean> {
     try {
-      const validRollbackActions = [
-        ROLLBACK_ACTIONS.CANCEL
-      ]
+      // only cancel action is supported atm
+      const validRollbackActions = [ROLLBACK_ACTIONS.CANCEL]
 
-      if (validRollbackActions.indexOf(action) === -1) return
+      // safety checks
+      if (!nrId) {
+        console.log('rollbackNameRequest(), invalid NR id') // eslint-disable-line no-console
+        return false
+      }
+      if (validRollbackActions.indexOf(action) === -1) {
+        console.log('rollbackNameRequest(), invalid action') // eslint-disable-line no-console
+        return false
+      }
+
       const response = await axios.patch(`/namerequests/${nrId}/rollback/${action}`, {}, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
 
-      if (response.status !== OK) {
+      if (!response || response.status !== OK) {
+        // eslint-disable-next-line no-console
+        console.log('rollbackNameRequest(), status was not 200, response =', response)
         throw new ApiError('Could not rollback or cancel the name request')
       }
+
+      return true
     } catch (error) {
       console.error('rollbackNameRequest() =', error) // eslint-disable-line no-console
       if (error instanceof ApiError) {
@@ -2396,6 +2410,7 @@ export class NewRequestModule extends VuexModule {
       } else {
         await errorModule.setAppError({ id: 'rollback-name-request-error', error: error.message } as ErrorI)
       }
+      return false
     }
   }
   @Action
