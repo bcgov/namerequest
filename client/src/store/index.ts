@@ -13,17 +13,17 @@ Vue.use(Vuex)
 export interface RootStateI {
   config?: EnvConfigI
   analyzeName?: AnalyzeName
-  rollbackOnExpire?: boolean
-  checkInOnExpire?: boolean
+  // rollbackOnExpire?: boolean // NOT USED
+  // checkInOnExpire?: boolean // NOT USED
   showNrSessionExpiryModal?: boolean
 }
 
 export default new Vuex.Store<RootStateI>({
   state: {
     config: {} as EnvConfigI,
-    showNrSessionExpiryModal: false,
-    rollbackOnExpire: true,
-    checkInOnExpire: false
+    showNrSessionExpiryModal: false
+    // rollbackOnExpire: true, // NOT USED
+    // checkInOnExpire: false // NOT USED
   },
   actions,
   mutations,

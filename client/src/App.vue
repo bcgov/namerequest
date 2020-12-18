@@ -124,16 +124,16 @@ import paymentModule from '@/modules/payment'
   },
   computed: {
     ...mapState([
-      'showNrSessionExpiryModal',
-      'rollbackOnExpire',
-      'checkInOnExpire'
+      'showNrSessionExpiryModal'
+      // 'rollbackOnExpire', // NOT USED
+      // 'checkInOnExpire' // NOT USED
     ]),
     ...mapGetters(['getNameRequestUrl'])
   }
 })
 export default class App extends Mixins(SessionTimerMixin) {
-  rollbackOnExpire: boolean
-  checkInOnExpire: boolean
+  // rollbackOnExpire: boolean // NOT USED
+  // checkInOnExpire: boolean // NOT USED
   readonly getNameRequestUrl!: string
   private showSpinner = false
 
