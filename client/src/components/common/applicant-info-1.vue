@@ -12,9 +12,7 @@
                             :rules="firstLastNameRules"
                             :value="applicant.lastName"
                             @blur="messages = {}"
-                            @focus="handleFocus('lastName', 'Last Name')"
-                            @input="updateApplicant('lastName', $event)"
-                            dense
+                            @input="mutateApplicant('lastName', $event)"
                             filled
                             height="50"
                             hide-details="auto"
@@ -30,7 +28,7 @@
                             :value="applicant.firstName"
                             @blur="messages = {}"
                             @focus="handleFocus('firstName', 'First Name')"
-                            @input="updateApplicant('firstName', $event)"
+                            @input="mutateApplicant('firstName', $event)"
                             dense
                             filled
                             height="50"
@@ -46,8 +44,7 @@
                             :value="applicant.middleName"
                             :rules="middleNameRules"
                             @blur="messages = {}"
-                            @focus="handleFocus('middleName', 'Middle Name')"
-                            @input="updateApplicant('middleName', $event)"
+                            @input="mutateApplicant('middleName', $event)"
                             dense
                             filled
                             height="50"
@@ -539,6 +536,9 @@ export default class ApplicantInfo1 extends Vue {
       return event
     }
   }
+  mutateApplicant (key, value) {
+    newReqModule.mutateApplicant({ key, value })
+  }
   mutateCorpNum (num) {
     newReqModule.mutateCorpNum(num)
   }
@@ -552,7 +552,9 @@ export default class ApplicantInfo1 extends Vue {
     newReqModule.mutateSubmissionTabComponent('NamesCapture')
   }
   updateApplicant (key, value) {
-    this.clearValidation()
+    // eslint-disable-next-line no-console
+    console.log('inside updateApplicant')
+    // this.clearValidation()
     newReqModule.updateApplicantDetails({ key, value })
     if (key === 'addrLine1') {
       this.showAddressMenu = true

@@ -23,7 +23,7 @@
       <v-row>
         <v-col cols="2" />
         <v-col cols="5">
-          <label for="faxNumber" class="hidden">Phone Number (Optional)</label>
+          <label for="phoneNumber" class="hidden">Phone Number (Optional)</label>
           <v-text-field :messages="messages['phone']"
                         :value="applicant.phoneNumber"
                         :rules="phoneFaxRules"
