@@ -9,7 +9,7 @@
             <v-col cols="4" class="pt-0">
               <label for="lastname" class="hidden">Last Name</label>
               <v-text-field :messages="messages['lastName']"
-                            :rules="requiredRules"
+                            :rules="firstLastNameRules"
                             :value="applicant.lastName"
                             @blur="messages = {}"
                             @focus="handleFocus('lastName', 'Last Name')"
@@ -26,7 +26,7 @@
             <v-col cols="4" class="pt-0">
               <label for="firstname" class="hidden">First Name</label>
               <v-text-field :messages="messages['firstName']"
-                            :rules="requiredRules"
+                            :rules="firstLastNameRules"
                             :value="applicant.firstName"
                             @blur="messages = {}"
                             @focus="handleFocus('firstName', 'First Name')"
@@ -44,6 +44,7 @@
               <label for="middlename" class="hidden">Middle Name (Optional)</label>
               <v-text-field :messages="messages['middleName']"
                             :value="applicant.middleName"
+                            :rules="middleNameRules"
                             @blur="messages = {}"
                             @focus="handleFocus('middleName', 'Middle Name')"
                             @input="updateApplicant('middleName', $event)"
@@ -352,6 +353,13 @@ export default class ApplicantInfo1 extends Vue {
   provStateRules = [
     v => typeof v === 'string' || 'Must be letters only',
     v => v.length <= 2 || 'Max 2 characters'
+  ]
+  firstLastNameRules = [
+    v => !!v || 'Required field',
+    v => (!v || v.length <= 50) || 'Cannot exceed 50 characters'
+  ]
+  middleNameRules = [
+    v => (!v || v.length <= 50) || 'Cannot exceed 50 characters'
   ]
   requiredRules = [
     v => !!v || 'Required field'

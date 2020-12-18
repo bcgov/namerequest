@@ -80,7 +80,7 @@
         <v-col cols="2" class="h6">About The Business</v-col>
         <v-col cols="5" align-self="start">
           <v-textarea :messages="messages['nature']"
-                      :rules="requiredRule"
+                      :rules="businessNatureRules"
                       :value="nrData.natureBusinessInfo"
                       @blur="messages = {}"
                       @focus="messages['nature'] = 'Nature of Business'"
@@ -173,16 +173,21 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 export default class ApplicantInfo3 extends Vue {
   corpNumDirty: boolean = false
   corpNumError: string = ''
+  additionalInfoRules = [
+    v => (!v || v.length <= 120) || 'Cannot exceed 120 characters'
+  ]
+  businessNatureRules = [
+    v => !!v || 'Required field',
+    v => (!v || v.length <= 1000) || 'Cannot exceed 1000 characters'
+  ]
   corpNumRules = [
     v => !!v || 'Required field',
     v => !!this.getCorpNum(v) || 'Cannot validate number.  Please try again'
   ]
   emailRules = [
     v => !!v || 'Required field',
-    v => /.+@.+\..+/.test(v) || 'Not a valid email'
-  ]
-  additionalInfoRules = [
-    v => (!v || v.length <= 120) || 'Cannot exceed 120 characters'
+    v => /.+@.+\..+/.test(v) || 'Not a valid email',
+    v => (!v || v.length <= 75) || 'Cannot exceed 75 characters'
   ]
   phoneFaxRules = [
     v => (!v || v.length <= 30) || 'Cannot exceed 30 characters'
@@ -195,9 +200,6 @@ export default class ApplicantInfo3 extends Vue {
   hideCorpNum: boolean | 'auto' = true
   loading: boolean = false
   messages = {}
-  requiredRule = [
-    v => !!v || 'Required field'
-  ]
 
   @Watch('xproJurisdiction')
   async hanldeJurisdiction (newVal, oldVal) {
