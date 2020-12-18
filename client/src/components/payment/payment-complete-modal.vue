@@ -29,12 +29,12 @@ import RequestDetails from '@/components/common/request-details.vue'
 
 import paymentModule from '@/modules/payment'
 import { NameRequestPayment, PaymentStatus, SbcPaymentStatus } from '@/modules/payment/models'
-import newRequestModule, { ROLLBACK_ACTIONS as rollbackActions } from '@/store/new-request-module'
+import newRequestModule from '@/store/new-request-module'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 
 import * as paymentTypes from '@/modules/payment/store/types'
-import { PaymentAction } from '@/enums'
+import { PaymentAction, RollbackActions } from '@/enums'
 
 import PaymentMixin from '@/components/payment/payment-mixin'
 import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
@@ -89,7 +89,7 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
 
         if (sessionPaymentAction && sessionPaymentAction === PaymentAction.COMPLETE) {
           // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-          await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
+          await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
           // Call fetchData to load the NR and the payment
           await this.fetchData(!DEBUG_RECEIPT)
         }
@@ -140,17 +140,19 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
 
   async completePayment (nrId: number, paymentId: number, action: string) {
     const result: NameRequestPayment = await newRequestModule.completePayment({ nrId, paymentId, action })
-    const paymentSuccess = result.paymentSuccess
+    const paymentSuccess = result?.paymentSuccess
 
     if (paymentSuccess) {
       paymentModule.toggleReceiptModal(true)
-    } else if (!paymentSuccess && result.paymentErrors) {
+    } else if (!paymentSuccess && result?.paymentErrors) {
       // Setting the errors to state will update any subscribing components, like the main ErrorModal
       await errorModule.setAppErrors(result.paymentErrors)
       if (action && action === PaymentAction.COMPLETE) {
         // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-        await newRequestModule.rollbackNameRequest({ nrId, action: rollbackActions.CANCEL })
+        await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
       }
+    } else {
+      console.error('completePayment(), unhandled scenario, result =', result) // eslint-disable-line no-console
     }
   }
 
