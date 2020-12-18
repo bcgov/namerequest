@@ -26,17 +26,17 @@ export default class QuickSearchNames extends Vue {
 <style scoped lang="scss">
 @import '@/assets/scss/theme.scss';
 #quick-search-names {
-    height: 300px;
+    height: 18.75rem;
     border-style: solid;
-    border-width: 1px;
-    border-radius: 5px;
+    border-width: 0.0625rem;
+    border-radius: 0.3125rem;
     display: block;
     overflow: auto;
 }
 .quickSearchNames {
-    font-size: 16px;
+    font-size: 1rem;
     color: $gray7;
-    padding-left: 5px;
-    padding-top: 15px;
+    padding-left: 0.3125rem;
+    padding-top: 0.9375rem;
 }
 </style>

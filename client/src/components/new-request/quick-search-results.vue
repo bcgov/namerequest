@@ -112,22 +112,22 @@ export default class QuickSearchResults extends Vue {
   background-color: #1669bb !important;
 }
 .quick-search-title {
-  font-size: 16px;
+  font-size: 1rem;
   color: $gray9;
   text-align: center;
   padding: 0;
   margin: 0;
 }
 .quick-search-info {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: $gray7;
   text-align: center;
   padding: 0;
   margin: 0;
-  padding-top: 5px;
+  padding-top: 0.3125rem;
 }
 .names-list {
-  padding-top: 10px;
+  padding-top: 0.625rem;
 }
 .continue-search-button {
   background-color: #fff !important;

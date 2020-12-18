@@ -79,29 +79,29 @@ export default class QuickSearchPending extends Vue {
 <style scoped lang="scss">
 @import '@/assets/scss/theme.scss';
 .quick-search-title {
-  font-size: 16px;
+  font-size: 1rem;
   color: $gray9;
   text-align: center;
   padding: 0;
   margin: 0;
-  padding-top: 5px;
+  padding-top: 0.3125rem;
 }
 .quick-search-info {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: $gray7;
   text-align: center;
   padding: 0;
   margin: 0;
-  padding-top: 5px;
+  padding-top: 0.3125rem;
 }
 .spinner-row {
   padding: 0;
   margin: 0;
-  padding-top: 25px;
+  padding-top: 1.5625rem;
 }
 .skip-button {
   padding: 0;
   margin: 0;
-  padding-top: 25px;
+  padding-top: 1.5625rem;
 }
 </style>

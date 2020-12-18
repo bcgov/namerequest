@@ -11,6 +11,9 @@
         <NameInput is-search-again="true"/>
       </v-row>
       <v-row justify="center" class="mt-n7 mb-n3 py-0">
+        <v-col cols="12" class="detailed-search-title">
+          <b>Detailed Search</b>
+        </v-col>
         <v-col cols="12" class="text-center text-body-2">
           We are attempting a detailed analysis of this name before you send it for review.
           <p>This search will run for up to two minutes. Note: We might not obtain results for certain names.</p>
@@ -78,4 +81,13 @@ export default class AnalyzePending extends Vue {
 
 </script>
 <style scoped lang="scss">
+@import '@/assets/scss/theme.scss';
+.detailed-search-title {
+  font-size: 1rem;
+  color: $gray9;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+  padding-top: 1.5625rem;
+}
 </style>
