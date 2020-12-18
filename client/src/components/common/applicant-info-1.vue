@@ -12,8 +12,7 @@
                             :rules="firstLastNameRules"
                             :value="applicant.lastName"
                             @blur="messages = {}"
-                            @focus="handleFocus('lastName', 'Last Name')"
-                            @input="updateApplicant('lastName', $event)"
+                            @input="mutateApplicant('lastName', $event)"
                             dense
                             filled
                             height="50"
@@ -29,8 +28,7 @@
                             :rules="firstLastNameRules"
                             :value="applicant.firstName"
                             @blur="messages = {}"
-                            @focus="handleFocus('firstName', 'First Name')"
-                            @input="updateApplicant('firstName', $event)"
+                            @input="mutateApplicant('firstName', $event)"
                             dense
                             filled
                             height="50"
@@ -46,8 +44,7 @@
                             :value="applicant.middleName"
                             :rules="middleNameRules"
                             @blur="messages = {}"
-                            @focus="handleFocus('middleName', 'Middle Name')"
-                            @input="updateApplicant('middleName', $event)"
+                            @input="mutateApplicant('middleName', $event)"
                             dense
                             filled
                             height="50"
@@ -440,12 +437,6 @@ export default class ApplicantInfo1 extends Vue {
   get provinceOptions () {
     return this.$canJurisdictions.map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
   }
-  get provinceStateOptions () {
-    if (this.location === 'IN') {
-      return null
-    }
-    return this.$canJurisdictions
-  }
   get showAllFields () {
     return (!this.editMode || this.nrState === 'DRAFT')
   }
@@ -539,17 +530,14 @@ export default class ApplicantInfo1 extends Vue {
       return event
     }
   }
+  mutateApplicant (key, value) {
+    newReqModule.mutateApplicant({ key, value })
+  }
   mutateCorpNum (num) {
     newReqModule.mutateCorpNum(num)
   }
   queryAddress (id) {
     newReqModule.getAddressDetails(id)
-  }
-  showNextTab () {
-    newReqModule.mutateSubmissionTabComponent('ApplicantInfo2')
-  }
-  showPreviousTab () {
-    newReqModule.mutateSubmissionTabComponent('NamesCapture')
   }
   updateApplicant (key, value) {
     this.clearValidation()
