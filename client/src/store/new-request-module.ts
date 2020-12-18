@@ -2185,7 +2185,7 @@ export class NewRequestModule extends VuexModule {
         return true
       } else {
         // eslint-disable-next-line no-console
-        console.log('patchNameRequests(), invalid response =', response)
+        console.error('patchNameRequests(), invalid response =', response)
         throw new ApiError()
       }
     } catch (err) {
@@ -2266,7 +2266,7 @@ export class NewRequestModule extends VuexModule {
         return true
       } else {
         // eslint-disable-next-line no-console
-        console.log('postNameRequests(), invalid response =', response)
+        console.error('postNameRequests(), invalid response =', response)
         throw new ApiError()
       }
     } catch (err) {
@@ -2316,7 +2316,7 @@ export class NewRequestModule extends VuexModule {
         return true
       } else {
         // eslint-disable-next-line no-console
-        console.log('putNameReservation(), invalid response =', response)
+        console.error('putNameReservation(), invalid response =', response)
         throw new ApiError()
       }
     } catch (err) {
@@ -2352,7 +2352,7 @@ export class NewRequestModule extends VuexModule {
         paymentResponse.paymentSuccess = true
       } else {
         // eslint-disable-next-line no-console
-        console.log('completePayment(), status was not 200, response =', response)
+        console.error('completePayment(), status was not 200, response =', response)
         paymentResponse.httpStatusCode = response.status.toString()
         paymentResponse.paymentSuccess = false
       }
@@ -2376,10 +2376,11 @@ export class NewRequestModule extends VuexModule {
 
       // safety checks
       if (!nrId) {
-        console.log('rollbackNameRequest(), invalid NR id') // eslint-disable-line no-console
+        console.error('rollbackNameRequest(), invalid NR id') // eslint-disable-line no-console
         return false
       }
       if (!validRollbackActions.includes(action)) {
+        console.error('rollbackNameRequest(), invalid action =', action) // eslint-disable-line no-console
         return false
       }
 
@@ -2389,7 +2390,7 @@ export class NewRequestModule extends VuexModule {
 
       if (!response || response.status !== OK) {
         // eslint-disable-next-line no-console
-        console.log('rollbackNameRequest(), status was not 200, response =', response)
+        console.error('rollbackNameRequest(), status was not 200, response =', response)
         throw new ApiError('Could not rollback or cancel the name request')
       }
 
