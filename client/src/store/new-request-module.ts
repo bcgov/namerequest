@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosResponse } from 'axios'
+import axios, { AxiosError } from 'axios'
 import querystring from 'qs'
 import Vue from 'vue'
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
@@ -43,8 +43,7 @@ import { NameRequestPayment } from '@/modules/payment/models'
 
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
-import * as types from '@/store/types'
-import { NrAction } from '@/enums'
+import { NrAction, RollbackActions } from '@/enums'
 import { featureFlags } from '@/plugins/featureFlags'
 import { OK, BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
 
@@ -129,12 +128,6 @@ let debouncedCheckMRAS: any
 let debouncedCheckCOLIN: any
 
 interface RequestNameMapI extends RequestNameI {}
-
-export const ROLLBACK_ACTIONS = {
-  CANCEL: 'cancel',
-  RESTORE: 'restore',
-  ROLLBACK_PAYMENT: 'rollback-payment'
-}
 
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
 export class NewRequestModule extends VuexModule {
@@ -2376,18 +2369,17 @@ export class NewRequestModule extends VuexModule {
     }
   }
   @Action
-  async rollbackNameRequest (nrId: number, action: string): Promise<boolean> {
+  async rollbackNameRequest ({ nrId, action }): Promise<boolean> {
     try {
       // only cancel action is supported atm
-      const validRollbackActions = [ROLLBACK_ACTIONS.CANCEL]
+      const validRollbackActions = [RollbackActions.CANCEL]
 
       // safety checks
       if (!nrId) {
         console.log('rollbackNameRequest(), invalid NR id') // eslint-disable-line no-console
         return false
       }
-      if (validRollbackActions.indexOf(action) === -1) {
-        console.log('rollbackNameRequest(), invalid action') // eslint-disable-line no-console
+      if (!validRollbackActions.includes(action)) {
         return false
       }
 

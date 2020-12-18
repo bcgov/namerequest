@@ -92,12 +92,11 @@ import { featureFlags } from '@/plugins/featureFlags'
 import TimeoutModal from '@/components/session-timer/timeout-modal.vue'
 import SessionTimerMixin from '@/components/session-timer/session-timer-mixin'
 
-import newRequestModule, {
-  ROLLBACK_ACTIONS as rollbackActions
-} from '@/store/new-request-module'
+import newRequestModule from '@/store/new-request-module'
 
 import timerModule from '@/modules/vx-timer'
 import paymentModule from '@/modules/payment'
+import { RollbackActions } from '@/enums'
 
 @Component({
   components: {
@@ -174,7 +173,7 @@ export default class App extends Mixins(SessionTimerMixin) {
     const componentName = newRequestModule.displayedComponent
     if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
       // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-      await newRequestModule.rollbackNameRequest(nrId, rollbackActions.CANCEL)
+      await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
     } else if (nrId && ['ExistingRequestEdit'].indexOf(componentName) > -1) {
       await newRequestModule.checkinNameRequest()
     }
@@ -209,7 +208,7 @@ export default class App extends Mixins(SessionTimerMixin) {
           expirationFn: async () => {
             const { nrId } = newRequestModule
             // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-            await newRequestModule.rollbackNameRequest(nrId, rollbackActions.CANCEL)
+            await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
             paymentModule.togglePaymentModal(false)
             // Direct the user back to the start
             await this.resetAppState()
@@ -226,10 +225,7 @@ export default class App extends Mixins(SessionTimerMixin) {
     // Only do this for New NRs!!!
     if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
       // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-      // Don't await this request, that way there's no lag, fire it off async and don't block I/O
-      // The empty then clause just prevents a linting issue that warns when you don't
-      // await an async function which is not an issue, since we don't want to block I/O
-      await newRequestModule.rollbackNameRequest(nrId, rollbackActions.CANCEL)
+      await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
       // Direct the user back to the start
       await this.resetAppState()
     }
