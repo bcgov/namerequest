@@ -57,6 +57,11 @@ function setVuexEnvironment (store, config: EnvConfigI): void {
   store.state.config = config
 }
 
+/**
+ * Our app start code, which is a function so that:
+ * 1. we can use await
+ * 2. we can catch errors
+ **/
 async function startVue () {
   // Fetch the configuration
   const envConfig: EnvConfigI = await getConfig()
@@ -78,6 +83,10 @@ async function startVue () {
       integrations: [
         // new Integrations.Vue({ Vue, attachProps: true }), // FUTURE maybe
         new Integrations.CaptureConsole({ levels: ['error'] })
+      ],
+      ignoreErrors: [
+        // this error is safe to ignore, ref: https://stackoverflow.com/a/50387233/8679162
+        'ResizeObserver loop limit exceeded'
       ]
     })
   }
