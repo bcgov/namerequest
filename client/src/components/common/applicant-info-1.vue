@@ -495,7 +495,7 @@ export default class ApplicantInfo1 extends Vue {
     if (this.showAddressMenu && event.key === 'Escape') {
       this.showAddressMenu = false
     }
-    if (this.addressSuggestions && this.showAddressMenu) {
+    if (this.addressSuggestions?.[0] && this.showAddressMenu) {
       if (event.key === 'Tab') {
         event.preventDefault()
         if (!this.highlightedSuggestion) {
