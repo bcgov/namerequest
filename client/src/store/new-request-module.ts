@@ -2621,14 +2621,14 @@ export class NewRequestModule extends VuexModule {
         return response.data
       }
     } catch (error) {
-      const code: number = error?.response?.code
+      const status: number = error?.response?.status
       // do not generate console error for the errors codes
       // that mras-search-info page handles
-      if (![BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE].includes(code)) {
+      if (![BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE].includes(status)) {
         console.error('fetchMRASProfile() =', error) // eslint-disable-line no-console
       }
       this.mutateName('')
-      this.mutateMrasSearchResult(code)
+      this.mutateMrasSearchResult(status)
       this.mutateMrasSearchInfoModalVisible(true)
     }
     return null
