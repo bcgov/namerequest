@@ -46,6 +46,7 @@ import { ErrorI } from '@/modules/error/store/actions'
 import * as types from '@/store/types'
 import { NrAction } from '@/enums'
 import { featureFlags } from '@/plugins/featureFlags'
+import { OK, BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
 
 const qs: any = querystring
 const ANALYSIS_TIMEOUT_MS = 3 * 60 * 1000 // 3 minutes
@@ -2352,7 +2353,7 @@ export class NewRequestModule extends VuexModule {
         }
       })
 
-      if (response.status === 200) {
+      if (response.status === OK) {
         paymentResponse.payment = response.data
         paymentResponse.httpStatusCode = response.status.toString()
         paymentResponse.paymentSuccess = true
@@ -2385,7 +2386,7 @@ export class NewRequestModule extends VuexModule {
         }
       })
 
-      if (response.status !== 200) {
+      if (response.status !== OK) {
         throw new ApiError('Could not rollback or cancel the name request')
       }
     } catch (error) {
@@ -2611,20 +2612,26 @@ export class NewRequestModule extends VuexModule {
     return axios.get(url)
   }
 
-  /** Fetch the MRAS Profile and handle varied responses */
   @Action
-  fetchMRASProfile (): Promise<any> {
-    let url = `mras-profile/${this.request_jurisdiction_cd}/${this.corpSearch}`
-    return axios.get(url).then(response => {
-      if (response?.status === 200) {
-        return response?.data
+  async fetchMRASProfile (): Promise<any> {
+    try {
+      let url = `mras-profile/${this.request_jurisdiction_cd}/${this.corpSearch}`
+      const response = await axios.get(url)
+      if (response?.status === OK) {
+        return response.data
       }
-    }).catch(error => {
-      console.error('fetchMRASProfile() =', error) // eslint-disable-line no-console
+    } catch (error) {
+      const code: number = error?.response?.code
+      // do not generate console error for the errors codes
+      // that mras-search-info page handles
+      if (![BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE].includes(code)) {
+        console.error('fetchMRASProfile() =', error) // eslint-disable-line no-console
+      }
       this.mutateName('')
-      this.mutateMrasSearchResult(error.response.status)
+      this.mutateMrasSearchResult(code)
       this.mutateMrasSearchInfoModalVisible(true)
-    })
+    }
+    return null
   }
 
   @Mutation
