@@ -188,9 +188,6 @@ export default class ApplicantInfo2 extends Vue {
   hideCorpNum: boolean | 'auto' = true
   loading: boolean = false
   messages = {}
-  requiredRule = [
-    v => !!v || 'Required field'
-  ]
 
   @Watch('xproJurisdiction')
   async hanldeJurisdiction (newVal, oldVal) {
