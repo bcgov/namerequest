@@ -135,7 +135,7 @@ export class NewRequestModule extends VuexModule {
   addressSuggestions: object | null = null
   allowAutoApprove: boolean = false
   analysisJSON: AnalysisJSONI | null = null
-  analyzePending: Boolean = false
+  analyzePending: boolean = false
   applicant: ApplicantI = {
     addrLine1: '',
     addrLine2: '',
@@ -1954,6 +1954,7 @@ export class NewRequestModule extends VuexModule {
   async findNameRequest (): Promise<void> {
     try {
       this.resetAnalyzeName()
+      this.mutateQuickSearch(true)
       this.mutateDisplayedComponent('SearchPending')
 
       const params: ExistingRequestSearchI = {
@@ -2438,7 +2439,6 @@ export class NewRequestModule extends VuexModule {
     this.resetNameChoices()
     this.mutateNameRequest({})
     this.mutateNameAnalysisTimedOut(false)
-    this.mutateQuickSearch(true)
     this.mutateAnalyzePending(false)
   }
   @Action
@@ -2455,6 +2455,7 @@ export class NewRequestModule extends VuexModule {
     this.setActiveComponent(destination)
     if (destination !== 'NamesCapture') {
       this.resetAnalyzeName()
+      this.mutateQuickSearch(true)
     }
   }
   @Action
@@ -2580,7 +2581,7 @@ export class NewRequestModule extends VuexModule {
   @Action
   async startQuickSearch () {
     if (this.name) {
-      let name = this.name
+      const name = this.name
       let exactMatchName = name.replace(' \/', '\/')
         .replace(/(^|\s+)(\$+(\s|$)+)+/g, '$1DOLLAR$3')
         .replace(/(^|\s+)(¢+(\s|$)+)+/g, '$1CENT$3')
@@ -2594,7 +2595,7 @@ export class NewRequestModule extends VuexModule {
       exactMatchName = exactMatchName.substring(0, 1) === '+' ? exactMatchName.substring(1) : exactMatchName
       exactMatchName = encodeURIComponent(exactMatchName)
 
-      let synonymsName = name.replace(/\//g, ' ')
+      const synonymsName = name.replace(/\//g, ' ')
         .replace(/\\/g, ' ')
         .replace(/&/g, ' ')
         .replace(/\+/g, ' ')
@@ -2611,10 +2612,6 @@ export class NewRequestModule extends VuexModule {
   }
   @Action({ rawError: true })
   async startAnalyzeName () {
-    if (this.quickSearch) {
-      this.startQuickSearch()
-      return
-    }
     this.resetAnalyzeName()
     this.mutateUserCancelledAnalysis(false)
     let name
@@ -2641,6 +2638,10 @@ export class NewRequestModule extends VuexModule {
       }
     }
     if (this.errors.length > 0) {
+      return
+    }
+    if (this.quickSearch) {
+      this.startQuickSearch()
       return
     }
     this.mutateNameOriginal(name) // Set original name for reset baseline
@@ -3166,7 +3167,7 @@ export class NewRequestModule extends VuexModule {
     this.quickSearchNames = value
   }
   @Mutation
-  mutateAnalyzePending (value: Boolean) {
+  mutateAnalyzePending (value: boolean) {
     this.analyzePending = value
   }
 }
