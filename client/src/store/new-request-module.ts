@@ -2572,8 +2572,8 @@ export class NewRequestModule extends VuexModule {
         this.mutateDisplayedComponent('QuickSearchResults')
       }
     } catch (error) {
-      // handle silently and move on to detailed search
-      console.error('quick search failed: ', error) // eslint-disable-line no-console
+      // send error to sentry and move on to detailed search (silently skips error for user)
+      console.error('getQuickSearch() =', error) // eslint-disable-line no-console
       this.mutateQuickSearch(false)
       this.startAnalyzeName()
     }
