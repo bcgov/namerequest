@@ -2640,10 +2640,6 @@ export class NewRequestModule extends VuexModule {
     if (this.errors.length > 0) {
       return
     }
-    if (this.quickSearch) {
-      this.startQuickSearch()
-      return
-    }
     this.mutateNameOriginal(name) // Set original name for reset baseline
     if (this.isXproMras) {
       this.mutateNRData({ key: 'xproJurisdiction', value: this.jurisdictionText })
@@ -2658,6 +2654,10 @@ export class NewRequestModule extends VuexModule {
           return
         }
       }
+    }
+    if (this.quickSearch) {
+      this.startQuickSearch()
+      return
     }
     let testName = this.name.toUpperCase()
     testName = removeExcessSpaces(testName)
