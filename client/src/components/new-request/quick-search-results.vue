@@ -38,7 +38,11 @@
           <v-btn id="search-again-button" :disabled="nameChanged" @click="searchAgain">Search Again</v-btn>
         </v-col>
         <v-col cols="auto" class="pb-0 pr-1">
-          <v-btn class="continue-search-button" color="primary" outlined @click="detailedSearch">
+          <v-btn class="continue-search-button"
+                 color="primary"
+                 outlined
+                 @click="detailedSearch"
+                 :loading="isLoadingAnalysis">
             Continue to Detailed Analysis
           </v-btn>
         </v-col>
@@ -68,6 +72,7 @@ export default class QuickSearchResults extends Vue {
   }
   contents: string = ''
   originalName: string = ''
+  private isLoadingAnalysis: boolean = false
 
   get entity_type_cd () {
     return newReqModule.entity_type_cd
@@ -97,6 +102,7 @@ export default class QuickSearchResults extends Vue {
     newReqModule.startAnalyzeName()
   }
   detailedSearch () {
+    this.isLoadingAnalysis = true
     newReqModule.mutateQuickSearch(false)
     newReqModule.startAnalyzeName()
   }
