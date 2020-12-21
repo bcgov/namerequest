@@ -108,7 +108,7 @@ export default class PaymentMixin extends Vue {
 
     if (!nrId) {
       // eslint-disable-next-line no-console
-      console.warn('NR ID is not present in NR, cannot continue!')
+      console.warn('NR ID is not present in params, cannot continue!')
       return false
     }
 

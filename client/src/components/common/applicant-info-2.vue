@@ -23,7 +23,7 @@
       <v-row>
         <v-col cols="2" />
         <v-col cols="5">
-          <label for="faxNumber" class="hidden">Phone Number (Optional)</label>
+          <label for="phoneNumber" class="hidden">Phone Number (Optional)</label>
           <v-text-field :messages="messages['phone']"
                         :value="applicant.phoneNumber"
                         :rules="phoneFaxRules"
@@ -57,7 +57,7 @@
         <v-col cols="5" align-self="start">
           <label for="natureBusinessInfo" class="hidden">Nature of Business</label>
           <v-textarea :messages="messages['nature']"
-                      :rules="requiredRule"
+                      :rules="businessNatureRules"
                       :value="nrData.natureBusinessInfo"
                       @blur="messages = {}"
                       @input="mutateNRData('natureBusinessInfo', $event)"
@@ -159,16 +159,22 @@ import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 export default class ApplicantInfo2 extends Vue {
   corpNumDirty: boolean = false
   corpNumError: string = ''
+  additionalInfoRules = [
+    v => (!v || v.length <= 120) || 'Cannot exceed 120 characters'
+  ]
+  businessNatureRules = [
+    v => !!v || 'Required field',
+    v => (!v || v.length <= 1000) || 'Cannot exceed 1000 characters'
+  ]
   corpNumRules = [
     v => !!v || 'Required field',
     v => !!this.getCorpNum(v) || 'Cannot validate number.  Please try again'
   ]
   emailRules = [
     v => !!v || 'Required field',
-    v => /.+@.+\..+/.test(v) || 'Not a valid email'
-  ]
-  additionalInfoRules = [
-    v => (!v || v.length <= 120) || 'Cannot exceed 120 characters'
+    v => /.+@.+\..+/.test(v) || 'Not a valid email',
+    v => (!v || v.length <= 75) || 'Cannot exceed 75 characters'
+
   ]
   phoneFaxRules = [
     v => (!v || v.length <= 30) || 'Cannot exceed 30 characters'
@@ -182,9 +188,6 @@ export default class ApplicantInfo2 extends Vue {
   hideCorpNum: boolean | 'auto' = true
   loading: boolean = false
   messages = {}
-  requiredRule = [
-    v => !!v || 'Required field'
-  ]
 
   @Watch('xproJurisdiction')
   async hanldeJurisdiction (newVal, oldVal) {
@@ -289,12 +292,6 @@ export default class ApplicantInfo2 extends Vue {
       await paymentModule.togglePaymentModal(true)
     }
   }
-  clearValidation () {
-    if (this.$refs.step2 as Vue) {
-      (this.$refs.step2 as any).resetValidation()
-    }
-    this.corpNumError = ''
-  }
   async getCorpNum (num) {
     this.isEditingCorpNum = false
     if (!num) {
@@ -326,9 +323,6 @@ export default class ApplicantInfo2 extends Vue {
   }
   setError (error) {
     this.error = error
-  }
-  showPreviousTab () {
-    newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
   }
   validate () {
     if (this.hideCorpNum !== 'auto') {

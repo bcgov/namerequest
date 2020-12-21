@@ -64,6 +64,15 @@ export function getConfig (): Promise<EnvConfigI> {
     const sentryDsn: string = response.data[0]['SENTRY_DSN'];
     (<any>window).sentryDsn = sentryDsn
 
+    const authTokenUrl: string = response.data[0]['AUTH_TOKEN_URL'];
+    (<any>window).authTokenUrl = authTokenUrl
+
+    const quickSearchPublicId: string = response.data[0]['QUICK_SEARCH_PUBLIC_ID'];
+    (<any>window).quickSearchPublicId = quickSearchPublicId
+
+    const quickSearchPublicSecret: string = response.data[0]['QUICK_SEARCH_PUBLIC_SECRET'];
+    (<any>window).quickSearchPublicSecret = quickSearchPublicSecret
+
     /**
      * authConfig is a workaround to fix the user settings call as it expects a URL with no trailing slash.
      * This will be removed when a fix is made to sbc-common-components to handle this
@@ -88,11 +97,11 @@ export function getConfig (): Promise<EnvConfigI> {
       $APP_IS_RUNNING_LOCALLY: appIsRunningLocally,
       $PAYMENT_PORTAL_URL: paymentUrl,
       $NR_COMPLETION_TIMER_NAME: nrCompletionTimerName,
-      $NR_COMPLETION_TIMEOUT_MS: !appIsRunningLocally ? nrCompletionTimeoutMs : nrCompletionTimeoutMs_dev,
+      $NR_COMPLETION_TIMEOUT_MS: appIsRunningLocally ? nrCompletionTimeoutMs_dev : nrCompletionTimeoutMs,
       $EXISTING_NR_TIMER_NAME: existingNrTimerName,
-      $EXISTING_NR_TIMEOUT_MS: !appIsRunningLocally ? existingNrTimeoutMs : existingNrTimeoutMs_dev,
+      $EXISTING_NR_TIMEOUT_MS: appIsRunningLocally ? existingNrTimeoutMs_dev : existingNrTimeoutMs,
       $PAYMENT_COMPLETION_TIMER_NAME: paymentCompletionTimerName,
-      $PAYMENT_COMPLETION_TIMEOUT_MS: appIsRunningLocally ? paymentCompletionTimeoutMs : paymentCompletionTimeoutMs_dev
+      $PAYMENT_COMPLETION_TIMEOUT_MS: appIsRunningLocally ? paymentCompletionTimeoutMs_dev : paymentCompletionTimeoutMs
     }
     resolve(config)
   })

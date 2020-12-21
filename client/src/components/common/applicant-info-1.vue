@@ -9,11 +9,10 @@
             <v-col cols="4" class="pt-0">
               <label for="lastname" class="hidden">Last Name</label>
               <v-text-field :messages="messages['lastName']"
-                            :rules="requiredRules"
+                            :rules="firstLastNameRules"
                             :value="applicant.lastName"
                             @blur="messages = {}"
-                            @focus="handleFocus('lastName', 'Last Name')"
-                            @input="updateApplicant('lastName', $event)"
+                            @input="mutateApplicant('lastName', $event)"
                             dense
                             filled
                             height="50"
@@ -26,11 +25,10 @@
             <v-col cols="4" class="pt-0">
               <label for="firstname" class="hidden">First Name</label>
               <v-text-field :messages="messages['firstName']"
-                            :rules="requiredRules"
+                            :rules="firstLastNameRules"
                             :value="applicant.firstName"
                             @blur="messages = {}"
-                            @focus="handleFocus('firstName', 'First Name')"
-                            @input="updateApplicant('firstName', $event)"
+                            @input="mutateApplicant('firstName', $event)"
                             dense
                             filled
                             height="50"
@@ -44,9 +42,9 @@
               <label for="middlename" class="hidden">Middle Name (Optional)</label>
               <v-text-field :messages="messages['middleName']"
                             :value="applicant.middleName"
+                            :rules="middleNameRules"
                             @blur="messages = {}"
-                            @focus="handleFocus('middleName', 'Middle Name')"
-                            @input="updateApplicant('middleName', $event)"
+                            @input="mutateApplicant('middleName', $event)"
                             dense
                             filled
                             height="50"
@@ -353,6 +351,13 @@ export default class ApplicantInfo1 extends Vue {
     v => typeof v === 'string' || 'Must be letters only',
     v => v.length <= 2 || 'Max 2 characters'
   ]
+  firstLastNameRules = [
+    v => !!v || 'Required field',
+    v => (!v || v.length <= 50) || 'Cannot exceed 50 characters'
+  ]
+  middleNameRules = [
+    v => (!v || v.length <= 50) || 'Cannot exceed 50 characters'
+  ]
   requiredRules = [
     v => !!v || 'Required field'
   ]
@@ -432,12 +437,6 @@ export default class ApplicantInfo1 extends Vue {
   get provinceOptions () {
     return this.$canJurisdictions.map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
   }
-  get provinceStateOptions () {
-    if (this.location === 'IN') {
-      return null
-    }
-    return this.$canJurisdictions
-  }
   get showAllFields () {
     return (!this.editMode || this.nrState === 'DRAFT')
   }
@@ -495,7 +494,7 @@ export default class ApplicantInfo1 extends Vue {
     if (this.showAddressMenu && event.key === 'Escape') {
       this.showAddressMenu = false
     }
-    if (this.addressSuggestions && this.showAddressMenu) {
+    if (this.addressSuggestions?.[0] && this.showAddressMenu) {
       if (event.key === 'Tab') {
         event.preventDefault()
         if (!this.highlightedSuggestion) {
@@ -531,17 +530,14 @@ export default class ApplicantInfo1 extends Vue {
       return event
     }
   }
+  mutateApplicant (key, value) {
+    newReqModule.mutateApplicant({ key, value })
+  }
   mutateCorpNum (num) {
     newReqModule.mutateCorpNum(num)
   }
   queryAddress (id) {
     newReqModule.getAddressDetails(id)
-  }
-  showNextTab () {
-    newReqModule.mutateSubmissionTabComponent('ApplicantInfo2')
-  }
-  showPreviousTab () {
-    newReqModule.mutateSubmissionTabComponent('NamesCapture')
   }
   updateApplicant (key, value) {
     this.clearValidation()

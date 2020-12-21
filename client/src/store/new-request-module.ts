@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosResponse } from 'axios'
+import axios, { AxiosError } from 'axios'
 import querystring from 'qs'
 import Vue from 'vue'
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
@@ -43,8 +43,7 @@ import { NameRequestPayment } from '@/modules/payment/models'
 
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
-import * as types from '@/store/types'
-import { NrAction } from '@/enums'
+import { NrAction, RollbackActions } from '@/enums'
 import { featureFlags } from '@/plugins/featureFlags'
 import { OK, BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
 
@@ -130,18 +129,13 @@ let debouncedCheckCOLIN: any
 
 interface RequestNameMapI extends RequestNameI {}
 
-export const ROLLBACK_ACTIONS = {
-  CANCEL: 'cancel',
-  RESTORE: 'restore',
-  ROLLBACK_PAYMENT: 'rollback-payment'
-}
-
 @Module({ dynamic: true, namespaced: false, store, name: 'newRequestModule' })
 export class NewRequestModule extends VuexModule {
   actingOnOwnBehalf: boolean = true
   addressSuggestions: object | null = null
   allowAutoApprove: boolean = false
   analysisJSON: AnalysisJSONI | null = null
+  analyzePending: boolean = false
   applicant: ApplicantI = {
     addrLine1: '',
     addrLine2: '',
@@ -744,6 +738,8 @@ export class NewRequestModule extends VuexModule {
   pickEntityModalVisible: boolean = false
   pickRequestTypeModalVisible: boolean = false
   priorityRequest: boolean = false
+  quickSearch: boolean = true
+  quickSearchNames: Array<object> = []
   request_action_cd: string = 'NEW'
   request_jurisdiction_cd: string = ''
   requestExaminationOrProvideConsent = {
@@ -1729,6 +1725,8 @@ export class NewRequestModule extends VuexModule {
      "ExistingRequestDisplay",
      "ExistingRequestEdit",
      "LowerContainer",
+     "QuickSearchPending",
+     "QuickSearchResults"
      "SearchPending",
      "Stats",
      "Success"
@@ -1788,8 +1786,8 @@ export class NewRequestModule extends VuexModule {
           }
         }
       }
-      return
     } catch (error) {
+      // AddressComplete problem - use console.log not console.error
       console.log('getAddressDetails() =', error) // eslint-disable-line no-console
     }
   }
@@ -1817,14 +1815,15 @@ export class NewRequestModule extends VuexModule {
         return
       }
       this.mutateAddressSuggestions(null)
-      return
     } catch (error) {
+      // AddressComplete problem - use console.log not console.error
       console.log('getAddressSuggestions() =', error) // eslint-disable-line no-console
     }
   }
   @Action
   async getNameAnalysis () {
     try {
+      this.mutateAnalyzePending(true)
       this.mutateDisplayedComponent('AnalyzePending')
       this.resetRequestExaminationOrProvideConsent()
 
@@ -1843,19 +1842,21 @@ export class NewRequestModule extends VuexModule {
         cancelToken: source.token,
         timeout: ANALYSIS_TIMEOUT_MS
       })
-
-      const json = resp.data
-      this.mutateAnalysisJSON(json)
-      if (Array.isArray(json.issues) && json.issues.length > 0) {
-        let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
-        if (corpConflict && Array.isArray(corpConflict.conflicts) && corpConflict.conflicts.length > 0) {
-          let firstConflict = corpConflict.conflicts[0]
-          if (firstConflict.id) {
-            this.mutateConflictId(firstConflict.id)
+      if (this.analyzePending) {
+        const json = resp.data
+        this.mutateAnalysisJSON(json)
+        if (Array.isArray(json.issues) && json.issues.length > 0) {
+          let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
+          if (corpConflict && Array.isArray(corpConflict.conflicts) && corpConflict.conflicts.length > 0) {
+            let firstConflict = corpConflict.conflicts[0]
+            if (firstConflict.id) {
+              this.mutateConflictId(firstConflict.id)
+            }
           }
         }
+        this.mutateAnalyzePending(false)
+        this.mutateDisplayedComponent('AnalyzeResults')
       }
-      this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
       console.error('getNameAnalysis() =', error) // eslint-disable-line no-console
       // FUTURE: fix error handling in case of network error (#5898)
@@ -1876,6 +1877,7 @@ export class NewRequestModule extends VuexModule {
   @Action
   async getNameAnalysisXPRO () {
     try {
+      this.mutateAnalyzePending(true)
       this.mutateDisplayedComponent('AnalyzePending')
       this.resetRequestExaminationOrProvideConsent()
 
@@ -1894,19 +1896,21 @@ export class NewRequestModule extends VuexModule {
         cancelToken: source.token,
         timeout: ANALYSIS_TIMEOUT_MS
       })
-
-      const json = resp.data
-      this.mutateAnalysisJSON(json)
-      if (Array.isArray(json.issues) && json.issues.length > 0) {
-        let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
-        if (corpConflict && Array.isArray(corpConflict.conflicts) && corpConflict.conflicts.length > 0) {
-          let firstConflict = corpConflict.conflicts[0]
-          if (firstConflict.id) {
-            this.mutateConflictId(firstConflict.id)
+      if (this.analyzePending) {
+        const json = resp.data
+        this.mutateAnalysisJSON(json)
+        if (Array.isArray(json.issues) && json.issues.length > 0) {
+          let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
+          if (corpConflict && Array.isArray(corpConflict.conflicts) && corpConflict.conflicts.length > 0) {
+            let firstConflict = corpConflict.conflicts[0]
+            if (firstConflict.id) {
+              this.mutateConflictId(firstConflict.id)
+            }
           }
         }
+        this.mutateAnalyzePending(false)
+        this.mutateDisplayedComponent('AnalyzeResults')
       }
-      this.mutateDisplayedComponent('AnalyzeResults')
     } catch (error) {
       console.error('getNameAnalysisXPRO() =', error) // eslint-disable-line no-console
       // FUTURE: fix error handling in case of network error (#5898)
@@ -1950,6 +1954,7 @@ export class NewRequestModule extends VuexModule {
   async findNameRequest (): Promise<void> {
     try {
       this.resetAnalyzeName()
+      this.mutateQuickSearch(true)
       this.mutateDisplayedComponent('SearchPending')
 
       const params: ExistingRequestSearchI = {
@@ -1995,9 +2000,10 @@ export class NewRequestModule extends VuexModule {
   @Action
   async addRequestActionComment (data) {
     try {
-      let requestAction = this.requestActionOriginal || this.request_action_cd
-      let { shortDesc } = this.requestActions.find(request => request.value === requestAction)
-      let msg = `*** ${shortDesc} ***`
+      const requestAction = this.requestActionOriginal || this.request_action_cd
+      const action = this.requestActions.find(request => request.value === requestAction)
+      const { shortDesc } = action || { shortDesc: 'action not found' }
+      const msg = `*** ${shortDesc} ***`
       if (!data['additionalInfo']) {
         // if data.additionalInfo is empty, just assign it to message
         data['additionalInfo'] = msg
@@ -2107,21 +2113,18 @@ export class NewRequestModule extends VuexModule {
           checkedOutBy: checkedOutBy,
           checkedOutDt: checkedOutDt
         }, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          headers: { 'Content-Type': 'application/json' }
         })
       } else {
         response = await axios.patch(`/namerequests/${nrId}/checkout`, {}, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          headers: { 'Content-Type': 'application/json' }
         })
       }
 
       const data = response.data || { checkedOutBy: null, checkedOutDt: null }
       sessionStorage.setItem('checkedOutBy', data.checkedOutBy)
       sessionStorage.setItem('checkedOutDt', data.checkedOutDt)
+
       return true
     } catch (err) {
       console.error('checkoutNameRequest() =', err) // eslint-disable-line no-console
@@ -2152,9 +2155,7 @@ export class NewRequestModule extends VuexModule {
           checkedOutBy: checkedOutBy,
           checkedOutDt: checkedOutDt
         }, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          headers: { 'Content-Type': 'application/json' }
         })
 
         sessionStorage.removeItem('checkedOutBy')
@@ -2187,17 +2188,21 @@ export class NewRequestModule extends VuexModule {
       const requestData = nr && await this.addRequestActionComment(nr)
 
       const response = requestData && await axios.patch(`/namerequests/${nrId}/edit`, requestData, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' }
       })
 
-      this.mutateNameRequest(response.data)
-      this.mutateDisplayedComponent('Success')
-      return true
+      if (response?.data) {
+        this.mutateNameRequest(response.data)
+        this.mutateDisplayedComponent('Success')
+        return true
+      } else {
+        // eslint-disable-next-line no-console
+        console.error('patchNameRequests(), invalid response =', response)
+        throw new ApiError()
+      }
     } catch (err) {
       console.error('patchNameRequests() =', err) // eslint-disable-line no-console
-      await handleApiError(err, 'Could not update the name request').catch(async error => {
+      await handleApiError(err, 'Could not patch the name requests').catch(async error => {
         if (error instanceof ApiError) {
           await errorModule.setAppError({ id: 'patch-name-requests-api-error', error: error.message } as ErrorI)
         } else {
@@ -2213,9 +2218,7 @@ export class NewRequestModule extends VuexModule {
     try {
       const { nrId } = this
       const response = await axios.patch(`/namerequests/${nrId}/${action}`, {}, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' }
       })
 
       this.mutateNameRequest(response.data)
@@ -2223,7 +2226,7 @@ export class NewRequestModule extends VuexModule {
       return true
     } catch (err) {
       console.error('patchNameRequestsByAction() =', err) // eslint-disable-line no-console
-      await handleApiError(err, 'Could not update the name request').catch(async error => {
+      await handleApiError(err, 'Could not patch the name requests by action').catch(async error => {
         if (error instanceof ApiError) {
           await errorModule.setAppError(
             { id: 'patch-name-requests-by-action-api-error', error: error.message } as ErrorI
@@ -2257,33 +2260,36 @@ export class NewRequestModule extends VuexModule {
           break
       }
 
-      const requestData: any = data && await this.addRequestActionComment(data)
-      try {
-        const response: AxiosResponse = requestData && await axios.post(`/namerequests`, requestData, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
+      const requestData = data && await this.addRequestActionComment(data)
+      const response = requestData && await axios.post(`/namerequests`, requestData, {
+        headers: { 'Content-Type': 'application/json' }
+      })
+
+      if (response?.data) {
         this.setNrResponse(response.data)
 
         const { dispatch } = this.context
         // Set rollback on expire for new NRs
-        await dispatch(types.SET_ROLLBACK_ON_EXPIRE, true)
+        // await dispatch(types.SET_ROLLBACK_ON_EXPIRE, true) // NOT USED
+
         // Check in on expire is for existing NRs, make sure it isn't set!
-        await dispatch(types.SET_CHECK_IN_ON_EXPIRE, false)
+        // await dispatch(types.SET_CHECK_IN_ON_EXPIRE, false) // NOT USED
+
         return true
-      } catch (err) {
-        console.error('postNameRequests() =', err) // eslint-disable-line no-console
-        await handleApiError(err, 'Could not create the name request')
-        return false
-      }
-    } catch (error) {
-      console.error('postNameRequests() =', error) // eslint-disable-line no-console
-      if (error instanceof ApiError) {
-        await errorModule.setAppError({ id: 'post-name-requests-api-error', error: error.message } as ErrorI)
       } else {
-        await errorModule.setAppError({ id: 'post-name-requests-error', error: error.message } as ErrorI)
+        // eslint-disable-next-line no-console
+        console.error('postNameRequests(), invalid response =', response)
+        throw new ApiError()
       }
+    } catch (err) {
+      console.error('postNameRequests() =', err) // eslint-disable-line no-console
+      await handleApiError(err, 'Could not create the name requests').catch(async error => {
+        if (error instanceof ApiError) {
+          await errorModule.setAppError({ id: 'post-name-requests-api-error', error: error.message } as ErrorI)
+        } else {
+          await errorModule.setAppError({ id: 'post-name-requests-error', error: error.message } as ErrorI)
+        }
+      })
       return false
     }
   }
@@ -2313,26 +2319,27 @@ export class NewRequestModule extends VuexModule {
       }
 
       const requestData = data && await this.addRequestActionComment(data)
+      const response = requestData && await axios.put(`/namerequests/${nrId}`, requestData, {
+        headers: { 'Content-Type': 'application/json' }
+      })
 
-      try {
-        const response = requestData && await axios.put(`/namerequests/${nrId}`, requestData, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
+      if (response?.data) {
         this.setNrResponse(response.data)
         return true
-      } catch (err) {
-        console.error('putNameReservation() =', err) // eslint-disable-line no-console
-        await handleApiError(err, 'Could not update the name request')
-      }
-    } catch (error) {
-      console.error('putNameReservation() =', error) // eslint-disable-line no-console
-      if (error instanceof ApiError) {
-        await errorModule.setAppError({ id: 'put-name-requests-api-error', error: error.message } as ErrorI)
       } else {
-        await errorModule.setAppError({ id: 'put-name-requests-error', error: error.message } as ErrorI)
+        // eslint-disable-next-line no-console
+        console.error('putNameReservation(), invalid response =', response)
+        throw new ApiError()
       }
+    } catch (err) {
+      console.error('putNameReservation() =', err) // eslint-disable-line no-console
+      await handleApiError(err, 'Could not update the name reservation').catch(async error => {
+        if (error instanceof ApiError) {
+          await errorModule.setAppError({ id: 'put-name-reservation-api-error', error: error.message } as ErrorI)
+        } else {
+          await errorModule.setAppError({ id: 'put-name-reservation-error', error: error.message } as ErrorI)
+        }
+      })
       return false
     }
   }
@@ -2348,16 +2355,16 @@ export class NewRequestModule extends VuexModule {
 
     try {
       const response = await axios.patch(`/payments/${nrId}/payment/${paymentId}/${action}`, {}, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' }
       })
 
-      if (response.status === OK) {
+      if (response?.status === OK) {
         paymentResponse.payment = response.data
         paymentResponse.httpStatusCode = response.status.toString()
         paymentResponse.paymentSuccess = true
       } else {
+        // eslint-disable-next-line no-console
+        console.error('completePayment(), status was not 200, response =', response)
         paymentResponse.httpStatusCode = response.status.toString()
         paymentResponse.paymentSuccess = false
       }
@@ -2370,25 +2377,36 @@ export class NewRequestModule extends VuexModule {
       } else {
         await errorModule.setAppError({ id: 'complete-payment-error', error: error.message } as ErrorI)
       }
+      return null
     }
   }
   @Action
-  async rollbackNameRequest ({ nrId, action }): Promise<any> {
+  async rollbackNameRequest ({ nrId, action }): Promise<boolean> {
     try {
-      const validRollbackActions = [
-        ROLLBACK_ACTIONS.CANCEL
-      ]
+      // only cancel action is supported atm
+      const validRollbackActions = [RollbackActions.CANCEL]
 
-      if (validRollbackActions.indexOf(action) === -1) return
+      // safety checks
+      if (!nrId) {
+        console.error('rollbackNameRequest(), invalid NR id') // eslint-disable-line no-console
+        return false
+      }
+      if (!validRollbackActions.includes(action)) {
+        console.error('rollbackNameRequest(), invalid action =', action) // eslint-disable-line no-console
+        return false
+      }
+
       const response = await axios.patch(`/namerequests/${nrId}/rollback/${action}`, {}, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' }
       })
 
-      if (response.status !== OK) {
+      if (!response || response.status !== OK) {
+        // eslint-disable-next-line no-console
+        console.error('rollbackNameRequest(), status was not 200, response =', response)
         throw new ApiError('Could not rollback or cancel the name request')
       }
+
+      return true
     } catch (error) {
       console.error('rollbackNameRequest() =', error) // eslint-disable-line no-console
       if (error instanceof ApiError) {
@@ -2396,6 +2414,7 @@ export class NewRequestModule extends VuexModule {
       } else {
         await errorModule.setAppError({ id: 'rollback-name-request-error', error: error.message } as ErrorI)
       }
+      return false
     }
   }
   @Action
@@ -2420,9 +2439,11 @@ export class NewRequestModule extends VuexModule {
     this.resetNameChoices()
     this.mutateNameRequest({})
     this.mutateNameAnalysisTimedOut(false)
+    this.mutateAnalyzePending(false)
   }
   @Action
   cancelAnalyzeName (destination: string) {
+    this.mutateAnalyzePending(false)
     if (source && source.cancel) {
       source.cancel()
       source = null
@@ -2434,6 +2455,7 @@ export class NewRequestModule extends VuexModule {
     this.setActiveComponent(destination)
     if (destination !== 'NamesCapture') {
       this.resetAnalyzeName()
+      this.mutateQuickSearch(true)
     }
   }
   @Action
@@ -2497,6 +2519,97 @@ export class NewRequestModule extends VuexModule {
     }
     this.mutateDisplayedComponent('ExistingRequestEdit')
   }
+  @Action
+  async parseExactNames (json: { names: [string] }) {
+    let nameObjs = json.names
+    let names = []
+    for (let i = 0; i < nameObjs.length; i++) {
+      names.push({ name: `${nameObjs[i]['name']}`, type: 'exact' })
+    }
+    return names
+  }
+  @Action
+  async parseSynonymNames (json: { names: [string], exactNames: [{ name: string, type: string }] }) {
+    let duplicateNames = []
+    for (let i = 0; i < json.exactNames.length; i++) {
+      duplicateNames.push(json.exactNames[i].name)
+    }
+    let nameObjs = json.names
+    let names = []
+    for (let i = 0; i < nameObjs.length; i++) {
+      if (nameObjs[i]['name_info']['id']) {
+        let name = nameObjs[i]['name_info']['name']
+        if (!duplicateNames.includes(name)) {
+          names.push({ name: name, type: 'synonym' })
+        }
+      }
+    }
+    return names
+  }
+  @Action
+  async getQuickSearch (cleanedName: {exactMatch: string, synonymMatch: string}) {
+    try {
+      this.mutateDisplayedComponent('QuickSearchPending')
+      let encodedAuth = btoa(`${window['quickSearchPublicId']}:${window['quickSearchPublicSecret']}`)
+      const tokenResp = await axios.post(window['authTokenUrl'], 'grant_type=client_credentials', {
+        headers: { Authorization: `Basic ${encodedAuth}`, 'content-type': 'application/x-www-form-urlencoded' }
+      })
+      let token = tokenResp.data.access_token
+      const exactResp = await axios.get('/exact-match?query=' + cleanedName.exactMatch, {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+      })
+      const synonymResp = await axios.get('/requests/synonymbucket/' + cleanedName.synonymMatch + '/*', {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+      })
+
+      const exactNames = await this.parseExactNames(exactResp.data)
+      // pass in exactNames so that we can check for duplicates
+      synonymResp.data.exactNames = exactNames
+      const synonymNames = await this.parseSynonymNames(synonymResp.data)
+      this.mutateQuickSearchNames(exactNames.concat(synonymNames))
+      // check if they skipped
+      if (this.quickSearch) {
+        this.mutateDisplayedComponent('QuickSearchResults')
+      }
+    } catch (error) {
+      // send error to sentry and move on to detailed search (silently skips error for user)
+      console.error('getQuickSearch() =', error) // eslint-disable-line no-console
+      this.mutateQuickSearch(false)
+      this.startAnalyzeName()
+    }
+  }
+  @Action
+  async startQuickSearch () {
+    if (this.name) {
+      const name = this.name
+      let exactMatchName = name.replace(' \/', '\/')
+        .replace(/(^|\s+)(\$+(\s|$)+)+/g, '$1DOLLAR$3')
+        .replace(/(^|\s+)(¢+(\s|$)+)+/g, '$1CENT$3')
+        .replace(/\$/g, 'S')
+        .replace(/¢/g, 'C')
+        .replace(/\\/g, '')
+        .replace(/\//g, '')
+        .replace(/(`|~|!|\||\(|\)|\[|\]|\{|\}|:|"|\^|#|%|\?)/g, '')
+        .replace(/[\+\-]{2,}/g, '')
+        .replace(/\s[\+\-]$/, '')
+      exactMatchName = exactMatchName.substring(0, 1) === '+' ? exactMatchName.substring(1) : exactMatchName
+      exactMatchName = encodeURIComponent(exactMatchName)
+
+      const synonymsName = name.replace(/\//g, ' ')
+        .replace(/\\/g, ' ')
+        .replace(/&/g, ' ')
+        .replace(/\+/g, ' ')
+        .replace(/\-/g, ' ')
+        .replace(/(^| )(\$+(\s|$)+)+/g, '$1DOLLAR$3')
+        .replace(/(^| )(¢+(\s|$)+)+/g, '$1CENT$3')
+        .replace(/\$/g, 'S')
+        .replace(/¢/g, 'C')
+        .replace(/(`|~|!|\||\(|\)|\[|\]|\{|\}|:|"|\^|#|%|\?|,)/g, '')
+
+      this.getQuickSearch({ 'exactMatch': exactMatchName, 'synonymMatch': synonymsName })
+    }
+    return
+  }
   @Action({ rawError: true })
   async startAnalyzeName () {
     this.resetAnalyzeName()
@@ -2525,6 +2638,10 @@ export class NewRequestModule extends VuexModule {
       }
     }
     if (this.errors.length > 0) {
+      return
+    }
+    if (this.quickSearch) {
+      this.startQuickSearch()
       return
     }
     this.mutateNameOriginal(name) // Set original name for reset baseline
@@ -2621,14 +2738,14 @@ export class NewRequestModule extends VuexModule {
         return response.data
       }
     } catch (error) {
-      const code: number = error?.response?.code
+      const status: number = error?.response?.status
       // do not generate console error for the errors codes
       // that mras-search-info page handles
-      if (![BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE].includes(code)) {
+      if (![BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE].includes(status)) {
         console.error('fetchMRASProfile() =', error) // eslint-disable-line no-console
       }
       this.mutateName('')
-      this.mutateMrasSearchResult(code)
+      this.mutateMrasSearchResult(status)
       this.mutateMrasSearchInfoModalVisible(true)
     }
     return null
@@ -3040,6 +3157,18 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateUserCancelledAnalysis (value: boolean) {
     this.userCancelledAnalysis = value
+  }
+  @Mutation
+  mutateQuickSearch (value: boolean) {
+    this.quickSearch = value
+  }
+  @Mutation
+  mutateQuickSearchNames (value: Array<object>) {
+    this.quickSearchNames = value
+  }
+  @Mutation
+  mutateAnalyzePending (value: boolean) {
+    this.analyzePending = value
   }
 }
 

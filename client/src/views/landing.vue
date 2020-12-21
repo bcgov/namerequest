@@ -33,7 +33,7 @@
         </v-col>
         <div class="main-container-style mt-3">
           <transition name="fade" mode="out-in" :duration="{ enter: 100, leave: 100 }">
-            <keep-alive :include="['Tabs', 'AnalyzePending']">
+            <keep-alive :include="['Tabs']">
               <component :is="displayedComponent" :key="displayedComponent" transition="fade-transition" />
             </keep-alive>
           </transition>
@@ -56,6 +56,8 @@ import SendToExamination from '@/components/new-request/send-to-examination.vue'
 import ExistingRequestDisplay from '@/components/existing-request/existing-request-display.vue'
 import ExistingRequestEdit from '@/components/existing-request/existing-request-edit.vue'
 import LowerContainer from '@/components/lower-info-area/lower-container.vue'
+import QuickSearchPending from '@/components/new-request/quick-search-pending.vue'
+import QuickSearchResults from '@/components/new-request/quick-search-results.vue'
 import SearchPending from '@/components/existing-request/search-pending.vue'
 import Stats from '@/components/new-request/stats.vue'
 import SubmissionTabs from '@/components/new-request/submit-request/submission-tabs.vue'
@@ -72,6 +74,8 @@ import newRequestModule from '@/store/new-request-module'
     ExistingRequestDisplay,
     ExistingRequestEdit,
     LowerContainer,
+    QuickSearchPending,
+    QuickSearchResults,
     SearchPending,
     Stats,
     SubmissionTabs,
