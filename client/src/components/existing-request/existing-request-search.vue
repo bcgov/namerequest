@@ -139,7 +139,10 @@ export default class ExistingRequestSearch extends Vue {
     }
   }
 
-  private setExistingRequestSearch (key, value) {
+  private setExistingRequestSearch (key: string, value: string) {
+    // auto-capitalize the entered NR number
+    if (key === 'nrNum') value = value.toUpperCase()
+
     this.$refs['existing-nr-form']['resetValidation']()
     newReqModule.mutateExistingRequestSearch({ key, value })
     if (this.errorMessage) {

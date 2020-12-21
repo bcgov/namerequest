@@ -51,9 +51,7 @@ const qs: any = querystring
 const ANALYSIS_TIMEOUT_MS = 3 * 60 * 1000 // 3 minutes
 let source: any
 
-export class ApiError extends Error {}
-
-function isAxiosError (err: AxiosError | Error): err is AxiosError {
+function isAxiosError (err: AxiosError | Error): boolean {
   return (err as AxiosError).isAxiosError !== undefined
 }
 
@@ -62,48 +60,41 @@ function isAxiosError (err: AxiosError | Error): err is AxiosError {
  * @param err error object from the catch statement
  * @param defaultMessage optional fallback message
  */
-async function handleApiError (err, defaultMessage = '') {
+async function handleApiError (err: any, defaultMessage = ''): Promise<string> {
   if (isAxiosError(err)) {
     let message = ''
     const responseData = err?.response?.data
     const hasResponseData = !!responseData
+
     if (hasResponseData && responseData instanceof Blob) {
-      // Handle any cases where the API error response is a Blob (eg. request for PDF receipt fails)
+      // Handle any cases where the API error response is a Blob (eg, request for PDF receipt fails).
       const errorText = await responseData.text()
       const errorJson = JSON.parse(errorText)
-      if (errorJson && errorJson.message) {
-        message = errorJson.message
+      if (errorJson?.message) {
+        message = `${err.toString()} (${errorJson.message})`
       }
     } else if (hasResponseData && responseData instanceof String) {
-      message = responseData.toString()
-      // Handle any cases where the API error response is a string
+      // Handle any cases where the API error response is a String.
+      message = `${err.toString()} (${responseData.toString()})`
     } else if (hasResponseData && responseData.message) {
-      // Handle API errors, they will be supplied as an object { message: 'Ipsum lorem dolor' }
-      message = responseData.message
+      // Handle any cases where the API error response in an object (eg, { message: 'Ipsum lorem dolor' }).
+      message += responseData.message
+      message = `${err.toString()} (${responseData.message})`
+    } else if (defaultMessage) {
+      // Handle any other cases.
+      message = `${err.toString()} (${defaultMessage})`
     } else {
-      message = defaultMessage
+      return err.toString()
     }
 
-    // Clean the error message, replace line breaks with HTML breaks
-    const regex = /(?:\r\n|\r|\n)/g
-    message = message.replace(regex, '<br>')
-    throw new ApiError(message)
+    // Replace line breaks with HTML line breaks.
+    return message.replace(/(?:\r\n|\r|\n)/g, '<br>')
   } else {
-    const { message } = err
-    throw new ApiError(message || defaultMessage)
+    // Handle non-axios error (ie, probably a JS error).
+    return (err?.toString() || defaultMessage)
   }
 }
 
-/** Test
- {
-    name1: 'ACME Construction',
-    name2: 'ACME Home Construction',
-    name3: 'ACME Commercial Construction',
-    designation1: 'Ltd.',
-    designation2: 'Ltd.',
-    designation3: 'Ltd.'
- }
- */
 const parseNameChoices = (nameChoices) => {
   return Object.keys(nameChoices)
     .reduce((names, key, idx) => {
@@ -123,9 +114,6 @@ const parseNameChoices = (nameChoices) => {
     })
     .filter((name) => !!name)
 }
-
-let debouncedCheckMRAS: any
-let debouncedCheckCOLIN: any
 
 interface RequestNameMapI extends RequestNameI {}
 
@@ -837,11 +825,10 @@ export class NewRequestModule extends VuexModule {
   userCancelledAnalysis: boolean = false
   waitingAddressSearch: WaitingAddressSearchI | null = null
 
-  private store: any
-
   get showPriorityRequest () {
     return (!this.editMode && this.nrState === 'DRAFT') || (!this.editMode && this.submissionType === 'examination')
   }
+
   get showCorpNum (): 'colin' | 'mras' | false {
     if (($colinRequestActions.includes(this.request_action_cd) && $colinRequestTypes.includes(this.entity_type_cd)) ||
       this.entity_type_cd === 'DBA') {
@@ -863,9 +850,11 @@ export class NewRequestModule extends VuexModule {
     }
     return false
   }
+
   get corpNumForEdit () {
     return this.corpNumForReservation
   }
+
   get corpNumForReservation () {
     // this differs from getCorpNumForEdit by not supplying the empty keys for corpNum and homeJurisNum
     // which are necessary to denote deletion during the PATCH operation that is for editing but which
@@ -887,6 +876,7 @@ export class NewRequestModule extends VuexModule {
       homeJurisNum: this.nrData.homeJurisNum
     }
   }
+
   get currentIssue () {
     const { analysisJSON } = this
     if (!analysisJSON) return {}
@@ -896,6 +886,7 @@ export class NewRequestModule extends VuexModule {
     }
     return {}
   }
+
   get showXproJurisdiction () {
     if (this.location !== 'BC') {
       return true
@@ -905,6 +896,7 @@ export class NewRequestModule extends VuexModule {
     }
     return false
   }
+
   get allDesignationWords () {
     let output = []
     for (let des in $designations) {
@@ -916,6 +908,7 @@ export class NewRequestModule extends VuexModule {
     }
     return output
   }
+
   get consentConflicts (): ConsentConflictI {
     let output: ConsentConflictI = {
       name: ''
@@ -934,6 +927,7 @@ export class NewRequestModule extends VuexModule {
     }
     return output
   }
+
   get consentWords () {
     let consentWords = []
 
@@ -948,6 +942,7 @@ export class NewRequestModule extends VuexModule {
     }
     return consentWords
   }
+
   get conversionTypeOptions () {
     let options = [...this.conversionTypes].filter(type => type.shortlist)
     let n = 3
@@ -968,6 +963,7 @@ export class NewRequestModule extends VuexModule {
       return 0
     })
   }
+
   get designationItems () {
     if (this.entity_type_cd && $designations[this.entity_type_cd]) {
       let { words } = $designations[this.entity_type_cd]
@@ -975,12 +971,14 @@ export class NewRequestModule extends VuexModule {
     }
     return []
   }
+
   get designationObject () {
     if (this.entity_type_cd && $designations[this.entity_type_cd]) {
       return $designations[this.entity_type_cd]
     }
     return ''
   }
+
   get entityTypesBC (): Array<EntityI> {
     try {
       let generateEntities = (entities) => {
@@ -1014,11 +1012,12 @@ export class NewRequestModule extends VuexModule {
         return generateEntities(mapping[this.request_action_cd])
       }
       return this.entityTypesBCData
-    } catch (error) {
-      console.error('entityTypesBC() =', error) // eslint-disable-line no-console
+    } catch (err) {
+      console.error('entityTypesBC() =', err) // eslint-disable-line no-console
       return this.entityTypesBCData
     }
   }
+
   get entityTypesXPRO (): Array<EntityI> {
     let { entityTypesXPROData } = this
     if (this.location === 'CA') {
@@ -1061,11 +1060,12 @@ export class NewRequestModule extends VuexModule {
         return generateEntities(mapping[this.request_action_cd])
       }
       return entityTypesXPROData
-    } catch (error) {
-      console.error('entityTypesXPRO() =', error) // eslint-disable-line no-console
+    } catch (err) {
+      console.error('entityTypesXPRO() =', err) // eslint-disable-line no-console
       return entityTypesXPROData
     }
   }
+
   get entityTextFromValue () {
     if (this.entity_type_cd) {
       let list = [...this.entityTypesBC, ...this.entityTypesXPRO]
@@ -1074,15 +1074,19 @@ export class NewRequestModule extends VuexModule {
     }
     return ''
   }
+
   get locationText () {
     return this.locationOptions.find(options => options.value === this.location)?.text
   }
+
   get isXproMras () {
     return (['CA', 'IN'].includes(this.location) && this.request_action_cd !== 'MVE')
   }
+
   get requestText () {
     return this.requestActions.find(options => options.value === this.request_action_cd)?.text
   }
+
   get entityTypeOptions () {
     let bcOptions: SelectOptionsI[] = this.entityTypesBC.filter(x => {
       if (this.request_action_cd === 'REH' && this.location === 'BC') {
@@ -1176,9 +1180,11 @@ export class NewRequestModule extends VuexModule {
       return 0
     })
   }
+
   get isAssumedName () {
     return !!this.assumedNameOriginal
   }
+
   get locationOptions () {
     // To save template conditional logic, some locations have duplicate descriptions to align with there request
     let options = [
@@ -1226,6 +1232,7 @@ export class NewRequestModule extends VuexModule {
     }
     return options
   }
+
   get nameIsSlashed () {
     if (this.name) {
       let { name } = this
@@ -1249,6 +1256,7 @@ export class NewRequestModule extends VuexModule {
     }
     return nrId
   }
+
   get nrNum () {
     const { nr } = this
     let nrNum
@@ -1257,6 +1265,7 @@ export class NewRequestModule extends VuexModule {
     }
     return nrNum
   }
+
   get nrState () {
     const { nr } = this
     let state
@@ -1265,6 +1274,7 @@ export class NewRequestModule extends VuexModule {
     }
     return state
   }
+
   get pickEntityTableBC () {
     let categories = []
     for (let type of this.entityTypesBC) {
@@ -1284,6 +1294,7 @@ export class NewRequestModule extends VuexModule {
     )
     return output
   }
+
   get pickEntityTableXPRO () {
     let categories = []
     for (let type of this.entityTypesXPRO) {
@@ -1303,12 +1314,14 @@ export class NewRequestModule extends VuexModule {
     )
     return output
   }
+
   get requestTextFromValue () {
     if (this.request_action_cd) {
       return this.requestTypeOptions.find(req => req.value === this.request_action_cd).text
     }
     return null
   }
+
   get requestTypeOptions () {
     let option = this.requestActions.find(type => type.value === 'NEW')
     option.rank = 1
@@ -1336,6 +1349,7 @@ export class NewRequestModule extends VuexModule {
       return 0
     })
   }
+
   get splitNameDesignation (): NameDesignationI {
     if (this.name && this.designationObject && this.designationObject.end) {
       let { words } = this.designationObject
@@ -1353,6 +1367,7 @@ export class NewRequestModule extends VuexModule {
       designation: ''
     })
   }
+
   get xproRequestTypeCd () {
     if (this.isAssumedName) {
       switch (this.entity_type_cd) {
@@ -1366,6 +1381,7 @@ export class NewRequestModule extends VuexModule {
     }
     return ''
   }
+
   /**
    * This getter combines the NR response data objects names against nameChoices,
    * which contains the actual form values, building the request object required for a Name.
@@ -1410,6 +1426,7 @@ export class NewRequestModule extends VuexModule {
     }
     return data
   }
+
   get draftNameReservation (): DraftReqI {
     const { nrRequestNames, applicant } = this
 
@@ -1475,6 +1492,7 @@ export class NewRequestModule extends VuexModule {
     }
     return data
   }
+
   get editNameReservation () {
     let { applicant } = this
 
@@ -1499,11 +1517,13 @@ export class NewRequestModule extends VuexModule {
     }
     return data
   }
+
   get jurisdictionText () {
     return this.location === 'CA'
       ? $canJurisdictions.find(jur => jur.value === this.request_jurisdiction_cd)?.text
       : $intJurisdictions.find(jur => jur.value === this.request_jurisdiction_cd)?.text
   }
+
   get nrNames () {
     const { nr } = this
     let names = []
@@ -1512,6 +1532,7 @@ export class NewRequestModule extends VuexModule {
     }
     return names
   }
+
   get nrRequestNames (): RequestNameI[] {
     const { nameChoices, nrNames } = this
     const defaultValues = {
@@ -1597,6 +1618,7 @@ export class NewRequestModule extends VuexModule {
 
     return requestNames
   }
+
   get reservedNameReservation (): ReservedReqI {
     const { applicant, nrData, nrRequestNames } = this
 
@@ -1624,6 +1646,7 @@ export class NewRequestModule extends VuexModule {
     }
     return data
   }
+
   /** Map the appropriate Blurb based on the request action and location */
   get entityBlurbs (): any {
     switch (this.request_action_cd) {
@@ -1691,6 +1714,7 @@ export class NewRequestModule extends VuexModule {
     }
     return ''
   }
+
   @Action
   setActiveComponent (component: string) {
     enum Tabs {
@@ -1733,6 +1757,7 @@ export class NewRequestModule extends VuexModule {
      */
     this.mutateDisplayedComponent(component)
   }
+
   @Action
   async getAddressDetails (id) {
     const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Retrieve/v2.11/json3.ws'
@@ -1786,11 +1811,13 @@ export class NewRequestModule extends VuexModule {
           }
         }
       }
-    } catch (error) {
+    } catch (err) {
+      const msg = await handleApiError(err, 'Could not get address details')
       // AddressComplete problem - use console.log not console.error
-      console.log('getAddressDetails() =', error) // eslint-disable-line no-console
+      console.log('getAddressDetails() =', msg) // eslint-disable-line no-console
     }
   }
+
   @Action
   async getAddressSuggestions (appKV) {
     if (!appKV.value) {
@@ -1815,11 +1842,13 @@ export class NewRequestModule extends VuexModule {
         return
       }
       this.mutateAddressSuggestions(null)
-    } catch (error) {
+    } catch (err) {
+      const msg = await handleApiError(err, 'Could not get address suggestions')
       // AddressComplete problem - use console.log not console.error
-      console.log('getAddressSuggestions() =', error) // eslint-disable-line no-console
+      console.log('getAddressSuggestions() =', msg) // eslint-disable-line no-console
     }
   }
+
   @Action
   async getNameAnalysis () {
     try {
@@ -1857,11 +1886,12 @@ export class NewRequestModule extends VuexModule {
         this.mutateAnalyzePending(false)
         this.mutateDisplayedComponent('AnalyzeResults')
       }
-    } catch (error) {
-      console.error('getNameAnalysis() =', error) // eslint-disable-line no-console
+    } catch (err) {
+      const msg = await handleApiError(err, 'Could not get name analysis')
+      console.error('getNameAnalysis() =', msg) // eslint-disable-line no-console
       // FUTURE: fix error handling in case of network error (#5898)
       // (should not display "send to examination")
-      if (error?.code === 'ECONNABORTED' || error?.message === 'Network Error') {
+      if (err?.code === 'ECONNABORTED' || err?.message === 'Network Error') {
         this.mutateNameAnalysisTimedOut(true)
         this.mutateName(this.name)
         this.mutateDisplayedComponent('SendToExamination')
@@ -1874,6 +1904,7 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('Tabs')
     }
   }
+
   @Action
   async getNameAnalysisXPRO () {
     try {
@@ -1911,11 +1942,12 @@ export class NewRequestModule extends VuexModule {
         this.mutateAnalyzePending(false)
         this.mutateDisplayedComponent('AnalyzeResults')
       }
-    } catch (error) {
-      console.error('getNameAnalysisXPRO() =', error) // eslint-disable-line no-console
+    } catch (err) {
+      const msg = await handleApiError(err, 'Could not get name analysis xpro')
+      console.error('getNameAnalysisXPRO() =', msg) // eslint-disable-line no-console
       // FUTURE: fix error handling in case of network error (#5898)
       // (should not display "send to examination")
-      if (error?.code === 'ECONNABORTED' || error?.message === 'Network Error') {
+      if (err?.code === 'ECONNABORTED' || err?.message === 'Network Error') {
         this.mutateNameAnalysisTimedOut(true)
         this.mutateName(this.name)
         this.mutateDisplayedComponent('SendToExamination')
@@ -1941,11 +1973,8 @@ export class NewRequestModule extends VuexModule {
       if (!nrData) throw new Error('Got error from getNameRequest()')
       this.setNrResponse(nrData)
       return Boolean(nrData.actions.includes(action))
-    } catch (error) {
-      console.error('confirmAction() =', error) // eslint-disable-line no-console
-      await errorModule.setAppError(
-        { id: 'confirm-action-error', error: 'Could not confirm action' }
-      )
+    } catch (err) {
+      // don't generate errors - getNameRequest() already did that
       return false
     }
   }
@@ -1984,8 +2013,9 @@ export class NewRequestModule extends VuexModule {
       }
       this.mutateNameRequest(resp.data)
       this.mutateDisplayedComponent('ExistingRequestDisplay')
-    } catch (error) {
-      console.error('findNameRequest(), error =', error) // eslint-disable-line no-console
+    } catch (err) {
+      const msg = await handleApiError(err, 'Could not find name request')
+      console.error('findNameRequest()', msg) // eslint-disable-line no-console
       this.mutateNameRequest(
         {
           text: 'A network error occurred. Please check your network connection and try again.',
@@ -2024,11 +2054,10 @@ export class NewRequestModule extends VuexModule {
       // if there is no previous request_action message then we just preserve whatever text there is and append msg
       data['additionalInfo'] += ` \n\n ${msg}`
       return data
-    } catch (error) {
-      console.error('addRequestActionComment() =', error) // eslint-disable-line no-console
-      await errorModule.setAppError(
-        { id: 'add-request-action-error', error: 'An error occurred when building the name request' }
-      )
+    } catch (err) {
+      const msg = await handleApiError(err, 'Could not add request action comment')
+      console.error('addRequestActionComment() =', msg) // eslint-disable-line no-console
+      await errorModule.setAppError({ id: 'add-request-action-error', error: msg } as ErrorI)
       return null
     }
   }
@@ -2046,11 +2075,10 @@ export class NewRequestModule extends VuexModule {
         headers: { 'Content-Type': 'application/json' }
       })
       return response.data
-    } catch (error) {
-      console.error('getNameRequest() =', error) // eslint-disable-line no-console
-      await errorModule.setAppError(
-        { id: 'fetch-name-request-error', error: 'Could not fetch name request' }
-      )
+    } catch (err) {
+      const msg = await handleApiError(err, 'Could not get name request')
+      console.error('getNameRequest() =', msg) // eslint-disable-line no-console
+      await errorModule.setAppError({ id: 'get-name-request-error', error: msg } as ErrorI)
       return null
     }
   }
@@ -2095,8 +2123,9 @@ export class NewRequestModule extends VuexModule {
     try {
       let resp = await axios.get('/statistics')
       this.mutateStats(resp.data)
-    } catch (error) {
-      console.error('getStats() =', error) // eslint-disable-line no-console
+    } catch (err) {
+      const msg = await handleApiError(err, 'Could not get stats')
+      console.error('getStats() =', msg) // eslint-disable-line no-console
     }
   }
 
@@ -2127,18 +2156,9 @@ export class NewRequestModule extends VuexModule {
 
       return true
     } catch (err) {
-      console.error('checkoutNameRequest() =', err) // eslint-disable-line no-console
-      await handleApiError(err, 'Could not check out the name request').catch(async error => {
-        if (error instanceof ApiError) {
-          await errorModule.setAppError(
-            { id: 'checkout-name-requests-api-error', error: error.message } as ErrorI
-          )
-        } else {
-          await errorModule.setAppError(
-            { id: 'checkout-name-requests-error', error: error.message } as ErrorI
-          )
-        }
-      })
+      const msg = await handleApiError(err, 'Could not checkout name request')
+      console.error('checkoutNameRequest() =', msg) // eslint-disable-line no-console
+      await errorModule.setAppError({ id: 'checkout-name-requests-error', error: msg } as ErrorI)
       return false
     }
   }
@@ -2164,18 +2184,9 @@ export class NewRequestModule extends VuexModule {
         return true
       }
     } catch (err) {
-      console.error('checkinNameRequest() =', err) // eslint-disable-line no-console
-      await handleApiError(err, 'Could not check in the name request').catch(async error => {
-        if (error instanceof ApiError) {
-          await errorModule.setAppError(
-            { id: 'checkin-name-requests-api-error', error: error.message } as ErrorI
-          )
-        } else {
-          await errorModule.setAppError(
-            { id: 'checkin-name-requests-error', error: error.message } as ErrorI
-          )
-        }
-      })
+      const msg = await handleApiError(err, 'Could not checkin name request')
+      console.error('checkinNameRequest() =', msg) // eslint-disable-line no-console
+      await errorModule.setAppError({ id: 'checkin-name-requests-error', error: msg } as ErrorI)
       return false
     }
   }
@@ -2198,17 +2209,12 @@ export class NewRequestModule extends VuexModule {
       } else {
         // eslint-disable-next-line no-console
         console.error('patchNameRequests(), invalid response =', response)
-        throw new ApiError()
+        throw new Error()
       }
     } catch (err) {
-      console.error('patchNameRequests() =', err) // eslint-disable-line no-console
-      await handleApiError(err, 'Could not patch the name requests').catch(async error => {
-        if (error instanceof ApiError) {
-          await errorModule.setAppError({ id: 'patch-name-requests-api-error', error: error.message } as ErrorI)
-        } else {
-          await errorModule.setAppError({ id: 'patch-name-requests-error', error: error.message } as ErrorI)
-        }
-      })
+      const msg = await handleApiError(err, 'Could not patch name requests')
+      console.error('patchNameRequests() =', msg) // eslint-disable-line no-console
+      await errorModule.setAppError({ id: 'patch-name-requests-error', error: msg } as ErrorI)
       return false
     }
   }
@@ -2225,18 +2231,9 @@ export class NewRequestModule extends VuexModule {
       this.mutateDisplayedComponent('Success')
       return true
     } catch (err) {
-      console.error('patchNameRequestsByAction() =', err) // eslint-disable-line no-console
-      await handleApiError(err, 'Could not patch the name requests by action').catch(async error => {
-        if (error instanceof ApiError) {
-          await errorModule.setAppError(
-            { id: 'patch-name-requests-by-action-api-error', error: error.message } as ErrorI
-          )
-        } else {
-          await errorModule.setAppError(
-            { id: 'patch-name-requests-by-action-error', error: error.message } as ErrorI
-          )
-        }
-      })
+      const msg = await handleApiError(err, 'Could not patch name requests by action')
+      console.error('patchNameRequestsByAction() =', msg) // eslint-disable-line no-console
+      await errorModule.setAppError({ id: 'patch-name-requests-by-action-error', error: msg } as ErrorI)
       return false
     }
   }
@@ -2252,7 +2249,6 @@ export class NewRequestModule extends VuexModule {
           data = this.draftNameReservation
           break
         case 'conditional':
-
           data = this.conditionalNameReservation
           break
         case 'reserved':
@@ -2279,20 +2275,16 @@ export class NewRequestModule extends VuexModule {
       } else {
         // eslint-disable-next-line no-console
         console.error('postNameRequests(), invalid response =', response)
-        throw new ApiError()
+        throw new Error()
       }
     } catch (err) {
-      console.error('postNameRequests() =', err) // eslint-disable-line no-console
-      await handleApiError(err, 'Could not create the name requests').catch(async error => {
-        if (error instanceof ApiError) {
-          await errorModule.setAppError({ id: 'post-name-requests-api-error', error: error.message } as ErrorI)
-        } else {
-          await errorModule.setAppError({ id: 'post-name-requests-error', error: error.message } as ErrorI)
-        }
-      })
+      const msg = await handleApiError(err, 'Could not post name requests')
+      console.error('postNameRequests() =', msg) // eslint-disable-line no-console
+      await errorModule.setAppError({ id: 'post-name-requests-error', error: msg } as ErrorI)
       return false
     }
   }
+
   @Action
   async putNameReservation (nrId) {
     let { nrState } = this
@@ -2314,6 +2306,7 @@ export class NewRequestModule extends VuexModule {
           data = this.editNameReservation
           break
       }
+
       if (this.showCorpNum && this.corpNum) {
         data['corpNum'] = this.corpNum
       }
@@ -2329,20 +2322,16 @@ export class NewRequestModule extends VuexModule {
       } else {
         // eslint-disable-next-line no-console
         console.error('putNameReservation(), invalid response =', response)
-        throw new ApiError()
+        throw new Error()
       }
     } catch (err) {
-      console.error('putNameReservation() =', err) // eslint-disable-line no-console
-      await handleApiError(err, 'Could not update the name reservation').catch(async error => {
-        if (error instanceof ApiError) {
-          await errorModule.setAppError({ id: 'put-name-reservation-api-error', error: error.message } as ErrorI)
-        } else {
-          await errorModule.setAppError({ id: 'put-name-reservation-error', error: error.message } as ErrorI)
-        }
-      })
+      const msg = await handleApiError(err, 'Could not put name reservation')
+      console.error('putNameReservation() =', msg) // eslint-disable-line no-console
+      await errorModule.setAppError({ id: 'put-name-reservation-error', error: msg } as ErrorI)
       return false
     }
   }
+
   @Action
   async completePayment ({ nrId, paymentId, action }): Promise<NameRequestPayment> {
     // TODO: Type the param!
@@ -2370,16 +2359,14 @@ export class NewRequestModule extends VuexModule {
       }
 
       return paymentResponse
-    } catch (error) {
-      console.error('completePayment() =', error) // eslint-disable-line no-console
-      if (error instanceof ApiError) {
-        await errorModule.setAppError({ id: 'complete-payment-api-error', error: error.message } as ErrorI)
-      } else {
-        await errorModule.setAppError({ id: 'complete-payment-error', error: error.message } as ErrorI)
-      }
+    } catch (err) {
+      const msg = await handleApiError(err, 'Could not complete payment')
+      console.error('completePayment() =', msg) // eslint-disable-line no-console
+      await errorModule.setAppError({ id: 'complete-payment-error', error: msg } as ErrorI)
       return null
     }
   }
+
   @Action
   async rollbackNameRequest ({ nrId, action }): Promise<boolean> {
     try {
@@ -2403,25 +2390,24 @@ export class NewRequestModule extends VuexModule {
       if (!response || response.status !== OK) {
         // eslint-disable-next-line no-console
         console.error('rollbackNameRequest(), status was not 200, response =', response)
-        throw new ApiError('Could not rollback or cancel the name request')
+        throw new Error('Could not rollback or cancel the name request')
       }
 
       return true
-    } catch (error) {
-      console.error('rollbackNameRequest() =', error) // eslint-disable-line no-console
-      if (error instanceof ApiError) {
-        await errorModule.setAppError({ id: 'rollback-name-request-api-error', error: error.message } as ErrorI)
-      } else {
-        await errorModule.setAppError({ id: 'rollback-name-request-error', error: error.message } as ErrorI)
-      }
+    } catch (err) {
+      const msg = await handleApiError(err, 'Could not rollback name request')
+      console.error('rollbackNameRequest() =', msg) // eslint-disable-line no-console
+      await errorModule.setAppError({ id: 'rollback-name-request-error', error: msg } as ErrorI)
       return false
     }
   }
+
   @Action
   userClickedStopAnalysis () {
     this.mutateUserCancelledAnalysis(true)
     this.mutateSubmissionType('examination')
   }
+
   @Action
   resetAnalyzeName () {
     this.clearAssumedNameOriginal()
@@ -2441,6 +2427,7 @@ export class NewRequestModule extends VuexModule {
     this.mutateNameAnalysisTimedOut(false)
     this.mutateAnalyzePending(false)
   }
+
   @Action
   cancelAnalyzeName (destination: string) {
     this.mutateAnalyzePending(false)
@@ -2458,6 +2445,7 @@ export class NewRequestModule extends VuexModule {
       this.mutateQuickSearch(true)
     }
   }
+
   @Action
   async cancelEditExistingRequest () {
     this.mutateDisplayedComponent('ExistingRequestDisplay')
@@ -2467,6 +2455,7 @@ export class NewRequestModule extends VuexModule {
     this.resetNrData()
     this.mutateEditMode(false)
   }
+
   @Action
   async editExistingRequest () {
     this.mutateEditMode(true)
@@ -2519,6 +2508,7 @@ export class NewRequestModule extends VuexModule {
     }
     this.mutateDisplayedComponent('ExistingRequestEdit')
   }
+
   @Action
   async parseExactNames (json: { names: [string] }) {
     let nameObjs = json.names
@@ -2528,6 +2518,7 @@ export class NewRequestModule extends VuexModule {
     }
     return names
   }
+
   @Action
   async parseSynonymNames (json: { names: [string], exactNames: [{ name: string, type: string }] }) {
     let duplicateNames = []
@@ -2546,6 +2537,7 @@ export class NewRequestModule extends VuexModule {
     }
     return names
   }
+
   @Action
   async getQuickSearch (cleanedName: {exactMatch: string, synonymMatch: string}) {
     try {
@@ -2571,13 +2563,16 @@ export class NewRequestModule extends VuexModule {
       if (this.quickSearch) {
         this.mutateDisplayedComponent('QuickSearchResults')
       }
-    } catch (error) {
-      // send error to sentry and move on to detailed search (silently skips error for user)
-      console.error('getQuickSearch() =', error) // eslint-disable-line no-console
+    } catch (err) {
+      const msg = await handleApiError(err, 'Could not get quick search')
+      // send error to sentry and move on to detailed search
+      // (do not show error to user)
+      console.error('getQuickSearch() =', msg) // eslint-disable-line no-console
       this.mutateQuickSearch(false)
       this.startAnalyzeName()
     }
   }
+
   @Action
   async startQuickSearch () {
     if (this.name) {
@@ -2610,6 +2605,7 @@ export class NewRequestModule extends VuexModule {
     }
     return
   }
+
   @Action({ rawError: true })
   async startAnalyzeName () {
     this.resetAnalyzeName()
@@ -2695,6 +2691,7 @@ export class NewRequestModule extends VuexModule {
       }
     }
   }
+
   @Action
   updateApplicantDetails (appKV) {
     this.mutateApplicant(appKV)
@@ -2703,6 +2700,7 @@ export class NewRequestModule extends VuexModule {
       return
     }
   }
+
   @Action
   getCorpNum (corpNum: string) {
     if (this.showCorpNum) {
@@ -2713,6 +2711,7 @@ export class NewRequestModule extends VuexModule {
       }
     }
   }
+
   @Action
   checkCOLIN (corpNum: string) {
     // Remove BC prefix as Colin only supports base number with no prefix for BC's
@@ -2720,6 +2719,7 @@ export class NewRequestModule extends VuexModule {
     let url = `colin/${cleanedCorpNum}`
     return axios.post(url, {})
   }
+
   @Action
   checkMRAS (corpNum: string) {
     let { xproJurisdiction } = this.nrData
@@ -2737,12 +2737,13 @@ export class NewRequestModule extends VuexModule {
       if (response?.status === OK) {
         return response.data
       }
-    } catch (error) {
-      const status: number = error?.response?.status
+    } catch (err) {
+      const status: number = err?.response?.status
       // do not generate console error for the errors codes
       // that mras-search-info page handles
       if (![BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE].includes(status)) {
-        console.error('fetchMRASProfile() =', error) // eslint-disable-line no-console
+        const msg = await handleApiError(err, 'Could not fetch mras profile')
+        console.error('fetchMRASProfile() =', msg) // eslint-disable-line no-console
       }
       this.mutateName('')
       this.mutateMrasSearchResult(status)
@@ -2755,10 +2756,12 @@ export class NewRequestModule extends VuexModule {
   clearErrors () {
     this.errors = []
   }
+
   @Mutation
   mutateActingOnOwnBehalf (value) {
     this.actingOnOwnBehalf = value
   }
+
   @Mutation
   mutateAddressSuggestions (value) {
     if (!value) {
@@ -2771,10 +2774,12 @@ export class NewRequestModule extends VuexModule {
     }
     this.addressSuggestions = Object.assign([], value)
   }
+
   @Mutation
   mutateAnalysisJSON (json: AnalysisJSONI) {
     this.analysisJSON = json
   }
+
   @Mutation
   mutateApplicant (appKV) {
     if (Array.isArray(appKV)) {
@@ -2788,50 +2793,62 @@ export class NewRequestModule extends VuexModule {
     }
     this.applicant[appKV.key] = appKV.value
   }
+
   @Mutation
   mutateConflictId (id) {
     this.conflictId = id
   }
+
   @Mutation
   mutateConversionType (value) {
     this.conversionType = value
   }
+
   @Mutation
   mutateConversionTypeAddToSelect (value) {
     this.conversionTypeAddToSelect = value
   }
+
   @Mutation
   mutateCorpNum (corpNum: string) {
     this.corpNum = corpNum
   }
+
   @Mutation
   mutateCorpSearch (corpNum: string) {
     this.corpSearch = corpNum
   }
+
   @Mutation
   mutateDisplayedComponent (comp: string) {
     this.displayedComponent = comp
   }
+
   @Mutation
   mutateEditMode (value) {
     this.editMode = value
   }
+
   @Mutation
   mutateEntityType (type: string) {
     this.entity_type_cd = type
   }
+
   @Mutation
   mutateEntityTypeAddToSelect (option: SelectOptionsI) {
     this.entityTypeAddToSelect = option
   }
+
   @Mutation
   resetEntityTypeAddToSelect () {
     this.entityTypeAddToSelect = null
   }
+
   @Mutation
   mutateExistingRequestSearch ({ key, value }) {
     this.existingRequestSearch[key] = value
   }
+
   @Mutation
   mutateExistingRequestSearchToInitialState () {
     this.existingRequestSearch = {
@@ -2840,30 +2857,37 @@ export class NewRequestModule extends VuexModule {
       phoneNumber: ''
     }
   }
+
   @Mutation
   mutateExtendedRequestType (option: SelectOptionsI) {
     this.extendedRequestType = option
   }
+
   @Mutation
   mutateGetNameReservationFailed (value) {
     this.getNameReservationFailed = value
   }
+
   @Mutation
   mutateHelpMeChooseModalVisible (value: boolean) {
     this.helpMeChooseModalVisible = value
   }
+
   @Mutation
   mutateIncorporateLoginModalVisible (value: boolean) {
     this.incorporateLoginModalVisible = value
   }
+
   @Mutation
   mutateAffiliationErrorModalVisible (value: boolean) {
     this.affiliationErrorModalVisible = value
   }
+
   @Mutation
   mutateIsPersonsName (value) {
     this.isPersonsName = value
   }
+
   @Mutation
   mutateLocation (location: LocationT) {
     if (location === this.location) {
@@ -2887,42 +2911,52 @@ export class NewRequestModule extends VuexModule {
     }
     this.location = location
   }
+
   @Mutation
   mutateLocationInfoModalVisible (value: boolean) {
     this.locationInfoModalVisible = value
   }
+
   @Mutation
   mutateMrasSearchResult (code: number) {
     this.mrasSearchResultCode = code
   }
+
   @Mutation
   mutateMrasSearchInfoModalVisible (value: boolean) {
     this.mrasSearchInfoModalVisible = value
   }
+
   @Mutation
   mutateJurisdiction (value) {
     this.request_jurisdiction_cd = value
   }
+
   @Mutation
   mutateName (name: string) {
     this.name = name
   }
+
   @Mutation
   mutateNameOriginal (name: string) {
     this.nameOriginal = name
   }
+
   @Mutation
   mutateNoCorpNum (noCorpNum: boolean) {
     this.noCorpNum = noCorpNum
   }
+
   @Mutation
   mutateNROriginal (nr) {
     this.nrOriginal = nr
   }
+
   @Mutation
   mutateNameChoices (choiceObj) {
     this.nameChoices[choiceObj.key] = choiceObj.value
   }
+
   @Mutation
   mutateNameChoicesToInitialState () {
     Vue.set(this, 'nameChoices', {
@@ -2934,14 +2968,17 @@ export class NewRequestModule extends VuexModule {
       designation3: ''
     })
   }
+
   @Mutation
   mutateNameIsEnglish (value) {
     this.nameIsEnglish = value
   }
+
   @Mutation
   mutateNameRequest (nr) {
     this.nr = nr
   }
+
   @Mutation
   mutateNameRequestByKey (kv) {
     Vue.set(
@@ -2950,10 +2987,12 @@ export class NewRequestModule extends VuexModule {
       kv.value
     )
   }
+
   @Mutation
   mutateNRData ({ key, value }) {
     this.nrData[key] = value
   }
+
   @Mutation
   mutateNRDataByKey (kv) {
     Vue.set(
@@ -2962,22 +3001,27 @@ export class NewRequestModule extends VuexModule {
       kv.value
     )
   }
+
   @Mutation
   mutateNrRequiredModalVisible (value: boolean) {
     this.nrRequiredModalVisible = value
   }
+
   @Mutation
   mutatePickEntityModalVisible (value: boolean) {
     this.pickEntityModalVisible = value
   }
+
   @Mutation
   mutatePickRequestTypeModalVisible (value: boolean) {
     this.pickRequestTypeModalVisible = value
   }
+
   @Mutation
   mutatePriorityRequest (value) {
     this.priorityRequest = value
   }
+
   @Mutation
   mutateRequestAction (action: string) {
     this.request_action_cd = action
@@ -2986,18 +3030,22 @@ export class NewRequestModule extends VuexModule {
       this.entity_type_cd = 'XCR'
     }
   }
+
   @Mutation
   mutateRequestExaminationOrProvideConsent ({ index, type, value }) {
     this.requestExaminationOrProvideConsent[index][type] = value
   }
+
   @Mutation
   mutateShowActualInput (value) {
     this.showActualInput = value
   }
+
   @Mutation
   mutateStats (stats) {
     this.stats = stats
   }
+
   @Mutation
   mutateSubmissionTabComponent (comp) {
     enum Components {
@@ -3009,22 +3057,27 @@ export class NewRequestModule extends VuexModule {
     let tab = parseInt(Components[comp])
     this.submissionTabNumber = tab
   }
+
   @Mutation
   mutateSubmissionTabNumber (value) {
     this.submissionTabNumber = value
   }
+
   @Mutation
   mutateSubmissionType (type) {
     this.submissionType = type
   }
+
   @Mutation
   mutateTabNumber (tab: number) {
     this.tabNumber = tab
   }
+
   @Mutation
   mutateWaitingAddressSearch (appKV: WaitingAddressSearchI) {
     this.waitingAddressSearch = appKV
   }
+
   @Mutation
   populateApplicantData () {
     for (let key in this.nr.applicants) {
@@ -3035,6 +3088,7 @@ export class NewRequestModule extends VuexModule {
       )
     }
   }
+
   @Mutation
   populateNrData () {
     for (let key in this.nrData) {
@@ -3048,10 +3102,12 @@ export class NewRequestModule extends VuexModule {
     }
     this.entity_type_cd = this.nr.entity_type_cd
   }
+
   @Mutation
   resetEditFormValues () {
     this.nr = this.nrOriginal
   }
+
   @Mutation
   resetApplicantDetails () {
     for (let key in this.applicant) {
@@ -3062,6 +3118,7 @@ export class NewRequestModule extends VuexModule {
       this.applicant[key] = ''
     }
   }
+
   @Mutation
   resetNrData () {
     for (let key in this.nrData) {
@@ -3072,6 +3129,7 @@ export class NewRequestModule extends VuexModule {
       )
     }
   }
+
   @Mutation
   resetRequestExaminationOrProvideConsent () {
     for (let n of [0, 1, 2]) {
@@ -3080,6 +3138,7 @@ export class NewRequestModule extends VuexModule {
       }
     }
   }
+
   @Mutation
   setErrors (value: string) {
     if (Array.isArray(this.errors) && this.errors.length > 0) {
@@ -3088,8 +3147,9 @@ export class NewRequestModule extends VuexModule {
     }
     this.errors = [value]
   }
+
   @Mutation
-  setNrResponse (data: any) {
+  setNrResponse (data: any): boolean {
     try {
       this.nr = data
 
@@ -3109,10 +3169,14 @@ export class NewRequestModule extends VuexModule {
         setApplicantDetails(applicants)
       }
       // else applicants is null/undefined
-    } catch (error) {
-      console.error('setNrResponse() =', error) // eslint-disable-line no-console
+
+      return true
+    } catch (err) {
+      console.error('setNrResponse() =', err) // eslint-disable-line no-console
+      return false
     }
   }
+
   @Mutation
   updateReservationNames (nrName: [] = []) {
     const { nameChoices } = this
@@ -3121,14 +3185,17 @@ export class NewRequestModule extends VuexModule {
       nameChoices[`designation${choice}`] = designation
     })
   }
+
   @Mutation
   mutateAssumedNameOriginal () {
     this.assumedNameOriginal = this.name
   }
+
   @Mutation
   mutateRequestActionOriginal (action: string) {
     this.requestActionOriginal = action
   }
+
   @Mutation
   resetNameChoices () {
     for (let key in this.nameChoices) {
@@ -3139,33 +3206,41 @@ export class NewRequestModule extends VuexModule {
       )
     }
   }
+
   @Mutation
   mutateNameAnalysisTimedOut (value: boolean) {
     this.nameAnalysisTimedOut = value
   }
+
   @Mutation
   mutateConditionsModalVisible (value: boolean) {
     this.conditionsModalVisible = value
   }
+
   @Mutation
   clearAssumedNameOriginal () {
     this.assumedNameOriginal = ''
   }
+
   getEntities (category) {
     return this.entityTypesBC.filter(type => type.cat === category)
   }
+
   @Mutation
   mutateUserCancelledAnalysis (value: boolean) {
     this.userCancelledAnalysis = value
   }
+
   @Mutation
   mutateQuickSearch (value: boolean) {
     this.quickSearch = value
   }
+
   @Mutation
   mutateQuickSearchNames (value: Array<object>) {
     this.quickSearchNames = value
   }
+
   @Mutation
   mutateAnalyzePending (value: boolean) {
     this.analyzePending = value

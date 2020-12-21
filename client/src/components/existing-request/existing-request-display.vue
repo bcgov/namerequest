@@ -59,7 +59,7 @@
                   &nbsp;{{ expiryDate }}
                 </v-col>
 
-                <v-col cols="12">
+                <v-col cols="12" v-if="extensionsRemainingText">
                   <span>Expiry Extensions Remaining:</span>&nbsp;
                   <v-tooltip right transition="fade-transition" content-class="tooltip">
                     <template v-slot:activator="{ on, attrs }">
@@ -272,6 +272,7 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
     })
   }
 
+  /** The current NR object. */
   private get nr () {
     return newReqModule.nr
   }
@@ -322,6 +323,9 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
 
   /** The display text for Expiry Extensions Remaining. */
   private get extensionsRemainingText (): string {
+    // do not display text if NR is consumed/expired/cancelled/rejected
+    if (this.isNrConsumed || this.isNrExpired || this.isNrCancelledOrRejected) return ''
+
     const extensions = 2
     // total is # extensions + the original approval
     return `${extensions + 1 - this.nr.submitCount}/${extensions}`
@@ -378,6 +382,11 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   /** True if NR is in Approved or Conditional state. */
   private get isNrApprovedOrConditional (): boolean {
     return [NrState.APPROVED, NrState.CONDITIONAL].includes(this.nr.state)
+  }
+
+  /** True if NR is in Cancelled or Rejected state. */
+  private get isNrCancelledOrRejected (): boolean {
+    return [NrState.CANCELLED, NrState.REFUNDED, NrState.REJECTED].includes(this.nr.state)
   }
 
   /** The NR's (first) approved name object, if any. */
@@ -441,10 +450,10 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
           let success: boolean | undefined
           if (doCheckout) {
             const { dispatch } = this.$store
-            // Disable rollback on expire, it's only for new NRs
+            // Disable rollback on expire, it's only for new NRs.
             // await dispatch(types.SET_ROLLBACK_ON_EXPIRE, false) // NOT USED
 
-            // Set check in on expire
+            // Set check in on expire.
             // await dispatch(types.SET_CHECK_IN_ON_EXPIRE, true) // NOT USED
 
             // Check out the NR - this sets the INPROGRESS lock on the NR
@@ -453,25 +462,25 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
           }
 
           // Only proceed with editing if the checkout was successful,
-          // the Name Request could be locked by another user session!
+          // as the Name Request could be locked by another user session!
           if (!doCheckout || (doCheckout && success)) {
             await newReqModule.editExistingRequest()
           }
           break
         case NrAction.UPGRADE:
-          paymentModule.toggleUpgradeModal(true)
+          await paymentModule.toggleUpgradeModal(true)
           break
         case NrAction.REAPPLY:
-          paymentModule.toggleReapplyModal(true)
+          await paymentModule.toggleReapplyModal(true)
           break
         case NrAction.RECEIPTS:
-          paymentModule.togglePaymentHistoryModal(true)
+          await paymentModule.togglePaymentHistoryModal(true)
           break
         case NrAction.REFUND:
-          paymentModule.toggleRefundModal(true)
+          await paymentModule.toggleRefundModal(true)
           break
         case NrAction.CANCEL:
-          paymentModule.toggleCancelModal(true)
+          await paymentModule.toggleCancelModal(true)
           break
         case NrAction.INCORPORATE:
           await this.affiliateOrLogin()
