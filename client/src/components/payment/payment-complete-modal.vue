@@ -82,11 +82,6 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
         // Then complete the payment
         await this.completePayment(nrId, sessionPaymentId, sessionPaymentAction)
       } else {
-        errorModule.setAppError({
-          id: 'payment-error',
-          error: 'Your payment could not be completed. Please try again at a later time.'
-        } as ErrorI)
-
         if (sessionPaymentAction && sessionPaymentAction === PaymentAction.COMPLETE) {
           // Cancel the NR using the rollback endpoint if we were processing a NEW NR
           await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
