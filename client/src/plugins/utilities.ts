@@ -11,12 +11,9 @@ export function sanitizeName (name: string): string {
   // ligatures, with their closest ASCII equivalents (eg. é => e, ø => o, æ => ae); removes any symbols outside of
   // the limited set supported by Namex; capitalizes; and trims any spaces padding <name> and any internal spaces
   // between words in excess of a single space per two words.
-  const sanitizedName = removeAccents.has(name) && removeAccents(name) // Check if name HAS accents before sanitizing
-  if (sanitizedName) {
-    sanitizedName.replace(/[^\sa-zA-Z0-9^\[\]*/+&().,="'#@!?;:-]/g, '')
-    return removeExcessSpaces(sanitizedName?.toUpperCase())
-  }
-  return name
+  name = removeAccents(name)
+  name = name.replace(/[^\sa-zA-Z0-9^\[\]*/+&().,="'#@!?;:-]/g, '')
+  return removeExcessSpaces(name.toUpperCase())
 }
 
 export function matchWord (name: string, word: string): string[] | string {

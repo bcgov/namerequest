@@ -18,13 +18,8 @@
           <v-icon class="action-icon" :class="actionConfig.class">{{ actionConfig.icon }}</v-icon>
           <span :class="actionConfig.class">{{ actionConfig.text }}</span>
         </v-col>
-        <v-col cols="12">
+        <v-col cols="12" class="pb-2">
           <p :class="actionConfig.class">{{ actionConfig.subText }}</p>
-        </v-col>
-        <v-col cols="12" class="py-2">
-          <p class="text-center copy-normal">
-            Submit your name to staff for review.
-          </p>
         </v-col>
       </v-row>
 
