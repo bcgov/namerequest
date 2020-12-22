@@ -5,14 +5,21 @@
         <div>Name Request encountered an error</div>
       </v-card-title>
 
-      <v-card-text class="copy-normal">
-        <ul v-if="hasErrors" class="ml-n1">
-          <li v-for="error in errors" :key="error.id" v-html="error.error" />
-        </ul>
+      <v-card-text class="copy-normal pt-8">
+        Name Request encountered an error. This error may be temporary. You can close
+        this message and try again.
       </v-card-text>
 
-      <v-card-actions class="justify-center">
-        <v-btn text @click="hideModal()">Close</v-btn>
+      <v-card-text class="copy-normal pt-6">
+        If this issue persists, contact BC Registries staff:
+      </v-card-text>
+
+      <v-card-text class="copy-normal pt-6">
+        <contact-info class="mt-2" direction="col" />
+      </v-card-text>
+
+      <v-card-actions class="justify-center pt-8">
+        <v-btn text class="px-8" @click="hideModal()">Close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -21,10 +28,12 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import ErrorModule from '@/modules/error'
-import { ErrorI } from '@/modules/error/store/actions'
 import * as ErrorTypes from '@/modules/error/store/types'
+import ContactInfo from '@/components/common/contact-info.vue'
 
-@Component({})
+@Component({
+  components: { ContactInfo }
+})
 export default class ErrorModal extends Vue {
   get showModal () {
     return ErrorModule[ErrorTypes.HAS_ERRORS]
@@ -33,20 +42,12 @@ export default class ErrorModal extends Vue {
   async hideModal () {
     await ErrorModule.clearAppErrors()
   }
-
-  get hasErrors (): ErrorI[] {
-    return ErrorModule[ErrorTypes.HAS_ERRORS]
-  }
-
-  get errors (): ErrorI[] {
-    return ErrorModule[ErrorTypes.GET_ERRORS]
-  }
 }
 </script>
 
 <style lang="scss" scoped>
 ::v-deep .v-dialog {
-  width: 40rem;
-  min-width: 36rem;
+  width: 45rem;
+  min-width: 33rem;
 }
 </style>

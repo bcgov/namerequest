@@ -2,8 +2,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import * as paymentTypes from '@/modules/payment/store/types'
 import * as paymentService from '@/modules/payment/services'
 import paymentModule from '@/modules/payment'
-import { NameRequestPaymentResponse, CreatePaymentParams } from '@/modules/payment/models'
-import { PaymentApiError } from '@/modules/payment/services'
+import { CreatePaymentParams } from '@/modules/payment/models'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 
@@ -90,13 +89,11 @@ export default class PaymentMixin extends Vue {
       })
       await paymentModule.setPaymentFees(response)
       return true
-    } catch (error) {
-      console.error('fetchFees() =', error) // eslint-disable-line no-console
-      if (error instanceof PaymentApiError) {
-        await errorModule.setAppError({ id: 'payment-api-error', error: error.message } as ErrorI)
-      } else {
-        await errorModule.setAppError({ id: 'fetch-fees-error', error: error.message } as ErrorI)
-      }
+    } catch (err) {
+      // don't console.error - getPaymentFees() already did that
+      await errorModule.setAppError(
+        { id: 'fetch-fees-error', error: 'Could not fetch fees' } as ErrorI
+      )
       return false
     }
   }
@@ -144,13 +141,11 @@ export default class PaymentMixin extends Vue {
         onSuccess(paymentResponse)
       }
       return true
-    } catch (error) {
-      console.error('createPayment() =', error) // eslint-disable-line no-console
-      if (error instanceof PaymentApiError) {
-        await errorModule.setAppError({ id: 'payment-api-error', error: error.message } as ErrorI)
-      } else {
-        await errorModule.setAppError({ id: 'create-payment-error', error: error.message } as ErrorI)
-      }
+    } catch (err) {
+      // don't console.error - createPaymentRequest() already did that
+      await errorModule.setAppError(
+        { id: 'create-payment-error', error: 'Could not create payment' } as ErrorI
+      )
       return false
     }
   }
@@ -164,34 +159,10 @@ export default class PaymentMixin extends Vue {
    * @param redirectUrl
    */
   redirectToPaymentPortal (paymentId, paymentToken, redirectUrl) {
-    // TODO: We could make this string configurable too... not necessary at this time
     const paymentPortalUrl = `${this.$PAYMENT_PORTAL_URL}/${paymentToken}/${redirectUrl}`
     // eslint-disable-next-line no-console
-    console.log(`Forwarding to SBC Payment Portal -> Payment redirect URL: ${redirectUrl}`)
+    // console.log(`Forwarding to SBC Payment Portal -> Payment redirect URL: ${redirectUrl}`)
     window.location.href = paymentPortalUrl
-  }
-
-  /**
-   * Grab the receipt PDF and download / display it for the user...
-   * @param paymentId
-   */
-  async fetchReceiptPdf (paymentId) {
-    try {
-      const response = await paymentService.getReceiptRequest(paymentId)
-      const url = window.URL.createObjectURL(new Blob([response]))
-      const link = document.createElement('a')
-      link.href = url
-      link.setAttribute('download', `payment-receipt-${paymentId}.pdf`)
-      document.body.appendChild(link)
-      link.click()
-    } catch (error) {
-      console.error('fetchReceiptPdf() =', error) // eslint-disable-line no-console
-      if (error instanceof PaymentApiError) {
-        await errorModule.setAppError({ id: 'fetch-receipt-pdf-api-error', error: error.message } as ErrorI)
-      } else {
-        await errorModule.setAppError({ id: 'fetch-receipt-pdf-error', error: error.message } as ErrorI)
-      }
-    }
   }
 
   async downloadReceipt () {
@@ -212,13 +183,11 @@ export default class PaymentMixin extends Vue {
       link.setAttribute('download', `payment-receipt-${paymentId}.pdf`)
       document.body.appendChild(link)
       link.click()
-    } catch (error) {
-      console.error('downloadReceiptPdf() =', error) // eslint-disable-line no-console
-      if (error instanceof PaymentApiError) {
-        await errorModule.setAppError({ id: 'fetch-receipt-pdf-api-error', error: error.message } as ErrorI)
-      } else {
-        await errorModule.setAppError({ id: 'fetch-receipt-pdf-error', error: error.message } as ErrorI)
-      }
+    } catch (err) {
+      // don't console.error - generateReceiptRequest() already did that
+      await errorModule.setAppError(
+        { id: 'download-receipt-pdf-error', error: 'Could not download receipt PDF' } as ErrorI
+      )
     }
   }
 
@@ -245,10 +214,10 @@ export default class PaymentMixin extends Vue {
         await paymentModule.setPaymentReceipt(receipt)
       }
       return true
-    } catch (error) {
-      console.error('fetchNrPayment() =', error) // eslint-disable-line no-console
+    } catch (err) {
+      // don't console.error - getNameRequestPayment() already did that
       await errorModule.setAppError(
-        { id: 'fetch-nr-payment-error', error: 'Could not fetch payment' }
+        { id: 'fetch-nr-payment-error', error: 'Could not fetch NR payment' }
       )
       return false
     }
@@ -266,10 +235,10 @@ export default class PaymentMixin extends Vue {
 
       await paymentModule.setPayments(paymentsResponse)
       return true
-    } catch (error) {
-      console.error('fetchNrPayments() =', error) // eslint-disable-line no-console
+    } catch (err) {
+      // don't console.error - getNameRequestPayments() already did that
       await errorModule.setAppError(
-        { id: 'fetch-nr-payments-error', error: 'Could not fetch payments' }
+        { id: 'fetch-nr-payments-error', error: 'Could not fetch NR payments' }
       )
       return false
     }
