@@ -97,9 +97,9 @@ export default class QuickSearchResults extends Vue {
   mounted () {
     this.originalName = this.searchName
   }
-  searchAgain () {
+  async searchAgain () {
     newReqModule.mutateQuickSearch(true)
-    newReqModule.startAnalyzeName()
+    await newReqModule.startAnalyzeName()
   }
   async detailedSearch () {
     this.isLoadingAnalysis = true

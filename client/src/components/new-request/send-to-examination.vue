@@ -18,12 +18,12 @@
           <v-icon class="action-icon" :class="actionConfig.class">{{ actionConfig.icon }}</v-icon>
           <span :class="actionConfig.class">{{ actionConfig.text }}</span>
         </v-col>
-        <v-col cols="12" class="pb-2">
+        <v-col cols="12">
           <p :class="actionConfig.class">{{ actionConfig.subText }}</p>
         </v-col>
       </v-row>
 
-      <v-row class="text-center justify-center mt-n1 mb-n2">
+      <v-row class="text-center justify-center mb-n2">
         <ReserveSubmit />
       </v-row>
     </template>

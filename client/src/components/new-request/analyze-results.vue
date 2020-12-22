@@ -738,7 +738,7 @@ export default class AnalyzeResults extends Vue {
     }
     this.contents = html
   }
-  handleEnterKey (event) {
+  async handleEnterKey (event) {
     if (this.isApproved) {
       event.preventDefault()
       this.quill.setText(this.originalName)
@@ -754,13 +754,13 @@ export default class AnalyzeResults extends Vue {
         let replace = '[' + Action.message + ']'
         this.name = removeExcessSpaces(this.name.replace(replace, ''))
       }
-      newReqModule.startAnalyzeName()
+      await newReqModule.startAnalyzeName()
     }
   }
-  handleSubmit (event: Event) {
+  async handleSubmit (event: Event) {
     event.preventDefault()
     this.name = this.quill.getText()
-    newReqModule.startAnalyzeName()
+    await newReqModule.startAnalyzeName()
   }
   stripAllDesignations (name) {
     for (let word of allDesignationsList) {

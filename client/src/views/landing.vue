@@ -38,7 +38,7 @@
                 <a class="white--text" href="mailto:BCRegistries@gov.bc.ca" target="_blank">BCRegistries@gov.bc.ca</a>
               </span>
               <p class="mb-0">As part of a
-                <a class="white--text" :href="agileUrl" target="_blank">agile software development process</a>
+                <a class="white--text" :href="agileUrl" target="_blank">modern agile software development process</a>
                 the Name Request website will be continually updated and improved based on feedback from citizens and
                 businesses in B.C.
               </p>
@@ -66,6 +66,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import AnalyzeCharacters from '@/components/new-request/analyze-characters.vue'
 import AnalyzePending from '@/components/new-request/analyze-pending.vue'
 import AnalyzeResults from '@/components/new-request/analyze-results.vue'
+import ContactInfo from '@/components/common/contact-info.vue'
 import SendToExamination from '@/components/new-request/send-to-examination.vue'
 import ExistingRequestDisplay from '@/components/existing-request/existing-request-display.vue'
 import ExistingRequestEdit from '@/components/existing-request/existing-request-edit.vue'
@@ -84,6 +85,7 @@ import newRequestModule from '@/store/new-request-module'
     AnalyzeCharacters,
     AnalyzePending,
     AnalyzeResults,
+    ContactInfo,
     SendToExamination,
     ExistingRequestDisplay,
     ExistingRequestEdit,
