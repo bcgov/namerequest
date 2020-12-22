@@ -758,14 +758,14 @@ export class NewRequestModule extends VuexModule {
   }
   requestActions: RequestActionsI[] = [
     {
-      text: 'Start a new',
+      text: 'Register or Incorporate a',
       shortDesc: 'New Request',
       value: 'NEW',
       blurbs: `Create a new business in British Columbia or register a business you formed in another province or 
               territory, country or federal jurisdiction so that you may also conduct business here in BC.`
     },
     {
-      text: 'Move (continue) into BC a',
+      text: 'Relocate a Corporation into BC a',
       shortDesc: 'Move Request',
       value: 'MVE',
       blurbs: `Transfer a corporation you formed in another jurisdiction so that it becomes a BC company.`
@@ -2667,7 +2667,10 @@ export class NewRequestModule extends VuexModule {
       if (!this.noCorpNum) {
         const profile = await this.fetchMRASProfile()
         if (profile) {
-          name = sanitizeName(profile?.LegalEntity?.names?.legalName)
+          const hasMultipleNames = profile?.LegalEntity?.names && profile?.LegalEntity?.names.constructor === Array
+          name = hasMultipleNames
+            ? sanitizeName(profile?.LegalEntity?.names[0]?.legalName)
+            : sanitizeName(profile?.LegalEntity?.names?.legalName)
           this.mutateName(name)
           this.mutateNRData({ key: 'homeJurisNum', value: this.corpSearch })
         } else {

@@ -69,9 +69,9 @@ export default class QuickSearchPending extends Vue {
         return 'a new'
     }
   }
-  skip () {
+  async skip () {
     newReqModule.mutateQuickSearch(false)
-    newReqModule.startAnalyzeName()
+    await newReqModule.startAnalyzeName()
   }
 }
 

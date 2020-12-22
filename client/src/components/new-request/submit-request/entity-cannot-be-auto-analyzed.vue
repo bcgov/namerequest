@@ -166,9 +166,9 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
     }
     return output
   }
-  newSearch () {
+  async newSearch () {
     this.name = this.englishOnlyName
-    newReqModule.startAnalyzeName()
+    await newReqModule.startAnalyzeName()
   }
   showNextTab () {
     newReqModule.mutateSubmissionTabComponent('NamesCapture')

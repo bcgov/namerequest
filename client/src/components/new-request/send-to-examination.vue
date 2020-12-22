@@ -13,20 +13,17 @@
         <NameInput :is-read-only="true" class="mb-n2"/>
       </v-row>
 
-      <v-row no-gutters justify="center">
+      <v-row no-gutters justify="center" class="text-center">
         <v-col cols="auto" class="h5">
           <v-icon class="action-icon" :class="actionConfig.class">{{ actionConfig.icon }}</v-icon>
-          &nbsp;
           <span :class="actionConfig.class">{{ actionConfig.text }}</span>
         </v-col>
-        <v-col cols="12" class="py-2">
-          <p class="text-center copy-normal">
-            This name cannot be analyzed here and must be sent to staff for review.
-          </p>
+        <v-col cols="12">
+          <p :class="actionConfig.class">{{ actionConfig.subText }}</p>
         </v-col>
       </v-row>
 
-      <v-row class="text-center justify-center mt-n1 mb-n2">
+      <v-row class="text-center justify-center mb-n2">
         <ReserveSubmit />
       </v-row>
     </template>
@@ -49,9 +46,10 @@ import NameInput from '@/components/new-request/name-input.vue'
 })
 export default class SendToExamination extends Vue {
   private actionConfig = {
-    class: 'rejected',
-    icon: 'mdi-star-circle',
-    text: 'Further Review Required',
+    class: 'approved',
+    icon: 'mdi-check-circle',
+    text: 'Name Ready for Review',
+    subText: '(Detailed Analysis Coming Soon)',
     showNextLines: true
   }
   get entityText () {
