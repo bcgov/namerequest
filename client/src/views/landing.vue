@@ -66,7 +66,6 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import AnalyzeCharacters from '@/components/new-request/analyze-characters.vue'
 import AnalyzePending from '@/components/new-request/analyze-pending.vue'
 import AnalyzeResults from '@/components/new-request/analyze-results.vue'
-import ContactInfo from '@/components/common/contact-info.vue'
 import SendToExamination from '@/components/new-request/send-to-examination.vue'
 import ExistingRequestDisplay from '@/components/existing-request/existing-request-display.vue'
 import ExistingRequestEdit from '@/components/existing-request/existing-request-edit.vue'
@@ -85,7 +84,6 @@ import newRequestModule from '@/store/new-request-module'
     AnalyzeCharacters,
     AnalyzePending,
     AnalyzeResults,
-    ContactInfo,
     SendToExamination,
     ExistingRequestDisplay,
     ExistingRequestEdit,
