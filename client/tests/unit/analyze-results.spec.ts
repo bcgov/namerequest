@@ -52,7 +52,7 @@ describe('AnalyzeResults', () => {
                 // eslint-disable-next-line
                 let checkbox = wrapper.find('#provide-consent-checkbox')
                 await checkbox.setChecked()
-                return new Promise(resolve => { resolve() })
+                return new Promise(resolve => { resolve(null) })
 
               case 'designation_non_existent':
               case 'designation_mismatch':
@@ -60,13 +60,13 @@ describe('AnalyzeResults', () => {
                 // eslint-disable-next-line
                 let designation = wrapper.find('#designation-btn-0')
                 await designation.trigger('click')
-                return new Promise(resolve => { resolve() })
+                return new Promise(resolve => { resolve(null) })
 
               case 'designation_misplaced':
                 // eslint-disable-next-line
                 let move = wrapper.find('#move-designation-btn')
                 await move.trigger('click')
-                return new Promise(resolve => { resolve() })
+                return new Promise(resolve => { resolve(null) })
             }
           }
 
