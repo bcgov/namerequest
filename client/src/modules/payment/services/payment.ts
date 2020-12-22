@@ -1,8 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios'
 import { NameRequestPaymentResponse } from '@/modules/payment/models'
 
-export class PaymentApiError extends Error {}
-
 function isAxiosError (err: AxiosError | Error): err is AxiosError {
   return (err as AxiosError).isAxiosError !== undefined
 }
@@ -12,35 +10,38 @@ function isAxiosError (err: AxiosError | Error): err is AxiosError {
  * @param err error object from the catch statement
  * @param defaultMessage optional fallback message
  */
-async function handleApiError (err, defaultMessage = '') {
+async function handleApiError (err: any, defaultMessage = ''): Promise<string> {
   if (isAxiosError(err)) {
     let message = ''
     const responseData = err?.response?.data
     const hasResponseData = !!responseData
+
     if (hasResponseData && responseData instanceof Blob) {
-      // Handle any cases where the API error response is a Blob (eg. request for PDF receipt fails)
+      // Handle any cases where the API error response is a Blob (eg, request for PDF receipt fails).
       const errorText = await responseData.text()
       const errorJson = JSON.parse(errorText)
-      if (errorJson && errorJson.message) {
-        message = errorJson.message
+      if (errorJson?.message) {
+        message = `${err.toString()} [ ${errorJson.message} ]`
       }
     } else if (hasResponseData && responseData instanceof String) {
-      message = responseData.toString()
-      // Handle any cases where the API error response is a string
+      // Handle any cases where the API error response is a String.
+      message = `${err.toString()} [ ${responseData.toString()} ]`
     } else if (hasResponseData && responseData.message) {
-      // Handle API errors, they will be supplied as an object { message: 'Ipsum lorem dolor' }
-      message = responseData.message
+      // Handle any cases where the API error response in an object (eg, { message: 'Ipsum lorem dolor' }).
+      message += responseData.message
+      message = `${err.toString()} [ ${responseData.message} ]`
+    } else if (defaultMessage) {
+      // Handle any other cases.
+      message = `${err.toString()} [ ${defaultMessage} ]`
     } else {
-      message = defaultMessage
+      return err.toString()
     }
 
-    // Clean the error message, replace line breaks with HTML breaks
-    const regex = /(?:\r\n|\r|\n)/g
-    message = message.replace(regex, '<br>')
-    throw new PaymentApiError(message)
+    // Replace line breaks with HTML line breaks.
+    return message.replace(/(?:\r\n|\r|\n)/g, '<br>')
   } else {
-    const { message } = err
-    throw new PaymentApiError(message || defaultMessage)
+    // Handle non-axios error (ie, probably a JS error).
+    return (err?.toString() || defaultMessage)
   }
 }
 
@@ -50,8 +51,9 @@ export async function createPaymentRequest (nrId, action, data): Promise<NameReq
     const response = await axios.post(url, data)
     return response.data
   } catch (err) {
-    console.error('createPaymentRequest() =', err) // eslint-disable-line no-console
-    await handleApiError(err, 'Could not create Name Request payment')
+    const msg = await handleApiError(err, 'Could not create payment request')
+    console.error('createPaymentRequest() =', msg) // eslint-disable-line no-console
+    throw new Error(msg)
   }
 }
 
@@ -61,8 +63,9 @@ export async function getNameRequestPayment (nrId, paymentId, params): Promise<N
     const response = await axios.get(url, params)
     return response.data
   } catch (err) {
-    console.error('getNameRequestPayment() =', err) // eslint-disable-line no-console
-    await handleApiError(err, 'Could not retrieve Name Request payment')
+    const msg = await handleApiError(err, 'Could not get name request payment')
+    console.error('getNameRequestPayment() =', msg) // eslint-disable-line no-console
+    throw new Error(msg)
   }
 }
 
@@ -72,8 +75,9 @@ export async function getNameRequestPayments (nrId, params): Promise<NameRequest
     const response = await axios.get(url, params)
     return response.data
   } catch (err) {
-    console.error('getNameRequestPayments() =', err) // eslint-disable-line no-console
-    await handleApiError(err, 'Could not retrieve Name Request payments')
+    const msg = await handleApiError(err, 'Could not get name request payments')
+    console.error('getNameRequestPayments() =', msg) // eslint-disable-line no-console
+    throw new Error(msg)
   }
 }
 
@@ -83,29 +87,12 @@ export async function getPaymentFees (params): Promise<any> {
     const response = await axios.post(url, params)
     return response.data
   } catch (err) {
-    console.error('getPaymentFees() =', err) // eslint-disable-line no-console
-    await handleApiError(err, 'Could not retrieve Name Request payment fees')
+    const msg = await handleApiError(err, 'Could not get payment fees')
+    console.error('getPaymentFees() =', msg) // eslint-disable-line no-console
+    throw new Error(msg)
   }
 }
 
-/**
- * @param paymentId
- */
-export async function getReceiptRequest (paymentId): Promise<any> {
-  const params = { responseType: 'blob' } as AxiosRequestConfig
-  const url = `/payments/${paymentId}/receipt`
-  try {
-    const response = await axios.get(url, params)
-    return response.data
-  } catch (err) {
-    console.error('getReceiptRequest() =', err) // eslint-disable-line no-console
-    await handleApiError(err, 'Could not retrieve Name Request payment receipt')
-  }
-}
-
-/**
- * @param paymentId
- */
 export async function generateReceiptRequest (paymentId): Promise<any> {
   const params = { responseType: 'arraybuffer' } as AxiosRequestConfig
   const url = `/payments/${paymentId}/receipt`
@@ -113,7 +100,8 @@ export async function generateReceiptRequest (paymentId): Promise<any> {
     const response = await axios.post(url, {}, params)
     return response.data
   } catch (err) {
-    console.error('generateReceiptRequest() =', err) // eslint-disable-line no-console
-    await handleApiError(err, 'Could not retrieve Name Request payment receipt')
+    const msg = await handleApiError(err, 'Could not generate payment receipt')
+    console.error('generateReceiptRequest() =', msg) // eslint-disable-line no-console
+    throw new Error(msg)
   }
 }

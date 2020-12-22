@@ -7,6 +7,8 @@ export function removeExcessSpaces (name: string): string {
 }
 
 export function sanitizeName (name: string): string {
+  if (!name) return '' // safety check
+
   // replaces most characters from the extended-latin character set, such as those modified with diacritics, and most
   // ligatures, with their closest ASCII equivalents (eg. é => e, ø => o, æ => ae); removes any symbols outside of
   // the limited set supported by Namex; capitalizes; and trims any spaces padding <name> and any internal spaces

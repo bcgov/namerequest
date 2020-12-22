@@ -209,7 +209,7 @@ export default class App extends Mixins(SessionTimerMixin) {
             const { nrId } = newRequestModule
             // Cancel the NR using the rollback endpoint if we were processing a NEW NR
             await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
-            paymentModule.togglePaymentModal(false)
+            await paymentModule.togglePaymentModal(false)
             // Direct the user back to the start
             await this.resetAppState()
           },
@@ -229,8 +229,7 @@ export default class App extends Mixins(SessionTimerMixin) {
       // Direct the user back to the start
       await this.resetAppState()
     }
-
-    paymentModule.togglePaymentModal(false)
+    await paymentModule.togglePaymentModal(false)
   }
 
   private closeAuthModal () {

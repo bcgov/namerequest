@@ -147,7 +147,7 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
         await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
       }
     } else {
-      console.error('completePayment(), unhandled scenario, result =', result) // eslint-disable-line no-console
+      // if we get here, it's because completePayment() failed (which is already reported)
     }
   }
 
