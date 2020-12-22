@@ -74,6 +74,10 @@ import { getBaseUrl } from './payment-utils'
     onCancel: {
       type: Function,
       default: async () => {}
+    },
+    stopTimer: {
+      type: Function,
+      default: async () => undefined
     }
   }
 })
@@ -103,6 +107,11 @@ export default class PaymentModal extends Mixins(
 
   /** Clears store property to hide this modal. */
   async hideModal () {
+    // stop timer because we don't need it any more
+    const { stopTimer } = this.$props
+    if (typeof stopTimer === 'function') {
+      stopTimer()
+    }
     this.isLoadingPayment = false
     await PaymentModule.togglePaymentModal(false)
   }
@@ -135,8 +144,16 @@ export default class PaymentModal extends Mixins(
 
   /** Called when user clicks "Continue to Payment" button. */
   private async confirmPayment () {
+    // stop timer now so delays in creating payment don't
+    // inadvertently cause timer expiry and app reset
+    const { stopTimer } = this.$props
+    if (typeof stopTimer === 'function') {
+      stopTimer()
+    }
+
     this.isLoadingPayment = true
     const { nrId, priorityRequest } = this
+
     const onSuccess = (paymentResponse) => {
       const { paymentId, paymentToken } = this
       // Save response to session

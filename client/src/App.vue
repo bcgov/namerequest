@@ -46,6 +46,7 @@
     <PaymentModal
       :onActivate="onPaymentModalActivated"
       :onCancel="onPaymentCancelled"
+      :stopTimer="stopPaymentCompletionTimer"
     />
     <UpgradeModal />
     <ReapplyModal />
@@ -162,7 +163,7 @@ export default class App extends Mixins(SessionTimerMixin) {
     // Avoided redundant navigation to current location: "/"
     this.$router.replace('/').catch(() => {})
 
-    // Display the tabs
+    // Clear data and display the Tabs page
     await newRequestModule.resetAnalyzeName()
     await newRequestModule.mutateName('')
     await newRequestModule.mutateDisplayedComponent('Tabs')
@@ -171,6 +172,7 @@ export default class App extends Mixins(SessionTimerMixin) {
   async onTimerModalExpired () {
     const { nrId } = newRequestModule
     const componentName = newRequestModule.displayedComponent
+
     if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
       // Cancel the NR using the rollback endpoint if we were processing a NEW NR
       await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
@@ -184,6 +186,7 @@ export default class App extends Mixins(SessionTimerMixin) {
   async onTimerModalSessionExtended () {
     const { nrId } = newRequestModule
     const componentName = newRequestModule.displayedComponent
+
     if (['SubmissionTabs'].indexOf(componentName) > -1 && this.$NR_COMPLETION_TIMEOUT_MS > 0) {
       await this.startNewNrTimer()
     } else if (nrId && ['ExistingRequestEdit'].indexOf(componentName) > -1 && this.$EXISTING_NR_TIMEOUT_MS > 0) {
@@ -194,12 +197,11 @@ export default class App extends Mixins(SessionTimerMixin) {
   async onPaymentModalActivated () {
     const { nrId } = newRequestModule
     const componentName = newRequestModule.displayedComponent
+
     // Only do this for New NRs!!!
     if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
-      if (this.$NR_COMPLETION_TIMEOUT_MS > 0) {
-        // First, clear the NR session timer
-        await timerModule.stopTimer({ id: this.$NR_COMPLETION_TIMER_NAME })
-      }
+      // First, clear the NR session timer
+      await timerModule.stopTimer({ id: this.$NR_COMPLETION_TIMER_NAME })
 
       if (this.$PAYMENT_COMPLETION_TIMEOUT_MS > 0) {
         // Start a new timer for the payment
@@ -230,6 +232,10 @@ export default class App extends Mixins(SessionTimerMixin) {
       await this.resetAppState()
     }
     await paymentModule.togglePaymentModal(false)
+  }
+
+  async stopPaymentCompletionTimer () {
+    await timerModule.stopTimer({ id: this.$PAYMENT_COMPLETION_TIMER_NAME })
   }
 
   private closeAuthModal () {
