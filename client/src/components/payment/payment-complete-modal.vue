@@ -84,7 +84,7 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
       } else {
         if (sessionPaymentAction && sessionPaymentAction === PaymentAction.COMPLETE) {
           // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-          await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
+          // await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
           // Call fetchData to load the NR and the payment
           await this.fetchData(!DEBUG_RECEIPT)
         }
@@ -142,10 +142,10 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
     } else if (!paymentSuccess && result?.paymentErrors) {
       // Setting the errors to state will update any subscribing components, like the main ErrorModal
       await errorModule.setAppErrors(result.paymentErrors)
-      if (action && action === PaymentAction.COMPLETE) {
+      // if (action && action === PaymentAction.COMPLETE) {
         // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-        await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
-      }
+        // await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
+      // }
     } else {
       // if we get here, it's because completePayment() failed (which is already reported)
     }
