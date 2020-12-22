@@ -103,6 +103,7 @@ export default class QuickSearchResults extends Vue {
   }
   async detailedSearch () {
     this.isLoadingAnalysis = true
+    newReqModule.mutateNoCorpNum(true)
     newReqModule.mutateQuickSearch(false)
     await newReqModule.startAnalyzeName()
     this.isLoadingAnalysis = false
