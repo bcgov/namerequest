@@ -765,7 +765,7 @@ export class NewRequestModule extends VuexModule {
               territory, country or federal jurisdiction so that you may also conduct business here in BC.`
     },
     {
-      text: 'Relocate a Corporation into BC a',
+      text: 'Relocate into BC a',
       shortDesc: 'Move Request',
       value: 'MVE',
       blurbs: `Transfer a corporation you formed in another jurisdiction so that it becomes a BC company.`
