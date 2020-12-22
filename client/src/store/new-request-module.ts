@@ -71,18 +71,18 @@ async function handleApiError (err: any, defaultMessage = ''): Promise<string> {
       const errorText = await responseData.text()
       const errorJson = JSON.parse(errorText)
       if (errorJson?.message) {
-        message = `${err.toString()} (${errorJson.message})`
+        message = `${err.toString()} [ ${errorJson.message} ]`
       }
     } else if (hasResponseData && responseData instanceof String) {
       // Handle any cases where the API error response is a String.
-      message = `${err.toString()} (${responseData.toString()})`
+      message = `${err.toString()} [ ${responseData.toString()} ]`
     } else if (hasResponseData && responseData.message) {
       // Handle any cases where the API error response in an object (eg, { message: 'Ipsum lorem dolor' }).
       message += responseData.message
-      message = `${err.toString()} (${responseData.message})`
+      message = `${err.toString()} [ ${responseData.message} ]`
     } else if (defaultMessage) {
       // Handle any other cases.
-      message = `${err.toString()} (${defaultMessage})`
+      message = `${err.toString()} [ ${defaultMessage} ]`
     } else {
       return err.toString()
     }
@@ -998,19 +998,23 @@ export class NewRequestModule extends VuexModule {
           }
           output.push(objSansRankAndShortlist)
         }
-        // but we must have at least one shortlist item.  this will kick in when CR is not one of the filtered entities
+
+        // but we must have at least one shortlist item
+        // this will kick in when CR is not one of the filtered entities
         if (!output.some(ent => ent.rank === 1)) {
           output[0]['rank'] = 1
           output[0]['shortlist'] = true
         }
         return output
       }
+
       // see 'src/store/list-data/request-action-mapping.ts'
       let mapping: RequestActionMappingI = bcMapping
       let cds = Object.keys(mapping)
       if (cds.includes(this.request_action_cd)) {
         return generateEntities(mapping[this.request_action_cd])
       }
+
       return this.entityTypesBCData
     } catch (err) {
       console.error('entityTypesBC() =', err) // eslint-disable-line no-console
@@ -1023,6 +1027,7 @@ export class NewRequestModule extends VuexModule {
     if (this.location === 'CA') {
       entityTypesXPROData = entityTypesXPROData.filter(ent => ent.value !== 'RLC')
     }
+
     try {
       let generateEntities = (entities) => {
         let output = []
@@ -1045,13 +1050,16 @@ export class NewRequestModule extends VuexModule {
           }
           output.push(objSansRankAndShortlist)
         }
-        // but we must have at least one shortlist item.  this will kick in when XCR is not one of the filtered entities
+
+        // but we must have at least one shortlist item
+        // this will kick in when XCR is not one of the filtered entities
         if (!output.some(ent => ent.rank === 1)) {
           output[0]['rank'] = 1
           output[0]['shortlist'] = true
         }
         return output
       }
+
       // see 'src/store/list-data/request-action-mapping.ts'
       let mapping: RequestActionMappingI = xproMapping
       let cds = Object.keys(mapping)
@@ -1059,6 +1067,7 @@ export class NewRequestModule extends VuexModule {
       if (cds.includes(this.request_action_cd)) {
         return generateEntities(mapping[this.request_action_cd])
       }
+
       return entityTypesXPROData
     } catch (err) {
       console.error('entityTypesXPRO() =', err) // eslint-disable-line no-console
@@ -1760,13 +1769,13 @@ export class NewRequestModule extends VuexModule {
 
   @Action
   async getAddressDetails (id) {
-    const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Retrieve/v2.11/json3.ws'
-    let params = {
-      Key: canadaPostAPIKey,
-      Id: id
-    }
-
     try {
+      const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Retrieve/v2.11/json3.ws'
+      let params = {
+        Key: canadaPostAPIKey,
+        Id: id
+      }
+
       let resp = await axios.post(url, qs.stringify(params), {
         headers: { 'Content-type': 'application/x-www-form-urlencoded' }
       })
@@ -1780,11 +1789,13 @@ export class NewRequestModule extends VuexModule {
           Line1: 'addrLine1',
           Line2: 'addrLine2'
         }
+
         for (let ln of ['2', '3']) {
           if (!addressData[`Line${ln}`]) {
             this.mutateApplicant({ key: `addrLine${ln}`, value: '' })
           }
         }
+
         if (addressData['ProvinceCode']) {
           if (addressData['ProvinceCode'].length > 2) {
             this.mutateApplicant({ key: 'stateProvinceCd', value: '' })
@@ -1802,6 +1813,7 @@ export class NewRequestModule extends VuexModule {
             canadaPostFieldsMapping['ProvinceName'] = 'addrLine3'
           }
         }
+
         let fields = Object.keys(canadaPostFieldsMapping)
         for (let field of fields) {
           if (addressData[field]) {
@@ -1820,20 +1832,21 @@ export class NewRequestModule extends VuexModule {
 
   @Action
   async getAddressSuggestions (appKV) {
-    if (!appKV.value) {
-      return
-    }
-    const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Find/v2.10/json3.ws'
-    let params = {
-      Key: canadaPostAPIKey,
-      SearchTerm: appKV.value,
-      MaxSuggestions: 3,
-      Country: this.applicant.countryTypeCd
-    }
     try {
+      if (!appKV.value) return
+
+      const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Find/v2.10/json3.ws'
+      let params = {
+        Key: canadaPostAPIKey,
+        SearchTerm: appKV.value,
+        MaxSuggestions: 3,
+        Country: this.applicant.countryTypeCd
+      }
+
       let resp = await axios.post(url, qs.stringify(params), {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
+
       if (Array.isArray(resp.data.Items)) {
         let filteredItems = resp.data.Items.filter(item => item.Next === 'Retrieve')
         if (this.applicant.addrLine1) {
@@ -1841,6 +1854,7 @@ export class NewRequestModule extends VuexModule {
         }
         return
       }
+
       this.mutateAddressSuggestions(null)
     } catch (err) {
       const msg = await handleApiError(err, 'Could not get address suggestions')
@@ -1871,6 +1885,7 @@ export class NewRequestModule extends VuexModule {
         cancelToken: source.token,
         timeout: ANALYSIS_TIMEOUT_MS
       })
+
       if (this.analyzePending) {
         const json = resp.data
         this.mutateAnalysisJSON(json)
@@ -1927,6 +1942,7 @@ export class NewRequestModule extends VuexModule {
         cancelToken: source.token,
         timeout: ANALYSIS_TIMEOUT_MS
       })
+
       if (this.analyzePending) {
         const json = resp.data
         this.mutateAnalysisJSON(json)
@@ -2034,24 +2050,31 @@ export class NewRequestModule extends VuexModule {
       const action = this.requestActions.find(request => request.value === requestAction)
       const { shortDesc } = action || { shortDesc: 'action not found' }
       const msg = `*** ${shortDesc} ***`
+
       if (!data['additionalInfo']) {
         // if data.additionalInfo is empty, just assign it to message
         data['additionalInfo'] = msg
         return data
       }
+
       if (data['additionalInfo'].includes(msg)) {
         // if message is already part of additionalInfo, do nothing, return
         return data
       }
-      // by here we know there is some text in additionalInfo but it does not contain the exact msg we must add
-      // so we check if there is a previous request_action message which no longer matches msg because we are editing
+
+      // by here we know there is some text in additionalInfo
+      // but it does not contain the exact msg we must add
+      // so we check if there is a previous request_action message
+      // which no longer matches msg because we are editing
       let allShortDescs = this.requestActions.map(request => `*** ${request.shortDesc} ***`)
       if (allShortDescs.some(desc => data['additionalInfo'].includes(desc))) {
         let desc = allShortDescs.find(sd => data['additionalInfo'].includes(sd))
         data['additionalInfo'] = data['additionalInfo'].replace(desc, msg)
         return data
       }
-      // if there is no previous request_action message then we just preserve whatever text there is and append msg
+
+      // if there is no previous request_action message then
+      // we just preserve whatever text there is and append msg
       data['additionalInfo'] += ` \n\n ${msg}`
       return data
     } catch (err) {
@@ -2206,11 +2229,9 @@ export class NewRequestModule extends VuexModule {
         this.mutateNameRequest(response.data)
         this.mutateDisplayedComponent('Success')
         return true
-      } else {
-        // eslint-disable-next-line no-console
-        console.error('patchNameRequests(), invalid response =', response)
-        throw new Error()
       }
+
+      throw new Error(`Invalid response = ${response}`)
     } catch (err) {
       const msg = await handleApiError(err, 'Could not patch name requests')
       console.error('patchNameRequests() =', msg) // eslint-disable-line no-console
@@ -2229,6 +2250,7 @@ export class NewRequestModule extends VuexModule {
 
       this.mutateNameRequest(response.data)
       this.mutateDisplayedComponent('Success')
+
       return true
     } catch (err) {
       const msg = await handleApiError(err, 'Could not patch name requests by action')
@@ -2272,11 +2294,9 @@ export class NewRequestModule extends VuexModule {
         // await dispatch(types.SET_CHECK_IN_ON_EXPIRE, false) // NOT USED
 
         return true
-      } else {
-        // eslint-disable-next-line no-console
-        console.error('postNameRequests(), invalid response =', response)
-        throw new Error()
       }
+
+      throw new Error(`Invalid response = ${response}`)
     } catch (err) {
       const msg = await handleApiError(err, 'Could not post name requests')
       console.error('postNameRequests() =', msg) // eslint-disable-line no-console
@@ -2319,11 +2339,9 @@ export class NewRequestModule extends VuexModule {
       if (response?.data) {
         this.setNrResponse(response.data)
         return true
-      } else {
-        // eslint-disable-next-line no-console
-        console.error('putNameReservation(), invalid response =', response)
-        throw new Error()
       }
+
+      throw new Error(`Invalid response = ${response}`)
     } catch (err) {
       const msg = await handleApiError(err, 'Could not put name reservation')
       console.error('putNameReservation() =', msg) // eslint-disable-line no-console
@@ -2375,10 +2393,14 @@ export class NewRequestModule extends VuexModule {
 
       // safety checks
       if (!nrId) {
+        // NB: use console.error to capture issues to Sentry
+        // ultimately this should never happen
         console.error('rollbackNameRequest(), invalid NR id') // eslint-disable-line no-console
         return false
       }
       if (!validRollbackActions.includes(action)) {
+        // NB: use console.error to capture issues to Sentry
+        // ultimately this should never happen
         console.error('rollbackNameRequest(), invalid action =', action) // eslint-disable-line no-console
         return false
       }
@@ -2388,9 +2410,7 @@ export class NewRequestModule extends VuexModule {
       })
 
       if (!response || response.status !== OK) {
-        // eslint-disable-next-line no-console
-        console.error('rollbackNameRequest(), status was not 200, response =', response)
-        throw new Error('Could not rollback or cancel the name request')
+        throw new Error(`Status was not 200, response = ${response}`)
       }
 
       return true
@@ -2543,22 +2563,27 @@ export class NewRequestModule extends VuexModule {
     try {
       this.mutateDisplayedComponent('QuickSearchPending')
       let encodedAuth = btoa(`${window['quickSearchPublicId']}:${window['quickSearchPublicSecret']}`)
+
       const tokenResp = await axios.post(window['authTokenUrl'], 'grant_type=client_credentials', {
         headers: { Authorization: `Basic ${encodedAuth}`, 'content-type': 'application/x-www-form-urlencoded' }
       })
+
       let token = tokenResp.data.access_token
       const exactResp = await axios.get('/exact-match?query=' + cleanedName.exactMatch, {
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
       })
+
       const synonymResp = await axios.get('/requests/synonymbucket/' + cleanedName.synonymMatch + '/*', {
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
       })
 
       const exactNames = await this.parseExactNames(exactResp.data)
+
       // pass in exactNames so that we can check for duplicates
       synonymResp.data.exactNames = exactNames
       const synonymNames = await this.parseSynonymNames(synonymResp.data)
       this.mutateQuickSearchNames(exactNames.concat(synonymNames))
+
       // check if they skipped
       if (this.quickSearch) {
         this.mutateDisplayedComponent('QuickSearchResults')
@@ -2724,7 +2749,6 @@ export class NewRequestModule extends VuexModule {
   checkMRAS (corpNum: string) {
     let { xproJurisdiction } = this.nrData
     let { SHORT_DESC } = $canJurisdictions.find(jur => jur.text === xproJurisdiction)
-
     let url = `mras-profile/${SHORT_DESC}/${this.corpNum}`
     return axios.get(url)
   }
@@ -2737,6 +2761,7 @@ export class NewRequestModule extends VuexModule {
       if (response?.status === OK) {
         return response.data
       }
+      throw new Error(`Status was not 200, response = ${response}`)
     } catch (err) {
       const status: number = err?.response?.status
       // do not generate console error for the errors codes
@@ -3152,23 +3177,26 @@ export class NewRequestModule extends VuexModule {
   setNrResponse (data: any): boolean {
     try {
       this.nr = data
-
       const { nr } = this
       const { applicants = [] } = nr
 
-      const setApplicantDetails = (applicant) => {
-        const data = Object.assign({}, applicant) as ApplicantI
-        Object.keys(data as ApplicantI).forEach(key => {
-          this.applicant[key] = data[key]
-        })
-      }
+      // OLD CODE - keep for now
+      // const setApplicantDetails = (applicant) => {
+      //   const data = Object.assign({}, applicant) as ApplicantI
+      //   Object.keys(data as ApplicantI).forEach(key => {
+      //     this.applicant[key] = data[key]
+      //   })
+      // }
 
       if (applicants instanceof Array) {
-        setApplicantDetails(applicants[0])
+        // setApplicantDetails(applicants[0]) // OLD CODE
+        this.applicant = { ...applicants[0] }
       } else if (applicants) {
-        setApplicantDetails(applicants)
+        // setApplicantDetails(applicants) // OLD CODE
+        this.applicant = { ...applicants }
+      } else {
+        // applicants is null/undefined
       }
-      // else applicants is null/undefined
 
       return true
     } catch (err) {

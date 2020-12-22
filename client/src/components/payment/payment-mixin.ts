@@ -159,10 +159,9 @@ export default class PaymentMixin extends Vue {
    * @param redirectUrl
    */
   redirectToPaymentPortal (paymentId, paymentToken, redirectUrl) {
-    // TODO: We could make this string configurable too... not necessary at this time
     const paymentPortalUrl = `${this.$PAYMENT_PORTAL_URL}/${paymentToken}/${redirectUrl}`
     // eslint-disable-next-line no-console
-    console.log(`Forwarding to SBC Payment Portal -> Payment redirect URL: ${redirectUrl}`)
+    // console.log(`Forwarding to SBC Payment Portal -> Payment redirect URL: ${redirectUrl}`)
     window.location.href = paymentPortalUrl
   }
 

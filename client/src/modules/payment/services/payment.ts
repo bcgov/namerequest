@@ -21,18 +21,18 @@ async function handleApiError (err: any, defaultMessage = ''): Promise<string> {
       const errorText = await responseData.text()
       const errorJson = JSON.parse(errorText)
       if (errorJson?.message) {
-        message = `${err.toString()} (${errorJson.message})`
+        message = `${err.toString()} [ ${errorJson.message} ]`
       }
     } else if (hasResponseData && responseData instanceof String) {
       // Handle any cases where the API error response is a String.
-      message = `${err.toString()} (${responseData.toString()})`
+      message = `${err.toString()} [ ${responseData.toString()} ]`
     } else if (hasResponseData && responseData.message) {
       // Handle any cases where the API error response in an object (eg, { message: 'Ipsum lorem dolor' }).
       message += responseData.message
-      message = `${err.toString()} (${responseData.message})`
+      message = `${err.toString()} [ ${responseData.message} ]`
     } else if (defaultMessage) {
       // Handle any other cases.
-      message = `${err.toString()} (${defaultMessage})`
+      message = `${err.toString()} [ ${defaultMessage} ]`
     } else {
       return err.toString()
     }
