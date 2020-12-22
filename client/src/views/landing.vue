@@ -9,7 +9,7 @@
           <span class="h2 colour-white">Name Request
             <v-tooltip bottom nudge-right="10"
                        nudge-top="5"
-                       content-class="bottom-tooltip"
+                       content-class="bottom-tooltip tooltip-extra-wide"
                        transition="fade-transition"
                        class="test-class"
                        :open-on-hover="false">
@@ -22,12 +22,26 @@
                   <sup class="beta-tag">Beta</sup>
                 </v-btn>
               </template>
-              <p>The Name Request website is available as a Beta version. Name Requests obtained through the Beta are
-                official name requests and can be used in the province of British Columbia.</p>
-              <p class="mb-0">As part of a new
-                <a class="white--text" :href="agileUrl" target="_blank">agile software development process</a>,
+              <p>The Name Request website is available as a Beta version. Name requests obtained through the Name
+                Request Beta website are official name requests and can be used in the province of British Columbia.</p>
+              <p class="mb-0">The Name Request Beta website contains all of the functionality of the previous Name
+                Requests Online site, as well as new functionality intended to improve the experience of starting and
+                managing businesses in B.C. Some features of the site may not function as intended, and if you encounter
+                this please contact us:</p>
+              <span class="tooltip-bullet mt-3">
+                <a class="white--text" href="tel:+1-877-370-1033" target="_blank">Toll Free: 1-877-370-1033</a>
+              </span>
+              <span class="tooltip-bullet">
+                <a class="white--text" href="tel:+1-250-370-1033" target="_blank">Victoria Office: 250-370-1033</a>
+              </span>
+              <span class="tooltip-bullet mb-3">
+                <a class="white--text" href="mailto:BCRegistries@gov.bc.ca" target="_blank">BCRegistries@gov.bc.ca</a>
+              </span>
+              <p class="mb-0">As part of a
+                <a class="white--text" :href="agileUrl" target="_blank">agile software development process</a>
                 the Name Request website will be continually updated and improved based on feedback from citizens and
-                businesses in BC.</p>
+                businesses in B.C.
+              </p>
             </v-tooltip>
           </span>
         </v-col>
@@ -141,5 +155,8 @@ export default class Landing extends Vue {
 }
 .v-tooltip__content {
   pointer-events: auto !important;
+}
+.tooltip-extra-wide {
+  width: 410px !important;
 }
 </style>

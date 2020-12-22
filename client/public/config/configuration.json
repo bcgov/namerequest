@@ -20,8 +20,8 @@
     "PAYMENT_COMPLETION_TIMER_NAME": "paymentCompletionTimer",
     "PAYMENT_COMPLETION_TIMEOUT_MS": 120000,
     "DEV_PAYMENT_COMPLETION_TIMEOUT_MS": 900000,
-    "AUTH_TOKEN_URL": "https://dev.oidc.gov.bc.ca/auth/realms/fcf0kpqr/protocol/openid-connect/token",
-    "QUICK_SEARCH_PUBLIC_ID": "",
-    "QUICK_SEARCH_PUBLIC_SECRET": ""
+    "AUTH_TOKEN_URL": "https://dev.oidc.gov.bc.ca/auth/realms/fcf0kpqr/protocol/openid-connect/token" ,
+    "QUICK_SEARCH_PUBLIC_ID": "namex-solr-service-account",
+    "QUICK_SEARCH_PUBLIC_SECRET": "1d31cb05-f090-4471-ba76-29130bca814f"
   }
 ]
