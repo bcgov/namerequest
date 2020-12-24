@@ -177,7 +177,6 @@ import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
 import { NameState, NrAction, NrState } from '@/enums'
 import { sleep } from '@/plugins/sleep'
 import { PaymentStatus, SbcPaymentStatus } from '@/modules/payment/models'
-import NameRequestMixin from '@/components/mixins/name-request-mixin'
 import { getBaseUrl } from '@/components/payment/payment-utils'
 
 @Component({
@@ -196,8 +195,7 @@ export default class ExistingRequestDisplay extends Mixins(
   NrAffiliationMixin,
   CommonMixin,
   DateMixin,
-  PaymentMixin,
-  NameRequestMixin) {
+  PaymentMixin) {
   // enums used in the template:
   NameState = NameState
   NrAction = NrAction
@@ -606,7 +604,9 @@ export default class ExistingRequestDisplay extends Mixins(
         this.$el.querySelector("#UPGRADE-btn > span")?.classList.add("existing-nr-upgrade-btn")
         this.$el.querySelector("#INCORPORATE-btn > span")?.classList.add("existing-nr-incorporate-btn")
       })
-      
+    }
+  }
+
   created (): void {
     this.$root.$on('paymentComplete', (flag = false) => { this.pendingPayment = null })
   }
@@ -616,8 +616,8 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   async mounted () {
-    if (this.nrId && this.nr.state !== NrState.CANCELLED) {
-      await this.fetchNrPayments(this.nrId)
+    if (this.nr.id && this.nr.state !== NrState.CANCELLED) {
+      await this.fetchNrPayments(this.nr.id)
       this.pendingPayment = this.payments.find(payment => (payment.statusCode !== PaymentStatus.COMPLETED))
     }
   }
