@@ -116,7 +116,7 @@
           </template>
           <span>{{ entityConversionText }}</span>
         </v-tooltip>
-      </v-col><span>{{entity_type_cd}}</span>
+      </v-col>
     </v-row>
 
     <v-row class="mt-4" no-gutters>
@@ -317,7 +317,6 @@ export default class NewSearch extends Vue {
     if (this.isConversion) {
       return newReqModule.conversionTypeOptions
     }
-    console.log(newReqModule.entityTypeOptions)
     return newReqModule.entityTypeOptions
   }
   get entityTypeOptions () {
