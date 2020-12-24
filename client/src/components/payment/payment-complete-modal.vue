@@ -63,8 +63,11 @@ const DEBUG_RECEIPT = false
     RequestDetails,
     PaymentConfirm
   },
+
   data: () => ({
+    checkPaymentStatusCount: 0
   }),
+
   computed: {
     isVisible: () => paymentModule[paymentTypes.PAYMENT_COMPLETE_MODAL_IS_VISIBLE]
   }
@@ -76,31 +79,11 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
     // and need to rehydrate the application using the payment ID (for now, it could be some other token too)!
     // TODO: Set the timer here!
     if (sessionPaymentId && sessionPaymentAction) {
-      // Call fetchData to load the NR and the payment
-      await this.fetchData(!DEBUG_RECEIPT)
       // Make sure edit mode is disabled or it will screw up the back button
       await newRequestModule.mutateEditMode(false)
-      const { nrId, paymentStatus, sbcPaymentStatus } = this
-
-      // If the payment is already complete for some reason, skip this
-      // TODO: Maybe set a constant instead somewhere...
-      if (paymentStatus === PaymentStatus.COMPLETED) return
-      if (sbcPaymentStatus === SbcPaymentStatus.COMPLETED && paymentStatus === PaymentStatus.CREATED) {
-        // Then complete the payment
-        await this.completePayment(nrId, sessionPaymentId, sessionPaymentAction)
-      } else {
-        if (sessionPaymentAction && sessionPaymentAction === PaymentAction.COMPLETE) {
-          // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-          await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
-          // Call fetchData to load the NR and the payment
-          await this.fetchData(!DEBUG_RECEIPT)
-        }
-      }
+      // Call fetchData to load the NR and the payment
+      await this.fetchData()
     }
-  }
-
-  async showModal () {
-    await paymentModule.toggleReceiptModal(true)
   }
 
   async hideModal () {
@@ -117,26 +100,38 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
   /**
    * NOTE: This method makes use of the PaymentSectionMixin class!
    */
-  async fetchData (clearSession: boolean = true) {
+  async fetchData () {
+    this.$data.checkPaymentStatusCount = 0
     const { sessionPaymentId, sessionNrId } = this
+    await this.fetchNr(+sessionNrId)
+    await this.fetchPaymentData(sessionPaymentId, +sessionNrId)
+    sessionStorage.removeItem('payment')
+    sessionStorage.removeItem('paymentInProgress')
+    sessionStorage.removeItem('paymentId')
+    sessionStorage.removeItem('paymentToken')
+    sessionStorage.removeItem('nrId')
+  }
 
-    // TODO: We need to make sure we get the correct NR number here? Or somewhere soon...
-    if (clearSession) {
-      // TODO: Remove this one, we don't want to set the payment to session once we're done!
-      // TODO: Or... we could add a debug payments mode?
-      sessionStorage.removeItem('payment')
-      // Clear the sessionStorage variables
-      sessionStorage.removeItem('paymentInProgress')
-      sessionStorage.removeItem('paymentId')
-      sessionStorage.removeItem('paymentToken')
-      sessionStorage.removeItem('nrId')
+  async fetchPaymentData (paymentId: number, nameReqId: number) {
+    if (++this.$data.checkPaymentStatusCount >= 10) {
+      return
     }
-
-    if (sessionNrId && sessionPaymentId) {
-      // Get the payment
-      await this.fetchNr(+sessionNrId)
-      // Get the payment
-      await this.fetchNrPayment(+sessionNrId, sessionPaymentId)
+    if (++this.$data.checkPaymentStatusCount === 8) {
+      await this.completePayment(nameReqId, paymentId, this.sessionPaymentAction)
+    }
+    if (nameReqId && paymentId) {
+      await this.fetchNrPayment(nameReqId, paymentId)
+      const { nrId, paymentStatus, sbcPaymentStatus } = this
+      if (sbcPaymentStatus === SbcPaymentStatus.COMPLETED && paymentStatus === PaymentStatus.COMPLETED) {
+        this.$root.$emit('paymentComplete', true)
+        await paymentModule.toggleReceiptModal(true)
+        return
+      } else if (sbcPaymentStatus === SbcPaymentStatus.COMPLETED && paymentStatus === PaymentStatus.CREATED) {
+        let vue = this
+        setTimeout(() => {
+          vue.fetchPaymentData(paymentId, nrId)
+        }, 2000)
+      }
     }
   }
 

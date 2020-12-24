@@ -95,7 +95,7 @@
             <v-col cols="3" class="py-0">
               <v-row dense>
                 <template v-if="pendingPayment">
-                  <v-col cols="12">
+                  <v-col cols="12" v-if="isNotPaid">
                     <v-btn block
                               class="button button-blue"
                               @click="handleButtonClick('RETRY_PAYMENT')">Retry Payment</v-btn>
@@ -361,8 +361,10 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** The display text for Request Status. */
   private get requestStatusText (): string {
-    if (this.pendingPayment) {
+    if (this.isNotPaid) {
       return 'Payment Incomplete'
+    } else if (this.isPaymentProcessing) {
+      return 'Payment Processing'
     } else {
       switch (this.nr.state) {
         case NrState.APPROVED:
@@ -448,9 +450,17 @@ export default class ExistingRequestDisplay extends Mixins(
   /** True if the current state should display an alert icon. */
   private get isAlertState (): boolean {
     return ['Cancelled', 'Cancelled, Refund Requested', 'Expired'].includes(this.requestStatusText) ||
-    this.pendingPayment
+    this.isNotPaid
     // FUTURE: use enums when EXPIRED state is implemented (ticket #5669)
     // return [NrState.CANCELLED, NrState.REFUND_REQUESTED, NrState.EXPIRED].includes(this.nr.state)
+  }
+
+  private get isNotPaid () {
+    return this.pendingPayment?.sbcPayment?.statusCode === 'CREATED'
+  }
+
+  private get isPaymentProcessing () {
+    return this.pendingPayment?.sbcPayment?.statusCode === 'COMPLETED'
   }
 
   /** Returns True if the specified action should display a red button. */
@@ -596,6 +606,14 @@ export default class ExistingRequestDisplay extends Mixins(
         this.$el.querySelector("#UPGRADE-btn > span")?.classList.add("existing-nr-upgrade-btn")
         this.$el.querySelector("#INCORPORATE-btn > span")?.classList.add("existing-nr-incorporate-btn")
       })
+      
+  created (): void {
+    this.$root.$on('paymentComplete', (flag = false) => { this.pendingPayment = null })
+  }
+
+  destroyed (): void {
+    this.$root.$off('paymentComplete')
+  }
 
   async mounted () {
     if (this.nrId && this.nr.state !== NrState.CANCELLED) {
