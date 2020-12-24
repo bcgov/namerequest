@@ -10,7 +10,6 @@ module.exports = {
     '@vue/standard'
   ],
   rules: {
-		"no-console": 0,
     'max-len': ['warn', { code: 120 }],
     'no-unused-vars': 'off',
     'quotes': 'off',
