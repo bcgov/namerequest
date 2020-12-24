@@ -348,6 +348,7 @@ export default class NewSearch extends Vue {
     newReqModule.mutateIsPersonsName(value)
   }
   get location () {
+    if (['MVE'].includes(this.request_action_cd)) newReqModule.mutateLocation('BC')
     return newReqModule.location
   }
   set location (location: LocationT) {
@@ -384,9 +385,6 @@ export default class NewSearch extends Vue {
     const request = this.requestActions.find(request => request.value === value)
     if (request.value !== 'NEW') {
       newReqModule.mutateExtendedRequestType(request)
-    }
-    if (request.value === 'MVE') {
-      newReqModule.mutateLocation('CA')
     }
     newReqModule.mutateRequestAction(value)
   }

@@ -245,6 +245,13 @@ export class NewRequestModule extends VuexModule {
         `Reported separately as Corporate tax`,
         `Has name protection in BC`
       ],
+      mveBlurbs: [
+        `A company that may have one or more people who own shares with some personal responsibility for
+        debt and liabilities.`,
+        'Has many of the same rights of an individual',
+        'Reported separately as Corporate tax',
+        'Has name protection in BC'
+      ],
       rehBlurbs: [
         'Restore a limited company that is no longer active with BC Registries.'
       ],
@@ -264,6 +271,13 @@ export class NewRequestModule extends VuexModule {
       blurbs: [
         `A type of corporation that is often used by American corporations as a Canadian subsidiary or to hold Canadian
          assets.`,
+        'Shareholders liable for debts and liabilities',
+        'Reported separately as Canadian Corporate tax',
+        'Has name protection in BC'
+      ],
+      mveBlurbs: [
+        `A type of corporation that is often used by American corporations as a Canadian subsidiary or
+        to hold Canadian assets.`,
         'Shareholders liable for debts and liabilities',
         'Reported separately as Canadian Corporate tax',
         'Has name protection in BC'
@@ -335,6 +349,13 @@ export class NewRequestModule extends VuexModule {
         'Reported as Corporate tax',
         'Has name protection in BC'
       ],
+      mveBlurbs: [
+        'Membership-based organization, owned and operated by the people who use its services.',
+        'Has independent legal status separate from its members',
+        'Members take on shares and have limited liability',
+        'Reported as Corporate tax',
+        'Has name protection in BC'
+      ],
       rehBlurbs: [
         'Restore a cooperative association that is no longer active with BC Registries.'
       ],
@@ -352,6 +373,12 @@ export class NewRequestModule extends VuexModule {
       cat: 'Corporations',
       blurbs: [
         `A type of corporation with special commitments to conduct business in a responsible and sustainable way.`,
+        'Must publish and post an audited annual benefit report',
+        'Reported as Corporate tax',
+        'Has name protection in BC'
+      ],
+      mveBlurbs: [
+        'A type of corporation with special commitments to conduct business in a responsible and sustainable way.',
         'Must publish and post an audited annual benefit report',
         'Reported as Corporate tax',
         'Has name protection in BC'
@@ -376,6 +403,12 @@ export class NewRequestModule extends VuexModule {
         'Reported as Corporate tax',
         'Has name protection in BC'
       ],
+      mveBlurbs: [
+        'A type of corporations which has a benefit to  the community.  They are intended to bridge the gap between ' +
+        'for-profit and non-profit companies.',
+        'Reported as Corporate tax',
+        'Has name protection in BC'
+      ],
       rehBlurbs: [
         'Restore a community contribution company (CCC) that is no longer active with BC Registries.'
       ],
@@ -392,6 +425,14 @@ export class NewRequestModule extends VuexModule {
       text: 'Society',
       cat: 'Social Enterprises',
       blurbs: [
+        `A non-profit organization that is also known as a non-share corporation.`,
+        'Any funds or profits must be used only for social or community benefit',
+        'When incorporated has independent legal status separate from its members',
+        'Members, staff and directors protected from personal liability',
+        'Has name protection in BC',
+        'Must use Societies Online to register a name and incorporate'
+      ],
+      mveBlurbs: [
         `A non-profit organization that is also known as a non-share corporation.`,
         'Any funds or profits must be used only for social or community benefit',
         'When incorporated has independent legal status separate from its members',
@@ -455,13 +496,6 @@ export class NewRequestModule extends VuexModule {
         'Corporation established and operating outside of Canada.  Plans to operate in BC as well.',
         'Has name protection in BC'
       ],
-      mveBlurbs: [
-        `A company that may have one or more people who own shares with some personal responsibility for
-        debt and liabilities.`,
-        'Has many of the same rights of an individual',
-        'Reported separately as Corporate tax',
-        'Has name protection in BC'
-      ],
       rehBlurbs: [
         'Reinstate an extraprovincially registered company that is no longer active with BC Registries.'
       ],
@@ -498,13 +532,6 @@ export class NewRequestModule extends VuexModule {
       intBlurbs: [
         `Unlimited liability company (ULC) established and operating outside of Canada.  Plans to
         operate in BC as well.`,
-        'Has name protection in BC'
-      ],
-      mveBlurbs: [
-        `A type of corporation that is often used by American corporations as a Canadian subsidiary or
-        to hold Canadian assets.`,
-        'Shareholders liable for debts and liabilities',
-        'Reported separately as Canadian Corporate tax',
         'Has name protection in BC'
       ],
       rehBlurbs: [
@@ -623,13 +650,6 @@ export class NewRequestModule extends VuexModule {
       ],
       intBlurbs: [
         'Cooperative association established and operating outside of Canada.  Plans to operate in BC.',
-        'Has name protection in BC'
-      ],
-      mveBlurbs: [
-        'Membership-based organization, owned and operated by the people who use its services.',
-        'Has independent legal status separate from its members',
-        'Members take on shares and have limited liability',
-        'Reported as Corporate tax',
         'Has name protection in BC'
       ],
       rehBlurbs: [
@@ -1178,7 +1198,6 @@ export class NewRequestModule extends VuexModule {
       n = 5
     }
     options = options.concat({ text: 'View all business types', value: 'INFO', rank: n })
-
     return options.sort((a, b) => {
       if (a.rank < b.rank) {
         return -1
@@ -1202,6 +1221,7 @@ export class NewRequestModule extends VuexModule {
         text: 'Extraprovincial (Canada based)',
         altText: 'Canadian',
         value: 'CA',
+        altValue: 'BC',
         blurbs: [
           `Your existing business is currently located in any Province or Territory other than BC.`,
           `Your existing business is currently located in any Province or Territory other than BC.`,
@@ -1237,7 +1257,7 @@ export class NewRequestModule extends VuexModule {
     }
     if (['MVE'].includes(this.request_action_cd)) {
       let moveOptions = options.filter(location => location.value !== 'BC')
-      return moveOptions.map(x => ({ ...x, text: x.altText }))
+      return moveOptions.map(x => ({ ...x, text: x.altText, value: x.altValue }))
     }
     return options
   }
@@ -1673,8 +1693,8 @@ export class NewRequestModule extends VuexModule {
         break
       // MOVE REQUEST
       case 'MVE':
-        if (['CA', 'IN'].includes(this.location)) {
-          return this.entityTypesXPROData.map(x => ({ ...x, blurbs: x.mveBlurbs }))
+        if (['BC'].includes(this.location)) {
+          return this.entityTypesBCData.map(x => ({ ...x, blurbs: x.mveBlurbs }))
         }
         break
       // RESTORE OR REINSTATE REQUEST
@@ -2698,7 +2718,7 @@ export class NewRequestModule extends VuexModule {
     this.mutateName(name)
     if (this.location === 'BC') {
       if (this.nameIsEnglish && !this.isPersonsName && !this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
-        if (['NEW', 'DBA', 'CHG'].includes(this.request_action_cd)) {
+        if (['NEW', 'MVE', 'DBA', 'CHG'].includes(this.request_action_cd)) {
           featureFlags.getFlag('disable-analysis')
             ? this.mutateDisplayedComponent('SendToExamination')
             : this.getNameAnalysis()
