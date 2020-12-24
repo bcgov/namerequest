@@ -116,7 +116,7 @@
           </template>
           <span>{{ entityConversionText }}</span>
         </v-tooltip>
-      </v-col>
+      </v-col><span>{{entity_type_cd}}</span>
     </v-row>
 
     <v-row class="mt-4" no-gutters>
@@ -267,7 +267,7 @@ export default class NewSearch extends Vue {
       let { value } = newReqModule.entityTypesXPROData.find(ent => ent.rank === 1)
       newReqModule.mutateEntityType(value)
     }
-    if (['CNV'].includes(newVal)) {
+    if (['CNV', 'MVE'].includes(newVal)) {
       this.location = 'BC'
       return
     }
@@ -317,6 +317,7 @@ export default class NewSearch extends Vue {
     if (this.isConversion) {
       return newReqModule.conversionTypeOptions
     }
+    console.log(newReqModule.entityTypeOptions)
     return newReqModule.entityTypeOptions
   }
   get entityTypeOptions () {
@@ -348,7 +349,6 @@ export default class NewSearch extends Vue {
     newReqModule.mutateIsPersonsName(value)
   }
   get location () {
-    if (['MVE'].includes(this.request_action_cd)) newReqModule.mutateLocation('BC')
     return newReqModule.location
   }
   set location (location: LocationT) {

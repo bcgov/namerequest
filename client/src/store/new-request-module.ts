@@ -785,7 +785,7 @@ export class NewRequestModule extends VuexModule {
               territory, country or federal jurisdiction so that you may also conduct business here in BC.`
     },
     {
-      text: 'Relocate into BC a',
+      text: 'Relocate into a',
       shortDesc: 'Move Request',
       value: 'MVE',
       blurbs: `Transfer a corporation you formed in another jurisdiction so that it becomes a BC company.`
@@ -1118,7 +1118,7 @@ export class NewRequestModule extends VuexModule {
 
   get entityTypeOptions () {
     let bcOptions: SelectOptionsI[] = this.entityTypesBC.filter(x => {
-      if (this.request_action_cd === 'REH' && this.location === 'BC') {
+      if ((['MVE', 'REH'].includes(this.request_action_cd) && this.location === 'BC')) {
         // Shortlist order: Limited company, Cooperative association
         if (x.value === 'CP') {
           x.shortlist = true
@@ -1221,7 +1221,6 @@ export class NewRequestModule extends VuexModule {
         text: 'Extraprovincial (Canada based)',
         altText: 'Canadian',
         value: 'CA',
-        altValue: 'BC',
         blurbs: [
           `Your existing business is currently located in any Province or Territory other than BC.`,
           `Your existing business is currently located in any Province or Territory other than BC.`,
@@ -1256,8 +1255,7 @@ export class NewRequestModule extends VuexModule {
       return options.filter(location => location.value !== 'BC')
     }
     if (['MVE'].includes(this.request_action_cd)) {
-      let moveOptions = options.filter(location => location.value !== 'BC')
-      return moveOptions.map(x => ({ ...x, text: x.altText, value: x.altValue }))
+      return options.filter(location => location.value === 'BC')
     }
     return options
   }
@@ -2716,7 +2714,7 @@ export class NewRequestModule extends VuexModule {
       return
     }
     this.mutateName(name)
-    if (this.location === 'BC') {
+    if (this.location === 'BC' || this.request_action_cd === 'MVE') {
       if (this.nameIsEnglish && !this.isPersonsName && !this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
         if (['NEW', 'MVE', 'DBA', 'CHG'].includes(this.request_action_cd)) {
           featureFlags.getFlag('disable-analysis')
