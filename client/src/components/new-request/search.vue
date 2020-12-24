@@ -267,6 +267,7 @@ export default class NewSearch extends Vue {
       let { value } = newReqModule.entityTypesXPROData.find(ent => ent.rank === 1)
       newReqModule.mutateEntityType(value)
     }
+    // Set default location to BC for the requests where BC is the only location option
     if (['CNV', 'MVE'].includes(newVal)) {
       this.location = 'BC'
       return

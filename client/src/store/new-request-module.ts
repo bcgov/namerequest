@@ -1118,6 +1118,7 @@ export class NewRequestModule extends VuexModule {
 
   get entityTypeOptions () {
     let bcOptions: SelectOptionsI[] = this.entityTypesBC.filter(x => {
+      // Set shortlisted entity types for BC Move and Restoration requests.
       if ((['MVE', 'REH'].includes(this.request_action_cd) && this.location === 'BC')) {
         // Shortlist order: Limited company, Cooperative association
         if (x.value === 'CP') {
