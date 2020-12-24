@@ -2,20 +2,15 @@
   <v-tooltip bottom
              content-class="bottom-tooltip"
              transition="fade-transition"
-              :disabled="isContinue">
+             :disabled="isContinue">
     <template v-slot:activator="scope">
-      <v-btn @click="handleSubmit"
+      <v-btn @click="handleSubmit()"
              :class="isContinue ? 'button-normal' : 'button-blue'"
              class="mt-auto"
              v-on="scope.on"
-             id="reserve-submit-btn"
-             ref="reserve-submit-button">
-        {{ text }}
-      </v-btn>
+             id="reserve-submit-btn">{{ text }}</v-btn>
     </template>
-    <template>
-      Stop the analysis of this name and submit it for review. Please check wait times at the top of the screen.
-    </template>
+    Stop the analysis of this name and submit it for review. Please check wait times at the top of the screen.
   </v-tooltip>
 </template>
 
@@ -27,6 +22,11 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 export default class ReserveSubmitButton extends Vue {
   @Prop(String) setup: string
   private isContinue: boolean = true
+
+  private mounted () {
+    // add classname to button text (for more detail in Sentry breadcrumbs)
+    this.$el.querySelector("#reserve-submit-btn > span")?.classList.add("reserve-submit-btn")
+  }
 
   get entity_type_cd () {
     return newReqModule.entity_type_cd

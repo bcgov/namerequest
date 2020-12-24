@@ -1,8 +1,8 @@
 <template>
   <MainContainer>
     <template v-slot:container-header>
-      <v-col cols="auto" class="h4 py-0">
-       {{ editModeHeader }}
+      <v-col cols="auto" class="font-weight-bold h5 py-0">
+        {{ editModeHeader }}
       </v-col>
     </template>
     <template v-slot:content>
@@ -30,51 +30,50 @@
 </template>
 
 <script lang="ts">
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import NewReqModule from '@/store/new-request-module'
+import MainContainer from '@/components/new-request/main-container.vue'
+import EntityCannotBeAutoAnalyzed from '@/components/new-request/submit-request/entity-cannot-be-auto-analyzed.vue'
+import NamesCapture from '@/components/common/names-capture.vue'
 import ApplicantInfo1 from '@/components/common/applicant-info-1.vue'
 import ApplicantInfo2 from '@/components/common/applicant-info-2.vue'
 import ApplicantInfo3 from '@/components/common/applicant-info-3.vue'
-import MainContainer from '@/components/new-request/main-container.vue'
-import NamesCapture from '@/components/common/names-capture.vue'
-import newReqModule from '@/store/new-request-module'
-import Success from '@/components/common/success.vue'
-import { Component, Vue } from 'vue-property-decorator'
 
+/**
+ * This is the component container for editing an existing NR.
+ */
 @Component({
   components: {
+    MainContainer,
+    EntityCannotBeAutoAnalyzed,
+    NamesCapture,
     ApplicantInfo1,
     ApplicantInfo2,
-    ApplicantInfo3,
-    MainContainer,
-    NamesCapture,
-    Success
+    ApplicantInfo3
   }
 })
 export default class ExistingRequestEdit extends Vue {
-  get actingOnOwnBehalf () {
-    return newReqModule.actingOnOwnBehalf
+  private get actingOnOwnBehalf (): boolean {
+    return NewReqModule.actingOnOwnBehalf
   }
-  get editMode () {
-    return newReqModule.editMode
-  }
-  get editModeHeader () {
-    if (this.editMode) {
-      if (this.submissionTabNumber === 1) {
-        return 'Request Type'
-      } else {
-        return 'Application Details'
-      }
+
+  private get editModeHeader (): string {
+    // safety check
+    if (!NewReqModule.editMode) return ''
+
+    if (this.submissionTabNumber === 1) {
+      return 'Request Type'
+    } else {
+      return 'Application Details'
     }
-    return ''
   }
-  get submissionTabNumber () {
-    return newReqModule.submissionTabNumber
+
+  private get submissionTabNumber (): number {
+    return NewReqModule.submissionTabNumber
   }
-  set submissionTabNumber (value) {
-    newReqModule.mutateSubmissionTabNumber(value)
+
+  private set submissionTabNumber (value: number) {
+    NewReqModule.mutateSubmissionTabNumber(value)
   }
 }
 </script>
-
-<style scoped lang="sass">
-
-</style>

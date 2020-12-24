@@ -17,15 +17,15 @@
             <v-col cols="12" v-html="box.text" />
              <v-col class="text-center">
               <v-btn x-large
-                     id="submit-continue-btn"
+                     id="examine-btn"
                      v-if="box.button === 'examine'"
                      @click="showNextTab">Send For Examination</v-btn>
               <v-btn x-large
-                     id="submit-continue-btn"
+                     id="restart-btn"
                      v-if="box.button === 'restart'"
                      @click="cancelAnalyzeName()">Start Search Over</v-btn>
                <v-btn x-large
-                      id="submit-continue-btn"
+                      id="english-btn"
                       v-if="box.button === 'english'"
                       @click="newSearch()">Search Again</v-btn>
             </v-col>
@@ -166,9 +166,9 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
     }
     return output
   }
-  newSearch () {
+  async newSearch () {
     this.name = this.englishOnlyName
-    newReqModule.startAnalyzeName()
+    await newReqModule.startAnalyzeName()
   }
   showNextTab () {
     newReqModule.mutateSubmissionTabComponent('NamesCapture')

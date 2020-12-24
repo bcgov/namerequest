@@ -44,6 +44,7 @@ import * as PaymentTypes from '@/modules/payment/store/types'
 import { NrAction } from '@/enums'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
 import NewReqModule from '@/store/new-request-module'
+import { sleep } from '@/plugins/sleep'
 
 @Component({})
 export default class CancelModal extends Mixins(NameRequestMixin, PaymentMixin) {
@@ -65,9 +66,16 @@ export default class CancelModal extends Mixins(NameRequestMixin, PaymentMixin) 
   /** Called when user clicks "Cancel this NR" button. */
   private async confirmCancel (): Promise<void> {
     this.loading = true
-    await NewReqModule.patchNameRequestsByAction(NrAction.CANCEL)
-    this.loading = false
-    this.hideModal() // FUTURE: not needed? will success component be displayed instead?
+    if (await NewReqModule.patchNameRequestsByAction(NrAction.CANCEL)) {
+      this.loading = false
+      this.hideModal()
+      NewReqModule.mutateDisplayedComponent('Success')
+      await sleep(1000)
+      NewReqModule.mutateDisplayedComponent('ExistingRequestDisplay')
+    } else {
+      this.loading = false
+      this.hideModal()
+    }
   }
 
   /** Called when user clicks "Keep this NR" button. */

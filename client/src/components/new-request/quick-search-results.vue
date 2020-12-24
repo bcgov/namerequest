@@ -35,12 +35,16 @@
       </v-row>
       <v-row justify="center">
         <v-col cols="auto" class="pb-0 pr-1">
-          <v-btn id="search-again-button" :disabled="nameChanged" @click="searchAgain">Search Again</v-btn>
+          <v-btn id="search-again-button"
+                 :disabled="nameChanged"
+                 @click="searchAgain()">Search Again</v-btn>
         </v-col>
         <v-col cols="auto" class="pb-0 pr-1">
-          <v-btn class="continue-search-button" color="primary" outlined @click="detailedSearch">
-            Continue to Detailed Analysis
-          </v-btn>
+          <v-btn id="continue-search-button"
+                 color="primary"
+                 outlined
+                 @click="detailedSearch()"
+                 :loading="isLoadingAnalysis">Continue to Detailed Analysis</v-btn>
         </v-col>
       </v-row>
     </template>
@@ -68,6 +72,7 @@ export default class QuickSearchResults extends Vue {
   }
   contents: string = ''
   originalName: string = ''
+  private isLoadingAnalysis: boolean = false
 
   get entity_type_cd () {
     return newReqModule.entity_type_cd
@@ -91,17 +96,22 @@ export default class QuickSearchResults extends Vue {
   }
   mounted () {
     this.originalName = this.searchName
+    // add classname to button text (for more detail in Sentry breadcrumbs)
+    this.$el.querySelector("#search-again-button > span")?.classList.add("search-again-btn")
+    this.$el.querySelector("#continue-search-button > span")?.classList.add("continue-detailed-analysis-btn")
   }
-  searchAgain () {
+  async searchAgain () {
     newReqModule.mutateQuickSearch(true)
-    newReqModule.startAnalyzeName()
+    await newReqModule.startAnalyzeName()
   }
-  detailedSearch () {
+  async detailedSearch () {
+    this.isLoadingAnalysis = true
+    newReqModule.mutateNoCorpNum(true)
     newReqModule.mutateQuickSearch(false)
-    newReqModule.startAnalyzeName()
+    await newReqModule.startAnalyzeName()
+    this.isLoadingAnalysis = false
   }
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -129,7 +139,7 @@ export default class QuickSearchResults extends Vue {
 .names-list {
   padding-top: 0.625rem;
 }
-.continue-search-button {
+#continue-search-button {
   background-color: #fff !important;
 }
 </style>

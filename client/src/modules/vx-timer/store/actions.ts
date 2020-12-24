@@ -5,9 +5,9 @@ export const createAndStartTimer = ({ commit }, opts: TimerOptions) => {
   commit(types.CREATE_AND_START_TIMER, opts)
 }
 
-export const createPromiseTimer = ({ commit }, opts: TimerOptions) => {
-  commit(types.CREATE_PROMISE_TIMER, opts)
-}
+// export const createPromiseTimer = ({ commit }, opts: TimerOptions) => {
+//   commit(types.CREATE_PROMISE_TIMER, opts)
+// }
 
 export const restartTimer = ({ commit }, opts: TimerOptions) => {
   commit(types.RESTART_TIMER, opts)

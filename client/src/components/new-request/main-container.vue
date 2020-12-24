@@ -28,7 +28,6 @@ import { Component, Mixins, Watch } from 'vue-property-decorator'
 import DisplayedComponentMixin from '@/components/mixins/displayed-component-mixin'
 import SessionTimerMixin from '@/components/session-timer/session-timer-mixin'
 import CountdownTimer from '@/components/session-timer/countdown-timer.vue'
-
 import newReqModule from '@/store/new-request-module'
 import timerModule from "@/modules/vx-timer"
 
@@ -42,6 +41,17 @@ export default class MainContainer extends Mixins(SessionTimerMixin, DisplayedCo
   displayTimer: boolean = false
   timerName: string = ''
   countdownMins: number = 0
+
+  private mounted () {
+    // add classname to button text (for more detail in Sentry breadcrumbs)
+    if (this.isExistingRequestDisplay) {
+      this.$el.querySelector("#back-to-search-btn > span")?.classList.add("exit-btn")
+    } else if (this.editMode) {
+      this.$el.querySelector("#back-to-search-btn > span")?.classList.add("return-btn")
+    } else {
+      this.$el.querySelector("#back-to-search-btn > span")?.classList.add("start-search-over-btn")
+    }
+  }
 
   get editMode () {
     return newReqModule.editMode

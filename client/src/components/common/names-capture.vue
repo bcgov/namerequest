@@ -43,8 +43,10 @@
       </template>
 
       <v-row class="mt-5" v-if="editMode || isAssumedName">
-        <v-col cols="12" class="h4 py-0" v-if="editMode">Name Choices</v-col>
-        <v-col cols="12" class="text-body-3 py-0" v-if="!editMode && isAssumedName">
+        <v-col cols="auto" class="font-weight-bold h5 py-0" v-if="editMode">
+          Name Choices
+        </v-col>
+        <v-col cols="auto" class="text-body-3 py-0" v-else-if="isAssumedName">
           Name in Home Jurisdiction: {{name}}
         </v-col>
       </v-row>
@@ -260,13 +262,17 @@ export default class NamesCapture extends Vue {
   }
 
   mounted () {
+    // add event listener when this component is mounted
+    // eg, when user continues to send for review
     this.$el.addEventListener('keydown', this.handleKeydown)
+
     newReqModule.mutateNameChoicesToInitialState()
     if (this.isAssumedName && !this.editMode) {
-      this.$nextTick(function () { this.hide = true })
+      this.$nextTick(() => { this.hide = true })
       return
     }
-    this.$nextTick(function () {
+
+    this.$nextTick(() => {
       if (this.editMode) {
         this.populateNames()
         return
@@ -291,8 +297,33 @@ export default class NamesCapture extends Vue {
       newReqModule.mutateNameChoices({ key: 'name1', value: this.name })
     })
   }
+
   destroyed () {
+    // remove the event listener when this component is destroyed
+    // eg, when user clicks Start Search Over
     this.$el.removeEventListener('keydown', this.handleKeydown)
+  }
+
+  get isVisible (): boolean {
+    const myComponent = (
+      newReqModule.displayedComponent === 'SubmissionTabs' ||
+      newReqModule.displayedComponent === 'ExistingRequestEdit'
+    )
+    const myTab = (newReqModule.submissionTabNumber === 1)
+    return (myComponent && myTab)
+  }
+
+  @Watch('isVisible')
+  private onVisibleChanged (val: boolean) {
+    if (val) {
+      // add event listener when this component is displayed
+      // eg, when user comes back from next tab
+      this.$el.addEventListener('keydown', this.handleKeydown)
+    } else {
+      // remove the event listener when this component is hidden
+      // eg, when user continues to next tab
+      this.$el.removeEventListener('keydown', this.handleKeydown)
+    }
   }
 
   @Watch('request_action_cd')
@@ -794,6 +825,16 @@ export default class NamesCapture extends Vue {
         this.messages[choice] = `A ${this.entityTypeText} name must not begin with one of the
           following phrases: ${this.entityPhraseText}`
       }
+    }
+  }
+
+  @Watch('isValid')
+  onValidChanged (val: boolean) {
+    if (val) {
+      this.$nextTick(() => {
+        // add classname to button text (for more detail in Sentry breadcrumbs)
+        this.$el.querySelector("#submit-continue-btn-true > span")?.classList.add("choices-continue-btn")
+      })
     }
   }
 }

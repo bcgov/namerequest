@@ -278,26 +278,28 @@ export default class ApplicantInfo3 extends Vue {
     newReqModule.mutatePriorityRequest(value)
   }
 
-  async submit () {
-    if (this.editMode) {
-      await newReqModule.patchNameRequests()
-    } else {
-      const { nrId } = this
-      if (!nrId) {
-        await newReqModule.postNameRequests('draft')
-      } else {
-        if (!this.editMode && ['COND-RESERVE', 'RESERVED'].includes(this.nrState)) {
-          const request = await newReqModule.getNameRequest(nrId)
-          if (request?.stateCd === 'CANCELLED') {
-            newReqModule.setActiveComponent('Timeout')
-            return
-          }
-        }
-        await newReqModule.putNameReservation(nrId)
-      }
-      await paymentModule.togglePaymentModal(true)
-    }
-  }
+  // NOT USED
+  // async submit () {
+  //   if (this.editMode) {
+  //     await newReqModule.patchNameRequests()
+  //   } else {
+  //     const { nrId } = this
+  //     if (!nrId) {
+  //       await newReqModule.postNameRequests('draft')
+  //     } else {
+  //       if (!this.editMode && ['COND-RESERVE', 'RESERVED'].includes(this.nrState)) {
+  //         const request = await newReqModule.getNameRequest(nrId)
+  //         if (request?.stateCd === 'CANCELLED') {
+  //           newReqModule.setActiveComponent('Timeout')
+  //           return
+  //         }
+  //       }
+  //       await newReqModule.putNameReservation(nrId)
+  //     }
+  //     await paymentModule.togglePaymentModal(true)
+  //   }
+  // }
+
   clearValidation () {
     if (this.$refs.step3 as Vue) {
       (this.$refs.step3 as any).resetValidation()
@@ -343,6 +345,17 @@ export default class ApplicantInfo3 extends Vue {
     }
     if (this.$refs.step3 as any) {
       (this.$refs.step3 as any).validate()
+    }
+  }
+
+  @Watch('isValid')
+  onValidChanged (val: boolean) {
+    if (val) {
+      this.$nextTick(() => {
+        // add classname to button text (for more detail in Sentry breadcrumbs)
+        this.$el.querySelector("#submit-back-btn-true > span")?.classList.add("client-review-back-btn")
+        this.$el.querySelector("#submit-continue-btn-true > span")?.classList.add("client-review-confirm-btn")
+      })
     }
   }
 }

@@ -51,6 +51,7 @@ import * as PaymentTypes from '@/modules/payment/store/types'
 import { NrAction } from '@/enums'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
 import NewReqModule from '@/store/new-request-module'
+import { sleep } from '@/plugins/sleep'
 
 @Component({
   components: {
@@ -99,9 +100,16 @@ export default class RefundModal extends Mixins(NameRequestMixin, PaymentMixin, 
   /** Called when user clicks "Cancel this NR" button. */
   private async confirmRefund (): Promise<void> {
     this.loading = true
-    await NewReqModule.patchNameRequestsByAction(NrAction.REFUND)
-    this.loading = false
-    this.hideModal() // FUTURE: not needed? will success component be displayed instead?
+    if (await NewReqModule.patchNameRequestsByAction(NrAction.REFUND)) {
+      this.loading = false
+      this.hideModal()
+      NewReqModule.mutateDisplayedComponent('Success')
+      await sleep(1000)
+      NewReqModule.mutateDisplayedComponent('ExistingRequestDisplay')
+    } else {
+      this.loading = false
+      this.hideModal()
+    }
   }
 
   /**
@@ -113,6 +121,17 @@ export default class RefundModal extends Mixins(NameRequestMixin, PaymentMixin, 
     if (!nrId) return false
     // NB: errors are handled by PaymentMixin
     return this.fetchNrPayments(nrId)
+  }
+
+  @Watch('isVisible')
+  onVisibleChanged (val: boolean) {
+    if (val) {
+      this.$nextTick(() => {
+        // add classname to button text (for more detail in Sentry breadcrumbs)
+        this.$el.querySelector("#cancel-nr-btn > span")?.classList.add("refund-cancel-btn")
+        this.$el.querySelector("#keep-nr-btn > span")?.classList.add("refund-keep-btn")
+      })
+    }
   }
 }
 </script>

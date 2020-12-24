@@ -14,18 +14,19 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import MainContainer from '@/components/new-request/main-container.vue'
 
 @Component({
-  components: { MainContainer }
-})
-export default class Success extends Vue {
-  mounted () {
-    setTimeout(() => {
-      newReqModule.mutateDisplayedComponent('ExistingRequestDisplay')
-    }, 1200)
+  components: {
+    MainContainer
   }
-}
+})
+export default class Success extends Vue {}
 </script>
+
+<style scoped lang="scss">
+.fs-58 {
+  font-size: 58px !important;
+}
+</style>
