@@ -267,7 +267,8 @@ export default class NewSearch extends Vue {
       let { value } = newReqModule.entityTypesXPROData.find(ent => ent.rank === 1)
       newReqModule.mutateEntityType(value)
     }
-    if (['CNV'].includes(newVal)) {
+    // Set default location to BC for the requests where BC is the only location option
+    if (['CNV', 'MVE'].includes(newVal)) {
       this.location = 'BC'
       return
     }
@@ -384,9 +385,6 @@ export default class NewSearch extends Vue {
     const request = this.requestActions.find(request => request.value === value)
     if (request.value !== 'NEW') {
       newReqModule.mutateExtendedRequestType(request)
-    }
-    if (request.value === 'MVE') {
-      newReqModule.mutateLocation('CA')
     }
     newReqModule.mutateRequestAction(value)
   }
