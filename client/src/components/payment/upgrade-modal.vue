@@ -131,5 +131,16 @@ export default class UpgradeModal extends Mixins(
       this.hideModal()
     }
   }
+
+  @Watch('isVisible')
+  onVisibleChanged (val: boolean) {
+    if (val) {
+      this.$nextTick(() => {
+        // add classname to button text (for more detail in Sentry breadcrumbs)
+        this.$el.querySelector("#payment-pay-btn > span")?.classList.add("upgrade-accept-btn")
+        this.$el.querySelector("#payment-close-btn > span")?.classList.add("upgrade-cancel-btn")
+      })
+    }
+  }
 }
 </script>

@@ -2227,7 +2227,6 @@ export class NewRequestModule extends VuexModule {
 
       if (response?.data) {
         this.mutateNameRequest(response.data)
-        this.mutateDisplayedComponent('Success')
         return true
       }
 
@@ -2248,10 +2247,12 @@ export class NewRequestModule extends VuexModule {
         headers: { 'Content-Type': 'application/json' }
       })
 
-      this.mutateNameRequest(response.data)
-      this.mutateDisplayedComponent('Success')
+      if (response?.data) {
+        this.mutateNameRequest(response.data)
+        return true
+      }
 
-      return true
+      throw new Error(`Invalid response = ${response}`)
     } catch (err) {
       const msg = await handleApiError(err, 'Could not patch name requests by action')
       console.error('patchNameRequestsByAction() =', msg) // eslint-disable-line no-console
@@ -2594,7 +2595,7 @@ export class NewRequestModule extends VuexModule {
       // (do not show error to user)
       console.error('getQuickSearch() =', msg) // eslint-disable-line no-console
       this.mutateQuickSearch(false)
-      this.startAnalyzeName()
+      await this.startAnalyzeName()
     }
   }
 
@@ -2626,9 +2627,8 @@ export class NewRequestModule extends VuexModule {
         .replace(/¢/g, 'C')
         .replace(/(`|~|!|\||\(|\)|\[|\]|\{|\}|:|"|\^|#|%|\?|,)/g, '')
 
-      this.getQuickSearch({ 'exactMatch': exactMatchName, 'synonymMatch': synonymsName })
+      await this.getQuickSearch({ 'exactMatch': exactMatchName, 'synonymMatch': synonymsName })
     }
-    return
   }
 
   @Action({ rawError: true })
@@ -2680,7 +2680,7 @@ export class NewRequestModule extends VuexModule {
       }
     }
     if (this.quickSearch) {
-      this.startQuickSearch()
+      await this.startQuickSearch()
       return
     }
     let testName = this.name.toUpperCase()

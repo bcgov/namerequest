@@ -1,21 +1,28 @@
 <template>
   <v-dialog max-width="40%" :value="isVisible" persistent>
-    <v-card class="pa-9">
-      <v-card-text class="h3">Payment Successful</v-card-text>
+    <v-card>
+      <v-card-title class="d-flex justify-space-between">
+        <div>Payment Successful</div>
+        <v-btn icon large class="dialog-close" @click="hideModal()">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-card-title>
+
       <v-card-text class="copy-normal">
         <payment-confirm
-          v-bind:nrNum="nrNum"
-          v-bind:applicant="applicant"
-          v-bind:nameChoices="nameChoices"
-          v-bind:name="name"
-          v-bind:summary="summary"
-          v-bind:receipt="paymentReceipt"
+          :nrNum="nrNum"
+          :applicant="applicant"
+          :nameChoices="nameChoices"
+          :name="name"
+          :summary="summary"
+          :receipt="paymentReceipt"
         />
       </v-card-text>
+
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="hideModal" id="receipt-close-btn" class="normal" text>Done</v-btn>
-        <v-btn @click="downloadReceipt" class="primary download-receipt-btn" text>Download Receipt</v-btn>
+        <v-btn @click="hideModal()" id="receipt-close-btn" class="normal" text>Done</v-btn>
+        <v-btn @click="downloadReceipt()" id="receipt-download-btn" class="primary" text>Download Receipt</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -155,6 +162,17 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
     return {
       completionDate: this.paymentDate,
       statusCode: this.sbcPaymentStatus
+    }
+  }
+
+  @Watch('isVisible')
+  onVisibleChanged (val: boolean) {
+    if (val) {
+      this.$nextTick(() => {
+        // add classname to button text (for more detail in Sentry breadcrumbs)
+        this.$el.querySelector("#receipt-close-btn > span")?.classList.add("payment-successful-done-btn")
+        this.$el.querySelector("#receipt-download-btn > span")?.classList.add("payment-successful-download-btn")
+      })
     }
   }
 }

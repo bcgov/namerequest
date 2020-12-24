@@ -242,9 +242,14 @@ import { LocationT } from '@/models'
   components: { NameInput }
 })
 export default class NewSearch extends Vue {
-  /** Local Properties */
+  // Local Properties
   private corpNumValid: boolean = true
   private corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
+
+  private mounted () {
+    // add classname to button text (for more detail in Sentry breadcrumbs)
+    this.$el.querySelector("#search-name-btn > span")?.classList.add("search-name-btn")
+  }
 
   /** Reset search values when location changes */
   @Watch('location')
