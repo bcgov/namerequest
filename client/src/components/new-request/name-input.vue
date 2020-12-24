@@ -94,10 +94,10 @@ export default class NameInput extends Vue {
   clearErrors () {
     newReqModule.clearErrors()
   }
-  handleSubmit (event: KeyboardEvent) {
+  async handleSubmit (event: KeyboardEvent) {
     if (event.key === 'Enter' && this.isCorpNumValid) {
       event.preventDefault()
-      if (this.searchValue) this.startAnalyzeName()
+      if (this.searchValue) await this.startAnalyzeName()
       return
     }
     return event

@@ -22,6 +22,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import newReqModule from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 import timerModule from '@/modules/vx-timer'
+import { sleep } from '@/plugins/sleep'
 
 @Component({})
 export default class ApplicantInfoNav extends Vue {
@@ -38,7 +39,7 @@ export default class ApplicantInfoNav extends Vue {
     return newReqModule.editMode
   }
   get nextText () {
-    if (this.tab === 3) {
+    if (this.submissionTabNumber === 3) {
       if (this.editMode) {
         return 'Submit Changes'
       }
@@ -56,46 +57,53 @@ export default class ApplicantInfoNav extends Vue {
     return newReqModule.nrState
   }
   get showBack () {
-    if (this.tab < 2) {
+    if (this.submissionTabNumber < 2) {
       return false
     }
-    if (this.tab === 2) {
+    if (this.submissionTabNumber === 2) {
       return (this.type === 'examination' || this.nrState === 'DRAFT')
     }
-    if (this.tab === 3) {
+    if (this.submissionTabNumber === 3) {
       return true
     }
     return false
   }
-  get tab () {
+  get submissionTabNumber (): number {
     return newReqModule.submissionTabNumber
   }
   get type () {
     return newReqModule.submissionType
   }
   back () {
-    newReqModule.mutateSubmissionTabNumber(this.tab - 1)
+    newReqModule.mutateSubmissionTabNumber(this.submissionTabNumber - 1)
   }
   async next () {
-    if (this.tab === 3) {
+    if (this.submissionTabNumber === 3) {
       this.isloadingSubmission = true
       await this.submit()
       return
     }
-    newReqModule.mutateSubmissionTabNumber(this.tab + 1)
+    newReqModule.mutateSubmissionTabNumber(this.submissionTabNumber + 1)
   }
 
+  /** Submits an edited NR or a new name submission. */
   async submit () {
-    let request
     // FUTURE: fix error handling in case of newReqModule (app or api) error (#5899)
     const { nrId } = this
     if (this.editMode) {
-      await newReqModule.patchNameRequests()
-      await newReqModule.checkinNameRequest()
+      // stop timer first so it doesn't expire during network requests
       timerModule.stopTimer({ id: this.$EXISTING_NR_TIMER_NAME })
-      await this.fetchNr(+nrId)
+      if (await newReqModule.patchNameRequests()) {
+        if (await newReqModule.checkinNameRequest()) {
+          newReqModule.mutateDisplayedComponent('Success')
+          await sleep(1000)
+          await this.fetchNr(+nrId)
+        }
+      }
     } else {
+      let request
       if (!nrId) {
+        // FUTURE: does a timer have to be stopped here?
         request = await newReqModule.postNameRequests('draft')
       } else {
         if (!this.editMode && ['COND-RESERVE', 'RESERVED'].includes(this.nrState)) {
@@ -103,6 +111,7 @@ export default class ApplicantInfoNav extends Vue {
           if (request?.stateCd === 'CANCELLED') {
             newReqModule.setActiveComponent('Timeout')
             this.isloadingSubmission = false
+            // FUTURE: does a timer have to be stopped here before returning?
             return
           }
         }

@@ -369,6 +369,7 @@ export default class ApplicantInfo1 extends Vue {
       newReqModule.updateApplicantDetails({ key: 'stateProvinceCd', value: '' })
     }
   }
+
   @Watch('showAddressMenu')
   supressMenu (newVal, oldVal) {
     if (newVal) {
@@ -379,6 +380,7 @@ export default class ApplicantInfo1 extends Vue {
     let ref: any = this.$refs.Line1
     ref.focus()
   }
+
   @Watch('xproJurisdiction')
   watchXproJurisdiction (newVal, oldVal) {
     if (newVal !== oldVal) {
@@ -390,11 +392,38 @@ export default class ApplicantInfo1 extends Vue {
     }
   }
 
-  beforeDestoy () {
+  mounted () {
+    // add event listener when this component is mounted
+    // eg, when user continues to send for review
+    this.$el.addEventListener('keydown', this.handleKeydown)
+  }
+
+  destroyed () {
+    // remove the event listener when this component is destroyed
+    // eg, when user clicks Start Search Over
     this.$el.removeEventListener('keydown', this.handleKeydown)
   }
-  mounted () {
-    this.$el.addEventListener('keydown', this.handleKeydown)
+
+  get isVisible (): boolean {
+    const myComponent = (
+      newReqModule.displayedComponent === 'SubmissionTabs' ||
+      newReqModule.displayedComponent === 'ExistingRequestEdit'
+    )
+    const myTab = (newReqModule.submissionTabNumber === 2)
+    return (myComponent && myTab)
+  }
+
+  @Watch('isVisible')
+  private onVisibleChanged (val: boolean) {
+    if (val) {
+      // add event listener when this component is displayed
+      // eg, when user comes back from next tab
+      this.$el.addEventListener('keydown', this.handleKeydown)
+    } else {
+      // remove the event listener when this component is hidden
+      // eg, when user continues to next tab
+      this.$el.removeEventListener('keydown', this.handleKeydown)
+    }
   }
 
   get actingOnOwnBehalf () {
@@ -568,10 +597,24 @@ export default class ApplicantInfo1 extends Vue {
       (this.$refs.step1 as any).validate()
     }
   }
+
+  @Watch('isValid')
+  onValidChanged (val: boolean) {
+    if (val) {
+      this.$nextTick(() => {
+        // add classname to button text (for more detail in Sentry breadcrumbs)
+        this.$el.querySelector("#submit-back-btn-true > span")?.classList.add("applicant-back-btn")
+        this.$el.querySelector("#submit-continue-btn-true > span")?.classList.add("applicant-continue-btn")
+      })
+    }
+  }
 }
 </script>
 
-<style scoped lang="sass">
-.highlight-list-item
-  background-color: $gray2
+<style scoped lang="scss">
+@import "@/assets/scss/theme.scss";
+
+.highlight-list-item {
+  background-color: $gray2;
+}
 </style>

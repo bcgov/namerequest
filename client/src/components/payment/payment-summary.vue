@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator'
+import { Component, Mixins, Prop, Watch } from 'vue-property-decorator'
 import PaymentMixin from '@/components/payment/payment-mixin'
 import ReceiptMixin from '@/components/mixins/receipt-mixin'
 
@@ -30,11 +30,12 @@ export default class PaymentSummary extends Mixins(PaymentMixin, ReceiptMixin) {
   private loading = false
 
   private get receiptNumber (): string {
-    return `Receipt No. ${this.summary?.receipt.receiptNumber}`
+    const receiptNumber = this.summary?.receipt.receiptNumber || 'UNK'
+    return `Receipt No. ${receiptNumber}`
   }
 
   private get receiptDate (): string {
-    return this.summary?.receipt.receiptDate
+    return this.summary?.receipt.receiptDate || 'UNK'
   }
 
   private get receiptDescription (): string {
@@ -51,6 +52,14 @@ export default class PaymentSummary extends Mixins(PaymentMixin, ReceiptMixin) {
     this.loading = true
     await this.downloadReceiptPdf(id)
     this.loading = false
+  }
+
+  @Watch('summary', { immediate: true })
+  onSummaryChanged (val: any) {
+    this.$nextTick(() => {
+      // add classname to button text (for more detail in Sentry breadcrumbs)
+      this.$el.querySelector(".download-receipt-btn > span")?.classList.add("receipts-download-btn")
+    })
   }
 }
 </script>

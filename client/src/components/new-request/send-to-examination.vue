@@ -16,7 +16,7 @@
       <v-row no-gutters justify="center" class="text-center">
         <v-col cols="auto" class="h5">
           <v-icon class="action-icon" :class="actionConfig.class">{{ actionConfig.icon }}</v-icon>
-          <span :class="actionConfig.class">{{ actionConfig.text }}</span>
+          <span class="pl-2" :class="actionConfig.class">{{ actionConfig.text }}</span>
         </v-col>
         <v-col cols="12">
           <p :class="actionConfig.class">{{ actionConfig.subText }}</p>

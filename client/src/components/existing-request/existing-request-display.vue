@@ -99,10 +99,12 @@
                   <template v-if="action !== NrAction.INCORPORATE">
                     <v-col cols="12" :key="action+'-button'">
                       <v-btn block
-                             class="button"
-                             :class="isRedButton(action) ? 'button-red' : 'button-blue'"
-                             :disabled="disableUnfurnished && (action !== NrAction.RECEIPT)"
-                             @click="handleButtonClick(action)">{{ actionText(action) }}</v-btn>
+                        class="button"
+                        :id="action+'-btn'"
+                        :class="isRedButton(action) ? 'button-red' : 'button-blue'"
+                        :disabled="disableUnfurnished && (action !== NrAction.RECEIPT)"
+                        @click="handleButtonClick(action)"
+                        >{{ actionText(action) }}</v-btn>
                     </v-col>
                   </template>
                 </template>
@@ -132,7 +134,8 @@
 
           <!-- incorporate button -->
           <div class="mt-5 text-center" v-if="showIncorporateButton">
-            <v-btn @click="handleButtonClick(NrAction.INCORPORATE)">Incorporate Using This Name Request</v-btn>
+            <v-btn id="INCORPORATE-btn" @click="handleButtonClick(NrAction.INCORPORATE)"
+              >Incorporate Using This Name Request</v-btn>
           </div>
         </div>
       </transition>
@@ -141,7 +144,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Vue } from 'vue-property-decorator'
+import { Component, Mixins, Vue, Watch } from 'vue-property-decorator'
 import { mapGetters } from 'vuex'
 import Moment from 'moment'
 
@@ -158,6 +161,7 @@ import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
 import { NameState, NrAction, NrState } from '@/enums'
+import { sleep } from '@/plugins/sleep'
 
 @Component({
   components: {
@@ -486,7 +490,11 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
           await this.affiliateOrLogin()
           break
         default:
-          await newReqModule.patchNameRequestsByAction(action)
+          if (await newReqModule.patchNameRequestsByAction(action)) {
+            newReqModule.mutateDisplayedComponent('Success')
+            await sleep(1000)
+            newReqModule.mutateDisplayedComponent('ExistingRequestDisplay')
+          }
           break
       }
     }
@@ -521,6 +529,29 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
       // Persist Nr in session for use in affiliation upon authentication via SignIn.vue.
       sessionStorage.setItem('NR_DATA', JSON.stringify(this.nr))
       newReqModule.mutateIncorporateLoginModalVisible(true)
+    }
+  }
+
+  private get isVisible () {
+    const componentName = newReqModule.displayedComponent
+    return (componentName === 'ExistingRequestDisplay')
+  }
+
+  @Watch('isVisible', { immediate: true })
+  onVisibleChanged (val: boolean) {
+    if (val) {
+      this.$nextTick(() => {
+        // add classname to button text (for more detail in Sentry breadcrumbs)
+        this.$el.querySelector("#CANCEL-btn > span")?.classList.add("existing-nr-cancel-btn")
+        this.$el.querySelector("#EDIT-btn > span")?.classList.add("existing-nr-edit-btn")
+        this.$el.querySelector("#REAPPLY-btn > span")?.classList.add("existing-nr-reapply-btn")
+        this.$el.querySelector("#RECEIPT-btn > span")?.classList.add("existing-nr-receipt-btn")
+        this.$el.querySelector("#REQUEST_REFUND-btn > span")?.classList.add("existing-nr-refund-btn")
+        this.$el.querySelector("#RESEND-btn > span")?.classList.add("existing-nr-resend-btn")
+        this.$el.querySelector("#RESULT-btn > span")?.classList.add("existing-nr-result-btn")
+        this.$el.querySelector("#UPGRADE-btn > span")?.classList.add("existing-nr-upgrade-btn")
+        this.$el.querySelector("#INCORPORATE-btn > span")?.classList.add("existing-nr-incorporate-btn")
+      })
     }
   }
 }

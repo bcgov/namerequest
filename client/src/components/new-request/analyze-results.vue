@@ -262,7 +262,7 @@ export default class AnalyzeResults extends Vue {
     this.originalOps = ops
   }
 
-  beforeDestroy () {
+  destroyed () {
     document.removeEventListener('keydown', this.handleEnterKey)
   }
 
