@@ -18,14 +18,32 @@
       </v-row>
       <v-row v-if="namesList.length" justify="center" class="ma-0 pa-0">
         <v-col cols="12" class="quick-search-info">
-          We found <b>{{namesList.length}}</b> names using these, or similar, words.
+          We found <b>{{namesList.length}}</b> corporations using these, or similar, words.
         </v-col>
-        <v-col cols="12" class="quick-search-info">
-          Names cannot be too similar to existing names within the same business category.
-          Try and request a unique name.
+        <v-col cols="12" class="quick-search-info" v-if="location.value==='BC'">
+          Research your name here to see if other businesses are using a similar name within
+          the same business category. Continue to submit up to 3 names.
+        </v-col>
+        <v-col cols="12" class="quick-search-info" v-else>
+          You must use your legal business name in your home jurisdiction, unless your name is to
+          similar to an existing BC corporation then you may need an assumed name to operate in BC.
+          You will have an option to add 2 assumed names to your submission.
         </v-col>
         <v-col cols="12" class="names-list">
-          <QuickSearchNames/>
+          <v-tooltip right transition="fade-transition" content-class="tooltip">
+            <template v-slot:activator="scope">
+              <div v-on="scope.on">
+                <QuickSearchNames/>
+              </div>
+            </template>
+            <span>
+              These results show corporations only and do not include sole proprietorships,
+              DBA's or partnerships. This is solely for information purposes, and can help
+              you choose a more unique name to submit. You should also research your choices
+              by searching the internet, social media and relevant domain names if that is
+              important to you.
+            </span>
+          </v-tooltip>
         </v-col>
       </v-row>
       <v-row v-else justify="center">
