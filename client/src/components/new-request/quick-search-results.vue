@@ -22,7 +22,7 @@
         </v-col>
         <v-col cols="12" class="quick-search-info" v-if="location.value==='BC'">
           Research your name here to see if other businesses are using a similar name within
-          the same business category. Continue to submit up to 3 names.
+          the same business category. Click continue below to submit up to 3 names.
         </v-col>
         <v-col cols="12" class="quick-search-info" v-else>
           You must use your legal business name in your home jurisdiction, unless your name is to
