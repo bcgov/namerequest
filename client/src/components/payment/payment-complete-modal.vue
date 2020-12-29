@@ -74,11 +74,11 @@ const DEBUG_RECEIPT = false
 })
 export default class PaymentCompleteModal extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
   async mounted () {
-    const { sessionPaymentId, sessionPaymentAction } = this
+    const { sessionPaymentId } = this
     // Check for a payment ID in sessionStorage, if it has been set, we've been redirected away from the application,
     // and need to rehydrate the application using the payment ID (for now, it could be some other token too)!
     // TODO: Set the timer here!
-    if (sessionPaymentId && sessionPaymentAction) {
+    if (sessionPaymentId) {
       // Make sure edit mode is disabled or it will screw up the back button
       await newRequestModule.mutateEditMode(false)
       // Call fetchData to load the NR and the payment
