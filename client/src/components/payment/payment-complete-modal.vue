@@ -116,9 +116,6 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
     if (++this.$data.checkPaymentStatusCount >= 10) {
       return
     }
-    if (++this.$data.checkPaymentStatusCount === 8) {
-      await this.completePayment(nameReqId, paymentId, this.sessionPaymentAction)
-    }
     if (nameReqId && paymentId) {
       await this.fetchNrPayment(nameReqId, paymentId)
       const { nrId, paymentStatus, sbcPaymentStatus } = this
