@@ -8,6 +8,7 @@
     "AUTH_API_URL": "https://auth-api-dev.pathfinder.gov.bc.ca/api/v1",
     "LEGAL_API_URL": "https://legal-api-dev.pathfinder.gov.bc.ca/api/v1",
     "NAME_REQUEST_URL": "https://dev.bcregistry.ca/namerequest",
+    "NRO_URL": "https://dev.bcregistrynames.gov.bc.ca/nro/",
     "LD_CLIENT_ID": "",
     "SENTRY_DSN": "",
     "NR_COMPLETION_TIMER_NAME": "nrCompletionTimer",
