@@ -9,4 +9,5 @@ export enum NrAction {
   RESULTS = 'RESULT', // FUTURE: will be implemented
   UPGRADE = 'UPGRADE',
   INCORPORATE = 'INCORPORATE',
+  RETRY_PAYMENT = 'RETRY_PAYMENT'
 }

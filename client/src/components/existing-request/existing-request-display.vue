@@ -38,7 +38,7 @@
 
                 <v-col cols="12">
                   <span>Request Status:</span>
-                  &nbsp;{{ requestStatusText }}
+                  &nbsp;<span :class="isNotPaid ? 'app-red' : isPaymentProcessing ? 'app-green' : ''">{{ requestStatusText }}</span>
                   <v-icon v-if="isAlertState" color="error" size="20" class="mt-n1 ml-1">
                     mdi-alert
                   </v-icon>
@@ -94,7 +94,20 @@
             <!-- action buttons -->
             <v-col cols="3" class="py-0">
               <v-row dense>
-                <template v-for="action of actions">
+                <template v-if="pendingPayment">
+                  <v-col cols="12" v-if="isNotPaid">
+                    <v-btn block
+                              class="button button-blue"
+                              @click="handleButtonClick('RETRY_PAYMENT')">Retry Payment</v-btn>
+                    <v-btn block
+                              class="button button-blue  mt-2"
+                              @click="handleButtonClick('EDIT')">Edit</v-btn>
+                    <v-btn block
+                              class="button button-red  mt-8"
+                              @click="handleButtonClick('CANCEL')">Cancel Name Request</v-btn>
+                  </v-col>
+                </template>
+                <template v-for="action of actions" v-else>
                   <!-- incorporate action is a distinct button below -->
                   <template v-if="action !== NrAction.INCORPORATE">
                     <v-col cols="12" :key="action+'-button'">
@@ -151,6 +164,7 @@ import Moment from 'moment'
 import MainContainer from '@/components/new-request/main-container.vue'
 import newReqModule from '@/store/new-request-module'
 import NrAffiliationMixin from '@/components/mixins/nr-affiliation-mixin'
+import PaymentMixin from '@/components/payment/payment-mixin'
 import CommonMixin from '@/components/mixins/common-mixin'
 import DateMixin from '@/components/mixins/date-mixin'
 import paymentModule from '@/modules/payment'
@@ -162,6 +176,8 @@ import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
 import { NameState, NrAction, NrState } from '@/enums'
 import { sleep } from '@/plugins/sleep'
+import { PaymentStatus, SbcPaymentStatus } from '@/modules/payment/models'
+import { getBaseUrl } from '@/components/payment/payment-utils'
 
 @Component({
   components: {
@@ -175,7 +191,11 @@ import { sleep } from '@/plugins/sleep'
     ...mapGetters(['isAuthenticated'])
   }
 })
-export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, CommonMixin, DateMixin) {
+export default class ExistingRequestDisplay extends Mixins(
+  NrAffiliationMixin,
+  CommonMixin,
+  DateMixin,
+  PaymentMixin) {
   // enums used in the template:
   NameState = NameState
   NrAction = NrAction
@@ -198,6 +218,8 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
    * triggering a fade in/out.
    */
   private furnished = 'notfurnished'
+
+  private pendingPayment = null
 
   /** The actions list, with some buttons forced to the bottom. */
   private get actions (): NrAction[] {
@@ -337,22 +359,28 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
 
   /** The display text for Request Status. */
   private get requestStatusText (): string {
-    switch (this.nr.state) {
-      case NrState.APPROVED:
-        if (this.isNrConsumed) return `Approved / Used For ${this.approvedName.corpNum}`
-        if (this.isNrExpired) return 'Expired'
-        return 'Approved'
-      case NrState.CANCELLED: return 'Cancelled'
-      case NrState.CONDITIONAL:
-        if (this.isNrConsumed) return `Conditional Approval / Used For ${this.approvedName.corpNum}`
-        if (this.isNrExpired) return 'Expired'
-        return 'Conditional Approval'
-      case NrState.DRAFT: return 'Draft'
-      case NrState.ON_HOLD: return 'In Progress' // show ON HOLD as "In Progress"
-      case NrState.IN_PROGRESS: return 'In Progress'
-      case NrState.REFUND_REQUESTED: return 'Cancelled, Refund Requested'
-      case NrState.REJECTED: return 'Rejected'
-      default: return '-' // should never happen
+    if (this.isNotPaid) {
+      return 'Payment Incomplete'
+    } else if (this.isPaymentProcessing) {
+      return 'Processing Payment'
+    } else {
+      switch (this.nr.state) {
+        case NrState.APPROVED:
+          if (this.isNrConsumed) return `Approved / Used For ${this.approvedName.corpNum}`
+          if (this.isNrExpired) return 'Expired'
+          return 'Approved'
+        case NrState.CANCELLED: return 'Cancelled'
+        case NrState.CONDITIONAL:
+          if (this.isNrConsumed) return `Conditional Approval / Used For ${this.approvedName.corpNum}`
+          if (this.isNrExpired) return 'Expired'
+          return 'Conditional Approval'
+        case NrState.DRAFT: return 'Not Yet Processed'
+        case NrState.ON_HOLD: return 'In Progress' // show ON HOLD as "In Progress"
+        case NrState.IN_PROGRESS: return 'In Progress'
+        case NrState.REFUND_REQUESTED: return 'Cancelled, Refund Requested'
+        case NrState.REJECTED: return 'Rejected'
+        default: return '-' // should never happen
+      }
     }
   }
 
@@ -419,9 +447,18 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
 
   /** True if the current state should display an alert icon. */
   private get isAlertState (): boolean {
-    return ['Cancelled', 'Cancelled, Refund Requested', 'Expired'].includes(this.requestStatusText)
+    return ['Cancelled', 'Cancelled, Refund Requested', 'Expired'].includes(this.requestStatusText) ||
+    this.isNotPaid
     // FUTURE: use enums when EXPIRED state is implemented (ticket #5669)
     // return [NrState.CANCELLED, NrState.REFUND_REQUESTED, NrState.EXPIRED].includes(this.nr.state)
+  }
+
+  private get isNotPaid () {
+    return this.pendingPayment?.sbcPayment?.statusCode === 'CREATED'
+  }
+
+  private get isPaymentProcessing () {
+    return this.pendingPayment?.sbcPayment?.statusCode === 'COMPLETED'
   }
 
   /** Returns True if the specified action should display a red button. */
@@ -444,7 +481,8 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
   }
 
   private async handleButtonClick (action: NrAction) {
-    const confirmed = await newReqModule.confirmAction(action)
+    // const confirmed = await newReqModule.confirmAction(action)
+    const confirmed = true
     if (confirmed) {
       switch (action) {
         case NrAction.EDIT:
@@ -489,6 +527,9 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
         case NrAction.INCORPORATE:
           await this.affiliateOrLogin()
           break
+        case NrAction.RETRY_PAYMENT:
+          this.navigateToPaymentPortal()
+          break
         default:
           if (await newReqModule.patchNameRequestsByAction(action)) {
             newReqModule.mutateDisplayedComponent('Success')
@@ -499,6 +540,17 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
       }
     }
     // else do nothing -- errors are handled by newReqModule
+  }
+
+  private navigateToPaymentPortal () {
+    const { id, token, nrId } = this.pendingPayment
+    sessionStorage.setItem('paymentInProgress', 'true')
+    sessionStorage.setItem('paymentId', id)
+    sessionStorage.setItem('paymentToken', token)
+    sessionStorage.setItem('nrId', nrId)
+    const baseUrl = getBaseUrl()
+    const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${id}`)
+    this.redirectToPaymentPortal(id, token, redirectUrl)
   }
 
   private async refresh (event) {
@@ -552,6 +604,21 @@ export default class ExistingRequestDisplay extends Mixins(NrAffiliationMixin, C
         this.$el.querySelector("#UPGRADE-btn > span")?.classList.add("existing-nr-upgrade-btn")
         this.$el.querySelector("#INCORPORATE-btn > span")?.classList.add("existing-nr-incorporate-btn")
       })
+    }
+  }
+
+  created (): void {
+    this.$root.$on('paymentComplete', (flag = false) => { this.pendingPayment = null })
+  }
+
+  destroyed (): void {
+    this.$root.$off('paymentComplete')
+  }
+
+  async mounted () {
+    if (this.nr.id && this.nr.state !== NrState.CANCELLED) {
+      await this.fetchNrPayments(this.nr.id)
+      this.pendingPayment = this.payments.find(payment => (payment.statusCode !== PaymentStatus.COMPLETED))
     }
   }
 }
