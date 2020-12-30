@@ -10,8 +10,7 @@
       </v-card-title>
 
       <v-card-text class="text-body-1">
-        The requested name choices will not be examined for use and will become
-        available to be requested by other businesses.
+        The requested name choices will become available to be requested by other businesses.
       </v-card-text>
 
       <!-- FOR FUTURE USE -->
