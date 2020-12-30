@@ -25,7 +25,7 @@
           the same business category. Click continue below to submit up to 3 names.
         </v-col>
         <v-col cols="12" class="quick-search-info" v-else>
-          You must use your legal business name in your home jurisdiction, unless your name is to
+          You must use your legal business name in your home jurisdiction, unless your name is too
           similar to an existing BC corporation then you may need an assumed name to operate in BC.
           Click continue below and you will have an option to add 2 assumed names to your submission.
         </v-col>
