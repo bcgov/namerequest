@@ -38,7 +38,7 @@
 
                 <v-col cols="12">
                   <span>Request Status:</span>
-                  &nbsp;{{ requestStatusText }}
+                  &nbsp;<span :class="isNotPaid ? 'app-red' : isPaymentProcessing ? 'app-green' : ''">{{ requestStatusText }}</span>
                   <v-icon v-if="isAlertState" color="error" size="20" class="mt-n1 ml-1">
                     mdi-alert
                   </v-icon>
@@ -362,7 +362,7 @@ export default class ExistingRequestDisplay extends Mixins(
     if (this.isNotPaid) {
       return 'Payment Incomplete'
     } else if (this.isPaymentProcessing) {
-      return 'Payment Processing'
+      return 'Processing Payment'
     } else {
       switch (this.nr.state) {
         case NrState.APPROVED:
@@ -374,7 +374,7 @@ export default class ExistingRequestDisplay extends Mixins(
           if (this.isNrConsumed) return `Conditional Approval / Used For ${this.approvedName.corpNum}`
           if (this.isNrExpired) return 'Expired'
           return 'Conditional Approval'
-        case NrState.DRAFT: return 'Draft'
+        case NrState.DRAFT: return 'Not Yet Processed'
         case NrState.ON_HOLD: return 'In Progress' // show ON HOLD as "In Progress"
         case NrState.IN_PROGRESS: return 'In Progress'
         case NrState.REFUND_REQUESTED: return 'Cancelled, Refund Requested'

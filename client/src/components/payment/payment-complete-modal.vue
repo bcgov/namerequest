@@ -64,21 +64,17 @@ const DEBUG_RECEIPT = false
     PaymentConfirm
   },
 
-  data: () => ({
-    checkPaymentStatusCount: 0
-  }),
-
   computed: {
     isVisible: () => paymentModule[paymentTypes.PAYMENT_COMPLETE_MODAL_IS_VISIBLE]
   }
 })
 export default class PaymentCompleteModal extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
   async mounted () {
-    const { sessionPaymentId } = this
+    const { sessionPaymentId, sessionPaymentAction } = this
     // Check for a payment ID in sessionStorage, if it has been set, we've been redirected away from the application,
     // and need to rehydrate the application using the payment ID (for now, it could be some other token too)!
     // TODO: Set the timer here!
-    if (sessionPaymentId) {
+    if (sessionPaymentId && sessionPaymentAction) {
       // Make sure edit mode is disabled or it will screw up the back button
       await newRequestModule.mutateEditMode(false)
       // Call fetchData to load the NR and the payment
@@ -101,7 +97,6 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
    * NOTE: This method makes use of the PaymentSectionMixin class!
    */
   async fetchData () {
-    this.$data.checkPaymentStatusCount = 0
     const { sessionPaymentId, sessionNrId } = this
     await this.fetchNr(+sessionNrId)
     await this.fetchPaymentData(sessionPaymentId, +sessionNrId)
@@ -113,21 +108,11 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
   }
 
   async fetchPaymentData (paymentId: number, nameReqId: number) {
-    if (++this.$data.checkPaymentStatusCount >= 10) {
-      return
-    }
     if (nameReqId && paymentId) {
       await this.fetchNrPayment(nameReqId, paymentId)
       const { nrId, paymentStatus, sbcPaymentStatus } = this
-      if (sbcPaymentStatus === SbcPaymentStatus.COMPLETED && paymentStatus === PaymentStatus.COMPLETED) {
-        this.$root.$emit('paymentComplete', true)
-        await paymentModule.toggleReceiptModal(true)
-        return
-      } else if (sbcPaymentStatus === SbcPaymentStatus.COMPLETED && paymentStatus === PaymentStatus.CREATED) {
-        let vue = this
-        setTimeout(() => {
-          vue.fetchPaymentData(paymentId, nrId)
-        }, 2000)
+      if (sbcPaymentStatus === SbcPaymentStatus.COMPLETED && paymentStatus === PaymentStatus.CREATED) {
+        await this.completePayment(nameReqId, paymentId, this.sessionPaymentAction)
       }
     }
   }
@@ -137,16 +122,12 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
     const paymentSuccess = result?.paymentSuccess
 
     if (paymentSuccess) {
-      paymentModule.toggleReceiptModal(true)
+      this.$root.$emit('paymentComplete', true)
+      await paymentModule.toggleReceiptModal(true)
+      return
     } else if (!paymentSuccess && result?.paymentErrors) {
       // Setting the errors to state will update any subscribing components, like the main ErrorModal
       await errorModule.setAppErrors(result.paymentErrors)
-      if (action && action === PaymentAction.COMPLETE) {
-        // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-        await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
-      }
-    } else {
-      // if we get here, it's because completePayment() failed (which is already reported)
     }
   }
 
