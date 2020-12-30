@@ -38,7 +38,8 @@
 
                 <v-col cols="12">
                   <span>Request Status:</span>
-                  &nbsp;<span :class="isNotPaid ? 'app-red' : isPaymentProcessing ? 'app-green' : ''">{{ requestStatusText }}</span>
+                  &nbsp;<span :class="isNotPaid ? 'app-red' : isPaymentProcessing ? 'app-green' : ''">
+                    {{ requestStatusText }}</span>
                   <v-icon v-if="isAlertState" color="error" size="20" class="mt-n1 ml-1">
                     mdi-alert
                   </v-icon>
