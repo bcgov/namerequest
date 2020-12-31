@@ -27,7 +27,7 @@
         </template>
         <p>During Business Hours</p>
       </v-tooltip>
-      <v-tooltip bottom nudge-left="56" content-class="bottom-tooltip wait-time-tooltip" transition="fade-transition">
+      <v-tooltip bottom nudge-left="56" content-class="bottom-tooltip new-submission-wait-time-tooltip" transition="fade-transition">
         <template v-slot:activator="{ on }">
           <div id="stats-content-outer-3" class="stats-content-outer py-0" v-on="on">
             <div class="stats-content-inner-1 text-center">
@@ -35,12 +35,17 @@
               <div class="stats-unit">Days</div>
             </div>
             <div class="stats-content-inner-2">
-              Standard Request<br>
+              New Submission<br>
               Wait Time
             </div>
           </div>
         </template>
-        <p>Business Days</p>
+        <p>
+          These are estimated wait times only and are based on submitting a name today.
+          It does not reflect the current estimated wait time on your previously submitted
+          Name Request. To calculate your estimated wait time check the last updated time
+          on the existing name request screen.
+        </p>
       </v-tooltip>
     </v-row>
   </v-container>
@@ -132,4 +137,9 @@ export default class Stats extends Vue {
   padding: 15px 0 0 0 !important
   text-align: center
   max-width: 160px
+
+.new-submission-wait-time-tooltip
+  padding: 15px 0 0 0 !important
+  text-align: center
+  width: 410px !important
 </style>
