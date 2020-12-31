@@ -101,9 +101,6 @@
                               class="button button-blue"
                               @click="handleButtonClick('RETRY_PAYMENT')">Retry Payment</v-btn>
                     <v-btn block
-                              class="button button-blue  mt-2"
-                              @click="handleButtonClick('EDIT')">Edit</v-btn>
-                    <v-btn block
                               class="button button-red  mt-8"
                               @click="handleButtonClick('CANCEL')">Cancel Name Request</v-btn>
                   </v-col>
