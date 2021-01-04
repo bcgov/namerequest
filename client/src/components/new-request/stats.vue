@@ -60,7 +60,10 @@ import { featureFlags } from '@/plugins/featureFlags'
 @Component({})
 export default class Stats extends Vue {
   created (): void {
-    newReqModule.getStats()
+    if (featureFlags.getFlag('hardcoded_regular_wait_time') == 0 || 
+        featureFlags.getFlag('hardcoded_priority_wait_time') == 0) {
+      newReqModule.getStats()
+    }
   }
 
   get stats (): StatsI {
@@ -73,8 +76,9 @@ export default class Stats extends Vue {
 
   /** The regular wait time, in days. */
   get regularWaitTime (): string | number {
-    if (featureFlags.getFlag('hardcode-wait-times')) {
-      return 15
+    const regularWaitTime = featureFlags.getFlag('hardcoded_regular_wait_time')
+    if (regularWaitTime > 0) {
+      return regularWaitTime
     } else {
       return (this.stats?.regular_wait_time || '-')
     }
@@ -82,8 +86,9 @@ export default class Stats extends Vue {
 
   /** The priority wait time, in hours. */
   get priorityWaitTime (): string | number {
-    if (featureFlags.getFlag('hardcode-wait-times')) {
-      return 24
+    const priorityWaitTime = featureFlags.getFlag('hardcoded_priority_wait_time')
+    if (priorityWaitTime > 0) {
+      return priorityWaitTime
     } else {
       return (this.stats?.priority_wait_time || '-')
     }
