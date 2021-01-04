@@ -60,9 +60,7 @@ import { featureFlags } from '@/plugins/featureFlags'
 @Component({})
 export default class Stats extends Vue {
   created (): void {
-    if (!featureFlags.getFlag('hardcode-wait-times')) {
-      newReqModule.getStats()
-    }
+    newReqModule.getStats()
   }
 
   get stats (): StatsI {
