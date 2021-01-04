@@ -76,7 +76,7 @@ export default class Stats extends Vue {
   /** The regular wait time, in days. */
   get regularWaitTime (): string | number {
     if (featureFlags.getFlag('hardcode-wait-times')) {
-      return 12
+      return 15
     } else {
       return (this.stats?.regular_wait_time || '-')
     }
