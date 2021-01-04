@@ -20,7 +20,7 @@ export function getConfig (): Promise<EnvConfigI> {
     const { origin } = window.location
     const { BASE_URL } = process.env
 
-    let response = await axios.get(origin + BASE_URL + 'config/configuration.json', {
+    const response = await axios.get(origin + BASE_URL + 'config/configuration.json', {
       headers: {
         'Accept': 'application/json',
         'ResponseType': 'application/json',

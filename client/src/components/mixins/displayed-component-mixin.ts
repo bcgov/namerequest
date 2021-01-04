@@ -43,6 +43,7 @@ export default class DisplayedComponentMixin extends Vue {
   }
 
   async redirectToStart () {
+    console.info('Redirecting to start...') // eslint-disable-line no-console
     // Redirect to the start
     // Catch any errors, so we don't get errors like:
     // Avoided redundant navigation to current location: "/"

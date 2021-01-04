@@ -158,6 +158,7 @@ export default class App extends Mixins(SessionTimerMixin) {
   }
 
   async resetAppState () {
+    console.info('Resetting app state...') // eslint-disable-line no-console
     // Redirect to the start
     // Catch any errors, so we don't get errors like:
     // Avoided redundant navigation to current location: "/"
