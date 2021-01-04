@@ -3,7 +3,8 @@ import { initialize, LDFlagSet } from 'launchdarkly-js-client-sdk'
 const defaultFlagSet = {
   'namerequest-ui-enabled': true,
   'disable-analysis': false,
-  'hardcode-wait-times': false,
+  'hardcoded_regular_wait_time': 0,
+  'hardcoded_priority_wait_time': 0,
   'banner-text': ''
 }
 
