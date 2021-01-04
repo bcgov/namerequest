@@ -85,8 +85,9 @@ async function startVue () {
         new Integrations.CaptureConsole({ levels: ['error'] })
       ],
       ignoreErrors: [
-        // this error is safe to ignore, ref: https://stackoverflow.com/a/50387233/8679162
+        // these errors are safe to ignore, ref: https://stackoverflow.com/a/50387233/8679162
         'ResizeObserver loop limit exceeded',
+        'ResizeObserver loop completed with undelivered notifications',
         // ignore Launch Darkly errors (partial match)
         'LD: [error]'
       ]

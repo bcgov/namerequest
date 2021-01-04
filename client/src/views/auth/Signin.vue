@@ -29,6 +29,7 @@ export default class Signin extends Mixins(NrAffiliationMixin) {
 
   /** called when keycloak session is ready. */
   private async onReady () {
+    console.info('Keycloak session is ready...') // eslint-disable-line no-console
     if (this.redirectUrl) {
       await this.$router.push(this.redirectUrl)
 

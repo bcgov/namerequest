@@ -12,7 +12,10 @@
 <!--            No Wait Time-->
 <!--          </div>-->
 <!--        </div>-->
-      <v-tooltip bottom nudge-left="50" content-class="bottom-tooltip wait-time-tooltip" transition="fade-transition">
+      <v-tooltip bottom nudge-left="50"
+        content-class="bottom-tooltip wait-time-tooltip"
+        transition="fade-transition"
+      >
         <template v-slot:activator="{ on }">
           <div class="stats-content-outer py-0" v-on="on">
             <div class="stats-content-inner-1 text-center">
@@ -27,7 +30,10 @@
         </template>
         <p>During Business Hours</p>
       </v-tooltip>
-      <v-tooltip bottom nudge-left="56" content-class="bottom-tooltip new-submission-wait-time-tooltip" transition="fade-transition">
+      <v-tooltip bottom nudge-left="56"
+        content-class="bottom-tooltip new-submission-wait-time-tooltip"
+        transition="fade-transition"
+      >
         <template v-slot:activator="{ on }">
           <div id="stats-content-outer-3" class="stats-content-outer py-0" v-on="on">
             <div class="stats-content-inner-1 text-center">
@@ -60,7 +66,7 @@ import { featureFlags } from '@/plugins/featureFlags'
 @Component({})
 export default class Stats extends Vue {
   created (): void {
-    if (featureFlags.getFlag('hardcoded_regular_wait_time') === 0 || 
+    if (featureFlags.getFlag('hardcoded_regular_wait_time') === 0 ||
         featureFlags.getFlag('hardcoded_priority_wait_time') === 0) {
       newReqModule.getStats()
     }

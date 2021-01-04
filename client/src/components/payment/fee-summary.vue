@@ -8,8 +8,8 @@
 
     <v-slide-y-transition group tag="ul" class="fee-list" v-show="!fetchError">
       <template
-        v-show="(totalFilingFees > 0 && lineItem.filingFees) || (totalFilingFees == 0)"
         v-for="lineItem in fees"
+        v-show="(totalFees > 0 && lineItem.filingFees) || (totalFees === 0)"
         >
         <li class="container fee-list__item"
           :key="lineItem.filingType"
