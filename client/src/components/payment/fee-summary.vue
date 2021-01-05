@@ -1,70 +1,74 @@
 <template>
-  <v-card>
-    <header class="font-weight-bold px-3 py-3">
-      <slot name="header">Payment Details</slot>
-    </header>
+  <div class="fee-summary">
+    <v-row align="center" justify="center">
+      <v-col cols="10">
+        <div class="font-weight-bold px-3 py-3 header">
+          Payment Details
+        </div>
 
-    <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
+        <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
 
-    <v-slide-y-transition group tag="ul" class="fee-list" v-show="!fetchError">
-      <template
-        v-for="lineItem in fees"
-        v-show="(totalFees > 0 && lineItem.filingFees) || (totalFees === 0)"
-        >
-        <li class="container fee-list__item"
-          :key="lineItem.filingType"
-          >
-          <div class="fee-list__item-name">{{lineItem.filingType}}</div>
-          <div class="fee-list__item-value" v-if="lineItem.filingFees > 0">${{lineItem.filingFees.toFixed(2)}}</div>
-          <div class="fee-list__item-value" v-else>No Fee</div>
-        </li>
-        <li class="container fee-list__item"
-          v-if="lineItem.priorityFees"
-          :key="lineItem.filingTypeCode+'-priority'"
-          >
-          <div class="fee-list__item-name pl-3">Priority Fee</div>
-          <div class="fee-list__item-value">${{lineItem.priorityFees.toFixed(2)}}</div>
-        </li>
-        <li class="container fee-list__item"
-          v-if="lineItem.serviceFees"
-          :key="lineItem.filingTypeCode+'-transaction'"
-          >
-          <div class="fee-list__item-name pl-3">Service Fee</div>
-          <div class="fee-list__item-value">${{lineItem.serviceFees.toFixed(2)}}</div>
-        </li>
-      </template>
-    </v-slide-y-transition>
+        <v-slide-y-transition group tag="ul" class="fee-list" v-show="!fetchError">
+          <template
+            v-for="lineItem in fees"
+            v-show="(totalFees > 0 && lineItem.filingFees) || (totalFees === 0)"
+            >
+            <li class="container fee-list__item"
+              :key="lineItem.filingType"
+              >
+              <div class="fee-list__item-name">{{lineItem.filingType}}</div>
+              <div class="fee-list__item-value" v-if="lineItem.filingFees > 0">${{lineItem.filingFees.toFixed(2)}}</div>
+              <div class="fee-list__item-value" v-else>No Fee</div>
+            </li>
+            <li class="container fee-list__item"
+              v-if="lineItem.priorityFees"
+              :key="lineItem.filingTypeCode+'-priority'"
+              >
+              <div class="fee-list__item-name pl-3">Priority Fee</div>
+              <div class="fee-list__item-value">${{lineItem.priorityFees.toFixed(2)}}</div>
+            </li>
+            <li class="container fee-list__item"
+              v-if="lineItem.serviceFees"
+              :key="lineItem.filingTypeCode+'-transaction'"
+              >
+              <div class="fee-list__item-name pl-3">Service Fee</div>
+              <div class="fee-list__item-value">${{lineItem.serviceFees.toFixed(2)}}</div>
+            </li>
+          </template>
+        </v-slide-y-transition>
 
-    <div class="container fee-total" v-show="!fetchError">
-      <div class="fee-total__name">Fees</div>
-      <!--<div class="fee-total__currency">CAD</div>-->
-      <div class="fee-total__value">
-        <v-slide-y-reverse-transition name="slide" mode="out-in">
-          <div>${{totalFees.toFixed(2)}}</div>
-        </v-slide-y-reverse-transition>
-      </div>
-    </div>
+        <div class="container fee-total" v-show="!fetchError">
+          <div class="fee-total__name">Fees</div>
+          <!--<div class="fee-total__currency">CAD</div>-->
+          <div class="fee-total__value">
+            <v-slide-y-reverse-transition name="slide" mode="out-in">
+              <div>${{totalFees.toFixed(2)}}</div>
+            </v-slide-y-reverse-transition>
+          </div>
+        </div>
 
-    <div class="container fee-total tax-total" v-show="!fetchError">
-      <div class="fee-total__name">Tax</div>
-      <!--<div class="fee-total__currency">CAD</div>-->
-      <div class="fee-total__value">
-        <v-slide-y-reverse-transition name="slide" mode="out-in">
-          <div>${{totalTax.toFixed(2)}}</div>
-        </v-slide-y-reverse-transition>
-      </div>
-    </div>
+        <div class="container fee-total tax-total" v-show="!fetchError">
+          <div class="fee-total__name">Tax</div>
+          <!--<div class="fee-total__currency">CAD</div>-->
+          <div class="fee-total__value">
+            <v-slide-y-reverse-transition name="slide" mode="out-in">
+              <div>${{totalTax.toFixed(2)}}</div>
+            </v-slide-y-reverse-transition>
+          </div>
+        </div>
 
-    <div class="container fee-total payment-total" v-show="!fetchError">
-      <div class="fee-total__name">Total</div>
-      <!--<div class="fee-total__currency">CAD</div>-->
-      <div class="fee-total__value">
-        <v-slide-y-reverse-transition name="slide" mode="out-in">
-          <div><b>${{total.toFixed(2)}}</b></div>
-        </v-slide-y-reverse-transition>
-      </div>
-    </div>
-  </v-card>
+        <div class="container fee-total payment-total" v-show="!fetchError">
+          <div class="fee-total__name">Total Amount (CAD)</div>
+          <!--<div class="fee-total__currency">CAD</div>-->
+          <div class="fee-total__value">
+            <v-slide-y-reverse-transition name="slide" mode="out-in">
+              <div><b>${{total.toFixed(2)}}</b></div>
+            </v-slide-y-reverse-transition>
+          </div>
+        </div>
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script lang="ts">
@@ -101,17 +105,15 @@ export default class FeeSummary extends Vue {
 
 <style lang="scss" scoped>
 @import "@/assets/scss/theme";
-
-header {
-  color: white;
-  background: $BCgovBlue5;
+.fee-summary {
+  background-color: $gray1;
 }
 
 .container {
   display: flex;
   flex-flow: row nowrap;
   line-height: 1.2rem;
-  font-size: 0.875rem;
+  font-size: 1rem;
 }
 
 .filing_fees-list {
@@ -161,12 +163,9 @@ header {
   }
 }
 
-.container.fee-total {
+.container.payment-total {
   font-weight: bold;
-}
-
-.fee-list__item-name {
-  font-weight: bold;
+  color: $gray9;
 }
 
 .container.fee-total,
@@ -174,12 +173,13 @@ header {
   justify-content: space-between;
 }
 
-.container.fee-list__item {
-  border-bottom: 1px dotted grey;
+.header {
+  font-size: 1.125rem;
+  color: $gray9;
 }
 
-.fee-total,
+.header,
 .tax-total {
-  border-bottom: 1px dotted grey;
+  border-bottom: 1px solid #80808029;
 }
 </style>

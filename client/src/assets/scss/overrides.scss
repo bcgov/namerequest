@@ -83,4 +83,20 @@
     background-color: transparent !important;
     box-shadow: none !important;
   }
+
+  .v-btn.btn-outlined-blue {
+    background-color: white !important;
+    color: $app-blue !important;
+    border: 1px solid $app-blue !important;
+    box-shadow: none !important;
+    text-transform: none !important;
+  }
+  
+  .v-btn.btn-outlined-red {
+    background-color: white !important;
+    color: $app-red !important;
+    border: 1px solid $app-red !important;
+    box-shadow: none !important;
+    text-transform: none !important;
+  }
 }

@@ -1,23 +1,40 @@
 <template>
   <div>
-    <div style="display: flex; justify-content: space-between; flex-flow: row wrap; margin-bottom: 15px">
-      <div style="margin: 30px 30px 0">
+    <div style="display: flex; justify-content: space-between; flex-flow: row wrap; margin-bottom: 5px">
+      <div style="margin: 30px 0 -2px">
         <h4>Requested Name <span v-if="nameChoices && nameChoices.length > 0">Choices</span></h4>
         <ul style="list-style: none" class="pl-0">
           <li v-if="nameChoices && nameChoices.length === 0">{{name}}</li>
           <li v-if="nameChoices[0]">
-            <span class="choice-indicator" v-if="nameChoices && nameChoices.length > 0">1</span>{{nameChoices[0]}}
+            <span v-if="nameChoices && nameChoices.length > 0">1. </span>{{nameChoices[0]}}
           </li>
           <li v-if="nameChoices[1]">
-            <span class="choice-indicator" v-if="nameChoices && nameChoices.length > 1">2</span>{{nameChoices[1]}}
+            <span v-if="nameChoices && nameChoices.length > 1">2. </span>{{nameChoices[1]}}
           </li>
           <li v-if="nameChoices[2]">
-            <span class="choice-indicator" v-if="nameChoices && nameChoices.length > 2">3</span>{{nameChoices[2]}}
+            <span v-if="nameChoices && nameChoices.length > 2">3. </span>{{nameChoices[2]}}
           </li>
         </ul>
       </div>
     </div>
-    <div style="display: flex; justify-content: space-between; flex-flow: row wrap; margin-bottom: 15px">
+    <div style="display: flex; justify-content: space-between; flex-flow: row wrap; margin-bottom: 9px">
+      <div style="margin: 15px 0 15px">
+        <h4>Applicant Info</h4>
+        <ul style="list-style: none" class="pl-0">
+          <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
+          <li >{{`${applicantName}`}}</li>
+          <li>
+            {{`${applicant.addrLine1 ? applicant.addrLine1 : ''} ${applicant.addrLine2 ? applicant.addrLine2 : ''}`}}
+          </li>
+          <li>
+            {{`${applicant.city ? applicant.city : ''}, ${applicant.stateProvinceCd ? applicant.stateProvinceCd : ''}`}}
+          </li>
+          <li>
+            {{`${applicant.countryTypeCd === 'CA' ? 'Canada' : applicant.countryTypeCd},
+             ${applicant.postalCd ? applicant.postalCd : ''}`}}
+          </li>
+        </ul>
+      </div>
       <div style="margin: 15px 30px 15px">
         <ul style="list-style: none" class="pl-0">
           <li v-if="client">
@@ -45,29 +62,11 @@
           </li>
         </ul>
       </div>
-      <div style="margin: 15px 30px 15px">
-        <h4>Applicant Info</h4>
-        <ul style="list-style: none" class="pl-0">
-          <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
-          <li >{{`${applicantName}`}}</li>
-          <li>
-            {{`${applicant.addrLine1 ? applicant.addrLine1 : ''} ${applicant.addrLine2 ? applicant.addrLine2 : ''}`}}
-          </li>
-          <li>
-            {{`${applicant.city ? applicant.city : ''}, ${applicant.stateProvinceCd ? applicant.stateProvinceCd : ''}`}}
-          </li>
-          <li>
-            {{`${applicant.countryTypeCd === 'CA' ? 'Canada' : applicant.countryTypeCd},
-             ${applicant.postalCd ? applicant.postalCd : ''}`}}
-          </li>
-        </ul>
-      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import FeeSummary from '@/components/payment/fee-summary.vue'
 
 import {
   ApplicantI
@@ -75,11 +74,7 @@ import {
 
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-@Component({
-  components: {
-    FeeSummary
-  }
-})
+@Component
 export default class RequestDetails extends Vue {
   @Prop(Object) applicant: ApplicantI
   @Prop(Array) nameChoices: {
@@ -114,23 +109,9 @@ export default class RequestDetails extends Vue {
 <style lang="scss">
 @import "@/assets/scss/theme.scss";
 
-.choice-indicator {
-  background-color: $gray9;
-  color: white;
-  border-radius: 100%;
-  width: 1.75rem;
-  height: 1.75rem;
-  margin-right: 0.5rem;
-  margin-bottom: 5px;
-  box-sizing: border-box;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 0.8rem;
-  font-weight: bold;
-}
-
 h4 {
   font-weight: bold !important;
+  font-size: 16px;
+  color: $gray9;
 }
 </style>
