@@ -4,13 +4,6 @@
 
       <v-card-title class="d-flex justify-space-between">
         <div>Re-apply for Name</div>
-        <countdown-timer
-          v-if="displayTimer"
-          :timerName="timerName"
-          colorString="#003366"
-          bgColorString="#efefef"
-          style="float: right"
-        />
       </v-card-title>
 
       <v-card-text class="copy-normal">
@@ -34,7 +27,6 @@
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
-import CountdownTimer from '@/components/session-timer/countdown-timer.vue'
 import PaymentModule from '@/modules/payment'
 import { CreatePaymentParams } from '@/modules/payment/models'
 import * as PaymentTypes from '@/modules/payment/store/types'
@@ -50,8 +42,7 @@ import { getBaseUrl } from './payment-utils'
 @Component({
   components: {
     RequestDetails,
-    FeeSummary,
-    CountdownTimer
+    FeeSummary
   }
 })
 export default class ReapplyModal extends Mixins(
@@ -62,18 +53,6 @@ export default class ReapplyModal extends Mixins(
 ) {
   /** The model value for the dialog component. */
   private isVisible = false
-
-  /**
-   * Optionally display the countdown timer.
-   * This could be turned into a prop for easier configuration.
-   */
-  private get displayTimer () {
-    return false
-  }
-
-  private get timerName () {
-    return this.$PAYMENT_COMPLETION_TIMER_NAME
-  }
 
   /** Whether this modal should be shown (per store property). */
   private get showModal (): boolean {

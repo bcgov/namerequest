@@ -44,9 +44,7 @@
     <PickEntityOrConversion />
     <PickRequestType />
     <PaymentModal
-      :onActivate="onPaymentModalActivated"
       :onCancel="onPaymentCancelled"
-      :stopTimer="stopPaymentCompletionTimer"
     />
     <UpgradeModal />
     <ReapplyModal />
@@ -195,33 +193,6 @@ export default class App extends Mixins(SessionTimerMixin) {
     }
   }
 
-  async onPaymentModalActivated () {
-    const { nrId } = newRequestModule
-    const componentName = newRequestModule.displayedComponent
-
-    // Only do this for New NRs!!!
-    if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
-      // First, clear the NR session timer
-      await timerModule.stopTimer({ id: this.$NR_COMPLETION_TIMER_NAME })
-
-      if (this.$PAYMENT_COMPLETION_TIMEOUT_MS > 0) {
-        // Start a new timer for the payment
-        timerModule.createAndStartTimer({
-          id: this.$PAYMENT_COMPLETION_TIMER_NAME,
-          expirationFn: async () => {
-            const { nrId } = newRequestModule
-            // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-            await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
-            await paymentModule.togglePaymentModal(false)
-            // Direct the user back to the start
-            await this.resetAppState()
-          },
-          timeoutMs: this.$PAYMENT_COMPLETION_TIMEOUT_MS
-        })
-      }
-    }
-  }
-
   async onPaymentCancelled () {
     const { nrId } = newRequestModule
     const componentName = newRequestModule.displayedComponent
@@ -233,10 +204,6 @@ export default class App extends Mixins(SessionTimerMixin) {
       await this.resetAppState()
     }
     await paymentModule.togglePaymentModal(false)
-  }
-
-  async stopPaymentCompletionTimer () {
-    await timerModule.stopTimer({ id: this.$PAYMENT_COMPLETION_TIMER_NAME })
   }
 
   private closeAuthModal () {

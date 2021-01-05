@@ -4,7 +4,6 @@
 
       <v-card-title class="d-flex justify-space-between">
         <div>Confirm Name Request</div>
-        <countdown-timer :timerName="timerName" colorString="#003366" bgColorString="#efefef" style="float: right"/>
       </v-card-title>
 
       <v-card-text class="copy-normal pt-0">
@@ -47,7 +46,6 @@
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
-import CountdownTimer from '@/components/session-timer/countdown-timer.vue'
 import PaymentModule from '@/modules/payment'
 import { CreatePaymentParams } from '@/modules/payment/models'
 import * as PaymentTypes from '@/modules/payment/store/types'
@@ -63,8 +61,7 @@ import { getBaseUrl } from './payment-utils'
 @Component({
   components: {
     RequestDetails,
-    FeeSummary,
-    CountdownTimer
+    FeeSummary
   },
   props: {
     onActivate: {
@@ -74,10 +71,6 @@ import { getBaseUrl } from './payment-utils'
     onCancel: {
       type: Function,
       default: async () => {}
-    },
-    stopTimer: {
-      type: Function,
-      default: async () => undefined
     }
   }
 })
@@ -92,10 +85,6 @@ export default class PaymentModal extends Mixins(
   /** The model value for the dialog component. */
   private isVisible = false
 
-  private get timerName () {
-    return this.$PAYMENT_COMPLETION_TIMER_NAME
-  }
-
   private get allowCancel (): boolean {
     return (typeof this.$props.onCancel === 'function')
   }
@@ -107,11 +96,6 @@ export default class PaymentModal extends Mixins(
 
   /** Clears store property to hide this modal. */
   async hideModal () {
-    // stop timer because we don't need it any more
-    const { stopTimer } = this.$props
-    if (typeof stopTimer === 'function') {
-      stopTimer()
-    }
     this.isLoadingPayment = false
     await PaymentModule.togglePaymentModal(false)
   }
@@ -144,13 +128,6 @@ export default class PaymentModal extends Mixins(
 
   /** Called when user clicks "Continue to Payment" button. */
   private async confirmPayment () {
-    // stop timer now so delays in creating payment don't
-    // inadvertently cause timer expiry and app reset
-    const { stopTimer } = this.$props
-    if (typeof stopTimer === 'function') {
-      stopTimer()
-    }
-
     this.isLoadingPayment = true
     const { nrId, priorityRequest } = this
 
