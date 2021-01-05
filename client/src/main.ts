@@ -41,9 +41,6 @@ function setVueEnvironment (config: EnvConfigI): void {
 
   Vue.prototype.$EXISTING_NR_TIMER_NAME = config.$EXISTING_NR_TIMER_NAME
   Vue.prototype.$EXISTING_NR_TIMEOUT_MS = config.$EXISTING_NR_TIMEOUT_MS
-
-  Vue.prototype.$PAYMENT_COMPLETION_TIMER_NAME = config.$PAYMENT_COMPLETION_TIMER_NAME
-  Vue.prototype.$PAYMENT_COMPLETION_TIMEOUT_MS = config.$PAYMENT_COMPLETION_TIMEOUT_MS
 }
 
 /**

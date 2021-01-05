@@ -9,9 +9,6 @@ export interface EnvConfigI {
     // EXISTING NR timer
     $EXISTING_NR_TIMER_NAME?: string
     $EXISTING_NR_TIMEOUT_MS?: number
-    // PAYMENT timer
-    $PAYMENT_COMPLETION_TIMER_NAME?: string
-    $PAYMENT_COMPLETION_TIMEOUT_MS?: number
 }
 
 // Detailed commentary on how this works @ github.com/bcgov/business-filings-ui/utils/fetch-config.ts
@@ -38,10 +35,6 @@ export function getConfig (): Promise<EnvConfigI> {
     const existingNrTimerName = response.data[0]['EXISTING_NR_TIMER_NAME']
     const existingNrTimeoutMs = response.data[0]['EXISTING_NR_TIMEOUT_MS']
     const existingNrTimeoutMs_dev = response.data[0]['DEV_EXISTING_NR_TIMEOUT_MS']
-
-    const paymentCompletionTimerName = response.data[0]['PAYMENT_COMPLETION_TIMER_NAME']
-    const paymentCompletionTimeoutMs = response.data[0]['PAYMENT_COMPLETION_TIMEOUT_MS']
-    const paymentCompletionTimeoutMs_dev = response.data[0]['DEV_PAYMENT_COMPLETION_TIMEOUT_MS']
 
     const keycloakConfigPath = response.data[0]['KEYCLOAK_CONFIG_PATH']
     sessionStorage.setItem('KEYCLOAK_CONFIG_PATH', keycloakConfigPath)
@@ -99,9 +92,7 @@ export function getConfig (): Promise<EnvConfigI> {
       $NR_COMPLETION_TIMER_NAME: nrCompletionTimerName,
       $NR_COMPLETION_TIMEOUT_MS: appIsRunningLocally ? nrCompletionTimeoutMs_dev : nrCompletionTimeoutMs,
       $EXISTING_NR_TIMER_NAME: existingNrTimerName,
-      $EXISTING_NR_TIMEOUT_MS: appIsRunningLocally ? existingNrTimeoutMs_dev : existingNrTimeoutMs,
-      $PAYMENT_COMPLETION_TIMER_NAME: paymentCompletionTimerName,
-      $PAYMENT_COMPLETION_TIMEOUT_MS: appIsRunningLocally ? paymentCompletionTimeoutMs_dev : paymentCompletionTimeoutMs
+      $EXISTING_NR_TIMEOUT_MS: appIsRunningLocally ? existingNrTimeoutMs_dev : existingNrTimeoutMs
     }
     resolve(config)
   })
