@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div style="display: flex; justify-content: space-between; flex-flow: row wrap; margin-bottom: 5px">
-      <div style="margin: 30px 0 -2px">
+    <div class="d-flex justify-space-between flex-row mt-8 mb-1">
+      <div>
         <h4>Requested Name <span v-if="nameChoices && nameChoices.length > 0">Choices</span></h4>
-        <ul style="list-style: none" class="pl-0">
+        <ul class="pl-0">
           <li v-if="nameChoices && nameChoices.length === 0">{{name}}</li>
           <li v-if="nameChoices[0]">
             <span v-if="nameChoices && nameChoices.length > 0">1. </span>{{nameChoices[0]}}
@@ -17,10 +17,10 @@
         </ul>
       </div>
     </div>
-    <div style="display: flex; justify-content: space-between; flex-flow: row wrap; margin-bottom: 9px">
-      <div style="margin: 15px 0 15px">
+    <div class="d-flex justify-space-between flex-row mt-4 mb-6">
+      <div>
         <h4>Applicant Info</h4>
-        <ul style="list-style: none" class="pl-0">
+        <ul class="pl-0">
           <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
           <li >{{`${applicantName}`}}</li>
           <li>
@@ -35,17 +35,17 @@
           </li>
         </ul>
       </div>
-      <div style="margin: 15px 30px 15px">
-        <ul style="list-style: none" class="pl-0">
+      <div>
+        <ul class="pl-0">
           <li v-if="client">
             <h4>Client Name</h4>
-            <ul style="list-style: none" class="pl-0">
+            <ul class="pl-0">
               <li>{{`${client}`}}</li>
             </ul>
           </li>
           <li v-if="contactPerson">
             <h4>Primary Contact</h4>
-            <ul style="list-style: none" class="pl-0">
+            <ul class="pl-0">
               <li>{{`${contactPerson}`}}</li>
               <li>{{applicant.emailAddress}}</li>
               <li>{{applicant.phoneNumber}}</li>
@@ -53,7 +53,7 @@
           </li>
           <li v-if="!contactPerson">
             <h4>Primary Contact</h4>
-            <ul style="list-style: none" class="pl-0">
+            <ul class="pl-0">
               <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
               <li>{{`${applicantName}`}}</li>
               <li>{{applicant.emailAddress}}</li>
@@ -74,7 +74,7 @@ import {
 
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-@Component
+@Component({})
 export default class RequestDetails extends Vue {
   @Prop(Object) applicant: ApplicantI
   @Prop(Array) nameChoices: {
@@ -106,12 +106,16 @@ export default class RequestDetails extends Vue {
 }
 </script>
 
-<style lang="scss">
-@import "@/assets/scss/theme.scss";
+<style lang="scss" scoped>
+@import "@/assets/scss/theme";
 
 h4 {
   font-weight: bold !important;
-  font-size: 16px;
-  color: $gray9;
+  font-size: 1rem;
+  color: $dk-text;
+}
+
+ul {
+  list-style: none;
 }
 </style>

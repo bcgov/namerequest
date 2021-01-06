@@ -4,7 +4,7 @@
 
       <v-card-title class="d-flex justify-space-between pb-1">
         <div>Confirm Name Request</div>
-        <v-icon class="close-icon" md color="primary" @click="hideModal()">mdi-close</v-icon>
+        <v-icon class="float-right" md color="primary" @click="hideModal()">mdi-close</v-icon>
       </v-card-title>
 
       <v-card-text class="copy-normal pt-0">
@@ -23,7 +23,7 @@
         <v-btn v-if="allowCancel"
                @click="cancelPayment()"
                id="payment-cancel-btn"
-               class="btn-outlined-red"
+               class="button-red"
                text
                :disabled="isLoadingPayment">Cancel Name Request</v-btn>
         <v-spacer></v-spacer>
@@ -34,7 +34,7 @@
                :loading="isLoadingPayment">Continue to Payment</v-btn>
         <v-btn @click="hideModal()"
                id="payment-close-btn"
-               class="btn-outlined-blue"
+               class="button-blue"
                :disabled="isLoadingPayment">Close</v-btn>
       </v-card-actions>
 
@@ -175,11 +175,3 @@ export default class PaymentModal extends Mixins(
   }
 }
 </script>
-
-<style lang="scss">
-@import "@/assets/scss/overrides";
-
-.close-icon {
-  float:right;
-}
-</style>

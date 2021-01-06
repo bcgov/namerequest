@@ -2,9 +2,7 @@
   <div class="fee-summary">
     <v-row align="center" justify="center">
       <v-col cols="10">
-        <div class="font-weight-bold px-3 py-3 header">
-          Payment Details
-        </div>
+        <div class="font-weight-bold px-3 py-3 header">Payment Details</div>
 
         <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
 
@@ -165,7 +163,7 @@ export default class FeeSummary extends Vue {
 
 .container.payment-total {
   font-weight: bold;
-  color: $gray9;
+  color: $dk-text;
 }
 
 .container.fee-total,
@@ -175,11 +173,11 @@ export default class FeeSummary extends Vue {
 
 .header {
   font-size: 1.125rem;
-  color: $gray9;
+  color: $dk-text;
 }
 
 .header,
 .tax-total {
-  border-bottom: 1px solid #80808029;
+  border-bottom: 1px solid $gray4;
 }
 </style>
