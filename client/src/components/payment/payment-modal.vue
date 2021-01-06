@@ -135,7 +135,7 @@ export default class PaymentModal extends Mixins(
     const onSuccess = (paymentResponse) => {
       const { paymentId, paymentToken } = this
       // Save response to session
-      this.savePaymentResponseToSession(PaymentAction.COMPLETE, paymentResponse)
+      this.savePaymentResponseToSession(PaymentAction.CREATE, paymentResponse)
 
       const baseUrl = getBaseUrl()
       const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${paymentId}`)
@@ -143,7 +143,7 @@ export default class PaymentModal extends Mixins(
     }
 
     const success = await this.createPayment({
-      action: PaymentAction.COMPLETE,
+      action: PaymentAction.CREATE,
       nrId: nrId,
       filingType: FilingTypes.NM620,
       priorityRequest: priorityRequest

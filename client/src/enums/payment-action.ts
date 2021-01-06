@@ -1,6 +1,6 @@
 /** Enum for Payment Action. */
 export enum PaymentAction {
-  COMPLETE = 'COMPLETE',
+  CREATE = 'CREATE',
   REAPPLY= 'REAPPLY',
   UPGRADE = 'UPGRADE',
 }

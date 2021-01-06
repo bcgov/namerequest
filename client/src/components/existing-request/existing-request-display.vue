@@ -541,11 +541,12 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   private navigateToPaymentPortal () {
-    const { id, token, nrId } = this.pendingPayment
+    const { id, token, nrId, action } = this.pendingPayment
     sessionStorage.setItem('paymentInProgress', 'true')
     sessionStorage.setItem('paymentId', id)
     sessionStorage.setItem('paymentToken', token)
     sessionStorage.setItem('nrId', nrId)
+    sessionStorage.setItem('paymentAction', action)
     const baseUrl = getBaseUrl()
     const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${id}`)
     this.redirectToPaymentPortal(id, token, redirectUrl)
