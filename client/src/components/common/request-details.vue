@@ -17,7 +17,7 @@
         </ul>
       </div>
     </div>
-    <v-row class="mt-3 mb-3">
+    <v-row>
       <v-col col="6">
         <h4>Applicant Information</h4>
         <ul class="pl-0">
