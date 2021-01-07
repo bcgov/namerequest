@@ -1,6 +1,6 @@
 {
   "name": "name-request",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -13,7 +13,7 @@
     "@mdi/font": "^4.5.95",
     "@sentry/browser": "^5.29.1",
     "@sentry/integrations": "^5.29.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "babel-plugin-transform-decorators": "^6.24.1",
     "core-js": "^3.7.0",
     "http-status-codes": "^1.4.0",
@@ -21,7 +21,7 @@
     "lodash": "^4.17.20",
     "moment": "^2.27.0",
     "remove-accents": "^0.4.2",
-    "sbc-common-components": "2.4.6",
+    "sbc-common-components": "2.4.8",
     "style-loader": "^1.2.1",
     "vue": "^2.6.11",
     "vue-contenteditable": "^1.0.2",
