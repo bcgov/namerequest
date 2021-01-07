@@ -4,7 +4,7 @@
 
       <v-card-title class="d-flex justify-space-between">
         <div>Confirm Name Request</div>
-        <v-icon class="float:right" md color="primary" @click="hideModal()">mdi-close</v-icon>
+        <v-icon class="float-right" md color="primary" @click="hideModal()">mdi-close</v-icon>
       </v-card-title>
 
       <v-card-text class="copy-normal pt-0">
@@ -19,23 +19,22 @@
         />
       </v-card-text>
 
-      <v-card-actions>
+      <v-card-actions class="pt-4">
         <v-btn v-if="allowCancel"
                @click="cancelPayment()"
                id="payment-cancel-btn"
-               class="error"
+               class="button-red px-4"
                text
                :disabled="isLoadingPayment">Cancel Name Request</v-btn>
         <v-spacer></v-spacer>
         <v-btn @click="confirmPayment()"
                id="payment-pay-btn"
-               class="primary"
+               class="primary px-4"
                text
                :loading="isLoadingPayment">Continue to Payment</v-btn>
         <v-btn @click="hideModal()"
                id="payment-close-btn"
-               class="normal"
-               text
+               class="button-blue"
                :disabled="isLoadingPayment">Close</v-btn>
       </v-card-actions>
 

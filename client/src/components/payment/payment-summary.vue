@@ -19,10 +19,9 @@
 <script lang="ts">
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator'
 import PaymentMixin from '@/components/payment/payment-mixin'
-import ReceiptMixin from '@/components/mixins/receipt-mixin'
 
 @Component({})
-export default class PaymentSummary extends Mixins(PaymentMixin, ReceiptMixin) {
+export default class PaymentSummary extends Mixins(PaymentMixin) {
   @Prop(Object)
   readonly summary: any
 
@@ -40,7 +39,7 @@ export default class PaymentSummary extends Mixins(PaymentMixin, ReceiptMixin) {
 
   private get receiptDescription (): string {
     const lineItem = this.summary?.payment.sbcPayment.lineItems[0] // just look at first one
-    return this.rcptDescToName(lineItem?.description)
+    return lineItem?.description
   }
 
   private get receiptAmount (): string {
