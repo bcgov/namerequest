@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="d-flex justify-space-between flex-row mt-8 mb-1">
+    <div class="mt-4">
       <div>
         <h4>Requested Name <span v-if="nameChoices && nameChoices.length > 0">Choices</span></h4>
         <ul class="pl-0">
@@ -17,9 +17,9 @@
         </ul>
       </div>
     </div>
-    <div class="d-flex justify-space-between flex-row mt-4 mb-6">
-      <div>
-        <h4>Applicant Info</h4>
+    <v-row class="mt-3 mb-3">
+      <v-col col="6">
+        <h4>Applicant Information</h4>
         <ul class="pl-0">
           <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
           <li >{{`${applicantName}`}}</li>
@@ -34,8 +34,8 @@
              ${applicant.postalCd ? applicant.postalCd : ''}`}}
           </li>
         </ul>
-      </div>
-      <div>
+      </v-col>
+      <v-col col="6">
         <ul class="pl-0">
           <li v-if="client">
             <h4>Client Name</h4>
@@ -61,8 +61,8 @@
             </ul>
           </li>
         </ul>
-      </div>
-    </div>
+      </v-col>
+    </v-row>
   </div>
 </template>
 

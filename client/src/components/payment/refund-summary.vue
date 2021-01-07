@@ -10,7 +10,7 @@
       <template v-for="item in lineItems">
         <ul class="fee-list" :key="item.id">
           <li class="fee-list__item text-body-1" v-if="item.filingFees > 0">
-            <div class="fee-list__item-name">{{feeDescription(item)}}</div>
+            <div class="fee-list__item-name">{{item.description}}</div>
             <div class="fee-list__item-value">${{item.filingFees.toFixed(2)}}</div>
           </li>
           <li class="fee-list__item text-body-1" v-if="item.serviceFees > 0">
@@ -30,11 +30,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Mixins } from 'vue-property-decorator'
-import ReceiptMixin from '@/components/mixins/receipt-mixin'
+import { Component, Prop, Mixins, Vue } from 'vue-property-decorator'
 
 @Component({})
-export default class RefundSummary extends Mixins(ReceiptMixin) {
+export default class RefundSummary extends Vue {
   @Prop({ default: () => [] })
   readonly payments: any[]
 
@@ -51,11 +50,6 @@ export default class RefundSummary extends Mixins(ReceiptMixin) {
     const fees = [].concat(...arrays)
     const total = fees.reduce((t, n) => (t + n), 0)
     return total
-  }
-
-  private feeDescription (item): string {
-    const name = this.rcptDescToName(item.description)
-    return `${name} fee`
   }
 }
 </script>

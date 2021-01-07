@@ -2,7 +2,7 @@
   <v-dialog max-width="50%" :value="isVisible" persistent>
     <v-card>
 
-      <v-card-title class="d-flex justify-space-between pb-1">
+      <v-card-title class="d-flex justify-space-between">
         <div>Confirm Name Request</div>
         <v-icon class="float-right" md color="primary" @click="hideModal()">mdi-close</v-icon>
       </v-card-title>
@@ -19,17 +19,17 @@
         />
       </v-card-text>
 
-      <v-card-actions class="pt-5">
+      <v-card-actions class="pt-4">
         <v-btn v-if="allowCancel"
                @click="cancelPayment()"
                id="payment-cancel-btn"
-               class="button-red"
+               class="button-red px-4"
                text
                :disabled="isLoadingPayment">Cancel Name Request</v-btn>
         <v-spacer></v-spacer>
         <v-btn @click="confirmPayment()"
                id="payment-pay-btn"
-               class="primary"
+               class="primary px-4"
                text
                :loading="isLoadingPayment">Continue to Payment</v-btn>
         <v-btn @click="hideModal()"
