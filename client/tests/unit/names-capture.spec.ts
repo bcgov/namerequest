@@ -30,9 +30,9 @@ describe('send-for-examination.vue', () => {
     it('sets the first name choice to the analyzed name', () => {
       expect(wrapper.vm.nameChoices.name1).toBe('Test Name')
     })
-    it('Initially renders the disabled continue button', () => {
+    it('Initially renders the enabled continue button', () => {
       expect(wrapper.vm.isValid).toBe(false)
-      expect(wrapper.find('#submit-continue-btn-false').classes().includes('v-btn--disabled')).toBeTruthy()
+      expect(wrapper.find('#submit-continue-btn-true').classes().includes('v-btn')).toBeTruthy()
     })
     it('demonstrates correct validation logic when designation-1 is entered', async () => {
       store.mutateNameChoices({ key: 'name1', value: 'A Really Nice Name' })
