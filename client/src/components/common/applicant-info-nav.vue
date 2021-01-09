@@ -1,7 +1,7 @@
 <template>
   <v-col cols="5" class="text-right py-0">
     <v-btn x-large
-           :id="`submit-back-btn-true`"
+           :id="`submit-back-btn`"
            class="mr-3"
            v-if="showBack"
            @click="back()">
@@ -10,7 +10,7 @@
     <v-btn x-large
            @click="nextAction()"
            :loading="isloadingSubmission"
-           :id="`submit-continue-btn-true`">
+           :id="`submit-continue-btn`">
       {{ nextText }}
     </v-btn>
   </v-col>

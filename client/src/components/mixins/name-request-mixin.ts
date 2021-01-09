@@ -162,7 +162,7 @@ export default class NameRequestMixin extends Vue {
       if (await newRequestModule.patchNameRequests()) {
         if (await newRequestModule.checkinNameRequest()) {
           newRequestModule.mutateDisplayedComponent('Success')
-          await sleep(1000)
+          await sleep(1000) // wait for a second to show the update success
           await this.fetchNr(+nrId)
         }
       }

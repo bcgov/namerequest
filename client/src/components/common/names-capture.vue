@@ -224,7 +224,7 @@
 
       <v-row class="mt-7">
         <v-col cols="7" class="py-0" />
-        <ApplicantInfoNav @nextAction="validateButton" />
+        <ApplicantInfoNav @nextAction="validateButton()" />
       </v-row>
     </v-container>
   </v-form>
@@ -825,7 +825,7 @@ export default class NamesCapture extends NameRequestMixin {
     if (val) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
-        this.$el.querySelector("#submit-continue-btn-true > span")?.classList.add("choices-continue-btn")
+        this.$el.querySelector("#submit-continue-btn > span")?.classList.add("choices-continue-btn")
       })
     }
   }

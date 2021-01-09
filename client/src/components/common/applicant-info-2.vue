@@ -139,7 +139,7 @@
 
       <v-row class="mt-5">
         <v-col cols="7" class="py-0" />
-        <ApplicantInfoNav @nextAction="nextAction" />
+        <ApplicantInfoNav @nextAction="nextAction()" />
       </v-row>
     </v-container>
   </v-form>
@@ -315,8 +315,8 @@ export default class ApplicantInfo2 extends NameRequestMixin {
     if (val) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
-        this.$el.querySelector("#submit-back-btn-true > span")?.classList.add("self-review-back-btn")
-        this.$el.querySelector("#submit-continue-btn-true > span")?.classList.add("self-review-confirm-btn")
+        this.$el.querySelector("#submit-back-btn > span")?.classList.add("self-review-back-btn")
+        this.$el.querySelector("#submit-continue-btn > span")?.classList.add("self-review-confirm-btn")
       })
     }
   }

@@ -321,7 +321,7 @@
                 class="mt-2 pt-0"
               />
             </v-col>
-            <ApplicantInfoNav @nextAction="nextAction" />
+            <ApplicantInfoNav @nextAction="nextAction()" />
           </v-row>
         </v-col>
       </v-row>
@@ -592,8 +592,8 @@ export default class ApplicantInfo1 extends NameRequestMixin {
     if (val) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
-        this.$el.querySelector("#submit-back-btn-true > span")?.classList.add("applicant-back-btn")
-        this.$el.querySelector("#submit-continue-btn-true > span")?.classList.add("applicant-continue-btn")
+        this.$el.querySelector("#submit-back-btn > span")?.classList.add("applicant-back-btn")
+        this.$el.querySelector("#submit-continue-btn > span")?.classList.add("applicant-continue-btn")
       })
     }
   }
