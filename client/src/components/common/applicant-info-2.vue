@@ -139,24 +139,25 @@
 
       <v-row class="mt-5">
         <v-col cols="7" class="py-0" />
-        <ApplicantInfoNav :isValid="isValid" />
+        <ApplicantInfoNav @nextAction="nextAction()" />
       </v-row>
     </v-container>
   </v-form>
 </template>
 
 <script lang="ts">
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import newReqModule, { NewRequestModule } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
-import { Component, Vue, Watch } from 'vue-property-decorator'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
+import NameRequestMixin from '@/components/mixins/name-request-mixin'
 
 @Component({
   components: {
     ApplicantInfoNav
   }
 })
-export default class ApplicantInfo2 extends Vue {
+export default class ApplicantInfo2 extends NameRequestMixin {
   corpNumDirty: boolean = false
   corpNumError: string = ''
   additionalInfoRules = [
@@ -203,31 +204,11 @@ export default class ApplicantInfo2 extends Vue {
   get corpNum () {
     return newReqModule.corpNum
   }
-  get editMode () {
-    return newReqModule.editMode
-  }
   get isPersonsName () {
     return newReqModule.isPersonsName
   }
   get location () {
     return newReqModule.location
-  }
-  get nr () {
-    const nameRequest: NewRequestModule = newReqModule
-    const nr: Partial<any> = nameRequest.nr || {}
-    return nr
-  }
-  get nrData () {
-    return newReqModule.nrData
-  }
-  get nrId () {
-    return newReqModule.nrId
-  }
-  get nrNum () {
-    return newReqModule.nrNum
-  }
-  get nrState () {
-    return newReqModule.nrState
   }
   get priorityRequest () {
     return newReqModule.priorityRequest
@@ -334,9 +315,16 @@ export default class ApplicantInfo2 extends Vue {
     if (val) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
-        this.$el.querySelector("#submit-back-btn-true > span")?.classList.add("self-review-back-btn")
-        this.$el.querySelector("#submit-continue-btn-true > span")?.classList.add("self-review-confirm-btn")
+        this.$el.querySelector("#submit-back-btn > span")?.classList.add("self-review-back-btn")
+        this.$el.querySelector("#submit-continue-btn > span")?.classList.add("self-review-confirm-btn")
       })
+    }
+  }
+
+  nextAction () {
+    this.validate()
+    if (this.isValid) {
+      this.next()
     }
   }
 }

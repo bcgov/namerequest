@@ -224,25 +224,26 @@
 
       <v-row class="mt-7">
         <v-col cols="7" class="py-0" />
-        <ApplicantInfoNav :isValid="isValid" />
+        <ApplicantInfoNav @nextAction="validateButton()" />
       </v-row>
     </v-container>
   </v-form>
 </template>
 
 <script lang="ts">
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { LocationT } from '@/models'
 import { sanitizeName } from '@/plugins/utilities'
 import newReqModule from '@/store/new-request-module'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import NameRequestMixin from '@/components/mixins/name-request-mixin'
 
 @Component({
   components: {
     ApplicantInfoNav
   }
 })
-export default class NamesCapture extends Vue {
+export default class NamesCapture extends NameRequestMixin {
   hide: boolean | 'auto' = true
   messages = {
     des1: '',
@@ -468,9 +469,6 @@ export default class NamesCapture extends Vue {
     }
   }
 
-  get editMode () {
-    return newReqModule.editMode
-  }
   get entityPhraseChoices () {
     if (!this.entity_type_cd || !this.$designations[this.entity_type_cd]) {
       return []
@@ -654,14 +652,8 @@ export default class NamesCapture extends Vue {
   get locationOptions () {
     return newReqModule.locationOptions
   }
-  get name () {
-    return newReqModule.name
-  }
   get nameChoices () {
     return newReqModule.nameChoices
-  }
-  get nr () {
-    return newReqModule.nr
   }
   get request_action_cd () {
     return newReqModule.request_action_cd
@@ -833,7 +825,7 @@ export default class NamesCapture extends Vue {
     if (val) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
-        this.$el.querySelector("#submit-continue-btn-true > span")?.classList.add("choices-continue-btn")
+        this.$el.querySelector("#submit-continue-btn > span")?.classList.add("choices-continue-btn")
       })
     }
   }

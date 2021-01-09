@@ -321,7 +321,7 @@
                 class="mt-2 pt-0"
               />
             </v-col>
-            <ApplicantInfoNav :isValid="isValid" />
+            <ApplicantInfoNav @nextAction="nextAction()" />
           </v-row>
         </v-col>
       </v-row>
@@ -330,10 +330,11 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
+import newReqModule from '@/store/new-request-module'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { Location } from '@/enums'
+import NameRequestMixin from '@/components/mixins/name-request-mixin'
 
 const _debounce = require('lodash/debounce')
 
@@ -342,7 +343,7 @@ const _debounce = require('lodash/debounce')
     ApplicantInfoNav
   }
 })
-export default class ApplicantInfo1 extends Vue {
+export default class ApplicantInfo1 extends NameRequestMixin {
   debouncedGetAddressSuggestions = _debounce(this.getAddressSuggestions, 400)
   highlightedSuggestion: string | null = null
   isValid: boolean = false
@@ -441,9 +442,6 @@ export default class ApplicantInfo1 extends Vue {
   get countryTypeCd () {
     return (newReqModule.applicant || {}).countryTypeCd || ''
   }
-  get editMode () {
-    return newReqModule.editMode
-  }
   get jurisdictionOptions () {
     return this.location === Location.Canadian
       ? this.$canJurisdictions.filter(jur => jur.value !== Location.BC)
@@ -453,15 +451,6 @@ export default class ApplicantInfo1 extends Vue {
   }
   get location () {
     return newReqModule.location
-  }
-  get nr () {
-    return newReqModule.nr
-  }
-  get nrData () {
-    return newReqModule.nrData
-  }
-  get nrState () {
-    return newReqModule.nrState
   }
   get provinceOptions () {
     return this.$canJurisdictions.map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
@@ -603,9 +592,16 @@ export default class ApplicantInfo1 extends Vue {
     if (val) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
-        this.$el.querySelector("#submit-back-btn-true > span")?.classList.add("applicant-back-btn")
-        this.$el.querySelector("#submit-continue-btn-true > span")?.classList.add("applicant-continue-btn")
+        this.$el.querySelector("#submit-back-btn > span")?.classList.add("applicant-back-btn")
+        this.$el.querySelector("#submit-continue-btn > span")?.classList.add("applicant-continue-btn")
       })
+    }
+  }
+
+  nextAction () {
+    this.validate()
+    if (this.isValid) {
+      this.next()
     }
   }
 }

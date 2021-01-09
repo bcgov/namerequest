@@ -5,6 +5,9 @@ import { ApplicantI } from '@/models'
 
 import newRequestModule, { NewRequestModule } from '@/store/new-request-module'
 import * as filingTypes from "@/modules/payment/filing-types"
+import paymentModule from '@/modules/payment'
+import { sleep } from '@/plugins/sleep'
+import timerModule from '@/modules/vx-timer'
 
 @Component
 export default class NameRequestMixin extends Vue {
@@ -117,5 +120,77 @@ export default class NameRequestMixin extends Vue {
     const nameRequest: NewRequestModule = newRequestModule
     const entity_type_cd: string = nameRequest.entity_type_cd
     return entity_type_cd
+  }
+
+  get nrState () {
+    return newRequestModule.nrState
+  }
+
+  get editMode () {
+    return newRequestModule.editMode
+  }
+
+  get submissionTabNumber (): number {
+    return newRequestModule.submissionTabNumber
+  }
+
+  get type () {
+    return newRequestModule.submissionType
+  }
+
+  back () {
+    newRequestModule.mutateSubmissionTabNumber(this.submissionTabNumber - 1)
+  }
+
+  private isloadingSubmission: boolean = false
+  async next () {
+    if (this.submissionTabNumber === 3) {
+      this.isloadingSubmission = true
+      await this.submit()
+      return
+    }
+    newRequestModule.mutateSubmissionTabNumber(this.submissionTabNumber + 1)
+  }
+
+  /** Submits an edited NR or a new name submission. */
+  async submit () {
+    // FUTURE: fix error handling in case of newReqModule (app or api) error (#5899)
+    const { nrId } = this
+    if (this.editMode) {
+      // stop timer first so it doesn't expire during network requests
+      timerModule.stopTimer({ id: this.$EXISTING_NR_TIMER_NAME })
+      if (await newRequestModule.patchNameRequests()) {
+        if (await newRequestModule.checkinNameRequest()) {
+          newRequestModule.mutateDisplayedComponent('Success')
+          await sleep(1000) // wait for a second to show the update success
+          await this.fetchNr(+nrId)
+        }
+      }
+    } else {
+      let request
+      if (!nrId) {
+        // FUTURE: does a timer have to be stopped here?
+        request = await newRequestModule.postNameRequests('draft')
+      } else {
+        if (!this.editMode && ['COND-RESERVE', 'RESERVED'].includes(this.nrState)) {
+          request = await newRequestModule.getNameRequest(nrId)
+          if (request?.stateCd === 'CANCELLED') {
+            newRequestModule.setActiveComponent('Timeout')
+            this.isloadingSubmission = false
+            // FUTURE: does a timer have to be stopped here before returning?
+            return
+          }
+        }
+        request = await newRequestModule.putNameReservation(nrId)
+        timerModule.stopTimer({ id: this.$NR_COMPLETION_TIMER_NAME })
+      }
+      if (request) await paymentModule.togglePaymentModal(true)
+    }
+    this.isloadingSubmission = false
+  }
+
+  async fetchNr (nrId: number): Promise<void> {
+    const nrData = await newRequestModule.getNameRequest(nrId)
+    await newRequestModule.loadExistingNameRequest(nrData)
   }
 }

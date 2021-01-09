@@ -31,7 +31,7 @@ describe('applicant-info-1.vue', () => {
   it('renders the form', () => {
     expect(wrapper.find('#applicant-info-1-form').element).toBeTruthy()
   })
-  it('Initially renders the disabled continue button', () => {
-    expect(wrapper.find('#submit-continue-btn-false').classes().includes('v-btn--disabled')).toBeTruthy()
+  it('Initially renders the enabled continue button', () => {
+    expect(wrapper.find('#submit-continue-btn').classes().includes('v-btn')).toBeTruthy()
   })
 })
