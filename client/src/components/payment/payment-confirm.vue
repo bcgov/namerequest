@@ -4,7 +4,7 @@
 
     <ul class="fee-list pl-0 mb-n1" v-show="!fetchError">
       <li>
-        <div class="fee-list__item-name">Your Name Request Number is <strong>{{nrNum}}</strong></div>
+        <div class="font-weight-bold nr-num">Your Name Request Number is {{nrNum}}</div>
       </li>
       <li>
         Use this number to check the status of your Name Request
@@ -32,8 +32,8 @@
               <div class="fee-list__item-value">${{receipt.receiptAmount.toFixed(2)}} CAD</div>
             </li>
             <li class="container fee-list__item px-0" v-if="summary">
-              <div class='fee-list__item-name'>Status</div>
-              <div class='fee-list__item-value'>{{summary.statusCode}}</div>
+              <div class="fee-list__item-name">Status</div>
+              <div class="fee-list__item-value">{{summary.statusCode}}</div>
             </li>
           </ul>
         </v-col>
@@ -136,5 +136,9 @@ export default class PaymentConfirm extends Vue {
   font-size: 1.125rem;
   color: $dk-text;
   border-bottom: 1px solid $gray4;
+}
+
+.nr-num {
+  color: $gray9;
 }
 </style>

@@ -149,7 +149,3 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
   }
 }
 </script>
-
-<style lang="scss" scoped>
-@import "@/assets/scss/base";
-</style>
