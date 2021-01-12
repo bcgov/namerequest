@@ -1,14 +1,14 @@
 <template>
-  <v-dialog max-width="40%" :value="isVisible" persistent>
+  <v-dialog max-width="45rem" :value="isVisible" persistent>
     <v-card>
-      <v-card-title class="d-flex justify-space-between">
+      <v-card-title class="d-flex justify-space-between mt-n3">
         <div>Payment Successful</div>
         <v-btn icon large class="dialog-close" @click="hideModal()">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
 
-      <v-card-text class="copy-normal">
+      <v-card-text class="copy-normal pt-4">
         <payment-confirm
           :nrNum="nrNum"
           :applicant="applicant"
@@ -19,10 +19,9 @@
         />
       </v-card-text>
 
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn @click="hideModal()" id="receipt-close-btn" class="normal" text>Done</v-btn>
-        <v-btn @click="downloadReceipt()" id="receipt-download-btn" class="primary" text>Download Receipt</v-btn>
+      <v-card-actions class="pt-1 justify-center">
+        <v-btn @click="downloadReceipt()" id="receipt-download-btn" class="primary px-4">Download Receipt</v-btn>
+        <v-btn @click="hideModal()" id="receipt-close-btn" class="button-blue px-4">Done</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

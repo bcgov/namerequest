@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="50%" :value="isVisible" persistent>
+  <v-dialog max-width="45rem" :value="isVisible" persistent>
     <v-card>
 
       <v-card-title class="d-flex justify-space-between">
