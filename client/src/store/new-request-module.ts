@@ -2477,7 +2477,7 @@ export class NewRequestModule extends VuexModule {
       source = null
     }
     if (destination === 'Tabs') {
-      this.mutateName('')
+      this.mutateName(this.nameOriginal)
       this.mutateUserCancelledAnalysis(false)
     }
     this.setActiveComponent(destination)
