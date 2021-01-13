@@ -37,6 +37,7 @@
     </div>
     <!--All v-dialogue (modal) components App-wide-->
     <Conditions />
+    <ExitModal />
     <LocationInfoModal />
     <MrasSearchInfoModal />
     <HelpMeChoose />
@@ -66,6 +67,7 @@
 <script lang="ts">
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
+import ExitModal from '@/components/modals/exit.vue'
 import Conditions from '@/components/modals/conditions.vue'
 import HelpMeChoose from '@/components/modals/help-me-choose.vue'
 import LocationInfoModal from '@/components/modals/location-info.vue'
@@ -101,6 +103,7 @@ import { RollbackActions } from '@/enums'
   components: {
     TimeoutModal,
     Conditions,
+    ExitModal,
     SbcHeader,
     SbcFooter,
     LocationInfoModal,

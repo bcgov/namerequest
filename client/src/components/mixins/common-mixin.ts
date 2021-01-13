@@ -8,7 +8,7 @@ export default class CommonMixin extends Vue {
     return str && str
       .toLowerCase()
       .split(' ')
-      .map((word: string) => word.replace(word[0], word[0].toUpperCase()))
+      .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ')
   }
 

@@ -42,6 +42,7 @@ import { ErrorI } from '@/modules/error/store/actions'
 import * as paymentTypes from '@/modules/payment/store/types'
 import { PaymentAction, RollbackActions } from '@/enums'
 
+import CommonMixin from '@/components/mixins/common-mixin'
 import PaymentMixin from '@/components/payment/payment-mixin'
 import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
@@ -67,7 +68,12 @@ const DEBUG_RECEIPT = false
     isVisible: () => paymentModule[paymentTypes.PAYMENT_COMPLETE_MODAL_IS_VISIBLE]
   }
 })
-export default class PaymentCompleteModal extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
+export default class PaymentCompleteModal extends Mixins(
+  CommonMixin,
+  NameRequestMixin,
+  PaymentMixin,
+  PaymentSessionMixin
+) {
   async mounted () {
     const { sessionPaymentId, sessionPaymentAction } = this
     // Check for a payment ID in sessionStorage, if it has been set, we've been redirected away from the application,
@@ -133,7 +139,7 @@ export default class PaymentCompleteModal extends Mixins(NameRequestMixin, Payme
   get summary () {
     return {
       completionDate: this.paymentDate,
-      statusCode: this.sbcPaymentStatus
+      statusCode: this.toTitleCase(this.sbcPaymentStatus)
     }
   }
 
