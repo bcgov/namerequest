@@ -30,7 +30,7 @@
                   <v-tooltip :disabled="!data.item.blurbs" right transition="fade-transition">
                     <template v-slot:activator="scope">
                       <span v-on="scope.on" class="list-item">
-                        {{ data.item.text.replace('Relocate into', 'Relocate into BC') }}
+                        {{ displayRequestActionListItem(data.item) }}
                       </span>
                     </template>
                     <span>{{ data.item.blurbs }}</span>
@@ -54,7 +54,7 @@
               <v-select :error-messages="errors.includes('location') ? 'Please select a location' : ''"
                         :hide-details="!errors.includes('location')"
                         :items="locationOptions"
-                        :disabled="!request_action_cd || jurisdictionDisabled"
+                        :disabled="!request_action_cd || locationDisabled"
                         @change="clearErrors()"
                         filled
                         label="Select a Jurisdiction"
@@ -141,7 +141,7 @@
           </template>
         </v-select>
       </v-col>
-      <v-col :cols="isXproMras ? 7 : 12" class="mt-2" :class="{ 'pl-3': (isXproMras && !isFederal) }">
+      <v-col :cols="isXproMras ? 8 : 12" class="mt-2" :class="{ 'pl-3': (isXproMras && !isFederal) }">
         <NameInput v-if="!isFederal"
                    :class="inputCompClass"
                    :is-mras-search="(isXproMras && !noCorpNum)"
@@ -251,7 +251,7 @@ export default class NewSearch extends Vue {
   // Local Properties
   private corpNumValid: boolean = true
   private corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
-  private jurisdictionDisabled: boolean = false
+  private locationDisabled: boolean = false
 
   private mounted () {
     // add classname to button text (for more detail in Sentry breadcrumbs)
@@ -269,10 +269,10 @@ export default class NewSearch extends Vue {
     // Set default location to BC for the requests where BC is the only location option
     if (['CNV', 'MVE'].includes(newVal)) {
       this.location = 'BC'
-      this.jurisdictionDisabled = true
+      this.locationDisabled = true
       return
     }
-    this.jurisdictionDisabled = false
+    this.locationDisabled = false
     if (['ASSUMED'].includes(newVal)) {
       if (this.location === 'BC') {
         this.location = 'CA'
@@ -419,6 +419,12 @@ export default class NewSearch extends Vue {
   }
   clearErrors () {
     newReqModule.clearErrors()
+  }
+  displayRequestActionListItem (item) {
+    if (item && item.text) {
+      return item.text.replace('Relocate into', 'Relocate into BC')
+    }
+    return ''
   }
   async handleSubmit () {
     if (this.isXproMras) this.$root.$emit('showSpinner', true)

@@ -8,27 +8,17 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-function setState () {
-  newReqModule.mutateEntityType('CR')
-  newReqModule.mutateLocation('BC')
-  newReqModule.mutateRequestAction('NEW')
-  newReqModule.mutateAnalyzePending(true)
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve('resolved')
-    }, 100)
-  })
-}
-
 describe('analyze-pending.vue', () => {
   let wrapper: any
-  beforeEach(async (done) => {
-    await setState()
+  beforeAll(async () => {
+    newReqModule.mutateEntityType('CR')
+    newReqModule.mutateLocation('BC')
+    newReqModule.mutateRequestAction('NEW')
+    newReqModule.mutateAnalyzePending(true)
     wrapper = mount(AnalyzePending, {
       localVue,
       vuetify
     })
-    done()
   })
   it('renders a spinner', () => {
     expect(wrapper.find('#analyze-pending-spinner').element).toBeTruthy()

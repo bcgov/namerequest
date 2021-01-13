@@ -66,7 +66,7 @@ describe('landing.vue', () => {
 describe('landing.vue', () => {
   let wrapper: any
 
-  beforeEach(() => {
+  beforeAll(() => {
     newReqModule.mutateRequestAction('NEW')
     newReqModule.mutateLocation('BC')
     newReqModule.mutateEntityType('CR')
