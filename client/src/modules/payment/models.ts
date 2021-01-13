@@ -1,10 +1,5 @@
 import { ErrorI } from '@/modules/error/store/actions'
 
-export const PaymentStatus = {
-  CREATED: 'CREATED',
-  COMPLETED: 'COMPLETED'
-}
-
 export const SbcPaymentStatus = {
   CREATED: 'CREATED',
   COMPLETED: 'COMPLETED'

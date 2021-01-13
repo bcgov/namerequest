@@ -8,6 +8,7 @@ import * as filingTypes from "@/modules/payment/filing-types"
 import paymentModule from '@/modules/payment'
 import { sleep } from '@/plugins/sleep'
 import timerModule from '@/modules/vx-timer'
+import { NrState } from '@/enums'
 
 @Component
 export default class NameRequestMixin extends Vue {
@@ -172,9 +173,9 @@ export default class NameRequestMixin extends Vue {
         // FUTURE: does a timer have to be stopped here?
         request = await newRequestModule.postNameRequests('draft')
       } else {
-        if (!this.editMode && ['COND-RESERVE', 'RESERVED'].includes(this.nrState)) {
+        if (!this.editMode && [NrState.COND_RESERVED, NrState.RESERVED].includes(this.nrState)) {
           request = await newRequestModule.getNameRequest(nrId)
-          if (request?.stateCd === 'CANCELLED') {
+          if (request?.stateCd === NrState.CANCELLED) {
             newRequestModule.setActiveComponent('Timeout')
             this.isloadingSubmission = false
             // FUTURE: does a timer have to be stopped here before returning?
