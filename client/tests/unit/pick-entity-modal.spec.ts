@@ -19,6 +19,8 @@ describe('name-input.vue', () => {
       localVue,
       vuetify
     })
+    newReqModule.mutateRequestAction('NEW')
+    newReqModule.mutateLocation('BC')
   })
 
   afterEach(() => {
@@ -30,13 +32,14 @@ describe('name-input.vue', () => {
   })
 
   it('When the location is not set to BC, it displays XPRO options', async () => {
-    newReqModule.mutateLocation('CA')
+    newReqModule.mutateLocation(null)
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.tableData).toStrictEqual(wrapper.vm.tableDataXPRO)
   })
 
   it('clicking an entity sets the entity_type_cd and closes the modal', async (): Promise<void> => {
     wrapper.vm.showModal = true
+    newReqModule.mutateLocation('CA')
     await wrapper.vm.$nextTick()
     let foreignCorp = wrapper.find('#XCR')
     foreignCorp.trigger('click')

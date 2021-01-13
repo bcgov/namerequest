@@ -10,7 +10,7 @@
     </v-row>
 
     <v-row class="mt-4" no-gutters>
-      <v-col cols="5">
+      <v-col cols="4">
         <!--request_action_cd-->
         <v-tooltip top
                    id="search-type-options-select"
@@ -19,16 +19,20 @@
                    :disabled="request_action_cd !== 'CNV'">
           <template v-slot:activator="scope">
             <div v-on="scope.on">
-              <v-select :error-messages="errors.includes('request_action_cd') ? 'Please select a type' : ''"
+              <v-select :error-messages="errors.includes('request_action_cd') ? 'Please select an action' : ''"
                         :hide-details="!errors.includes('request_action_cd')"
                         :items="requestActions"
                         @change="clearErrors()"
+                        class="select-drop-down"
+                        label="Select an Action"
                         filled
                         v-model="request_action_cd">
                 <template slot="item" slot-scope="data">
                   <v-tooltip :disabled="!data.item.blurbs" right transition="fade-transition">
                     <template v-slot:activator="scope">
-                      <span v-on="scope.on" class="list-item">{{ data.item.text }}</span>
+                      <span v-on="scope.on" class="list-item">
+                        {{ data.item.text.replace('Relocate into', 'Relocate into BC') }}
+                      </span>
                     </template>
                     <span>{{ data.item.blurbs }}</span>
                   </v-tooltip>
@@ -36,26 +40,29 @@
               </v-select>
             </div>
           </template>
-          <span>{{requestText}}</span>
+          <span>{{ requestText }}</span>
         </v-tooltip>
       </v-col>
-      <v-col cols="2" class="px-3">
+      <v-col cols="4" class="px-3">
         <!--location-->
         <v-tooltip id="location-options-select"
                    top
                    content-class="top-tooltip"
                    transition="fade-transition"
-                   :disabled="location === 'BC'">
+                   :disabled="!location || location === 'BC'">
           <template v-slot:activator="scope">
             <div v-on="scope.on">
               <v-select :error-messages="errors.includes('location') ? 'Please select a location' : ''"
                         :hide-details="!errors.includes('location')"
                         :items="locationOptions"
+                        :disabled="!request_action_cd || jurisdictionDisabled"
                         @change="clearErrors()"
+                        class="select-drop-down"
                         filled
+                        label="Select a Jurisdiction"
                         v-model="location">
                 <template slot="item" slot-scope="data">
-                  <v-tooltip :disabled="!data.item.blurbs" right transition="fade-transition">
+                  <v-tooltip :disabled="!request_action_cd || !data.item.blurbs" right transition="fade-transition">
                     <template v-slot:activator="scope">
                       <span v-on="scope.on" class="list-item">{{ data.item.text }}</span>
                     </template>
@@ -73,7 +80,7 @@
           <span>{{ locationText }}</span>
         </v-tooltip>
       </v-col>
-      <v-col cols="5">
+      <v-col cols="4">
         <!--entityConversionType-->
         <v-tooltip id="entity-type-options-select"
                    top
@@ -85,8 +92,10 @@
               <v-select :error-messages="errors.includes('entity_type_cd') ? 'Please select a type' : ''"
                         :hide-details="!errors.includes('entity_type_cd')"
                         :items="entityConversionTypeOptions"
-                        :label="isConversion ? 'Please choose a conversion type' : ''"
+                        :label="isConversion ? 'Select an Alteration Type' : 'Select a Business Type'"
+                        :disabled="!request_action_cd || !location"
                         @change="clearErrors()"
+                        class="select-drop-down"
                         filled
                         v-model="entity_type_cd">
                 <template slot="item" slot-scope="data">
@@ -120,12 +129,13 @@
     </v-row>
 
     <v-row class="mt-4" no-gutters>
-      <v-col cols="5" v-if="isXproMras">
+      <v-col cols="4" v-if="isXproMras">
         <v-select :error-messages="errors.includes('jurisdiction') ? 'Please select a jurisdiction' : ''"
                   :hide-details="!errors.includes('jurisdiction')"
                   :items="jurisdictionOptions"
                   label="Select business's home jurisdiction"
                   @change="clearErrors()"
+                  class="select-drop-down"
                   filled
                   v-model="jurisdiction">
           <template slot="item" slot-scope="data">
@@ -219,7 +229,7 @@
     </v-row>
 
     <div v-if="!isFederal" class="mt-6 text-center">
-      <v-btn id="search-name-btn" :disabled="!corpNumValid" @click="handleSubmit()">
+      <v-btn id="search-name-btn" :disabled="!corpNumValid || !allFieldsSelected" @click="handleSubmit()">
         {{ isXproMras ? 'Search' : 'Search Name'}}
       </v-btn>
     </div>
@@ -245,6 +255,7 @@ export default class NewSearch extends Vue {
   // Local Properties
   private corpNumValid: boolean = true
   private corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
+  private jurisdictionDisabled: boolean = false
 
   private mounted () {
     // add classname to button text (for more detail in Sentry breadcrumbs)
@@ -259,19 +270,13 @@ export default class NewSearch extends Vue {
   }
   @Watch('request_action_cd')
   watchRequestActionCd (newVal) {
-    if (Object.keys(bcMapping).includes(newVal) && ['BC'].includes(this.location)) {
-      let { value } = newReqModule.entityTypesBCData.find(ent => ent.rank === 1)
-      newReqModule.mutateEntityType(value)
-    }
-    if (Object.keys(xproMapping).includes(newVal) && ['CA', 'IN'].includes(this.location)) {
-      let { value } = newReqModule.entityTypesXPROData.find(ent => ent.rank === 1)
-      newReqModule.mutateEntityType(value)
-    }
     // Set default location to BC for the requests where BC is the only location option
     if (['CNV', 'MVE'].includes(newVal)) {
       this.location = 'BC'
+      this.jurisdictionDisabled = true
       return
     }
+    this.jurisdictionDisabled = false
     if (['ASSUMED'].includes(newVal)) {
       if (this.location === 'BC') {
         this.location = 'CA'
@@ -286,7 +291,10 @@ export default class NewSearch extends Vue {
     'CHG'
   ]
   entityBlurbs (entity_type_cd: string) {
-    return newReqModule.entityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || ''
+    if (newReqModule.entityBlurbs) {
+      return newReqModule.entityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || ''
+    }
+    return ''
   }
   get isScreenLg () {
     return this.$vuetify.breakpoint.lgAndUp
@@ -304,7 +312,7 @@ export default class NewSearch extends Vue {
     if (type === 'INFO') {
       newReqModule.mutatePickEntityModalVisible(true)
     }
-    if (this.isConversion) {
+    if (type && this.isConversion) {
       if (type !== 'INFO') {
         let { entity_type_cd } = newReqModule.conversionTypes.find(conv => conv.value === type)
         newReqModule.mutateEntityType(entity_type_cd)
@@ -328,6 +336,10 @@ export default class NewSearch extends Vue {
   }
   get errors () {
     return newReqModule.errors
+  }
+  get allFieldsSelected () {
+    return newReqModule.request_action_cd && newReqModule.location &&
+      ((!this.isConversion && newReqModule.entity_type_cd) || (this.isConversion && newReqModule.conversionType))
   }
   get inputCompClass () {
     let errorTypes = ['entity_type_cd', 'request_action_cd', 'location']
@@ -383,6 +395,10 @@ export default class NewSearch extends Vue {
   }
   set request_action_cd (value: string) {
     const request = this.requestActions.find(request => request.value === value)
+    this.location = null
+    if (this.entity_type_cd) {
+      this.entity_type_cd = ''
+    }
     if (request.value !== 'NEW') {
       newReqModule.mutateExtendedRequestType(request)
     }
@@ -432,6 +448,9 @@ export default class NewSearch extends Vue {
 .list-item:hover {
   color: $app-blue;
 }
+.select-drop-down {
+  padding-top: 0 !important;
+}
 #search-name-btn {
   min-height: 45px !important;
   padding: 0 50px !important;
@@ -448,9 +467,18 @@ export default class NewSearch extends Vue {
   .v-select:not(.v-select--is-multi).v-text-field--single-line .v-select__selections{
     line-height: 2;
   }
+  .v-select__selections {
+    line-height: 1.5rem !important;
+  }
   /* remove bottom margin from checkboxes */
   .v-input--checkbox > .v-input__slot {
     margin-bottom: 0 !important;
+  }
+  .v-input--is-disabled .v-input__icon {
+    display: none !important;
+  }
+  .v-select__selection--disabled {
+    color: $gray9 !important;
   }
 }
 </style>

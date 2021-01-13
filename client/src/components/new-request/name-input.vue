@@ -87,7 +87,8 @@ export default class NameInput extends Vue {
   }
   get nameLabel () {
     if (this.isMrasSearch) return 'Enter the corporate number assigned by the home jurisdiction'
-    return newReqModule.location !== Location.BC && newReqModule.request_action_cd !== RequestCode.MOVE
+    return newReqModule.location && newReqModule.location !== Location.BC &&
+      newReqModule.request_action_cd !== RequestCode.MOVE
       ? 'Business\'s full legal name in home jurisdiction'
       : 'Enter a Name'
   }

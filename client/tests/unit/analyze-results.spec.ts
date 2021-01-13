@@ -11,6 +11,9 @@ localVue.use(Vuetify)
 const vuetify = new Vuetify()
 
 function setState (data) {
+  newReqModule.mutateEntityType('CR')
+  newReqModule.mutateLocation('BC')
+  newReqModule.mutateRequestAction('NEW')
   newReqModule.mutateName(data['name'])
   newReqModule.mutateAnalysisJSON(data['analysisJSON'])
   return new Promise(resolve => {
