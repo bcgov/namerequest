@@ -172,9 +172,9 @@ import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
-import { NameState, NrAction, NrState } from '@/enums'
+import { NameState, NrAction, NrState, PaymentStatus } from '@/enums'
 import { sleep } from '@/plugins/sleep'
-import { PaymentStatus, SbcPaymentStatus } from '@/modules/payment/models'
+import { SbcPaymentStatus } from '@/modules/payment/models'
 import { getBaseUrl } from '@/components/payment/payment-utils'
 
 @Component({
@@ -452,11 +452,11 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   private get isNotPaid () {
-    return this.pendingPayment?.sbcPayment?.statusCode === 'CREATED'
+    return this.pendingPayment?.sbcPayment?.statusCode === PaymentStatus.CREATED
   }
 
   private get isPaymentProcessing () {
-    return this.pendingPayment?.sbcPayment?.statusCode === 'COMPLETED'
+    return this.pendingPayment?.sbcPayment?.statusCode === PaymentStatus.COMPLETED
   }
 
   /** Returns True if the specified action should display a red button. */

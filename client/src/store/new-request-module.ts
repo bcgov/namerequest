@@ -43,7 +43,7 @@ import { NameRequestPayment } from '@/modules/payment/models'
 
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
-import { NrAction, RollbackActions } from '@/enums'
+import { NrAction, NrState, RollbackActions } from '@/enums'
 import { featureFlags } from '@/plugins/featureFlags'
 import { OK, BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
 
@@ -1456,7 +1456,7 @@ export class NewRequestModule extends VuexModule {
       entity_type_cd: this.entity_type_cd,
       request_action_cd: this.request_action_cd,
       request_type_cd: this.xproRequestTypeCd ? this.xproRequestTypeCd : '',
-      stateCd: 'COND-RESERVE',
+      stateCd: NrState.COND_RESERVED,
       english: this.nameIsEnglish,
       nameFlag: this.isPersonsName,
       submit_count: 0,
@@ -1482,7 +1482,7 @@ export class NewRequestModule extends VuexModule {
       priorityCd: this.priorityRequest ? 'Y' : 'N',
       entity_type_cd: this.entity_type_cd,
       request_action_cd: this.request_action_cd,
-      stateCd: 'DRAFT',
+      stateCd: NrState.DRAFT,
       english: this.nameIsEnglish,
       nameFlag: this.isPersonsName,
       submit_count: 0,
@@ -1676,7 +1676,7 @@ export class NewRequestModule extends VuexModule {
       // @ts-ignore TODO: This is not typed correctly!
       entity_type_cd: this.entity_type_cd,
       request_action_cd: this.request_action_cd,
-      stateCd: 'RESERVED',
+      stateCd: NrState.RESERVED,
       english: this.nameIsEnglish,
       nameFlag: this.isPersonsName,
       submit_count: 0,
@@ -2339,21 +2339,28 @@ export class NewRequestModule extends VuexModule {
   async putNameReservation (nrId) {
     let { nrState } = this
     if (this.isAssumedName) nrState = 'ASSUMED'
-
     try {
       let data: any
       switch (nrState) {
-        case 'DRAFT':
+        case NrState.DRAFT:
           data = this.draftNameReservation
           break
-        case 'COND-RESERVE':
+        case NrState.COND_RESERVED:
           data = this.conditionalNameReservation
           break
-        case 'RESERVED':
+        case NrState.RESERVED:
           data = this.reservedNameReservation
           break
         case 'ASSUMED':
           data = this.editNameReservation
+          break
+        case NrState.PENDING_PAYMENT:
+          // The user clicked Review and Confirm, which POSTed the draft NR.
+          // Then they closed the modal (eg, so they could fix something),
+          // and now they clicked Review and Confirm again.
+          // Treat this like a new NR, but keep the same state.
+          data = this.draftNameReservation
+          data['stateCd'] = NrState.PENDING_PAYMENT
           break
       }
 
