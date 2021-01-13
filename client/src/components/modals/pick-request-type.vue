@@ -9,31 +9,31 @@
         <v-row>
           <v-col cols="6">
             <v-simple-table class="text-left">
-          <tr v-for="type in tableData.col1" :key="type.value+'-tr'">
-            <td class="clickable-cell" :id="type.value" @click="chooseType(type)">
-              <v-tooltip bottom max-width="500">
-                <template v-slot:activator="scope">
-                  <button class="link-sm-sans-ul" v-on="scope.on">{{ type.text }}</button>
-                </template>
-                <span>{{ type.blurb }}</span>
-              </v-tooltip>
-            </td>
-          </tr>
-        </v-simple-table>
+              <tr v-for="type in tableData.col1" :key="type.value+'-tr'">
+                <td class="clickable-cell" :id="type.value" @click="chooseType(type)">
+                  <v-tooltip bottom max-width="500">
+                    <template v-slot:activator="scope">
+                      <button class="link-sm-sans-ul" v-on="scope.on">{{ type.text }}</button>
+                    </template>
+                    <span>{{ type.blurb }}</span>
+                  </v-tooltip>
+                </td>
+              </tr>
+            </v-simple-table>
           </v-col>
           <v-col cols="6">
             <v-simple-table class="text-left">
-          <tr v-for="type in tableData.col2" :key="type.value+'-tr'">
-            <td class="clickable-cell" :id="type.value" @click="chooseType(type)">
-              <v-tooltip bottom max-width="500">
-                <template v-slot:activator="scope">
-                  <button class="link-sm-sans-ul" v-on="scope.on">{{ type.text }}</button>
-                </template>
-                <span>{{ type.blurb }}</span>
-              </v-tooltip>
-            </td>
-          </tr>
-        </v-simple-table>
+              <tr v-for="type in tableData.col2" :key="type.value+'-tr'">
+                <td class="clickable-cell" :id="type.value" @click="chooseType(type)">
+                  <v-tooltip bottom max-width="500">
+                    <template v-slot:activator="scope">
+                      <button class="link-sm-sans-ul" v-on="scope.on">{{ type.text }}</button>
+                    </template>
+                    <span>{{ type.blurb }}</span>
+                  </v-tooltip>
+                </td>
+              </tr>
+            </v-simple-table>
           </v-col>
         </v-row>
       </v-container>

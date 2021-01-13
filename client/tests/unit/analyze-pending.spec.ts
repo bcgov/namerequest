@@ -1,6 +1,7 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuetify from 'vuetify'
-import Comp from '@/components/new-request/analyze-pending.vue'
+import AnalyzePending from '@/components/new-request/analyze-pending.vue'
+import newReqModule from '@/store/new-request-module'
 
 const localVue = createLocalVue()
 const vuetify = new Vuetify()
@@ -8,9 +9,16 @@ const vuetify = new Vuetify()
 localVue.use(Vuetify)
 
 describe('analyze-pending.vue', () => {
-  const wrapper = mount(Comp, {
-    localVue,
-    vuetify
+  let wrapper: any
+  beforeAll(async () => {
+    newReqModule.mutateEntityType('CR')
+    newReqModule.mutateLocation('BC')
+    newReqModule.mutateRequestAction('NEW')
+    newReqModule.mutateAnalyzePending(true)
+    wrapper = mount(AnalyzePending, {
+      localVue,
+      vuetify
+    })
   })
   it('renders a spinner', () => {
     expect(wrapper.find('#analyze-pending-spinner').element).toBeTruthy()
