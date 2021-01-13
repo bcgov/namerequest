@@ -23,7 +23,6 @@
                         :hide-details="!errors.includes('request_action_cd')"
                         :items="requestActions"
                         @change="clearErrors()"
-                        class="select-drop-down"
                         label="Select an Action"
                         filled
                         v-model="request_action_cd">
@@ -57,7 +56,6 @@
                         :items="locationOptions"
                         :disabled="!request_action_cd || jurisdictionDisabled"
                         @change="clearErrors()"
-                        class="select-drop-down"
                         filled
                         label="Select a Jurisdiction"
                         v-model="location">
@@ -95,7 +93,6 @@
                         :label="isConversion ? 'Select an Alteration Type' : 'Select a Business Type'"
                         :disabled="!request_action_cd || !location"
                         @change="clearErrors()"
-                        class="select-drop-down"
                         filled
                         v-model="entity_type_cd">
                 <template slot="item" slot-scope="data">
@@ -135,7 +132,6 @@
                   :items="jurisdictionOptions"
                   label="Select business's home jurisdiction"
                   @change="clearErrors()"
-                  class="select-drop-down"
                   filled
                   v-model="jurisdiction">
           <template slot="item" slot-scope="data">
@@ -447,9 +443,6 @@ export default class NewSearch extends Vue {
 }
 .list-item:hover {
   color: $app-blue;
-}
-.select-drop-down {
-  padding-top: 0 !important;
 }
 #search-name-btn {
   min-height: 45px !important;
