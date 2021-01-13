@@ -3,6 +3,7 @@ import * as paymentTypes from '@/modules/payment/store/types'
 import * as paymentService from '@/modules/payment/services'
 import paymentModule from '@/modules/payment'
 import { CreatePaymentParams } from '@/modules/payment/models'
+import { PaymentStatus } from '@/enums'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 
@@ -28,7 +29,7 @@ export default class PaymentMixin extends Vue {
     return this.$store.getters[paymentTypes.GET_PAYMENT_TOKEN]
   }
 
-  get paymentStatus () {
+  get paymentStatus (): PaymentStatus {
     return this.$store.getters[paymentTypes.GET_PAYMENT_STATUS]
   }
 
