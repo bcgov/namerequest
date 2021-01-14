@@ -30,7 +30,7 @@
                   <v-tooltip :disabled="!data.item.blurbs" right transition="fade-transition">
                     <template v-slot:activator="scope">
                       <span v-on="scope.on" class="list-item">
-                        {{ displayRequestActionListItem(data.item) }}
+                        {{ data.item.text }}
                       </span>
                     </template>
                     <span>{{ data.item.blurbs }}</span>
@@ -54,7 +54,9 @@
               <v-select :error-messages="errors.includes('location') ? 'Please select a location' : ''"
                         :hide-details="!errors.includes('location')"
                         :items="locationOptions"
-                        :disabled="!request_action_cd || locationDisabled"
+                        :disabled="locationDisabled"
+                        :readonly="!request_action_cd"
+                        :class="setClass(!request_action_cd)"
                         @change="clearErrors()"
                         filled
                         label="Select a Jurisdiction"
@@ -91,7 +93,8 @@
                         :hide-details="!errors.includes('entity_type_cd')"
                         :items="entityConversionTypeOptions"
                         :label="isConversion ? 'Select an Alteration Type' : 'Select a Business Type'"
-                        :disabled="!request_action_cd || !location"
+                        :readonly="!request_action_cd || !location"
+                        :class="setClass(!location)"
                         @change="clearErrors()"
                         filled
                         v-model="entity_type_cd">
@@ -419,11 +422,8 @@ export default class NewSearch extends Vue {
   clearErrors () {
     newReqModule.clearErrors()
   }
-  displayRequestActionListItem (item) {
-    if (item && item.text) {
-      return item.text.replace('Relocate into', 'Relocate into BC')
-    }
-    return ''
+  setClass (value) {
+    return value ? 'disabled-custom' : ''
   }
   async handleSubmit () {
     if (this.isXproMras) this.$root.$emit('showSpinner', true)
@@ -448,6 +448,10 @@ export default class NewSearch extends Vue {
 }
 .list-item:hover {
   color: $app-blue;
+}
+.disabled-custom {
+  opacity: 0.4;
+  pointer-events: none;
 }
 #search-name-btn {
   min-height: 45px !important;
