@@ -70,7 +70,10 @@
                               :name="Math.random()"/>
               </v-col>
               <v-col cols="4" class="py-0" v-if="designationAtEnd">
-                <v-tooltip bottom transition="fade-transition" content-class="bottom-tooltip">
+                <v-tooltip top
+                  transition="fade-transition"
+                  content-class="top-tooltip designation-tooltip"
+                >
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
                       <v-select :error-messages="des1Message"
@@ -105,7 +108,10 @@
                               :name="Math.random()"/>
               </v-col>
               <v-col cols="4" class="py-0" v-if="isAssumedName">
-                <v-tooltip bottom transition="fade-transition" content-class="bottom-tooltip">
+                <v-tooltip top
+                  transition="fade-transition"
+                  content-class="top-tooltip designation-tooltip"
+                >
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
                       <v-select :error-messages="des1Message"
@@ -190,7 +196,10 @@
                               :name="Math.random()" />
               </v-col>
               <v-col cols="4" class="py-0" v-if="designationAtEnd">
-                <v-tooltip bottom transition="fade-transition" content-class="bottom-tooltip">
+                <v-tooltip top
+                  transition="fade-transition"
+                  content-class="top-tooltip designation-tooltip"
+                >
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
                       <v-select :error-messages="des2Message"
@@ -234,7 +243,10 @@
                               :name="Math.random()" />
               </v-col>
               <v-col cols="4" class="py-0" style="height: 60px" v-if="designationAtEnd">
-                <v-tooltip bottom transition="fade-transition" content-class="bottom-tooltip">
+                <v-tooltip top
+                  transition="fade-transition"
+                  content-class="top-tooltip designation-tooltip"
+                >
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
                       <v-select :error-messages="des3Message"
@@ -889,5 +901,11 @@ export default class NamesCapture extends NameRequestMixin {
 
 ::v-deep .theme--light.v-input--is-disabled input, .theme--light.v-input--is-disabled textarea {
   color: $gray9 !important;
+}
+
+.designation-tooltip {
+  padding: 15px 0 0 0 !important;
+  text-align: center;
+  width: 280px !important;
 }
 </style>
