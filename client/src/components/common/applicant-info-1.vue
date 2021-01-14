@@ -433,13 +433,15 @@ export default class ApplicantInfo1 extends Vue {
     return newReqModule.addressSuggestions
   }
   get applicant () {
-    return newReqModule.applicant
+    // if applicant is null/undefined then return an object
+    // to prevent dereference errors (ie, cannot read property X of undefined)
+    return newReqModule.applicant || {}
   }
   get countryOptions () {
     return this.$intJurisdictions
   }
   get countryTypeCd () {
-    return (newReqModule.applicant || {}).countryTypeCd || ''
+    return newReqModule.applicant?.countryTypeCd || ''
   }
   get editMode () {
     return newReqModule.editMode

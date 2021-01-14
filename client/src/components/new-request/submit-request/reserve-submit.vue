@@ -24,8 +24,10 @@ export default class ReserveSubmitButton extends Vue {
   private isContinue: boolean = true
 
   private mounted () {
-    // add classname to button text (for more detail in Sentry breadcrumbs)
-    this.$el.querySelector("#reserve-submit-btn > span")?.classList.add("reserve-submit-btn")
+    this.$nextTick(() => {
+      // add classname to button text (for more detail in Sentry breadcrumbs)
+      this.$el.querySelector("#reserve-submit-btn > span")?.classList.add("reserve-submit-btn")
+    })
   }
 
   get entity_type_cd () {
