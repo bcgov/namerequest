@@ -43,7 +43,7 @@ import { NameRequestPayment } from '@/modules/payment/models'
 
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
-import { NrAction, RollbackActions } from '@/enums'
+import { NrAction, NrState, RollbackActions } from '@/enums'
 import { featureFlags } from '@/plugins/featureFlags'
 import { OK, BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
 
@@ -1446,7 +1446,7 @@ export class NewRequestModule extends VuexModule {
       entity_type_cd: this.entity_type_cd,
       request_action_cd: this.request_action_cd,
       request_type_cd: this.xproRequestTypeCd ? this.xproRequestTypeCd : '',
-      stateCd: 'COND-RESERVE',
+      stateCd: NrState.COND_RESERVED,
       english: this.nameIsEnglish,
       nameFlag: this.isPersonsName,
       submit_count: 0,
@@ -1472,7 +1472,7 @@ export class NewRequestModule extends VuexModule {
       priorityCd: this.priorityRequest ? 'Y' : 'N',
       entity_type_cd: this.entity_type_cd,
       request_action_cd: this.request_action_cd,
-      stateCd: 'DRAFT',
+      stateCd: NrState.DRAFT,
       english: this.nameIsEnglish,
       nameFlag: this.isPersonsName,
       submit_count: 0,
@@ -1666,7 +1666,7 @@ export class NewRequestModule extends VuexModule {
       // @ts-ignore TODO: This is not typed correctly!
       entity_type_cd: this.entity_type_cd,
       request_action_cd: this.request_action_cd,
-      stateCd: 'RESERVED',
+      stateCd: NrState.RESERVED,
       english: this.nameIsEnglish,
       nameFlag: this.isPersonsName,
       submit_count: 0,
@@ -1676,7 +1676,7 @@ export class NewRequestModule extends VuexModule {
   }
 
   /** Map the appropriate Blurb based on the request action and location */
-  get entityBlurbs (): any {
+  get entityBlurbs (): Array<any> {
     switch (this.request_action_cd) {
       // NEW REQUEST
       case 'NEW':
@@ -1737,10 +1737,8 @@ export class NewRequestModule extends VuexModule {
           return this.conversionTypes
         }
         break
-      default:
-        return ''
     }
-    return ''
+    return null
   }
 
   @Action
@@ -2329,21 +2327,28 @@ export class NewRequestModule extends VuexModule {
   async putNameReservation (nrId) {
     let { nrState } = this
     if (this.isAssumedName) nrState = 'ASSUMED'
-
     try {
       let data: any
       switch (nrState) {
-        case 'DRAFT':
+        case NrState.DRAFT:
           data = this.draftNameReservation
           break
-        case 'COND-RESERVE':
+        case NrState.COND_RESERVED:
           data = this.conditionalNameReservation
           break
-        case 'RESERVED':
+        case NrState.RESERVED:
           data = this.reservedNameReservation
           break
         case 'ASSUMED':
           data = this.editNameReservation
+          break
+        case NrState.PENDING_PAYMENT:
+          // The user clicked Review and Confirm, which POSTed the draft NR.
+          // Then they closed the modal (eg, so they could fix something),
+          // and now they clicked Review and Confirm again.
+          // Treat this like a new NR, but keep the same state.
+          data = this.draftNameReservation
+          data['stateCd'] = NrState.PENDING_PAYMENT
           break
       }
 
@@ -2777,24 +2782,26 @@ export class NewRequestModule extends VuexModule {
 
   @Action
   async fetchMRASProfile (): Promise<any> {
-    try {
-      let url = `mras-profile/${this.request_jurisdiction_cd}/${this.corpSearch}`
-      const response = await axios.get(url)
-      if (response?.status === OK) {
-        return response.data
+    if (this.corpSearch) {
+      try {
+        let url = `mras-profile/${this.request_jurisdiction_cd}/${this.corpSearch}`
+        const response = await axios.get(url)
+        if (response?.status === OK) {
+          return response.data
+        }
+        throw new Error(`Status was not 200, response = ${response}`)
+      } catch (err) {
+        const status: number = err?.response?.status
+        // do not generate console error for the errors codes
+        // that mras-search-info page handles
+        if (![BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE].includes(status)) {
+          const msg = await handleApiError(err, 'Could not fetch mras profile')
+          console.error('fetchMRASProfile() =', msg) // eslint-disable-line no-console
+        }
+        this.mutateName('')
+        this.mutateMrasSearchResult(status)
+        this.mutateMrasSearchInfoModalVisible(true)
       }
-      throw new Error(`Status was not 200, response = ${response}`)
-    } catch (err) {
-      const status: number = err?.response?.status
-      // do not generate console error for the errors codes
-      // that mras-search-info page handles
-      if (![BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE].includes(status)) {
-        const msg = await handleApiError(err, 'Could not fetch mras profile')
-        console.error('fetchMRASProfile() =', msg) // eslint-disable-line no-console
-      }
-      this.mutateName('')
-      this.mutateMrasSearchResult(status)
-      this.mutateMrasSearchInfoModalVisible(true)
     }
     return null
   }

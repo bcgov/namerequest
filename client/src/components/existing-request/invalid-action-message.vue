@@ -14,6 +14,7 @@
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import MainContainer from '@/components/new-request/main-container.vue'
+import { NrState } from '@/enums'
 
 @Component({
   components: { MainContainer }
@@ -28,18 +29,20 @@ export default class InvalidActionMessage extends Vue {
     return newReqModule.nr
   }
   get stateCd (): string {
-    return ((this.nr || {}).stateCd) || ''
+    return (this.nr?.stateCd || '')
   }
   get details () {
     switch (this.stateCd) {
-      case 'APPROVED':
-      case 'CONDITIONAL':
-      case 'REJECTED':
+      case NrState.APPROVED:
+      case NrState.CONDITIONAL:
+      case NrState.REJECTED:
         return {
           heading: 'We have finished examining your Name Request',
-          details: `Your request has been ${this.stateCd === 'CONDITIONAL' ? 'CONDITIONALLY APPROVED' : this.stateCd}`
+          details: 'Your request has been ' +
+            (this.stateCd === NrState.CONDITIONAL ? 'CONDITIONALLY APPROVED' : this.stateCd) +
+            '.'
         }
-      case 'CANCELLED':
+      case NrState.CANCELLED:
         return {
           heading: 'Unfortunately your Name Request has been CANCELLED',
           details: 'Please contact <i>Registries and Online Services</i> at 250-387-7848 if you require ' +

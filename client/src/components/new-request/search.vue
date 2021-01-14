@@ -247,8 +247,10 @@ export default class NewSearch extends Vue {
   private corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
 
   private mounted () {
-    // add classname to button text (for more detail in Sentry breadcrumbs)
-    this.$el.querySelector("#search-name-btn > span")?.classList.add("search-name-btn")
+    this.$nextTick(() => {
+      // add classname to button text (for more detail in Sentry breadcrumbs)
+      this.$el.querySelector("#search-name-btn > span")?.classList.add("search-name-btn")
+    })
   }
 
   /** Reset search values when location changes */
@@ -285,8 +287,8 @@ export default class NewSearch extends Vue {
     'AML',
     'CHG'
   ]
-  entityBlurbs (entity_type_cd: string) {
-    return newReqModule.entityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || ''
+  entityBlurbs (entity_type_cd: string): Array<string> {
+    return newReqModule.entityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || []
   }
   get isScreenLg () {
     return this.$vuetify.breakpoint.lgAndUp

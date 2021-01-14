@@ -140,8 +140,8 @@ export default class PickEntityOrConversion extends Vue {
     // 210 per column with a max threshold of 960px
     return `${210 * cols > maxThreshold ? maxThreshold : 210 * cols}px`
   }
-  entityBlurbs (entity_type_cd: string) {
-    return newReqModule.entityBlurbs && newReqModule.entityBlurbs.find(type => type.value === entity_type_cd)?.blurbs
+  entityBlurbs (entity_type_cd: string): Array<string> {
+    return newReqModule.entityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || []
   }
   clearEntitySelection () {
     this.entity_type_cd = 'INFO'

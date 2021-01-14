@@ -1,3 +1,5 @@
+import { NrState } from '@/enums'
+
 export type LocationT = 'BC' | 'CA' | 'FD' | 'IN' | 'INFO'
 export type NameReqT = DraftReqI | ConditionalReqI | ReservedReqI
 export type NrDataResponseT = NameRequestI | null
@@ -44,7 +46,7 @@ export interface ConditionalReqI {
   priorityCd: string
   request_action_cd: string
   request_type_cd?: string
-  stateCd: 'COND-RESERVE'
+  stateCd: NrState.COND_RESERVED
   submit_count: number
   tradeMark: string
   xproJurisdiction?: string
@@ -77,7 +79,7 @@ export interface DraftReqI {
   previousRequestId?: string
   priorityCd: string
   request_action_cd: string
-  stateCd: 'DRAFT'
+  stateCd: NrState.DRAFT
   submit_count: number
   tradeMark?: string
   xproJurisdiction?: string
@@ -189,7 +191,7 @@ export interface ReservedReqI {
   previousRequestId?: string
   priorityCd: string
   request_action_cd: string
-  stateCd: 'RESERVED'
+  stateCd: NrState.RESERVED
   submit_count: number
   tradeMark: string
   xproJurisdiction?: string

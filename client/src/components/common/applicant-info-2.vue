@@ -266,28 +266,6 @@ export default class ApplicantInfo2 extends Vue {
     newReqModule.mutatePriorityRequest(value)
   }
 
-  // NOT USED
-  // async submit () {
-  //   if (this.editMode) {
-  //     await newReqModule.patchNameRequests()
-  //   } else {
-  //     const { nrId } = this
-  //     if (!nrId) {
-  //       await newReqModule.postNameRequests('draft')
-  //     } else {
-  //       if (!this.editMode && ['COND-RESERVE', 'RESERVED'].includes(this.nrState)) {
-  //         const request = await newReqModule.getNameRequest(nrId)
-  //         if (request?.stateCd === 'CANCELLED') {
-  //           newReqModule.setActiveComponent('Timeout')
-  //           return
-  //         }
-  //       }
-  //       await newReqModule.putNameReservation(nrId)
-  //     }
-  //     await paymentModule.togglePaymentModal(true)
-  //   }
-  // }
-
   async getCorpNum (num) {
     this.isEditingCorpNum = false
     if (!num) {

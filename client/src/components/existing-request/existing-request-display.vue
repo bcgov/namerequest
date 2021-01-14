@@ -66,7 +66,7 @@
                     <template v-slot:activator="{ on, attrs }">
                       <span v-bind="attrs" v-on="on"
                         class="dotted-underline app-blue font-weight-regular cursor-default"
-                        >{{ extensionsRemainingText }}</span>
+                      >{{ extensionsRemainingText }}</span>
                     </template>
                     Once approved, you normally have 56 days to use your Name Request.
                     However, within 5 days of expiry, you can renew a Name Request two
@@ -98,11 +98,11 @@
                 <template v-if="pendingPayment">
                   <v-col cols="12" v-if="isNotPaid">
                     <v-btn block
-                              class="button button-blue"
-                              @click="handleButtonClick('RETRY_PAYMENT')">Retry Payment</v-btn>
+                           class="button button-blue"
+                           @click="handleButtonClick('RETRY_PAYMENT')">Retry Payment</v-btn>
                     <v-btn block
-                              class="button button-red  mt-8"
-                              @click="handleButtonClick('CANCEL')">Cancel Name Request</v-btn>
+                           class="button button-red  mt-8"
+                           @click="handleButtonClick('CANCEL')">Cancel Name Request</v-btn>
                   </v-col>
                 </template>
                 <template v-for="action of actions" v-else>
@@ -115,7 +115,7 @@
                         :class="isRedButton(action) ? 'button-red' : 'button-blue'"
                         :disabled="disableUnfurnished && (action !== NrAction.RECEIPT)"
                         @click="handleButtonClick(action)"
-                        >{{ actionText(action) }}</v-btn>
+                      >{{ actionText(action) }}</v-btn>
                     </v-col>
                   </template>
                 </template>
@@ -146,7 +146,7 @@
           <!-- incorporate button -->
           <div class="mt-5 text-center" v-if="showIncorporateButton">
             <v-btn id="INCORPORATE-btn" @click="handleButtonClick(NrAction.INCORPORATE)"
-              >Incorporate Using This Name Request</v-btn>
+            >Incorporate Using This Name Request</v-btn>
           </div>
         </div>
       </transition>
@@ -172,9 +172,9 @@ import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
-import { NameState, NrAction, NrState } from '@/enums'
+import { NameState, NrAction, NrState, PaymentStatus } from '@/enums'
 import { sleep } from '@/plugins/sleep'
-import { PaymentStatus, SbcPaymentStatus } from '@/modules/payment/models'
+import { SbcPaymentStatus } from '@/modules/payment/models'
 import { getBaseUrl } from '@/components/payment/payment-utils'
 
 @Component({
@@ -452,11 +452,11 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   private get isNotPaid () {
-    return this.pendingPayment?.sbcPayment?.statusCode === 'CREATED'
+    return this.pendingPayment?.sbcPayment?.statusCode === PaymentStatus.CREATED
   }
 
   private get isPaymentProcessing () {
-    return this.pendingPayment?.sbcPayment?.statusCode === 'COMPLETED'
+    return this.pendingPayment?.sbcPayment?.statusCode === PaymentStatus.COMPLETED
   }
 
   /** Returns True if the specified action should display a red button. */
