@@ -66,7 +66,7 @@
                     <template v-slot:activator="{ on, attrs }">
                       <span v-bind="attrs" v-on="on"
                         class="dotted-underline app-blue font-weight-regular cursor-default"
-                        >{{ extensionsRemainingText }}</span>
+                      >{{ extensionsRemainingText }}</span>
                     </template>
                     Once approved, you normally have 56 days to use your Name Request.
                     However, within 5 days of expiry, you can renew a Name Request two
@@ -98,11 +98,11 @@
                 <template v-if="pendingPayment">
                   <v-col cols="12" v-if="isNotPaid">
                     <v-btn block
-                              class="button button-blue"
-                              @click="handleButtonClick('RETRY_PAYMENT')">Retry Payment</v-btn>
+                           class="button button-blue"
+                           @click="handleButtonClick('RETRY_PAYMENT')">Retry Payment</v-btn>
                     <v-btn block
-                              class="button button-red  mt-8"
-                              @click="handleButtonClick('CANCEL')">Cancel Name Request</v-btn>
+                           class="button button-red  mt-8"
+                           @click="handleButtonClick('CANCEL')">Cancel Name Request</v-btn>
                   </v-col>
                 </template>
                 <template v-for="action of actions" v-else>
@@ -115,7 +115,7 @@
                         :class="isRedButton(action) ? 'button-red' : 'button-blue'"
                         :disabled="disableUnfurnished && (action !== NrAction.RECEIPT)"
                         @click="handleButtonClick(action)"
-                        >{{ actionText(action) }}</v-btn>
+                      >{{ actionText(action) }}</v-btn>
                     </v-col>
                   </template>
                 </template>
@@ -146,7 +146,7 @@
           <!-- incorporate button -->
           <div class="mt-5 text-center" v-if="showIncorporateButton">
             <v-btn id="INCORPORATE-btn" @click="handleButtonClick(NrAction.INCORPORATE)"
-              >Incorporate Using This Name Request</v-btn>
+            >Incorporate Using This Name Request</v-btn>
           </div>
         </div>
       </transition>
