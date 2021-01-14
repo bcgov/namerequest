@@ -70,16 +70,28 @@
                               :name="Math.random()"/>
               </v-col>
               <v-col cols="4" class="py-0" v-if="designationAtEnd">
-                <v-select :error-messages="des1Message"
-                          :hide-details="hide"
-                          :items="items"
-                          :menu-props="props"
-                          :value="nameChoices.designation1"
-                          @blur="handleBlur(); showDesignationErrors.des1 = true"
-                          @input="editChoices('designation1', $event, true)"
-                          filled
-                          id="designation-1-select"
-                          label="Designation" />
+                <v-tooltip top
+                  transition="fade-transition"
+                  content-class="top-tooltip designation-tooltip"
+                >
+                  <template v-slot:activator="{ on }">
+                    <div v-on="on">
+                      <v-select :error-messages="des1Message"
+                                :hide-details="hide"
+                                :items="items"
+                                :menu-props="props"
+                                :value="nameChoices.designation1"
+                                @blur="handleBlur(); showDesignationErrors.des1 = true"
+                                @input="editChoices('designation1', $event, true)"
+                                filled
+                                id="designation-1-select"
+                                label="Designation" />
+                    </div>
+                  </template>
+                  <p>Your company name must include a designation.
+                  There are no legal differences between these designations.
+                  You can choose whichever you prefer.</p>
+                </v-tooltip>
               </v-col>
             </v-row>
             <v-row class="ma-0 pa-0" v-else>
@@ -96,16 +108,28 @@
                               :name="Math.random()"/>
               </v-col>
               <v-col cols="4" class="py-0" v-if="isAssumedName">
-                <v-select :error-messages="des1Message"
-                          :hide-details="hide"
-                          :items="items"
-                          :menu-props="props"
-                          :value="nameChoices.designation1"
-                          @blur="handleBlur(); showDesignationErrors.des1 = true"
-                          @input="editChoices('designation1', $event, true)"
-                          filled
-                          id="designation-1-select"
-                          label="Designation" />
+                <v-tooltip top
+                  transition="fade-transition"
+                  content-class="top-tooltip designation-tooltip"
+                >
+                  <template v-slot:activator="{ on }">
+                    <div v-on="on">
+                      <v-select :error-messages="des1Message"
+                                :hide-details="hide"
+                                :items="items"
+                                :menu-props="props"
+                                :value="nameChoices.designation1"
+                                @blur="handleBlur(); showDesignationErrors.des1 = true"
+                                @input="editChoices('designation1', $event, true)"
+                                filled
+                                id="designation-1-select"
+                                label="Designation" />
+                    </div>
+                  </template>
+                  <p>Your company name must include a designation.
+                  There are no legal differences between these designations.
+                  You can choose whichever you prefer.</p>
+                </v-tooltip>
               </v-col>
             </v-row>
           </v-col>
@@ -172,16 +196,28 @@
                               :name="Math.random()" />
               </v-col>
               <v-col cols="4" class="py-0" v-if="designationAtEnd">
-                <v-select :error-messages="des2Message"
-                          :hide-details="hide"
-                          :items="items"
-                          :menu-props="props"
-                          :value="nameChoices.designation2"
-                          @blur="handleBlur(); showDesignationErrors.des2 = true"
-                          @input="editChoices('designation2', $event, true)"
-                          filled
-                          id="designation-2-select"
-                          label="Designation" />
+                <v-tooltip top
+                  transition="fade-transition"
+                  content-class="top-tooltip designation-tooltip"
+                >
+                  <template v-slot:activator="{ on }">
+                    <div v-on="on">
+                      <v-select :error-messages="des2Message"
+                                :hide-details="hide"
+                                :items="items"
+                                :menu-props="props"
+                                :value="nameChoices.designation2"
+                                @blur="handleBlur(); showDesignationErrors.des2 = true"
+                                @input="editChoices('designation2', $event, true)"
+                                filled
+                                id="designation-2-select"
+                                label="Designation" />
+                    </div>
+                  </template>
+                  <p>Your company name must include a designation.
+                  There are no legal differences between these designations.
+                  You can choose whichever you prefer.</p>
+                </v-tooltip>
               </v-col>
             </v-row>
           </v-col>
@@ -207,15 +243,27 @@
                               :name="Math.random()" />
               </v-col>
               <v-col cols="4" class="py-0" style="height: 60px" v-if="designationAtEnd">
-                <v-select :error-messages="des3Message"
-                          :hide-details="hide"
-                          :items="items"
-                          :value="nameChoices.designation3"
-                          @blur="handleBlur(); showDesignationErrors.des3 = true"
-                          @input="editChoices('designation3', $event, true)"
-                          filled
-                          id="designation-3-select"
-                          label="Designation" />
+                <v-tooltip top
+                  transition="fade-transition"
+                  content-class="top-tooltip designation-tooltip"
+                >
+                  <template v-slot:activator="{ on }">
+                    <div v-on="on">
+                      <v-select :error-messages="des3Message"
+                                :hide-details="hide"
+                                :items="items"
+                                :value="nameChoices.designation3"
+                                @blur="handleBlur(); showDesignationErrors.des3 = true"
+                                @input="editChoices('designation3', $event, true)"
+                                filled
+                                id="designation-3-select"
+                                label="Designation" />
+                    </div>
+                  </template>
+                  <p>Your company name must include a designation.
+                  There are no legal differences between these designations.
+                  You can choose whichever you prefer.</p>
+                </v-tooltip>
               </v-col>
             </v-row>
           </v-col>
@@ -423,15 +471,15 @@ export default class NamesCapture extends NameRequestMixin {
       return [
         {
           'label': 'First Choice',
-          'hint': ''
+          'hint': 'First Name Choice'
         },
         {
           'label': 'Second Choice',
-          'hint': 'Second Alternate Name (Optional)'
+          'hint': 'Second Name Choice (Optional)'
         },
         {
           'label': 'Third Choice',
-          'hint': 'Third Alternate Name (Optional)'
+          'hint': 'Third Name Choice (Optional)'
         }
       ]
     } else {
@@ -853,5 +901,11 @@ export default class NamesCapture extends NameRequestMixin {
 
 ::v-deep .theme--light.v-input--is-disabled input, .theme--light.v-input--is-disabled textarea {
   color: $gray9 !important;
+}
+
+.designation-tooltip {
+  padding: 15px 0 0 0 !important;
+  text-align: center;
+  width: 280px !important;
 }
 </style>
