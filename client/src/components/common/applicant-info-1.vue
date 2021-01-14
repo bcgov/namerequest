@@ -4,24 +4,8 @@
       <v-row>
         <v-col cols="2" class="h6 align-self-start pt-0">Applicant</v-col>
         <v-col cols="10" class="py-0">
-          <!--FIRST NAME, LAST NAME, MIDDLE NAME-->
+          <!--FIRST NAME, MIDDLE NAME, LAST NAME-->
           <v-row>
-            <v-col cols="4" class="pt-0">
-              <label for="lastname" class="hidden">Last Name</label>
-              <v-text-field :messages="messages['lastName']"
-                            :rules="firstLastNameRules"
-                            :value="applicant.lastName"
-                            @blur="messages = {}"
-                            @input="mutateApplicant('lastName', $event)"
-                            dense
-                            filled
-                            height="50"
-                            hide-details="auto"
-                            id="lastname"
-                            :name="Math.random()"
-                            autocomplete="chrome-off"
-                            label="Last Name" />
-            </v-col>
             <v-col cols="4" class="pt-0">
               <label for="firstname" class="hidden">First Name</label>
               <v-text-field :messages="messages['firstName']"
@@ -54,6 +38,22 @@
                             autocomplete="chrome-off"
                             label="Middle Name (Optional)" />
             </v-col>
+            <v-col cols="4" class="pt-0">
+              <label for="lastname" class="hidden">Last Name</label>
+              <v-text-field :messages="messages['lastName']"
+                            :rules="firstLastNameRules"
+                            :value="applicant.lastName"
+                            @blur="messages = {}"
+                            @input="mutateApplicant('lastName', $event)"
+                            dense
+                            filled
+                            height="50"
+                            hide-details="auto"
+                            id="lastname"
+                            :name="Math.random()"
+                            autocomplete="chrome-off"
+                            label="Last Name" />
+            </v-col>
           </v-row>
 
           <!--ADDDRESS !-->
@@ -81,7 +81,7 @@
                                 id="line1"
                                 :name="Math.random()"
                                 autocomplete="chrome-off"
-                                placeholder="Start typing an address here..."
+                                label="Street Address"
                                 ref="Line1"
                                 single-line />
                 </template>
@@ -135,7 +135,7 @@
             </v-col>
           </v-row>
 
-          <v-row class="mt-2" v-if="applicant.addrLine1 && !showAddressMenu">
+          <v-row class="mt-2">
             <v-col cols="12" class="py-0 my-0">
               <label for="line2" class="hidden">Additional Street Address (Optional)</label>
               <v-text-field :messages="messages['Line2']"
@@ -434,13 +434,15 @@ export default class ApplicantInfo1 extends NameRequestMixin {
     return newReqModule.addressSuggestions
   }
   get applicant () {
-    return newReqModule.applicant
+    // if applicant is null/undefined then return an object
+    // to prevent dereference errors (ie, cannot read property X of undefined)
+    return newReqModule.applicant || {}
   }
   get countryOptions () {
     return this.$intJurisdictions
   }
   get countryTypeCd () {
-    return (newReqModule.applicant || {}).countryTypeCd || ''
+    return newReqModule.applicant?.countryTypeCd || ''
   }
   get jurisdictionOptions () {
     return this.location === Location.Canadian

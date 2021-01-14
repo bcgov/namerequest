@@ -5,14 +5,14 @@
       <v-col cols="auto" class="py-0" v-if="displayedComponent !== 'Success'">
         <button id="back-to-search-btn"
                 class="modal-activator link-std-sans-ul"
-                @click="cancelAndResetState()">
-          <span class="link-std-sans-ul" v-if="isExistingRequestDisplay">
+                @click="backToSearch()">
+          <span class="link-std-sans-ul" v-if="showExit">
             Exit
             <v-icon color="primary" class="dialog-close mt-n1">mdi-close</v-icon>
           </span>
           <span class="link-std-sans-ul" v-else>
             <v-icon class="mr-n1 mini-back-arrow">mdi-chevron-left</v-icon>
-            {{ editMode ? 'Return' : 'Start Search Over' }}
+            {{ editMode ? 'Return' : 'Start Over' }}
           </span>
         </button>
         <countdown-timer :timerName="timerName" colorString="#1669bb" bgColorString="#efefef" />
@@ -43,22 +43,34 @@ export default class MainContainer extends Mixins(SessionTimerMixin, DisplayedCo
   countdownMins: number = 0
 
   private mounted () {
-    // add classname to button text (for more detail in Sentry breadcrumbs)
-    if (this.isExistingRequestDisplay) {
-      this.$el.querySelector("#back-to-search-btn > span")?.classList.add("exit-btn")
-    } else if (this.editMode) {
-      this.$el.querySelector("#back-to-search-btn > span")?.classList.add("return-btn")
-    } else {
-      this.$el.querySelector("#back-to-search-btn > span")?.classList.add("start-search-over-btn")
-    }
+    this.$nextTick(() => {
+      // add classname to button text (for more detail in Sentry breadcrumbs)
+      if (this.showExit) {
+        this.$el.querySelector("#back-to-search-btn > span")?.classList.add("exit-btn")
+      } else if (this.editMode) {
+        this.$el.querySelector("#back-to-search-btn > span")?.classList.add("return-btn")
+      } else {
+        this.$el.querySelector("#back-to-search-btn > span")?.classList.add("start-search-over-btn")
+      }
+    })
   }
 
   get editMode () {
     return newReqModule.editMode
   }
 
-  get isExistingRequestDisplay (): boolean {
-    return (newReqModule.displayedComponent === 'ExistingRequestDisplay')
+  get showExit (): boolean {
+    return [2, 3].includes(newReqModule.submissionTabNumber) ||
+      newReqModule.displayedComponent === 'ExistingRequestDisplay'
+  }
+
+  backToSearch () {
+    if ([2, 3].includes(newReqModule.submissionTabNumber) &&
+      newReqModule.displayedComponent !== 'ExistingRequestDisplay') {
+      newReqModule.mutateExitModalVisible(true)
+    } else {
+      this.cancelAndResetState()
+    }
   }
 
   @Watch('componentName')

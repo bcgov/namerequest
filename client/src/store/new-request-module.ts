@@ -146,6 +146,7 @@ export class NewRequestModule extends VuexModule {
   }
   assumedNameOriginal: string = ''
   conditionsModalVisible: boolean = false
+  exitModalVisible: boolean = false
   conflictId: string | null = null
   conversionType: string = ''
   conversionTypeAddToSelect: ConversionTypesI | null = null
@@ -1686,7 +1687,7 @@ export class NewRequestModule extends VuexModule {
   }
 
   /** Map the appropriate Blurb based on the request action and location */
-  get entityBlurbs (): any {
+  get entityBlurbs (): Array<any> {
     switch (this.request_action_cd) {
       // NEW REQUEST
       case 'NEW':
@@ -1747,10 +1748,8 @@ export class NewRequestModule extends VuexModule {
           return this.conversionTypes
         }
         break
-      default:
-        return ''
     }
-    return ''
+    return null
   }
 
   @Action
@@ -1846,7 +1845,7 @@ export class NewRequestModule extends VuexModule {
         let fields = Object.keys(canadaPostFieldsMapping)
         for (let field of fields) {
           if (addressData[field]) {
-            let value = addressData[field].toUpperCase()
+            let value = addressData[field]
             let mappedField = canadaPostFieldsMapping[field]
             this.mutateApplicant({ key: mappedField, value })
           }
@@ -2794,24 +2793,26 @@ export class NewRequestModule extends VuexModule {
 
   @Action
   async fetchMRASProfile (): Promise<any> {
-    try {
-      let url = `mras-profile/${this.request_jurisdiction_cd}/${this.corpSearch}`
-      const response = await axios.get(url)
-      if (response?.status === OK) {
-        return response.data
+    if (this.corpSearch) {
+      try {
+        let url = `mras-profile/${this.request_jurisdiction_cd}/${this.corpSearch}`
+        const response = await axios.get(url)
+        if (response?.status === OK) {
+          return response.data
+        }
+        throw new Error(`Status was not 200, response = ${response}`)
+      } catch (err) {
+        const status: number = err?.response?.status
+        // do not generate console error for the errors codes
+        // that mras-search-info page handles
+        if (![BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE].includes(status)) {
+          const msg = await handleApiError(err, 'Could not fetch mras profile')
+          console.error('fetchMRASProfile() =', msg) // eslint-disable-line no-console
+        }
+        this.mutateName('')
+        this.mutateMrasSearchResult(status)
+        this.mutateMrasSearchInfoModalVisible(true)
       }
-      throw new Error(`Status was not 200, response = ${response}`)
-    } catch (err) {
-      const status: number = err?.response?.status
-      // do not generate console error for the errors codes
-      // that mras-search-info page handles
-      if (![BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE].includes(status)) {
-        const msg = await handleApiError(err, 'Could not fetch mras profile')
-        console.error('fetchMRASProfile() =', msg) // eslint-disable-line no-console
-      }
-      this.mutateName('')
-      this.mutateMrasSearchResult(status)
-      this.mutateMrasSearchInfoModalVisible(true)
     }
     return null
   }
@@ -2832,10 +2833,6 @@ export class NewRequestModule extends VuexModule {
       this.addressSuggestions = null
       return
     }
-    for (let n = 0; n < value.length; n++) {
-      value[n].Text = value[n].Text.toUpperCase()
-      value[n].Description = value[n].Description.toUpperCase()
-    }
     this.addressSuggestions = Object.assign([], value)
   }
 
@@ -2848,12 +2845,8 @@ export class NewRequestModule extends VuexModule {
   mutateApplicant (appKV) {
     if (Array.isArray(appKV)) {
       for (let address of appKV) {
-        address.value = address.value.toUpperCase()
         this.applicant[address.name] = address.value
       }
-    }
-    if (appKV.key !== 'emailAddress') {
-      appKV.value = appKV.value.toUpperCase()
     }
     this.applicant[appKV.key] = appKV.value
   }
@@ -3278,6 +3271,11 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateConditionsModalVisible (value: boolean) {
     this.conditionsModalVisible = value
+  }
+
+  @Mutation
+  mutateExitModalVisible (value: boolean) {
+    this.exitModalVisible = value
   }
 
   @Mutation
