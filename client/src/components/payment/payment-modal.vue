@@ -4,7 +4,9 @@
 
       <v-card-title class="d-flex justify-space-between">
         <div>Confirm Name Request</div>
-        <v-icon class="float-right" md color="primary" @click="hideModal()">mdi-close</v-icon>
+        <v-btn icon large class="dialog-close float-right" @click="hideModal()">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
       </v-card-title>
 
       <v-card-text class="copy-normal pt-0">

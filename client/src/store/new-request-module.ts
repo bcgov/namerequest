@@ -146,6 +146,7 @@ export class NewRequestModule extends VuexModule {
   }
   assumedNameOriginal: string = ''
   conditionsModalVisible: boolean = false
+  exitModalVisible: boolean = false
   conflictId: string | null = null
   conversionType: string = ''
   conversionTypeAddToSelect: ConversionTypesI | null = null
@@ -1844,7 +1845,7 @@ export class NewRequestModule extends VuexModule {
         let fields = Object.keys(canadaPostFieldsMapping)
         for (let field of fields) {
           if (addressData[field]) {
-            let value = addressData[field].toUpperCase()
+            let value = addressData[field]
             let mappedField = canadaPostFieldsMapping[field]
             this.mutateApplicant({ key: mappedField, value })
           }
@@ -2832,10 +2833,6 @@ export class NewRequestModule extends VuexModule {
       this.addressSuggestions = null
       return
     }
-    for (let n = 0; n < value.length; n++) {
-      value[n].Text = value[n].Text.toUpperCase()
-      value[n].Description = value[n].Description.toUpperCase()
-    }
     this.addressSuggestions = Object.assign([], value)
   }
 
@@ -2848,12 +2845,8 @@ export class NewRequestModule extends VuexModule {
   mutateApplicant (appKV) {
     if (Array.isArray(appKV)) {
       for (let address of appKV) {
-        address.value = address.value.toUpperCase()
         this.applicant[address.name] = address.value
       }
-    }
-    if (appKV.key !== 'emailAddress') {
-      appKV.value = appKV.value.toUpperCase()
     }
     this.applicant[appKV.key] = appKV.value
   }
@@ -3278,6 +3271,11 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateConditionsModalVisible (value: boolean) {
     this.conditionsModalVisible = value
+  }
+
+  @Mutation
+  mutateExitModalVisible (value: boolean) {
+    this.exitModalVisible = value
   }
 
   @Mutation
