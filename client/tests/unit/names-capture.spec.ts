@@ -20,6 +20,9 @@ describe('send-for-examination.vue', () => {
         localVue,
         vuetify
       })
+      store.mutateRequestAction('NEW')
+      store.mutateLocation('BC')
+      store.mutateEntityType('CR')
       await wrapper.vm.$nextTick()
       done()
     })

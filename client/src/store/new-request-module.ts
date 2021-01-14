@@ -43,7 +43,7 @@ import { NameRequestPayment } from '@/modules/payment/models'
 
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
-import { NrAction, RollbackActions } from '@/enums'
+import { NrAction, NrState, RollbackActions } from '@/enums'
 import { featureFlags } from '@/plugins/featureFlags'
 import { OK, BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
 
@@ -205,7 +205,7 @@ export class NewRequestModule extends VuexModule {
   displayedComponent: string = 'Tabs'
   doNotAnalyzeEntities: string[] = ['PAR', 'CC', 'CP', 'PA', 'FI', 'XCP', 'SO']
   editMode: boolean = false
-  entity_type_cd: string = 'CR'
+  entity_type_cd: string = ''
   entityTypeAddToSelect: SelectOptionsI | null = null
   entityTypesBCData: EntityI[] = [
     {
@@ -714,7 +714,7 @@ export class NewRequestModule extends VuexModule {
   affiliationErrorModalVisible: boolean = false
   isPersonsName: boolean = false
   issueIndex: number = 0
-  location: LocationT = 'BC'
+  location: LocationT = null
   locationInfoModalVisible: boolean = false
   mrasSearchInfoModalVisible: boolean = false
   mrasSearchResultCode: number = null
@@ -749,7 +749,7 @@ export class NewRequestModule extends VuexModule {
   priorityRequest: boolean = false
   quickSearch: boolean = true
   quickSearchNames: Array<object> = []
-  request_action_cd: string = 'NEW'
+  request_action_cd: string = ''
   request_jurisdiction_cd: string = ''
   requestExaminationOrProvideConsent = {
     0: {
@@ -786,7 +786,7 @@ export class NewRequestModule extends VuexModule {
               territory, country or federal jurisdiction so that you may also conduct business here in BC.`
     },
     {
-      text: 'Relocate into a',
+      text: 'Relocate into',
       shortDesc: 'Move Request',
       value: 'MVE',
       blurbs: `Transfer a corporation you formed in another jurisdiction so that it becomes a BC company.`
@@ -973,7 +973,7 @@ export class NewRequestModule extends VuexModule {
       options = options.concat(this.conversionTypeAddToSelect)
       n = 4
     }
-    options = options.concat({ text: 'View All Conversions', value: 'INFO', rank: n })
+    options = options.concat({ text: 'View all Alterations', value: 'INFO', rank: n })
     return options.sort((a, b) => {
       if (a.rank < b.rank) {
         return -1
@@ -1218,7 +1218,17 @@ export class NewRequestModule extends VuexModule {
   get locationOptions () {
     // To save template conditional logic, some locations have duplicate descriptions to align with there request
     let options = [
-      { text: 'BC', value: 'BC' },
+      {
+        text: 'BC',
+        value: 'BC',
+        blurbs: [
+          `Your business does not currently exist anywhere (i.e., it is a new business).`,
+          ``,
+          `The business that needs to be restored or reinstated is based in BC.`,
+          `One or more of the businesses that have amalgamated are incorporated in BC.`,
+          `Your existing business is incorporated or registered in BC.`
+        ]
+      },
       {
         text: 'Extraprovincial (Canada based)',
         altText: 'Canadian',
@@ -1226,8 +1236,8 @@ export class NewRequestModule extends VuexModule {
         blurbs: [
           `Your existing business is currently located in any Province or Territory other than BC.`,
           `Your existing business is currently located in any Province or Territory other than BC.`,
-          `One or more of the businesses that need to be restored or reinstated are based in Canada and were 
-           extraprovincially registered in BC.`,
+          `The business that needs to be restored or reinstated is based in Canada and was
+          extraprovincially registered in BC.`,
           `One or more of the businesses that have amalgamated are Canadian and are extraprovincially 
            registered in BC.`,
           `Your existing Canada based business is extraprovincially registered in BC and has changed its name in the 
@@ -1241,10 +1251,10 @@ export class NewRequestModule extends VuexModule {
         blurbs: [
           `Your existing business is currently located outside of Canada.`,
           `Your existing business is currently located outside of Canada.`,
-          `One or more of the businesses that need to be restored or reinstated are internationally based and 
-           were extraprovincially registered in BC.`,
-          `One or more of the businesses that have amalgamated are internationally based and are extra 
-           provincially registered in BC.`,
+          `The business that needs to be restored or reinstated is internationally based and was
+          extraprovincially registered in BC.`,
+          `One or more of the businesses that have amalgamated are internationally based and are
+          extraprovincially registered in BC.`,
           `Your existing internationally based business is extraprovincially registered in BC and has changed its name 
            in the home jurisdiction.`
         ]
@@ -1345,7 +1355,7 @@ export class NewRequestModule extends VuexModule {
   }
 
   get requestTextFromValue () {
-    if (this.request_action_cd) {
+    if (this.request_action_cd && this.requestTypeOptions.find(req => req.value === this.request_action_cd)) {
       return this.requestTypeOptions.find(req => req.value === this.request_action_cd).text
     }
     return null
@@ -1447,7 +1457,7 @@ export class NewRequestModule extends VuexModule {
       entity_type_cd: this.entity_type_cd,
       request_action_cd: this.request_action_cd,
       request_type_cd: this.xproRequestTypeCd ? this.xproRequestTypeCd : '',
-      stateCd: 'COND-RESERVE',
+      stateCd: NrState.COND_RESERVED,
       english: this.nameIsEnglish,
       nameFlag: this.isPersonsName,
       submit_count: 0,
@@ -1473,7 +1483,7 @@ export class NewRequestModule extends VuexModule {
       priorityCd: this.priorityRequest ? 'Y' : 'N',
       entity_type_cd: this.entity_type_cd,
       request_action_cd: this.request_action_cd,
-      stateCd: 'DRAFT',
+      stateCd: NrState.DRAFT,
       english: this.nameIsEnglish,
       nameFlag: this.isPersonsName,
       submit_count: 0,
@@ -1605,7 +1615,7 @@ export class NewRequestModule extends VuexModule {
       }
     } else {
       // Just use the 'name' property to fill in the requestName
-      if (this.location === 'BC' && $designations[this.entity_type_cd].end) {
+      if (this.entity_type_cd && this.location === 'BC' && $designations[this.entity_type_cd].end) {
         requestNames.push({
           name: this.name,
           designation: this.splitNameDesignation.designation,
@@ -1667,7 +1677,7 @@ export class NewRequestModule extends VuexModule {
       // @ts-ignore TODO: This is not typed correctly!
       entity_type_cd: this.entity_type_cd,
       request_action_cd: this.request_action_cd,
-      stateCd: 'RESERVED',
+      stateCd: NrState.RESERVED,
       english: this.nameIsEnglish,
       nameFlag: this.isPersonsName,
       submit_count: 0,
@@ -1677,7 +1687,7 @@ export class NewRequestModule extends VuexModule {
   }
 
   /** Map the appropriate Blurb based on the request action and location */
-  get entityBlurbs (): any {
+  get entityBlurbs (): Array<any> {
     switch (this.request_action_cd) {
       // NEW REQUEST
       case 'NEW':
@@ -1738,10 +1748,8 @@ export class NewRequestModule extends VuexModule {
           return this.conversionTypes
         }
         break
-      default:
-        return ''
     }
-    return ''
+    return null
   }
 
   @Action
@@ -2330,21 +2338,28 @@ export class NewRequestModule extends VuexModule {
   async putNameReservation (nrId) {
     let { nrState } = this
     if (this.isAssumedName) nrState = 'ASSUMED'
-
     try {
       let data: any
       switch (nrState) {
-        case 'DRAFT':
+        case NrState.DRAFT:
           data = this.draftNameReservation
           break
-        case 'COND-RESERVE':
+        case NrState.COND_RESERVED:
           data = this.conditionalNameReservation
           break
-        case 'RESERVED':
+        case NrState.RESERVED:
           data = this.reservedNameReservation
           break
         case 'ASSUMED':
           data = this.editNameReservation
+          break
+        case NrState.PENDING_PAYMENT:
+          // The user clicked Review and Confirm, which POSTed the draft NR.
+          // Then they closed the modal (eg, so they could fix something),
+          // and now they clicked Review and Confirm again.
+          // Treat this like a new NR, but keep the same state.
+          data = this.draftNameReservation
+          data['stateCd'] = NrState.PENDING_PAYMENT
           break
       }
 
@@ -2778,24 +2793,26 @@ export class NewRequestModule extends VuexModule {
 
   @Action
   async fetchMRASProfile (): Promise<any> {
-    try {
-      let url = `mras-profile/${this.request_jurisdiction_cd}/${this.corpSearch}`
-      const response = await axios.get(url)
-      if (response?.status === OK) {
-        return response.data
+    if (this.corpSearch) {
+      try {
+        let url = `mras-profile/${this.request_jurisdiction_cd}/${this.corpSearch}`
+        const response = await axios.get(url)
+        if (response?.status === OK) {
+          return response.data
+        }
+        throw new Error(`Status was not 200, response = ${response}`)
+      } catch (err) {
+        const status: number = err?.response?.status
+        // do not generate console error for the errors codes
+        // that mras-search-info page handles
+        if (![BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE].includes(status)) {
+          const msg = await handleApiError(err, 'Could not fetch mras profile')
+          console.error('fetchMRASProfile() =', msg) // eslint-disable-line no-console
+        }
+        this.mutateName('')
+        this.mutateMrasSearchResult(status)
+        this.mutateMrasSearchInfoModalVisible(true)
       }
-      throw new Error(`Status was not 200, response = ${response}`)
-    } catch (err) {
-      const status: number = err?.response?.status
-      // do not generate console error for the errors codes
-      // that mras-search-info page handles
-      if (![BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE].includes(status)) {
-        const msg = await handleApiError(err, 'Could not fetch mras profile')
-        console.error('fetchMRASProfile() =', msg) // eslint-disable-line no-console
-      }
-      this.mutateName('')
-      this.mutateMrasSearchResult(status)
-      this.mutateMrasSearchInfoModalVisible(true)
     }
     return null
   }
@@ -2944,11 +2961,6 @@ export class NewRequestModule extends VuexModule {
       }
     }
     this.entityTypeAddToSelect = null
-    if (location === 'BC') {
-      this.entity_type_cd = 'CR'
-    } else {
-      this.entity_type_cd = 'XCR'
-    }
     this.location = location
   }
 
@@ -3064,6 +3076,7 @@ export class NewRequestModule extends VuexModule {
 
   @Mutation
   mutateRequestAction (action: string) {
+    this.conversionType = ''
     this.request_action_cd = action
     if (action === 'MVE' && this.location === 'BC') {
       this.location = 'CA'

@@ -43,6 +43,9 @@ describe('landing.vue', () => {
   let wrapper: any
 
   beforeAll(() => {
+    newReqModule.mutateRequestAction('NEW')
+    newReqModule.mutateLocation('BC')
+    newReqModule.mutateEntityType('CR')
     newReqModule.mutateDisplayedComponent('AnalyzePending')
   })
   beforeEach(() => {
@@ -63,7 +66,10 @@ describe('landing.vue', () => {
 describe('landing.vue', () => {
   let wrapper: any
 
-  beforeEach(() => {
+  beforeAll(() => {
+    newReqModule.mutateRequestAction('NEW')
+    newReqModule.mutateLocation('BC')
+    newReqModule.mutateEntityType('CR')
     newReqModule.mutateDisplayedComponent('AnalyzeResults')
 
     wrapper = mount(Landing, {
