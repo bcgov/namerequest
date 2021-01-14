@@ -811,7 +811,7 @@ export class NewRequestModule extends VuexModule {
       text: 'Amalgamate two or more',
       shortDesc: 'Amalgamation Request',
       value: 'AML',
-      blurbs: 'Amalgamating one or more companies to result in a new BC Company.'
+      blurbs: 'You have two or more businesses that you want to combine to create a new business.'
     },
     {
       text: 'Change the name of an existing',
