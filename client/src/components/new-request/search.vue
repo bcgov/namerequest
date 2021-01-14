@@ -56,7 +56,7 @@
                         :items="locationOptions"
                         :disabled="locationDisabled"
                         :readonly="!request_action_cd"
-                        :class="setClass(!request_action_cd)"
+                        :class="!request_action_cd ? 'disabled-custom' : ''"
                         @change="clearErrors()"
                         filled
                         label="Select a Jurisdiction"
@@ -94,7 +94,7 @@
                         :items="entityConversionTypeOptions"
                         :label="isConversion ? 'Select an Alteration Type' : 'Select a Business Type'"
                         :readonly="!request_action_cd || !location"
-                        :class="setClass(!location)"
+                        :class="!location ? 'disabled-custom' : ''"
                         @change="clearErrors()"
                         filled
                         v-model="entity_type_cd">
@@ -421,9 +421,6 @@ export default class NewSearch extends Vue {
   }
   clearErrors () {
     newReqModule.clearErrors()
-  }
-  setClass (value) {
-    return value ? 'disabled-custom' : ''
   }
   async handleSubmit () {
     if (this.isXproMras) this.$root.$emit('showSpinner', true)
