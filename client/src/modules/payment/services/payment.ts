@@ -51,8 +51,9 @@ export async function createPaymentRequest (nrId, action, data): Promise<NameReq
     const response = await axios.post(url, data)
     return response.data
   } catch (err) {
+    console.error('createPaymentRequest() =', err) // eslint-disable-line no-console
     const msg = await handleApiError(err, 'Could not create payment request')
-    console.error('createPaymentRequest() =', msg) // eslint-disable-line no-console
+    // console.error('createPaymentRequest() =', msg) // eslint-disable-line no-console
     throw new Error(msg)
   }
 }

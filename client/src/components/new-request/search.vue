@@ -254,8 +254,10 @@ export default class NewSearch extends Vue {
   private locationDisabled: boolean = false
 
   private mounted () {
-    // add classname to button text (for more detail in Sentry breadcrumbs)
-    this.$el.querySelector("#search-name-btn > span")?.classList.add("search-name-btn")
+    this.$nextTick(() => {
+      // add classname to button text (for more detail in Sentry breadcrumbs)
+      this.$el.querySelector("#search-name-btn > span")?.classList.add("search-name-btn")
+    })
   }
 
   /** Reset search values when location changes */
@@ -286,11 +288,8 @@ export default class NewSearch extends Vue {
     'AML',
     'CHG'
   ]
-  entityBlurbs (entity_type_cd: string) {
-    if (newReqModule.entityBlurbs) {
-      return newReqModule.entityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || ''
-    }
-    return ''
+  entityBlurbs (entity_type_cd: string): Array<string> {
+    return newReqModule.entityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || []
   }
   get isScreenLg () {
     return this.$vuetify.breakpoint.lgAndUp

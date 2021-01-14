@@ -1686,7 +1686,7 @@ export class NewRequestModule extends VuexModule {
   }
 
   /** Map the appropriate Blurb based on the request action and location */
-  get entityBlurbs (): any {
+  get entityBlurbs (): Array<any> {
     switch (this.request_action_cd) {
       // NEW REQUEST
       case 'NEW':
@@ -1747,10 +1747,8 @@ export class NewRequestModule extends VuexModule {
           return this.conversionTypes
         }
         break
-      default:
-        return ''
     }
-    return ''
+    return null
   }
 
   @Action
@@ -2794,24 +2792,26 @@ export class NewRequestModule extends VuexModule {
 
   @Action
   async fetchMRASProfile (): Promise<any> {
-    try {
-      let url = `mras-profile/${this.request_jurisdiction_cd}/${this.corpSearch}`
-      const response = await axios.get(url)
-      if (response?.status === OK) {
-        return response.data
+    if (this.corpSearch) {
+      try {
+        let url = `mras-profile/${this.request_jurisdiction_cd}/${this.corpSearch}`
+        const response = await axios.get(url)
+        if (response?.status === OK) {
+          return response.data
+        }
+        throw new Error(`Status was not 200, response = ${response}`)
+      } catch (err) {
+        const status: number = err?.response?.status
+        // do not generate console error for the errors codes
+        // that mras-search-info page handles
+        if (![BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE].includes(status)) {
+          const msg = await handleApiError(err, 'Could not fetch mras profile')
+          console.error('fetchMRASProfile() =', msg) // eslint-disable-line no-console
+        }
+        this.mutateName('')
+        this.mutateMrasSearchResult(status)
+        this.mutateMrasSearchInfoModalVisible(true)
       }
-      throw new Error(`Status was not 200, response = ${response}`)
-    } catch (err) {
-      const status: number = err?.response?.status
-      // do not generate console error for the errors codes
-      // that mras-search-info page handles
-      if (![BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE].includes(status)) {
-        const msg = await handleApiError(err, 'Could not fetch mras profile')
-        console.error('fetchMRASProfile() =', msg) // eslint-disable-line no-console
-      }
-      this.mutateName('')
-      this.mutateMrasSearchResult(status)
-      this.mutateMrasSearchInfoModalVisible(true)
     }
     return null
   }
