@@ -81,8 +81,8 @@ const jurisdictions = [
   },
   {
     "value": "SX",
-    "SHORT_DESC": "St Maar Dp",
-    "text": "Sint Maarten(dutch Part)"
+    "SHORT_DESC": "St Maar DP",
+    "text": "Sint Maarten(Dutch Part)"
   },
   {
     "value": "SS",
@@ -91,8 +91,8 @@ const jurisdictions = [
   },
   {
     "value": "MF",
-    "SHORT_DESC": "St Mart Fp",
-    "text": "Saint Martin(french Part)"
+    "SHORT_DESC": "St Mart FP",
+    "text": "Saint Martin(French Part)"
   },
   {
     "value": "AX",
@@ -391,8 +391,8 @@ const jurisdictions = [
   },
   {
     "value": "CC",
-    "SHORT_DESC": "Cocos (keeling)",
-    "text": "Cocos (keeling) Islands"
+    "SHORT_DESC": "Cocos (Keeling)",
+    "text": "Cocos (Keeling) Islands"
   },
   {
     "value": "CO",
@@ -421,8 +421,8 @@ const jurisdictions = [
   },
   {
     "value": "CI",
-    "SHORT_DESC": "Cote D''ivoire",
-    "text": "Cote D''ivoire"
+    "SHORT_DESC": "Cote D'Ivoire",
+    "text": "Cote D'Ivoire"
   },
   {
     "value": "HR",
@@ -502,7 +502,7 @@ const jurisdictions = [
   {
     "value": "FK",
     "SHORT_DESC": "Falkland Island",
-    "text": "Falkland Islands (malvinas)"
+    "text": "Falkland Islands (Malvinas)"
   },
   {
     "value": "FO",
@@ -606,8 +606,8 @@ const jurisdictions = [
   },
   {
     "value": "GW",
-    "SHORT_DESC": "Guinea-bissau",
-    "text": "Guinea-bissau"
+    "SHORT_DESC": "Guinea-Bissau",
+    "text": "Guinea-Bissau"
   },
   {
     "value": "GY",
@@ -622,12 +622,12 @@ const jurisdictions = [
   {
     "value": "HM",
     "SHORT_DESC": "Heard Island An",
-    "text": "Heard Island And Mcdonald Islands"
+    "text": "Heard Island And McDonald Islands"
   },
   {
     "value": "VA",
-    "SHORT_DESC": "Holy See (vatic",
-    "text": "Holy See (vatican City State)"
+    "SHORT_DESC": "Holy See (Vatic",
+    "text": "Holy See (Vatican City State)"
   },
   {
     "value": "HN",
@@ -737,7 +737,7 @@ const jurisdictions = [
   {
     "value": "LA",
     "SHORT_DESC": "Laos",
-    "text": "Lao People''s Democratic Republic"
+    "text": "Lao People's Democratic Republic"
   },
   {
     "value": "LV",
@@ -1141,8 +1141,8 @@ const jurisdictions = [
   },
   {
     "value": "GS",
-    "SHORT_DESC": "South Georgia A",
-    "text": "South Georgia And The South Sandwich Isl"
+    "SHORT_DESC": "South Georgia a",
+    "text": "South Georgia and the South Sandwich Isl"
   },
   {
     "value": "ES",
@@ -1211,8 +1211,8 @@ const jurisdictions = [
   },
   {
     "value": "TL",
-    "SHORT_DESC": "Timor-leste",
-    "text": "Timor-leste"
+    "SHORT_DESC": "Timor-Leste",
+    "text": "Timor-Leste"
   },
   {
     "value": "TG",
