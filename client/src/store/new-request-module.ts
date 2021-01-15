@@ -2679,7 +2679,8 @@ export class NewRequestModule extends VuexModule {
         this.setErrors(field)
       }
     })
-    if (['CA'].includes(this.location) && !['MVE'].includes(this.request_action_cd) && !this.request_jurisdiction_cd) {
+    if (['CA', 'IN'].includes(this.location) &&
+        !['MVE'].includes(this.request_action_cd) && !this.request_jurisdiction_cd) {
       this.setErrors('jurisdiction')
       return
     }
