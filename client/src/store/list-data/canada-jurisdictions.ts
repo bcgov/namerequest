@@ -2,75 +2,75 @@ const jurisdictions = [
   {
     "value": "AB",
     "SHORT_DESC": "AB",
-    "text": "ALBERTA"
+    "text": "Alberta"
   },
   {
     "value": "BC",
     "SHORT_DESC": "BC",
-    "text": "BRITISH COLUMBIA"
+    "text": "British Columbia"
   },
   {
     "value": "MB",
     "SHORT_DESC": "MB",
-    "text": "MANITOBA"
+    "text": "Manitoba"
   },
   {
     "value": "NB",
     "SHORT_DESC": "NB",
-    "text": "NEW BRUNSWICK"
+    "text": "New Brunswick"
   },
   {
     "value": "NF",
     "SHORT_DESC": "NF",
-    "text": "NEWFOUNDLAND AND LABRADOR"
+    "text": "Newfoundland And Labrador"
   },
   {
     "value": "NT",
     "SHORT_DESC": "NT",
-    "text": "NORTHWEST TERRITORIES"
+    "text": "Northwest Territories"
   },
   {
     "value": "NS",
     "SHORT_DESC": "NS",
-    "text": "NOVA SCOTIA"
+    "text": "Nova Scotia"
   },
   {
     "value": "NU",
     "SHORT_DESC": "NU",
-    "text": "NUNAVUT"
+    "text": "Nunavut"
   },
   {
     "value": "ON",
     "SHORT_DESC": "ON",
-    "text": "ONTARIO"
+    "text": "Ontario"
   },
   {
     "value": "PE",
     "SHORT_DESC": "PE",
-    "text": "PRINCE EDWARD ISLAND"
+    "text": "Prince Edward Island"
   },
   {
     "value": "QC",
     "SHORT_DESC": "QC",
-    "text": "QUEBEC"
+    "text": "Quebec"
   },
   {
     "value": "SK",
     "SHORT_DESC": "SK",
-    "text": "SASKATCHEWAN"
+    "text": "Saskatchewan"
   },
   {
     "value": "YT",
     "SHORT_DESC": "YT",
-    "text": "YUKON"
+    "text": "Yukon"
   },
   {
     "value": "FD",
     "SHORT_DESC": "FED",
-    "text": "FEDERAL"
+    "text": "Federal"
   }
 ]
 
-export const $mrasJurisdictions = ['ALBERTA', 'MANITOBA', 'SASKATCHEWAN', 'QUEBEC']
+export const $mrasJurisdictions = ['alberta', 'manitoba', 'saskatchewan', 'quebec']
 
 export default jurisdictions

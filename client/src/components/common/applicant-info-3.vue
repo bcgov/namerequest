@@ -259,6 +259,7 @@ export default class ApplicantInfo3 extends NameRequestMixin {
   ]
   phoneRules = [
     v => !!v || 'Required field',
+    // keeping max length of phone number to 14 considering parentheses, hypen and space. Example: (555) 555-5555
     v => (v.length === 0 || v.length === 14) || 'Not a valid Phone number'
   ]
   faxRules = [
@@ -330,12 +331,6 @@ export default class ApplicantInfo3 extends NameRequestMixin {
     newReqModule.mutatePriorityRequest(value)
   }
 
-  clearValidation () {
-    if (this.$refs.step3 as Vue) {
-      (this.$refs.step3 as any).resetValidation()
-    }
-    this.corpNumError = ''
-  }
   async getCorpNum (num) {
     if (!num) {
       return
@@ -359,11 +354,9 @@ export default class ApplicantInfo3 extends NameRequestMixin {
     }
   }
   mutateApplicant (key, value) {
-    this.clearValidation()
     newReqModule.mutateApplicant({ key, value })
   }
   mutateNRData (key, value) {
-    this.clearValidation()
     newReqModule.mutateNRData({ key, value })
   }
   setError (error) {

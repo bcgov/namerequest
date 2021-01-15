@@ -238,6 +238,7 @@ export default class ApplicantInfo2 extends NameRequestMixin {
   ]
   phoneRules = [
     v => !!v || 'Required field',
+    // keeping max length of phone number to 14 considering parentheses, hypen and space. Example: (555) 555-5555
     v => (v.length === 0 || v.length === 14) || 'Not a valid Phone number'
   ]
   faxRules = [

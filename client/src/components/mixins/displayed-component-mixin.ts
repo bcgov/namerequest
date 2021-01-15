@@ -21,6 +21,7 @@ export default class DisplayedComponentMixin extends Vue {
 
   async cancelAndResetState () {
     const componentName = newRequestModule.displayedComponent
+    newRequestModule.mutateSubmissionTabNumber(0)
     // Are we cancelling a new NR?
     if (['SubmissionTabs'].indexOf(componentName) > -1) {
       await newRequestModule.cancelAnalyzeName('Tabs')
