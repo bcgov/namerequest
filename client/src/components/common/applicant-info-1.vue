@@ -73,7 +73,6 @@
                                 :value="applicant.addrLine1"
                                 @blur="blurAddress1"
                                 @input="updateApplicant('addrLine1', $event)"
-                                class="pa-0"
                                 dense
                                 filled
                                 height="50"
@@ -82,8 +81,7 @@
                                 :name="Math.random()"
                                 autocomplete="chrome-off"
                                 label="Street Address"
-                                ref="Line1"
-                                single-line />
+                                ref="Line1" />
                 </template>
                 <v-list class="ma-0 pa-0" style="border-radius: 0">
                   <v-list-item dense v-if="!addressSuggestions && applicant.addrLine1" class="pa-2">

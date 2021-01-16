@@ -65,7 +65,7 @@ export default class MainContainer extends Mixins(SessionTimerMixin, DisplayedCo
   }
 
   backToSearch () {
-    if ([2, 3].includes(newReqModule.submissionTabNumber) &&
+    if ([2, 3].includes(newReqModule.submissionTabNumber) && !this.editMode &&
       newReqModule.displayedComponent !== 'ExistingRequestDisplay') {
       newReqModule.mutateExitModalVisible(true)
     } else {

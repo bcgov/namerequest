@@ -4,7 +4,6 @@
       <v-row>
         <v-col cols="2" class="h6 align-self-start pt-0">Contact Info</v-col>
         <v-col cols="5" class="py-0">
-          <label for="emailAddress" class="hidden">Email Address (for notifications)</label>
           <v-text-field :messages="messages['email']"
                         :rules="emailRules"
                         :value="applicant.emailAddress"
@@ -23,10 +22,11 @@
       <v-row>
         <v-col cols="2" />
         <v-col cols="5">
-          <label for="phoneNumber" class="hidden">Phone Number (Optional)</label>
           <v-text-field :messages="messages['phone']"
                         :value="applicant.phoneNumber"
-                        :rules="phoneFaxRules"
+                        type="tel"
+                        v-mask="['(###) ###-####']"
+                        :rules="phoneRules"
                         @blur="messages = {}"
                         @input="mutateApplicant('phoneNumber', $event)"
                         id="phoneNumber"
@@ -34,13 +34,12 @@
                         autocomplete="chrome-off"
                         filled
                         hide-details="auto"
-                        label="Phone Number (Optional)" />
+                        label="Phone Number" />
         </v-col>
         <v-col cols="5">
-          <label for="faxNumber" class="hidden">Fax Number (Optional)</label>
           <v-text-field :messages="messages['fax']"
                         :value="applicant.faxNumber"
-                        :rules="phoneFaxRules"
+                        :rules="faxRules"
                         @blur="messages = {}"
                         @input="mutateApplicant('faxNumber', $event)"
                         id="faxNumber"
@@ -55,90 +54,148 @@
       <v-row v-if="showAllFields">
         <v-col cols="2" class="h6">About Your Business</v-col>
         <v-col cols="5" align-self="start">
-          <label for="natureBusinessInfo" class="hidden">Nature of Business</label>
-          <v-textarea :messages="messages['nature']"
-                      :rules="businessNatureRules"
-                      :value="nrData.natureBusinessInfo"
-                      @blur="messages = {}"
-                      @input="mutateNRData('natureBusinessInfo', $event)"
-                      id="natureBusinessInfo"
-                      name="natureBusinessInfo"
-                      filled
-                      hide-details="auto"
-                      label="Nature of Business"
-                      rows="3" />
+          <v-tooltip top
+            content-class="top-tooltip contact-tooltip"
+            transition="fade-transition"
+          >
+            <template v-slot:activator="{ on }">
+              <div v-on="on">
+                <v-textarea :messages="messages['nature']"
+                            :rules="businessNatureRules"
+                            :value="nrData.natureBusinessInfo"
+                            @blur="messages = {}"
+                            @input="mutateNRData('natureBusinessInfo', $event)"
+                            id="natureBusinessInfo"
+                            name="natureBusinessInfo"
+                            filled
+                            hide-details="auto"
+                            label="Nature of Business"
+                            no-resize
+                            rows="3" />
+              </div>
+            </template>
+            <p>
+              Nature of business information collected is for name review purposes only.
+              What is entered here does not limit the business activities of your company.
+            </p>
+          </v-tooltip>
         </v-col>
         <v-col cols="5" align-self="start">
-          <label for="additionalInfo" class="hidden">Additional Business Info (Optional)</label>
-          <v-textarea :messages="messages['additional']"
-                      :value="nrData.additionalInfo"
-                      :rules="additionalInfoRules"
-                      @blur="messages = {}"
-                      @input="mutateNRData('additionalInfo', $event)"
-                      id="additionalInfo"
-                      name="additionalInfo"
-                      filled
-                      hide-details="auto"
-                      label="Additional Business Info (Optional)"
-                      rows="3" />
+          <v-tooltip top
+            content-class="top-tooltip contact-tooltip"
+            transition="fade-transition"
+          >
+            <template v-slot:activator="{ on }">
+              <div v-on="on">
+                <v-textarea :messages="messages['additional']"
+                            :value="nrData.additionalInfo"
+                            :rules="additionalInfoRules"
+                            @blur="messages = {}"
+                            @input="mutateNRData('additionalInfo', $event)"
+                            id="additionalInfo"
+                            name="additionalInfo"
+                            filled
+                            hide-details="auto"
+                            label="Additional Information (Optional)"
+                            no-resize
+                            rows="3" />
+              </div>
+            </template>
+            <p>
+              Enter information you think Registries staff should know to help them review your
+              name such as details regarding previous name requests, related business, etc.
+            </p>
+          </v-tooltip>
         </v-col>
         <v-col cols="2" />
         <v-col cols="5" v-if="showCorpNum === 'colin'">
-          <label for="corpNum" class="hidden">Incorporation Number (required)</label>
-          <v-text-field :error-messages="corpNumError"
-                        :hide-details="hideCorpNum"
-                        :loading="loading"
-                        :messages="messages['corpNum']"
-                        :rules="corpNumRules"
-                        @blur="messages = {}; isEditingCorpNum = false"
-                        @focus="messages['corpNum'] = 'Incorporation Number (required)'; isEditingCorpNum = true"
-                        id="corpNum"
-                        :name="Math.random()"
-                        autocomplete="chrome-off"
-                        filled
-                        label="Incorporation Number (required)"
-                        v-model="corpNum"
-                        v-on:update:error="setError">
-            <template v-slot:append>
-              <v-icon :class="error || corpNumError || corpNumDirty ? 'red--text' : 'green--text'"
-                      v-if="hideCorpNum === 'auto' && !isEditingCorpNum && !loading">
-                {{ error || corpNumError || corpNumDirty ? 'mdi-close' : 'mdi-check' }}</v-icon>
+          <v-tooltip top
+            content-class="top-tooltip contact-tooltip"
+            transition="fade-transition"
+          >
+            <template v-slot:activator="{ on }">
+              <div v-on="on">
+                <v-text-field :error-messages="corpNumError"
+                              :hide-details="hideCorpNum"
+                              :loading="loading"
+                              :messages="messages['corpNum']"
+                              :rules="corpNumRules"
+                              @blur="messages = {}; isEditingCorpNum = false"
+                              @focus="messages['corpNum'] = 'Incorporation or Registration Number';
+                                isEditingCorpNum = true"
+                              id="corpNum"
+                              :name="Math.random()"
+                              autocomplete="chrome-off"
+                              filled
+                              label="Incorporation or Registration Number"
+                              v-model="corpNum"
+                              v-on:update:error="setError">
+                  <template v-slot:append>
+                    <v-icon :class="error || corpNumError || corpNumDirty ? 'red--text' : 'green--text'"
+                            v-if="hideCorpNum === 'auto' && !isEditingCorpNum && !loading">
+                      {{ error || corpNumError || corpNumDirty ? 'mdi-close' : 'mdi-check' }}</v-icon>
+                  </template>
+                </v-text-field>
+              </div>
             </template>
-          </v-text-field>
+            <p>
+              Enter the BC incorporation number of your business.
+            </p>
+          </v-tooltip>
         </v-col>
         <v-col cols="5">
-          <label for="tradeMark" class="hidden">Registered Trademark (Optional)</label>
-          <v-text-field :messages="messages['tradeMark']"
-                        :value="nrData.tradeMark"
-                        :rules="trademarkRules"
-                        @blur="messages = {}"
-                        @input="mutateNRData('tradeMark', $event)"
-                        id="tradeMark"
-                        :name="Math.random()"
-                        autocomplete="chrome-off"
-                        filled
-                        hide-details="auto"
-                        label="Registered Trademark (Optional)" />
-        </v-col>
-      </v-row>
-
-      <v-row v-if="showPriorityRequest">
-        <v-col cols="2" class="h6">Additional Services</v-col>
-        <v-col cols="10" align-self="center">
-          <v-checkbox
-            hide-details
-            v-model="priorityRequest"
-            class="mt-0 pt-0"
+          <v-tooltip top
+            content-class="top-tooltip contact-tooltip"
+            transition="fade-transition"
           >
-            <template v-slot:label>
-              <span>Priority Request - <b>$100 Fee</b></span>
+            <template v-slot:activator="{ on }">
+              <div v-on="on">
+                <v-text-field :messages="messages['tradeMark']"
+                              :value="nrData.tradeMark"
+                              :rules="trademarkRules"
+                              @blur="messages = {}"
+                              @input="mutateNRData('tradeMark', $event)"
+                              id="tradeMark"
+                              :name="Math.random()"
+                              autocomplete="chrome-off"
+                              filled
+                              hide-details="auto"
+                              label="Registered Canadian Trademark (Optional)" />
+              </div>
             </template>
-          </v-checkbox>
+            <p>
+              If your name is a registered trademark in Canada, enter your trademark name and registration number.
+            </p>
+          </v-tooltip>
         </v-col>
       </v-row>
 
-      <v-row class="mt-5">
-        <v-col cols="7" class="py-0" />
+      <v-row class="mt-2">
+        <v-col cols="2" />
+        <v-col cols="5">
+          <v-tooltip top
+            content-class="top-tooltip contact-tooltip"
+            transition="fade-transition"
+          >
+            <template v-slot:activator="{ on }">
+              <div v-on="on">
+                <v-checkbox
+                  v-if="showPriorityRequest"
+                  hide-details
+                  v-model="priorityRequest"
+                  class="mt-0 pt-0"
+                >
+                  <template v-slot:label>
+                    <span>Make this a Priority Request <b>($100.00)</b></span>
+                  </template>
+                </v-checkbox>
+              </div>
+            </template>
+            <p>
+              Priority name requests are typically reviewed within 1-2 business days.
+            </p>
+          </v-tooltip>
+        </v-col>
         <ApplicantInfoNav @nextAction="nextAction()" />
       </v-row>
     </v-container>
@@ -147,6 +204,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
+import { mask } from 'vue-the-mask'
 import newReqModule, { NewRequestModule } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
@@ -155,7 +213,8 @@ import NameRequestMixin from '@/components/mixins/name-request-mixin'
 @Component({
   components: {
     ApplicantInfoNav
-  }
+  },
+  directives: { mask }
 })
 export default class ApplicantInfo2 extends NameRequestMixin {
   corpNumDirty: boolean = false
@@ -177,7 +236,12 @@ export default class ApplicantInfo2 extends NameRequestMixin {
     v => (!v || v.length <= 75) || 'Cannot exceed 75 characters'
 
   ]
-  phoneFaxRules = [
+  phoneRules = [
+    v => !!v || 'Required field',
+    // keeping max length of phone number to 14 considering parentheses, hypen and space. Example: (555) 555-5555
+    v => (v.length === 0 || v.length === 14) || 'Not a valid Phone number'
+  ]
+  faxRules = [
     v => (!v || v.length <= 30) || 'Cannot exceed 30 characters'
   ]
   trademarkRules = [
@@ -307,3 +371,15 @@ export default class ApplicantInfo2 extends NameRequestMixin {
   }
 }
 </script>
+<style lang="scss" scoped>
+.contact-tooltip {
+  padding: 15px 0 0 0 !important;
+  text-align: center;
+  width: 380px !important;
+}
+
+::v-deep .v-textarea textarea {
+  line-height: 1.375rem !important;
+  font-size: 0.875rem !important;
+}
+</style>

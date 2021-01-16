@@ -861,7 +861,7 @@ export class NewRequestModule extends VuexModule {
     let mrasEntities = ['XCR', 'XLP', 'UL', 'CR', 'CP', 'BC', 'CC']
     let { xproJurisdiction } = this.nrData
 
-    if ($mrasJurisdictions.includes(xproJurisdiction) && mrasEntities.includes(this.entity_type_cd)) {
+    if ($mrasJurisdictions.includes(xproJurisdiction?.toLowerCase()) && mrasEntities.includes(this.entity_type_cd)) {
       if (this.location === 'CA' && ['NEW', 'ASSUMED'].includes(this.request_action_cd)) {
         return 'mras'
       }
@@ -2848,6 +2848,9 @@ export class NewRequestModule extends VuexModule {
       for (let address of appKV) {
         this.applicant[address.name] = address.value
       }
+    }
+    if (appKV.key === 'postalCd') {
+      appKV.value = appKV.value.toUpperCase()
     }
     this.applicant[appKV.key] = appKV.value
   }
