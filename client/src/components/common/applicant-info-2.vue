@@ -25,7 +25,6 @@
           <v-text-field :messages="messages['phone']"
                         :value="applicant.phoneNumber"
                         type="tel"
-                        v-mask="['(###) ###-####']"
                         :rules="phoneRules"
                         @blur="messages = {}"
                         @input="mutateApplicant('phoneNumber', $event)"
@@ -204,7 +203,6 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { mask } from 'vue-the-mask'
 import newReqModule, { NewRequestModule } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
@@ -213,8 +211,7 @@ import NameRequestMixin from '@/components/mixins/name-request-mixin'
 @Component({
   components: {
     ApplicantInfoNav
-  },
-  directives: { mask }
+  }
 })
 export default class ApplicantInfo2 extends NameRequestMixin {
   corpNumDirty: boolean = false
@@ -238,8 +235,7 @@ export default class ApplicantInfo2 extends NameRequestMixin {
   ]
   phoneRules = [
     v => !!v || 'Required field',
-    // keeping max length of phone number to 14 considering parentheses, hypen and space. Example: (555) 555-5555
-    v => (v.length === 0 || v.length === 14) || 'Not a valid Phone number'
+    v => (v.length <= 30) || 'Cannot exceed 30 characters'
   ]
   faxRules = [
     v => (!v || v.length <= 30) || 'Cannot exceed 30 characters'
@@ -373,8 +369,6 @@ export default class ApplicantInfo2 extends NameRequestMixin {
 </script>
 <style lang="scss" scoped>
 .contact-tooltip {
-  padding: 15px 0 0 0 !important;
-  text-align: center;
   width: 380px !important;
 }
 

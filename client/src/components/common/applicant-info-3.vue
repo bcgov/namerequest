@@ -7,7 +7,6 @@
           <v-text-field :messages="messages['contact']"
                         :value="applicant.contact"
                         @blur="messages = {}"
-                        @focus="messages['contact'] = 'Contact Name (Optional)'"
                         @input="mutateApplicant('contact', $event)"
                         filled
                         hide-details="auto"
@@ -18,7 +17,6 @@
                         :rules="emailRules"
                         :value="applicant.emailAddress"
                         @blur="messages = {}"
-                        @focus="messages['email'] = 'Notification Email'"
                         @input="mutateApplicant('emailAddress', $event)"
                         filled
                         hide-details="auto"
@@ -31,10 +29,8 @@
         <v-col cols="5">
           <v-text-field :messages="messages['phone']"
                         :value="applicant.phoneNumber"
-                        v-mask="['(###) ###-####']"
                         :rules="phoneRules"
                         @blur="messages = {}"
-                        @focus="messages['phone'] = 'Phone Number'"
                         @input="mutateApplicant('phoneNumber', $event)"
                         filled
                         hide-details="auto"
@@ -45,7 +41,6 @@
                         :value="applicant.faxNumber"
                         :rules="faxRules"
                         @blur="messages = {}"
-                        @focus="messages['fax'] = 'Fax Number (Optional)'"
                         @input="mutateApplicant('faxNumber', $event)"
                         filled
                         hide-details="auto"
@@ -59,7 +54,6 @@
           <v-text-field :messages="messages['clientFirst']"
                         :value="applicant.clientFirstName"
                         @blur="messages = {}"
-                        @focus="messages['clientFirst'] = 'First Name'"
                         @input="mutateApplicant('clientFirstName', $event)"
                         filled
                         hide-details="auto"
@@ -69,7 +63,6 @@
           <v-text-field :messages="messages['clientLast']"
                         :value="applicant.clientLastName"
                         @blur="messages = {}"
-                        @focus="messages['clientLast'] = 'Last Name'"
                         @input="mutateApplicant('clientLastName', $event)"
                         filled
                         hide-details="auto"
@@ -90,7 +83,6 @@
                             :rules="businessNatureRules"
                             :value="nrData.natureBusinessInfo"
                             @blur="messages = {}"
-                            @focus="messages['nature'] = 'Nature of Business'"
                             @input="mutateNRData('natureBusinessInfo', $event)"
                             filled
                             hide-details="auto"
@@ -116,7 +108,6 @@
                             :value="nrData.additionalInfo"
                             :rules="additionalInfoRules"
                             @blur="messages = {}"
-                            @focus="messages['additional'] = 'Additional Info'"
                             @input="mutateNRData('additionalInfo', $event)"
                             filled
                             hide-details="auto"
@@ -148,7 +139,6 @@
                               validate-on-blur
                               @blur="messages = {}"
                               :loading="loading"
-                              @focus="messages['corpNum'] = 'Incorporation or Registration Number'"
                               filled
                               v-on:update:error="setError"
                               :hide-details="hideCorpNum"
@@ -178,7 +168,6 @@
                               :value="nrData.tradeMark"
                               :rules="trademarkRules"
                               @blur="messages = {}"
-                              @focus="messages['tradeMark'] = 'Registered Canadian Trademark (Optional)'"
                               @input="mutateNRData('tradeMark', $event)"
                               filled
                               hide-details="auto"
@@ -226,7 +215,6 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { mask } from 'vue-the-mask'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import newReqModule, { NewRequestModule } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
@@ -235,8 +223,7 @@ import NameRequestMixin from '@/components/mixins/name-request-mixin'
 @Component({
   components: {
     ApplicantInfoNav
-  },
-  directives: { mask }
+  }
 })
 export default class ApplicantInfo3 extends NameRequestMixin {
   corpNumDirty: boolean = false
@@ -259,8 +246,7 @@ export default class ApplicantInfo3 extends NameRequestMixin {
   ]
   phoneRules = [
     v => !!v || 'Required field',
-    // keeping max length of phone number to 14 considering parentheses, hypen and space. Example: (555) 555-5555
-    v => (v.length === 0 || v.length === 14) || 'Not a valid Phone number'
+    v => (v.length <= 30) || 'Cannot exceed 30 characters'
   ]
   faxRules = [
     v => (!v || v.length <= 30) || 'Cannot exceed 30 characters'
@@ -392,8 +378,6 @@ export default class ApplicantInfo3 extends NameRequestMixin {
 </script>
 <style lang="scss" scoped>
 .contact-tooltip {
-  padding: 15px 0 0 0 !important;
-  text-align: center;
   width: 380px !important;
 }
 

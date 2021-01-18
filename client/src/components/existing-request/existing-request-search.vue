@@ -36,7 +36,6 @@
       </v-col>
       <v-col class="max-height">
         <v-text-field :rules="phoneRules"
-                      v-mask="['(###) ###-####']"
                       :value="search.phoneNumber"
                       @input="setExistingRequestSearch('phoneNumber', $event)"
                       class="copy-normal"
@@ -68,7 +67,6 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { mask } from 'vue-the-mask'
 import ForgotNrModal from '@/components/modals/forgot-nr.vue'
 import newReqModule from '@/store/new-request-module'
 import ErrorModule from '@/modules/error'
@@ -76,8 +74,7 @@ import { NameRequestI, SearchDataI, NrDataResponseT, NrDataT } from '@/models'
 
 const NR_REGEX = /^(NR\ ?L?|L?)?([\d]{6,8})$/
 @Component({
-  components: { ForgotNrModal },
-  directives: { mask }
+  components: { ForgotNrModal }
 })
 export default class ExistingRequestSearch extends Vue {
   private errorMessage = ''
@@ -108,8 +105,7 @@ export default class ExistingRequestSearch extends Vue {
     v => NR_REGEX.test(v) || 'Please enter a valid NR number'
   ]
   private phoneRules = [
-    // keeping max length of phone number to 14 considering parentheses, hypen and space. Example: (555) 555-5555
-    v => (v.length === 0 || v.length === 14) || 'Not a valid Phone number'
+    v => (v.length <= 30) || 'Cannot exceed 30 characters'
   ]
 
   private get nr () {

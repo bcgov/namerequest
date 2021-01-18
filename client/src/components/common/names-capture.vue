@@ -904,8 +904,6 @@ export default class NamesCapture extends NameRequestMixin {
 }
 
 .designation-tooltip {
-  padding: 15px 0 0 0 !important;
-  text-align: center;
   width: 280px !important;
 }
 </style>
