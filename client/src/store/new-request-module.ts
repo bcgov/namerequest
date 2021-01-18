@@ -2675,6 +2675,7 @@ export class NewRequestModule extends VuexModule {
       name = sanitizeName(this.name)
     }
     ['entity_type_cd', 'request_action_cd', 'location'].forEach(field => {
+      // These are initialized empty. Check to make sure user selected an option for each
       if (!this[field] || this[field] === 'INFO') {
         this.setErrors(field)
       }
