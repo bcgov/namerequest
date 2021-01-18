@@ -2675,7 +2675,7 @@ export class NewRequestModule extends VuexModule {
       name = sanitizeName(this.name)
     }
     ['entity_type_cd', 'request_action_cd', 'location'].forEach(field => {
-      if (this[field] === 'INFO') {
+      if (!this[field] || this[field] === 'INFO') {
         this.setErrors(field)
       }
     })

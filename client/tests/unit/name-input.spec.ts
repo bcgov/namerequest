@@ -22,6 +22,7 @@ describe('name-input.vue', () => {
 
   afterEach(() => {
     newReqModule.mutateEntityType('CR')
+    newReqModule.mutateLocation('BC')
     newReqModule.mutateRequestAction('NEW')
     newReqModule.mutateName('')
   })
