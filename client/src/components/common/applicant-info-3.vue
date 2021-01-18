@@ -377,10 +377,6 @@ export default class ApplicantInfo3 extends NameRequestMixin {
 }
 </script>
 <style lang="scss" scoped>
-.contact-tooltip {
-  width: 380px !important;
-}
-
 ::v-deep .v-textarea textarea {
   line-height: 1.375rem !important;
   font-size: 0.875rem !important;
