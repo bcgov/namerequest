@@ -74,7 +74,7 @@
         <v-col cols="2" class="h6">About The Business</v-col>
         <v-col cols="5" align-self="start">
           <v-tooltip top
-            content-class="top-tooltip contact-tooltip"
+            content-class="top-tooltip"
             transition="fade-transition"
           >
             <template v-slot:activator="{ on }">
@@ -91,15 +91,15 @@
                             rows="3" />
               </div>
             </template>
-            <p>
+            <span>
               Nature of business information collected is for name review purposes only.
               What is entered here does not limit the business activities of your company.
-            </p>
+            </span>
           </v-tooltip>
         </v-col>
         <v-col cols="5" align-self="start">
           <v-tooltip top
-            content-class="top-tooltip contact-tooltip"
+            content-class="top-tooltip"
             transition="fade-transition"
           >
             <template v-slot:activator="{ on }">
@@ -116,10 +116,10 @@
                             rows="3" />
               </div>
             </template>
-            <p>
+            <span>
               Enter information you think Registries staff should know to help them review your
               name such as details regarding previous name requests, related business, etc.
-            </p>
+            </span>
           </v-tooltip>
         </v-col>
       </v-row>
@@ -128,7 +128,7 @@
         <v-col cols="2" />
         <v-col cols="5" v-if="showCorpNum">
           <v-tooltip top
-            content-class="top-tooltip contact-tooltip"
+            content-class="top-tooltip"
             transition="fade-transition"
           >
             <template v-slot:activator="{ on }">
@@ -152,14 +152,14 @@
                 </v-text-field>
               </div>
             </template>
-            <p>
+            <span>
               Enter the BC incorporation number of your business.
-            </p>
+            </span>
           </v-tooltip>
         </v-col>
         <v-col cols="5">
           <v-tooltip top
-            content-class="top-tooltip contact-tooltip"
+            content-class="top-tooltip"
             transition="fade-transition"
           >
             <template v-slot:activator="{ on }">
@@ -174,9 +174,9 @@
                               label="Registered Canadian Trademark (Optional)" />
               </div>
             </template>
-            <p>
+            <span>
               If your name is a registered trademark in Canada, enter your trademark name and registration number.
-            </p>
+            </span>
           </v-tooltip>
         </v-col>
       </v-row>
@@ -185,7 +185,7 @@
         <v-col cols="2" />
         <v-col cols="5" align-self="center" class="py-0" v-if="showPriorityRequest">
           <v-tooltip top
-            content-class="top-tooltip contact-tooltip"
+            content-class="top-tooltip"
             transition="fade-transition"
           >
             <template v-slot:activator="{ on }">
@@ -201,9 +201,9 @@
                 </v-checkbox>
               </div>
             </template>
-            <p>
+            <span>
               Priority name requests are typically reviewed within 1-2 business days.
-            </p>
+            </span>
           </v-tooltip>
         </v-col>
         <v-col v-else cols="5" class="py-0" />

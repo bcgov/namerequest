@@ -72,7 +72,7 @@
               <v-col cols="4" class="py-0" v-if="designationAtEnd">
                 <v-tooltip top
                   transition="fade-transition"
-                  content-class="top-tooltip designation-tooltip"
+                  content-class="top-tooltip"
                 >
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
@@ -88,9 +88,9 @@
                                 label="Designation" />
                     </div>
                   </template>
-                  <p>Your company name must include a designation.
+                  <span>Your company name must include a designation.
                   There are no legal differences between these designations.
-                  You can choose whichever you prefer.</p>
+                  You can choose whichever you prefer.</span>
                 </v-tooltip>
               </v-col>
             </v-row>
@@ -110,7 +110,7 @@
               <v-col cols="4" class="py-0" v-if="isAssumedName">
                 <v-tooltip top
                   transition="fade-transition"
-                  content-class="top-tooltip designation-tooltip"
+                  content-class="top-tooltip"
                 >
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
@@ -126,9 +126,9 @@
                                 label="Designation" />
                     </div>
                   </template>
-                  <p>Your company name must include a designation.
+                  <span>Your company name must include a designation.
                   There are no legal differences between these designations.
-                  You can choose whichever you prefer.</p>
+                  You can choose whichever you prefer.</span>
                 </v-tooltip>
               </v-col>
             </v-row>
@@ -198,7 +198,7 @@
               <v-col cols="4" class="py-0" v-if="designationAtEnd">
                 <v-tooltip top
                   transition="fade-transition"
-                  content-class="top-tooltip designation-tooltip"
+                  content-class="top-tooltip"
                 >
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
@@ -214,9 +214,9 @@
                                 label="Designation" />
                     </div>
                   </template>
-                  <p>Your company name must include a designation.
+                  <span>Your company name must include a designation.
                   There are no legal differences between these designations.
-                  You can choose whichever you prefer.</p>
+                  You can choose whichever you prefer.</span>
                 </v-tooltip>
               </v-col>
             </v-row>
@@ -245,7 +245,7 @@
               <v-col cols="4" class="py-0" style="height: 60px" v-if="designationAtEnd">
                 <v-tooltip top
                   transition="fade-transition"
-                  content-class="top-tooltip designation-tooltip"
+                  content-class="top-tooltip"
                 >
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
@@ -260,9 +260,9 @@
                                 label="Designation" />
                     </div>
                   </template>
-                  <p>Your company name must include a designation.
+                  <span>Your company name must include a designation.
                   There are no legal differences between these designations.
-                  You can choose whichever you prefer.</p>
+                  You can choose whichever you prefer.</span>
                 </v-tooltip>
               </v-col>
             </v-row>
@@ -901,9 +901,5 @@ export default class NamesCapture extends NameRequestMixin {
 
 ::v-deep .theme--light.v-input--is-disabled input, .theme--light.v-input--is-disabled textarea {
   color: $gray9 !important;
-}
-
-.designation-tooltip {
-  width: 280px !important;
 }
 </style>
