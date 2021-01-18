@@ -90,3 +90,9 @@ export default class MainContainer extends Mixins(SessionTimerMixin, DisplayedCo
   }
 }
 </script>
+
+<style lang="scss" scoped>
+#back-to-search-btn:focus {
+  outline:0;
+}
+</style>
