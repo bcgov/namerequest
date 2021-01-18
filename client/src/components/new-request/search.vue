@@ -20,7 +20,6 @@
           <template v-slot:activator="scope">
             <div v-on="scope.on">
               <v-select :error-messages="errors.includes('request_action_cd') ? 'Please select an action' : ''"
-                        :hide-details="!errors.includes('request_action_cd')"
                         :items="requestActions"
                         @change="clearErrors()"
                         label="Select an Action"
@@ -51,8 +50,7 @@
                    :disabled="!location || location === 'BC'">
           <template v-slot:activator="scope">
             <div v-on="scope.on">
-              <v-select :error-messages="errors.includes('location') ? 'Please select a location' : ''"
-                        :hide-details="!errors.includes('location')"
+              <v-select :error-messages="errors.includes('location') ? 'Please select a jurisdiction' : ''"
                         :items="locationOptions"
                         :disabled="locationDisabled"
                         :readonly="!request_action_cd"
@@ -89,8 +87,7 @@
                    transition="fade-transition">
           <template v-slot:activator="scope">
             <div v-on="scope.on">
-              <v-select :error-messages="errors.includes('entity_type_cd') ? 'Please select a type' : ''"
-                        :hide-details="!errors.includes('entity_type_cd')"
+              <v-select :error-messages="errors.includes('entity_type_cd') ? 'Please select a business type' : ''"
                         :items="entityConversionTypeOptions"
                         :label="isConversion ? 'Select an Alteration Type' : 'Select a Business Type'"
                         :readonly="!request_action_cd || !location"
@@ -128,10 +125,9 @@
       </v-col>
     </v-row>
 
-    <v-row class="mt-4" no-gutters>
+    <v-row no-gutters>
       <v-col cols="4" v-if="isXproMras">
         <v-select :error-messages="errors.includes('jurisdiction') ? 'Please select a jurisdiction' : ''"
-                  :hide-details="!errors.includes('jurisdiction')"
                   :items="jurisdictionOptions"
                   label="Select business's home jurisdiction"
                   @change="clearErrors()"
@@ -144,7 +140,7 @@
           </template>
         </v-select>
       </v-col>
-      <v-col :cols="isXproMras ? 8 : 12" class="mt-2" :class="{ 'pl-3': (isXproMras && !isFederal) }">
+      <v-col :cols="isXproMras ? 8 : 12" :class="{ 'pl-3': (isXproMras && !isFederal) }">
         <NameInput v-if="!isFederal"
                    :class="inputCompClass"
                    :is-mras-search="(isXproMras && !noCorpNum)"
@@ -228,7 +224,7 @@
     </v-row>
 
     <div v-if="!isFederal" class="mt-6 text-center">
-      <v-btn id="search-name-btn" :disabled="!corpNumValid || !allFieldsSelected" @click="handleSubmit()">
+      <v-btn id="search-name-btn" :disabled="!corpNumValid" @click="handleSubmit()">
         {{ isXproMras ? 'Search' : 'Search Name'}}
       </v-btn>
     </div>
@@ -334,10 +330,6 @@ export default class NewSearch extends Vue {
   }
   get errors () {
     return newReqModule.errors
-  }
-  get allFieldsSelected () {
-    return newReqModule.request_action_cd && newReqModule.location &&
-      ((!this.isConversion && newReqModule.entity_type_cd) || (this.isConversion && newReqModule.conversionType))
   }
   get inputCompClass () {
     let errorTypes = ['entity_type_cd', 'request_action_cd', 'location']
@@ -456,6 +448,9 @@ export default class NewSearch extends Vue {
 }
 #goto-corporate-btn {
   min-height: 45px !important;
+}
+#name-input-component {
+  margin-top: 0 !important;
 }
 /* Deep Vuetify overrides */
 ::v-deep {
