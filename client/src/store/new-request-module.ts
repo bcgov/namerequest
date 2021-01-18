@@ -2955,6 +2955,8 @@ export class NewRequestModule extends VuexModule {
     if (location === this.location) {
       return
     }
+    // entity type needs to be reset when the location changes (options depend on location)
+    this.entity_type_cd = ''
     if (location === 'INFO') {
       this.location = location
       return
