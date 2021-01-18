@@ -33,7 +33,7 @@
         v-html="bannerText"
       />
       <router-view />
-      <sbc-footer />
+      <sbc-footer :aboutText=aboutText />
     </div>
     <!--All v-dialogue (modal) components App-wide-->
     <Conditions />
@@ -142,6 +142,11 @@ export default class App extends Mixins(SessionTimerMixin) {
     const bannerText: string = featureFlags.getFlag('banner-text')
     // remove spaces so that " " becomes falsy
     return bannerText?.trim()
+  }
+
+  /** The About text. */
+  private get aboutText (): string {
+    return process.env.ABOUT_TEXT
   }
 
   get showAuthModal () {

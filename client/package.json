@@ -1,7 +1,9 @@
 {
   "name": "name-request",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "private": true,
+  "appName": "Name Request UI",
+  "sbcName": "SBC Common Components",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "node --max_old_space_size=8000 node_modules/@vue/cli-service/bin/vue-cli-service.js build",
