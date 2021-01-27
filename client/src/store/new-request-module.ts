@@ -1752,6 +1752,46 @@ export class NewRequestModule extends VuexModule {
     return null
   }
 
+  /**
+   * Downloads the specified Name Request output.
+   * @param id The Name Request id.
+   */
+  @Action
+  async downloadOutputs (id: string): Promise<void> {
+    try {
+      const url = `namerequests/${id}/result`
+      const headers = { 'Accept': 'application/pdf' }
+
+      // Request PDF for specified id
+      const response: any = await axios.get(url, { headers: headers, responseType: 'blob' as 'json' })
+
+      // Create a new blob object with mime-type explicitly set, otherwise only Chrome works
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+
+      // IE doesn't allow using a blob object directly as link href, so use msSaveOrOpenBlob
+      if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveOrOpenBlob(blob)
+      } else {
+        // for other browsers, create a link pointing to the ObjectURL containing the blob
+        const url = window.URL.createObjectURL(blob)
+        const a = window.document.createElement('a')
+        window.document.body.appendChild(a)
+        a.setAttribute('style', 'display: none')
+        a.href = url
+        a.download = 'Name Request Results'
+        a.click()
+        window.URL.revokeObjectURL(url)
+        a.remove()
+      }
+    } catch (error) {
+      console.error('downloadOutputs() =', error) // eslint-disable-line no-console
+
+      await errorModule.setAppError(
+        { id: 'download-pdf-error', error: 'Could not download PDF' } as ErrorI
+      )
+    }
+  }
+
   @Action
   setActiveComponent (component: string) {
     enum Tabs {

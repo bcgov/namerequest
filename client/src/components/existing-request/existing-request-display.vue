@@ -528,6 +528,16 @@ export default class ExistingRequestDisplay extends Mixins(
         case NrAction.RETRY_PAYMENT:
           this.navigateToPaymentPortal()
           break
+        case NrAction.RESULTS:
+          // show spinner since the network calls below can take a few seconds
+          this.$root.$emit('showSpinner', true)
+
+          // Request the outputs
+          await newReqModule.downloadOutputs(this.nr.id)
+
+          // clear spinner
+          this.$root.$emit('showSpinner', false)
+          break
         default:
           if (await newReqModule.patchNameRequestsByAction(action)) {
             newReqModule.mutateDisplayedComponent('Success')
