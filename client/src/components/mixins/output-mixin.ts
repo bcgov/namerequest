@@ -7,7 +7,7 @@ export default class OutputMixin extends Vue {
    * Downloads the specified Name Request output.
    * @param id The Name Request id.
    */
-  async downloadOutputs (id: string): Promise<any> {
+  async downloadOutputs (id: string): Promise<void> {
     try {
       const url = `namerequests/${id}/result`
       const headers = { 'Accept': 'application/pdf' }
@@ -16,9 +16,12 @@ export default class OutputMixin extends Vue {
       this.$root.$emit('showSpinner', true)
 
       // Request PDF for specified id
-      const outputResponse: any = await axios.get(url, { headers: headers, responseType: 'blob' as 'json' })
-      const blob = new Blob([outputResponse.data], { type: 'application/pdf' })
+      const response: any = await axios.get(url, { headers: headers, responseType: 'blob' as 'json' })
 
+      // Create a new blob object with mime-type explicitly set, otherwise only Chrome works
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+
+      // IE doesn't allow using a blob object directly as link href, so use msSaveOrOpenBlob
       if (window.navigator && window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveOrOpenBlob(blob)
       } else {
@@ -28,7 +31,7 @@ export default class OutputMixin extends Vue {
         window.document.body.appendChild(a)
         a.setAttribute('style', 'display: none')
         a.href = url
-        a.download = ''
+        a.download = 'Name Request Results'
         a.click()
         window.URL.revokeObjectURL(url)
         a.remove()
