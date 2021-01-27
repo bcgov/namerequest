@@ -1,5 +1,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import axios from 'axios'
+import errorModule from '@/modules/error'
+import { ErrorI } from '@/modules/error/store/actions'
 
 @Component
 export default class OutputMixin extends Vue {
@@ -41,6 +43,11 @@ export default class OutputMixin extends Vue {
       this.$root.$emit('showSpinner', false)
     } catch (error) {
       console.error('downloadOutputs() =', error) // eslint-disable-line no-console
+
+      await errorModule.setAppError(
+        { id: 'download-pdf-error', error: 'Could not download PDF' } as ErrorI
+      )
+
       // clear spinner on error
       this.$root.$emit('showSpinner', false)
     }
