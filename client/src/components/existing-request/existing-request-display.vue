@@ -161,9 +161,10 @@ import Moment from 'moment'
 
 import MainContainer from '@/components/new-request/main-container.vue'
 import newReqModule from '@/store/new-request-module'
+import CommonMixin from '@/components/mixins/common-mixin'
 import NrAffiliationMixin from '@/components/mixins/nr-affiliation-mixin'
 import PaymentMixin from '@/components/payment/payment-mixin'
-import CommonMixin from '@/components/mixins/common-mixin'
+import OutputMixin from '@/components/mixins/output-mixin'
 import DateMixin from '@/components/mixins/date-mixin'
 import paymentModule from '@/modules/payment'
 import timerModule from '@/modules/vx-timer'
@@ -193,6 +194,7 @@ export default class ExistingRequestDisplay extends Mixins(
   NrAffiliationMixin,
   CommonMixin,
   DateMixin,
+  OutputMixin,
   PaymentMixin) {
   // enums used in the template:
   NameState = NameState
@@ -527,6 +529,9 @@ export default class ExistingRequestDisplay extends Mixins(
           break
         case NrAction.RETRY_PAYMENT:
           this.navigateToPaymentPortal()
+          break
+        case NrAction.RESULTS:
+          await this.downloadOutputs(this.nr.id)
           break
         default:
           if (await newReqModule.patchNameRequestsByAction(action)) {
