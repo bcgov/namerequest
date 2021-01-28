@@ -15,7 +15,9 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="confirmPayment()" id="payment-pay-btn" class="primary" text :loading="isLoadingPayment">Accept</v-btn>
+        <v-btn @click="confirmPayment()" id="payment-pay-btn" class="primary" text :loading="isLoadingPayment">
+          Accept
+        </v-btn>
         <v-btn @click="hideModal()" id="payment-close-btn" class="normal" text>Cancel</v-btn>
       </v-card-actions>
 
