@@ -15,7 +15,7 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="confirmPayment()" id="payment-pay-btn" class="primary" text>Accept</v-btn>
+        <v-btn @click="confirmPayment()" id="payment-pay-btn" class="primary" text :loading="isLoadingPayment">Accept</v-btn>
         <v-btn @click="hideModal()" id="payment-close-btn" class="normal" text>Cancel</v-btn>
       </v-card-actions>
 
@@ -38,6 +38,7 @@ import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
 import DisplayedComponentMixin from '@/components/mixins/displayed-component-mixin'
 import { getBaseUrl } from './payment-utils'
+import newReqModule from '@/store/new-request-module'
 
 @Component({
   components: {
@@ -51,6 +52,7 @@ export default class ReapplyModal extends Mixins(
   PaymentSessionMixin,
   DisplayedComponentMixin
 ) {
+  private isLoadingPayment: boolean = false
   /** The model value for the dialog component. */
   private isVisible = false
 
@@ -61,6 +63,7 @@ export default class ReapplyModal extends Mixins(
 
   /** Clears store property to hide this modal. */
   async hideModal () {
+    this.isLoadingPayment = false
     await PaymentModule.toggleReapplyModal(false)
   }
 
@@ -87,15 +90,20 @@ export default class ReapplyModal extends Mixins(
 
   /** Called when user clicks "Accept" button. */
   private async confirmPayment () {
+    this.isLoadingPayment = true
     const { nrId, priorityRequest } = this
     const onSuccess = (paymentResponse) => {
       const { paymentId, paymentToken } = this
       // Save response to session
       this.savePaymentResponseToSession(PaymentAction.REAPPLY, paymentResponse)
-
+      // see if redirect is needed else go to existing NR screen
       const baseUrl = getBaseUrl()
       const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${paymentId}`)
-      this.redirectToPaymentPortal(paymentId, paymentToken, redirectUrl)
+      if (paymentResponse.sbcPayment.isPaymentActionRequired) {
+        this.redirectToPaymentPortal(paymentId, paymentToken, redirectUrl)
+      } else {
+        window.location.href = redirectUrl
+      }
     }
 
     const success = await this.createPayment({

@@ -6,6 +6,8 @@ import { CreatePaymentParams } from '@/modules/payment/models'
 import { PaymentStatus } from '@/enums'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
+import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
+import newReqModule from '@/store/new-request-module'
 
 @Component
 export default class PaymentMixin extends Vue {
@@ -126,9 +128,21 @@ export default class PaymentMixin extends Vue {
             priority: priorityRequest || false
           }
         ]
+      },
+      headers: {}
+    }
+    const token = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
+    const accountInfo = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
+    let headers = {}
+    if (token && accountInfo) {
+      const parsedAccountInfo = JSON.parse(accountInfo)
+      headers = {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Account-Id': parsedAccountInfo.id
       }
     }
-
+    req.headers = headers
     try {
       const paymentResponse = await paymentService.createPaymentRequest(nrId, action, req)
       const { payment, sbcPayment = { receipts: [] } } = paymentResponse
@@ -200,11 +214,22 @@ export default class PaymentMixin extends Vue {
    */
   async fetchNrPayment (nrId: number, paymentId: number): Promise<boolean> {
     try {
-      const paymentResponse = await paymentService.getNameRequestPayment(nrId, paymentId, {})
+      const token = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
+      const accountInfo = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
+      let headers = {}
+      if (token && accountInfo) {
+        const parsedAccountInfo = JSON.parse(accountInfo)
+        headers = {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Account-Id': parsedAccountInfo.id
+        }
+      }
+      const paymentResponse = await paymentService.getNameRequestPayment(nrId, paymentId, headers)
       if (!paymentResponse) throw new Error('Got error from getNameRequestPayment()')
 
       const { payment, sbcPayment =
-      { receipts: [], status_code: '' }, token, statusCode, completionDate } = paymentResponse
+      { receipts: [], status_code: '' }, statusCode, completionDate } = paymentResponse
 
       await paymentModule.setPayment(payment)
       await paymentModule.setSbcPayment(sbcPayment)

@@ -617,7 +617,7 @@ export default class ExistingRequestDisplay extends Mixins(
   async mounted () {
     if (this.nr.id && this.nr.state !== NrState.CANCELLED) {
       await this.fetchNrPayments(this.nr.id)
-      this.pendingPayment = this.payments.find(payment => (payment.statusCode !== PaymentStatus.COMPLETED))
+      this.pendingPayment = this.payments.find(sbcPayment => (sbcPayment.statusCode !== PaymentStatus.COMPLETED))
     }
   }
 }
