@@ -223,6 +223,29 @@
       </v-col>
     </v-row>
 
+    <!-- No Corp Designation blurb and checkbox -->
+    <v-expand-transition>
+      <v-row v-if="showNoCorpDesignation" no-gutters class="bg-light-blue mt-6">
+        <v-col class="text-body-4 pa-7">
+          <strong>Important:</strong> A {{entityTextFromValue}} <strong>cannot use a Corporate designation</strong>
+          (Inc., Incorporated, LTD, Limited, etc.) in its name. Although not required, you can use Company or Co. for
+          a {{entityTextFromValue}}.
+
+          <v-checkbox
+            v-model="noCorpDesignation"
+            id="no-corp-designation-checkbox"
+            class="pt-0"
+            :error-messages="errors.includes('no_corp_designation') ? 'Confirm designation usage' : ''"
+            @change="clearErrors()"
+          >
+            <template slot="label">
+              <span class="text-body-4">I confirm that I have <strong>not</strong> used a corporate designation.</span>
+            </template>
+          </v-checkbox>
+        </v-col>
+      </v-row>
+    </v-expand-transition>
+
     <div v-if="!isFederal" class="mt-6 text-center">
       <v-btn id="search-name-btn" :disabled="!corpNumValid" @click="handleSubmit()">
         {{ isXproMras ? 'Search' : 'Search Name'}}
@@ -380,6 +403,12 @@ export default class NewSearch extends Vue {
   set noCorpNum (value) {
     newReqModule.mutateNoCorpNum(value)
   }
+  get noCorpDesignation () {
+    return newReqModule.noCorpDesignation
+  }
+  set noCorpDesignation (value) {
+    newReqModule.mutateNoCorpDesignation(value)
+  }
   get request_action_cd () {
     return newReqModule.request_action_cd
   }
@@ -407,6 +436,12 @@ export default class NewSearch extends Vue {
     return this.location === 'CA'
       ? this.$canJurisdictions.filter(jur => jur.value !== 'BC')
       : this.$intJurisdictions.filter(jur => jur.value !== 'CA')
+  }
+  get showNoCorpDesignation (): boolean {
+    return newReqModule.showNoCorpDesignation
+  }
+  get entityTextFromValue (): string {
+    return newReqModule.entityTextFromValue || 'specified business type'
   }
   activateNRRModal () {
     newReqModule.mutateNrRequiredModalVisible(true)
@@ -464,15 +499,15 @@ export default class NewSearch extends Vue {
   .v-select__selections {
     line-height: 1.5rem !important;
   }
-  /* remove bottom margin from checkboxes */
-  .v-input--checkbox > .v-input__slot {
-    margin-bottom: 0 !important;
-  }
   .v-input--is-disabled .v-input__icon {
     display: none !important;
   }
   .v-select__selection--disabled {
     color: $gray9 !important;
+  }
+  /* reduce checkbox height when there are no error messages */
+  .v-messages:not(.error--text) {
+    margin-bottom: -22px;
   }
 }
 </style>

@@ -731,6 +731,7 @@ export class NewRequestModule extends VuexModule {
   nameIsEnglish: boolean = true
   nameAnalysisTimedOut: boolean = false
   noCorpNum: boolean = false
+  noCorpDesignation: boolean = false
   nr: Partial<NameRequestI> = {} as NameRequestI
   nrData = {
     additionalInfo: '',
@@ -1752,6 +1753,11 @@ export class NewRequestModule extends VuexModule {
     return null
   }
 
+  /** True if the selected business type requires the No Corp Designation panel. */
+  get showNoCorpDesignation (): boolean {
+    return ['DBA', 'FR', 'GP'].includes(this.entity_type_cd)
+  }
+
   /**
    * Downloads the specified Name Request output.
    * @param id The Name Request id.
@@ -2720,6 +2726,10 @@ export class NewRequestModule extends VuexModule {
         this.setErrors(field)
       }
     })
+    // set error if checkbox is shown and user hasn't confirmed it
+    if (this.showNoCorpDesignation && !this.noCorpDesignation) {
+      this.setErrors('no_corp_designation')
+    }
     if (['CA', 'IN'].includes(this.location) &&
         !['MVE'].includes(this.request_action_cd) && !this.request_jurisdiction_cd) {
       this.setErrors('jurisdiction')
@@ -3044,6 +3054,11 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateNoCorpNum (noCorpNum: boolean) {
     this.noCorpNum = noCorpNum
+  }
+
+  @Mutation
+  mutateNoCorpDesignation (value: boolean) {
+    this.noCorpDesignation = value
   }
 
   @Mutation
