@@ -23,7 +23,7 @@
         :redirectOnLoginSuccess="getNameRequestUrl"
         :redirect-on-login-fail="getNameRequestUrl"
         :redirect-on-logout="getNameRequestUrl"
-        :show-actions="false"
+        :show-actions="true"
       />
       <v-alert
         tile dense
