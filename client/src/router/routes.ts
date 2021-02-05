@@ -45,7 +45,7 @@ export const routes = [
     name: 'signout',
     component: Signout,
     meta: {
-      requiresAuth: true
+      requiresAuth: false
     }
   },
   {
@@ -54,7 +54,7 @@ export const routes = [
     component: Signout,
     props: true,
     meta: {
-      requiresAuth: true
+      requiresAuth: false
     }
   },
   {
