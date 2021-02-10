@@ -2,11 +2,6 @@
   <v-container fluid id="new-request-container" class="copy-normal pa-10">
     <v-row no-gutters>
       <v-col cols="6" class="pt-0 font-weight-bold h6"><span>I need a name to:</span></v-col>
-      <v-col cols="6" class="pt-0">
-        <span id="nr-required-activator"
-              class="link-std d-flex justify-end"
-              @click="activateNRRModal()">Check to see if you need to file a Name Request</span>
-      </v-col>
     </v-row>
 
     <v-row class="mt-4" no-gutters>
@@ -442,9 +437,6 @@ export default class NewSearch extends Vue {
   }
   get entityTextFromValue (): string {
     return newReqModule.entityTextFromValue || 'specified business type'
-  }
-  activateNRRModal () {
-    newReqModule.mutateNrRequiredModalVisible(true)
   }
   clearErrors () {
     newReqModule.clearErrors()

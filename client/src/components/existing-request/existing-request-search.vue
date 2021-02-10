@@ -1,68 +1,99 @@
 <template>
-  <v-form v-model="isValid" lazy-validation @submit="handleSubmit()" class="pa-10" ref="existing-nr-form">
+  <div>
     <v-row no-gutters>
-      <!-- FIRST LINE -->
-      <v-col cols="12" class="h6 font-weight-regular">
-        Enter the Name Request (NR) Number and either the Applicant's Phone Number or Email:
-      </v-col>
-    </v-row>
 
-    <!-- SECOND LINE -->
-    <v-row class="mt-5" no-gutters v-if="errorMessage">
-      <v-col cols="12" class="red--text" v-html="errorMessage" />
-    </v-row>
+      <!-- Help Info -->
+      <v-col cols="3" class="existing-request-info copy-small">
+        <div class="ma-8">
+          <ul class="mt-3">
+            <li>
+              Check review time and approval status
+            </li>
+            <li>
+              Upgrade Name Request to Priority ($100.00)
+            </li>
+            <li>
+              Extend Name Request for an additional 56 days before it expires ($30.00)
+            </li>
+            <li>
+              Cancel your Name Request
+            </li>
+            <li>
+              Edit details, download receipts, and more
+            </li>
+          </ul>
+        </div>
+      </v-col>
 
-    <!-- THIRD LINE -->
-    <v-row class="mt-5" no-gutters align="center">
-      <v-col cols="1" class="max-width">
-        <v-img src="../../assets/images/one-icon.png" contain width="34" height="34" />
-      </v-col>
-      <v-col class="max-height">
-        <v-text-field :rules="nrRules"
-                      :value="search.nrNum"
-                      @input="setExistingRequestSearch('nrNum', $event)"
-                      class="copy-normal"
-                      filled
-                      id="nr-num-text-field"
-                      label="NR Number"
-                      validate-on-blur />
-      </v-col>
-    </v-row>
+      <!-- Existing Request Search -->
+      <v-col cols="9">
+        <v-form v-model="isValid" lazy-validation @submit="handleSubmit()" class="pa-10" ref="existing-nr-form">
+          <v-row no-gutters>
+            <!-- FIRST LINE -->
+            <v-col cols="12" class="h6">
+             Enter your information to manage an existing Name Request:
+            </v-col>
+          </v-row>
 
-    <!-- FOURTH LINE -->
-    <v-row class="mt-5" no-gutters align="center">
-      <v-col cols="1" class="max-width">
-        <v-img src="../../assets/images/two-icon.png" contain width="34" height="34" />
-      </v-col>
-      <v-col class="max-height">
-        <v-text-field :rules="phoneRules"
-                      :value="search.phoneNumber"
-                      @input="setExistingRequestSearch('phoneNumber', $event)"
-                      class="copy-normal"
-                      filled
-                      id="phone-number-text-field"
-                      label="Applicant's Phone Number" />
-      </v-col>
-      <v-col class="copy-normal text-center shrink mx-4"> or </v-col>
-      <v-col class="max-height">
-        <v-text-field :rules="emailRules"
-                      :value="search.emailAddress"
-                      @input="setExistingRequestSearch('emailAddress', $event)"
-                      class="copy-normal"
-                      filled
-                      id="email-address-text-field"
-                      label="Applicant's Notification Email"
-                      validate-on-blur />
-      </v-col>
-    </v-row>
+          <!-- SECOND LINE -->
+          <v-row class="mt-5" no-gutters v-if="errorMessage">
+            <v-col cols="12" class="red--text" v-html="errorMessage" />
+          </v-row>
 
-    <!-- FIFTH LINE -->
-    <v-row class="mt-8" no-gutters>
-      <v-col class="text-center">
-        <v-btn id="retrieve-name-btn" @click="handleSubmit()">Retrieve Name Request</v-btn>
+          <!-- THIRD LINE -->
+          <v-row class="mt-5" no-gutters align="center">
+            <v-col cols="1" class="max-width">
+              <v-img src="../../assets/images/one-icon.png" contain width="34" height="34" />
+            </v-col>
+            <v-col class="max-height">
+              <v-text-field :rules="nrRules"
+                            :value="search.nrNum"
+                            @input="setExistingRequestSearch('nrNum', $event)"
+                            class="copy-normal"
+                            filled
+                            id="nr-num-text-field"
+                            label="NR Number"
+                            validate-on-blur />
+            </v-col>
+          </v-row>
+
+          <!-- FOURTH LINE -->
+          <v-row class="mt-5" no-gutters align="center">
+            <v-col cols="1" class="max-width">
+              <v-img src="../../assets/images/two-icon.png" contain width="34" height="34" />
+            </v-col>
+            <v-col class="max-height">
+              <v-text-field :rules="phoneRules"
+                            :value="search.phoneNumber"
+                            @input="setExistingRequestSearch('phoneNumber', $event)"
+                            class="copy-normal"
+                            filled
+                            id="phone-number-text-field"
+                            label="Applicant's Phone Number" />
+            </v-col>
+            <v-col class="copy-normal text-center shrink mx-4"> or </v-col>
+            <v-col class="max-height">
+              <v-text-field :rules="emailRules"
+                            :value="search.emailAddress"
+                            @input="setExistingRequestSearch('emailAddress', $event)"
+                            class="copy-normal"
+                            filled
+                            id="email-address-text-field"
+                            label="Applicant's Notification Email"
+                            validate-on-blur />
+            </v-col>
+          </v-row>
+
+          <!-- FIFTH LINE -->
+          <v-row class="mt-8" no-gutters>
+            <v-col class="text-center">
+              <v-btn id="retrieve-name-btn" @click="handleSubmit()">Retrieve Name Request</v-btn>
+            </v-col>
+          </v-row>
+        </v-form>
       </v-col>
     </v-row>
-  </v-form>
+  </div>
 </template>
 
 <script lang="ts">
@@ -153,6 +184,20 @@ export default class ExistingRequestSearch extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import '@/assets/scss/theme.scss';
+
+.existing-request-info {
+  background-color: $gray1;
+  width: 100%;
+
+  ul {
+    display: inline-table;
+
+    li  {
+      padding-bottom: 10px;
+    }
+  }
+}
 .col.max-width {
   max-width: 3rem;
 }
