@@ -9,7 +9,7 @@
             <li>
               Check review time and approval status
             </li>
-            <li>
+            <li class="test-arrow">
               Upgrade Name Request to Priority ($100.00)
             </li>
             <li>
@@ -30,7 +30,8 @@
         <v-form v-model="isValid" lazy-validation @submit="handleSubmit()" class="pa-10" ref="existing-nr-form">
           <v-row no-gutters>
             <!-- FIRST LINE -->
-            <v-col cols="12" class="h6">
+            <v-col cols="1" class="max-width"></v-col>
+            <v-col cols="11" class="h6">
              Enter your information to manage an existing Name Request:
             </v-col>
           </v-row>
@@ -41,9 +42,9 @@
           </v-row>
 
           <!-- THIRD LINE -->
-          <v-row class="mt-5" no-gutters align="center">
+          <v-row class="mt-5 mb-5" no-gutters align="center">
             <v-col cols="1" class="max-width">
-              <v-img src="../../assets/images/one-icon.png" contain width="34" height="34" />
+              <v-img src="../../assets/images/number1.svg" contain width="34" height="34" />
             </v-col>
             <v-col class="max-height">
               <v-text-field :rules="nrRules"
@@ -53,6 +54,8 @@
                             filled
                             id="nr-num-text-field"
                             label="NR Number"
+                            hint="Example: NR 1234567"
+                            persistent-hint
                             validate-on-blur />
             </v-col>
           </v-row>
@@ -60,7 +63,7 @@
           <!-- FOURTH LINE -->
           <v-row class="mt-5" no-gutters align="center">
             <v-col cols="1" class="max-width">
-              <v-img src="../../assets/images/two-icon.png" contain width="34" height="34" />
+              <v-img src="../../assets/images/number2.svg" contain width="34" height="34" />
             </v-col>
             <v-col class="max-height">
               <v-text-field :rules="phoneRules"
@@ -69,7 +72,10 @@
                             class="copy-normal"
                             filled
                             id="phone-number-text-field"
-                            label="Applicant's Phone Number" />
+                            label="Applicant's Phone Number"
+                            hint="Example: 555-555-5555"
+                            persistent-hint
+                            validate-on-blur />
             </v-col>
             <v-col class="copy-normal text-center shrink mx-4"> or </v-col>
             <v-col class="max-height">
@@ -80,6 +86,8 @@
                             filled
                             id="email-address-text-field"
                             label="Applicant's Notification Email"
+                            hint="Example: name@email.com"
+                            persistent-hint
                             validate-on-blur />
             </v-col>
           </v-row>
@@ -189,6 +197,7 @@ export default class ExistingRequestSearch extends Vue {
 .existing-request-info {
   background-color: $gray1;
   width: 100%;
+  position: relative !important;
 
   ul {
     display: inline-table;
@@ -197,6 +206,16 @@ export default class ExistingRequestSearch extends Vue {
       padding-bottom: 10px;
     }
   }
+}
+
+.existing-request-info:after{
+  content: "";
+  position:absolute;
+  top:5.5rem;
+  left:100%;
+  border-top: 20px solid transparent !important;
+  border-bottom: 20px solid transparent !important;
+  border-left: 16px solid $gray1 !important;
 }
 .col.max-width {
   max-width: 3rem;

@@ -30,12 +30,6 @@ describe('search.vue', () => {
     expect(newReqModule.nrRequiredModalVisible).toBe(false)
     expect(newReqModule.helpMeChooseModalVisible).toBe(false)
   })
-  // it('Sets the modal visibility state to true when the nr-required-activator span is clicked', async () => {
-  //   let activator = wrapper.find('#nr-required-activator')
-  //   activator.trigger('click')
-  //   await wrapper.vm.$nextTick()
-  //   expect(newReqModule.nrRequiredModalVisible).toBe(true)
-  // })
   it(
     'Initially renders with the BC Corporation entity type as empty and the PickEntityOrConversion modal invisible',
     () => {

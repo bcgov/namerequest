@@ -10,26 +10,12 @@
         <v-icon color="primary">mdi-help-circle-outline</v-icon> Learn how to build a name
       </v-col>
     </a>
-    <a id="entity-type-selector-link" href="" class="pt-2">
+    <a id="entity-selector-link" href="" class="pt-2">
       <v-col>
         <v-icon color="primary">mdi-help-circle-outline</v-icon> Help me choose a business type
+        <v-icon color="primary" x-small>mdi-open-in-new</v-icon>
       </v-col>
     </a>
-<!--    <v-col class="mt-2">-->
-<!--      <a @click="activateNRRModal()">-->
-<!--        <v-icon color="primary">mdi-help-circle-outline</v-icon> Check if you need a Name Request-->
-<!--      </a>-->
-<!--    </v-col>-->
-<!--    <v-col class="middle-link mt-2">-->
-<!--      <a href="#name-build-info">-->
-<!--        <v-icon color="primary">mdi-help-circle-outline</v-icon> Learn how to build a name-->
-<!--      </a>-->
-<!--    </v-col>-->
-<!--    <v-col class="mt-2">-->
-<!--      <a href="">-->
-<!--        <v-icon color="primary">mdi-help-circle-outline</v-icon> Help me choose a business type-->
-<!--      </a>-->
-<!--    </v-col>-->
   </v-row>
 </template>
 
