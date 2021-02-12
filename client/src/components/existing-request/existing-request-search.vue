@@ -122,7 +122,8 @@ export default class ExistingRequestSearch extends Vue {
   mounted () {
     this.$nextTick(() => {
       // add classname to button text (for more detail in Sentry breadcrumbs)
-      this.$el.querySelector("#retrieve-name-btn > span")?.classList.add("retrieve-nr-btn")
+      const retrieveNrBtn = this.$el.querySelector("#retrieve-name-btn > span")
+      if (retrieveNrBtn) retrieveNrBtn.classList.add("retrieve-nr-btn")
     })
 
     if (this.nr && this.nr.failed) {

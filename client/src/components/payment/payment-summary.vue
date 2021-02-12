@@ -57,7 +57,8 @@ export default class PaymentSummary extends Mixins(PaymentMixin) {
   onSummaryChanged (val: any) {
     this.$nextTick(() => {
       // add classname to button text (for more detail in Sentry breadcrumbs)
-      this.$el.querySelector(".download-receipt-btn > span")?.classList.add("receipts-download-btn")
+      const receiptsDownloadBtn = this.$el.querySelector(".download-receipt-btn > span")
+      if (receiptsDownloadBtn) receiptsDownloadBtn.classList.add("receipts-download-btn")
     })
   }
 }

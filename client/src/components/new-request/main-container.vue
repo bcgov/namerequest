@@ -46,11 +46,14 @@ export default class MainContainer extends Mixins(SessionTimerMixin, DisplayedCo
     this.$nextTick(() => {
       // add classname to button text (for more detail in Sentry breadcrumbs)
       if (this.showExit) {
-        this.$el.querySelector("#back-to-search-btn > span")?.classList.add("exit-btn")
+        const exitBtn = this.$el.querySelector("#back-to-search-btn > span")
+        if (exitBtn) exitBtn.classList.add("exit-btn")
       } else if (this.editMode) {
-        this.$el.querySelector("#back-to-search-btn > span")?.classList.add("return-btn")
+        const returnBtn = this.$el.querySelector("#back-to-search-btn > span")
+        if (returnBtn) returnBtn.classList.add("return-btn")
       } else {
-        this.$el.querySelector("#back-to-search-btn > span")?.classList.add("start-search-over-btn")
+        const startSearchOverBtn = this.$el.querySelector("#back-to-search-btn > span")
+        if (startSearchOverBtn) startSearchOverBtn.classList.add("start-search-over-btn")
       }
     })
   }

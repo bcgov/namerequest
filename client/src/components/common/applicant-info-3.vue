@@ -362,8 +362,10 @@ export default class ApplicantInfo3 extends NameRequestMixin {
     if (val) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
-        this.$el.querySelector("#submit-back-btn > span")?.classList.add("client-review-back-btn")
-        this.$el.querySelector("#submit-continue-btn > span")?.classList.add("client-review-confirm-btn")
+        const clientReviewBackBtn = this.$el.querySelector("#submit-back-btn > span")
+        if (clientReviewBackBtn) clientReviewBackBtn.classList.add("client-review-back-btn")
+        const clientReviewConfirmBtn = this.$el.querySelector("#submit-continue-btn > span")
+        if (clientReviewConfirmBtn) clientReviewConfirmBtn.classList.add("client-review-confirm-btn")
       })
     }
   }

@@ -126,8 +126,10 @@ export default class ReapplyModal extends Mixins(
     if (val) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
-        this.$el.querySelector("#payment-pay-btn > span")?.classList.add("reapply-accept-btn")
-        this.$el.querySelector("#payment-close-btn > span")?.classList.add("reapply-cancel-btn")
+        const reapplyAcceptBtn = this.$el.querySelector("#payment-pay-btn > span")
+        if (reapplyAcceptBtn) reapplyAcceptBtn.classList.add("reapply-accept-btn")
+        const reapplyCancelBtn = this.$el.querySelector("#payment-close-btn > span")
+        if (reapplyCancelBtn) reapplyCancelBtn.classList.add("reapply-cancel-btn")
       })
     }
   }
