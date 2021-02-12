@@ -12,7 +12,9 @@
     <a id="name-build-link"
        class="middle-link pt-2"
        :class="{ 'no-selector-link' : !entitySelectorUrl }"
-       href="#name-build-info"
+       href="#"
+       onclick="return false;"
+       @click="scrollTo('name-build-info')"
     >
       <v-col>
         <v-icon color="primary">mdi-help-circle-outline</v-icon> Learn how to build a name
@@ -33,11 +35,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 import newReqModule from '@/store/new-request-module'
+import CommonMixin from '@/components/mixins/common-mixin'
 
 @Component({})
-export default class LinkRow extends Vue {
+export default class LinkRow extends Mixins(CommonMixin) {
   /** Entity Selector Tool */
   private get entitySelectorUrl (): string {
     return sessionStorage.getItem('ENTITY_SELECTOR_URL')

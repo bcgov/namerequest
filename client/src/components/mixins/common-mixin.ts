@@ -59,4 +59,9 @@ export default class CommonMixin extends Vue {
     return [EntityType.XCR, EntityType.XUL, EntityType.RLC, EntityType.XLP, EntityType.XLL,
       EntityType.XCP, EntityType.XSO].includes(nr?.entity_type_cd)
   }
+
+  /** Scroll to given element Id */
+  private scrollTo (id) {
+    document.getElementById(id).scrollIntoView()
+  }
 }
