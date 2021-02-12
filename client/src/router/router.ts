@@ -13,8 +13,11 @@ export function getVueRouter () {
     base: process.env.BASE_URL,
     routes,
     scrollBehavior (to, from, savedPosition) {
-      // see https://router.vuejs.org/guide/advanced/scroll-behavior.html
-      return { x: 0, y: 0 }
+      if (to.hash) {
+        return { selector: to.hash }
+      } else {
+        return { x: 0, y: 0 }
+      }
     }
   })
 }
