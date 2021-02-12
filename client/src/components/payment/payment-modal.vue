@@ -174,9 +174,12 @@ export default class PaymentModal extends Mixins(
     if (val) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
-        this.$el.querySelector("#payment-cancel-btn > span")?.classList.add("confirm-nr-cancel-btn")
-        this.$el.querySelector("#payment-pay-btn > span")?.classList.add("confirm-nr-continue-btn")
-        this.$el.querySelector("#payment-close-btn > span")?.classList.add("confirm-nr-close-btn")
+        const confirmNrCancelBtn = this.$el.querySelector("#payment-cancel-btn > span")
+        if (confirmNrCancelBtn) confirmNrCancelBtn.classList.add("confirm-nr-cancel-btn")
+        const confirmNrContinueBtn = this.$el.querySelector("#payment-pay-btn > span")
+        if (confirmNrContinueBtn) confirmNrContinueBtn.classList.add("confirm-nr-continue-btn")
+        const confirmNrCloseBtn = this.$el.querySelector("#payment-close-btn > span")
+        if (confirmNrCloseBtn) confirmNrCloseBtn.classList.add("confirm-nr-close-btn")
       })
     }
   }

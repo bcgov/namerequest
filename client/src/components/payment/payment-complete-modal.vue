@@ -148,8 +148,10 @@ export default class PaymentCompleteModal extends Mixins(
     if (val) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
-        this.$el.querySelector("#receipt-close-btn > span")?.classList.add("payment-successful-done-btn")
-        this.$el.querySelector("#receipt-download-btn > span")?.classList.add("payment-successful-download-btn")
+        const paymentSuccessfulDoneBtn = this.$el.querySelector("#receipt-close-btn > span")
+        if (paymentSuccessfulDoneBtn) paymentSuccessfulDoneBtn.classList.add("payment-successful-done-btn")
+        const paymentSuccessfulDownloadBtn = this.$el.querySelector("#receipt-download-btn > span")
+        if (paymentSuccessfulDownloadBtn) paymentSuccessfulDownloadBtn.classList.add("payment-successful-download-btn")
       })
     }
   }

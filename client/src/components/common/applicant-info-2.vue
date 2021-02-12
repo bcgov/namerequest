@@ -353,8 +353,10 @@ export default class ApplicantInfo2 extends NameRequestMixin {
     if (val) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
-        this.$el.querySelector("#submit-back-btn > span")?.classList.add("self-review-back-btn")
-        this.$el.querySelector("#submit-continue-btn > span")?.classList.add("self-review-confirm-btn")
+        const selfReviewBackBtn = this.$el.querySelector("#submit-back-btn > span")
+        if (selfReviewBackBtn) selfReviewBackBtn.classList.add("self-review-back-btn")
+        const selfReviewConfirmBtn = this.$el.querySelector("#submit-continue-btn > span")
+        if (selfReviewConfirmBtn) selfReviewConfirmBtn.classList.add("self-review-confirm-btn")
       })
     }
   }

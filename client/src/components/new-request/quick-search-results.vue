@@ -116,8 +116,10 @@ export default class QuickSearchResults extends Vue {
     this.originalName = this.searchName
     this.$nextTick(() => {
       // add classname to button text (for more detail in Sentry breadcrumbs)
-      this.$el.querySelector("#search-again-button > span")?.classList.add("search-again-btn")
-      this.$el.querySelector("#continue-search-button > span")?.classList.add("continue-detailed-analysis-btn")
+      const searchAgainBtn = this.$el.querySelector("#search-again-button > span")
+      if (searchAgainBtn) searchAgainBtn.classList.add("search-again-btn")
+      const continueDetailedAnalysisBtn = this.$el.querySelector("#continue-search-button > span")
+      if (continueDetailedAnalysisBtn) continueDetailedAnalysisBtn.classList.add("continue-detailed-analysis-btn")
     })
   }
   async searchAgain () {
