@@ -12,9 +12,12 @@ export function getVueRouter () {
     mode: 'history',
     base: process.env.BASE_URL,
     routes,
-    scrollBehavior (to, from, savedPosition) {
-      // see https://router.vuejs.org/guide/advanced/scroll-behavior.html
-      return { x: 0, y: 0 }
+    scrollBehavior: function (to, from, savedPosition) {
+      if (to.hash) {
+        return { selector: to.hash }
+      } else {
+        return { x: 0, y: 0 }
+      }
     }
   })
 }
