@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import { createLocalVue, mount } from '@vue/test-utils'
 import LinkRow from '@/components/common/link-row.vue'
 import newReqModule from '@/store/new-request-module'
@@ -12,6 +13,8 @@ describe('link-row.vue', () => {
   let wrapper: any
 
   beforeEach(async () => {
+    sessionStorage.setItem('ENTITY_SELECTOR_URL', `myhost/basePath/entitySelector`)
+
     wrapper = mount(LinkRow, {
       localVue,
       vuetify
@@ -34,5 +37,12 @@ describe('link-row.vue', () => {
     activator.trigger('click')
     await wrapper.vm.$nextTick()
     expect(newReqModule.nrRequiredModalVisible).toBe(true)
+  })
+
+  it('Hides the entity-selector link when the url is NOT provided', async () => {
+    sessionStorage.setItem('ENTITY_SELECTOR_URL', null)
+
+    await Vue.nextTick()
+    expect(wrapper.find('#entity-selector-link').attributes('display')).toBeFalsy()
   })
 })

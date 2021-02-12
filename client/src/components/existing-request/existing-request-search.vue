@@ -9,7 +9,7 @@
             <li>
               Check review time and approval status
             </li>
-            <li class="test-arrow">
+            <li>
               Upgrade Name Request to Priority ($100.00)
             </li>
             <li>
@@ -208,15 +208,17 @@ export default class ExistingRequestSearch extends Vue {
   }
 }
 
+/* Helper info column pointer */
 .existing-request-info:after{
   content: "";
   position:absolute;
-  top:5.5rem;
+  top:5.75rem;
   left:100%;
-  border-top: 20px solid transparent !important;
-  border-bottom: 20px solid transparent !important;
-  border-left: 16px solid $gray1 !important;
+  border-top: 18px solid transparent !important;
+  border-bottom: 18px solid transparent !important;
+  border-left: 14px solid $gray1 !important;
 }
+
 .col.max-width {
   max-width: 3rem;
 }

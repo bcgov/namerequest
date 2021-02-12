@@ -1,16 +1,29 @@
 <template>
   <v-row id="link-row" class="links-row text-body-4 px-2">
-    <a id="nr-required-activator" @click="activateNRRModal()" class="pt-2">
+    <a id="nr-required-activator"
+       class="pt-2"
+       :class="{ 'no-selector-link' : !entitySelectorUrl }"
+       @click="activateNRRModal()"
+    >
       <v-col>
         <v-icon color="primary">mdi-help-circle-outline</v-icon> Check if you need a Name Request
       </v-col>
     </a>
-    <a id="name-build-link" href="#name-build-info" class="middle-link pt-2">
+    <a id="name-build-link"
+       class="middle-link pt-2"
+       :class="{ 'no-selector-link' : !entitySelectorUrl }"
+       href="#name-build-info"
+    >
       <v-col>
         <v-icon color="primary">mdi-help-circle-outline</v-icon> Learn how to build a name
       </v-col>
     </a>
-    <a id="entity-selector-link" href="" class="pt-2">
+    <a v-if="entitySelectorUrl"
+       id="entity-selector-link"
+       class="pt-2"
+       :href="entitySelectorUrl"
+       target="_blank"
+    >
       <v-col>
         <v-icon color="primary">mdi-help-circle-outline</v-icon> Help me choose a business type
         <v-icon color="primary" x-small>mdi-open-in-new</v-icon>
@@ -25,6 +38,11 @@ import newReqModule from '@/store/new-request-module'
 
 @Component({})
 export default class LinkRow extends Vue {
+  /** Entity Selector Tool */
+  private get entitySelectorUrl (): string {
+    return sessionStorage.getItem('ENTITY_SELECTOR_URL')
+  }
+
   activateNRRModal () {
     newReqModule.mutateNrRequiredModalVisible(true)
   }
@@ -46,6 +64,10 @@ export default class LinkRow extends Vue {
   a {
     width: 33%;
     text-decoration: none;
+  }
+
+  .no-selector-link {
+    width: 50% !important;
   }
 
   .middle-link {

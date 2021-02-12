@@ -51,6 +51,9 @@ export function getConfig (): Promise<EnvConfigI> {
     const legalApiUrl = response.data[0]['LEGAL_API_URL']
     sessionStorage.setItem('LEGAL_API_URL', legalApiUrl)
 
+    const entitySelectorUrl = response.data[0]['ENTITY_SELECTOR_URL']
+    entitySelectorUrl && sessionStorage.setItem('ENTITY_SELECTOR_URL', entitySelectorUrl)
+
     const ldClientId: string = response.data[0]['LD_CLIENT_ID'];
     (<any>window).ldClientId = ldClientId
 
