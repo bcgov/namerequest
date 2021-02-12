@@ -12,7 +12,7 @@ export function getVueRouter () {
     mode: 'history',
     base: process.env.BASE_URL,
     routes,
-    scrollBehavior: function (to, from, savedPosition) {
+    scrollBehavior (to, from, savedPosition) {
       if (to.hash) {
         return { selector: to.hash }
       } else {
