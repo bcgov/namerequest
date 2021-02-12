@@ -61,7 +61,7 @@ export default class CommonMixin extends Vue {
   }
 
   /** Scroll to given element Id */
-  private scrollTo (id) {
+  private scrollTo (id): void {
     document.getElementById(id)?.scrollIntoView()
   }
 }
