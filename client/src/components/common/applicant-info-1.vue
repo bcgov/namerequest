@@ -348,7 +348,7 @@ export default class ApplicantInfo1 extends NameRequestMixin {
   messages = {}
   provStateRules = [
     v => typeof v === 'string' || 'Must be letters only',
-    v => v.length <= 2 || 'Max 2 characters'
+    v => (!v || v.length <= 2) || 'Max 2 characters'
   ]
   firstLastNameRules = [
     v => !!v || 'Required field',
