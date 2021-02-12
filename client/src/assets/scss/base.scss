@@ -35,6 +35,10 @@
   src: url('~@/assets/fonts/BCSans-BoldItalic.woff') format('woff');
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 /*
  * HTML element styles
  */
@@ -94,7 +98,7 @@
   background-color: transparent !important;
   border: thin solid $app-blue !important;
 }
-  
+
 // red button: red on white
 .button-red {
   color: $app-red !important;

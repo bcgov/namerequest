@@ -26,18 +26,9 @@ describe('search.vue', () => {
     expect(wrapper.find('#entity-type-options-select').element).toBeTruthy()
     expect(wrapper.find('#name-input-component').element).toBeTruthy()
   })
-  it('Displays the two modal activators', () => {
-    expect(wrapper.find('#nr-required-activator').element).toBeTruthy()
-  })
   it('Initially sets the state for controlling both info modals visibility to false', () => {
     expect(newReqModule.nrRequiredModalVisible).toBe(false)
     expect(newReqModule.helpMeChooseModalVisible).toBe(false)
-  })
-  it('Sets the modal visibility state to true when the nr-required-activator span is clicked', async () => {
-    let activator = wrapper.find('#nr-required-activator')
-    activator.trigger('click')
-    await wrapper.vm.$nextTick()
-    expect(newReqModule.nrRequiredModalVisible).toBe(true)
   })
   it(
     'Initially renders with the BC Corporation entity type as empty and the PickEntityOrConversion modal invisible',

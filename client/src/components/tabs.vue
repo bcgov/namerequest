@@ -1,7 +1,6 @@
 <template>
-  <v-container height="400" id="tabs-landing-comp">
+  <v-container id="tabs-landing-comp">
     <v-tabs v-model="tabNumber"
-            background-color="#003366"
             active-class="active-tab"
             style="border-radius: 4px 4px 0 0"
             hide-slider
@@ -10,19 +9,24 @@
             grow>
       <v-tab :ripple="false"
               id="new-tab"
-              class="upper-left-border"
+              class="upper-border"
+              :class="{ 'mt-1': tabNumber === 1 }"
               tabindex="0">
-        <span :class="tabNumber === 0 ? 'h5' : 'h5-lt'">New Name Search</span>
+        <v-icon class="mr-2">mdi-magnify</v-icon>
+        <span :class="tabNumber === 0 ? 'h5' : 'h5-lt'">Request a Business Name</span>
       </v-tab>
       <v-tab :ripple="false"
               id="existing-tab"
-              class="upper-right-border"
+              class="upper-border"
+             :class="{ 'mt-1': tabNumber === 0 }"
               tabindex="1">
-        <span :class="tabNumber === 1 ? 'h5' : 'h5-lt'">Existing Name Request</span>
+        <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
+        <span :class="tabNumber === 1 ? 'h5' : 'h5-lt'">Manage My Name Request</span>
       </v-tab>
       <v-tabs-items class="rounded-b tab-items" v-model="tabNumber">
         <v-tab-item>
           <NewSearch />
+          <link-row />
         </v-tab-item>
         <v-tab-item>
           <ExistingRequestSearch/>
@@ -37,11 +41,13 @@ import NewSearch from '@/components/new-request/search.vue'
 import ExistingRequestSearch from './existing-request/existing-request-search.vue'
 import newReqModule from '../store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
+import LinkRow from '@/components/common/link-row.vue'
 
 @Component({
   components: {
     NewSearch,
-    ExistingRequestSearch
+    ExistingRequestSearch,
+    LinkRow
   }
 })
 export default class Tabs extends Vue {
@@ -61,17 +67,31 @@ export default class Tabs extends Vue {
   max-width: 1140px !important;
   padding: 0 !important;
 }
+
 #new-tab, #existing-tab {
   min-height: 64px;
+  background-color: $BCgovBlue5;
 }
-.upper-left-border {
+
+.upper-border {
   border-top-left-radius: 4px;
-  min-height: 58px;
-  max-height: 58px;
-}
-.upper-right-border {
   border-top-right-radius: 4px;
   min-height: 58px;
   max-height: 58px;
+  margin: 0 2.5px;
+}
+
+::v-deep .v-tab:before {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+::v-deep .theme--light.v-tabs > .v-tabs-bar{
+  background-color: transparent;
+}
+
+::v-deep .theme--light.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) > .v-icon {
+  color: white;
+  transition: none !important;
 }
 </style>
