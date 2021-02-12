@@ -814,12 +814,10 @@ export default class NamesCapture extends NameRequestMixin {
               newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })
             }
           }
-        } else {
-          if (this.$designations[this.entity_type_cd].end && nameChoices[`designation${choice}`]) {
-            if (!nameChoices[`name${choice}`].endsWith(nameChoices[`designation${choice}`])) {
-              let newName = nameChoices[`name${choice}`] + ' ' + nameChoices[`designation${choice}`]
-              newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })
-            }
+        } else if (this.designationAtEnd && nameChoices[`designation${choice}`]) {
+          if (!nameChoices[`name${choice}`].endsWith(nameChoices[`designation${choice}`])) {
+            let newName = nameChoices[`name${choice}`] + ' ' + nameChoices[`designation${choice}`]
+            newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })
           }
         }
       }

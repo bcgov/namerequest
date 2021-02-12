@@ -1391,7 +1391,7 @@ export class NewRequestModule extends VuexModule {
   }
 
   get splitNameDesignation (): NameDesignationI {
-    if (this.name && this.designationObject && this.designationObject.end) {
+    if (this.name && this.designationObject?.end) {
       let { words } = this.designationObject
       for (let word of words) {
         if (this.name.endsWith(word)) {
@@ -1592,7 +1592,7 @@ export class NewRequestModule extends VuexModule {
       while (choiceIdx <= 3) {
         if (nameChoices[`name${choiceIdx}`] as boolean) {
           let combinedName = nameChoices[`name${choiceIdx}`]
-          if (($designations[this.entity_type_cd] && $designations[this.entity_type_cd].end)) {
+          if (this.entity_type_cd && $designations[this.entity_type_cd]?.end) {
             let des = nameChoices[`designation${choiceIdx}`]
             if (des && !combinedName.endsWith(des)) {
               combinedName = combinedName + ' ' + des
@@ -1616,7 +1616,7 @@ export class NewRequestModule extends VuexModule {
       }
     } else {
       // Just use the 'name' property to fill in the requestName
-      if (this.entity_type_cd && this.location === 'BC' && $designations[this.entity_type_cd].end) {
+      if (this.entity_type_cd && this.location === 'BC' && $designations[this.entity_type_cd]?.end) {
         requestNames.push({
           name: this.name,
           designation: this.splitNameDesignation.designation,
