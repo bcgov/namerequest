@@ -37,12 +37,13 @@
           </v-row>
 
           <!-- SECOND LINE -->
-          <v-row class="mt-5" no-gutters v-if="errorMessage">
-            <v-col cols="12" class="red--text" v-html="errorMessage" />
+          <v-row class="mt-4" no-gutters v-if="errorMessage">
+            <v-col cols="1" class="max-width"></v-col>
+            <v-col cols="11" class="error-message copy-small" v-html="errorMessage" />
           </v-row>
 
           <!-- THIRD LINE -->
-          <v-row class="mt-5 mb-5" no-gutters align="center">
+          <v-row class="mt-4 mb-6" no-gutters align="center">
             <v-col cols="1" class="max-width">
               <v-img src="../../assets/images/number1.svg" contain width="34" height="34" />
             </v-col>
@@ -93,7 +94,7 @@
           </v-row>
 
           <!-- FIFTH LINE -->
-          <v-row class="mt-8" no-gutters>
+          <v-row class="mt-9" no-gutters>
             <v-col class="text-center">
               <v-btn id="retrieve-name-btn" @click="handleSubmit()">Retrieve Name Request</v-btn>
             </v-col>
