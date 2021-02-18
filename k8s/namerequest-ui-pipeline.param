@@ -5,10 +5,8 @@
 # Action: build
 # Template File: templates/namerequest-ui-pipeline.json
 #=========================================================
-NAME="namerequest-ui"
-PIPELINE_PURPOSE="build"
+NAME="namerequest"
+TAG="dev"
 GIT_REPO_URL="https://github.com/bcgov/namerequest.git"
 GIT_REF="master"
-SOURCE_CONTEXT_DIR="."
-JENKINS_FILE="Jenkinsfiles/build.groovy"
-WEBHOOK="unknown"
+JENKINS_FILE="Jenkinsfiles/dev.groovy"
