@@ -81,8 +81,8 @@
 
                 <v-col cols="12">
                   <span>Applicant Name:</span>
-                  &nbsp;{{ nr.applicants.lastName }},
-                  &nbsp;{{ nr.applicants.firstName }}
+                  &nbsp;{{ nr && nr.applicants && nr.applicants.lastName }},
+                  &nbsp;{{ nr && nr.applicants && nr.applicants.firstName }}
                 </v-col>
 
                 <v-col cols="12">
@@ -134,7 +134,7 @@
             v-if="showNrApprovedGrayBox"
             :nrNum="nr.nrNum"
             :approvedName="approvedName && approvedName.name"
-            :emailAddress="nr.applicants.emailAddress"
+            :emailAddress="nr && nr.applicants && nr.applicants.emailAddress"
           />
 
           <nr-not-approved-gray-box
@@ -600,7 +600,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   @Watch('isVisible', { immediate: true })
   onVisibleChanged (val: boolean) {
-    if (val) {
+    if (val && this.$el.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
         const existingNrCancelBtn = this.$el.querySelector("#CANCEL-btn > span")

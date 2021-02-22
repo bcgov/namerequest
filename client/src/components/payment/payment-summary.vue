@@ -1,7 +1,7 @@
 <template>
   <v-expand-transition>
-    <!-- do not display until payments are fetched -->
-    <section class="payment-summary" v-if="summary">
+    <!-- check for valid receipt, as the payment may exist but not be completed -->
+    <section class="payment-summary" v-if="summary.receipt">
       <v-row class="py-5" no-gutters>
         <div class="col1 align-self-center">{{receiptNumber}}</div>
         <div class="col2 align-self-center">{{receiptDate}}</div>
@@ -57,7 +57,7 @@ export default class PaymentSummary extends Mixins(PaymentMixin) {
   onSummaryChanged (val: any) {
     this.$nextTick(() => {
       // add classname to button text (for more detail in Sentry breadcrumbs)
-      const receiptsDownloadBtn = this.$el.querySelector(".download-receipt-btn > span")
+      const receiptsDownloadBtn = this.$el.querySelector && this.$el.querySelector(".download-receipt-btn > span")
       if (receiptsDownloadBtn) receiptsDownloadBtn.classList.add("receipts-download-btn")
     })
   }
