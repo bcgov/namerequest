@@ -32,8 +32,8 @@
             <v-col cols="9" class="py-0">
               <v-row dense>
                 <v-col cols="12">
-                  <span>Last Update:</span>
-                  &nbsp;{{ lastUpdate }}
+                  <span>Submitted Date:</span>
+                  &nbsp;{{ submittedDate }}
                 </v-col>
 
                 <v-col cols="12">
@@ -53,6 +53,33 @@
                 <v-col cols="12">
                   <span>Priority Request:</span>
                   &nbsp;{{ isPriorityReq(nr) ? 'Yes' : 'No' }}
+                </v-col>
+
+                 <v-col cols="12" v-if="showEstimatedDateNotPriority">
+                  <span>Estimated Review Date:</span>
+                  &nbsp;
+                  <v-tooltip
+                    right
+                    transition="fade-transition"
+                    content-class="tooltip"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <span
+                        v-bind="attrs"
+                        v-on="on"
+                        class="dotted-underline app-blue font-weight-regular cursor-default"
+                        >{{ reviewDate }}</span
+                      >
+                    </template>
+                    This is an estimate only, actual review date may vary. Staff
+                    are currently reviewing Name Requests submitted on
+                    {{ queueDate }}.
+                  </v-tooltip>
+                </v-col>
+
+                <v-col cols="12" v-if="showEstimatedDatePriority" class="font-italic">
+                  Priority Requests are usually reviewed within 1 to 2 business
+                  days
                 </v-col>
 
                 <v-col cols="12" v-if="expiryDate">
@@ -157,7 +184,7 @@
 <script lang="ts">
 import { Component, Mixins, Vue, Watch } from 'vue-property-decorator'
 import { mapGetters } from 'vuex'
-import Moment from 'moment'
+import Moment from 'moment-timezone'
 
 import MainContainer from '@/components/new-request/main-container.vue'
 import newReqModule from '@/store/new-request-module'
@@ -257,23 +284,46 @@ export default class ExistingRequestDisplay extends Mixins(
 
   private get consentDate () {
     if (this.nr.consent_dt) {
-      return Moment(this.nr.consent_dt).utc().format('MMM Do[,] YYYY')
+      return Moment(this.nr.consent_dt).tz('America/Vancouver').format('MMM Do[,] YYYY')
     }
     return 'Not Yet Received'
   }
 
   private get expiryDate () {
     if (this.nr.expirationDate) {
-      return Moment(this.nr.expirationDate).format('MMM Do[,] YYYY')
+      return Moment(this.nr.expirationDate).tz('America/Vancouver').format('MMM Do[,] YYYY')
     }
     return ''
   }
 
-  private get lastUpdate () {
-    if (this.nr.lastUpdate) {
-      return Moment(this.nr.lastUpdate).format('MMM Do[,] YYYY')
+  private get reviewDate () {
+    if (this.nr.waiting_time) {
+      let waitingTime = this.nr.waiting_time
+      // make sure minimum waiting time is 1
+      if (waitingTime < 1) {
+        waitingTime = 1
+      }
+      let reviewDate = new Date()
+      // add the number of days to the current date to get the review date
+      reviewDate.setDate(reviewDate.getDate() + waitingTime)
+      return Moment(reviewDate).tz('America/Vancouver').format("MMM Do[,] YYYY") + " (" + this.nr.waiting_time + " days)"
     }
-    return ''
+    return ""
+  }
+
+  private get queueDate () {
+    if (this.nr.oldest_draft) {
+      let oldest_draft = Moment(this.nr.oldest_draft)
+      return oldest_draft.tz('America/Vancouver').format("MMM Do[,] YYYY")
+    }
+    return ""
+  }
+
+  private get submittedDate () {
+    if (this.nr.submittedDate) {
+      return Moment(this.nr.submittedDate).tz('America/Vancouver').format("MMMM Do[,] YYYY, h:mm a") + " Pacific Time"
+    }
+    return ""
   }
 
   private get disableUnfurnished (): boolean {
@@ -333,6 +383,16 @@ export default class ExistingRequestDisplay extends Mixins(
     )
   }
 
+  /** True if the non priority estimated date should be shown. */
+  private get showEstimatedDateNotPriority (): boolean {
+    return !this.isPriorityReq(this.nr) && this.nr.state === NrState.DRAFT
+  }
+
+  /** True if priority estimated date text should be shown. */
+  private get showEstimatedDatePriority (): boolean {
+    return this.isPriorityReq(this.nr) && this.nr.state === NrState.DRAFT
+  }
+
   /** True if the Conditions link should be shown. */
   private get showConditionsLink (): boolean {
     // 1. NR is approved or conditional
@@ -372,7 +432,7 @@ export default class ExistingRequestDisplay extends Mixins(
           if (this.isNrConsumed) return `Conditional Approval / Used For ${this.approvedName.corpNum}`
           if (this.isNrExpired) return 'Expired'
           return 'Conditional Approval'
-        case NrState.DRAFT: return 'Not Yet Processed'
+        case NrState.DRAFT: return 'Pending Staff Review'
         case NrState.ON_HOLD: return 'In Progress' // show ON HOLD as "In Progress"
         case NrState.IN_PROGRESS: return 'In Progress'
         case NrState.REFUND_REQUESTED: return 'Cancelled, Refund Requested'
