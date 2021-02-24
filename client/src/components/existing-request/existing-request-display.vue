@@ -184,7 +184,7 @@
 <script lang="ts">
 import { Component, Mixins, Vue, Watch } from 'vue-property-decorator'
 import { mapGetters } from 'vuex'
-import Moment from 'moment'
+import Moment from 'moment-timezone'
 
 import MainContainer from '@/components/new-request/main-container.vue'
 import newReqModule from '@/store/new-request-module'
@@ -313,7 +313,8 @@ export default class ExistingRequestDisplay extends Mixins(
 
   private get queueDate () {
     if (this.nr.oldest_draft) {
-      return Moment(this.nr.oldest_draft).format("MMM Do[,] YYYY")
+      let oldest_draft = Moment(this.nr.oldest_draft)
+      return oldest_draft.tz('America/Los_Angeles').format("MMM Do[,] YYYY")
     }
     return ""
   }
