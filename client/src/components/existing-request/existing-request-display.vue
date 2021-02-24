@@ -32,8 +32,8 @@
             <v-col cols="9" class="py-0">
               <v-row dense>
                 <v-col cols="12">
-                  <span>Last Update:</span>
-                  &nbsp;{{ lastUpdate }}
+                  <span>Submitted Date:</span>
+                  &nbsp;{{ submittedDate }}
                 </v-col>
 
                 <v-col cols="12">
@@ -53,6 +53,33 @@
                 <v-col cols="12">
                   <span>Priority Request:</span>
                   &nbsp;{{ isPriorityReq(nr) ? 'Yes' : 'No' }}
+                </v-col>
+
+                 <v-col cols="12" v-if="showEstimatedDateNotPriority">
+                  <span>Estimated Review Date:</span>
+                  &nbsp;
+                  <v-tooltip
+                    right
+                    transition="fade-transition"
+                    content-class="tooltip"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <span
+                        v-bind="attrs"
+                        v-on="on"
+                        class="dotted-underline app-blue font-weight-regular cursor-default"
+                        >{{ reviewDate }}</span
+                      >
+                    </template>
+                    This is an estimate only, actual review date may vary. Staff
+                    are currently reviewing Name Requests submitted on
+                    {{ queueDate }}.
+                  </v-tooltip>
+                </v-col>
+
+                <v-col cols="12" v-if="showEstimatedDatePriority" class="italic">
+                  Priority Requests are usually reviewed within 1 to 2 business
+                  days
                 </v-col>
 
                 <v-col cols="12" v-if="expiryDate">
@@ -276,6 +303,36 @@ export default class ExistingRequestDisplay extends Mixins(
     return ''
   }
 
+  private get reviewDate () {
+    if (this.nr.waiting_time) {
+      let waitingTime = this.nr.waiting_time
+      // make sure minimum waiting time is 1
+      if (waitingTime < 1) {
+        waitingTime = 1
+      }
+      // add 20 % for weekends to account for business days
+      waitingTime = Math.round(waitingTime * 1.2)
+      let reviewDate = new Date()
+      reviewDate.setDate(reviewDate.getDate() + waitingTime)
+      return Moment(reviewDate).format("MMM Do[,] YYYY") + " (" + this.nr.waiting_time + " days)"
+    }
+    return ""
+  }
+
+  private get queueDate () {
+    if (this.nr.oldest_draft) {
+      return Moment(this.nr.oldest_draft).format("MMM Do[,] YYYY")
+    }
+    return ""
+  }
+
+  private get submittedDate () {
+    if (this.nr.submittedDate) {
+      return Moment(this.nr.submittedDate).format("MMMM Do[,] YYYY, h:mm a z")
+    }
+    return ""
+  }
+
   private get disableUnfurnished (): boolean {
     return (
       this.nr.furnished === 'N' &&
@@ -333,6 +390,16 @@ export default class ExistingRequestDisplay extends Mixins(
     )
   }
 
+  /** True if the non priority estimated date should be shown. */
+  private get showEstimatedDateNotPriority (): boolean {
+    return !this.isPriorityReq(this.nr) && this.nr.state === NrState.DRAFT
+  }
+
+  /** True if priority estimated date text should be shown. */
+  private get showEstimatedDatePriority (): boolean {
+    return this.isPriorityReq(this.nr) && this.nr.state === NrState.DRAFT
+  }
+
   /** True if the Conditions link should be shown. */
   private get showConditionsLink (): boolean {
     // 1. NR is approved or conditional
@@ -372,7 +439,7 @@ export default class ExistingRequestDisplay extends Mixins(
           if (this.isNrConsumed) return `Conditional Approval / Used For ${this.approvedName.corpNum}`
           if (this.isNrExpired) return 'Expired'
           return 'Conditional Approval'
-        case NrState.DRAFT: return 'Not Yet Processed'
+        case NrState.DRAFT: return 'Pending Staff Review'
         case NrState.ON_HOLD: return 'In Progress' // show ON HOLD as "In Progress"
         case NrState.IN_PROGRESS: return 'In Progress'
         case NrState.REFUND_REQUESTED: return 'Cancelled, Refund Requested'
@@ -653,5 +720,8 @@ export default class ExistingRequestDisplay extends Mixins(
     color: $dk-text;
     font-weight: bold;
   }
+}
+.italic {
+  font-style: italic;
 }
 </style>
