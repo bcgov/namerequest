@@ -284,14 +284,14 @@ export default class ExistingRequestDisplay extends Mixins(
 
   private get consentDate () {
     if (this.nr.consent_dt) {
-      return Moment(this.nr.consent_dt).utc().format('MMM Do[,] YYYY')
+      return Moment(this.nr.consent_dt).tz('America/Vancouver').format('MMM Do[,] YYYY')
     }
     return 'Not Yet Received'
   }
 
   private get expiryDate () {
     if (this.nr.expirationDate) {
-      return Moment(this.nr.expirationDate).format('MMM Do[,] YYYY')
+      return Moment(this.nr.expirationDate).tz('America/Vancouver').format('MMM Do[,] YYYY')
     }
     return ''
   }
@@ -306,7 +306,7 @@ export default class ExistingRequestDisplay extends Mixins(
       let reviewDate = new Date()
       // add the number of days to the current date to get the review date
       reviewDate.setDate(reviewDate.getDate() + waitingTime)
-      return Moment(reviewDate).format("MMM Do[,] YYYY") + " (" + this.nr.waiting_time + " days)"
+      return Moment(reviewDate).tz('America/Vancouver').format("MMM Do[,] YYYY") + " (" + this.nr.waiting_time + " days)"
     }
     return ""
   }
@@ -314,14 +314,14 @@ export default class ExistingRequestDisplay extends Mixins(
   private get queueDate () {
     if (this.nr.oldest_draft) {
       let oldest_draft = Moment(this.nr.oldest_draft)
-      return oldest_draft.tz('America/Los_Angeles').format("MMM Do[,] YYYY")
+      return oldest_draft.tz('America/Vancouver').format("MMM Do[,] YYYY")
     }
     return ""
   }
 
   private get submittedDate () {
     if (this.nr.submittedDate) {
-      return Moment(this.nr.submittedDate).format("MMMM Do[,] YYYY, h:mm a") + " Pacific Time"
+      return Moment(this.nr.submittedDate).tz('America/Vancouver').format("MMMM Do[,] YYYY, h:mm a") + " Pacific Time"
     }
     return ""
   }
