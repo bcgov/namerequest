@@ -1,0 +1,86 @@
+/*
+ * Vuetify overrides
+ */
+
+@import "theme.scss";
+
+.v-application {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-family: 'BCSans', Verdana, Arial, sans-serif !important;
+  padding: 0;
+
+  .text-body-1 {
+    font-family: inherit !important;
+    letter-spacing: normal !important;
+    line-height: 1.5rem !important;
+  }
+
+  .text-body-2 {
+    font-family: inherit !important;
+    letter-spacing: normal !important;
+    line-height: 1.375rem !important;
+  }
+
+  .text-body-3 {
+    font-family: inherit;
+    font-size: 0.875rem;
+    line-height: 1.375rem;
+  }
+
+  .text-body-4 {
+    font-family: inherit;
+    font-size: 0.875rem;
+    line-height: 1.375rem;
+    color: $text;
+  }
+
+  .text-name {
+    font-family: inherit;
+    font-size: 1.125rem;
+    line-height: 1.875rem;
+    text-transform: capitalize;
+    color: $text;
+  }
+}
+
+.v-btn {
+  font-family: inherit !important;
+  font-size: 0.875rem !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  height: 2.5rem !important;
+  box-shadow: 1px 1px rgba(0,0,0,.2) !important;
+}
+
+/* generic layout for dialogs */
+.v-dialog > .v-card {
+  padding: 2.5rem;
+
+  .v-card__title {
+    padding: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: $dk-text;
+    letter-spacing: normal;
+    margin-top: -0.5rem;
+    margin-bottom: -0.5rem;
+  }
+
+  .v-card__text {
+    padding: 2rem 0 0 0;
+    font-size: 1rem;
+    color: $text;
+    line-height: 1.5rem;
+  }
+
+  .v-card__actions {
+    padding: 2rem 0 0 0;
+  }
+
+  .v-btn.dialog-close {
+    color: $app-blue !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+}

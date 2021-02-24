@@ -1,0 +1,286 @@
+.bg-grey-1
+  background-color: $gray1
+
+.bg-grey-2
+  background-color: $grey-2
+
+.bg-grey-3
+  background-color: $gray2
+
+.bg-grey-4
+  background-color: $grey-4
+
+.bg-grey-5
+  background-color: $grey-5
+
+.colour-link
+  color: $app-blue
+
+.colour-p-blue-text
+  color: $p-blue-text !important
+
+.colour-text
+  color: $text !important
+
+.colour-dk-text
+  color: $dk-text !important
+
+.colour-white
+  color: white !important
+
+.copy-bold
+  @extend .copy-normal
+  font-weight: bold !important
+
+.copy-large
+  @extend .copy-normal
+  font-size: 18px !important
+  line-height: 26px !important
+
+.copy-normal
+  color: $text
+  font-weight: normal
+  font-size: 1rem
+  line-height: 24px
+
+.copy-small
+  @extend .copy-normal
+  font-size: 0.875rem !important
+  line-height: 1.25rem !important
+
+.fs-24
+  font-size: 24px
+
+.h1, h1
+  color: $dk-text
+  font-size: 40px
+  line-height: 50px
+  font-weight: bold
+
+.h2, h2
+  color: $dk-text
+  font-size: 32px
+  line-height: 42px
+  font-weight: bold
+
+.h2-lt
+  @extend .h2
+  color: white
+
+.h3, h3
+  color: $dk-text
+  font-size: 24px
+  line-height: 34px
+  font-weight: bold
+
+.h3-lt
+  @extend .h3
+  color: white
+
+.h4, h4
+  color: $dk-text
+  font-size: 18px
+  line-height: 26px
+  font-weight: bold
+
+.h4-lt
+  @extend .h4
+  color: white
+
+.h5, h5
+  color: $dk-text
+  font-size: 18px
+  line-height: 24px
+  font-weight: bold
+  letter-spacing: 0
+
+.h5-lt
+  @extend .h5
+  color: white
+
+.h6, h6
+  color: $dk-text
+  font-size: 1rem
+  line-height: 20px
+  font-weight: bold
+
+.link-lg
+  @extend .link-std
+  font-size: 18px
+  line-height: 20px
+
+.link-sm
+  @extend .link-std
+  font-size: 0.875rem
+  line-height: 20px
+
+.link-sm-dk-text
+  font-size: 0.875rem !important
+  color: $dk-text !important
+  text-decoration: none !important
+
+.link-sm-sans-ul
+  @extend .link-sm
+  text-decoration: none
+
+.link-std
+  font-size: 0.875rem
+  font-weight: normal
+  color: $app-blue
+  text-decoration: underline
+  line-height: 20px
+  cursor: pointer
+
+.link-std-sans-ul
+  @extend .link-std
+  text-decoration: none !important
+
+.link-xsm
+  @extend .link-std
+  font-size: 0.75rem
+  line-height: 16px
+
+#next-issue-btn, #previous-issue-btn
+  background-color: white !important
+  border-radius: 4px !important
+  box-shadow: none !important
+  border-width: 1px !important
+  border-style: solid !important
+  border-block-end-width: 1px !important
+  margin-right: 20px
+
+#next-issue-btn.disabled-issue-btn
+  color: lightgrey !important
+  border-color: lightgrey !important
+
+#next-issue-btn.active-issue-btn, #previous-issue-btn
+  color: $app-blue !important
+  border-color: $app-blue !important
+
+button.reserve-submit-btn
+  min-width: 130px
+  text-transform: unset
+
+.main-container-style
+  border-radius: 4px !important
+  max-width: 1140px
+
+.mini-back-arrow
+  font-weight: bold
+  top: -1px !important
+  position: relative !important
+  color: $app-blue !important
+
+#applicant-info-1 .v-text-field__details
+  margin: 0 !important
+
+#submit-back-btn
+  background-color: white !important
+  color: $app-blue !important
+  border: 1px solid $app-blue !important
+  box-shadow: none !important
+  text-transform: none !important
+
+/* CSS TRANSITION/ANIMATION CLASSES */
+.fade-enter, .fade-leave-to
+  opacity: 0
+
+.fade-enter-active, .fade-leave-active
+  transition: all .25s ease-in
+
+.fadeslower-enter, .fadeslower-leave-to
+  opacity: 0
+
+.fadeslower-enter-active, .fadeslower-leave-active
+  transition: all .40s ease-in
+
+.flip-enter, .flip-leave-to
+  transform: rotateX(90deg)
+
+.flip-enter-active, .flip-leave-active
+  transition: all .2s ease-in
+
+.flip-enter-to, .flip-leave
+  transform: rotateX(0deg)
+
+.flip-class
+  backface-visibility: visible
+  perspective-origin: center
+  perspective: 1000px
+  transform-style: preserve-3d
+
+.square-card-x1
+  padding: 25px
+  border-radius: 4px
+  border: 1px dashed $pale-blue
+  background-color: $gray1
+  height: 100%
+  width: auto
+  text-align: center !important
+  max-width: 1140px
+
+.square-card-x2
+  height: 100%
+  width: auto
+  padding: 25px
+  border-radius: 4px
+  border: 1px dashed $pale-blue
+  background-color: $gray1
+
+.square-card-x3
+  height: 100%
+  width: auto
+  padding: 25px
+  margin: 0px
+  border-radius: 4px
+  border: 1px dashed $pale-blue
+  background-color: $gray1
+
+#Country2
+  font-size: 0.875rem !important
+
+.name-search-icon
+  color: $app-blue
+  cursor: pointer
+
+.hidden
+  display: none !important
+
+/* TODO: Move this somewhere better! */
+.fee-list
+  padding-left: 5px !important
+  list-style: none
+
+.title-bold-14
+  font-weight: bold
+  font-size: .9rem
+  color: $dk-text
+
+.title-bold-16
+  font-weight: bold
+  font-size: 1rem
+  color: $dk-text
+
+// Loading Indicator
+.loading-container
+  display: flex
+  align-items: center
+  position: fixed
+  top: 0
+  right: 0
+  bottom: 0
+  left: 0
+  z-index: 999
+  background: rgba(255, 255, 255, 1)
+
+.loading__content
+  margin-top: -2rem
+  flex: 1 1 auto
+  text-align: center
+
+.tooltip-bullet
+  display: list-item
+  list-style-type: disc
+  list-style-position: outside
+  margin-left: 1.5em
+  padding-top: 3px

@@ -1,0 +1,144 @@
+<template>
+  <div>
+    <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
+
+    <ul class="fee-list pl-0 mb-n1" v-show="!fetchError">
+      <li>
+        <div class="font-weight-bold nr-num">Your Name Request Number is {{nrNum}}</div>
+      </li>
+      <li>
+        Use this number to check the status of your Name Request
+      </li>
+    </ul>
+
+    <request-details
+      v-bind:applicant="applicant"
+      v-bind:nameChoices="nameChoices"
+      v-bind:name="name"
+    />
+
+    <v-container>
+      <v-row align="center" justify="center" class="receipt-summary" v-show="!fetchError">
+        <v-col cols="10">
+          <div class="font-weight-bold pb-3 header">Receipt No. {{receipt.receiptNumber}}</div>
+
+          <ul class="fee-list pt-3 px-0">
+            <li class="container fee-list__item px-0" v-if="receipt">
+              <div class="fee-list__item-name">Payment Date</div>
+              <div class="fee-list__item-value">{{receipt.receiptDate}}</div>
+            </li>
+            <li class="container fee-list__item px-0" v-if="receipt">
+              <div class="fee-list__item-name">Amount</div>
+              <div class="fee-list__item-value">${{receipt.receiptAmount.toFixed(2)}} CAD</div>
+            </li>
+            <li class="container fee-list__item px-0" v-if="summary">
+              <div class="fee-list__item-name">Status</div>
+              <div class="fee-list__item-value">{{summary.statusCode}}</div>
+            </li>
+          </ul>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
+</template>
+
+<script lang="ts">
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import RequestDetails from '@/components/common/request-details.vue'
+import { ApplicantI } from '@/models'
+
+@Component({
+  components: {
+    RequestDetails
+  }
+})
+export default class PaymentConfirm extends Vue {
+  @Prop(String) nrNum: string
+  @Prop(Object) summary: any
+  @Prop(Object) receipt: any
+  @Prop(Object) applicant: ApplicantI
+  @Prop(Array) nameChoices: {
+    type: any[]
+    required: false
+  }
+  @Prop(String) name: string
+
+  protected fetchError = ''
+}
+</script>
+
+<style lang="scss" scoped>
+@import "@/assets/scss/theme";
+.receipt-summary {
+  background-color: $gray1;
+}
+
+.filing_receipt-list {
+  border-bottom: 1px solid $gray3;
+}
+
+.filing_receipt-list__item {
+  &-name, &-value {
+    font-weight: bold;
+  }
+
+  &-name {
+    flex: 1 1 auto;
+    margin-right: 2rem;
+  }
+
+  &-value {
+    flex: 0 0 auto;
+    text-align: right;
+  }
+}
+
+.filing_receipt-list__item + .filing_receipt-list__item {
+  border-top: 1px solid $gray3;
+}
+
+.filing_receipt-total {
+  align-items: center;
+  letter-spacing: -0.01rem;
+  line-height: auto;
+
+  &__name {
+    flex: 1 1 auto;
+    margin-right: auto;
+    font-weight: bold;
+  }
+
+  &__currency {
+    margin-right: 0.5rem;
+    color: $gray5;
+    font-weight: normal;
+  }
+
+  &__value {
+    font-size: 1.65rem;
+    font-weight: bold;
+  }
+}
+
+.fee-total {
+  font-weight: bold;
+}
+
+.fee-list__item {
+  display: flex;
+  flex-flow: row nowrap;
+  line-height: 0;
+  justify-content: space-between;
+  font-size: 1rem;
+}
+
+.header {
+  font-size: 1.125rem;
+  color: $dk-text;
+  border-bottom: 1px solid $gray4;
+}
+
+.nr-num {
+  color: $gray9;
+}
+</style>
