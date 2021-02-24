@@ -7,10 +7,6 @@ on:
 jobs:
   name-request-ui-ci:
     runs-on: ubuntu-20.04
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./client
 
     strategy:
       matrix:

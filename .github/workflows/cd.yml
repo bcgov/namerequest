@@ -27,7 +27,7 @@ jobs:
 
       - uses: pwei1018/bcrs-cd-action@versioning
         with:
-          WORKING_DIRECTORY: "./client"
+          WORKING_DIRECTORY: "."
           APP_NAME: "namerequest-ui"
           VAULTS: ""
           SKIP_OP: "true"
