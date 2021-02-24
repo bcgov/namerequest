@@ -77,7 +77,7 @@
                   </v-tooltip>
                 </v-col>
 
-                <v-col cols="12" v-if="showEstimatedDatePriority" class="italic">
+                <v-col cols="12" v-if="showEstimatedDatePriority" class="font-italic">
                   Priority Requests are usually reviewed within 1 to 2 business
                   days
                 </v-col>
@@ -296,13 +296,6 @@ export default class ExistingRequestDisplay extends Mixins(
     return ''
   }
 
-  private get lastUpdate () {
-    if (this.nr.lastUpdate) {
-      return Moment(this.nr.lastUpdate).format('MMM Do[,] YYYY')
-    }
-    return ''
-  }
-
   private get reviewDate () {
     if (this.nr.waiting_time) {
       let waitingTime = this.nr.waiting_time
@@ -310,9 +303,8 @@ export default class ExistingRequestDisplay extends Mixins(
       if (waitingTime < 1) {
         waitingTime = 1
       }
-      // add 20 % for weekends to account for business days
-      waitingTime = Math.round(waitingTime * 1.2)
       let reviewDate = new Date()
+      // add the number of days to the current date to get the review date
       reviewDate.setDate(reviewDate.getDate() + waitingTime)
       return Moment(reviewDate).format("MMM Do[,] YYYY") + " (" + this.nr.waiting_time + " days)"
     }
@@ -328,7 +320,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   private get submittedDate () {
     if (this.nr.submittedDate) {
-      return Moment(this.nr.submittedDate).format("MMMM Do[,] YYYY, h:mm a z")
+      return Moment(this.nr.submittedDate).format("MMMM Do[,] YYYY, h:mm a") + " Pacific Time"
     }
     return ""
   }
@@ -720,8 +712,5 @@ export default class ExistingRequestDisplay extends Mixins(
     color: $dk-text;
     font-weight: bold;
   }
-}
-.italic {
-  font-style: italic;
 }
 </style>
