@@ -1,13 +1,14 @@
 {
   "name": "name-request",
-  "version": "0.6.2",
+  "version": "2.0.0",
   "private": true,
   "appName": "Name Request UI",
   "sbcName": "SBC Common Components",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "node --max_old_space_size=8000 node_modules/@vue/cli-service/bin/vue-cli-service.js build",
-    "test": "vue-cli-service test:unit  --verbose --coverage",
+    "test": "vue-cli-service test:unit --verbose --coverage",
+    "test:unit": "vue-cli-service test:unit --testPathPattern --coverage",
     "lint": "vue-cli-service lint",
     "lint:nofix": "vue-cli-service lint --no-fix"
   },

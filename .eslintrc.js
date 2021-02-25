@@ -3,11 +3,11 @@ module.exports = {
   env: {
     node: true
   },
-  'extends': [
+  extends: [
     'plugin:vue/essential',
     'eslint:recommended',
-    '@vue/typescript',
-    '@vue/standard'
+    '@vue/standard',
+    '@vue/typescript'
   ],
   rules: {
     'max-len': ['warn', { code: 120 }],
