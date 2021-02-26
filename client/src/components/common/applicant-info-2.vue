@@ -228,10 +228,13 @@ export default class ApplicantInfo2 extends NameRequestMixin {
     v => !!this.getCorpNum(v) || 'Cannot validate number.  Please try again'
   ]
   emailRules = [
-    v => !!v || 'Required field',
-    v => /.+@.+\..+/.test(v) || 'Not a valid email',
-    v => (!v || v.length <= 75) || 'Cannot exceed 75 characters'
-
+    (v: string) => !!v || 'Required field',
+    (v: string) => {
+      // eslint-disable-next-line max-len
+      const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      return pattern.test(v) || 'Not a valid email'
+    },
+    (v: string) => (!v || v.length <= 75) || 'Cannot exceed 75 characters'
   ]
   phoneRules = [
     v => !!v || 'Required field',
@@ -350,7 +353,7 @@ export default class ApplicantInfo2 extends NameRequestMixin {
 
   @Watch('isValid')
   onValidChanged (val: boolean) {
-    if (val) {
+    if (val && this.$el?.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
         const selfReviewBackBtn = this.$el.querySelector("#submit-back-btn > span")
@@ -361,11 +364,15 @@ export default class ApplicantInfo2 extends NameRequestMixin {
     }
   }
 
-  nextAction () {
+  async nextAction () {
+    newReqModule.mutateIsLoadingSubmission(true)
     this.validate()
     if (this.isValid) {
-      this.next()
+      await this.submit()
     }
+    // hang on to the loading state for a bit
+    // to prevent users clicking button again while next component displays
+    setTimeout(() => newReqModule.mutateIsLoadingSubmission(false), 1000)
   }
 }
 </script>
