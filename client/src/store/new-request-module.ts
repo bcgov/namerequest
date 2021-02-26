@@ -846,6 +846,7 @@ export class NewRequestModule extends VuexModule {
   tabNumber: number = 0
   userCancelledAnalysis: boolean = false
   waitingAddressSearch: WaitingAddressSearchI | null = null
+  isLoadingSubmission = false
 
   get showPriorityRequest () {
     return (!this.editMode && this.nrState === 'DRAFT') || (!this.editMode && this.submissionType === 'examination')
@@ -3367,6 +3368,11 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateAnalyzePending (value: boolean) {
     this.analyzePending = value
+  }
+
+  @Mutation
+  mutateIsLoadingSubmission (val: boolean) {
+    this.isLoadingSubmission = val
   }
 }
 

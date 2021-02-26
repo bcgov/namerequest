@@ -868,7 +868,7 @@ export default class NamesCapture extends NameRequestMixin {
 
   @Watch('isValid')
   onValidChanged (val: boolean) {
-    if (val) {
+    if (val && this.$el?.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
         const choicesContinueBtn = this.$el.querySelector("#submit-continue-btn > span")
