@@ -240,9 +240,13 @@ export default class ApplicantInfo3 extends NameRequestMixin {
     v => !!this.getCorpNum(v) || 'Cannot validate number.  Please try again'
   ]
   emailRules = [
-    v => !!v || 'Required field',
-    v => /.+@.+\..+/.test(v) || 'Not a valid email',
-    v => (!v || v.length <= 75) || 'Cannot exceed 75 characters'
+    (v: string) => !!v || 'Required field',
+    (v: string) => {
+      // eslint-disable-next-line max-len
+      const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      return pattern.test(v) || 'Not a valid email'
+    },
+    (v: string) => (!v || v.length <= 75) || 'Cannot exceed 75 characters'
   ]
   phoneRules = [
     v => !!v || 'Required field',
