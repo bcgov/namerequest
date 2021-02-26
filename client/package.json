@@ -23,7 +23,6 @@
     "launchdarkly-js-client-sdk": "^2.18.3",
     "lodash": "^4.17.20",
     "moment": "^2.27.0",
-    "moment-timezone": "^0.5.33",
     "remove-accents": "^0.4.2",
     "sbc-common-components": "2.4.8",
     "style-loader": "^1.2.1",
