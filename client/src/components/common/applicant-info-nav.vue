@@ -9,7 +9,7 @@
     </v-btn>
     <v-btn x-large
            @click="nextAction()"
-           :loading="isloadingSubmission"
+           :loading="loading"
            id="submit-continue-btn">
       {{ nextText }}
     </v-btn>
@@ -17,13 +17,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue } from 'vue-property-decorator'
+import { Component, Emit } from 'vue-property-decorator'
+import newRequestModule from '@/store/new-request-module'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
 
 @Component({})
 export default class ApplicantInfoNav extends NameRequestMixin {
   @Emit('nextAction')
   private nextAction () : void {}
+
+  get loading (): boolean {
+    return newRequestModule.isLoadingSubmission
+  }
 
   get backText () {
     if (this.editMode) {

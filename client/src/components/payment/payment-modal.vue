@@ -171,7 +171,7 @@ export default class PaymentModal extends Mixins(
 
   @Watch('isVisible')
   onVisibleChanged (val: boolean) {
-    if (val) {
+    if (val && this.$el?.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
         const confirmNrCancelBtn = this.$el.querySelector("#payment-cancel-btn > span")

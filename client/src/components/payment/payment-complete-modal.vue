@@ -145,7 +145,7 @@ export default class PaymentCompleteModal extends Mixins(
 
   @Watch('isVisible')
   onVisibleChanged (val: boolean) {
-    if (val) {
+    if (val && this.$el?.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
         const paymentSuccessfulDoneBtn = this.$el.querySelector("#receipt-close-btn > span")
