@@ -24,7 +24,6 @@ const state = {
     isReapplyVisible: false,
     isPaymentCompleteVisible: false,
     isProcessing: false,
-    paymentTimeoutTimer: undefined,
     filingTypeCode: filingTypes.NM606,
     // entity_type_cd: corpTypes.CR,
     entity_type_cd: null,

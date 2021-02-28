@@ -7,7 +7,6 @@ import newRequestModule, { NewRequestModule } from '@/store/new-request-module'
 import * as filingTypes from "@/modules/payment/filing-types"
 import paymentModule from '@/modules/payment'
 import { sleep } from '@/plugins/sleep'
-import timerModule from '@/modules/vx-timer'
 import { NrState } from '@/enums'
 
 @Component
@@ -158,8 +157,6 @@ export default class NameRequestMixin extends Vue {
     // FUTURE: fix error handling in case of newReqModule (app or api) error (#5899)
     const { nrId } = this
     if (this.editMode) {
-      // stop timer first so it doesn't expire during network requests
-      timerModule.stopTimer({ id: this.$EXISTING_NR_TIMER_NAME })
       if (await newRequestModule.patchNameRequests()) {
         if (await newRequestModule.checkinNameRequest()) {
           newRequestModule.mutateDisplayedComponent('Success')
@@ -170,7 +167,6 @@ export default class NameRequestMixin extends Vue {
     } else {
       let request
       if (!nrId) {
-        // FUTURE: does a timer have to be stopped here?
         request = await newRequestModule.postNameRequests('draft')
       } else {
         if (!this.editMode && [NrState.COND_RESERVED, NrState.RESERVED].includes(this.nrState)) {
@@ -178,12 +174,10 @@ export default class NameRequestMixin extends Vue {
           if (request?.stateCd === NrState.CANCELLED) {
             newRequestModule.setActiveComponent('Timeout')
             this.isloadingSubmission = false
-            // FUTURE: does a timer have to be stopped here before returning?
             return
           }
         }
         request = await newRequestModule.putNameReservation(nrId)
-        timerModule.stopTimer({ id: this.$NR_COMPLETION_TIMER_NAME })
       }
       if (request) await paymentModule.togglePaymentModal(true)
     }

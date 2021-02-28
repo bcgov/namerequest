@@ -15,7 +15,6 @@
             {{ editMode ? 'Return' : 'Start Over' }}
           </span>
         </button>
-        <countdown-timer :timerName="timerName" colorString="#1669bb" bgColorString="#efefef" />
       </v-col>
     </v-row>
     <slot name="content"/>
@@ -23,24 +22,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Watch } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 
 import DisplayedComponentMixin from '@/components/mixins/displayed-component-mixin'
-import SessionTimerMixin from '@/components/session-timer/session-timer-mixin'
-import CountdownTimer from '@/components/session-timer/countdown-timer.vue'
 import newReqModule from '@/store/new-request-module'
-import timerModule from "@/modules/vx-timer"
 
-@Component({
-  components: {
-    CountdownTimer
-  }
-})
-export default class MainContainer extends Mixins(SessionTimerMixin, DisplayedComponentMixin) {
+@Component({})
+export default class MainContainer extends Mixins(DisplayedComponentMixin) {
   componentName: string = ''
-  displayTimer: boolean = false
-  timerName: string = ''
-  countdownMins: number = 0
 
   private mounted () {
     this.$nextTick(() => {
@@ -73,22 +62,6 @@ export default class MainContainer extends Mixins(SessionTimerMixin, DisplayedCo
       newReqModule.mutateExitModalVisible(true)
     } else {
       this.cancelAndResetState()
-    }
-  }
-
-  @Watch('componentName')
-  async onDisplayedComponentChanged () {
-    const componentName = newReqModule.displayedComponent
-    if (['SubmissionTabs'].indexOf(componentName) > -1 && this.$NR_COMPLETION_TIMEOUT_MS > 0) {
-      await this.startNewNrTimer()
-      this.$set(this, 'displayTimer', true)
-      this.$set(this, 'timerName', this.$NR_COMPLETION_TIMER_NAME)
-      this.$set(this, 'countdownMins', this.$NR_COMPLETION_TIMEOUT_MS / 1000 / 60)
-    } else if (['ExistingRequestEdit'].indexOf(componentName) > -1 && this.$EXISTING_NR_TIMEOUT_MS > 0) {
-      await this.startExistingNrTimer()
-      this.$set(this, 'displayTimer', true)
-      this.$set(this, 'timerName', this.$EXISTING_NR_TIMER_NAME)
-      this.$set(this, 'countdownMins', this.$EXISTING_NR_TIMEOUT_MS / 1000 / 60)
     }
   }
 }

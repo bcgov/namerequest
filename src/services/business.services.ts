@@ -1,12 +1,12 @@
 import Axios from 'axios'
 import { addAxiosInterceptors } from 'sbc-common-components/src/util/interceptors'
 import AuthServices from '@/services/auth.services'
-import { BusinessRequest } from '@/models/business'
+import { BusinessRequest } from '@/interfaces'
 
 const axios = addAxiosInterceptors(Axios.create())
 
 export default class BusinessServices {
-  /** Legal API */
+  /** Legal API URL. */
   static legalApiUrl = sessionStorage.getItem('LEGAL_API_URL')
 
   /** Create a draft Incorporation Application for org and requested business */

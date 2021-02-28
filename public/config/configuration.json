@@ -2,24 +2,19 @@
   {
     "URL": "https://namex-dev.pathfinder.gov.bc.ca",
     "PAYMENT_PORTAL_URL": "https://dev.bcregistry.ca/business/auth/makepayment",
-    "VUE_APP_PAY_ROOT_API": "https://pay-api-dev.pathfinder.gov.bc.ca/api/v1",
     "BUSINESSES_URL": "https://dev.bcregistry.ca/business/auth/",
     "KEYCLOAK_CONFIG_PATH": "/local-keycloak-config-url/keycloak.json",
     "AUTH_API_URL": "https://auth-api-dev.pathfinder.gov.bc.ca/api/v1",
     "LEGAL_API_URL": "https://legal-api-dev.pathfinder.gov.bc.ca/api/v1",
+    "VUE_APP_PAY_ROOT_API": "https://pay-api-dev.pathfinder.gov.bc.ca/api/v1",
+    "VUE_APP_STATUS_ROOT_API": "https://status-api-dev.apps.silver.devops.gov.bc.ca/api/v1",
+    "SENTRY_DSN": "",
+    "LD_CLIENT_ID": "",
     "NAME_REQUEST_URL": "https://dev.bcregistry.ca/namerequest",
     "NRO_URL": "https://dev.bcregistrynames.gov.bc.ca/nro/",
-    "ENTITY_SELECTOR_URL": "https://entity-selection-dev.pathfinder.gov.bc.ca/",
-    "LD_CLIENT_ID": "",
-    "SENTRY_DSN": "",
-    "NR_COMPLETION_TIMER_NAME": "nrCompletionTimer",
-    "NR_COMPLETION_TIMEOUT_MS": 0,
-    "DEV_NR_COMPLETION_TIMEOUT_MS": 0,
-    "EXISTING_NR_TIMER_NAME": "existingNrTimer",
-    "EXISTING_NR_TIMEOUT_MS": 0,
-    "DEV_EXISTING_NR_TIMEOUT_MS": 0,
     "AUTH_TOKEN_URL": "https://dev.oidc.gov.bc.ca/auth/realms/fcf0kpqr/protocol/openid-connect/token",
-    "QUICK_SEARCH_PUBLIC_ID": "",
-    "QUICK_SEARCH_PUBLIC_SECRET": ""
+    "QUICK_SEARCH_PUBLIC_ID": "namex-solr-service-account",
+    "QUICK_SEARCH_PUBLIC_SECRET": "",
+    "ENTITY_SELECTOR_URL": "https://entity-selection-dev.pathfinder.gov.bc.ca/"
   }
 ]

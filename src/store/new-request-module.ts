@@ -2360,14 +2360,6 @@ export class NewRequestModule extends VuexModule {
 
       if (response?.data) {
         this.setNrResponse(response.data)
-
-        const { dispatch } = this.context
-        // Set rollback on expire for new NRs
-        // await dispatch(types.SET_ROLLBACK_ON_EXPIRE, true) // NOT USED
-
-        // Check in on expire is for existing NRs, make sure it isn't set!
-        // await dispatch(types.SET_CHECK_IN_ON_EXPIRE, false) // NOT USED
-
         return true
       }
 
