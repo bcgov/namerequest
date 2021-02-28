@@ -35,12 +35,6 @@ Vue.config.devtools = true
 function setVueEnvironment (config: EnvConfigI): void {
   // Load environment config
   Vue.prototype.$PAYMENT_PORTAL_URL = config.$PAYMENT_PORTAL_URL
-
-  Vue.prototype.$NR_COMPLETION_TIMER_NAME = config.$NR_COMPLETION_TIMER_NAME
-  Vue.prototype.$NR_COMPLETION_TIMEOUT_MS = config.$NR_COMPLETION_TIMEOUT_MS
-
-  Vue.prototype.$EXISTING_NR_TIMER_NAME = config.$EXISTING_NR_TIMER_NAME
-  Vue.prototype.$EXISTING_NR_TIMEOUT_MS = config.$EXISTING_NR_TIMEOUT_MS
 }
 
 /**

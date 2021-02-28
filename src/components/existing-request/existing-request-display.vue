@@ -145,8 +145,9 @@
 
           <!-- incorporate button -->
           <div class="mt-5 text-center" v-if="showIncorporateButton">
-            <v-btn id="INCORPORATE-btn" @click="handleButtonClick(NrAction.INCORPORATE)"
-            >Incorporate Using This Name Request</v-btn>
+            <v-btn id="INCORPORATE-btn" @click="handleButtonClick(NrAction.INCORPORATE)">
+              Incorporate Using This Name Request
+            </v-btn>
           </div>
         </div>
       </transition>
@@ -166,8 +167,6 @@ import PaymentMixin from '@/components/payment/payment-mixin'
 import CommonMixin from '@/components/mixins/common-mixin'
 import DateMixin from '@/components/mixins/date-mixin'
 import paymentModule from '@/modules/payment'
-import timerModule from '@/modules/vx-timer'
-import * as types from '@/store/types'
 import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
@@ -490,12 +489,6 @@ export default class ExistingRequestDisplay extends Mixins(
           let success: boolean | undefined
           if (doCheckout) {
             const { dispatch } = this.$store
-            // Disable rollback on expire, it's only for new NRs.
-            // await dispatch(types.SET_ROLLBACK_ON_EXPIRE, false) // NOT USED
-
-            // Set check in on expire.
-            // await dispatch(types.SET_CHECK_IN_ON_EXPIRE, true) // NOT USED
-
             // Check out the NR - this sets the INPROGRESS lock on the NR
             // and needs to be done before you can edit the Name Request
             success = await newReqModule.checkoutNameRequest()

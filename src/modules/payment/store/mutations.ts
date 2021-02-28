@@ -21,12 +21,6 @@ export default {
   [types.TOGGLE_REAPPLY_MODAL]: (state, isVisible: boolean) => {
     state[STATE_KEY].isReapplyVisible = isVisible || false
   },
-  [types.START_PAYMENT_TIMEOUT_TIMER]: (state, timer: any) => {
-    state[STATE_KEY].timer = timer
-  },
-  [types.CLEAR_PAYMENT_TIMEOUT_TIMER]: (state) => {
-    state[STATE_KEY].paymentTimeoutTimer = undefined
-  },
   [types.SET_PAYMENT_FEES]: (state, fees: any) => {
     if (fees) {
       state[STATE_KEY].fees = fees

@@ -55,12 +55,6 @@
     <CancelModal />
     <AffiliationErrorModal />
     <ErrorModal />
-    <TimeoutModal
-      :show="showNrSessionExpiryModal"
-      :onTimerExpired="this.onTimerModalExpired"
-      :onExtendSession="this.onTimerModalSessionExtended"
-      :displayExpireNowButton="true"
-    />
   </v-app>
 </template>
 
@@ -86,22 +80,17 @@ import AffiliationErrorModal from '@/components/modals/affiliation-error.vue'
 import ErrorModal from '@/components/common/error-modal.vue'
 import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
 
-import { Component, Mixins } from 'vue-property-decorator'
-import { mapState, mapGetters } from 'vuex'
+import { Component, Vue } from 'vue-property-decorator'
+import { mapGetters } from 'vuex'
 import { featureFlags } from '@/plugins/featureFlags'
-
-import TimeoutModal from '@/components/session-timer/timeout-modal.vue'
-import SessionTimerMixin from '@/components/session-timer/session-timer-mixin'
 
 import newRequestModule from '@/store/new-request-module'
 
-import timerModule from '@/modules/vx-timer'
 import paymentModule from '@/modules/payment'
 import { RollbackActions } from '@/enums'
 
 @Component({
   components: {
-    TimeoutModal,
     Conditions,
     ExitModal,
     SbcHeader,
@@ -124,17 +113,10 @@ import { RollbackActions } from '@/enums'
     SbcAuthenticationOptionsDialog
   },
   computed: {
-    ...mapState([
-      'showNrSessionExpiryModal'
-      // 'rollbackOnExpire', // NOT USED
-      // 'checkInOnExpire' // NOT USED
-    ]),
     ...mapGetters(['getNameRequestUrl'])
   }
 })
-export default class App extends Mixins(SessionTimerMixin) {
-  // rollbackOnExpire: boolean // NOT USED
-  // checkInOnExpire: boolean // NOT USED
+export default class App extends Vue {
   readonly getNameRequestUrl!: string
   private showSpinner = false
 
@@ -174,31 +156,6 @@ export default class App extends Mixins(SessionTimerMixin) {
     await newRequestModule.resetAnalyzeName()
     await newRequestModule.mutateName('')
     await newRequestModule.mutateDisplayedComponent('Tabs')
-  }
-
-  async onTimerModalExpired () {
-    const { nrId } = newRequestModule
-    const componentName = newRequestModule.displayedComponent
-
-    if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
-      // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-      await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
-    } else if (nrId && ['ExistingRequestEdit'].indexOf(componentName) > -1) {
-      await newRequestModule.checkinNameRequest()
-    }
-    // Direct the user back to the start
-    await this.resetAppState()
-  }
-
-  async onTimerModalSessionExtended () {
-    const { nrId } = newRequestModule
-    const componentName = newRequestModule.displayedComponent
-
-    if (['SubmissionTabs'].indexOf(componentName) > -1 && this.$NR_COMPLETION_TIMEOUT_MS > 0) {
-      await this.startNewNrTimer()
-    } else if (nrId && ['ExistingRequestEdit'].indexOf(componentName) > -1 && this.$EXISTING_NR_TIMEOUT_MS > 0) {
-      await this.startExistingNrTimer()
-    }
   }
 
   async onPaymentCancelled () {
