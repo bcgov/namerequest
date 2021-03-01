@@ -110,7 +110,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import ForgotNrModal from '@/components/modals/forgot-nr.vue'
 import newReqModule from '@/store/new-request-module'
 import ErrorModule from '@/modules/error'
-import { NameRequestI, SearchDataI, NrDataResponseT, NrDataT } from '@/models'
+import { NameRequestI, SearchDataI, NrDataResponseT, NrDataT } from '@/interfaces'
 
 const NR_REGEX = /^(NR\ ?L?|L?)?([\d]{6,8})$/
 @Component({

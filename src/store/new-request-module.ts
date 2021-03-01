@@ -23,7 +23,7 @@ import {
   StatsI,
   SubmissionTypeT,
   WaitingAddressSearchI
-} from '@/models'
+} from '@/interfaces'
 
 import store from '@/store'
 import {
@@ -38,13 +38,12 @@ import $designations from './list-data/designations'
 import $intJurisdictions from './list-data/intl-jurisdictions'
 import canadaPostAPIKey from './config'
 
-import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
+import { removeExcessSpaces, sanitizeName, featureFlags } from '@/plugins'
 import { NameRequestPayment } from '@/modules/payment/models'
 
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 import { NrAction, NrState, RollbackActions } from '@/enums'
-import { featureFlags } from '@/plugins/featureFlags'
 import { OK, BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
 
 const qs: any = querystring

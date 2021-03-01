@@ -171,9 +171,8 @@ import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
-import { NameState, NrAction, NrState, PaymentStatus } from '@/enums'
-import { sleep } from '@/plugins/sleep'
-import { SbcPaymentStatus } from '@/modules/payment/models'
+import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus } from '@/enums'
+import { sleep } from '@/plugins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
 
 @Component({

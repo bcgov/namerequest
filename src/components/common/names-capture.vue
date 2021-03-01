@@ -281,8 +281,8 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
-import { LocationT } from '@/models'
-import { sanitizeName } from '@/plugins/utilities'
+import { LocationT } from '@/interfaces'
+import { sanitizeName } from '@/plugins'
 import newReqModule from '@/store/new-request-module'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
 

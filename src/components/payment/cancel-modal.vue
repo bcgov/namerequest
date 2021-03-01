@@ -43,7 +43,7 @@ import * as PaymentTypes from '@/modules/payment/store/types'
 import { NrAction } from '@/enums'
 import NameRequestMixin from '@/components/mixins/name-request-mixin'
 import NewReqModule from '@/store/new-request-module'
-import { sleep } from '@/plugins/sleep'
+import { sleep } from '@/plugins'
 
 @Component({})
 export default class CancelModal extends Mixins(NameRequestMixin, PaymentMixin) {

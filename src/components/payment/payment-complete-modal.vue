@@ -29,19 +29,15 @@
 
 <script lang="ts">
 import { Component, Mixins, Vue, Watch } from 'vue-property-decorator'
-
 import PaymentConfirm from '@/components/payment/payment-confirm.vue'
 import RequestDetails from '@/components/common/request-details.vue'
-
 import paymentModule from '@/modules/payment'
-import { NameRequestPayment, SbcPaymentStatus } from '@/modules/payment/models'
+import { NameRequestPayment } from '@/modules/payment/models'
 import newRequestModule from '@/store/new-request-module'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
-
 import * as paymentTypes from '@/modules/payment/store/types'
-import { PaymentAction, PaymentStatus, RollbackActions } from '@/enums'
-
+import { PaymentAction, PaymentStatus, RollbackActions, SbcPaymentStatus } from '@/enums'
 import CommonMixin from '@/components/mixins/common-mixin'
 import PaymentMixin from '@/components/payment/payment-mixin'
 import PaymentSessionMixin from '@/components/payment/payment-session-mixin'

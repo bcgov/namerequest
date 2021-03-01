@@ -82,7 +82,7 @@ import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components
 
 import { Component, Vue } from 'vue-property-decorator'
 import { mapGetters } from 'vuex'
-import { featureFlags } from '@/plugins/featureFlags'
+import { featureFlags } from '@/plugins'
 
 import newRequestModule from '@/store/new-request-module'
 
@@ -175,13 +175,9 @@ export default class App extends Vue {
     newRequestModule.mutateIncorporateLoginModalVisible(false)
   }
 }
-
 </script>
 
 <style lang="sass">
-#app
-  background-color: $body-bg
-
 #main-column
   display: flex
   flex-flow: column nowrap

@@ -49,25 +49,30 @@
 <script lang="ts">
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
-import { SelectOptionsI } from '@/models'
+import { SelectOptionsI } from '@/interfaces'
 
 @Component({})
 export default class PickRequestType extends Vue {
   get editMode () {
     return newReqModule.editMode
   }
+
   get showModal () {
     return newReqModule.pickRequestTypeModalVisible
   }
+
   get location () {
     return newReqModule.location
   }
+
   get requestActions () {
     return newReqModule.requestActions
   }
+
   set showModal (value: boolean) {
     newReqModule.mutatePickRequestTypeModalVisible(value)
   }
+
   get tableData () {
     let { length } = this.requestActions
     let midIndex = length % 2 ? (length + 1) / 2 : (length / 2)
@@ -87,7 +92,6 @@ export default class PickRequestType extends Vue {
     this.showModal = false
   }
 }
-
 </script>
 
 <style lang="sass" scoped>
