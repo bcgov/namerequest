@@ -59,9 +59,9 @@
 
 <script lang="ts">
 import newReqModule from '@/store/new-request-module'
-import { StatsI } from '@/models'
+import { StatsI } from '@/interfaces'
 import { Vue, Component } from 'vue-property-decorator'
-import { featureFlags } from '@/plugins/featureFlags'
+import { featureFlags } from '@/plugins'
 
 @Component({})
 export default class Stats extends Vue {

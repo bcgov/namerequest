@@ -24,12 +24,12 @@
     </v-row>
   </div>
 </template>
+
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component
-export default class NewAndBetterWay extends Vue {
-}
+export default class NewAndBetterWay extends Vue {}
 </script>
 
 <style lang="scss" scoped>

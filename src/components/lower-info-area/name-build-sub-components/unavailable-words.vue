@@ -1,6 +1,7 @@
 <template>
   <v-container id="unavailable-words">
     <h4>Words that can not be used by the public</h4>
+
     <v-list class="unavailable-words-list">
       <v-row>
         <v-col cols="12" sm="6">
@@ -36,7 +37,6 @@ export default class UnavailableWords extends Vue {
   private listItems2 = ['Credit Union', 'Farmers Institute', 'GST', 'Guarantee', 'ICPO / Interpol', 'LLB',
     'Post Office', 'RCMP', 'Road Star', 'Savings and Loans', 'VSE', 'White Knight']
 }
-
 </script>
 
 <style scoped lang="sass">

@@ -3,8 +3,7 @@ import { Component } from 'vue-property-decorator'
 import AuthServices from '@/services/auth.services'
 import BusinessServices from '@/services/business.services'
 import newReqModule from '@/store/new-request-module'
-import { BusinessRequest, CreateNRAffiliationRequestBody } from '@/interfaces'
-import { NameRequestI } from '@/models'
+import { BusinessRequest, CreateNRAffiliationRequestBody, NameRequestI } from '@/interfaces'
 
 @Component
 export default class NrAffiliationMixin extends Vue {

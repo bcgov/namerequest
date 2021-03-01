@@ -259,7 +259,7 @@ import NameInput from './name-input.vue'
 import newReqModule from '../../store/new-request-module'
 import { bcMapping, xproMapping } from '@/store/list-data/request-action-mapping'
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { LocationT } from '@/models'
+import { LocationT } from '@/interfaces'
 
 @Component({
   components: { NameInput }
@@ -284,6 +284,7 @@ export default class NewSearch extends Vue {
     newReqModule.mutateName('')
     newReqModule.mutateCorpSearch('')
   }
+
   @Watch('request_action_cd')
   watchRequestActionCd (newVal) {
     // Set default location to BC for the requests where BC is the only location option
@@ -299,6 +300,7 @@ export default class NewSearch extends Vue {
       }
     }
   }
+
   private request_action_enum = [
     'NEW',
     'MVE',
@@ -306,21 +308,26 @@ export default class NewSearch extends Vue {
     'AML',
     'CHG'
   ]
+
   entityBlurbs (entity_type_cd: string): Array<string> {
     return newReqModule.entityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || []
   }
+
   get isScreenLg () {
     return this.$vuetify.breakpoint.lgAndUp
   }
+
   get displayedComponent () {
     return newReqModule.displayedComponent
   }
+
   get entity_type_cd () {
     if (this.isConversion) {
       return newReqModule.conversionType
     }
     return newReqModule.entity_type_cd
   }
+
   set entity_type_cd (type: string) {
     if (type === 'INFO') {
       newReqModule.mutatePickEntityModalVisible(true)
@@ -335,21 +342,26 @@ export default class NewSearch extends Vue {
     }
     newReqModule.mutateEntityType(type)
   }
+
   get entityConversionTypeOptions () {
     if (this.isConversion) {
       return newReqModule.conversionTypeOptions
     }
     return newReqModule.entityTypeOptions
   }
+
   get entityTypeOptions () {
     return newReqModule.entityTypeOptions
   }
+
   get entityConversionText () {
     return newReqModule.conversionTypes.find(conversion => conversion.value === newReqModule.conversionType)?.text
   }
+
   get errors () {
     return newReqModule.errors
   }
+
   get inputCompClass () {
     let errorTypes = ['entity_type_cd', 'request_action_cd', 'location']
     if (errorTypes.some(type => this.errors.includes(type))) {
@@ -357,57 +369,75 @@ export default class NewSearch extends Vue {
     }
     return 'mt-n2'
   }
+
   get isConversion () {
     return newReqModule.request_action_cd === 'CNV'
   }
+
   get isFederal () {
     return this.jurisdiction === 'FD'
   }
+
   get isPersonsName () {
     return newReqModule.isPersonsName
   }
+
   set isPersonsName (value) {
     newReqModule.mutateIsPersonsName(value)
   }
+
   get location () {
     return newReqModule.location
   }
+
   set location (location: LocationT) {
     newReqModule.mutateLocation(location)
   }
+
   get locationOptions () {
     return newReqModule.locationOptions
   }
+
   get jurisdiction () {
     return newReqModule.request_jurisdiction_cd
   }
+
   set jurisdiction (jurisdiction: string) {
     newReqModule.mutateJurisdiction(jurisdiction)
   }
+
   get locationText () {
     return newReqModule.locationText
   }
+
   get nameIsEnglish () {
     return newReqModule.nameIsEnglish
   }
+
   set nameIsEnglish (value) {
     newReqModule.mutateNameIsEnglish(value)
   }
+
   get noCorpNum () {
     return newReqModule.noCorpNum
   }
+
   set noCorpNum (value) {
     newReqModule.mutateNoCorpNum(value)
   }
+
   get noCorpDesignation () {
     return newReqModule.noCorpDesignation
   }
+
   set noCorpDesignation (value) {
     newReqModule.mutateNoCorpDesignation(value)
   }
+
   get request_action_cd () {
     return newReqModule.request_action_cd
   }
+
   set request_action_cd (value: string) {
     const request = this.requestActions.find(request => request.value === value)
     this.location = null
@@ -419,29 +449,37 @@ export default class NewSearch extends Vue {
     }
     newReqModule.mutateRequestAction(value)
   }
+
   get requestActions () {
     return newReqModule.requestActions
   }
+
   get requestText () {
     return newReqModule.requestText
   }
+
   get isXproMras () {
     return newReqModule.isXproMras
   }
+
   get jurisdictionOptions () {
     return this.location === 'CA'
       ? this.$canJurisdictions.filter(jur => jur.value !== 'BC')
       : this.$intJurisdictions.filter(jur => jur.value !== 'CA')
   }
+
   get showNoCorpDesignation (): boolean {
     return newReqModule.showNoCorpDesignation
   }
+
   get entityTextFromValue (): string {
     return newReqModule.entityTextFromValue || 'specified business type'
   }
+
   clearErrors () {
     newReqModule.clearErrors()
   }
+
   async handleSubmit () {
     if (this.isXproMras) this.$root.$emit('showSpinner', true)
     await newReqModule.startAnalyzeName()

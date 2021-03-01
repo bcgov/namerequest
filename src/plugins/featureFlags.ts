@@ -1,5 +1,9 @@
 import { initialize, LDFlagSet } from 'launchdarkly-js-client-sdk'
 
+//
+// *** TODO: replace this with newer feature-flag code from other apps
+//
+
 const defaultFlagSet = {
   'namerequest-ui-enabled': true,
   'disable-analysis': false,

@@ -189,9 +189,9 @@ import Moment from 'moment'
 import newReqModule from '@/store/new-request-module'
 import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { IssueI, QuillOpsI, SelectionI } from '@/models'
+import { IssueI, QuillOpsI, SelectionI } from '@/interfaces'
 import { quillEditor } from 'vue-quill-editor'
-import { matchWord, removeExcessSpaces, replaceWord } from '@/plugins/utilities'
+import { matchWord, removeExcessSpaces, replaceWord } from '@/plugins'
 
 @Component({
   components: { GreyBox, MainContainer, quillEditor, ReserveSubmit }
@@ -284,6 +284,7 @@ export default class AnalyzeResults extends Vue {
       })
     }
   }
+
   @Watch('nameIsFixed')
   updateFinalName (newVal) {
     if (newVal) {
@@ -299,6 +300,7 @@ export default class AnalyzeResults extends Vue {
   get allDesignationsStripped () {
     return this.stripAllDesignations(this.originalName)
   }
+
   get allowProceed () {
     /* newReqModule.designationIssueTypes is a list of all the designation-related issue types.  designationIsFixed
      will not be true unless one of these issues was solved.  some sets of issues will not include a designation-related
@@ -308,6 +310,7 @@ export default class AnalyzeResults extends Vue {
     }
     return this.designationIsFixed
   }
+
   get baseWordsAreUnchanged () {
     let nameTest = this.stripAllDesignations(this.name)
     let { allDesignationsStripped } = this
@@ -319,6 +322,7 @@ export default class AnalyzeResults extends Vue {
     }
     return (allDesignationsStripped === nameTest)
   }
+
   get changesInBaseName () {
     if (this.finalName && this.name === this.finalName) return false
     if (this.name === this.originalName) {
@@ -326,9 +330,11 @@ export default class AnalyzeResults extends Vue {
     }
     return !this.baseWordsAreUnchanged
   }
+
   get chunkedName () {
     return this.name.split(' ')
   }
+
   get conflictDate () {
     if (Array.isArray(this.issue.conflicts) && this.issue.conflicts.length >= 1) {
       if (this.issue.conflicts[0].source === 'corp') {
@@ -337,24 +343,28 @@ export default class AnalyzeResults extends Vue {
     }
     return null
   }
+
   get conflictId () {
     if (Array.isArray(this.issue.conflicts) && this.issue.conflicts.length >= 1) {
       return this.issue.conflicts[0].id
     }
     return null
   }
+
   get conflicts () {
     if (Array.isArray((this.issue as IssueI).conflicts)) {
       return (this.issue as IssueI).conflicts
     }
     return []
   }
+
   get designations () {
     if (this.issue && this.issue.designations) {
       return this.issue.designations
     }
     return null
   }
+
   get designationIsFixed () {
     try {
       if (this.userCancelled) return false
@@ -457,21 +467,26 @@ export default class AnalyzeResults extends Vue {
       return false
     }
   }
+
   get hasDesignationIssue () {
     return (this.json.issues.some(issue => newReqModule.designationIssueTypes.includes(issue.issue_type)))
   }
+
   get enableNextForAssumedName () {
     if (this.issue && ['corp_conflict', 'queue_conflict'].includes(this.issue.issue_type)) {
       return (this.issue.setup[0].type === 'assumed_name' && !this.isLastIndex)
     }
     return false
   }
+
   get entity_type_cd () {
     return newReqModule.entity_type_cd
   }
+
   get entityText () {
     return newReqModule.entityTextFromValue
   }
+
   get examinationOrConsentCompleted () {
     let types = ['send_to_examiner', 'obtain_consent', 'conflict_self_consent']
 
@@ -492,6 +507,7 @@ export default class AnalyzeResults extends Vue {
     }
     return result
   }
+
   get hasNameActions () {
     if (this.issue && this.issue.name_actions && Array.isArray(this.issue.name_actions)) {
       if (this.issue.name_actions.length > 0) {
@@ -500,6 +516,7 @@ export default class AnalyzeResults extends Vue {
     }
     return false
   }
+
   get headerProps () {
     if (this.isApproved) {
       return {
@@ -535,24 +552,29 @@ export default class AnalyzeResults extends Vue {
       showNextLines: true
     }
   }
+
   get headerText () {
     let issues = this.json.issues
     return (issues.length === 1 && issues[0].issue_type === 'excess_words')
       ? 'Further Review Required'
       : 'Further Action Required'
   }
+
   get isApproved () {
     return (this.json.status === 'Available')
   }
+
   get isDesignationIssue () {
     if (this.issue && this.issue.issue_type) {
       return (newReqModule.designationIssueTypes.some(issue => issue.issue_type === this.issue.issue_type))
     }
     return false
   }
+
   get isLastIndex () {
     return (this.issueIndex === this.issueLength - 1)
   }
+
   get isMismatchFollowingMisplaced () {
     if (this.issueIndex > 0 &&
     this.issueType === 'designation_mismatch' &&
@@ -561,6 +583,7 @@ export default class AnalyzeResults extends Vue {
     }
     return false
   }
+
   get isMisplacedPrecedingMismatch () {
     if (this.issueLength > 1 && this.issueIndex < this.issueLength) {
       if (['designation_misplaced', 'end_designation_more_than_once'].includes(this.issueType)) {
@@ -571,50 +594,60 @@ export default class AnalyzeResults extends Vue {
     }
     return false
   }
+
   get issue () {
     if (Array.isArray(this.json.issues)) {
       return this.json.issues[this.issueIndex]
     }
     return {}
   }
+
   get issueLength () {
     if (Array.isArray(this.json.issues)) {
       return this.json.issues.length
     }
     return 1
   }
+
   get issueType () {
     if (this?.issue?.issue_type) {
       return this.issue.issue_type
     }
     return ''
   }
+
   get json () {
     return newReqModule.analysisJSON
   }
+
   get location () {
     let value = newReqModule.location
     let options = newReqModule.locationOptions
     return options.find((opt: any) => opt.value === value)
   }
+
   get name () {
     return newReqModule.name
   }
+
   get nameActions () {
     if ((this.issue as IssueI) && (this.issue as IssueI).name_actions) {
       return (this.issue as IssueI).name_actions
     }
     return null
   }
+
   get nameActionWords () {
     if (Array.isArray(this.nameActions) && this.nameActions.length > 0) {
       return this.nameActions.map(action => action.word.toUpperCase())
     }
     return []
   }
+
   get nameIsFixed () {
     return (this.hasDesignationIssue && this.isLastIndex && this.designationIsFixed && !this.changesInBaseName)
   }
+
   get nextButtonDisabled () {
     if (this.enableNextForAssumedName) {
       return false
@@ -631,33 +664,41 @@ export default class AnalyzeResults extends Vue {
     }
     return true
   }
+
   get quill (): any {
     return (this.$refs as any).quill.quill
   }
+
   get requestExaminationOrProvideConsent () {
     return newReqModule.requestExaminationOrProvideConsent
   }
+
   get showActualInput () {
     return newReqModule.showActualInput
   }
+
   get showGreyBoxes () {
     if (!this.isLastIndex || this.changesInBaseName || !this.hasDesignationIssue) {
       return true
     }
     return !(this.examinationOrConsentCompleted && this.designationIsFixed)
   }
+
   get word () {
     if (Array.isArray(this.issue.name_actions) && this.issue.name_actions[0]) {
       return this.issue.name_actions[0].word.toUpperCase()
     }
     return ''
   }
+
   set name (name: string) {
     newReqModule.mutateName(name)
   }
+
   set showActualInput (value) {
     newReqModule.mutateShowActualInput(value)
   }
+
   get userCancelled () {
     return newReqModule.userCancelledAnalysis
   }
@@ -665,6 +706,7 @@ export default class AnalyzeResults extends Vue {
   cancelAnalyzeName () {
     newReqModule.cancelAnalyzeName('Tabs')
   }
+
   clickNameField () {
     if (!this.showActualInput) {
       this.showActualInput = true
@@ -709,6 +751,7 @@ export default class AnalyzeResults extends Vue {
       }
     }
   }
+
   clickNext () {
     let reset = () => {
       this.highlightCheckboxes = false
@@ -723,12 +766,14 @@ export default class AnalyzeResults extends Vue {
       setTimeout(() => { reset() }, 4000)
     }
   }
+
   getBaseNameOps () {
     let nameWords = this.originalName.split(' ')
     return nameWords.map((word, i) => (
       { insert: (i > 0) ? (' ' + word) : (word) }
     ))
   }
+
   handleChange ({ html, text }) {
     // prevents quill from adding a newline to what is supposed to be a single-line input field
     text = text.replace('\n', '')
@@ -738,6 +783,7 @@ export default class AnalyzeResults extends Vue {
     }
     this.contents = html
   }
+
   async handleEnterKey (event) {
     if (this.isApproved) {
       event.preventDefault()
@@ -757,17 +803,20 @@ export default class AnalyzeResults extends Vue {
       await newReqModule.startAnalyzeName()
     }
   }
+
   async handleSubmit (event: Event) {
     event.preventDefault()
     this.name = this.quill.getText()
     await newReqModule.startAnalyzeName()
   }
+
   stripAllDesignations (name) {
     for (let word of allDesignationsList) {
       name = replaceWord(name, word)
     }
     return name
   }
+
   updateContents (text: string) {
     try {
       (this.quill as any).setContents([

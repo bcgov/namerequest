@@ -1,6 +1,7 @@
 <template>
   <v-container id="consent-words">
     <h4>Some words require consent to be used</h4>
+
     <v-list class="consent-words-list">
       <v-row>
         <v-col cols="12" sm="6">
@@ -37,7 +38,6 @@ export default class ConsentWords extends Vue {
   private listItems2 = ['Well known trademarks', '(<i>ex: Apple, Walmart, Pepsi etc.</i>)',
     '<div class="pt-5">Well known public figures</div>']
 }
-
 </script>
 
 <style scoped lang="sass">

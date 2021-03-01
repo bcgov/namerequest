@@ -11,6 +11,7 @@ export interface AnalysisJSONI {
   issues: IssueI[] | null
   status: 'fa' | 'rc' | 'ar'
 }
+
 export interface ApplicantI {
   addrLine1: string
   addrLine2?: string
@@ -31,6 +32,7 @@ export interface ApplicantI {
   postalCd: string
   stateProvinceCd: string
 }
+
 export interface ConditionalReqI {
   additionalInfo: string
   applicants: [ ApplicantI ]
@@ -51,10 +53,12 @@ export interface ConditionalReqI {
   tradeMark: string
   xproJurisdiction?: string
 }
+
 export interface ConsentConflictI {
   name: string
-  [propName: string]: any
+  [propName: string]: any // excess properties
 }
+
 export interface ConversionTypesI {
   blurbs?: string[]
   desc?: string
@@ -65,6 +69,7 @@ export interface ConversionTypesI {
   text: string
   value: string
 }
+
 export interface DraftReqI {
   additionalInfo?: string
   applicants: [ ApplicantI ]
@@ -85,6 +90,7 @@ export interface DraftReqI {
   xproJurisdiction?: string
   request_type_cd?: string
 }
+
 export interface EntityI {
   blurbs?: string[] | string
   intBlurbs?: string[]
@@ -98,11 +104,13 @@ export interface EntityI {
   text: string
   value: string
 }
+
 export interface ExistingRequestSearchI {
   emailAddress?: string
   nrNum: string
   phoneNumber?: string
 }
+
 export interface IssueI {
   conflicts?: {
     name: string
@@ -129,13 +137,16 @@ export interface IssueI {
   show_examination_button: boolean
   show_reservxe_button: boolean
 }
+
 export interface NameDesignationI {
   designation: string
   name: string
 }
+
 export interface NameRequestI {
-  [propname: string]: any
+  [propName: string]: any // excess properties
 }
+
 export interface NewRequestNameSearchI {
   entity_type_cd: string
   location: LocationT
@@ -143,6 +154,7 @@ export interface NewRequestNameSearchI {
   request_action_cd: string
   request_type_cd?: string
 }
+
 export interface OptionI {
   button?: string
   checkbox?: string
@@ -152,13 +164,21 @@ export interface OptionI {
   line2?: string
   type: string
 }
+
+interface QuillAttributesI {
+  color: string
+  strike?: boolean
+}
+
 export interface QuillOpsI {
   insert: string
   attributes?: QuillAttributesI
 }
+
 export interface RequestActionMappingI {
-  [propName: string]: string[]
+  [propName: string]: string[] // excess properties // *** TODO: this should just be `any`
 }
+
 export interface RequestActionsI {
   text: string
   value: string
@@ -166,6 +186,7 @@ export interface RequestActionsI {
   rank?: number
   shortDesc?: string
 }
+
 export interface RequestNameI {
   id?: number
   choice: number
@@ -177,6 +198,7 @@ export interface RequestNameI {
   conflict1_num: string
   request_type_cd?: string
 }
+
 export interface ReservedReqI {
   id?: number
   additionalInfo: string
@@ -196,21 +218,25 @@ export interface ReservedReqI {
   tradeMark: string
   xproJurisdiction?: string
 }
+
 export interface SearchDataI {
   emailAddress?: string
   name?: string
   nrNumber?: string
   phoneNumber?: string
 }
+
 export interface SelectionI {
   index?: number
   length?: number
 }
+
 export interface SelectOptionsI {
   text: string
   value: any
-  [propName: string]: any
+  [propName: string]: any // excess properties
 }
+
 export interface SetupI {
   button?: 'examine' | 'reserve' | 'consent-body' | 'consent-corp' | 'restart' | 'next'
   checkbox?: 'examine' | 'consent-corp' | 'consent-body'
@@ -218,20 +244,14 @@ export interface SetupI {
   text1: string
   text2?: string
 }
+
 export interface StatsI {
   auto_approved_count: number
   priority_wait_time: number
   regular_wait_time: number
 }
+
 export interface WaitingAddressSearchI {
   text: string
   value: string
-}
-interface QuillAttributesI {
-  color: string
-  strike?: boolean
-}
-
-export interface EditButtonsI {
-  edit
 }

@@ -67,11 +67,7 @@
 </template>
 
 <script lang="ts">
-
-import {
-  ApplicantI
-} from '@/models'
-
+import { ApplicantI } from '@/interfaces'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component({})
