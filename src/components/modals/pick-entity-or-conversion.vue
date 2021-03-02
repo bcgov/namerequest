@@ -9,6 +9,7 @@
           <v-icon md color="primary" @click="showModal = false">mdi-close</v-icon>
         </v-col>
       </v-row>
+
       <template v-if="isConversion">
         <v-card-text>
           <v-container>
@@ -32,6 +33,7 @@
           </v-container>
         </v-card-text>
       </template>
+
       <template v-else-if="!showSocietiesInfo">
         <v-card-text class="d-flex">
           <v-simple-table v-for="(category, i) in tableData" :key="'cat' + i">
@@ -60,6 +62,7 @@
           </v-simple-table>
         </v-card-text>
       </template>
+
       <template v-else>
         <v-card-text>
           <v-container fluid>
@@ -80,7 +83,7 @@
 <script lang="ts">
 import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { SelectOptionsI } from '@/models'
+import { SelectOptionsI } from '@/interfaces'
 
 @Component({})
 export default class PickEntityOrConversion extends Vue {
@@ -96,27 +99,35 @@ export default class PickEntityOrConversion extends Vue {
   get conversionTypes () {
     return newReqModule.conversionTypes
   }
+
   get entity_type_cd () {
     return newReqModule.entity_type_cd
   }
+
   set entity_type_cd (value) {
     newReqModule.mutateEntityType(value)
   }
+
   get isConversion () {
     return (newReqModule.request_action_cd === 'CNV')
   }
+
   get location () {
     return newReqModule.location
   }
+
   get locationText () {
     return newReqModule.locationText === 'BC' ? 'British Columbia' : newReqModule.locationText
   }
+
   get showModal () {
     return newReqModule.pickEntityModalVisible
   }
+
   set showModal (value: boolean) {
     newReqModule.mutatePickEntityModalVisible(value)
   }
+
   get tableData () {
     if (this.location === 'BC') {
       return this.tableDataBC
@@ -124,12 +135,15 @@ export default class PickEntityOrConversion extends Vue {
       return this.tableDataXPRO
     }
   }
+
   get tableDataBC () {
     return newReqModule.pickEntityTableBC
   }
+
   get tableDataXPRO () {
     return newReqModule.pickEntityTableXPRO
   }
+
   get width () {
     if (this.showSocietiesInfo || this.isConversion) {
       return '550px'
@@ -140,12 +154,15 @@ export default class PickEntityOrConversion extends Vue {
     // 210 per column with a max threshold of 960px
     return `${210 * cols > maxThreshold ? maxThreshold : 210 * cols}px`
   }
+
   entityBlurbs (entity_type_cd: string): Array<string> {
     return newReqModule.entityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || []
   }
+
   clearEntitySelection () {
     this.entity_type_cd = 'INFO'
   }
+
   chooseConversion (conversion) {
     let index = newReqModule.conversionTypeOptions.findIndex((conv: any) => conv.value === conversion.value)
     if (index === -1) {
@@ -157,6 +174,7 @@ export default class PickEntityOrConversion extends Vue {
     newReqModule.mutateConversionType(conversion.value)
     this.showModal = false
   }
+
   chooseType (entity: SelectOptionsI) {
     if (entity.value === 'SO' || entity.value === 'XSO') {
       this.showSocietiesInfo = true
@@ -171,8 +189,8 @@ export default class PickEntityOrConversion extends Vue {
     this.showModal = false
   }
 }
-
 </script>
+
 <style lang="sass" scoped>
 .v-data-table
   margin: 0 -3px

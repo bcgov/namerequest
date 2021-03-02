@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import DisplayedComponentMixin from '@/components/mixins/displayed-component-mixin'
+import { DisplayedComponentMixin } from '@/mixins'
 import newReqModule from '@/store/new-request-module'
 
 @Component({})

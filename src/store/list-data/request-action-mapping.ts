@@ -1,4 +1,4 @@
-import { RequestActionMappingI } from '@/models'
+import { RequestActionMappingI } from '@/interfaces'
 
 const entityTypesBC = ['FR', 'DBA', 'CR', 'UL', 'GP', 'LP', 'LL', 'CP', 'BC', 'CC', 'SO', 'PA', 'FI', 'PAR']
 

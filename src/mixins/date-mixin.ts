@@ -1,7 +1,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component
-export default class DateMixin extends Vue {
+export class DateMixin extends Vue {
   readonly MS_IN_A_DAY = (1000 * 60 * 60 * 24)
 
   /**

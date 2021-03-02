@@ -3,11 +3,10 @@ import { Component } from 'vue-property-decorator'
 import AuthServices from '@/services/auth.services'
 import BusinessServices from '@/services/business.services'
 import newReqModule from '@/store/new-request-module'
-import { BusinessRequest, CreateNRAffiliationRequestBody } from '@/interfaces'
-import { NameRequestI } from '@/models'
+import { BusinessRequest, CreateNRAffiliationRequestBody, NameRequestI } from '@/interfaces'
 
 @Component
-export default class NrAffiliationMixin extends Vue {
+export class NrAffiliationMixin extends Vue {
   /**
    * Create an affiliation between current authenticated Account and current Nr
    * @param nr The Nr to affiliate

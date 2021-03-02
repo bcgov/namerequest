@@ -281,10 +281,10 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
-import { LocationT } from '@/models'
-import { sanitizeName } from '@/plugins/utilities'
+import { LocationT } from '@/interfaces'
+import { sanitizeName } from '@/plugins'
 import newReqModule from '@/store/new-request-module'
-import NameRequestMixin from '@/components/mixins/name-request-mixin'
+import { NameRequestMixin } from '@/mixins'
 
 @Component({
   components: {
@@ -868,7 +868,7 @@ export default class NamesCapture extends NameRequestMixin {
 
   @Watch('isValid')
   onValidChanged (val: boolean) {
-    if (val) {
+    if (val && this.$el?.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
         const choicesContinueBtn = this.$el.querySelector("#submit-continue-btn > span")

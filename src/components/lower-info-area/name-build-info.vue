@@ -93,7 +93,6 @@ export default class NameBuildInfo extends Vue {
     return this.itemIndex === index
   }
 }
-
 </script>
 
 <style lang="scss" scoped>

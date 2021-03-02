@@ -8,8 +8,9 @@
         <div class="col3 align-self-center">{{receiptDescription}}</div>
         <div class="col4 align-self-center">${{receiptAmount}}</div>
         <div class="col5 align-self-center">
-          <v-btn class="download-receipt-btn float-right" :loading="loading"
-            @click="downloadReceipt()">Download PDF</v-btn>
+          <v-btn class="download-receipt-btn float-right" :loading="loading" @click="downloadReceipt()">
+            <span>Download PDF</span>
+          </v-btn>
         </div>
       </v-row>
     </section>
@@ -18,7 +19,7 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator'
-import PaymentMixin from '@/components/payment/payment-mixin'
+import { PaymentMixin } from '@/mixins'
 
 @Component({})
 export default class PaymentSummary extends Mixins(PaymentMixin) {
@@ -46,7 +47,7 @@ export default class PaymentSummary extends Mixins(PaymentMixin) {
     return `${this.summary?.receipt.receiptAmount.toFixed(2)} CAD`
   }
 
-  public async downloadReceipt () {
+  private async downloadReceipt () {
     const id = this.summary?.id
     this.loading = true
     await this.downloadReceiptPdf(id)

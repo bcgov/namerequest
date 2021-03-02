@@ -44,14 +44,12 @@
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import PaymentModule from '@/modules/payment'
-import PaymentMixin from '@/components/payment/payment-mixin'
-import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
 import RefundSummary from '@/components/payment/refund-summary.vue'
 import * as PaymentTypes from '@/modules/payment/store/types'
 import { NrAction } from '@/enums'
-import NameRequestMixin from '@/components/mixins/name-request-mixin'
+import { NameRequestMixin, PaymentMixin, PaymentSessionMixin } from '@/mixins'
 import NewReqModule from '@/store/new-request-module'
-import { sleep } from '@/plugins/sleep'
+import { sleep } from '@/plugins'
 
 @Component({
   components: {
@@ -125,7 +123,7 @@ export default class RefundModal extends Mixins(NameRequestMixin, PaymentMixin, 
 
   @Watch('isVisible')
   onVisibleChanged (val: boolean) {
-    if (val) {
+    if (val && this.$el?.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
         const refundCancelBtn = this.$el.querySelector("#cancel-nr-btn > span")

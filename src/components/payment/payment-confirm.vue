@@ -45,7 +45,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import RequestDetails from '@/components/common/request-details.vue'
-import { ApplicantI } from '@/models'
+import { ApplicantI } from '@/interfaces'
 
 @Component({
   components: {

@@ -140,8 +140,8 @@ import allDesignations, { allDesignationsList } from '@/store/list-data/designat
 import newReqModule from '@/store/new-request-module'
 import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { IssueI, OptionI } from '@/models'
-import { matchWord, removeExcessSpaces, replaceWord } from '@/plugins/utilities'
+import { IssueI, OptionI } from '@/interfaces'
+import { matchWord, removeExcessSpaces, replaceWord } from '@/plugins'
 
 @Component({
   components: { ReserveSubmit }
@@ -198,10 +198,12 @@ export default class GreyBox extends Vue {
   get allDesignationsStripped () {
     return this.stripAllDesignations(this.originalName)
   }
+
   get boxIsChecked () {
     let { type } = this.option
     return this.requestExaminationOrProvideConsent[this.issueIndex][type]
   }
+
   set boxIsChecked (value) {
     for (let type of this.types) {
       newReqModule.mutateRequestExaminationOrProvideConsent({
@@ -222,6 +224,7 @@ export default class GreyBox extends Vue {
       index: this.issueIndex
     })
   }
+
   get checkBoxLabel () {
     switch (this.option.type) {
       case 'send_to_examiner':
@@ -235,15 +238,18 @@ export default class GreyBox extends Vue {
         return ''
     }
   }
+
   get designations () {
     if (this.issue && this.issue.designations) {
       return this.issue.designations
     }
     return null
   }
+
   get entity_type_cd () {
     return newReqModule.entity_type_cd
   }
+
   get examinationRequested () {
     if (this.issueLength > 1) {
       for (let n of [0, 1, 2]) {
@@ -254,39 +260,48 @@ export default class GreyBox extends Vue {
     }
     return false
   }
+
   get isAssumedName () {
     return this.issue.setup.some(box => box.type === 'assumed_name')
   }
+
   get isDesignationIssueType () {
     if (newReqModule.designationIssueTypes.includes(this.issueType)) {
       return true
     }
     return false
   }
+
   get isLastIndex () {
     return (this.issueIndex === this.lastIndex)
   }
+
   get issue () {
     return newReqModule.analysisJSON.issues[this.issueIndex]
   }
+
   get issueLength () {
     if (Array.isArray(newReqModule.analysisJSON.issues)) {
       return newReqModule.analysisJSON.issues.length
     }
     return 1
   }
+
   get issueType () {
     if (this.issue && this.issue.issue_type) {
       return this.issue.issue_type
     }
     return ''
   }
-  isSendForReview (header: string) {
-    return header === 'Send for Review'
+
+  isSendForReview (header: string): boolean {
+    return (header === 'Send for Review')
   }
+
   get lastIndex () {
     return this.issueLength - 1
   }
+
   get multipleMismatchedDesignations () {
     if (this.issueType === 'designation_mismatch') {
       if (Array.isArray(this.nameActions) && this.nameActions.length > 1) {
@@ -297,25 +312,30 @@ export default class GreyBox extends Vue {
     }
     return false
   }
+
   get name () {
     return newReqModule.name
   }
+
   set name (name) {
     newReqModule.mutateName(name)
     this.$root.$emit('updatecontents', name)
   }
+
   get nameActions () {
     if (this.issue && Array.isArray(this.issue.name_actions)) {
       return this.issue.name_actions
     }
     return []
   }
+
   get nameActionWords () {
     if (Array.isArray(this.nameActions) && this.nameActions.length > 0) {
       return this.nameActions.map(action => action.word.toUpperCase())
     }
     return []
   }
+
   get optionClasses () {
     let { i } = this
     if (this.issue && Array.isArray(this.issue.setup)) {
@@ -338,9 +358,11 @@ export default class GreyBox extends Vue {
     }
     return ''
   }
+
   get requestExaminationOrProvideConsent () {
     return newReqModule.requestExaminationOrProvideConsent
   }
+
   get reserveSubmitConfig () {
     if (this.issueLength === 1) {
       if (this.option.type === 'send_to_examiner') {
@@ -378,7 +400,8 @@ export default class GreyBox extends Vue {
     }
     return ''
   }
-  get showCheckBoxOrButton () {
+
+  get showCheckBoxOrButton (): string {
     let { type } = this.option
     if (['obtain_consent', 'conflict_self_consent'].includes(type)) {
       if (this.requestExaminationOrProvideConsent[this.issueIndex].send_to_examiner) {
@@ -423,6 +446,7 @@ export default class GreyBox extends Vue {
     }
     return 'checkbox'
   }
+
   get word () {
     if (this.issue && Array.isArray(this.issue.name_actions)) {
       if (this.issue.name_actions[0] && this.issue.name_actions[0].word) {
@@ -438,6 +462,7 @@ export default class GreyBox extends Vue {
   cancelAnalyzeName (destination) {
     newReqModule.cancelAnalyzeName(destination)
   }
+
   changeDesignation (designation) {
     newReqModule.mutateShowActualInput(true)
     designation = designation.toUpperCase()
@@ -465,6 +490,7 @@ export default class GreyBox extends Vue {
       return
     }
   }
+
   extractInnerDesignation (name, designation = null) {
     let { words } = allDesignations[this.entity_type_cd]
     let index, length
@@ -477,6 +503,7 @@ export default class GreyBox extends Vue {
     }
     return name
   }
+
   moveDesignation () {
     newReqModule.mutateShowActualInput(true)
     let baseName: string
@@ -487,6 +514,7 @@ export default class GreyBox extends Vue {
     }
     this.name = baseName + ' ' + this.word
   }
+
   removeMismatchedDesignations (name, designation = null) {
     if (designation) {
       return replaceWord(name, designation)
@@ -506,6 +534,7 @@ export default class GreyBox extends Vue {
     }
     return name
   }
+
   stripAllDesignations (name) {
     for (let word of allDesignationsList) {
       name = replaceWord(name, word)

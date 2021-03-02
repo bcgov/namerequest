@@ -1,16 +1,14 @@
 import Vue from 'vue'
 import { Component } from 'vue-property-decorator'
-
-import { ApplicantI } from '@/models'
-
+import { ApplicantI } from '@/interfaces'
 import newRequestModule, { NewRequestModule } from '@/store/new-request-module'
 import * as filingTypes from "@/modules/payment/filing-types"
 import paymentModule from '@/modules/payment'
-import { sleep } from '@/plugins/sleep'
+import { sleep } from '@/plugins'
 import { NrState } from '@/enums'
 
 @Component
-export default class NameRequestMixin extends Vue {
+export class NameRequestMixin extends Vue {
   get nr () {
     const nameRequest: NewRequestModule = newRequestModule
     const nr: Partial<any> = nameRequest.nr || {}
@@ -142,16 +140,6 @@ export default class NameRequestMixin extends Vue {
     newRequestModule.mutateSubmissionTabNumber(this.submissionTabNumber - 1)
   }
 
-  private isloadingSubmission: boolean = false
-  async next () {
-    if (this.submissionTabNumber === 3) {
-      this.isloadingSubmission = true
-      await this.submit()
-      return
-    }
-    newRequestModule.mutateSubmissionTabNumber(this.submissionTabNumber + 1)
-  }
-
   /** Submits an edited NR or a new name submission. */
   async submit () {
     // FUTURE: fix error handling in case of newReqModule (app or api) error (#5899)
@@ -172,8 +160,7 @@ export default class NameRequestMixin extends Vue {
         if (!this.editMode && [NrState.COND_RESERVED, NrState.RESERVED].includes(this.nrState)) {
           request = await newRequestModule.getNameRequest(nrId)
           if (request?.stateCd === NrState.CANCELLED) {
-            newRequestModule.setActiveComponent('Timeout')
-            this.isloadingSubmission = false
+            await newRequestModule.setActiveComponent('Timeout')
             return
           }
         }
@@ -181,7 +168,6 @@ export default class NameRequestMixin extends Vue {
       }
       if (request) await paymentModule.togglePaymentModal(true)
     }
-    this.isloadingSubmission = false
   }
 
   async fetchNr (nrId: number): Promise<void> {

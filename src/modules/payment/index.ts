@@ -1,6 +1,5 @@
 import { Module, VuexModule, getModule } from 'vuex-module-decorators'
 import store from '@/store'
-
 import paymentStore from './store'
 
 @Module({ dynamic: true, namespaced: false, store, name: 'paymentModule' })

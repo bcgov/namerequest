@@ -25,7 +25,7 @@ describe('link-row.vue', () => {
   })
 
   it('Displays the required ui elements', () => {
-    expect(wrapper.find(LinkRow).exists()).toBe(true)
+    expect(wrapper.findComponent(LinkRow).exists()).toBe(true)
     expect(wrapper.find('#link-row').element).toBeTruthy()
     expect(wrapper.find('#nr-required-activator').element).toBeTruthy()
     expect(wrapper.find('#name-build-link').element).toBeTruthy()

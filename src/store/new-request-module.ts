@@ -23,7 +23,7 @@ import {
   StatsI,
   SubmissionTypeT,
   WaitingAddressSearchI
-} from '@/models'
+} from '@/interfaces'
 
 import store from '@/store'
 import {
@@ -38,13 +38,12 @@ import $designations from './list-data/designations'
 import $intJurisdictions from './list-data/intl-jurisdictions'
 import canadaPostAPIKey from './config'
 
-import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
+import { removeExcessSpaces, sanitizeName, getFeatureFlag } from '@/plugins'
 import { NameRequestPayment } from '@/modules/payment/models'
 
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 import { NrAction, NrState, RollbackActions } from '@/enums'
-import { featureFlags } from '@/plugins/featureFlags'
 import { OK, BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
 
 const qs: any = querystring
@@ -846,6 +845,7 @@ export class NewRequestModule extends VuexModule {
   tabNumber: number = 0
   userCancelledAnalysis: boolean = false
   waitingAddressSearch: WaitingAddressSearchI | null = null
+  isLoadingSubmission = false
 
   get showPriorityRequest () {
     return (!this.editMode && this.nrState === 'DRAFT') || (!this.editMode && this.submissionType === 'examination')
@@ -2778,7 +2778,7 @@ export class NewRequestModule extends VuexModule {
     if (this.location === 'BC' || this.request_action_cd === 'MVE') {
       if (this.nameIsEnglish && !this.isPersonsName && !this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
         if (['NEW', 'MVE', 'DBA', 'CHG'].includes(this.request_action_cd)) {
-          featureFlags.getFlag('disable-analysis')
+          getFeatureFlag('disable-analysis')
             ? this.mutateDisplayedComponent('SendToExamination')
             : this.getNameAnalysis()
           return
@@ -2792,7 +2792,7 @@ export class NewRequestModule extends VuexModule {
           this.mutateDisplayedComponent('SendToExamination')
           return
         }
-        featureFlags.getFlag('disable-analysis')
+        getFeatureFlag('disable-analysis')
           ? this.mutateDisplayedComponent('SendToExamination')
           : this.getNameAnalysisXPRO()
       }
@@ -3359,6 +3359,11 @@ export class NewRequestModule extends VuexModule {
   @Mutation
   mutateAnalyzePending (value: boolean) {
     this.analyzePending = value
+  }
+
+  @Mutation
+  mutateIsLoadingSubmission (val: boolean) {
+    this.isLoadingSubmission = val
   }
 }
 

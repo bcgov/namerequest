@@ -1,6 +1,7 @@
 <template>
   <v-container id="business-designation">
     <h4>Include a designation based on the type of business</h4>
+
     <v-list class="business-designation-list">
       <v-row>
         <v-col cols="12" sm="6">
