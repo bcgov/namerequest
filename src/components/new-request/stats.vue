@@ -61,13 +61,13 @@
 import newReqModule from '@/store/new-request-module'
 import { StatsI } from '@/interfaces'
 import { Vue, Component } from 'vue-property-decorator'
-import { featureFlags } from '@/plugins'
+import { getFeatureFlag } from '@/plugins'
 
 @Component({})
 export default class Stats extends Vue {
   created (): void {
-    if (featureFlags.getFlag('hardcoded_regular_wait_time') === 0 ||
-        featureFlags.getFlag('hardcoded_priority_wait_time') === 0) {
+    if (getFeatureFlag('hardcoded_regular_wait_time') === 0 ||
+        getFeatureFlag('hardcoded_priority_wait_time') === 0) {
       newReqModule.getStats()
     }
   }
@@ -82,7 +82,7 @@ export default class Stats extends Vue {
 
   /** The regular wait time, in days. */
   get regularWaitTime (): string | number {
-    const regularWaitTime = featureFlags.getFlag('hardcoded_regular_wait_time')
+    const regularWaitTime = getFeatureFlag('hardcoded_regular_wait_time')
     if (regularWaitTime > 0) {
       return regularWaitTime
     } else {
@@ -92,7 +92,7 @@ export default class Stats extends Vue {
 
   /** The priority wait time, in hours. */
   get priorityWaitTime (): string | number {
-    const priorityWaitTime = featureFlags.getFlag('hardcoded_priority_wait_time')
+    const priorityWaitTime = getFeatureFlag('hardcoded_priority_wait_time')
     if (priorityWaitTime > 0) {
       return priorityWaitTime
     } else {

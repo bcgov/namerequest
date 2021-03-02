@@ -38,7 +38,7 @@ import $designations from './list-data/designations'
 import $intJurisdictions from './list-data/intl-jurisdictions'
 import canadaPostAPIKey from './config'
 
-import { removeExcessSpaces, sanitizeName, featureFlags } from '@/plugins'
+import { removeExcessSpaces, sanitizeName, getFeatureFlag } from '@/plugins'
 import { NameRequestPayment } from '@/modules/payment/models'
 
 import errorModule from '@/modules/error'
@@ -2778,7 +2778,7 @@ export class NewRequestModule extends VuexModule {
     if (this.location === 'BC' || this.request_action_cd === 'MVE') {
       if (this.nameIsEnglish && !this.isPersonsName && !this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
         if (['NEW', 'MVE', 'DBA', 'CHG'].includes(this.request_action_cd)) {
-          featureFlags.getFlag('disable-analysis')
+          getFeatureFlag('disable-analysis')
             ? this.mutateDisplayedComponent('SendToExamination')
             : this.getNameAnalysis()
           return
@@ -2792,7 +2792,7 @@ export class NewRequestModule extends VuexModule {
           this.mutateDisplayedComponent('SendToExamination')
           return
         }
-        featureFlags.getFlag('disable-analysis')
+        getFeatureFlag('disable-analysis')
           ? this.mutateDisplayedComponent('SendToExamination')
           : this.getNameAnalysisXPRO()
       }
