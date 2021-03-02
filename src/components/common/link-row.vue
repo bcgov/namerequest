@@ -37,7 +37,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import newReqModule from '@/store/new-request-module'
-import CommonMixin from '@/components/mixins/common-mixin'
+import { CommonMixin } from '@/mixins'
 
 @Component({})
 export default class LinkRow extends Mixins(CommonMixin) {

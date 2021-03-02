@@ -7,10 +7,9 @@ import { PaymentStatus } from '@/enums'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
-import newReqModule from '@/store/new-request-module'
 
 @Component
-export default class PaymentMixin extends Vue {
+export class PaymentMixin extends Vue {
   get sbcPayment () {
     return this.$store.getters[paymentTypes.GET_SBC_PAYMENT]
   }
@@ -179,11 +178,6 @@ export default class PaymentMixin extends Vue {
     // eslint-disable-next-line no-console
     // console.log(`Forwarding to SBC Payment Portal -> Payment redirect URL: ${redirectUrl}`)
     window.location.href = url
-  }
-
-  async downloadReceipt () {
-    const { paymentId } = this
-    await this.downloadReceiptPdf(paymentId)
   }
 
   /**

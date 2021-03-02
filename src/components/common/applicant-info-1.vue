@@ -332,7 +332,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import newReqModule from '@/store/new-request-module'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { Location } from '@/enums'
-import NameRequestMixin from '@/components/mixins/name-request-mixin'
+import { NameRequestMixin } from '@/mixins'
 
 const _debounce = require('lodash/debounce')
 
@@ -589,7 +589,7 @@ export default class ApplicantInfo1 extends NameRequestMixin {
 
   @Watch('isValid')
   onValidChanged (val: boolean) {
-    if (val) {
+    if (val && this.$el?.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
         const applicantBackBtn = this.$el.querySelector("#submit-back-btn > span")
@@ -603,7 +603,7 @@ export default class ApplicantInfo1 extends NameRequestMixin {
   nextAction () {
     this.validate()
     if (this.isValid) {
-      this.next()
+      newReqModule.mutateSubmissionTabNumber(this.submissionTabNumber + 1)
     }
   }
 }

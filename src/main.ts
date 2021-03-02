@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import { getVueRouter } from '@/router'
 import store from './store'
-import { getConfig, getVuetify, featureFlags, initLDClient } from '@/plugins'
+import { getConfig, getVuetify, initLdClient } from '@/plugins'
 import KeycloakService from 'sbc-common-components/src/services/keycloak.services'
 import * as Sentry from '@sentry/browser'
 import * as Integrations from '@sentry/integrations'
@@ -71,14 +71,7 @@ async function startVue () {
   // Initialize Launch Darkly
   if (window['ldClientId']) {
     console.info('Initializing Launch Darkly...') // eslint-disable-line no-console
-    await initLDClient()
-  }
-
-  // Check app feature flag
-  if (!featureFlags.getFlag('namerequest-ui-enabled')) {
-    alert('Sorry, the Name Request web app is temporarily disabled.\n' +
-      'Please try again later.')
-    return
+    await initLdClient()
   }
 
   // Initialize Keyloak Service

@@ -35,13 +35,8 @@ import * as PaymentTypes from '@/modules/payment/store/types'
 import * as FilingTypes from '@/modules/payment/filing-types'
 import * as Jurisdictions from '@/modules/payment/jurisdictions'
 import { PaymentAction } from '@/enums'
-import PaymentMixin from '@/components/payment/payment-mixin'
-import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
-import NameRequestMixin from '@/components/mixins/name-request-mixin'
-import DisplayedComponentMixin from '@/components/mixins/displayed-component-mixin'
+import { NameRequestMixin, PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from './payment-utils'
-import newReqModule from '@/store/new-request-module'
-import ExistingRequestDisplay from '@/components/existing-request/existing-request-display.vue'
 
 @Component({
   components: {
@@ -124,7 +119,7 @@ export default class UpgradeModal extends Mixins(
 
   @Watch('isVisible')
   onVisibleChanged (val: boolean) {
-    if (val) {
+    if (val && this.$el?.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
         const upgradeAcceptBtn = this.$el.querySelector("#payment-pay-btn > span")

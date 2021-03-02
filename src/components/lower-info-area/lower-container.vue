@@ -109,7 +109,7 @@
                 <li>Email: <a href="mailto:bcregistries@gov.bc.ca" class="white--text">BCRegistries@gov.bc.ca</a></li>
               </ul>
               <v-col cols="12" class="pb-0 px-0 font-weight-bold">Hours of Operation:</v-col>
-              <v-col cols="12" class="pt-0 px-0">Monday to Friday, 8:30am - 4:30pm Pacific Time</v-col>
+              <v-col cols="12" class="pt-0 px-0">Monday to Friday, 8:30am - 4:30pm Pacific time</v-col>
             </v-row>
           </v-container>
         </v-col>

@@ -7,15 +7,10 @@
 </template>
 
 <script lang="ts">
-// Libraries
 import { Component, Prop, Mixins } from 'vue-property-decorator'
-
-// Components
 // @ts-ignore
 import SbcSignin from 'sbc-common-components/src/components/SbcSignin'
-
-// Mixins
-import NrAffiliationMixin from '@/components/mixins/nr-affiliation-mixin'
+import { NrAffiliationMixin } from '@/mixins'
 
 @Component({
   components: {

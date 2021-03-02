@@ -79,13 +79,10 @@ import PaymentCompleteModal from '@/components/payment/payment-complete-modal.vu
 import AffiliationErrorModal from '@/components/modals/affiliation-error.vue'
 import ErrorModal from '@/components/common/error-modal.vue'
 import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
-
 import { Component, Vue } from 'vue-property-decorator'
 import { mapGetters } from 'vuex'
-import { featureFlags } from '@/plugins'
-
+import { getFeatureFlag } from '@/plugins'
 import newRequestModule from '@/store/new-request-module'
-
 import paymentModule from '@/modules/payment'
 import { RollbackActions } from '@/enums'
 
@@ -121,7 +118,7 @@ export default class App extends Vue {
   private showSpinner = false
 
   get bannerText (): string | null {
-    const bannerText: string = featureFlags.getFlag('banner-text')
+    const bannerText: string = getFeatureFlag('banner-text')
     // remove spaces so that " " becomes falsy
     return bannerText?.trim()
   }
