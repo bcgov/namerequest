@@ -9,7 +9,7 @@ import { ErrorI } from '@/modules/error/store/actions'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 @Component
-export default class extends Vue {
+export class PaymentMixin extends Vue {
   get sbcPayment () {
     return this.$store.getters[paymentTypes.GET_SBC_PAYMENT]
   }

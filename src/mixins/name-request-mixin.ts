@@ -8,7 +8,7 @@ import { sleep } from '@/plugins'
 import { NrState } from '@/enums'
 
 @Component
-export default class extends Vue {
+export class NameRequestMixin extends Vue {
   get nr () {
     const nameRequest: NewRequestModule = newRequestModule
     const nr: Partial<any> = nameRequest.nr || {}

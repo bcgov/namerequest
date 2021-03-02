@@ -2,7 +2,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { EntityType } from '@/enums'
 
 @Component
-export default class extends Vue {
+export class CommonMixin extends Vue {
   /** Returns the specified string in Title Case. */
   toTitleCase (str: string): string {
     return str && str
