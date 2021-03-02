@@ -1,4 +1,4 @@
-import { EntityI } from '@/models'
+import { EntityI } from '@/interfaces/models'
 
 export const EntityTypesBCData: EntityI[] = [
   {

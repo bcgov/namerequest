@@ -6,7 +6,7 @@ import {
   ExistingRequestSearchI,
   LocationT, NameRequestI, RequestActionsI, RequestNameI,
   SelectOptionsI, StatsI, SubmissionTypeT, WaitingAddressSearchI
-} from '@/models'
+} from '@/interfaces/models'
 import { NameChoicesIF, NrDataIF, RequestOrConsentIF } from '@/interfaces'
 
 interface RequestNameMapI extends RequestNameI {}

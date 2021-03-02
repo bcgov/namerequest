@@ -8,7 +8,7 @@ import {
   NameRequestI,
   RequestActionMappingI,
   SelectOptionsI
-} from '@/models'
+} from '@/interfaces/models'
 import { NrState } from '@/enums'
 import {
   $colinRequestActions,

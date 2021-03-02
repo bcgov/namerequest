@@ -1,4 +1,4 @@
-import { ConversionTypesI } from '@/models'
+import { ConversionTypesI } from '@/interfaces/models'
 
 export const ConversionTypes: ConversionTypesI[] = [
   {

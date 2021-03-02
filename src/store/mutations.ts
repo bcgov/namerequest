@@ -9,7 +9,7 @@ import {
   SelectOptionsI,
   StatsI,
   SubmissionTypeT, WaitingAddressSearchI
-} from '@/models'
+} from '@/interfaces/models'
 
 export const clearErrors = (state: StateIF) => {
   state.stateModel.newRequestModel.errors = []

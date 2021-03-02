@@ -1,4 +1,4 @@
-import { RequestActionsI } from '@/models'
+import { RequestActionsI } from '@/interfaces/models'
 
 export const RequestActions: RequestActionsI[] = [
   {

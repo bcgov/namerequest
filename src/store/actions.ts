@@ -1,31 +1,16 @@
-/**
- * Downloads the specified Name Request output.
- * @param id The Name Request id.
- */
-import { Action } from 'vuex-module-decorators'
 import querystring from 'qs'
 import axios, { AxiosError } from 'axios'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 import canadaPostAPIKey from '@/store/config'
-import { ExistingRequestSearchI, LocationT, NewRequestNameSearchI } from '@/models'
+import { ExistingRequestSearchI, LocationT, NewRequestNameSearchI } from '@/interfaces'
 import { NrAction, NrState, RollbackActions } from '@/enums'
 import { NameRequestPayment } from '@/modules/payment/models'
 import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
 import $canJurisdictions from '@/store/list-data/canada-jurisdictions'
 import $intJurisdictions from '@/store/list-data/intl-jurisdictions'
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
-import { featureFlags } from '@/plugins/featureFlags'
-
-// Getters
-// import {
-//   getName,
-//   getLocation,
-//   getEntityTypeCd,
-//   getExistingRequestSearch,
-//   getRequestActionCd,
-//   userCancelledAnalysis
-// } from '@/store/getters'
+import { getFeatureFlag } from '@/plugins'
 
 // List Data
 import { RequestActions } from './list-data'
@@ -1058,7 +1043,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
     if (getters.getNameIsEnglish && !getters.getIsPersonsName &&
       !getters.getDoNotAnalyzeEntities.includes(this.entity_type_cd)) {
       if (['NEW', 'MVE', 'DBA', 'CHG'].includes(this.request_action_cd)) {
-        featureFlags.getFlag('disable-analysis')
+        getFeatureFlag('disable-analysis')
           ? commit('mutateDisplayedComponent', 'SendToExamination')
           : this.getNameAnalysis()
         return
@@ -1072,7 +1057,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
         commit('mutateDisplayedComponent', 'SendToExamination')
         return
       }
-      featureFlags.getFlag('disable-analysis')
+      getFeatureFlag('disable-analysis')
         ? commit('mutateDisplayedComponent', 'SendToExamination')
         : this.getNameAnalysisXPRO()
     }
