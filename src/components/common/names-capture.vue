@@ -284,7 +284,7 @@ import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { LocationT } from '@/interfaces'
 import { sanitizeName } from '@/plugins'
 import newReqModule from '@/store/new-request-module'
-import NameRequestMixin from '@/components/mixins/name-request-mixin'
+import { NameRequestMixin } from '@/mixins'
 
 @Component({
   components: {

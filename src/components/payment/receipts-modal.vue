@@ -26,9 +26,7 @@ import { Component, Mixins, Watch } from 'vue-property-decorator'
 import PaymentSummary from '@/components/payment/payment-summary.vue'
 import PaymentModule from '@/modules/payment'
 import * as PaymentTypes from '@/modules/payment/store/types'
-import NameRequestMixin from '@/components/mixins/name-request-mixin'
-import PaymentMixin from '@/components/payment/payment-mixin'
-import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
+import { NameRequestMixin, PaymentMixin, PaymentSessionMixin } from '@/mixins'
 
 @Component({
   components: {

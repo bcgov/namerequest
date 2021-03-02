@@ -6,7 +6,7 @@ import newReqModule from '@/store/new-request-module'
 import { BusinessRequest, CreateNRAffiliationRequestBody, NameRequestI } from '@/interfaces'
 
 @Component
-export default class NrAffiliationMixin extends Vue {
+export default class extends Vue {
   /**
    * Create an affiliation between current authenticated Account and current Nr
    * @param nr The Nr to affiliate

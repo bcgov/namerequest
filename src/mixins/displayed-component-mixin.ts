@@ -4,7 +4,7 @@ import { Component } from 'vue-property-decorator'
 import newRequestModule from '@/store/new-request-module'
 
 @Component
-export default class DisplayedComponentMixin extends Vue {
+export default class extends Vue {
   componentName: string = ''
   get displayedComponent () {
     // We can't watch a computed property directly, and we don't want to inject displayedComponent as a prop

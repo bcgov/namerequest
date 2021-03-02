@@ -19,7 +19,7 @@
 <script lang="ts">
 import { Component, Emit } from 'vue-property-decorator'
 import newRequestModule from '@/store/new-request-module'
-import NameRequestMixin from '@/components/mixins/name-request-mixin'
+import { NameRequestMixin } from '@/mixins'
 
 @Component({})
 export default class ApplicantInfoNav extends NameRequestMixin {

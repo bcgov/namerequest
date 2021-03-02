@@ -38,10 +38,9 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import PaymentModule from '@/modules/payment'
-import PaymentMixin from '@/components/payment/payment-mixin'
 import * as PaymentTypes from '@/modules/payment/store/types'
 import { NrAction } from '@/enums'
-import NameRequestMixin from '@/components/mixins/name-request-mixin'
+import { NameRequestMixin, PaymentMixin } from '@/mixins'
 import NewReqModule from '@/store/new-request-module'
 import { sleep } from '@/plugins'
 

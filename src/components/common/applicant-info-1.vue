@@ -332,7 +332,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import newReqModule from '@/store/new-request-module'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { Location } from '@/enums'
-import NameRequestMixin from '@/components/mixins/name-request-mixin'
+import { NameRequestMixin } from '@/mixins'
 
 const _debounce = require('lodash/debounce')
 

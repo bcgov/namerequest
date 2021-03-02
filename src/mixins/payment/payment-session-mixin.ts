@@ -5,7 +5,7 @@ import { NameRequestPaymentResponse } from '@/modules/payment/models'
 import { PaymentAction } from '@/enums'
 
 @Component
-export default class PaymentMixin extends Vue {
+export default class extends Vue {
   get paymentInProgress (): boolean {
     return (sessionStorage.getItem('paymentInProgress') === 'true')
   }

@@ -20,28 +20,28 @@
       </v-card-text>
 
       <v-card-actions class="pt-1 justify-center">
-        <v-btn @click="downloadReceipt()" id="receipt-download-btn" class="primary px-4">Download Receipt</v-btn>
-        <v-btn @click="hideModal()" id="receipt-close-btn" class="button-blue px-4">Done</v-btn>
+        <v-btn id="receipt-download-btn" class="primary px-4" :loading="loading" @click="downloadReceipt()">
+          <span>Download Receipt</span>
+        </v-btn>
+        <v-btn id="receipt-close-btn" class="button-blue px-4" @click="hideModal()">
+          <span>Done</span>
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Vue, Watch } from 'vue-property-decorator'
+import { Component, Mixins, Watch } from 'vue-property-decorator'
 import PaymentConfirm from '@/components/payment/payment-confirm.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 import paymentModule from '@/modules/payment'
 import { NameRequestPayment } from '@/modules/payment/models'
 import newRequestModule from '@/store/new-request-module'
 import errorModule from '@/modules/error'
-import { ErrorI } from '@/modules/error/store/actions'
 import * as paymentTypes from '@/modules/payment/store/types'
-import { PaymentAction, PaymentStatus, RollbackActions, SbcPaymentStatus } from '@/enums'
-import CommonMixin from '@/components/mixins/common-mixin'
-import PaymentMixin from '@/components/payment/payment-mixin'
-import PaymentSessionMixin from '@/components/payment/payment-session-mixin'
-import NameRequestMixin from '@/components/mixins/name-request-mixin'
+import { PaymentStatus, SbcPaymentStatus } from '@/enums'
+import { CommonMixin, NameRequestMixin, PaymentMixin, PaymentSessionMixin } from '@/mixins'
 
 /**
  * Makes debugging the receipt easier.
@@ -70,6 +70,9 @@ export default class PaymentCompleteModal extends Mixins(
   PaymentMixin,
   PaymentSessionMixin
 ) {
+  /** Used to show loading state on button. */
+  private loading = false
+
   async mounted () {
     const { sessionPaymentId, sessionPaymentAction } = this
     // Check for a payment ID in sessionStorage, if it has been set, we've been redirected away from the application,
@@ -136,6 +139,13 @@ export default class PaymentCompleteModal extends Mixins(
       completionDate: this.paymentDate,
       statusCode: this.toTitleCase(this.sbcPaymentStatus)
     }
+  }
+
+  private async downloadReceipt () {
+    const { paymentId } = this
+    this.loading = true
+    await this.downloadReceiptPdf(paymentId)
+    this.loading = false
   }
 
   @Watch('isVisible')

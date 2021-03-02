@@ -186,10 +186,7 @@ import { mapGetters } from 'vuex'
 import Moment from 'moment-timezone'
 import MainContainer from '@/components/new-request/main-container.vue'
 import newReqModule from '@/store/new-request-module'
-import NrAffiliationMixin from '@/components/mixins/nr-affiliation-mixin'
-import PaymentMixin from '@/components/payment/payment-mixin'
-import CommonMixin from '@/components/mixins/common-mixin'
-import DateMixin from '@/components/mixins/date-mixin'
+import { NrAffiliationMixin, CommonMixin, DateMixin, PaymentMixin } from '@/mixins'
 import paymentModule from '@/modules/payment'
 import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
@@ -215,7 +212,8 @@ export default class ExistingRequestDisplay extends Mixins(
   NrAffiliationMixin,
   CommonMixin,
   DateMixin,
-  PaymentMixin) {
+  PaymentMixin
+) {
   // enums used in the template:
   NameState = NameState
   NrAction = NrAction
