@@ -10,6 +10,7 @@ module.exports = {
     '@vue/typescript'
   ],
   rules: {
+    'no-console': 0,
     'max-len': ['warn', { code: 120 }],
     'no-unused-vars': 'off',
     'quotes': 'off',

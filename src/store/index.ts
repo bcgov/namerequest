@@ -17,5 +17,5 @@ export default new Vuex.Store<RootStateI>({
   state: {
     config: {} as EnvConfigI
   },
-  getters
+  getters: getters as any
 })
