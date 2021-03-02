@@ -589,7 +589,7 @@ export default class ApplicantInfo1 extends NameRequestMixin {
 
   @Watch('isValid')
   onValidChanged (val: boolean) {
-    if (val) {
+    if (val && this.$el?.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
         const applicantBackBtn = this.$el.querySelector("#submit-back-btn > span")
@@ -603,7 +603,7 @@ export default class ApplicantInfo1 extends NameRequestMixin {
   nextAction () {
     this.validate()
     if (this.isValid) {
-      this.next()
+      newReqModule.mutateSubmissionTabNumber(this.submissionTabNumber + 1)
     }
   }
 }

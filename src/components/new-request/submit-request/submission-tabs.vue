@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import NewReqModule from '@/store/new-request-module'
 import MainContainer from '../main-container.vue'
 import EntityCannotBeAutoAnalyzed from './entity-cannot-be-auto-analyzed.vue'

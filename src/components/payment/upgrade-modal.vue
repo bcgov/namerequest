@@ -124,7 +124,7 @@ export default class UpgradeModal extends Mixins(
 
   @Watch('isVisible')
   onVisibleChanged (val: boolean) {
-    if (val) {
+    if (val && this.$el?.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
         const upgradeAcceptBtn = this.$el.querySelector("#payment-pay-btn > span")

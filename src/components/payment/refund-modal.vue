@@ -125,7 +125,7 @@ export default class RefundModal extends Mixins(NameRequestMixin, PaymentMixin, 
 
   @Watch('isVisible')
   onVisibleChanged (val: boolean) {
-    if (val) {
+    if (val && this.$el?.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
         const refundCancelBtn = this.$el.querySelector("#cancel-nr-btn > span")
