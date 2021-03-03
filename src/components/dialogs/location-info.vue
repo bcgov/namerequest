@@ -32,7 +32,7 @@ import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({})
-export default class LocationInfoModal extends Vue {
+export default class LocationInfoDialog extends Vue {
   get showModal () {
     return newReqModule.locationInfoModalVisible
   }

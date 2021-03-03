@@ -56,7 +56,7 @@ import { sleep } from '@/plugins'
     RefundSummary
   }
 })
-export default class RefundModal extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
+export default class RefundDialog extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
   /** Used to display a fetch error, if any. */
   protected fetchError = ''
 

@@ -106,16 +106,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
-import ForgotNrModal from '@/components/modals/forgot-nr.vue'
+import { Component, Vue } from 'vue-property-decorator'
 import newReqModule from '@/store/new-request-module'
-import ErrorModule from '@/modules/error'
-import { NameRequestI, SearchDataI, NrDataResponseT, NrDataT } from '@/interfaces'
+// import ErrorModule from '@/modules/error' // *** TODO: delete this?
+// import { NameRequestI, SearchDataI, NrDataResponseT, NrDataT } from '@/interfaces' // *** TODO: delete this?
 
 const NR_REGEX = /^(NR\ ?L?|L?)?([\d]{6,8})$/
-@Component({
-  components: { ForgotNrModal }
-})
+@Component({})
 export default class ExistingRequestSearch extends Vue {
   private errorMessage = ''
   private isValid = false

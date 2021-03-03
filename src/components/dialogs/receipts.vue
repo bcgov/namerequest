@@ -33,7 +33,7 @@ import { NameRequestMixin, PaymentMixin, PaymentSessionMixin } from '@/mixins'
     PaymentSummary
   }
 })
-export default class ReceiptsModal extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
+export default class ReceiptsDialog extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
   /** Used to display a fetch error, if any. */
   protected fetchError = ''
 

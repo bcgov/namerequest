@@ -25,7 +25,7 @@ import { NameState } from '@/enums'
 
 @Component({})
 export default class NamesGrayBox extends Vue {
-  // enums used in the template:
+  // enum used in the template
   NameState = NameState
 
   @Prop({ default: () => [] })

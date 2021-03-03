@@ -52,7 +52,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { SelectOptionsI } from '@/interfaces'
 
 @Component({})
-export default class PickRequestType extends Vue {
+export default class PickRequestTypeDialog extends Vue {
   get editMode () {
     return newReqModule.editMode
   }

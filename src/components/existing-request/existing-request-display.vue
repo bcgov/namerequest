@@ -181,8 +181,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Vue, Watch } from 'vue-property-decorator'
-import { mapGetters } from 'vuex'
+import { Component, Mixins, Watch } from 'vue-property-decorator'
 import Moment from 'moment-timezone'
 import MainContainer from '@/components/new-request/main-container.vue'
 import newReqModule from '@/store/new-request-module'
@@ -192,9 +191,10 @@ import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
-import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus } from '@/enums'
+import { NameState, NrAction, NrState, PaymentStatus } from '@/enums'
 import { sleep } from '@/plugins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
+import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 @Component({
   components: {
@@ -203,9 +203,6 @@ import { getBaseUrl } from '@/components/payment/payment-utils'
     CheckStatusGrayBox,
     NrApprovedGrayBox,
     NrNotApprovedGrayBox
-  },
-  computed: {
-    ...mapGetters(['isAuthenticated'])
   }
 })
 export default class ExistingRequestDisplay extends Mixins(
@@ -214,13 +211,15 @@ export default class ExistingRequestDisplay extends Mixins(
   DateMixin,
   PaymentMixin
 ) {
-  // enums used in the template:
+  // enums used in the template
   NameState = NameState
   NrAction = NrAction
   NrState = NrState
 
-  // external getter
-  readonly isAuthenticated!: boolean
+  /** True if user is authenticated, else False. */
+  get isAuthenticated (): boolean {
+    return Boolean(sessionStorage.getItem(SessionStorageKeys.KeyCloakToken))
+  }
 
   /** This is True while refreshing the NR. (Not used in template at the moment.) */
   private checking = false
@@ -578,11 +577,9 @@ export default class ExistingRequestDisplay extends Mixins(
         case NrAction.RESULTS:
           // show spinner since the network calls below can take a few seconds
           this.$root.$emit('showSpinner', true)
-
-          // Request the outputs
+          // download the outputs
           await newReqModule.downloadOutputs(this.nr.id)
-
-          // clear spinner
+          // hide spinner
           this.$root.$emit('showSpinner', false)
           break
         default:
@@ -634,7 +631,7 @@ export default class ExistingRequestDisplay extends Mixins(
     if (this.isAuthenticated) {
       await this.createAffiliation(this.nr)
     } else {
-      // Persist Nr in session for use in affiliation upon authentication via SignIn.vue.
+      // Persist NR in session for use in affiliation upon authentication via Signin component
       sessionStorage.setItem('NR_DATA', JSON.stringify(this.nr))
       newReqModule.mutateIncorporateLoginModalVisible(true)
     }

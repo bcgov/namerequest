@@ -1,20 +1,9 @@
-import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
-import { NrDataIF, StateIF } from '@/interfaces'
+import { StateIF } from '@/interfaces'
 import {
-  ApplicantI,
-  DraftReqI,
-  EntityI,
-  ExistingRequestSearchI,
-  NameRequestI,
-  RequestActionMappingI,
-  SelectOptionsI
+  ApplicantI, EntityI, ExistingRequestSearchI, NameRequestI, RequestActionMappingI, SelectOptionsI
 } from '@/interfaces/models'
-import { NrState } from '@/enums'
 import {
-  $colinRequestActions,
-  $colinRequestTypes, $xproColinRequestTypes,
-  bcMapping,
-  xproMapping
+  $colinRequestActions, $colinRequestTypes, $xproColinRequestTypes, bcMapping, xproMapping
 } from '@/store/list-data/request-action-mapping'
 
 // List Data
@@ -22,16 +11,6 @@ import { EntityTypesBCData, EntityTypesXPROData, RequestActions } from './list-d
 import { $mrasJurisdictions } from '@/store/list-data/canada-jurisdictions'
 
 // TODO: Apply StateIF to state types after store transition
-
-/** Returns current name request URL. */
-export const getNameRequestUrl = (state: any): string => {
-  return `${window.location.origin}${process.env.VUE_APP_PATH}`
-}
-
-/** Returns True if user is authenticated, else False. */
-export const isAuthenticated = (state: any): boolean => {
-  return Boolean(sessionStorage.getItem(SessionStorageKeys.KeyCloakToken))
-}
 
 /** Returns the name. */
 export const getName = (state: StateIF): string => {

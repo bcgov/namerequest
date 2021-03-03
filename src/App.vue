@@ -1,14 +1,14 @@
 <template>
   <v-app id="app">
     <div id="main-column">
-      <sbc-authentication-options-dialog
+      <SbcAuthenticationOptionsDialog
         attach="#app"
         :showModal="showAuthModal"
-        :redirectUrl="getNameRequestUrl"
-        @close="closeAuthModal()"
+        :redirectUrl="nameRequestUrl"
+        @close="showAuthModal = false"
       />
 
-      <!-- Loading Spinner -->
+      <!-- Loading spinner -->
       <v-fade-transition>
         <div class="loading-container grayed-out" v-show="showSpinner">
           <div class="loading__content">
@@ -17,14 +17,17 @@
         </div>
       </v-fade-transition>
 
+      <!-- SBC Common Components header -->
       <sbc-header
         class="sbc-header"
         :in-auth="false"
-        :redirectOnLoginSuccess="getNameRequestUrl"
-        :redirect-on-login-fail="getNameRequestUrl"
-        :redirect-on-logout="getNameRequestUrl"
+        :redirectOnLoginSuccess="nameRequestUrl"
+        :redirect-on-login-fail="nameRequestUrl"
+        :redirect-on-logout="nameRequestUrl"
         :show-actions="true"
       />
+
+      <!-- Alert banner -->
       <v-alert
         tile dense
         type="warning"
@@ -32,90 +35,68 @@
         v-if="bannerText"
         v-html="bannerText"
       />
+
+      <!-- Components according to route -->
       <router-view />
+
+      <!-- SBC Common Components header -->
       <sbc-footer :aboutText=aboutText />
     </div>
-    <!--All v-dialogue (modal) components App-wide-->
-    <Conditions />
-    <ExitModal />
-    <LocationInfoModal />
-    <MrasSearchInfoModal />
-    <HelpMeChoose />
-    <NrNotRequired />
-    <PickEntityOrConversion />
-    <PickRequestType />
-    <PaymentModal
-      :onCancel="onPaymentCancelled"
-    />
-    <UpgradeModal />
-    <ReapplyModal />
-    <PaymentCompleteModal />
-    <ReceiptsModal />
-    <RefundModal />
-    <CancelModal />
-    <AffiliationErrorModal />
-    <ErrorModal />
+
+    <!-- All dialogs app-wide -->
+    <!-- *** TODO: should these be in "main-column" div? -->
+    <AffiliationErrorDialog />
+    <CancelDialog />
+    <ConditionsDialog />
+    <ErrorDialog />
+    <ExitDialog />
+    <HelpMeChooseDialog />
+    <LocationInfoDialog />
+    <MrasSearchInfoDialog />
+    <NrNotRequiredDialog />
+    <PaymentDialog :onCancel="onPaymentCancelled" />
+    <PaymentCompleteDialog />
+    <PickEntityOrConversionDialog />
+    <PickRequestTypeDialog />
+    <ReapplyDialog />
+    <ReceiptsDialog />
+    <RefundDialog />
+    <UpgradeDialog />
   </v-app>
 </template>
 
 <script lang="ts">
-import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
-import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
-import ExitModal from '@/components/modals/exit.vue'
-import Conditions from '@/components/modals/conditions.vue'
-import HelpMeChoose from '@/components/modals/help-me-choose.vue'
-import LocationInfoModal from '@/components/modals/location-info.vue'
-import MrasSearchInfoModal from '@/components/modals/mras-search-info.vue'
-import NrNotRequired from '@/components/modals/nr-not-required.vue'
-import PickEntityOrConversion from '@/components/modals/pick-entity-or-conversion.vue'
-import PickRequestType from '@/components/modals/pick-request-type.vue'
-import PaymentModal from '@/components/payment/payment-modal.vue'
-import ReceiptsModal from '@/components/payment/receipts-modal.vue'
-import RefundModal from '@/components/payment/refund-modal.vue'
-import CancelModal from '@/components/payment/cancel-modal.vue'
-import UpgradeModal from '@/components/payment/upgrade-modal.vue'
-import ReapplyModal from '@/components/payment/reapply-modal.vue'
-import PaymentCompleteModal from '@/components/payment/payment-complete-modal.vue'
-import AffiliationErrorModal from '@/components/modals/affiliation-error.vue'
-import ErrorModal from '@/components/common/error-modal.vue'
-import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
+// libraries, etc
 import { Component, Vue } from 'vue-property-decorator'
-import { mapGetters } from 'vuex'
 import { getFeatureFlag } from '@/plugins'
 import newRequestModule from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 import { RollbackActions } from '@/enums'
 
+// dialogs and other components
+import {
+  AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
+  LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, PaymentDialog, PaymentCompleteDialog,
+  PickEntityOrConversionDialog, PickRequestTypeDialog, ReapplyDialog, ReceiptsDialog, RefundDialog, UpgradeDialog
+} from '@/components/dialogs'
+import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
+import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
+import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
+
 @Component({
   components: {
-    Conditions,
-    ExitModal,
-    SbcHeader,
-    SbcFooter,
-    LocationInfoModal,
-    MrasSearchInfoModal,
-    NrNotRequired,
-    HelpMeChoose,
-    PickEntityOrConversion,
-    PickRequestType,
-    PaymentModal,
-    UpgradeModal,
-    ReapplyModal,
-    PaymentCompleteModal,
-    ReceiptsModal,
-    RefundModal,
-    CancelModal,
-    AffiliationErrorModal,
-    ErrorModal,
-    SbcAuthenticationOptionsDialog
-  },
-  computed: {
-    ...mapGetters(['getNameRequestUrl'])
+    AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
+    LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, PaymentDialog, PaymentCompleteDialog,
+    PickEntityOrConversionDialog, PickRequestTypeDialog, ReapplyDialog, ReceiptsDialog, RefundDialog, UpgradeDialog,
+    SbcAuthenticationOptionsDialog, SbcHeader, SbcFooter
   }
 })
 export default class App extends Vue {
-  readonly getNameRequestUrl!: string
   private showSpinner = false
+
+  get nameRequestUrl (): string {
+    return `${window.location.origin}${process.env.VUE_APP_PATH}`
+  }
 
   get bannerText (): string | null {
     const bannerText: string = getFeatureFlag('banner-text')
@@ -130,6 +111,9 @@ export default class App extends Vue {
 
   get showAuthModal () {
     return newRequestModule.incorporateLoginModalVisible
+  }
+  set showAuthModal (val: boolean) {
+    newRequestModule.mutateIncorporateLoginModalVisible(val)
   }
 
   created (): void {
@@ -166,10 +150,6 @@ export default class App extends Vue {
       await this.resetAppState()
     }
     await paymentModule.togglePaymentModal(false)
-  }
-
-  private closeAuthModal () {
-    newRequestModule.mutateIncorporateLoginModalVisible(false)
   }
 }
 </script>

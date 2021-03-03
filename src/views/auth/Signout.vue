@@ -1,21 +1,17 @@
 <template>
-  <sbc-signout :redirect-url="getNameRequestUrl" />
+  <sbc-signout :redirect-url="nameRequestUrl" />
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { mapGetters } from 'vuex'
 import SbcSignout from 'sbc-common-components/src/components/SbcSignout.vue'
 
 @Component({
-  components: {
-    SbcSignout
-  },
-  computed: {
-    ...mapGetters(['getNameRequestUrl'])
-  }
+  components: { SbcSignout }
 })
 export default class Signout extends Vue {
-  readonly getNameRequestUrl!: string
+  get nameRequestUrl (): string {
+    return `${window.location.origin}${process.env.VUE_APP_PATH}`
+  }
 }
 </script>
