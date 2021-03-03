@@ -1,7 +1,7 @@
-import Modal from '@/components/modals/pick-entity-or-conversion.vue'
-import newReqModule from '@/store/new-request-module'
 import { mount, createLocalVue } from '@vue/test-utils'
 import Vuetify from 'vuetify'
+import { PickEntityOrConversionDialog } from '@/components/dialogs'
+import newReqModule from '@/store/new-request-module'
 
 // Prevent the warning "[Vuetify] Unable to locate target [data-app]"
 document.body.setAttribute('data-app', 'true')
@@ -15,10 +15,7 @@ describe('name-input.vue', () => {
   let wrapper: any
 
   beforeEach(() => {
-    wrapper = mount(Modal, {
-      localVue,
-      vuetify
-    })
+    wrapper = mount(PickEntityOrConversionDialog, { localVue, vuetify })
     newReqModule.mutateRequestAction('NEW')
     newReqModule.mutateLocation('BC')
   })

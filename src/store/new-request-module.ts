@@ -2634,42 +2634,50 @@ export class NewRequestModule extends VuexModule {
 
   @Action
   async getQuickSearch (cleanedName: {exactMatch: string, synonymMatch: string}) {
-    try {
-      this.mutateDisplayedComponent('QuickSearchPending')
-      let encodedAuth = btoa(`${window['quickSearchPublicId']}:${window['quickSearchPublicSecret']}`)
+    const quickSearchPublicId = window['quickSearchPublicId']
+    const quickSearchPublicSecret = window['quickSearchPublicSecret']
 
-      const tokenResp = await axios.post(window['authTokenUrl'], 'grant_type=client_credentials', {
-        headers: { Authorization: `Basic ${encodedAuth}`, 'content-type': 'application/x-www-form-urlencoded' }
-      })
+    // only do quick search if we have id and secret
+    if (quickSearchPublicId && quickSearchPublicSecret) {
+      try {
+        this.mutateDisplayedComponent('QuickSearchPending')
+        let encodedAuth = btoa(`${window['quickSearchPublicId']}:${window['quickSearchPublicSecret']}`)
 
-      let token = tokenResp.data.access_token
-      const exactResp = await axios.get('/exact-match?query=' + cleanedName.exactMatch, {
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
-      })
+        const tokenResp = await axios.post(window['authTokenUrl'], 'grant_type=client_credentials', {
+          headers: { Authorization: `Basic ${encodedAuth}`, 'content-type': 'application/x-www-form-urlencoded' }
+        })
 
-      const synonymResp = await axios.get('/requests/synonymbucket/' + cleanedName.synonymMatch + '/*', {
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
-      })
+        let token = tokenResp.data.access_token
+        const exactResp = await axios.get('/exact-match?query=' + cleanedName.exactMatch, {
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+        })
 
-      const exactNames = await this.parseExactNames(exactResp.data)
+        const synonymResp = await axios.get('/requests/synonymbucket/' + cleanedName.synonymMatch + '/*', {
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+        })
 
-      // pass in exactNames so that we can check for duplicates
-      synonymResp.data.exactNames = exactNames
-      const synonymNames = await this.parseSynonymNames(synonymResp.data)
-      this.mutateQuickSearchNames(exactNames.concat(synonymNames))
+        const exactNames = await this.parseExactNames(exactResp.data)
 
-      // check if they skipped
-      if (this.quickSearch) {
-        this.mutateDisplayedComponent('QuickSearchResults')
+        // pass in exactNames so that we can check for duplicates
+        synonymResp.data.exactNames = exactNames
+        const synonymNames = await this.parseSynonymNames(synonymResp.data)
+        this.mutateQuickSearchNames(exactNames.concat(synonymNames))
+
+        // check if they skipped
+        if (this.quickSearch) {
+          this.mutateDisplayedComponent('QuickSearchResults')
+        }
+
+        return
+      } catch (err) {
+        const msg = await handleApiError(err, 'Could not get quick search')
+        // send error to sentry and move on to detailed search
+        // (do not show error to user)
+        console.error('getQuickSearch() =', msg) // eslint-disable-line no-console
       }
-    } catch (err) {
-      const msg = await handleApiError(err, 'Could not get quick search')
-      // send error to sentry and move on to detailed search
-      // (do not show error to user)
-      console.error('getQuickSearch() =', msg) // eslint-disable-line no-console
-      this.mutateQuickSearch(false)
-      await this.startAnalyzeName()
     }
+    this.mutateQuickSearch(false)
+    await this.startAnalyzeName()
   }
 
   @Action

@@ -13,7 +13,7 @@
     "NAME_REQUEST_URL": "https://dev.bcregistry.ca/namerequest",
     "NRO_URL": "https://dev.bcregistrynames.gov.bc.ca/nro/",
     "AUTH_TOKEN_URL": "https://dev.oidc.gov.bc.ca/auth/realms/fcf0kpqr/protocol/openid-connect/token",
-    "QUICK_SEARCH_PUBLIC_ID": "namex-solr-service-account",
+    "QUICK_SEARCH_PUBLIC_ID": "",
     "QUICK_SEARCH_PUBLIC_SECRET": "",
     "ENTITY_SELECTOR_URL": "https://entity-selection-dev.pathfinder.gov.bc.ca/"
   }

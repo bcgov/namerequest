@@ -21,12 +21,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component } from 'vue-property-decorator'
 import { DisplayedComponentMixin } from '@/mixins'
 import newReqModule from '@/store/new-request-module'
 
 @Component({})
-export default class ExitModal extends DisplayedComponentMixin {
+export default class ExitDialog extends DisplayedComponentMixin {
   get showModal () {
     return newReqModule.exitModalVisible
   }

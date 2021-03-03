@@ -24,7 +24,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import newReqModule from '@/store/new-request-module'
 
 @Component({})
-export default class AffiliationErrorModal extends Vue {
+export default class AffiliationErrorDialog extends Vue {
   get showModal () {
     return newReqModule.affiliationErrorModalVisible
   }

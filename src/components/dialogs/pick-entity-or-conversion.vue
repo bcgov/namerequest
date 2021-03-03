@@ -86,7 +86,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { SelectOptionsI } from '@/interfaces'
 
 @Component({})
-export default class PickEntityOrConversion extends Vue {
+export default class PickEntityOrConversionDialog extends Vue {
   showSocietiesInfo = false
 
   @Watch('showModal')

@@ -36,7 +36,7 @@ import * as FilingTypes from '@/modules/payment/filing-types'
 import * as Jurisdictions from '@/modules/payment/jurisdictions'
 import { PaymentAction } from '@/enums'
 import { NameRequestMixin, PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
-import { getBaseUrl } from './payment-utils'
+import { getBaseUrl } from '@/components/payment/payment-utils'
 
 @Component({
   components: {
@@ -44,7 +44,7 @@ import { getBaseUrl } from './payment-utils'
     FeeSummary
   }
 })
-export default class ReapplyModal extends Mixins(
+export default class ReapplyDialog extends Mixins(
   NameRequestMixin,
   PaymentMixin,
   PaymentSessionMixin,

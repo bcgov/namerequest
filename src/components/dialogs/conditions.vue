@@ -20,7 +20,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { NameState } from '@/enums'
 
 @Component({})
-export default class ConditionsModal extends Vue {
+export default class ConditionsDialog extends Vue {
   get nameObject () {
     const name = (this.nrNames || []).find(name => name.state === NameState.CONDITIONAL && name.decision_text)
     return name || {}

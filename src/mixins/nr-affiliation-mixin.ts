@@ -52,12 +52,13 @@ export class NrAffiliationMixin extends Vue {
           )
         } else throw new Error('Business creation error: invalid api response ')
       } else throw new Error('Affiliation error: invalid api response ')
-    } catch (error) {
-      console.error('createAffiliation() =', error) // eslint-disable-line no-console
-      // clear spinner on error
+    } catch (err) {
+      console.error('createAffiliation() =', err) // eslint-disable-line no-console
+
+      // hide spinner
       this.$root.$emit('showSpinner', false)
 
-      // show error dialog, clear NR Data and navigate to landing
+      // clear NR Data and show error dialog
       sessionStorage.removeItem('NR_DATA')
       newReqModule.mutateAffiliationErrorModalVisible(true)
     }

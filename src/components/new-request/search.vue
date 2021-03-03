@@ -156,7 +156,8 @@
                   id="person-checkbox"
                   class="copy-small mt-0 pt-0"
                   hide-details
-                  v-slot:label v-on="on">
+                  v-slot:label
+                  v-on="on">
             <template>
               <span v-on="on" class="copy-small">Name is a person's name</span>
             </template>
@@ -178,7 +179,8 @@
                   :true-value="false"
                   class="copy-small mt-0 pt-0 ml-4"
                   hide-details
-                  v-slot:label v-on="on">
+                  v-slot:label
+                  v-on="on">
             <template>
               <span v-on="on" class="copy-small">Name contains no English words</span>
             </template>
@@ -204,7 +206,8 @@
                     id="corp-num-checkbox"
                     class="copy-small mt-0 pt-0"
                     hide-details
-                    v-slot:label v-on="on">
+                    v-slot:label
+                    v-on="on">
               <template>
                 <span v-on="on" class="copy-small">I don't have a corporate number</span>
               </template>
@@ -483,7 +486,7 @@ export default class NewSearch extends Vue {
   async handleSubmit () {
     if (this.isXproMras) this.$root.$emit('showSpinner', true)
     await newReqModule.startAnalyzeName()
-    this.$root.$emit('showSpinner', false)
+    if (this.isXproMras) this.$root.$emit('showSpinner', false)
   }
 }
 </script>

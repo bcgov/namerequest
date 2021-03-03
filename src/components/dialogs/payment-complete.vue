@@ -64,7 +64,7 @@ const DEBUG_RECEIPT = false
     isVisible: () => paymentModule[paymentTypes.PAYMENT_COMPLETE_MODAL_IS_VISIBLE]
   }
 })
-export default class PaymentCompleteModal extends Mixins(
+export default class PaymentCompleteDialog extends Mixins(
   CommonMixin,
   NameRequestMixin,
   PaymentMixin,

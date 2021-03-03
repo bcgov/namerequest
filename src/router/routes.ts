@@ -3,12 +3,12 @@ import { Signin, Signout, Landing } from '@/views'
 export const routes = [
   {
     path: '/',
-    name: 'landing',
+    name: 'landing', // *** TODO: make this "Request a Business Name" tab
     component: Landing
   },
   {
     path: '/nr/:id',
-    name: 'existing-nr',
+    name: 'existing-nr', // *** TODO: make this "Manage My Name Request" tab
     component: Landing,
     props: true
   },

@@ -39,7 +39,7 @@ import { BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
 @Component({
   components: { NameInput }
 })
-export default class MrasSearchInfoModal extends Vue {
+export default class MrasSearchInfoDialog extends Vue {
   private resultConfig: any = {
     [BAD_REQUEST]: {
       desc: null,

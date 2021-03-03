@@ -39,7 +39,7 @@ import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({})
-export default class NrNotRequired extends Vue {
+export default class NrNotRequiredDialog extends Vue {
   private corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
   private businessRegistryLink = "https://www.bcregistry.ca/business"
 

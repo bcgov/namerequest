@@ -45,7 +45,7 @@ import NewReqModule from '@/store/new-request-module'
 import { sleep } from '@/plugins'
 
 @Component({})
-export default class CancelModal extends Mixins(NameRequestMixin, PaymentMixin) {
+export default class CancelDialog extends Mixins(NameRequestMixin, PaymentMixin) {
   /** Used to show loading state on button. */
   private loading = false
 

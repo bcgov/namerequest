@@ -34,7 +34,7 @@ import ContactInfo from '@/components/common/contact-info.vue'
 @Component({
   components: { ContactInfo }
 })
-export default class ErrorModal extends Vue {
+export default class ErrorDialog extends Vue {
   get showModal () {
     return ErrorModule[ErrorTypes.HAS_ERRORS]
   }

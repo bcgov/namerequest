@@ -18,7 +18,7 @@ import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({})
-export default class HelpMeChoose extends Vue {
+export default class HelpMeChooseDialog extends Vue {
   get showModal () {
     return newReqModule.helpMeChooseModalVisible
   }
