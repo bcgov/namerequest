@@ -16,7 +16,10 @@ export default new Vuetify({
         error: '#d3272c', // same as $app-red
         info: '#2196F3',
         success: '#1a9031', // same as $app-green
-        warning: '#FFC107'
+        warning: '#FFC107',
+        bcgovblue: {
+          base: '#003366'
+        }
       }
     }
   },
