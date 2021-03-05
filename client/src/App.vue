@@ -1,5 +1,8 @@
 <template>
   <v-app id="app">
+
+    <ChatPopup />
+
     <div id="main-column">
       <sbc-authentication-options-dialog
         attach="#app"
@@ -25,6 +28,7 @@
         :redirect-on-logout="getNameRequestUrl"
         :show-actions="true"
       />
+
       <v-alert
         tile dense
         type="warning"
@@ -32,6 +36,7 @@
         v-if="bannerText"
         v-html="bannerText"
       />
+
       <router-view />
       <sbc-footer :aboutText=aboutText />
     </div>
@@ -84,6 +89,7 @@ import ReapplyModal from '@/components/payment/reapply-modal.vue'
 import PaymentCompleteModal from '@/components/payment/payment-complete-modal.vue'
 import AffiliationErrorModal from '@/components/modals/affiliation-error.vue'
 import ErrorModal from '@/components/common/error-modal.vue'
+import ChatPopup from '@/components/common/chat-popup.vue'
 import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
 
 import { Component, Mixins } from 'vue-property-decorator'
@@ -121,7 +127,8 @@ import { RollbackActions } from '@/enums'
     CancelModal,
     AffiliationErrorModal,
     ErrorModal,
-    SbcAuthenticationOptionsDialog
+    SbcAuthenticationOptionsDialog,
+    ChatPopup
   },
   computed: {
     ...mapState([
