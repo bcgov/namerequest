@@ -5,7 +5,7 @@ export function countdown (lastRenderTime, el) {
   const countdownInt = parseInt(String((new Date().getTime() - lastRenderTime) / 1000))
   let text = ''
   if (countdownInt >= countdownSec) {
-    text = "Expiring in..."
+    text = 'Expiring in...'
   } else if (!isNaN(countdownInt)) {
     const secondsLeft = countdownSec - countdownInt
     text = `${secondsLeft} second${secondsLeft === 1 ? '' : 's'}`

@@ -4,7 +4,7 @@
       Request Timed Out
     </v-col>
     <v-col cols="12" class="text-center mt-n3">
-      Unfortunately you took too long to complete your submission.  Please try again from the beginning.
+      Unfortunately you took too long to complete your submission. Please try again from the beginning.
     </v-col>
     <v-col cols="12" class="text-center">
       <v-btn @click="restart">Search Again</v-btn>

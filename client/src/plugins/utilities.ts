@@ -14,6 +14,7 @@ export function sanitizeName (name: string): string {
   // the limited set supported by Namex; capitalizes; and trims any spaces padding <name> and any internal spaces
   // between words in excess of a single space per two words.
   name = removeAccents(name)
+  // eslint-disable-next-line no-useless-escape
   name = name.replace(/[^\sa-zA-Z0-9^\[\]*/+&().,="'#@!?;:-]/g, '')
   return removeExcessSpaces(name.toUpperCase())
 }

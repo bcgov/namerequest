@@ -172,7 +172,7 @@ export interface RequestNameI {
   name: string
   name_type_cd: string
   designation: string
-  consent_words: "" | string[]
+  consent_words: '' | string[]
   conflict1: string
   conflict1_num: string
   request_type_cd?: string

@@ -6,7 +6,7 @@
         Your session will automatically expire due to inactivity in
         &nbsp;
         <span class="countdown-display">{{ countdownTime }}</span>.
-        Please click 'Continue' if you need more time.
+        Please click Continue if you need more time.
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>

@@ -462,7 +462,6 @@ export default class GreyBox extends Vue {
     }
     if (this.multipleMismatchedDesignations) {
       this.name = this.removeMismatchedDesignations(this.originalName) + ' ' + designation
-      return
     }
   }
   extractInnerDesignation (name, designation = null) {

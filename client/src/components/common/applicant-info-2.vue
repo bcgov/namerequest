@@ -225,7 +225,7 @@ export default class ApplicantInfo2 extends NameRequestMixin {
   ]
   corpNumRules = [
     v => !!v || 'Required field',
-    v => !!this.getCorpNum(v) || 'Cannot validate number.  Please try again'
+    v => !!this.getCorpNum(v) || 'Cannot validate number. Please try again.'
   ]
   emailRules = [
     (v: string) => !!v || 'Required field',
@@ -316,7 +316,7 @@ export default class ApplicantInfo2 extends NameRequestMixin {
       return
     }
     if (num.length < 4) {
-      this.corpNumError = 'Too short.  Please confirm number.'
+      this.corpNumError = 'Too short. Please confirm number.'
       return
     }
     this.loading = true
@@ -327,7 +327,7 @@ export default class ApplicantInfo2 extends NameRequestMixin {
       this.corpNumDirty = false
       return true
     } catch (error) {
-      this.corpNumError = 'Error validating number. Please try again'
+      this.corpNumError = 'Error validating number. Please try again.'
       this.loading = false
       this.corpNumDirty = false
       return false
@@ -356,10 +356,10 @@ export default class ApplicantInfo2 extends NameRequestMixin {
     if (val && this.$el?.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
-        const selfReviewBackBtn = this.$el.querySelector("#submit-back-btn > span")
-        if (selfReviewBackBtn) selfReviewBackBtn.classList.add("self-review-back-btn")
-        const selfReviewConfirmBtn = this.$el.querySelector("#submit-continue-btn > span")
-        if (selfReviewConfirmBtn) selfReviewConfirmBtn.classList.add("self-review-confirm-btn")
+        const selfReviewBackBtn = this.$el.querySelector('#submit-back-btn > span')
+        if (selfReviewBackBtn) selfReviewBackBtn.classList.add('self-review-back-btn')
+        const selfReviewConfirmBtn = this.$el.querySelector('#submit-continue-btn > span')
+        if (selfReviewConfirmBtn) selfReviewConfirmBtn.classList.add('self-review-confirm-btn')
       })
     }
   }

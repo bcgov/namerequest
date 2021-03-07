@@ -128,10 +128,10 @@ export default class RefundModal extends Mixins(NameRequestMixin, PaymentMixin, 
     if (val && this.$el?.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
-        const refundCancelBtn = this.$el.querySelector("#cancel-nr-btn > span")
-        if (refundCancelBtn) refundCancelBtn.classList.add("refund-cancel-btn")
-        const refundKeepBtn = this.$el.querySelector("#keep-nr-btn > span")
-        if (refundKeepBtn) refundKeepBtn.classList.add("refund-keep-btn")
+        const refundCancelBtn = this.$el.querySelector('#cancel-nr-btn > span')
+        if (refundCancelBtn) refundCancelBtn.classList.add('refund-cancel-btn')
+        const refundKeepBtn = this.$el.querySelector('#keep-nr-btn > span')
+        if (refundKeepBtn) refundKeepBtn.classList.add('refund-keep-btn')
       })
     }
   }

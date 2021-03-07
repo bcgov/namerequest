@@ -306,24 +306,26 @@ export default class ExistingRequestDisplay extends Mixins(
       let reviewDate = new Date()
       // add the number of days to the current date to get the review date
       reviewDate.setDate(reviewDate.getDate() + waitingTime)
-      return Moment(reviewDate).tz('America/Vancouver').format("MMMM D[,] YYYY") + " (" + this.nr.waiting_time + " days)"
+      return Moment(reviewDate).tz('America/Vancouver')
+        .format('MMMM D[,] YYYY') + ' (' + this.nr.waiting_time + ' days)'
     }
-    return ""
+    return ''
   }
 
   private get queueDate () {
     if (this.nr.oldest_draft) {
       let oldest_draft = Moment(this.nr.oldest_draft)
-      return oldest_draft.tz('America/Vancouver').format("MMMM D[,] YYYY")
+      return oldest_draft.tz('America/Vancouver').format('MMMM D[,] YYYY')
     }
-    return ""
+    return ''
   }
 
   private get submittedDate () {
     if (this.nr.submittedDate) {
-      return Moment(this.nr.submittedDate).tz('America/Vancouver').format("MMMM D[,] YYYY, h:mm a") + " Pacific Time"
+      return Moment(this.nr.submittedDate).tz('America/Vancouver')
+        .format('MMMM D[,] YYYY, h:mm a') + ' Pacific Time'
     }
-    return ""
+    return ''
   }
 
   private get disableUnfurnished (): boolean {
@@ -663,24 +665,24 @@ export default class ExistingRequestDisplay extends Mixins(
     if (val && this.$el?.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
-        const existingNrCancelBtn = this.$el.querySelector("#CANCEL-btn > span")
-        if (existingNrCancelBtn) existingNrCancelBtn.classList.add("existing-nr-cancel-btn")
-        const exitingNrEditBtn = this.$el.querySelector("#EDIT-btn > span")
-        if (exitingNrEditBtn) exitingNrEditBtn.classList.add("existing-nr-edit-btn")
-        const existingNrReapplyBtn = this.$el.querySelector("#REAPPLY-btn > span")
-        if (existingNrReapplyBtn) existingNrReapplyBtn.classList.add("existing-nr-reapply-btn")
-        const existingNrReceiptBtn = this.$el.querySelector("#RECEIPT-btn > span")
-        if (existingNrReceiptBtn) existingNrReceiptBtn.classList.add("existing-nr-receipt-btn")
-        const existingNrRefundBtn = this.$el.querySelector("#REQUEST_REFUND-btn > span")
-        if (existingNrRefundBtn) existingNrRefundBtn.classList.add("existing-nr-refund-btn")
-        const existingNrResendBtn = this.$el.querySelector("#RESEND-btn > span")
-        if (existingNrResendBtn) existingNrResendBtn.classList.add("existing-nr-resend-btn")
-        const existingNrResultBtn = this.$el.querySelector("#RESULT-btn > span")
-        if (existingNrResultBtn) existingNrResultBtn.classList.add("existing-nr-result-btn")
-        const existingNrUpgradeBtn = this.$el.querySelector("#UPGRADE-btn > span")
-        if (existingNrUpgradeBtn) existingNrUpgradeBtn.classList.add("existing-nr-upgrade-btn")
-        const existingNrIncorporateBtn = this.$el.querySelector("#INCORPORATE-btn > span")
-        if (existingNrIncorporateBtn) existingNrIncorporateBtn.classList.add("existing-nr-incorporate-btn")
+        const existingNrCancelBtn = this.$el.querySelector('#CANCEL-btn > span')
+        if (existingNrCancelBtn) existingNrCancelBtn.classList.add('existing-nr-cancel-btn')
+        const exitingNrEditBtn = this.$el.querySelector('#EDIT-btn > span')
+        if (exitingNrEditBtn) exitingNrEditBtn.classList.add('existing-nr-edit-btn')
+        const existingNrReapplyBtn = this.$el.querySelector('#REAPPLY-btn > span')
+        if (existingNrReapplyBtn) existingNrReapplyBtn.classList.add('existing-nr-reapply-btn')
+        const existingNrReceiptBtn = this.$el.querySelector('#RECEIPT-btn > span')
+        if (existingNrReceiptBtn) existingNrReceiptBtn.classList.add('existing-nr-receipt-btn')
+        const existingNrRefundBtn = this.$el.querySelector('#REQUEST_REFUND-btn > span')
+        if (existingNrRefundBtn) existingNrRefundBtn.classList.add('existing-nr-refund-btn')
+        const existingNrResendBtn = this.$el.querySelector('#RESEND-btn > span')
+        if (existingNrResendBtn) existingNrResendBtn.classList.add('existing-nr-resend-btn')
+        const existingNrResultBtn = this.$el.querySelector('#RESULT-btn > span')
+        if (existingNrResultBtn) existingNrResultBtn.classList.add('existing-nr-result-btn')
+        const existingNrUpgradeBtn = this.$el.querySelector('#UPGRADE-btn > span')
+        if (existingNrUpgradeBtn) existingNrUpgradeBtn.classList.add('existing-nr-upgrade-btn')
+        const existingNrIncorporateBtn = this.$el.querySelector('#INCORPORATE-btn > span')
+        if (existingNrIncorporateBtn) existingNrIncorporateBtn.classList.add('existing-nr-incorporate-btn')
       })
     }
   }
