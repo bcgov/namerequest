@@ -259,8 +259,14 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   private get address () {
-    const fields = ['addrLine2', 'city', 'stateProvinceCd', 'countryCd', 'postalCd']
+    // FUTURE: delete this check as it hides an error that shouldn't happen
+    //         for now, report the error and don't crash
+    if (!this.nr.applicants) {
+      console.error('undefined applicants, nr =', this.nr) // eslint-disable-line no-console
+      return ''
+    }
     let output: string = this.nr.applicants.addrLine1
+    const fields = ['addrLine2', 'city', 'stateProvinceCd', 'countryCd', 'postalCd']
     for (let field of fields) {
       if (this.nr.applicants[field]) {
         output += ', ' + this.nr.applicants[field]
