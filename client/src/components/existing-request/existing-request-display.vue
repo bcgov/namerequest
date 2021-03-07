@@ -270,6 +270,12 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   private get addressLines () {
+    // FUTURE: delete this check as it hides an error that shouldn't happen
+    //         for now, report the error and don't crash
+    if (!this.nr.applicants) {
+      console.error('undefined applicants, nr =', this.nr) // eslint-disable-line no-console
+      return ''
+    }
     const output = [ this.nr.applicants.addrLine1 ]
     if (this.nr.applicants.addrLine2) {
       output.push(this.nr.applicants.addrLine2)
