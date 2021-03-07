@@ -250,7 +250,7 @@ export default class ApplicantInfo3 extends NameRequestMixin {
   ]
   phoneRules = [
     v => !!v || 'Required field',
-    v => (v.length <= 30) || 'Cannot exceed 30 characters'
+    v => (!v || v.length <= 30) || 'Cannot exceed 30 characters'
   ]
   faxRules = [
     v => (!v || v.length <= 30) || 'Cannot exceed 30 characters'
@@ -363,13 +363,15 @@ export default class ApplicantInfo3 extends NameRequestMixin {
 
   @Watch('isValid')
   onValidChanged (val: boolean) {
-    if (val && this.$el?.querySelector) {
+    if (val) {
       this.$nextTick(() => {
-        // add classname to button text (for more detail in Sentry breadcrumbs)
-        const clientReviewBackBtn = this.$el.querySelector("#submit-back-btn > span")
-        if (clientReviewBackBtn) clientReviewBackBtn.classList.add("client-review-back-btn")
-        const clientReviewConfirmBtn = this.$el.querySelector("#submit-continue-btn > span")
-        if (clientReviewConfirmBtn) clientReviewConfirmBtn.classList.add("client-review-confirm-btn")
+        if (this.$el?.querySelector) {
+          // add classname to button text (for more detail in Sentry breadcrumbs)
+          const clientReviewBackBtn = this.$el.querySelector('#submit-back-btn > span')
+          if (clientReviewBackBtn) clientReviewBackBtn.classList.add('client-review-back-btn')
+          const clientReviewConfirmBtn = this.$el.querySelector('#submit-continue-btn > span')
+          if (clientReviewConfirmBtn) clientReviewConfirmBtn.classList.add('client-review-confirm-btn')
+        }
       })
     }
   }

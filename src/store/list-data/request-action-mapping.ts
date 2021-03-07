@@ -3,7 +3,7 @@ import { RequestActionMappingI } from '@/interfaces'
 const entityTypesBC = ['FR', 'DBA', 'CR', 'UL', 'GP', 'LP', 'LL', 'CP', 'BC', 'CC', 'SO', 'PA', 'FI', 'PAR']
 
 // maps request_action_cd (key) to array of allowable entities (value)
-// { [request_action_cd]: Array<entity_type_cd> }
+// { [request_action_cd]: entity_type_cd[] }
 export const bcMapping: RequestActionMappingI = {
   AML: ['CR', 'UL', 'CC', 'CP', 'BC'],
   REN: ['CR', 'CP', 'CC', 'UL', 'FI', 'BC'],

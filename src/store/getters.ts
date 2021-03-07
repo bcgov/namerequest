@@ -128,7 +128,7 @@ export const getDoNotAnalyzeEntities = (state: StateIF): string[] => {
 // }
 
 /** Return the BC Entity Types. */
-export const getEntityTypesBC = (state: StateIF): Array<EntityI> => {
+export const getEntityTypesBC = (state: StateIF): EntityI[] => {
   try {
     let generateEntities = (entities) => {
       let output = []
@@ -172,7 +172,7 @@ export const getEntityTypesBC = (state: StateIF): Array<EntityI> => {
 }
 
 /** Get Xpro entity types. */
-export const getEntityTypesXPRO = (state: StateIF): Array<EntityI> => {
+export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
   let entityTypesXPROData = EntityTypesXPROData
   if (getLocation(state) === 'CA') {
     entityTypesXPROData = entityTypesXPROData.filter(ent => ent.value !== 'RLC')

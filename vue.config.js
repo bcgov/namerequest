@@ -42,7 +42,7 @@ module.exports = {
   pluginOptions: {
     'style-resources-loader': {
       preProcessor: 'sass',
-      patterns: [path.resolve(__dirname, "./src/assets/sass/theme.sass")]
+      patterns: [path.resolve(__dirname, './src/assets/sass/theme.sass')]
     }
   },
   transpileDependencies: [

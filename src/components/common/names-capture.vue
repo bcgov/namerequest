@@ -868,11 +868,13 @@ export default class NamesCapture extends NameRequestMixin {
 
   @Watch('isValid')
   onValidChanged (val: boolean) {
-    if (val && this.$el?.querySelector) {
+    if (val) {
       this.$nextTick(() => {
-        // add classname to button text (for more detail in Sentry breadcrumbs)
-        const choicesContinueBtn = this.$el.querySelector("#submit-continue-btn > span")
-        if (choicesContinueBtn) choicesContinueBtn.classList.add("choices-continue-btn")
+        if (this.$el?.querySelector) {
+          // add classname to button text (for more detail in Sentry breadcrumbs)
+          const choicesContinueBtn = this.$el.querySelector('#submit-continue-btn > span')
+          if (choicesContinueBtn) choicesContinueBtn.classList.add('choices-continue-btn')
+        }
       })
     }
   }

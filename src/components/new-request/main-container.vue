@@ -33,16 +33,18 @@ export default class MainContainer extends Mixins(DisplayedComponentMixin) {
 
   private mounted () {
     this.$nextTick(() => {
-      // add classname to button text (for more detail in Sentry breadcrumbs)
-      if (this.showExit) {
-        const exitBtn = this.$el.querySelector("#back-to-search-btn > span")
-        if (exitBtn) exitBtn.classList.add("exit-btn")
-      } else if (this.editMode) {
-        const returnBtn = this.$el.querySelector("#back-to-search-btn > span")
-        if (returnBtn) returnBtn.classList.add("return-btn")
-      } else {
-        const startSearchOverBtn = this.$el.querySelector("#back-to-search-btn > span")
-        if (startSearchOverBtn) startSearchOverBtn.classList.add("start-search-over-btn")
+      if (this.$el?.querySelector) {
+        // add classname to button text (for more detail in Sentry breadcrumbs)
+        if (this.showExit) {
+          const exitBtn = this.$el.querySelector('#back-to-search-btn > span')
+          if (exitBtn) exitBtn.classList.add('exit-btn')
+        } else if (this.editMode) {
+          const returnBtn = this.$el.querySelector('#back-to-search-btn > span')
+          if (returnBtn) returnBtn.classList.add('return-btn')
+        } else {
+          const startSearchOverBtn = this.$el.querySelector('#back-to-search-btn > span')
+          if (startSearchOverBtn) startSearchOverBtn.classList.add('start-search-over-btn')
+        }
       }
     })
   }

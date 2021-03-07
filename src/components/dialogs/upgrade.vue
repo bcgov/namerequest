@@ -119,13 +119,15 @@ export default class UpgradeDialog extends Mixins(
 
   @Watch('isVisible')
   onVisibleChanged (val: boolean) {
-    if (val && this.$el?.querySelector) {
+    if (val) {
       this.$nextTick(() => {
-        // add classname to button text (for more detail in Sentry breadcrumbs)
-        const upgradeAcceptBtn = this.$el.querySelector("#payment-pay-btn > span")
-        if (upgradeAcceptBtn) upgradeAcceptBtn.classList.add("upgrade-accept-btn")
-        const upgradeCancelBtn = this.$el.querySelector("#payment-close-btn > span")
-        if (upgradeCancelBtn) upgradeCancelBtn.classList.add("upgrade-cancel-btn")
+        if (this.$el?.querySelector) {
+          // add classname to button text (for more detail in Sentry breadcrumbs)
+          const upgradeAcceptBtn = this.$el.querySelector('#payment-pay-btn > span')
+          if (upgradeAcceptBtn) upgradeAcceptBtn.classList.add('upgrade-accept-btn')
+          const upgradeCancelBtn = this.$el.querySelector('#payment-close-btn > span')
+          if (upgradeCancelBtn) upgradeCancelBtn.classList.add('upgrade-cancel-btn')
+        }
       })
     }
   }

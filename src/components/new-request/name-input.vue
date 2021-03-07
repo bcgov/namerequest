@@ -49,7 +49,7 @@ export default class NameInput extends Vue {
   @Prop({ default: false }) isReadOnly: boolean
 
   /** The array of validation rules for the MRAS corp num. */
-  private get mrasRules (): Array<Function> {
+  private get mrasRules (): Function[] {
     return [
       v => (/^\d+$/.test(v) || 'A corporate number is required')
     ]

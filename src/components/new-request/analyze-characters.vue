@@ -57,6 +57,7 @@ export default class AnalyzeCharacters extends Vue {
     return newReqModule.entity_type_cd
   }
   get nameStartsWithSymbol () {
+    // eslint-disable-next-line no-useless-escape
     return !!this.name.match(/^[\[\]\^*\+-\/\=&\(\)\.,"'#@\!\?;:]/)
   }
   get name () {

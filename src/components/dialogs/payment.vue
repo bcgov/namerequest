@@ -167,15 +167,17 @@ export default class PaymentDialog extends Mixins(
 
   @Watch('isVisible')
   onVisibleChanged (val: boolean) {
-    if (val && this.$el?.querySelector) {
+    if (val) {
       this.$nextTick(() => {
-        // add classname to button text (for more detail in Sentry breadcrumbs)
-        const confirmNrCancelBtn = this.$el.querySelector("#payment-cancel-btn > span")
-        if (confirmNrCancelBtn) confirmNrCancelBtn.classList.add("confirm-nr-cancel-btn")
-        const confirmNrContinueBtn = this.$el.querySelector("#payment-pay-btn > span")
-        if (confirmNrContinueBtn) confirmNrContinueBtn.classList.add("confirm-nr-continue-btn")
-        const confirmNrCloseBtn = this.$el.querySelector("#payment-close-btn > span")
-        if (confirmNrCloseBtn) confirmNrCloseBtn.classList.add("confirm-nr-close-btn")
+        if (this.$el?.querySelector) {
+          // add classname to button text (for more detail in Sentry breadcrumbs)
+          const confirmNrCancelBtn = this.$el.querySelector('#payment-cancel-btn > span')
+          if (confirmNrCancelBtn) confirmNrCancelBtn.classList.add('confirm-nr-cancel-btn')
+          const confirmNrContinueBtn = this.$el.querySelector('#payment-pay-btn > span')
+          if (confirmNrContinueBtn) confirmNrContinueBtn.classList.add('confirm-nr-continue-btn')
+          const confirmNrCloseBtn = this.$el.querySelector('#payment-close-btn > span')
+          if (confirmNrCloseBtn) confirmNrCloseBtn.classList.add('confirm-nr-close-btn')
+        }
       })
     }
   }

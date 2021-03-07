@@ -127,7 +127,6 @@ export default class PaymentCompleteDialog extends Mixins(
     if (paymentSuccess) {
       this.$root.$emit('paymentComplete', true)
       await paymentModule.toggleReceiptModal(true)
-      return
     } else if (!paymentSuccess && result?.paymentErrors) {
       // Setting the errors to state will update any subscribing components, like the main ErrorModal
       await errorModule.setAppErrors(result.paymentErrors)
@@ -150,13 +149,21 @@ export default class PaymentCompleteDialog extends Mixins(
 
   @Watch('isVisible')
   onVisibleChanged (val: boolean) {
-    if (val && this.$el?.querySelector) {
+    if (val) {
       this.$nextTick(() => {
-        // add classname to button text (for more detail in Sentry breadcrumbs)
-        const paymentSuccessfulDoneBtn = this.$el.querySelector("#receipt-close-btn > span")
-        if (paymentSuccessfulDoneBtn) paymentSuccessfulDoneBtn.classList.add("payment-successful-done-btn")
-        const paymentSuccessfulDownloadBtn = this.$el.querySelector("#receipt-download-btn > span")
-        if (paymentSuccessfulDownloadBtn) paymentSuccessfulDownloadBtn.classList.add("payment-successful-download-btn")
+        if (this.$el?.querySelector) {
+          // add classname to button text (for more detail in Sentry breadcrumbs)
+          const paymentSuccessfulDoneBtn = this.$el.querySelector('#receipt-close-btn > span')
+          if (paymentSuccessfulDoneBtn) {
+            paymentSuccessfulDoneBtn.classList
+              .add('payment-successful-done-btn')
+          }
+          const paymentSuccessfulDownloadBtn = this.$el.querySelector('#receipt-download-btn > span')
+          if (paymentSuccessfulDownloadBtn) {
+            paymentSuccessfulDownloadBtn.classList
+              .add('payment-successful-download-btn')
+          }
+        }
       })
     }
   }

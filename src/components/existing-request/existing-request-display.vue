@@ -250,9 +250,15 @@ export default class ExistingRequestDisplay extends Mixins(
     })
   }
 
-  private get address () {
-    const fields = ['addrLine2', 'city', 'stateProvinceCd', 'countryCd', 'postalCd']
+  private get address (): string {
+    // FUTURE: delete this check as it hides an error that shouldn't happen
+    //         for now, report the error and don't crash
+    if (!this.nr.applicants) {
+      console.error('undefined applicants, nr =', this.nr) // eslint-disable-line no-console
+      return ''
+    }
     let output: string = this.nr.applicants.addrLine1
+    const fields = ['addrLine2', 'city', 'stateProvinceCd', 'countryCd', 'postalCd']
     for (let field of fields) {
       if (this.nr.applicants[field]) {
         output += ', ' + this.nr.applicants[field]
@@ -261,7 +267,7 @@ export default class ExistingRequestDisplay extends Mixins(
     return output
   }
 
-  private get addressLines () {
+  private get addressLines (): string[] {
     const output = [ this.nr.applicants.addrLine1 ]
     if (this.nr.applicants.addrLine2) {
       output.push(this.nr.applicants.addrLine2)
@@ -644,27 +650,29 @@ export default class ExistingRequestDisplay extends Mixins(
 
   @Watch('isVisible', { immediate: true })
   onVisibleChanged (val: boolean) {
-    if (val && this.$el?.querySelector) {
+    if (val) {
       this.$nextTick(() => {
-        // add classname to button text (for more detail in Sentry breadcrumbs)
-        const existingNrCancelBtn = this.$el.querySelector("#CANCEL-btn > span")
-        if (existingNrCancelBtn) existingNrCancelBtn.classList.add("existing-nr-cancel-btn")
-        const exitingNrEditBtn = this.$el.querySelector("#EDIT-btn > span")
-        if (exitingNrEditBtn) exitingNrEditBtn.classList.add("existing-nr-edit-btn")
-        const existingNrReapplyBtn = this.$el.querySelector("#REAPPLY-btn > span")
-        if (existingNrReapplyBtn) existingNrReapplyBtn.classList.add("existing-nr-reapply-btn")
-        const existingNrReceiptBtn = this.$el.querySelector("#RECEIPT-btn > span")
-        if (existingNrReceiptBtn) existingNrReceiptBtn.classList.add("existing-nr-receipt-btn")
-        const existingNrRefundBtn = this.$el.querySelector("#REQUEST_REFUND-btn > span")
-        if (existingNrRefundBtn) existingNrRefundBtn.classList.add("existing-nr-refund-btn")
-        const existingNrResendBtn = this.$el.querySelector("#RESEND-btn > span")
-        if (existingNrResendBtn) existingNrResendBtn.classList.add("existing-nr-resend-btn")
-        const existingNrResultBtn = this.$el.querySelector("#RESULT-btn > span")
-        if (existingNrResultBtn) existingNrResultBtn.classList.add("existing-nr-result-btn")
-        const existingNrUpgradeBtn = this.$el.querySelector("#UPGRADE-btn > span")
-        if (existingNrUpgradeBtn) existingNrUpgradeBtn.classList.add("existing-nr-upgrade-btn")
-        const existingNrIncorporateBtn = this.$el.querySelector("#INCORPORATE-btn > span")
-        if (existingNrIncorporateBtn) existingNrIncorporateBtn.classList.add("existing-nr-incorporate-btn")
+        if (this.$el?.querySelector) {
+          // add classname to button text (for more detail in Sentry breadcrumbs)
+          const existingNrCancelBtn = this.$el.querySelector('#CANCEL-btn > span')
+          if (existingNrCancelBtn) existingNrCancelBtn.classList.add('existing-nr-cancel-btn')
+          const exitingNrEditBtn = this.$el.querySelector('#EDIT-btn > span')
+          if (exitingNrEditBtn) exitingNrEditBtn.classList.add('existing-nr-edit-btn')
+          const existingNrReapplyBtn = this.$el.querySelector('#REAPPLY-btn > span')
+          if (existingNrReapplyBtn) existingNrReapplyBtn.classList.add('existing-nr-reapply-btn')
+          const existingNrReceiptBtn = this.$el.querySelector('#RECEIPT-btn > span')
+          if (existingNrReceiptBtn) existingNrReceiptBtn.classList.add('existing-nr-receipt-btn')
+          const existingNrRefundBtn = this.$el.querySelector('#REQUEST_REFUND-btn > span')
+          if (existingNrRefundBtn) existingNrRefundBtn.classList.add('existing-nr-refund-btn')
+          const existingNrResendBtn = this.$el.querySelector('#RESEND-btn > span')
+          if (existingNrResendBtn) existingNrResendBtn.classList.add('existing-nr-resend-btn')
+          const existingNrResultBtn = this.$el.querySelector('#RESULT-btn > span')
+          if (existingNrResultBtn) existingNrResultBtn.classList.add('existing-nr-result-btn')
+          const existingNrUpgradeBtn = this.$el.querySelector('#UPGRADE-btn > span')
+          if (existingNrUpgradeBtn) existingNrUpgradeBtn.classList.add('existing-nr-upgrade-btn')
+          const existingNrIncorporateBtn = this.$el.querySelector('#INCORPORATE-btn > span')
+          if (existingNrIncorporateBtn) existingNrIncorporateBtn.classList.add('existing-nr-incorporate-btn')
+        }
       })
     }
   }

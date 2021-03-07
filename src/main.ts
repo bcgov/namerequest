@@ -52,6 +52,7 @@ async function startVue () {
   // Initialize Sentry
   if (window['sentryDsn']) {
     console.info('Initializing Sentry...') // eslint-disable-line no-console
+    const release = process.env.ABOUT_TEXT.replace(/<br>.*/, '')
     Sentry.init({
       dsn: window['sentryDsn'],
       integrations: [
@@ -63,8 +64,11 @@ async function startVue () {
         'ResizeObserver loop limit exceeded',
         'ResizeObserver loop completed with undelivered notifications',
         // ignore Launch Darkly errors (partial match)
-        'LD: [error]'
-      ]
+        'LD: [error]',
+        // ignore Vuex errors (partial match)
+        '[vuex]'
+      ],
+      release
     })
   }
 
