@@ -250,7 +250,7 @@ export default class ApplicantInfo3 extends NameRequestMixin {
   ]
   phoneRules = [
     v => !!v || 'Required field',
-    v => (v.length <= 30) || 'Cannot exceed 30 characters'
+    v => (!v || v.length <= 30) || 'Cannot exceed 30 characters'
   ]
   faxRules = [
     v => (!v || v.length <= 30) || 'Cannot exceed 30 characters'
