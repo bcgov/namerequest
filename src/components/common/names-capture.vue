@@ -575,7 +575,7 @@ export default class NamesCapture extends NameRequestMixin {
       let outcome = true
       for (let choice of [1, 2, 3]) {
         if (nameChoices[`name${choice}`] === this.name) {
-          messages[`name${choice}`] = 'This is identical to the name your originally entered.  Please enter a new name.'
+          messages[`name${choice}`] = 'This is identical to the name you originally entered. Please enter a new name.'
           this.hide = 'auto'
           outcome = false
         }
@@ -614,7 +614,7 @@ export default class NamesCapture extends NameRequestMixin {
       }
       validatePhrases('name2')
       if (nameChoices.name2 === nameChoices.name1) {
-        messages.name2 = 'This is identical to your first name choice.  Please enter a unique name'
+        messages.name2 = 'This is identical to your first name choice. Please enter a unique name.'
       }
       if (designationAtEnd && !nameChoices.designation2) {
         messages.des2 = 'Please choose a designation'
@@ -636,10 +636,10 @@ export default class NamesCapture extends NameRequestMixin {
       }
       validatePhrases('name3')
       if (nameChoices.name3 === nameChoices.name1) {
-        messages.name3 = 'This is identical to your first name choice.  Please enter a unique name'
+        messages.name3 = 'This is identical to your first name choice. Please enter a unique name.'
       }
       if (nameChoices.name3 === nameChoices.name2) {
-        messages.name3 = 'This is identical to your second name choice.  Please enter a unique name'
+        messages.name3 = 'This is identical to your second name choice. Please enter a unique name.'
       }
       if (designationAtEnd && !nameChoices.designation3) {
         messages.des3 = 'Please choose a designation'

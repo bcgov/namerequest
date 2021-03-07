@@ -316,7 +316,7 @@ export default class ApplicantInfo2 extends NameRequestMixin {
       return
     }
     if (num.length < 4) {
-      this.corpNumError = 'Too short.  Please confirm number.'
+      this.corpNumError = 'Too short. Please confirm number.'
       return
     }
     this.loading = true
@@ -327,7 +327,7 @@ export default class ApplicantInfo2 extends NameRequestMixin {
       this.corpNumDirty = false
       return true
     } catch (error) {
-      this.corpNumError = 'Error validating number. Please try again'
+      this.corpNumError = 'Error validating number. Please try again.'
       this.loading = false
       this.corpNumDirty = false
       return false
