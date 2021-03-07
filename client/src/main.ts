@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
+import Hotjar from 'vue-hotjar'
 import { getVueRouter } from '@/router'
 import store from './store'
 import { EnvConfigI, getConfig } from '@/plugins/getConfig'
@@ -71,6 +72,14 @@ async function startVue () {
   Vue.prototype.$intJurisdictions = intJurisdictions
   Vue.prototype.$USAStateCodes = USAStateCodes
   Vue.prototype.$xproMapping = mapping.xproMapping
+
+  // Setup Hotjar
+  if (window['hotjarId']) {
+    console.info('Initializing Hotjar...') // eslint-disable-line no-console
+    Vue.use(Hotjar, {
+      id: window['hotjarId']
+    })
+  }
 
   // Initialize Sentry
   if (window['sentryDsn']) {

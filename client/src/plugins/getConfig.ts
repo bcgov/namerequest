@@ -54,6 +54,9 @@ export function getConfig (): Promise<EnvConfigI> {
     const entitySelectorUrl = response.data[0]['ENTITY_SELECTOR_URL']
     entitySelectorUrl && sessionStorage.setItem('ENTITY_SELECTOR_URL', entitySelectorUrl)
 
+    const hotjarId: string = response.data[0]['HOTJAR_ID'];
+    (<any>window).hotjarId = hotjarId
+
     const ldClientId: string = response.data[0]['LD_CLIENT_ID'];
     (<any>window).ldClientId = ldClientId
 

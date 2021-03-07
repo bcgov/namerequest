@@ -20,6 +20,7 @@
     "DEV_EXISTING_NR_TIMEOUT_MS": 0,
     "AUTH_TOKEN_URL": "https://dev.oidc.gov.bc.ca/auth/realms/fcf0kpqr/protocol/openid-connect/token",
     "QUICK_SEARCH_PUBLIC_ID": "",
-    "QUICK_SEARCH_PUBLIC_SECRET": ""
+    "QUICK_SEARCH_PUBLIC_SECRET": "",
+    "HOTJAR_ID": "2284327"
   }
 ]
