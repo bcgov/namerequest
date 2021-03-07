@@ -64,9 +64,7 @@ async function startVue () {
         'ResizeObserver loop limit exceeded',
         'ResizeObserver loop completed with undelivered notifications',
         // ignore Launch Darkly errors (partial match)
-        'LD: [error]',
-        // ignore Vuex errors (partial match)
-        '[vuex]'
+        'LD: [error]'
       ],
       release
     })
