@@ -417,7 +417,7 @@ export const mutateQuickSearch = (state: StateIF, quickSearch: boolean) => {
   state.stateModel.newRequestModel.quickSearch = quickSearch
 }
 
-export const mutateQuickSearchNames = (state: StateIF, quickSearchNames: Array<object>) => {
+export const mutateQuickSearchNames = (state: StateIF, quickSearchNames: object[]) => {
   state.stateModel.newRequestModel.quickSearchNames = quickSearchNames
 }
 

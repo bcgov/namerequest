@@ -575,7 +575,7 @@ export default class NamesCapture extends NameRequestMixin {
       let outcome = true
       for (let choice of [1, 2, 3]) {
         if (nameChoices[`name${choice}`] === this.name) {
-          messages[`name${choice}`] = 'This is identical to the name your originally entered.  Please enter a new name.'
+          messages[`name${choice}`] = 'This is identical to the name you originally entered. Please enter a new name.'
           this.hide = 'auto'
           outcome = false
         }
@@ -614,7 +614,7 @@ export default class NamesCapture extends NameRequestMixin {
       }
       validatePhrases('name2')
       if (nameChoices.name2 === nameChoices.name1) {
-        messages.name2 = 'This is identical to your first name choice.  Please enter a unique name'
+        messages.name2 = 'This is identical to your first name choice. Please enter a unique name.'
       }
       if (designationAtEnd && !nameChoices.designation2) {
         messages.des2 = 'Please choose a designation'
@@ -636,10 +636,10 @@ export default class NamesCapture extends NameRequestMixin {
       }
       validatePhrases('name3')
       if (nameChoices.name3 === nameChoices.name1) {
-        messages.name3 = 'This is identical to your first name choice.  Please enter a unique name'
+        messages.name3 = 'This is identical to your first name choice. Please enter a unique name.'
       }
       if (nameChoices.name3 === nameChoices.name2) {
-        messages.name3 = 'This is identical to your second name choice.  Please enter a unique name'
+        messages.name3 = 'This is identical to your second name choice. Please enter a unique name.'
       }
       if (designationAtEnd && !nameChoices.designation3) {
         messages.des3 = 'Please choose a designation'
@@ -868,11 +868,13 @@ export default class NamesCapture extends NameRequestMixin {
 
   @Watch('isValid')
   onValidChanged (val: boolean) {
-    if (val && this.$el?.querySelector) {
+    if (val) {
       this.$nextTick(() => {
-        // add classname to button text (for more detail in Sentry breadcrumbs)
-        const choicesContinueBtn = this.$el.querySelector("#submit-continue-btn > span")
-        if (choicesContinueBtn) choicesContinueBtn.classList.add("choices-continue-btn")
+        if (this.$el?.querySelector) {
+          // add classname to button text (for more detail in Sentry breadcrumbs)
+          const choicesContinueBtn = this.$el.querySelector('#submit-continue-btn > span')
+          if (choicesContinueBtn) choicesContinueBtn.classList.add('choices-continue-btn')
+        }
       })
     }
   }

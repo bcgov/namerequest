@@ -748,7 +748,7 @@ export class NewRequestModule extends VuexModule {
   pickRequestTypeModalVisible: boolean = false
   priorityRequest: boolean = false
   quickSearch: boolean = true
-  quickSearchNames: Array<object> = []
+  quickSearchNames: object[] = []
   request_action_cd: string = ''
   request_jurisdiction_cd: string = ''
   requestExaminationOrProvideConsent = {
@@ -1001,7 +1001,7 @@ export class NewRequestModule extends VuexModule {
     return ''
   }
 
-  get entityTypesBC (): Array<EntityI> {
+  get entityTypesBC (): EntityI[] {
     try {
       let generateEntities = (entities) => {
         let output = []
@@ -1044,7 +1044,7 @@ export class NewRequestModule extends VuexModule {
     }
   }
 
-  get entityTypesXPRO (): Array<EntityI> {
+  get entityTypesXPRO (): EntityI[] {
     let { entityTypesXPROData } = this
     if (this.location === 'CA') {
       entityTypesXPROData = entityTypesXPROData.filter(ent => ent.value !== 'RLC')
@@ -1688,7 +1688,7 @@ export class NewRequestModule extends VuexModule {
   }
 
   /** Map the appropriate Blurb based on the request action and location */
-  get entityBlurbs (): Array<any> {
+  get entityBlurbs (): any[] {
     switch (this.request_action_cd) {
       // NEW REQUEST
       case 'NEW':
@@ -2684,6 +2684,7 @@ export class NewRequestModule extends VuexModule {
   async startQuickSearch () {
     if (this.name) {
       const name = this.name
+      // eslint-disable-next-line no-useless-escape
       let exactMatchName = name.replace(' \/', '\/')
         .replace(/(^|\s+)(\$+(\s|$)+)+/g, '$1DOLLAR$3')
         .replace(/(^|\s+)(¢+(\s|$)+)+/g, '$1CENT$3')
@@ -2692,7 +2693,9 @@ export class NewRequestModule extends VuexModule {
         .replace(/\\/g, '')
         .replace(/\//g, '')
         .replace(/(`|~|!|\||\(|\)|\[|\]|\{|\}|:|"|\^|#|%|\?)/g, '')
+        // eslint-disable-next-line no-useless-escape
         .replace(/[\+\-]{2,}/g, '')
+        // eslint-disable-next-line no-useless-escape
         .replace(/\s[\+\-]$/, '')
       exactMatchName = exactMatchName.substring(0, 1) === '+' ? exactMatchName.substring(1) : exactMatchName
       exactMatchName = encodeURIComponent(exactMatchName)
@@ -2701,6 +2704,7 @@ export class NewRequestModule extends VuexModule {
         .replace(/\\/g, ' ')
         .replace(/&/g, ' ')
         .replace(/\+/g, ' ')
+        // eslint-disable-next-line no-useless-escape
         .replace(/\-/g, ' ')
         .replace(/(^| )(\$+(\s|$)+)+/g, '$1DOLLAR$3')
         .replace(/(^| )(¢+(\s|$)+)+/g, '$1CENT$3')
@@ -2772,6 +2776,7 @@ export class NewRequestModule extends VuexModule {
     }
     let testName = this.name.toUpperCase()
     testName = removeExcessSpaces(testName)
+    // eslint-disable-next-line no-useless-escape
     if ((name !== testName) || name.match(/^[\[\]\^*\+-\/\=&\(\)\.,"'#@\!\?;:]/)) {
       this.mutateDisplayedComponent('AnalyzeCharacters')
       this.mutateName(name)
@@ -2793,7 +2798,6 @@ export class NewRequestModule extends VuexModule {
         }
       }
       this.mutateDisplayedComponent('SendToExamination')
-      return
     } else {
       if (['AML', 'CHG', 'DBA', 'MVE', 'NEW', 'REH', 'REN', 'REST'].includes(this.request_action_cd)) {
         if (this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
@@ -2812,7 +2816,6 @@ export class NewRequestModule extends VuexModule {
     this.mutateApplicant(appKV)
     if (!appKV.value || appKV.key !== 'addrLine1') {
       this.mutateAddressSuggestions(null)
-      return
     }
   }
 
@@ -3360,7 +3363,7 @@ export class NewRequestModule extends VuexModule {
   }
 
   @Mutation
-  mutateQuickSearchNames (value: Array<object>) {
+  mutateQuickSearchNames (value: object[]) {
     this.quickSearchNames = value
   }
 

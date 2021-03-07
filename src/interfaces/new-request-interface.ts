@@ -64,7 +64,7 @@ export interface NewRequestIF {
   pickRequestTypeModalVisible: boolean,
   priorityRequest: boolean,
   quickSearch: boolean,
-  quickSearchNames: Array<object>,
+  quickSearchNames: object[],
   request_action_cd: string,
   request_jurisdiction_cd: string,
   requestExaminationOrProvideConsent: RequestOrConsentIF,

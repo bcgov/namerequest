@@ -155,7 +155,7 @@ export default class PickEntityOrConversionDialog extends Vue {
     return `${210 * cols > maxThreshold ? maxThreshold : 210 * cols}px`
   }
 
-  entityBlurbs (entity_type_cd: string): Array<string> {
+  entityBlurbs (entity_type_cd: string): string[] {
     return newReqModule.entityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || []
   }
 

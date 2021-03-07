@@ -275,9 +275,11 @@ export default class NewSearch extends Vue {
 
   private mounted () {
     this.$nextTick(() => {
-      // add classname to button text (for more detail in Sentry breadcrumbs)
-      const searchNameBtn = this.$el.querySelector("#search-name-btn > span")
-      if (searchNameBtn) searchNameBtn.classList.add("search-name-btn")
+      if (this.$el?.querySelector) {
+        // add classname to button text (for more detail in Sentry breadcrumbs)
+        const searchNameBtn = this.$el.querySelector('#search-name-btn > span')
+        if (searchNameBtn) searchNameBtn.classList.add('search-name-btn')
+      }
     })
   }
 
@@ -312,7 +314,7 @@ export default class NewSearch extends Vue {
     'CHG'
   ]
 
-  entityBlurbs (entity_type_cd: string): Array<string> {
+  entityBlurbs (entity_type_cd: string): string[] {
     return newReqModule.entityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || []
   }
 

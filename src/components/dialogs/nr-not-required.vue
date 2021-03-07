@@ -41,7 +41,7 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component({})
 export default class NrNotRequiredDialog extends Vue {
   private corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
-  private businessRegistryLink = "https://www.bcregistry.ca/business"
+  private businessRegistryLink = 'https://www.bcregistry.ca/business'
 
   get showModal () {
     return newReqModule.nrRequiredModalVisible

@@ -85,10 +85,26 @@ import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 
 @Component({
   components: {
-    AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
-    LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, PaymentDialog, PaymentCompleteDialog,
-    PickEntityOrConversionDialog, PickRequestTypeDialog, ReapplyDialog, ReceiptsDialog, RefundDialog, UpgradeDialog,
-    SbcAuthenticationOptionsDialog, SbcHeader, SbcFooter
+    AffiliationErrorDialog,
+    CancelDialog,
+    ConditionsDialog,
+    ErrorDialog,
+    ExitDialog,
+    HelpMeChooseDialog,
+    LocationInfoDialog,
+    MrasSearchInfoDialog,
+    NrNotRequiredDialog,
+    PaymentDialog,
+    PaymentCompleteDialog,
+    PickEntityOrConversionDialog,
+    PickRequestTypeDialog,
+    ReapplyDialog,
+    ReceiptsDialog,
+    RefundDialog,
+    UpgradeDialog,
+    SbcAuthenticationOptionsDialog,
+    SbcHeader,
+    SbcFooter
   }
 })
 export default class App extends Vue {

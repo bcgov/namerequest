@@ -2,7 +2,7 @@ import Vue from 'vue'
 import { Component } from 'vue-property-decorator'
 import { ApplicantI } from '@/interfaces'
 import newRequestModule, { NewRequestModule } from '@/store/new-request-module'
-import * as filingTypes from "@/modules/payment/filing-types"
+import * as filingTypes from '@/modules/payment/filing-types'
 import paymentModule from '@/modules/payment'
 import { sleep } from '@/plugins'
 import { NrState } from '@/enums'

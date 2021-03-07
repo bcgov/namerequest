@@ -823,7 +823,7 @@ export default class AnalyzeResults extends Vue {
         { insert: text }
       ])
     } catch {
-      return
+      // ignore errors
     }
   }
 }

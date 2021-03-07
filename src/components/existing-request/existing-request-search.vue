@@ -111,6 +111,7 @@ import newReqModule from '@/store/new-request-module'
 // import ErrorModule from '@/modules/error' // *** TODO: delete this?
 // import { NameRequestI, SearchDataI, NrDataResponseT, NrDataT } from '@/interfaces' // *** TODO: delete this?
 
+// eslint-disable-next-line no-useless-escape
 const NR_REGEX = /^(NR\ ?L?|L?)?([\d]{6,8})$/
 @Component({})
 export default class ExistingRequestSearch extends Vue {
@@ -119,9 +120,11 @@ export default class ExistingRequestSearch extends Vue {
 
   mounted () {
     this.$nextTick(() => {
-      // add classname to button text (for more detail in Sentry breadcrumbs)
-      const retrieveNrBtn = this.$el.querySelector("#retrieve-name-btn > span")
-      if (retrieveNrBtn) retrieveNrBtn.classList.add("retrieve-nr-btn")
+      if (this.$el?.querySelector) {
+        // add classname to button text (for more detail in Sentry breadcrumbs)
+        const retrieveNrBtn = this.$el.querySelector('#retrieve-name-btn > span')
+        if (retrieveNrBtn) retrieveNrBtn.classList.add('retrieve-nr-btn')
+      }
     })
 
     if (this.nr && this.nr.failed) {
@@ -143,7 +146,7 @@ export default class ExistingRequestSearch extends Vue {
     v => NR_REGEX.test(v) || 'Please enter a valid NR number'
   ]
   private phoneRules = [
-    v => (v.length <= 30) || 'Cannot exceed 30 characters'
+    v => (!v || v.length <= 30) || 'Cannot exceed 30 characters'
   ]
 
   private get nr () {
@@ -167,7 +170,6 @@ export default class ExistingRequestSearch extends Vue {
         // capture error text and then clear out the NR data
         this.errorMessage = this.nr.text
         newReqModule.mutateNameRequest({})
-        return
       }
       // FUTURE: clear out applicant's phone and email ?
       // for (let key of ['emailAddress', 'phoneNumber']) {

@@ -947,6 +947,7 @@ export const getQuickSearch = async ({ commit, getters }, cleanedName: {exactMat
 export const startQuickSearch = async () => {
   if (this.getName) {
     const name = this.getName
+    // eslint-disable-next-line no-useless-escape
     let exactMatchName = name.replace(' \/', '\/')
       .replace(/(^|\s+)(\$+(\s|$)+)+/g, '$1DOLLAR$3')
       .replace(/(^|\s+)(¢+(\s|$)+)+/g, '$1CENT$3')
@@ -955,7 +956,9 @@ export const startQuickSearch = async () => {
       .replace(/\\/g, '')
       .replace(/\//g, '')
       .replace(/(`|~|!|\||\(|\)|\[|\]|\{|\}|:|"|\^|#|%|\?)/g, '')
+      // eslint-disable-next-line no-useless-escape
       .replace(/[\+\-]{2,}/g, '')
+      // eslint-disable-next-line no-useless-escape
       .replace(/\s[\+\-]$/, '')
     exactMatchName = exactMatchName.substring(0, 1) === '+' ? exactMatchName.substring(1) : exactMatchName
     exactMatchName = encodeURIComponent(exactMatchName)
@@ -964,6 +967,7 @@ export const startQuickSearch = async () => {
       .replace(/\\/g, ' ')
       .replace(/&/g, ' ')
       .replace(/\+/g, ' ')
+      // eslint-disable-next-line no-useless-escape
       .replace(/\-/g, ' ')
       .replace(/(^| )(\$+(\s|$)+)+/g, '$1DOLLAR$3')
       .replace(/(^| )(¢+(\s|$)+)+/g, '$1CENT$3')
@@ -1035,6 +1039,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
   }
   let testName = getters.getName.toUpperCase()
   testName = removeExcessSpaces(testName)
+  // eslint-disable-next-line no-useless-escape
   if ((name !== testName) || name.match(/^[\[\]\^*\+-\/\=&\(\)\.,"'#@\!\?;:]/)) {
     commit('mutateDisplayedComponent', 'AnalyzeCharacters')
     commit('mutateName', name)
@@ -1058,7 +1063,6 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
       }
     }
     commit('mutateDisplayedComponent', 'SendToExamination')
-    return
   } else {
     if (['AML', 'CHG', 'DBA', 'MVE', 'NEW', 'REH', 'REN', 'REST'].includes(this.request_action_cd)) {
       if (getters.getDoNotAnalyzeEntities.includes(getters.getEntityTypeCd)) {
@@ -1076,7 +1080,6 @@ export const updateApplicantDetails: ActionIF = ({ commit }, appKV) => {
   commit('mutateApplicant', appKV)
   if (!appKV.value || appKV.key !== 'addrLine1') {
     commit('mutateAddressSuggestions', null)
-    return
   }
 }
 

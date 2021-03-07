@@ -73,7 +73,7 @@ import { FilingData } from 'sbc-common-components/src/models'
 
 @Component({})
 export default class FeeSummary extends Vue {
-  @Prop({ default: () => [] }) filingData!: Array<FilingData>
+  @Prop({ default: () => [] }) filingData!: FilingData[]
   @Prop({ default: () => [] }) fees: any[]
 
   protected fetchError = ''

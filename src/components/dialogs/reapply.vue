@@ -119,13 +119,15 @@ export default class ReapplyDialog extends Mixins(
 
   @Watch('isVisible')
   onVisibleChanged (val: boolean) {
-    if (val && this.$el?.querySelector) {
+    if (val) {
       this.$nextTick(() => {
-        // add classname to button text (for more detail in Sentry breadcrumbs)
-        const reapplyAcceptBtn = this.$el.querySelector("#payment-pay-btn > span")
-        if (reapplyAcceptBtn) reapplyAcceptBtn.classList.add("reapply-accept-btn")
-        const reapplyCancelBtn = this.$el.querySelector("#payment-close-btn > span")
-        if (reapplyCancelBtn) reapplyCancelBtn.classList.add("reapply-cancel-btn")
+        if (this.$el?.querySelector) {
+          // add classname to button text (for more detail in Sentry breadcrumbs)
+          const reapplyAcceptBtn = this.$el.querySelector('#payment-pay-btn > span')
+          if (reapplyAcceptBtn) reapplyAcceptBtn.classList.add('reapply-accept-btn')
+          const reapplyCancelBtn = this.$el.querySelector('#payment-close-btn > span')
+          if (reapplyCancelBtn) reapplyCancelBtn.classList.add('reapply-cancel-btn')
+        }
       })
     }
   }
