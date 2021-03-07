@@ -8,6 +8,8 @@
         @close="showAuthModal = false"
       />
 
+      <ChatPopup />
+
       <!-- Loading spinner -->
       <v-fade-transition>
         <div class="loading-container grayed-out" v-show="showSpinner">
@@ -74,6 +76,7 @@ import paymentModule from '@/modules/payment'
 import { RollbackActions } from '@/enums'
 
 // dialogs and other components
+import ChatPopup from '@/components/common/chat-popup.vue'
 import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
   LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, PaymentDialog, PaymentCompleteDialog,
@@ -85,6 +88,7 @@ import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 
 @Component({
   components: {
+    ChatPopup,
     AffiliationErrorDialog,
     CancelDialog,
     ConditionsDialog,
