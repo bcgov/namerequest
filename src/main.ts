@@ -2,7 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import Hotjar from 'vue-hotjar'
 import { getVueRouter } from '@/router'
-import store from './store'
+import { getVuexStore } from '@/store'
+import { EnvConfigI } from '@/interfaces'
 import { getConfig, getVuetify, initLdClient } from '@/plugins'
 import KeycloakService from 'sbc-common-components/src/services/keycloak.services'
 import * as Sentry from '@sentry/browser'
@@ -35,9 +36,9 @@ Vue.config.devtools = true
 async function startVue () {
   // Fetch the configuration
   const envConfig = await getConfig()
-  //
+  const store = await getVuexStore()
+
   // *** TODO: remove these config assignments if possible
-  //
   // Load environment config
   Vue.prototype.$PAYMENT_PORTAL_URL = envConfig.$PAYMENT_PORTAL_URL
   // Load Vuex config
@@ -92,7 +93,7 @@ async function startVue () {
   new Vue({
     vuetify: getVuetify(),
     router: getVueRouter(),
-    store,
+    store: store,
     render: h => h(App)
   }).$mount('#app')
 }

@@ -3,7 +3,13 @@ import axios, { AxiosError } from 'axios'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 import canadaPostAPIKey from '@/store/config'
-import { ExistingRequestSearchI, LocationT, NewRequestNameSearchI } from '@/interfaces'
+import {
+  ConversionTypesI,
+  ExistingRequestSearchI,
+  LocationT,
+  NewRequestNameSearchI,
+  SelectOptionsI
+} from '@/interfaces'
 import { NrAction, NrState, RollbackActions } from '@/enums'
 import { NameRequestPayment } from '@/modules/payment/models'
 import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
@@ -100,7 +106,7 @@ export const downloadOutputs = async (id: string): Promise<void> => {
   }
 }
 
-export const setActiveComponent: ActionIF = ({ commit }, component): void => {
+export const setActiveComponent = ({ commit }, component): void => {
   enum Tabs {
     NewSearch,
     ExistingRequestSearch
@@ -354,7 +360,7 @@ export const confirmAction: ActionIF = async ({ commit }, action: string): Promi
 
 export const findNameRequest: ActionIF = async ({ commit, getters }): Promise<void> => {
   try {
-    commit('resetAnalyzeName')
+    resetAnalyzeName({ commit, getters })
     commit('mutateQuickSearch', true)
     commit('mutateDisplayedComponent', 'SearchPending')
 
@@ -498,13 +504,13 @@ export const loadExistingNameRequest:ActionIF = async ({ commit }, nrData: any) 
   }
 }
 
-export const getStats: ActionIF = async ({ commit }) => {
+export const setStats: ActionIF = async ({ commit }) => {
   try {
     let resp = await axios.get('/statistics')
     commit('mutateStats', resp)
   } catch (err) {
     const msg = await handleApiError(err, 'Could not get stats')
-    console.error('getStats() =', msg) // eslint-disable-line no-console
+    console.error('setStats() =', msg) // eslint-disable-line no-console
   }
 }
 
@@ -771,9 +777,9 @@ export const userClickedStopAnalysis: ActionIF = ({ commit }) => {
   commit('mutateSubmissionType', 'examination')
 }
 
-export const resetAnalyzeName: ActionIF = ({ commit }) => {
+export const resetAnalyzeName = ({ commit, getters }) => {
   commit('clearAssumedNameOriginal')
-  if (!this.userCancelledAnalysis) {
+  if (!getters.getUserCancelledAnalysis) {
     commit('mutateAnalysisJSON', null)
   }
   commit('mutateCorpNum', '')
@@ -800,9 +806,9 @@ export const cancelAnalyzeName: ActionIF = ({ commit, getters }, destination: st
     commit('mutateName', getters.getOriginalName)
     commit('mutateUserCancelledAnalysis', false)
   }
-  this.setActiveComponent(destination)
+  setActiveComponent({ commit }, destination)
   if (destination !== 'NamesCapture') {
-    commit('resetAnalyzeName')
+    resetAnalyzeName({ commit, getters })
     commit('mutateQuickSearch', true)
   }
 }
@@ -944,10 +950,9 @@ export const getQuickSearch = async ({ commit, getters }, cleanedName: {exactMat
 }
 
 // TODO: Not an Action
-export const startQuickSearch = async () => {
-  if (this.getName) {
-    const name = this.getName
-    // eslint-disable-next-line no-useless-escape
+export const startQuickSearch = async ({ commit, getters }) => {
+  if (getters.getName) {
+    const name = getters.getName
     let exactMatchName = name.replace(' \/', '\/')
       .replace(/(^|\s+)(\$+(\s|$)+)+/g, '$1DOLLAR$3')
       .replace(/(^|\s+)(¢+(\s|$)+)+/g, '$1CENT$3')
@@ -981,20 +986,19 @@ export const startQuickSearch = async () => {
 }
 
 export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
-  this.resetAnalyzeName()
-  this.mutateUserCancelledAnalysis(false)
+  resetAnalyzeName({ commit, getters })
+  setUserCancelledAnalysis({ commit, getters }, false)
   let name
   if (getters.getName) {
     name = sanitizeName(getters.getName)
   }
-  ['entity_type_cd', 'request_action_cd', 'location'].forEach(field => {
-    // These are initialized empty. Check to make sure user selected an option for each
-    if (!this[field] || this[field] === 'INFO') {
-      commit('setErrors', field)
-    }
-  })
+
+  if (!getters.getRequestActionCd) commit('setErrors', 'request_action_cd')
+  if (!getters.getLocation) commit('setErrors', 'location')
+  if (!getters.getEntityTypeCd) commit('setErrors', 'entity_type_cd')
+
   // set error if checkbox is shown and user hasn't confirmed it
-  if (this.showNoCorpDesignation && !this.noCorpDesignation) {
+  if (getters.getShowNoCorpDesignation && !getters.getNoCorpDesignation) {
     commit('setErrors', 'no_corp_designation')
   }
   if (['CA', 'IN'].includes(getters.getLocation) &&
@@ -1017,9 +1021,9 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
   }
   commit('mutateNameOriginal', name) // Set original name for reset baseline
   if (getters.getIsXproMras) {
-    commit('mutateNRData', { key: 'xproJurisdiction', value: this.jurisdictionText })
+    commit('mutateNRData', { key: 'xproJurisdiction', value: getters.getJurisdictionText })
     if (!getters.getHasNoCorpNum) {
-      const profile = await this.fetchMRASProfile()
+      const profile: any = await fetchMRASProfile({ commit, getters })
       if (profile) {
         const hasMultipleNames = profile?.LegalEntity?.names && profile?.LegalEntity?.names.constructor === Array
         name = hasMultipleNames
@@ -1033,10 +1037,10 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
       }
     }
   }
-  if (getters.getQuickSearch) {
-    await startQuickSearch()
-    return
-  }
+  // if (getters.getQuickSearch) {
+  //   await startQuickSearch()
+  //   return
+  // }
   let testName = getters.getName.toUpperCase()
   testName = removeExcessSpaces(testName)
   // eslint-disable-next-line no-useless-escape
@@ -1051,11 +1055,11 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
 
     return
   }
-  this.mutateName(name)
+  commit('mutateName', name)
   if (getters.getLocation === 'BC' || getters.getRequestActionCd === 'MVE') {
     if (getters.getNameIsEnglish && !getters.getIsPersonsName &&
-      !getters.getDoNotAnalyzeEntities.includes(this.entity_type_cd)) {
-      if (['NEW', 'MVE', 'DBA', 'CHG'].includes(this.request_action_cd)) {
+      !getters.getDoNotAnalyzeEntities.includes(getters.getEntityTypeCd)) {
+      if (['NEW', 'MVE', 'DBA', 'CHG'].includes(getters.getRequestActionCd)) {
         getFeatureFlag('disable-analysis')
           ? commit('mutateDisplayedComponent', 'SendToExamination')
           : this.getNameAnalysis()
@@ -1064,7 +1068,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
     }
     commit('mutateDisplayedComponent', 'SendToExamination')
   } else {
-    if (['AML', 'CHG', 'DBA', 'MVE', 'NEW', 'REH', 'REN', 'REST'].includes(this.request_action_cd)) {
+    if (['AML', 'CHG', 'DBA', 'MVE', 'NEW', 'REH', 'REN', 'REST'].includes(getters.getRequestActionCd)) {
       if (getters.getDoNotAnalyzeEntities.includes(getters.getEntityTypeCd)) {
         commit('mutateDisplayedComponent', 'SendToExamination')
         return
@@ -1110,7 +1114,7 @@ export const checkMRAS = (corpNum: string) => {
   return axios.get(url)
 }
 
-export const fetchMRASProfile: ActionIF = async ({ commit, getters }): Promise<any> => {
+export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
   if (getters.getCorpSearch) {
     try {
       let url = `mras-profile/${getters.getRequestJurisdictionCd}/${getters.getCorpSearch}`
@@ -1139,10 +1143,95 @@ export const setName: ActionIF = ({ commit }, name: string): void => {
   commit('mutateName', name)
 }
 
+export const setLocation: ActionIF = ({ commit }, location: LocationT): void => {
+  commit('mutateLocation', location)
+}
+
 export const setDisplayedComponent: ActionIF = ({ commit }, component: string): void => {
   commit('mutateDisplayedComponent', component)
 }
 
+export const setTabNumber: ActionIF = ({ commit }, tabNumber: number): void => {
+  commit('mutateTabNumber', tabNumber)
+}
+
+export const setCorpSearch: ActionIF = ({ commit }, corpSearch: string): void => {
+  commit('mutateCorpSearch', corpSearch)
+}
+
+export const setEntityTypeCd: ActionIF = ({ commit }, entityTypeCd: string): void => {
+  commit('mutateEntityType', entityTypeCd)
+}
+
+export const setConversionType: ActionIF = ({ commit }, conversionType: string): void => {
+  commit('mutateConversionType', conversionType)
+}
+
+export const setJurisdiction: ActionIF = ({ commit }, jurisdictionCd: string): void => {
+  commit('mutateJurisdiction', jurisdictionCd)
+}
+
+export const setIsPersonsName: ActionIF = ({ commit }, isPersonsName: boolean): void => {
+  commit('mutateIsPersonsName', isPersonsName)
+}
+
+export const setNameIsEnglish: ActionIF = ({ commit }, isEnglishName: boolean): void => {
+  commit('mutateNameIsEnglish', isEnglishName)
+}
+
+export const setNoCorpNum: ActionIF = ({ commit }, noCorpNum: boolean): void => {
+  commit('mutateNameIsEnglish', noCorpNum)
+}
+
+export const setNoCorpDesignation: ActionIF = ({ commit }, noCorpDesignation: boolean): void => {
+  commit('mutateNoCorpDesignation', noCorpDesignation)
+}
+
+export const setExtendedRequestType: ActionIF = ({ commit }, extendedRequestType: SelectOptionsI): void => {
+  commit('mutateExtendedRequestType', extendedRequestType)
+}
+
+export const setRequestAction: ActionIF = ({ commit }, requestAction: string): void => {
+  commit('mutateRequestAction', requestAction)
+}
+
+export const setConversionTypeAddToSelect: ActionIF = ({ commit }, conversionType: ConversionTypesI): void => {
+  commit('mutateConversionTypeAddToSelect', conversionType)
+}
+
+export const setEntityTypeAddToSelect: ActionIF = ({ commit }, entityType: SelectOptionsI): void => {
+  commit('mutateEntityTypeAddToSelect', entityType)
+}
+
+export const setClearErrors: ActionIF = ({ commit }): void => {
+  commit('clearErrors')
+}
+
+export const setUserCancelledAnalysis: ActionIF = ({ commit }, cancelledAnalysis: boolean): void => {
+  commit('mutateUserCancelledAnalysis', cancelledAnalysis)
+}
+
+// Dialog Actions
 export const setIncorporateLoginModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
   commit('mutateIncorporateLoginModalVisible', isVisible)
+}
+
+export const setPickEntityModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
+  commit('mutatePickEntityModalVisible', isVisible)
+}
+
+export const setPickRequestTypeModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
+  commit('mutatePickRequestTypeModalVisible', isVisible)
+}
+
+export const setMrasSearchInfoModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
+  commit('mutateMrasSearchInfoModalVisible', isVisible)
+}
+
+export const setExitModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
+  commit('mutateExitModalVisible', isVisible)
+}
+
+export const setSubmissionTabComponent: ActionIF = ({ commit }, isVisible: boolean): void => {
+  commit('mutateSubmissionTabComponent', isVisible)
 }

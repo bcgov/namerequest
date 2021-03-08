@@ -60,7 +60,7 @@ export class PaymentMixin extends Vue {
 
   get paymentSummaries () {
     const payments = this.$store.getters[paymentTypes.GET_PAYMENTS]
-    const summaries = payments.map(payment => {
+    const summaries = payments && payments.map(payment => {
       const { id, sbcPayment } = payment
       let receipt
       if (sbcPayment &&

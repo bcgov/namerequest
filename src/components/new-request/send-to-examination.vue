@@ -3,8 +3,8 @@
     <template v-slot:container-header>
       <v-col cols="auto" class="h6 pt-0 my-1">
         You are searching for a name for a
-        {{ entityText === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }}
-        {{ entityText }}
+        {{ getEntityTextFromValue === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }}
+        {{ getEntityTextFromValue }}
       </v-col>
     </template>
 
@@ -31,11 +31,14 @@
 </template>
 
 <script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+
 import MainContainer from '@/components/new-request/main-container.vue'
 import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
-import newReqModule from '@/store/new-request-module'
-import { Component, Vue } from 'vue-property-decorator'
 import NameInput from '@/components/new-request/name-input.vue'
+
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: {
@@ -45,6 +48,13 @@ import NameInput from '@/components/new-request/name-input.vue'
   }
 })
 export default class SendToExamination extends Vue {
+  @Getter getEntityTextFromValue!: string
+  @Getter getLocation!: string
+  @Getter getLocationOptions!: string[]
+
+  @Action setDisplayedComponent!: ActionBindingIF
+  @Action setSubmissionTabComponent!: ActionBindingIF
+
   private actionConfig = {
     class: 'approved',
     icon: 'mdi-check-circle',
@@ -52,20 +62,16 @@ export default class SendToExamination extends Vue {
     subText: '(Detailed Analysis Coming Soon)',
     showNextLines: true
   }
-  get entityText () {
-    return newReqModule.entityTextFromValue
-  }
+
   get location () {
-    let value = newReqModule.location
-    let options = newReqModule.locationOptions
+    let value = this.getLocation
+    let options = this.getLocationOptions
     return options.find((opt: any) => opt.value === value)
   }
-  get name () {
-    return newReqModule.name
-  }
+
   sendToExamination () {
-    newReqModule.mutateSubmissionTabComponent('NamesCapture')
-    newReqModule.mutateDisplayedComponent('SubmissionTabs')
+    this.setSubmissionTabComponent('NamesCapture')
+    this.setDisplayedComponent('SubmissionTabs')
   }
 }
 </script>

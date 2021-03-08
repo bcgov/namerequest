@@ -47,48 +47,49 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+
+// Interfaces / enums / list data
 import { SelectOptionsI } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { RequestActions } from '@/store/list-data'
 
 @Component({})
 export default class PickRequestTypeDialog extends Vue {
-  get editMode () {
-    return newReqModule.editMode
-  }
+  // Global Getters
+  @Getter getPickRequestTypeModalVisible!: boolean
+
+  // Global Actions
+  @Action setClearErrors!: ActionBindingIF
+  @Action setExtendedRequestType!: ActionBindingIF
+  @Action setPickRequestTypeModalVisible!: ActionBindingIF
+  @Action setRequestAction!: ActionBindingIF
 
   get showModal () {
-    return newReqModule.pickRequestTypeModalVisible
-  }
-
-  get location () {
-    return newReqModule.location
-  }
-
-  get requestActions () {
-    return newReqModule.requestActions
+    return this.getPickRequestTypeModalVisible
   }
 
   set showModal (value: boolean) {
-    newReqModule.mutatePickRequestTypeModalVisible(value)
+    this.setPickRequestTypeModalVisible(value)
   }
 
   get tableData () {
-    let { length } = this.requestActions
+    let { length } = RequestActions
     let midIndex = length % 2 ? (length + 1) / 2 : (length / 2)
 
     return {
-      col1: this.requestActions.slice(0, midIndex),
-      col2: this.requestActions.slice(midIndex, length)
+      col1: RequestActions.slice(0, midIndex),
+      col2: RequestActions.slice(midIndex, length)
     }
   }
 
   chooseType (request: SelectOptionsI) {
-    newReqModule.clearErrors()
+    this.setClearErrors(null)
     if (request.value !== 'NEW') {
-      newReqModule.mutateExtendedRequestType(request)
+      this.setExtendedRequestType(request)
     }
-    newReqModule.mutateRequestAction(request.value)
+    this.setRequestAction(request.value)
     this.showModal = false
   }
 }

@@ -33,9 +33,10 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/new-request-module'
 import { Component, Prop, Vue, Watch, Emit } from 'vue-property-decorator'
+import { Getter, Action } from 'vuex-class'
 import { Location, RequestCode } from '@/enums'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class NameInput extends Vue {
@@ -43,6 +44,22 @@ export default class NameInput extends Vue {
   $refs!: {
     nameInput: any
   }
+
+  // Global Getters
+  @Getter getCorpSearch!: string
+  @Getter getErrors!: string[]
+  @Getter getLocation!: string
+  @Getter getName!: string
+  @Getter getRequestActionCd!: string
+  @Getter getIsXproMras!: boolean
+
+  // Global Actions
+  @Action setClearErrors!: ActionBindingIF
+  @Action setCorpSearch!: ActionBindingIF
+  @Action setName!: ActionBindingIF
+  @Action setMrasSearchInfoModalVisible!: ActionBindingIF
+  @Action startAnalyzeName!: ActionBindingIF
+
   /** Local Properties */
   @Prop({ default: false }) isSearchAgain: boolean
   @Prop({ default: false }) isMrasSearch: boolean
@@ -60,55 +77,55 @@ export default class NameInput extends Vue {
     return this.isMrasSearch ? this.$refs['nameInput']?.valid : true
   }
 
-  get name () {
-    return newReqModule.name
-  }
-
-  get errors () {
-    return newReqModule.errors
-  }
   get message () {
-    if (this.isMrasSearch && this.errors.includes('name')) {
+    if (this.isMrasSearch && this.getErrors.includes('name')) {
       return ['Please enter a corporation number to search for']
     }
-    if (this.errors.includes('length')) {
+    if (this.getErrors.includes('length')) {
       return ['Please enter a longer name']
     }
-    if (this.errors.includes('name')) {
+    if (this.getErrors.includes('name')) {
       return ['Please enter a name to search for']
     }
     return ''
   }
+
   get searchValue () {
-    return this.isMrasSearch ? newReqModule.corpSearch : newReqModule.name
+    return this.isMrasSearch ? this.getCorpSearch : this.getName
   }
+
   set searchValue (value: string) {
-    this.isMrasSearch ? newReqModule.mutateCorpSearch(value) : newReqModule.mutateName(value)
+    this.isMrasSearch ? this.setCorpSearch(value) : this.setName(value)
   }
+
   get nameLabel () {
     if (this.isMrasSearch) return 'Enter the corporate number assigned by the home jurisdiction'
-    return newReqModule.location && newReqModule.location !== Location.BC &&
-      newReqModule.request_action_cd !== RequestCode.MOVE
+    return this.getLocation && this.getLocation !== Location.BC &&
+      this.getRequestActionCd !== RequestCode.MOVE
       ? 'Business\'s full legal name in home jurisdiction'
       : 'Enter a Name'
   }
+
   clearErrors () {
-    newReqModule.clearErrors()
+    this.setClearErrors(null)
   }
+
   async handleSubmit (event: KeyboardEvent) {
     if (event.key === 'Enter' && this.isCorpNumValid) {
       event.preventDefault()
-      if (this.searchValue) await this.startAnalyzeName()
+      if (this.searchValue) await this.analyzeName()
       return
     }
     return event
   }
-  async startAnalyzeName () {
-    newReqModule.mutateMrasSearchInfoModalVisible(false)
-    if (newReqModule.isXproMras) this.$root.$emit('showSpinner', true)
-    if (this.searchValue) await newReqModule.startAnalyzeName()
-    if (newReqModule.isXproMras) this.$root.$emit('showSpinner', false)
+
+  async analyzeName () {
+    this.setMrasSearchInfoModalVisible(false)
+    if (this.getIsXproMras) this.$root.$emit('showSpinner', true)
+    if (this.searchValue) await this.startAnalyzeName(null)
+    if (this.getIsXproMras) this.$root.$emit('showSpinner', false)
   }
+
   @Watch('isCorpNumValid')
   @Emit() private emitCorpNumValidity () {
     return this.isCorpNumValid

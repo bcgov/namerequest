@@ -14,8 +14,8 @@
                    :disabled="request_action_cd !== 'CNV'">
           <template v-slot:activator="scope">
             <div v-on="scope.on">
-              <v-select :error-messages="errors.includes('request_action_cd') ? 'Please select an action' : ''"
-                        :items="requestActions"
+              <v-select :error-messages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
+                        :items="RequestActions"
                         @change="clearErrors()"
                         label="Select an Action"
                         filled
@@ -33,7 +33,7 @@
               </v-select>
             </div>
           </template>
-          <span>{{ requestText }}</span>
+          <span>{{ getRequestText }}</span>
         </v-tooltip>
       </v-col>
       <v-col cols="4" class="px-3">
@@ -45,8 +45,8 @@
                    :disabled="!location || location === 'BC'">
           <template v-slot:activator="scope">
             <div v-on="scope.on">
-              <v-select :error-messages="errors.includes('location') ? 'Please select a jurisdiction' : ''"
-                        :items="locationOptions"
+              <v-select :error-messages="getErrors.includes('location') ? 'Please select a jurisdiction' : ''"
+                        :items="getLocationOptions"
                         :disabled="locationDisabled"
                         :readonly="!request_action_cd"
                         :class="!request_action_cd ? 'disabled-custom' : ''"
@@ -70,7 +70,7 @@
               </v-select>
             </div>
           </template>
-          <span>{{ locationText }}</span>
+          <span>{{ getLocationText }}</span>
         </v-tooltip>
       </v-col>
       <v-col cols="4">
@@ -82,9 +82,9 @@
                    transition="fade-transition">
           <template v-slot:activator="scope">
             <div v-on="scope.on">
-              <v-select :error-messages="errors.includes('entity_type_cd') ? 'Please select a business type' : ''"
+              <v-select :error-messages="getErrors.includes('entity_type_cd') ? 'Please select a business type' : ''"
                         :items="entityConversionTypeOptions"
-                        :label="isConversion ? 'Select an Alteration Type' : 'Select a Business Type'"
+                        :label="getIsConversion ? 'Select an Alteration Type' : 'Select a Business Type'"
                         :readonly="!request_action_cd || !location"
                         :class="!location ? 'disabled-custom' : ''"
                         @change="clearErrors()"
@@ -121,8 +121,8 @@
     </v-row>
 
     <v-row no-gutters>
-      <v-col cols="4" v-if="isXproMras">
-        <v-select :error-messages="errors.includes('jurisdiction') ? 'Please select a jurisdiction' : ''"
+      <v-col cols="4" v-if="getIsXproMras">
+        <v-select :error-messages="getErrors.includes('jurisdiction') ? 'Please select a jurisdiction' : ''"
                   :items="jurisdictionOptions"
                   label="Select business's home jurisdiction"
                   @change="clearErrors()"
@@ -135,10 +135,10 @@
           </template>
         </v-select>
       </v-col>
-      <v-col :cols="isXproMras ? 8 : 12" :class="{ 'pl-3': (isXproMras && !isFederal) }">
+      <v-col :cols="getIsXproMras ? 8 : 12" :class="{ 'pl-3': (getIsXproMras && !isFederal) }">
         <NameInput v-if="!isFederal"
                    :class="inputCompClass"
-                   :is-mras-search="(isXproMras && !noCorpNum)"
+                   :is-mras-search="(getIsXproMras && !noCorpNum)"
                    id="name-input-component"
                    class="pa-0"
                    @emit-corp-num-validity="corpNumValid = $event"/>
@@ -148,7 +148,7 @@
     </v-row>
 
     <!-- Person name and english checkboxes, render when location is NOT XPro Canada -->
-    <v-row v-if="!isXproMras" no-gutters>
+    <v-row v-if="!getIsXproMras" no-gutters>
       <v-tooltip top content-class="top-tooltip" transition="fade-transition" open-delay="200">
         <template v-slot:activator="{ on }">
           <v-checkbox
@@ -223,7 +223,7 @@
 
     <!-- No Corp Designation blurb and checkbox -->
     <v-expand-transition>
-      <v-row v-if="showNoCorpDesignation" no-gutters class="bg-light-blue mt-6">
+      <v-row v-if="getShowNoCorpDesignation" no-gutters class="bg-light-blue mt-6">
         <v-col class="text-body-4 pa-7">
           <strong>Important:</strong> A {{entityTextFromValue}} <strong>cannot use a Corporate designation</strong>
           (Inc., Incorporated, LTD, Limited, etc.) in its name. Although not required, you can use Company or Co. for
@@ -233,7 +233,7 @@
             v-model="noCorpDesignation"
             id="no-corp-designation-checkbox"
             class="pt-0"
-            :error-messages="errors.includes('no_corp_designation') ? 'Confirm designation usage' : ''"
+            :error-messages="getErrors.includes('no_corp_designation') ? 'Confirm designation usage' : ''"
             @change="clearErrors()"
           >
             <template slot="label">
@@ -246,7 +246,7 @@
 
     <div v-if="!isFederal" class="mt-6 text-center">
       <v-btn id="search-name-btn" :disabled="!corpNumValid" @click="handleSubmit()">
-        {{ isXproMras ? 'Search' : 'Search Name'}}
+        {{ getIsXproMras ? 'Search' : 'Search Name'}}
       </v-btn>
     </div>
     <div v-else class="mt-6 text-center">
@@ -258,54 +258,69 @@
 </template>
 
 <script lang="ts">
-import NameInput from './name-input.vue'
-import newReqModule from '../../store/new-request-module'
-import { bcMapping, xproMapping } from '@/store/list-data/request-action-mapping'
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { LocationT } from '@/interfaces'
+import { Action, Getter } from 'vuex-class'
+
+// Components
+import NameInput from './name-input.vue'
+
+// Interfaces / Enums / List Data
+import { ConversionTypesI, EntityI, RequestActionsI } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { ConversionTypes, RequestActions } from '@/store/list-data'
+import $canJurisdictions, { $mrasJurisdictions } from '@/store/list-data/canada-jurisdictions'
+import $intJurisdictions from '@/store/list-data/intl-jurisdictions'
 
 @Component({
   components: { NameInput }
 })
 export default class NewSearch extends Vue {
+  // Global Getters
+  @Getter getConversionType!: string
+  @Getter getConversionTypeOptions!: ConversionTypesI[]
+  @Getter getEntityBlurbs!: Array<EntityI>
+  @Getter getEntityTypeCd!: string
+  @Getter getEntityTypeOptions!: Array<EntityI>
+  @Getter getEntityTextFromValue!: string
+  @Getter getErrors!: string[]
+  @Getter getHasNoCorpNum!: boolean
+  @Getter getIsConversion!: boolean
+  @Getter getIsPersonsName!: boolean
+  @Getter getIsXproMras!: boolean
+  @Getter getJurisdiction!: string
+  @Getter getLocation!: string
+  @Getter getLocationOptions!: object[]
+  @Getter getLocationText!: string
+  @Getter getNameIsEnglish!: boolean
+  @Getter getNoCorpDesignation!: boolean
+  @Getter getRequestActionCd!: string
+  @Getter getRequestText!: string
+  @Getter getShowNoCorpDesignation!: boolean
+
+  // Global Actions
+  @Action setConversionType!: ActionBindingIF
+  @Action setCorpSearch!: ActionBindingIF
+  @Action setClearErrors!: ActionBindingIF
+  @Action setEntityTypeCd!: ActionBindingIF
+  @Action setExtendedRequestType!: ActionBindingIF
+  @Action setIsPersonsName!: ActionBindingIF
+  @Action setJurisdiction!: ActionBindingIF
+  @Action setLocation!: ActionBindingIF
+  @Action setName!: ActionBindingIF
+  @Action setNameIsEnglish!: ActionBindingIF
+  @Action setNoCorpNum!: ActionBindingIF
+  @Action setNoCorpDesignation!: ActionBindingIF
+  @Action setPickEntityModalVisible!: ActionBindingIF
+  @Action setRequestAction!: ActionBindingIF
+  @Action startAnalyzeName!: ActionBindingIF
+
   // Local Properties
-  private corpNumValid: boolean = true
+  private corpNumValid = true
   private corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
-  private locationDisabled: boolean = false
+  private locationDisabled = false
+  private RequestActions = RequestActions
 
-  private mounted () {
-    this.$nextTick(() => {
-      if (this.$el?.querySelector) {
-        // add classname to button text (for more detail in Sentry breadcrumbs)
-        const searchNameBtn = this.$el.querySelector('#search-name-btn > span')
-        if (searchNameBtn) searchNameBtn.classList.add('search-name-btn')
-      }
-    })
-  }
-
-  /** Reset search values when location changes */
-  @Watch('location')
-  watchLocation () {
-    newReqModule.mutateName('')
-    newReqModule.mutateCorpSearch('')
-  }
-
-  @Watch('request_action_cd')
-  watchRequestActionCd (newVal) {
-    // Set default location to BC for the requests where BC is the only location option
-    if (['CNV', 'MVE'].includes(newVal)) {
-      this.location = 'BC'
-      this.locationDisabled = true
-      return
-    }
-    this.locationDisabled = false
-    if (['ASSUMED'].includes(newVal)) {
-      if (this.location === 'BC') {
-        this.location = 'CA'
-      }
-    }
-  }
-
+  // Local Enum
   private request_action_enum = [
     'NEW',
     'MVE',
@@ -314,69 +329,64 @@ export default class NewSearch extends Vue {
     'CHG'
   ]
 
-  entityBlurbs (entity_type_cd: string): string[] {
-    return newReqModule.entityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || []
+  private mounted () {
+    this.$nextTick(() => {
+      if (this.$el.querySelector) {
+        // add classname to button text (for more detail in Sentry breadcrumbs)
+        const searchNameBtn = this.$el.querySelector("#search-name-btn > span")
+        if (searchNameBtn) searchNameBtn.classList.add("search-name-btn")
+      }
+    })
   }
 
+  // Local Getters
   get isScreenLg () {
     return this.$vuetify.breakpoint.lgAndUp
   }
 
-  get displayedComponent () {
-    return newReqModule.displayedComponent
+  entityBlurbs (entity_type_cd: string): string[] | string {
+    return this.getEntityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || []
   }
 
   get entity_type_cd () {
-    if (this.isConversion) {
-      return newReqModule.conversionType
+    if (this.getIsConversion) {
+      return this.getConversionType
     }
-    return newReqModule.entity_type_cd
+    return this.getEntityTypeCd
   }
 
   set entity_type_cd (type: string) {
     if (type === 'INFO') {
-      newReqModule.mutatePickEntityModalVisible(true)
+      this.setPickEntityModalVisible(true)
     }
-    if (type && this.isConversion) {
+    if (type && this.getIsConversion) {
       if (type !== 'INFO') {
-        let { entity_type_cd } = newReqModule.conversionTypes.find(conv => conv.value === type)
-        newReqModule.mutateEntityType(entity_type_cd)
+        let { entity_type_cd } = ConversionTypes.find(conv => conv.value === type)
+        this.setEntityTypeCd(entity_type_cd)
       }
-      newReqModule.mutateConversionType(type)
+      this.setConversionType(type)
       return
     }
-    newReqModule.mutateEntityType(type)
+    this.setEntityTypeCd(type)
   }
 
   get entityConversionTypeOptions () {
-    if (this.isConversion) {
-      return newReqModule.conversionTypeOptions
+    if (this.getIsConversion) {
+      return this.getConversionTypeOptions
     }
-    return newReqModule.entityTypeOptions
-  }
-
-  get entityTypeOptions () {
-    return newReqModule.entityTypeOptions
+    return this.getEntityTypeOptions
   }
 
   get entityConversionText () {
-    return newReqModule.conversionTypes.find(conversion => conversion.value === newReqModule.conversionType)?.text
-  }
-
-  get errors () {
-    return newReqModule.errors
+    return ConversionTypes.find(conversion => conversion.value === this.getConversionType)?.text
   }
 
   get inputCompClass () {
     let errorTypes = ['entity_type_cd', 'request_action_cd', 'location']
-    if (errorTypes.some(type => this.errors.includes(type))) {
+    if (errorTypes.some(type => this.getErrors.includes(type))) {
       return 'mt-n5'
     }
     return 'mt-n2'
-  }
-
-  get isConversion () {
-    return newReqModule.request_action_cd === 'CNV'
   }
 
   get isFederal () {
@@ -384,111 +394,110 @@ export default class NewSearch extends Vue {
   }
 
   get isPersonsName () {
-    return newReqModule.isPersonsName
+    return this.getIsPersonsName
   }
 
   set isPersonsName (value) {
-    newReqModule.mutateIsPersonsName(value)
+    this.setIsPersonsName(value)
   }
 
   get location () {
-    return newReqModule.location
+    return this.getLocation
   }
 
-  set location (location: LocationT) {
-    newReqModule.mutateLocation(location)
-  }
-
-  get locationOptions () {
-    return newReqModule.locationOptions
+  set location (location: string) {
+    this.setLocation(location)
   }
 
   get jurisdiction () {
-    return newReqModule.request_jurisdiction_cd
+    return this.getJurisdiction
   }
 
   set jurisdiction (jurisdiction: string) {
-    newReqModule.mutateJurisdiction(jurisdiction)
-  }
-
-  get locationText () {
-    return newReqModule.locationText
+    this.setJurisdiction(jurisdiction)
   }
 
   get nameIsEnglish () {
-    return newReqModule.nameIsEnglish
+    return this.getNameIsEnglish
   }
 
   set nameIsEnglish (value) {
-    newReqModule.mutateNameIsEnglish(value)
+    this.setNameIsEnglish(value)
   }
 
   get noCorpNum () {
-    return newReqModule.noCorpNum
+    return this.getHasNoCorpNum
   }
 
   set noCorpNum (value) {
-    newReqModule.mutateNoCorpNum(value)
+    this.setNoCorpNum(value)
   }
 
   get noCorpDesignation () {
-    return newReqModule.noCorpDesignation
+    return this.getNoCorpDesignation
   }
 
   set noCorpDesignation (value) {
-    newReqModule.mutateNoCorpDesignation(value)
+    this.setNoCorpDesignation(value)
   }
 
   get request_action_cd () {
-    return newReqModule.request_action_cd
+    return this.getRequestActionCd
   }
 
   set request_action_cd (value: string) {
-    const request = this.requestActions.find(request => request.value === value)
+    const request = RequestActions.find(request => request.value === value)
     this.location = null
     if (this.entity_type_cd) {
       this.entity_type_cd = ''
     }
     if (request.value !== 'NEW') {
-      newReqModule.mutateExtendedRequestType(request)
+      this.setExtendedRequestType(request)
     }
-    newReqModule.mutateRequestAction(value)
-  }
-
-  get requestActions () {
-    return newReqModule.requestActions
-  }
-
-  get requestText () {
-    return newReqModule.requestText
-  }
-
-  get isXproMras () {
-    return newReqModule.isXproMras
+    this.setRequestAction(value)
   }
 
   get jurisdictionOptions () {
     return this.location === 'CA'
-      ? this.$canJurisdictions.filter(jur => jur.value !== 'BC')
-      : this.$intJurisdictions.filter(jur => jur.value !== 'CA')
-  }
-
-  get showNoCorpDesignation (): boolean {
-    return newReqModule.showNoCorpDesignation
+      ? $canJurisdictions.filter(jur => jur.value !== 'BC')
+      : $intJurisdictions.filter(jur => jur.value !== 'CA')
   }
 
   get entityTextFromValue (): string {
-    return newReqModule.entityTextFromValue || 'specified business type'
+    return this.getEntityTextFromValue || 'specified business type'
   }
 
   clearErrors () {
-    newReqModule.clearErrors()
+    this.setClearErrors(null)
   }
 
   async handleSubmit () {
-    if (this.isXproMras) this.$root.$emit('showSpinner', true)
-    await newReqModule.startAnalyzeName()
-    if (this.isXproMras) this.$root.$emit('showSpinner', false)
+    if (this.getIsXproMras) this.$root.$emit('showSpinner', true)
+    await this.startAnalyzeName(null)
+    if (this.getIsXproMras) this.$root.$emit('showSpinner', false)
+  }
+
+  /** Reset search values when location changes */
+  @Watch('location')
+  watchLocation () {
+    this.setName('')
+    this.setCorpSearch('')
+  }
+
+  @Watch('request_action_cd')
+  watchRequestActionCd (newVal) {
+    // Set default location to BC for the requests where BC is the only location option
+    if (['CNV', 'MVE'].includes(newVal)) {
+      this.setLocation('BC')
+      this.locationDisabled = true
+      return
+    }
+    this.locationDisabled = false
+    if (['ASSUMED'].includes(newVal)) {
+      if (this.location === 'BC') {
+        this.setLocation('CA')
+      }
+    }
   }
 }
 </script>

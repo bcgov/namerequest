@@ -3,9 +3,9 @@
     <div id="main-column">
       <SbcAuthenticationOptionsDialog
         attach="#app"
-        :showModal="showAuthModal"
+        :showModal="getIncorporateLoginModalVisible"
         :redirectUrl="nameRequestUrl"
-        @close="showAuthModal = false"
+        @close="setIncorporateLoginModalVisible(false)"
       />
 
       <ChatPopup v-if="getFeatureFlag('chat-popup-enabled')" />
@@ -56,7 +56,7 @@
     <LocationInfoDialog />
     <MrasSearchInfoDialog />
     <NrNotRequiredDialog />
-    <PaymentDialog :onCancel="onPaymentCancelled" />
+<!--    <PaymentDialog :onCancel="onPaymentCancelled" />-->
     <PaymentCompleteDialog />
     <PickEntityOrConversionDialog />
     <PickRequestTypeDialog />
@@ -70,10 +70,9 @@
 <script lang="ts">
 // libraries, etc
 import { Component, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
 import { getFeatureFlag } from '@/plugins'
-import newRequestModule from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
-import { RollbackActions } from '@/enums'
 
 // dialogs and other components
 import ChatPopup from '@/components/common/chat-popup.vue'
@@ -85,6 +84,10 @@ import {
 import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
+
+// Interfaces / Enums
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { RollbackActions } from '@/enums'
 
 @Component({
   components: {
@@ -116,6 +119,16 @@ export default class App extends Vue {
 
   private showSpinner = false
 
+  // Global Getters
+  @Getter getIncorporateLoginModalVisible!: boolean
+
+  // Global Actions
+  @Action resetAnalyzeName!: ActionBindingIF
+  @Action setName!: ActionBindingIF
+  @Action setDisplayedComponent!: ActionBindingIF
+  @Action setIncorporateLoginModalVisible!: ActionBindingIF
+
+  // Local Getters
   get nameRequestUrl (): string {
     return `${window.location.origin}${process.env.VUE_APP_PATH}`
   }
@@ -129,13 +142,6 @@ export default class App extends Vue {
   /** The About text. */
   private get aboutText (): string {
     return process.env.ABOUT_TEXT
-  }
-
-  get showAuthModal () {
-    return newRequestModule.incorporateLoginModalVisible
-  }
-  set showAuthModal (val: boolean) {
-    newRequestModule.mutateIncorporateLoginModalVisible(val)
   }
 
   created (): void {
@@ -156,23 +162,24 @@ export default class App extends Vue {
     this.$router.replace('/').catch(() => {})
 
     // Clear data and display the Tabs page
-    await newRequestModule.resetAnalyzeName()
-    await newRequestModule.mutateName('')
-    await newRequestModule.mutateDisplayedComponent('Tabs')
+    await this.resetAnalyzeName(null)
+    await this.setName('')
+    await this.setDisplayedComponent('Tabs')
   }
 
-  async onPaymentCancelled () {
-    const { nrId } = newRequestModule
-    const componentName = newRequestModule.displayedComponent
-    // Only do this for New NRs!!!
-    if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
-      // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-      await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
-      // Direct the user back to the start
-      await this.resetAppState()
-    }
-    await paymentModule.togglePaymentModal(false)
-  }
+  // TODO: Update Pay module
+  // async onPaymentCancelled () {
+  //   const { nrId } = newRequestModule
+  //   const componentName = newRequestModule.displayedComponent
+  //   // Only do this for New NRs!!!
+  //   if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
+  //     // Cancel the NR using the rollback endpoint if we were processing a NEW NR
+  //     await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
+  //     // Direct the user back to the start
+  //     await this.resetAppState()
+  //   }
+  //   await paymentModule.togglePaymentModal(false)
+  // }
 }
 </script>
 

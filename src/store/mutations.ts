@@ -108,7 +108,6 @@ export const mutateHelpMeChooseModalVisible = (state: StateIF, helpMeChooseModal
 }
 
 export const mutateIncorporateLoginModalVisible = (state: StateIF, incorporateLoginModalVisible: boolean) => {
-  console.log('inside mutation')
   state.stateModel.newRequestModel.incorporateLoginModalVisible = incorporateLoginModalVisible
 }
 
@@ -125,7 +124,7 @@ export const mutateLocation = (state: StateIF, location: LocationT) => {
     return
   }
   // entity type needs to be reset when the location changes (options depend on location)
-  this.entity_type_cd = ''
+  state.stateModel.newRequestModel.entity_type_cd = ''
   if (location === 'INFO') {
     state.stateModel.newRequestModel.location = location
     return
@@ -339,7 +338,7 @@ export const resetRequestExaminationOrProvideConsent = (state: StateIF) => {
 }
 
 export const setErrors = (state: StateIF, errors: string) => {
-  if (Array.isArray(this.errors) && state.stateModel.newRequestModel.errors.length > 0) {
+  if (Array.isArray(state.stateModel.newRequestModel.errors) && state.stateModel.newRequestModel.errors.length > 0) {
     state.stateModel.newRequestModel.errors = state.stateModel.newRequestModel.errors.concat(errors)
     return
   }

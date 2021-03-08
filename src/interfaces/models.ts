@@ -96,8 +96,8 @@ export interface EntityI {
   intBlurbs?: string[]
   mveBlurbs?: string[]
   rehBlurbs?: string[]
-  amlBlurbs?: string[] | [string[], string[]?]
-  chgBlurbs?: string [] | [string[], string[]?]
+  amlBlurbs?: string[]
+  chgBlurbs?: string[]
   cat?: string
   rank?: number
   shortlist?: boolean
@@ -246,9 +246,11 @@ export interface SetupI {
 }
 
 export interface StatsI {
-  auto_approved_count: number
-  priority_wait_time: number
-  regular_wait_time: number
+  data: {
+    auto_approved_count: number
+    priority_wait_time: number
+    regular_wait_time: number
+  }
 }
 
 export interface WaitingAddressSearchI {

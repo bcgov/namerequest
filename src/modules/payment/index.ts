@@ -1,6 +1,8 @@
 import { Module, VuexModule, getModule } from 'vuex-module-decorators'
-import store from '@/store'
+import { getVuexStore } from '@/store'
 import paymentStore from './store'
+
+const store = getVuexStore()
 
 @Module({ dynamic: true, namespaced: false, store, name: 'paymentModule' })
 export class PaymentModule extends VuexModule {

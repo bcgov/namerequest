@@ -1,15 +1,23 @@
 import Vue from 'vue'
 import { Component } from 'vue-property-decorator'
-
-import newRequestModule from '@/store/new-request-module'
+import { Action, Getter } from 'vuex-class'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component
 export class DisplayedComponentMixin extends Vue {
+  @Getter getDisplayedComponent!: string
+
+  @Action cancelAnalyzeName!: ActionBindingIF
+  @Action cancelEditExistingRequest!: ActionBindingIF
+  @Action checkinNameRequest!: ActionBindingIF
+  @Action setDisplayedComponent!: ActionBindingIF
+  @Action setSubmissionTabComponent!: ActionBindingIF
+
   componentName: string = ''
   get displayedComponent () {
     // We can't watch a computed property directly, and we don't want to inject displayedComponent as a prop
     // so we're using an intermediate data property, which we CAN watch - set its value here
-    const componentName = newRequestModule.displayedComponent
+    const componentName = this.getDisplayedComponent
     if (this.componentName !== componentName) {
       // Update the active component name
       this.componentName = componentName
@@ -19,23 +27,23 @@ export class DisplayedComponentMixin extends Vue {
   }
 
   async cancelAndResetState () {
-    const componentName = newRequestModule.displayedComponent
-    newRequestModule.mutateSubmissionTabNumber(0)
+    const componentName = this.getDisplayedComponent
+    this.setSubmissionTabComponent(0)
     // Are we cancelling a new NR?
     if (['SubmissionTabs'].indexOf(componentName) > -1) {
-      await newRequestModule.cancelAnalyzeName('Tabs')
+      await this.cancelAnalyzeName('Tabs')
       this.redirectToStart()
     } else if (['ExistingRequestDisplay'].indexOf(componentName) > -1) {
-      await newRequestModule.cancelAnalyzeName('Tabs')
+      await this.cancelAnalyzeName('Tabs')
       this.redirectToStart()
     } else if (['ExistingRequestEdit'].indexOf(componentName) > -1) {
       // We're editing
       // Check in the NR to release the INPROGRESS lock on the NR
-      await newRequestModule.cancelEditExistingRequest()
-      await newRequestModule.checkinNameRequest()
+      await this.cancelEditExistingRequest(null)
+      await this.checkinNameRequest(null)
       this.redirectToStart()
     } else {
-      await newRequestModule.cancelAnalyzeName('Tabs')
+      await this.cancelAnalyzeName('Tabs')
       this.redirectToStart()
     }
   }

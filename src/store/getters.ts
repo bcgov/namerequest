@@ -1,4 +1,4 @@
-import { StateIF } from '@/interfaces'
+import { ConversionTypesI, LocationT, StateIF, StatsI } from '@/interfaces'
 import {
   ApplicantI, EntityI, ExistingRequestSearchI, NameRequestI, RequestActionMappingI, SelectOptionsI
 } from '@/interfaces/models'
@@ -7,7 +7,7 @@ import {
 } from '@/store/list-data/request-action-mapping'
 
 // List Data
-import { EntityTypesBCData, EntityTypesXPROData, RequestActions } from './list-data'
+import { ConversionTypes, EntityTypesBCData, EntityTypesXPROData, Locations, RequestActions } from './list-data'
 import { $mrasJurisdictions } from '@/store/list-data/canada-jurisdictions'
 
 // TODO: Apply StateIF to state types after store transition
@@ -43,11 +43,20 @@ export const getNrState = (state: StateIF): string => {
 }
 
 /** Returns the location. */
-export const getLocation = (state: StateIF): string => {
+export const getLocation = (state: StateIF): LocationT => {
   return state.stateModel.newRequestModel.location
 }
 
-/** Returns the location. */
+export const getLocationText = (state: StateIF): string => {
+  return getLocationOptions(state).find(options => options.value === getLocation(state))?.text
+}
+
+/** Return the current jurisdiction code. */
+export const getJurisdiction = (state: StateIF): string => {
+  return state.stateModel.newRequestModel.request_jurisdiction_cd
+}
+
+/** Returns the entity type code. */
 export const getEntityTypeCd = (state: StateIF): string => {
   return state.stateModel.newRequestModel.entity_type_cd
 }
@@ -55,6 +64,11 @@ export const getEntityTypeCd = (state: StateIF): string => {
 /** Returns the current action code. */
 export const getRequestActionCd = (state: StateIF): string => {
   return state.stateModel.newRequestModel.request_action_cd
+}
+
+/** Return the request text. */
+export const getRequestText = (state: StateIF): string => {
+  return RequestActions.find(options => options.value === getRequestActionCd(state))?.text
 }
 
 /** Returns the current request jurisdiction code. */
@@ -80,6 +94,10 @@ export const getCorpSearch = (state: StateIF): string => {
 /** Returns the analyze pending boolean. */
 export const getAnalyzePending = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.analyzePending
+}
+
+export const getIsConversion = (state: StateIF): boolean => {
+  return getRequestActionCd(state) === 'CNV'
 }
 
 /** Return the existing request data. */
@@ -122,10 +140,146 @@ export const getDoNotAnalyzeEntities = (state: StateIF): string[] => {
   return state.stateModel.newRequestModel.doNotAnalyzeEntities
 }
 
-// /** Return the cancelled analysis boolean. */
-// export const getUserCancelledAnalysis = (state: StateIF): boolean => {
-//   return state.stateModel.newRequestModel.userCancelledAnalysis
-// }
+/** Return the cancelled analysis boolean. */
+export const getUserCancelledAnalysis = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.userCancelledAnalysis
+}
+
+export const getDisplayedComponent = (state: StateIF): string => {
+  return state.stateModel.newRequestModel.displayedComponent
+}
+
+export const getStats = (state: StateIF): StatsI => {
+  return state.stateModel.newRequestModel.stats
+}
+
+export const getTabNumber = (state: StateIF): number => {
+  return state.stateModel.newRequestModel.tabNumber
+}
+
+export const getConversionType = (state: StateIF): string => {
+  return state.stateModel.newRequestModel.conversionType
+}
+
+export const getNoCorpDesignation = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.noCorpDesignation
+}
+
+export const getConversionTypeAddToSelect = (state: StateIF): ConversionTypesI => {
+  return state.stateModel.newRequestModel.conversionTypeAddToSelect
+}
+
+export const getEntityTypeAddToSelect = (state: StateIF): SelectOptionsI => {
+  return state.stateModel.newRequestModel.entityTypeAddToSelect
+}
+
+export const getEditMode = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.editMode
+}
+
+export const getShowNoCorpDesignation = (state: StateIF): boolean => {
+  return ['DBA', 'FR', 'GP'].includes(getEntityTypeCd(state))
+}
+
+export const getSubmissionTabNumber = (state: StateIF): number => {
+  return state.stateModel.newRequestModel.submissionTabNumber
+}
+
+export const getEntityTextFromValue = (state: StateIF): string => {
+  if (getEntityTypeCd(state)) {
+    let list = [...getEntityTypesBC(state), ...getEntityTypesXPRO(state)]
+    let type = list.find(t => t.value === getEntityTypeCd(state))
+    return type?.text
+  }
+  return ''
+}
+
+export const getConversionTypeOptions = (state: StateIF): ConversionTypesI[] => {
+  let options = [...ConversionTypes].filter(type => type.shortlist)
+  let n = 3
+
+  if (getConversionTypeAddToSelect(state)) {
+    getConversionTypeAddToSelect(state).rank = 4
+    options = options.concat(getConversionTypeAddToSelect(state))
+    n = 4
+  }
+  options = options.concat({ text: 'View all Alterations', value: 'INFO', rank: n })
+  return options.sort((a, b) => {
+    if (a.rank < b.rank) {
+      return -1
+    }
+    if (a.rank > b.rank) {
+      return 1
+    }
+    return 0
+  })
+}
+
+/** Map the appropriate Blurb based on the request action and location */
+export const getEntityBlurbs = (state: StateIF): Array<EntityI> => {
+  switch (getRequestActionCd(state)) {
+  // NEW REQUEST
+    case 'NEW':
+      if (['BC'].includes(getLocation(state))) {
+        return EntityTypesBCData
+      }
+      if (['CA'].includes(getLocation(state))) {
+        return EntityTypesXPROData
+      }
+      if (['IN'].includes(getLocation(state))) {
+        return EntityTypesXPROData.map(x => ({ ...x, blurbs: x.intBlurbs }))
+      }
+      break
+      // MOVE REQUEST
+    case 'MVE':
+      if (['BC'].includes(getLocation(state))) {
+        return EntityTypesBCData.map(x => ({ ...x, blurbs: x.mveBlurbs }))
+      }
+      break
+      // RESTORE OR REINSTATE REQUEST
+    case 'REH':
+      if (['BC'].includes(getLocation(state))) {
+        return EntityTypesBCData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
+      }
+      if (['CA', 'IN'].includes(getLocation(state))) {
+        return EntityTypesXPROData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
+      }
+      break
+      // AMALGAMATE REQUEST
+    case 'AML':
+      if (['BC'].includes(getLocation(state))) {
+        return EntityTypesBCData.map(x => ({ ...x, blurbs: x.amlBlurbs }))
+      }
+      if (['CA'].includes(getLocation(state))) {
+        return EntityTypesXPROData.map(x => ({ ...x, blurbs: x.amlBlurbs[0] }))
+      }
+      if (['IN'].includes(getLocation(state))) {
+        // If international blurb is the same as national, map that blurb
+        return EntityTypesXPROData.map(x => ({ ...x, blurbs: x.amlBlurbs[1] || x.amlBlurbs[0] }))
+      }
+      break
+      // CHANGE NAME REQUEST
+    case 'CHG':
+      if (['BC'].includes(getLocation(state))) {
+        return EntityTypesBCData.map(x => ({ ...x, blurbs: x.chgBlurbs }))
+      }
+      if (['CA'].includes(getLocation(state))) {
+        return EntityTypesXPROData.map(x => ({ ...x, blurbs: x.chgBlurbs[0] }))
+      }
+      if (['IN'].includes(getLocation(state))) {
+        // If international blurb is the same as national, map that blurb
+        return EntityTypesXPROData.map(x => ({ ...x, blurbs: x.chgBlurbs[1] || x.chgBlurbs[0] }))
+      }
+      break
+      // CONVERSION REQUEST
+    case 'CNV':
+      if (['BC'].includes(getLocation(state))) {
+        return ConversionTypes
+      }
+      break
+  }
+  return null
+}
 
 /** Return the BC Entity Types. */
 export const getEntityTypesBC = (state: StateIF): EntityI[] => {
@@ -161,7 +315,7 @@ export const getEntityTypesBC = (state: StateIF): EntityI[] => {
     let mapping: RequestActionMappingI = bcMapping
     let cds = Object.keys(mapping)
     if (cds.includes(getRequestActionCd(state))) {
-      return generateEntities(mapping[this.request_action_cd])
+      return generateEntities(mapping[getRequestActionCd(state)])
     }
 
     return EntityTypesBCData
@@ -226,8 +380,8 @@ export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
 }
 
 /** Get entity type options. */
-export const getEntityTypeOptions = (state: StateIF) => {
-  let bcOptions: SelectOptionsI[] = getEntityTypesBC(state).filter(x => {
+export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
+  let bcOptions: SelectOptionsI[] = getEntityTypesBC(state)?.filter(x => {
     // Set shortlisted entity types for BC Move and Restoration requests.
     if ((['MVE', 'REH'].includes(getRequestActionCd(state)) && getLocation(state) === 'BC')) {
       // Shortlist order: Limited company, Cooperative association
@@ -238,7 +392,7 @@ export const getEntityTypeOptions = (state: StateIF) => {
         x.shortlist = null
         x.rank = null
       }
-    } else if (this.request_action_cd === 'AML' && getLocation(state) === 'BC') {
+    } else if (getRequestActionCd(state) === 'AML' && getLocation(state) === 'BC') {
       // Shortlist order: Limited company, Unlimited liability company
       if (x.value === 'UL') {
         x.shortlist = true
@@ -265,7 +419,7 @@ export const getEntityTypeOptions = (state: StateIF) => {
     }
   })
   let xproOptions: SelectOptionsI[] = getEntityTypesXPRO(state).filter(x => {
-    if (this.request_action_cd === 'NEW' && ['CA', 'IN'].includes(getLocation(state))) {
+    if (getRequestActionCd(state) === 'NEW' && ['CA', 'IN'].includes(getLocation(state))) {
       // Shortlist order: Limited company, Limited partnership
       if (x.value === 'XLP') {
         x.shortlist = true
@@ -274,7 +428,7 @@ export const getEntityTypeOptions = (state: StateIF) => {
         x.shortlist = null
         x.rank = null
       }
-    } else if (this.request_action_cd === 'MVE' && ['CA', 'IN'].includes(getLocation(state))) {
+    } else if (getRequestActionCd(state) === 'MVE' && ['CA', 'IN'].includes(getLocation(state))) {
       // Shortlist order: Limited company, Cooperative association
       if (x.value === 'XLP') {
         x.shortlist = null
@@ -283,7 +437,7 @@ export const getEntityTypeOptions = (state: StateIF) => {
         x.shortlist = true
         x.rank = 2
       }
-    } else if (this.request_action_cd === 'CHG' && ['CA', 'IN'].includes(getLocation(state))) {
+    } else if (getRequestActionCd(state) === 'CHG' && ['CA', 'IN'].includes(getLocation(state))) {
       // Shortlist order: Limited company, Limited partnership, Limited liability partnership
       if (x.value === 'XLP') {
         x.shortlist = true
@@ -303,9 +457,9 @@ export const getEntityTypeOptions = (state: StateIF) => {
   let options: SelectOptionsI[] = getLocation(state) === 'BC' ? [...bcOptions] : [...xproOptions]
   let n = 4
 
-  if (this.entityTypeAddToSelect) {
-    this.entityTypeAddToSelect.rank = 4
-    options = options.concat(this.entityTypeAddToSelect)
+  if (getEntityTypeAddToSelect(state)) {
+    getEntityTypeAddToSelect(state).rank = 4
+    options = options.concat(getEntityTypeAddToSelect(state))
     n = 5
   }
   options = options.concat({ text: 'View all business types', value: 'INFO', rank: n })
@@ -318,6 +472,20 @@ export const getEntityTypeOptions = (state: StateIF) => {
     }
     return 0
   })
+}
+
+/** Returned the filtered location options. */
+export const getLocationOptions = (state: StateIF): Array<any> => {
+  if (['CNV'].includes(getRequestActionCd(state))) {
+    return Locations.filter(location => location.value === 'BC')
+  }
+  if (['ASSUMED'].includes(getRequestActionCd(state))) {
+    return Locations.filter(location => location.value !== 'BC')
+  }
+  if (['MVE'].includes(getRequestActionCd(state))) {
+    return Locations.filter(location => location.value === 'BC')
+  }
+  return Locations
 }
 
 /** Return true if the name is Slashed */
@@ -362,4 +530,12 @@ export const getShowCorpNum = (state: StateIF): 'colin' | 'mras' | false => {
 // MODAL GETTERS
 export const getIncorporateLoginModalVisible = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.incorporateLoginModalVisible
+}
+
+export const getPickEntityModalVisible = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.pickEntityModalVisible
+}
+
+export const getPickRequestTypeModalVisible = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.pickRequestTypeModalVisible
 }
