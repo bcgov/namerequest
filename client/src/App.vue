@@ -1,7 +1,7 @@
 <template>
   <v-app id="app">
 
-    <ChatPopup />
+    <ChatPopup v-if="featureFlags.getFlag('chat-popup-enabled')" />
 
     <div id="main-column">
       <sbc-authentication-options-dialog
@@ -137,10 +137,12 @@ import { RollbackActions } from '@/enums'
     ...mapGetters(['getNameRequestUrl'])
   }
 })
+
 export default class App extends Mixins(SessionTimerMixin) {
   // rollbackOnExpire: boolean // NOT USED
   // checkInOnExpire: boolean // NOT USED
   readonly getNameRequestUrl!: string
+  readonly featureFlags = featureFlags
   private showSpinner = false
 
   get bannerText (): string | null {
