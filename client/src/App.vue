@@ -68,6 +68,7 @@
 </template>
 
 <script lang="ts">
+import axios, { AxiosError, AxiosRequestConfig } from 'axios'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 import ExitModal from '@/components/modals/exit.vue'
