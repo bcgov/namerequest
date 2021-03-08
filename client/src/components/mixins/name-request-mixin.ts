@@ -4,7 +4,7 @@ import { Component } from 'vue-property-decorator'
 import { ApplicantI } from '@/models'
 
 import newRequestModule, { NewRequestModule } from '@/store/new-request-module'
-import * as filingTypes from "@/modules/payment/filing-types"
+import * as filingTypes from '@/modules/payment/filing-types'
 import paymentModule from '@/modules/payment'
 import { sleep } from '@/plugins/sleep'
 import timerModule from '@/modules/vx-timer'

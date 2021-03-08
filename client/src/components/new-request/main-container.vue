@@ -29,7 +29,7 @@ import DisplayedComponentMixin from '@/components/mixins/displayed-component-mix
 import SessionTimerMixin from '@/components/session-timer/session-timer-mixin'
 import CountdownTimer from '@/components/session-timer/countdown-timer.vue'
 import newReqModule from '@/store/new-request-module'
-import timerModule from "@/modules/vx-timer"
+import timerModule from '@/modules/vx-timer'
 
 @Component({
   components: {
@@ -44,16 +44,18 @@ export default class MainContainer extends Mixins(SessionTimerMixin, DisplayedCo
 
   private mounted () {
     this.$nextTick(() => {
-      // add classname to button text (for more detail in Sentry breadcrumbs)
-      if (this.showExit) {
-        const exitBtn = this.$el.querySelector("#back-to-search-btn > span")
-        if (exitBtn) exitBtn.classList.add("exit-btn")
-      } else if (this.editMode) {
-        const returnBtn = this.$el.querySelector("#back-to-search-btn > span")
-        if (returnBtn) returnBtn.classList.add("return-btn")
-      } else {
-        const startSearchOverBtn = this.$el.querySelector("#back-to-search-btn > span")
-        if (startSearchOverBtn) startSearchOverBtn.classList.add("start-search-over-btn")
+      if (this.$el?.querySelector) {
+        // add classname to button text (for more detail in Sentry breadcrumbs)
+        if (this.showExit) {
+          const exitBtn = this.$el.querySelector('#back-to-search-btn > span')
+          if (exitBtn) exitBtn.classList.add('exit-btn')
+        } else if (this.editMode) {
+          const returnBtn = this.$el.querySelector('#back-to-search-btn > span')
+          if (returnBtn) returnBtn.classList.add('return-btn')
+        } else {
+          const startSearchOverBtn = this.$el.querySelector('#back-to-search-btn > span')
+          if (startSearchOverBtn) startSearchOverBtn.classList.add('start-search-over-btn')
+        }
       }
     })
   }

@@ -347,7 +347,7 @@ export default class ApplicantInfo1 extends NameRequestMixin {
   isValid: boolean = false
   messages = {}
   provStateRules = [
-    v => typeof v === 'string' || 'Must be letters only',
+    v => (typeof v === 'string') || 'Must be letters only',
     v => (!v || v.length <= 2) || 'Max 2 characters'
   ]
   firstLastNameRules = [
@@ -592,10 +592,10 @@ export default class ApplicantInfo1 extends NameRequestMixin {
     if (val && this.$el?.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
-        const applicantBackBtn = this.$el.querySelector("#submit-back-btn > span")
-        if (applicantBackBtn) applicantBackBtn.classList.add("applicant-back-btn")
-        const applicantContinueBtn = this.$el.querySelector("#submit-continue-btn > span")
-        if (applicantContinueBtn) applicantContinueBtn.classList.add("applicant-continue-btn")
+        const applicantBackBtn = this.$el.querySelector('#submit-back-btn > span')
+        if (applicantBackBtn) applicantBackBtn.classList.add('applicant-back-btn')
+        const applicantContinueBtn = this.$el.querySelector('#submit-continue-btn > span')
+        if (applicantContinueBtn) applicantContinueBtn.classList.add('applicant-continue-btn')
       })
     }
   }

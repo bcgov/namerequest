@@ -10,12 +10,11 @@ module.exports = {
     '@vue/standard'
   ],
   rules: {
+    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'max-len': ['warn', { code: 120 }],
-    'no-unused-vars': 'off',
-    'quotes': 'off',
-    'no-useless-return': 'off',
-    'camelcase': 'off',
-    'no-useless-escape': 'off'
+    'camelcase': 'off', // FUTURE: fix code and remove this
+    'no-unused-vars': 'off' // FUTURE: fix code and remove this
   },
   parserOptions: {
     parser: '@typescript-eslint/parser',

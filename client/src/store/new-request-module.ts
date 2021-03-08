@@ -2685,6 +2685,7 @@ export class NewRequestModule extends VuexModule {
   async startQuickSearch () {
     if (this.name) {
       const name = this.name
+      // eslint-disable-next-line no-useless-escape
       let exactMatchName = name.replace(' \/', '\/')
         .replace(/(^|\s+)(\$+(\s|$)+)+/g, '$1DOLLAR$3')
         .replace(/(^|\s+)(¢+(\s|$)+)+/g, '$1CENT$3')
@@ -2693,7 +2694,9 @@ export class NewRequestModule extends VuexModule {
         .replace(/\\/g, '')
         .replace(/\//g, '')
         .replace(/(`|~|!|\||\(|\)|\[|\]|\{|\}|:|"|\^|#|%|\?)/g, '')
+        // eslint-disable-next-line no-useless-escape
         .replace(/[\+\-]{2,}/g, '')
+        // eslint-disable-next-line no-useless-escape
         .replace(/\s[\+\-]$/, '')
       exactMatchName = exactMatchName.substring(0, 1) === '+' ? exactMatchName.substring(1) : exactMatchName
       exactMatchName = encodeURIComponent(exactMatchName)
@@ -2702,6 +2705,7 @@ export class NewRequestModule extends VuexModule {
         .replace(/\\/g, ' ')
         .replace(/&/g, ' ')
         .replace(/\+/g, ' ')
+        // eslint-disable-next-line no-useless-escape
         .replace(/\-/g, ' ')
         .replace(/(^| )(\$+(\s|$)+)+/g, '$1DOLLAR$3')
         .replace(/(^| )(¢+(\s|$)+)+/g, '$1CENT$3')
@@ -2773,6 +2777,7 @@ export class NewRequestModule extends VuexModule {
     }
     let testName = this.name.toUpperCase()
     testName = removeExcessSpaces(testName)
+    // eslint-disable-next-line no-useless-escape
     if ((name !== testName) || name.match(/^[\[\]\^*\+-\/\=&\(\)\.,"'#@\!\?;:]/)) {
       this.mutateDisplayedComponent('AnalyzeCharacters')
       this.mutateName(name)
@@ -2794,7 +2799,6 @@ export class NewRequestModule extends VuexModule {
         }
       }
       this.mutateDisplayedComponent('SendToExamination')
-      return
     } else {
       if (['AML', 'CHG', 'DBA', 'MVE', 'NEW', 'REH', 'REN', 'REST'].includes(this.request_action_cd)) {
         if (this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
@@ -2813,7 +2817,6 @@ export class NewRequestModule extends VuexModule {
     this.mutateApplicant(appKV)
     if (!appKV.value || appKV.key !== 'addrLine1') {
       this.mutateAddressSuggestions(null)
-      return
     }
   }
 

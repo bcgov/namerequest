@@ -25,9 +25,11 @@ export default class ReserveSubmitButton extends Vue {
 
   private mounted () {
     this.$nextTick(() => {
-      // add classname to button text (for more detail in Sentry breadcrumbs)
-      const reserveSubmitBtn = this.$el.querySelector("#reserve-submit-btn > span")
-      if (reserveSubmitBtn) reserveSubmitBtn.classList.add("reserve-submit-btn")
+      if (this.$el?.querySelector) {
+        // add classname to button text (for more detail in Sentry breadcrumbs)
+        const reserveSubmitBtn = this.$el.querySelector('#reserve-submit-btn > span')
+        if (reserveSubmitBtn) reserveSubmitBtn.classList.add('reserve-submit-btn')
+      }
     })
   }
 
@@ -116,7 +118,6 @@ export default class ReserveSubmitButton extends Vue {
         newReqModule.mutateSubmissionType('normal')
         newReqModule.postNameRequests('reserved')
         newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
-        return
     }
   }
 }

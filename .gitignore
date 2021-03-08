@@ -1,6 +1,9 @@
+# Build files, etc
+coverage/
+dist/
+node_modules/
+
 .DS_Store
-node_modules
-/client/dist
 
 /.quokka
 /.quokka/*
@@ -84,12 +87,5 @@ typings/
 #JetBrains IDEa config
 .idea/
 
-package-lock.json*
-client/package-lock.json
-/build
 .vscode
-/client/src/modules/auth/
 .history
-
-#Temp ignore auth module
-client/src/modules/auth

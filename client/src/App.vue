@@ -49,9 +49,7 @@
     <NrNotRequired />
     <PickEntityOrConversion />
     <PickRequestType />
-    <PaymentModal
-      :onCancel="onPaymentCancelled"
-    />
+    <PaymentModal :onCancel="onPaymentCancelled" />
     <UpgradeModal />
     <ReapplyModal />
     <PaymentCompleteModal />

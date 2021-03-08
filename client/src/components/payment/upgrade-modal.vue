@@ -127,10 +127,10 @@ export default class UpgradeModal extends Mixins(
     if (val && this.$el?.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
-        const upgradeAcceptBtn = this.$el.querySelector("#payment-pay-btn > span")
-        if (upgradeAcceptBtn) upgradeAcceptBtn.classList.add("upgrade-accept-btn")
-        const upgradeCancelBtn = this.$el.querySelector("#payment-close-btn > span")
-        if (upgradeCancelBtn) upgradeCancelBtn.classList.add("upgrade-cancel-btn")
+        const upgradeAcceptBtn = this.$el.querySelector('#payment-pay-btn > span')
+        if (upgradeAcceptBtn) upgradeAcceptBtn.classList.add('upgrade-accept-btn')
+        const upgradeCancelBtn = this.$el.querySelector('#payment-close-btn > span')
+        if (upgradeCancelBtn) upgradeCancelBtn.classList.add('upgrade-cancel-btn')
       })
     }
   }

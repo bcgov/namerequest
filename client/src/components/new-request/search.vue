@@ -272,9 +272,11 @@ export default class NewSearch extends Vue {
 
   private mounted () {
     this.$nextTick(() => {
-      // add classname to button text (for more detail in Sentry breadcrumbs)
-      const searchNameBtn = this.$el.querySelector("#search-name-btn > span")
-      if (searchNameBtn) searchNameBtn.classList.add("search-name-btn")
+      if (this.$el?.querySelector) {
+        // add classname to button text (for more detail in Sentry breadcrumbs)
+        const searchNameBtn = this.$el.querySelector('#search-name-btn > span')
+        if (searchNameBtn) searchNameBtn.classList.add('search-name-btn')
+      }
     })
   }
 

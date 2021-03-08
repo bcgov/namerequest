@@ -237,7 +237,7 @@ export default class ApplicantInfo3 extends NameRequestMixin {
   ]
   corpNumRules = [
     v => !!v || 'Required field',
-    v => !!this.getCorpNum(v) || 'Cannot validate number.  Please try again'
+    v => !!this.getCorpNum(v) || 'Cannot validate number. Please try again.'
   ]
   emailRules = [
     (v: string) => !!v || 'Required field',
@@ -326,7 +326,7 @@ export default class ApplicantInfo3 extends NameRequestMixin {
       return
     }
     if (num.length < 4) {
-      this.corpNumError = 'Too short.  Please confirm number.'
+      this.corpNumError = 'Too short. Please confirm number.'
       return
     }
     this.loading = true
@@ -337,7 +337,7 @@ export default class ApplicantInfo3 extends NameRequestMixin {
       this.corpNumDirty = false
       return true
     } catch (error) {
-      this.corpNumError = 'Error validating number. Please try again'
+      this.corpNumError = 'Error validating number. Please try again.'
       this.loading = false
       this.corpNumDirty = false
       return false
@@ -366,10 +366,10 @@ export default class ApplicantInfo3 extends NameRequestMixin {
     if (val && this.$el?.querySelector) {
       this.$nextTick(() => {
         // add classname to button text (for more detail in Sentry breadcrumbs)
-        const clientReviewBackBtn = this.$el.querySelector("#submit-back-btn > span")
-        if (clientReviewBackBtn) clientReviewBackBtn.classList.add("client-review-back-btn")
-        const clientReviewConfirmBtn = this.$el.querySelector("#submit-continue-btn > span")
-        if (clientReviewConfirmBtn) clientReviewConfirmBtn.classList.add("client-review-confirm-btn")
+        const clientReviewBackBtn = this.$el.querySelector('#submit-back-btn > span')
+        if (clientReviewBackBtn) clientReviewBackBtn.classList.add('client-review-back-btn')
+        const clientReviewConfirmBtn = this.$el.querySelector('#submit-continue-btn > span')
+        if (clientReviewConfirmBtn) clientReviewConfirmBtn.classList.add('client-review-confirm-btn')
       })
     }
   }
