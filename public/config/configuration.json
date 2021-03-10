@@ -16,6 +16,9 @@
     "QUICK_SEARCH_PUBLIC_ID": "",
     "QUICK_SEARCH_PUBLIC_SECRET": "",
     "HOTJAR_ID": "2284327",
-    "ENTITY_SELECTOR_URL": "https://entity-selection-dev.pathfinder.gov.bc.ca/"
+    "ENTITY_SELECTOR_URL": "https://entity-selection-dev.pathfinder.gov.bc.ca/",
+    "WEBCHAT_URL": "",
+    "WEBCHAT_ID": "",
+    "WEBCHAT_STATUS_URL": ""
   }
 ]
