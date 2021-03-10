@@ -64,7 +64,7 @@ export default class ChatPopup extends Vue {
       .get(window['webChatStatusUrl'])
       .then(response => (this.chatStatus = response.data.status))
       .catch(error => {
-        console.log(error)
+        console.error('failed to get webchat status, error =', error) // eslint-disable-line no-console
         this.chatError = true
       })
   }
