@@ -45,6 +45,9 @@ export async function getConfig (): Promise<EnvConfigI> {
   const sentryDsn: string = response.data[0]['SENTRY_DSN'];
   (<any>window).sentryDsn = sentryDsn
 
+  const hotjarId: string = response.data[0]['HOTJAR_ID'];
+  (<any>window).hotjarId = hotjarId
+
   const ldClientId: string = response.data[0]['LD_CLIENT_ID'];
   (<any>window).ldClientId = ldClientId
 
