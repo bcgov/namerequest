@@ -8,6 +8,7 @@ declare const window: any
  * Uses "business-edit" project (per LD client id in config).
  */
 const defaultFlagSet: LDFlagSet = {
+  'chat-popup-enabled': false, // by default, don't show webchat
   'disable-analysis': true, // by default, analysis is disabled
   'hardcoded_regular_wait_time': 0, // by default, use actual wait time
   'hardcoded_priority_wait_time': 0, // by default, use actual wait time

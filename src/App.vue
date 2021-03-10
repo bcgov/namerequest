@@ -8,7 +8,7 @@
         @close="showAuthModal = false"
       />
 
-      <ChatPopup />
+      <ChatPopup v-if="getFeatureFlag('chat-popup-enabled')" />
 
       <!-- Loading spinner -->
       <v-fade-transition>
@@ -112,6 +112,8 @@ import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
   }
 })
 export default class App extends Vue {
+  readonly getFeatureFlag = getFeatureFlag
+
   private showSpinner = false
 
   get nameRequestUrl (): string {

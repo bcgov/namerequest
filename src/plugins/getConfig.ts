@@ -45,6 +45,9 @@ export async function getConfig (): Promise<EnvConfigI> {
   const sentryDsn: string = response.data[0]['SENTRY_DSN'];
   (<any>window).sentryDsn = sentryDsn
 
+  const hotjarId: string = response.data[0]['HOTJAR_ID'];
+  (<any>window).hotjarId = hotjarId
+
   const ldClientId: string = response.data[0]['LD_CLIENT_ID'];
   (<any>window).ldClientId = ldClientId
 
@@ -56,6 +59,15 @@ export async function getConfig (): Promise<EnvConfigI> {
 
   const quickSearchPublicSecret: string = response.data[0]['QUICK_SEARCH_PUBLIC_SECRET'];
   (<any>window).quickSearchPublicSecret = quickSearchPublicSecret
+
+  const webChatUrl: string = response.data[0]['WEBCHAT_URL'];
+  (<any>window).webChatUrl = webChatUrl
+
+  const webChatId: string = response.data[0]['WEBCHAT_ID'];
+  (<any>window).webChatId = webChatId
+
+  const webChatStatusUrl: string = response.data[0]['WEBCHAT_STATUS_URL'];
+  (<any>window).webChatStatusUrl = webChatStatusUrl
 
   const entitySelectorUrl = response.data[0]['ENTITY_SELECTOR_URL']
   entitySelectorUrl && sessionStorage.setItem('ENTITY_SELECTOR_URL', entitySelectorUrl)

@@ -15,6 +15,10 @@
     "AUTH_TOKEN_URL": "https://dev.oidc.gov.bc.ca/auth/realms/fcf0kpqr/protocol/openid-connect/token",
     "QUICK_SEARCH_PUBLIC_ID": "",
     "QUICK_SEARCH_PUBLIC_SECRET": "",
-    "ENTITY_SELECTOR_URL": "https://entity-selection-dev.pathfinder.gov.bc.ca/"
+    "HOTJAR_ID": "2284327",
+    "ENTITY_SELECTOR_URL": "https://entity-selection-dev.pathfinder.gov.bc.ca/",
+    "WEBCHAT_URL": "",
+    "WEBCHAT_ID": "",
+    "WEBCHAT_STATUS_URL": ""
   }
 ]
