@@ -20,7 +20,7 @@
             <ApplicantInfo1 />
           </v-tab-item>
           <v-tab-item>
-            <ApplicantInfo2 v-if="actingOnOwnBehalf" />
+            <ApplicantInfo2 v-if="getActingOnOwnBehalf" />
             <ApplicantInfo3 v-else />
           </v-tab-item>
         </v-tabs-items>
@@ -31,13 +31,16 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import NewReqModule from '@/store/new-request-module'
+import { Action, Getter } from 'vuex-class'
+
 import MainContainer from '@/components/new-request/main-container.vue'
 import EntityCannotBeAutoAnalyzed from '@/components/new-request/submit-request/entity-cannot-be-auto-analyzed.vue'
 import NamesCapture from '@/components/common/names-capture.vue'
 import ApplicantInfo1 from '@/components/common/applicant-info-1.vue'
 import ApplicantInfo2 from '@/components/common/applicant-info-2.vue'
 import ApplicantInfo3 from '@/components/common/applicant-info-3.vue'
+
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 /**
  * This is the component container for editing an existing NR.
@@ -53,13 +56,17 @@ import ApplicantInfo3 from '@/components/common/applicant-info-3.vue'
   }
 })
 export default class ExistingRequestEdit extends Vue {
-  private get actingOnOwnBehalf (): boolean {
-    return NewReqModule.actingOnOwnBehalf
-  }
+  // Global Getters
+  @Getter getActingOnOwnBehalf!: boolean
+  @Getter getEditMode!: boolean
+  @Getter getSubmissionTabNumber!: number
+
+  // Global Action
+  @Action setSubmissionTabNumber!: ActionBindingIF
 
   private get editModeHeader (): string {
     // safety check
-    if (!NewReqModule.editMode) return ''
+    if (!this.getEditMode) return ''
 
     if (this.submissionTabNumber === 1) {
       return 'Request Type'
@@ -69,11 +76,11 @@ export default class ExistingRequestEdit extends Vue {
   }
 
   private get submissionTabNumber (): number {
-    return NewReqModule.submissionTabNumber
+    return this.getSubmissionTabNumber
   }
 
   private set submissionTabNumber (value: number) {
-    NewReqModule.mutateSubmissionTabNumber(value)
+    this.setSubmissionTabNumber(value)
   }
 }
 </script>

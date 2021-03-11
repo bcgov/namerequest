@@ -1,4 +1,13 @@
-import { ConversionTypesI, LocationT, StateIF, StatsI } from '@/interfaces'
+import {
+  AnalysisJSONI,
+  ConversionTypesI, DraftReqI, IssueI,
+  LocationT,
+  NameChoicesIF, RequestActionsI, RequestNameI, RequestOrConsentIF,
+  StateIF,
+  StatsI,
+  SubmissionTypeT
+} from '@/interfaces'
+import { NrState } from '@/enums'
 import {
   ApplicantI, EntityI, ExistingRequestSearchI, NameRequestI, RequestActionMappingI, SelectOptionsI
 } from '@/interfaces/models'
@@ -7,10 +16,10 @@ import {
 } from '@/store/list-data/request-action-mapping'
 
 // List Data
+import designations from '@/store/list-data/designations'
 import { ConversionTypes, EntityTypesBCData, EntityTypesXPROData, Locations, RequestActions } from './list-data'
 import { $mrasJurisdictions } from '@/store/list-data/canada-jurisdictions'
-
-// TODO: Apply StateIF to state types after store transition
+import { NameRequestMixin } from '@/mixins'
 
 /** Returns the name. */
 export const getName = (state: StateIF): string => {
@@ -32,9 +41,21 @@ export const getNr = (state: StateIF): Partial<NameRequestI> => {
   return state.stateModel.newRequestModel.nr
 }
 
+export const getNrNames = (state: StateIF): any => {
+  return state.stateModel.newRequestModel.nr.names
+}
+
+export const getNrData = (state: StateIF): any => {
+  return state.stateModel.newRequestModel.nrData
+}
+
 /** Returns the nr id. */
 export const getNrId = (state: StateIF): string => {
   return state.stateModel.newRequestModel.nr.id
+}
+
+export const getNrNum = (state: StateIF): string => {
+  return state.stateModel.newRequestModel.nr.nrNum
 }
 
 /** Returns the nr state. */
@@ -125,9 +146,83 @@ export const getHasNoCorpNum = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.noCorpNum
 }
 
+export const getCorpNum = (state: StateIF): string => {
+  return state.stateModel.newRequestModel.corpNum
+}
+
 /** Return english name flag. */
 export const getNameIsEnglish = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.nameIsEnglish
+}
+
+export const getExtendedRequestType = (state: StateIF): SelectOptionsI => {
+  return state.stateModel.newRequestModel.extendedRequestType
+}
+
+export const getRequestTypeOptions = (state: StateIF): RequestActionsI[] => {
+  let option = RequestActions.find(type => type.value === 'NEW')
+  option.rank = 1
+  let options = [option]
+  let n = 2
+  if (getExtendedRequestType(state)) {
+    getExtendedRequestType(state).rank = 2
+    options.push(getExtendedRequestType(state))
+    n = 3
+  }
+  let { requestTypeCd } = getNr(state)
+  if (getEditMode(state) && ['AS', 'AL', 'XASO', 'XCASO', 'UA'].includes(requestTypeCd)) {
+    options.push({ text: 'Assume an', value: 'ASSUMED', rank: n })
+    n++
+  }
+  options.push({ text: 'View All Request Actions', value: 'INFO', rank: n })
+
+  return options.sort((a, b) => {
+    if (a.rank < b.rank) {
+      return -1
+    }
+    if (a.rank > b.rank) {
+      return 1
+    }
+    return 0
+  })
+}
+
+export const getNameChoices = (state: StateIF): NameChoicesIF => {
+  return state.stateModel.newRequestModel.nameChoices
+
+  // TODO: Good Grief, do we need this?
+  // /** Test
+  //  {
+  //     name1: 'ACME Construction',
+  //     name2: 'ACME Home Construction',
+  //     name3: 'ACME Commercial Construction',
+  //     designation1: 'Ltd.',
+  //     designation2: 'Ltd.',
+  //     designation3: 'Ltd.'
+  //  }
+  //  */
+  // const parseNameChoices = (nameChoices: NameChoicesIF) => {
+  //   return Object.keys(nameChoices)
+  //     .reduce((names, key, idx) => {
+  //       // Key will be either 'name' or 'designation'
+  //       const nameIdx = key.match(/[\d]+$/)[0]
+  //       const typeKey = key.substring(0, key.lastIndexOf(nameIdx))
+  //       names[nameIdx] = names[nameIdx] || { name: undefined, designation: undefined }
+  //       names[nameIdx][typeKey] = nameChoices[key]
+  //       return names
+  //     }, [])
+  //     .map((choice) => {
+  //       // Make sure to replace designation if it's part of the name
+  //       return (choice.name && choice.designation)
+  //         ? `${choice.name.replace(choice.designation, '')} ${choice.designation}`
+  //         : (choice.name && !choice.designation)
+  //           ? `${choice.name}`
+  //           : undefined
+  //     })
+  //     .filter((name) => !!name)
+  // }
+  // console.log(parseNameChoices(nameRequestChoices))
+  // return parseNameChoices(nameRequestChoices)
 }
 
 /** Return persons name flag. */
@@ -177,12 +272,56 @@ export const getEditMode = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.editMode
 }
 
+export const getActingOnOwnBehalf = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.actingOnOwnBehalf
+}
+
 export const getShowNoCorpDesignation = (state: StateIF): boolean => {
   return ['DBA', 'FR', 'GP'].includes(getEntityTypeCd(state))
 }
 
 export const getSubmissionTabNumber = (state: StateIF): number => {
   return state.stateModel.newRequestModel.submissionTabNumber
+}
+
+export const getSubmissionType = (state: StateIF): SubmissionTypeT => {
+  return state.stateModel.newRequestModel.submissionType
+}
+
+export const getIsLoadingSubmission = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.isLoadingSubmission
+}
+
+export const getAddressSuggestions = (state: StateIF): object | null => {
+  return state.stateModel.newRequestModel.addressSuggestions
+}
+
+export const getIsAssumedName = (state: StateIF): boolean => {
+  return !!state.stateModel.newRequestModel.assumedNameOriginal
+}
+
+export const getShowActualInput = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.showActualInput
+}
+
+export const getAnalysisJSON = (state: StateIF): AnalysisJSONI => {
+  return state.stateModel.newRequestModel.analysisJSON
+}
+
+export const getIsPriorityRequest = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.priorityRequest
+}
+
+export const getCurrentIssue = (state: StateIF): IssueI => {
+  if (!getAnalysisJSON(state)) return
+
+  if (getAnalysisJSON(state) && getAnalysisJSON(state).issues && Array.isArray(getAnalysisJSON(state).issues)) {
+    return getAnalysisJSON(state).issues[this.issueIndex]
+  }
+}
+
+export const getRequestExaminationOrProvideConsent = (state: StateIF): RequestOrConsentIF => {
+  return state.stateModel.newRequestModel.requestExaminationOrProvideConsent
 }
 
 export const getEntityTextFromValue = (state: StateIF): string => {
@@ -379,6 +518,30 @@ export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
   }
 }
 
+export const getShowXproJurisdiction = (state: StateIF): boolean => {
+  if (getLocation(state) !== 'BC') {
+    return true
+  }
+  if (getRequestActionCd(state) === 'MVE') {
+    return true
+  }
+  return false
+}
+
+export const getXproRequestTypeCd = (state: StateIF): string => {
+  if (getIsAssumedName(state)) {
+    switch (getEntityTypeCd(state)) {
+      case 'RLC':
+        return 'AL'
+      case 'XCR':
+        return 'AS'
+      default:
+        return ''
+    }
+  }
+  return ''
+}
+
 /** Get entity type options. */
 export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
   let bcOptions: SelectOptionsI[] = getEntityTypesBC(state)?.filter(x => {
@@ -505,16 +668,16 @@ export const getNameIsSlashed = (state: StateIF) => {
 }
 
 export const getShowCorpNum = (state: StateIF): 'colin' | 'mras' | false => {
-  if (($colinRequestActions.includes(this.request_action_cd) && $colinRequestTypes.includes(getEntityTypeCd(state))) ||
-    this.entity_type_cd === 'DBA') {
+  if (($colinRequestActions.includes(getRequestActionCd(state)) &&
+    $colinRequestTypes.includes(getEntityTypeCd(state))) || getEntityTypeCd(state) === 'DBA') {
     return 'colin'
   }
-  if ($colinRequestActions.includes(this.request_action_cd) &&
+  if ($colinRequestActions.includes(getRequestActionCd(state)) &&
     $xproColinRequestTypes.includes(getEntityTypeCd(state))) {
     return 'colin'
   }
   let mrasEntities = ['XCR', 'XLP', 'UL', 'CR', 'CP', 'BC', 'CC']
-  let { xproJurisdiction } = this.nrData
+  let { xproJurisdiction } = getNrData(state)
 
   if ($mrasJurisdictions.includes(xproJurisdiction?.toLowerCase()) && mrasEntities.includes(getEntityTypeCd(state))) {
     if (getLocation(state) === 'CA' && ['NEW', 'ASSUMED'].includes(getRequestActionCd(state))) {
@@ -525,6 +688,33 @@ export const getShowCorpNum = (state: StateIF): 'colin' | 'mras' | false => {
     }
   }
   return false
+}
+
+export const getCorpNumForReservation = (state: StateIF): any => {
+  // this differs from getCorpNumForEdit by not supplying the empty keys for corpNum and homeJurisNum
+  // which are necessary to denote deletion during the PATCH operation that is for editing but which
+  // are not supported in the POST/PUT operation
+  if (!getShowCorpNum(state)) {
+    return {
+      corpNum: '',
+      homeJurisNum: getNrData(state).homeJurisNum
+    }
+  }
+  if (getShowCorpNum(state) === 'colin') {
+    return {
+      corpNum: getCorpNum(state),
+      homeJurisNum: ''
+    }
+  }
+  return {
+    corpNum: getCorpNum(state),
+    homeJurisNum: getNrData(state).homeJurisNum
+  }
+}
+
+export const getShowPriorityRequest = (state: StateIF): boolean => {
+  return (!getEditMode(state) && getNrState(state) === 'DRAFT') ||
+    (!getEditMode(state) && getSubmissionType(state) === 'examination')
 }
 
 // MODAL GETTERS
@@ -538,4 +728,163 @@ export const getPickEntityModalVisible = (state: StateIF): boolean => {
 
 export const getPickRequestTypeModalVisible = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.pickRequestTypeModalVisible
+}
+
+export const getExitModalVisible = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.exitModalVisible
+}
+
+// JSON Request constructors
+export const getNrRequestNames = (state: StateIF): RequestNameI[] => {
+  const nameChoices = getNameChoices(state)
+  const nrNames = getNrNames(state)
+
+  const defaultValues = {
+    name_type_cd: getAssumedName(state) ? 'AS' : 'CO',
+    consent_words: '',
+    conflict1: '',
+    conflict1_num: ''
+  }
+
+  // Check to make sure there are nameChoices that have been set
+  // const nameChoicesAreSet = (parseNameChoices(nameChoices).length > 0)
+
+  let requestNames = []
+  if (nameChoices) {
+    // We only allow three choices
+    let choiceIdx = 1
+    while (choiceIdx <= 3) {
+      if (nameChoices[`name${choiceIdx}`] as boolean) {
+        let combinedName = nameChoices[`name${choiceIdx}`]
+        if (getEntityTypeCd(state) && designations[getEntityTypeCd(state)]?.end) {
+          let des = nameChoices[`designation${choiceIdx}`]
+          if (des && !combinedName.endsWith(des)) {
+            combinedName = combinedName + ' ' + des
+          }
+          requestNames.push({
+            name: combinedName,
+            designation: nameChoices[`designation${choiceIdx}`],
+            choice: choiceIdx,
+            ...defaultValues
+          })
+        } else {
+          requestNames.push({
+            name: combinedName,
+            designation: '',
+            choice: choiceIdx,
+            ...defaultValues
+          })
+        }
+      }
+      choiceIdx++
+    }
+  } else {
+    // Just use the 'name' property to fill in the requestName
+    if (getEntityTypeCd(state) && getLocation(state) === 'BC' && designations[getEntityTypeCd(state)]?.end) {
+      requestNames.push({
+        name: getName(state),
+        designation: this.splitNameDesignation.designation,
+        choice: 1,
+        ...defaultValues
+      })
+    } else {
+      requestNames.push({
+        name: getName(state),
+        designation: '',
+        choice: 1,
+        ...defaultValues
+      })
+    }
+  }
+  requestNames = requestNames.map((requestName, idx) => {
+    if (nrNames) {
+      const existingName = nrNames.find(nrName => nrName.choice === requestName.choice)
+      if (existingName) {
+        return {
+          ...existingName,
+          // Merge in requestName form values
+          ...requestName,
+          // Merge conflicts and consent words
+          consent_words: !existingName.consent_words
+            ? this.consentWords.length > 0 ? this.consentWords : ''
+            : existingName.consent_words,
+          conflict1: !existingName.conflict1
+            ? this.consentConflicts.name
+            : existingName.conflict1,
+          conflict1_num: existingName.conflict1_num ? existingName.conflict1_num : ''
+        } as RequestNameI
+      }
+    }
+
+    return { ...requestName } as RequestNameI
+  })
+
+  return requestNames
+}
+
+export const getDraftNameReservation = (state: StateIF): DraftReqI => {
+  const nrRequestNames = getNrRequestNames(state)
+  const applicant = getApplicant(state)
+
+  let nrData = {}
+  for (let key in getNrData(state)) {
+    if (getNrData(state)[key]) {
+      nrData[key] = getNrData(state)[key]
+    }
+  }
+
+  const data: DraftReqI = {
+    applicants: [applicant],
+    names: nrRequestNames,
+    ...nrData,
+    priorityCd: getIsPriorityRequest(state) ? 'Y' : 'N',
+    entity_type_cd: getEntityTypeCd(state),
+    request_action_cd: getRequestActionCd(state),
+    stateCd: NrState.DRAFT,
+    english: getNameIsEnglish(state),
+    nameFlag: getIsPersonsName(state),
+    submit_count: 0,
+    ...getCorpNumForReservation(state)
+  }
+  if (getXproRequestTypeCd(state)) {
+    data['request_type_cd'] = getXproRequestTypeCd(state)
+  }
+  if (getIsAssumedName(state)) {
+    if (!data['additionalInfo']) {
+      data['additionalInfo'] = ''
+    } else {
+      data['additionalInfo'] += '\n\n'
+    }
+    if (!data['additionalInfo'].includes('*** Registered Name:')) {
+      let notice = `*** Registered Name: ${getAssumedName(state)} ***`
+      data['additionalInfo'] += ' ' + notice
+    }
+  }
+  for (let step in getRequestExaminationOrProvideConsent(state)) {
+    if (getRequestExaminationOrProvideConsent(state)[step].obtain_consent ||
+      getRequestExaminationOrProvideConsent(state)[step].conflict_self_consent) {
+      if (!data['additionalInfo']) {
+        data['additionalInfo'] = ''
+      }
+      if (!data['additionalInfo'].includes('*** Consent will be supplied')) {
+        data['additionalInfo'] += '\n\n'
+        let notice = `*** Consent will be supplied ***`
+        data['additionalInfo'] += ' ' + notice
+      }
+    }
+    if (getLocation(state) !== 'BC') {
+      if (getRequestExaminationOrProvideConsent(state)[step].obtain_consent ||
+        getRequestExaminationOrProvideConsent(state)[step].send_to_examiner) {
+        if (!data['additionalInfo']) {
+          data['additionalInfo'] = ''
+        }
+        if (!data['additionalInfo'].includes('*** Legal Name:')) {
+          data['additionalInfo'] += '\n\n'
+          let notice = `*** Legal Name: ${this.nameChoices.name1} ***`
+          data['additionalInfo'] += ' ' + notice
+        }
+      }
+    }
+  }
+  return data
 }

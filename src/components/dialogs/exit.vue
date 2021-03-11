@@ -22,18 +22,22 @@
 
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
 import { DisplayedComponentMixin } from '@/mixins'
-import newReqModule from '@/store/new-request-module'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class ExitDialog extends DisplayedComponentMixin {
+  @Getter getExitModalVisible!: boolean
+  @Action setExitModalVisible!: ActionBindingIF
+
   get showModal () {
-    return newReqModule.exitModalVisible
+    return this.getExitModalVisible
   }
   set showModal (value: boolean) {
   }
   hideModal () {
-    newReqModule.mutateExitModalVisible(false)
+    this.setExitModalVisible(false)
   }
 
   exit () {

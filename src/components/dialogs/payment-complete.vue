@@ -10,10 +10,10 @@
 
       <v-card-text class="copy-normal pt-4">
         <payment-confirm
-          :nrNum="nrNum"
-          :applicant="applicant"
-          :nameChoices="nameChoices"
-          :name="name"
+          :nrNum="getNrNum"
+          :applicant="getApplicant"
+          :nameChoices="getNameChoices"
+          :name="getName"
           :summary="summary"
           :receipt="paymentReceipt"
         />
@@ -33,15 +33,17 @@
 
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
 import PaymentConfirm from '@/components/payment/payment-confirm.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 import paymentModule from '@/modules/payment'
 import { NameRequestPayment } from '@/modules/payment/models'
-import newRequestModule from '@/store/new-request-module'
 import errorModule from '@/modules/error'
 import * as paymentTypes from '@/modules/payment/store/types'
 import { PaymentStatus, SbcPaymentStatus } from '@/enums'
-import { CommonMixin, NameRequestMixin, PaymentMixin, PaymentSessionMixin } from '@/mixins'
+import { CommonMixin, PaymentMixin, PaymentSessionMixin } from '@/mixins'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { ApplicantI, NameChoicesIF } from '@/interfaces'
 
 /**
  * Makes debugging the receipt easier.
@@ -66,10 +68,21 @@ const DEBUG_RECEIPT = false
 })
 export default class PaymentCompleteDialog extends Mixins(
   CommonMixin,
-  NameRequestMixin,
   PaymentMixin,
   PaymentSessionMixin
 ) {
+  // Global Getters
+  @Getter getName!: string
+  @Getter getNrNum!: string
+  @Getter getApplicant!: ApplicantI
+  @Getter getNameChoices!: NameChoicesIF
+
+  // Global Actions
+  @Action setCompletePayment!: ActionBindingIF
+  @Action getNameRequest!: ActionBindingIF
+  @Action loadExistingNameRequest!: ActionBindingIF
+  @Action setEditMode!: ActionBindingIF
+
   /** Used to show loading state on button. */
   private loading = false
 
@@ -79,7 +92,7 @@ export default class PaymentCompleteDialog extends Mixins(
     // and need to rehydrate the application using the payment ID (for now, it could be some other token too)!
     if (sessionPaymentId && sessionPaymentAction) {
       // Make sure edit mode is disabled or it will screw up the back button
-      await newRequestModule.mutateEditMode(false)
+      await this.setEditMode(false)
       // Call fetchData to load the NR and the payment
       await this.fetchData()
     }
@@ -92,8 +105,8 @@ export default class PaymentCompleteDialog extends Mixins(
   }
 
   async fetchNr (nrId: number): Promise<void> {
-    const nrData = await newRequestModule.getNameRequest(nrId)
-    await newRequestModule.loadExistingNameRequest(nrData)
+    const nrData = await this.getNameRequest(nrId)
+    await this.loadExistingNameRequest(nrData)
   }
 
   /**
@@ -121,7 +134,7 @@ export default class PaymentCompleteDialog extends Mixins(
   }
 
   async completePayment (nrId: number, paymentId: number, action: string) {
-    const result: NameRequestPayment = await newRequestModule.completePayment({ nrId, paymentId, action })
+    const result: NameRequestPayment = await this.setCompletePayment({ nrId, paymentId, action })
     const paymentSuccess = result?.paymentSuccess
 
     if (paymentSuccess) {

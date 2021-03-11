@@ -15,11 +15,26 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { IssueI } from '@/interfaces'
 
 @Component({})
 export default class ReserveSubmitButton extends Vue {
+  // Global Getters
+  @Getter getCurrentIssue!: IssueI
+  @Getter getLocation!: string
+  @Getter getShowActualInput!: boolean
+
+  @Action cancelAnalyzeName!: ActionBindingIF
+  @Action userClickedStopAnalysis!: ActionBindingIF
+  @Action postNameRequests!: ActionBindingIF
+  @Action setAssumedNameOriginal!: ActionBindingIF
+  @Action setDisplayedComponent!: ActionBindingIF
+  @Action setSubmissionType!: ActionBindingIF
+  @Action setSubmissionTabComponent!: ActionBindingIF
+
   @Prop(String) setup: string
   private isContinue: boolean = true
 
@@ -33,24 +48,6 @@ export default class ReserveSubmitButton extends Vue {
     })
   }
 
-  get entity_type_cd () {
-    return newReqModule.entity_type_cd
-  }
-  get isAssumedName () {
-    return newReqModule.isAssumedName
-  }
-  get location () {
-    return newReqModule.location
-  }
-  get name () {
-    return newReqModule.name
-  }
-  get request_action_cd () {
-    return newReqModule.request_action_cd
-  }
-  get showActualInput () {
-    return newReqModule.showActualInput
-  }
   get text () {
     if (this.setup === 'cancel') {
       this.isContinue = false
@@ -60,32 +57,33 @@ export default class ReserveSubmitButton extends Vue {
     return 'Continue'
   }
   async sendToExamination () {
-    await newReqModule.userClickedStopAnalysis()
-    newReqModule.cancelAnalyzeName('NamesCapture')
+    await this.userClickedStopAnalysis(null)
+    this.cancelAnalyzeName('NamesCapture')
   }
 
   handleSubmit () {
-    let { setup, location, entity_type_cd, request_action_cd } = this
+    let { setup, getLocation } = this
 
     if (setup === 'cancel') {
       this.sendToExamination()
       return
     }
-    if (newReqModule.currentIssue?.issue_type) {
-      if (['add_descriptive', 'add_distinctive'].includes(newReqModule.currentIssue.issue_type)) {
-        if (!newReqModule.showActualInput) {
+
+    if (this.getCurrentIssue?.issue_type) {
+      if (['add_descriptive', 'add_distinctive'].includes(this.getCurrentIssue.issue_type)) {
+        if (!this.getShowActualInput) {
           this.$root.$emit('show-original-name')
         }
       }
     }
 
     let goToNames = () => {
-      newReqModule.mutateSubmissionType('examination')
-      newReqModule.mutateSubmissionTabComponent('NamesCapture')
+      this.setSubmissionType('examination')
+      this.setSubmissionTabComponent('NamesCapture')
     }
-    newReqModule.mutateDisplayedComponent('SubmissionTabs')
+    this.setDisplayedComponent('SubmissionTabs')
 
-    if (location !== 'BC' && setup !== 'assumed') {
+    if (getLocation !== 'BC' && setup !== 'assumed') {
       goToNames()
       return
     }
@@ -101,7 +99,7 @@ export default class ReserveSubmitButton extends Vue {
 
     switch (setup) {
       case 'assumed':
-        newReqModule.mutateAssumedNameOriginal()
+        this.setAssumedNameOriginal(null)
         goToNames()
         return
       // @ts-ignore - typescript knows setup can only === 'assumed' at this point and gives error
@@ -110,14 +108,14 @@ export default class ReserveSubmitButton extends Vue {
         return
       // @ts-ignore - typescript knows setup can only === 'assumed' at this point and gives error
       case 'consent':
-        newReqModule.postNameRequests('conditional')
-        newReqModule.mutateSubmissionType('consent')
-        newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
+        this.postNameRequests('conditional')
+        this.setSubmissionType('consent')
+        this.setSubmissionTabComponent('ApplicantInfo1')
         return
       default:
-        newReqModule.mutateSubmissionType('normal')
-        newReqModule.postNameRequests('reserved')
-        newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
+        this.setSubmissionType('normal')
+        this.postNameRequests('reserved')
+        this.setSubmissionTabComponent('ApplicantInfo1')
     }
   }
 }

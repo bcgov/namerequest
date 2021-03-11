@@ -1,3 +1,4 @@
+/* eslint-disable */
 // import axios, { AxiosError } from 'axios'
 // import querystring from 'qs'
 // import Vue from 'vue'

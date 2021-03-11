@@ -76,5 +76,6 @@ export interface NewRequestIF {
   submissionType: SubmissionTypeT | null,
   tabNumber: number,
   userCancelledAnalysis: boolean,
+  isLoadingSubmission: boolean
   waitingAddressSearch: WaitingAddressSearchI | null
 }

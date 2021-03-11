@@ -6,9 +6,9 @@
         <v-col cols="5" class="py-0">
           <v-text-field :messages="messages['email']"
                         :rules="emailRules"
-                        :value="applicant.emailAddress"
+                        :value="getApplicant.emailAddress"
                         @blur="messages = {}"
-                        @input="mutateApplicant('emailAddress', $event)"
+                        @input="setApplicant('emailAddress', $event)"
                         id="emailAddress"
                         filled
                         hide-details="auto"
@@ -23,11 +23,11 @@
         <v-col cols="2" />
         <v-col cols="5">
           <v-text-field :messages="messages['phone']"
-                        :value="applicant.phoneNumber"
+                        :value="getApplicant.phoneNumber"
                         type="tel"
                         :rules="phoneRules"
                         @blur="messages = {}"
-                        @input="mutateApplicant('phoneNumber', $event)"
+                        @input="setApplicant('phoneNumber', $event)"
                         id="phoneNumber"
                         :name="Math.random()"
                         autocomplete="chrome-off"
@@ -37,10 +37,10 @@
         </v-col>
         <v-col cols="5">
           <v-text-field :messages="messages['fax']"
-                        :value="applicant.faxNumber"
+                        :value="getApplicant.faxNumber"
                         :rules="faxRules"
                         @blur="messages = {}"
-                        @input="mutateApplicant('faxNumber', $event)"
+                        @input="setApplicant('faxNumber', $event)"
                         id="faxNumber"
                         :name="Math.random()"
                         autocomplete="chrome-off"
@@ -61,9 +61,9 @@
               <div v-on="on">
                 <v-textarea :messages="messages['nature']"
                             :rules="businessNatureRules"
-                            :value="nrData.natureBusinessInfo"
+                            :value="getNrData.natureBusinessInfo"
                             @blur="messages = {}"
-                            @input="mutateNRData('natureBusinessInfo', $event)"
+                            @input="setNRData('natureBusinessInfo', $event)"
                             id="natureBusinessInfo"
                             name="natureBusinessInfo"
                             filled
@@ -87,10 +87,10 @@
             <template v-slot:activator="{ on }">
               <div v-on="on">
                 <v-textarea :messages="messages['additional']"
-                            :value="nrData.additionalInfo"
+                            :value="getNrData.additionalInfo"
                             :rules="additionalInfoRules"
                             @blur="messages = {}"
-                            @input="mutateNRData('additionalInfo', $event)"
+                            @input="setNRData('additionalInfo', $event)"
                             id="additionalInfo"
                             name="additionalInfo"
                             filled
@@ -107,7 +107,7 @@
           </v-tooltip>
         </v-col>
         <v-col cols="2" />
-        <v-col cols="5" v-if="showCorpNum === 'colin'">
+        <v-col cols="5" v-if="getShowCorpNum === 'colin'">
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
@@ -150,10 +150,10 @@
             <template v-slot:activator="{ on }">
               <div v-on="on">
                 <v-text-field :messages="messages['tradeMark']"
-                              :value="nrData.tradeMark"
+                              :value="getNrData.tradeMark"
                               :rules="trademarkRules"
                               @blur="messages = {}"
-                              @input="mutateNRData('tradeMark', $event)"
+                              @input="setNRData('tradeMark', $event)"
                               id="tradeMark"
                               :name="Math.random()"
                               autocomplete="chrome-off"
@@ -179,7 +179,7 @@
             <template v-slot:activator="{ on }">
               <div v-on="on">
                 <v-checkbox
-                  v-if="showPriorityRequest"
+                  v-if="getShowPriorityRequest"
                   hide-details
                   v-model="priorityRequest"
                   class="mt-0 pt-0"
@@ -203,17 +203,40 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import newReqModule, { NewRequestModule } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
-import { NameRequestMixin } from '@/mixins'
+import { Action, Getter } from 'vuex-class'
+import { ApplicantI, NameRequestI } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: {
     ApplicantInfoNav
   }
 })
-export default class ApplicantInfo2 extends NameRequestMixin {
+export default class ApplicantInfo2 extends Vue {
+  @Getter getCorpNum!: string // USED
+  @Getter getIsPersonsName!: boolean
+  @Getter getApplicant!: ApplicantI // USED
+  @Getter getIsPriorityRequest!: boolean
+  @Getter getEditMode!: boolean
+  // @Getter getLocation!: string
+  // @Getter getNr!: Partial<NameRequestI>
+  @Getter getNrData!: any
+  @Getter getNrState!: string
+  @Getter getShowPriorityRequest!: boolean
+  @Getter getShowCorpNum!: string
+
+  // Global Actions
+  @Action setCorpNum!: ActionBindingIF
+  @Action setPriorityRequest!: ActionBindingIF
+  @Action corpNumRequest!: ActionBindingIF
+  @Action setApplicant!: ActionBindingIF
+  @Action submit!: ActionBindingIF
+  // @Action setCorpNum!: ActionBindingIF
+  @Action setNRData!: ActionBindingIF
+  @Action setIsLoadingSubmission!: ActionBindingIF
+
   corpNumDirty: boolean = false
   corpNumError: string = ''
   additionalInfoRules = [
@@ -225,7 +248,7 @@ export default class ApplicantInfo2 extends NameRequestMixin {
   ]
   corpNumRules = [
     v => !!v || 'Required field',
-    v => !!this.getCorpNum(v) || 'Cannot validate number. Please try again'
+    v => !!this.validateCorpNum(v) || 'Cannot validate number. Please try again.'
   ]
   emailRules = [
     (v: string) => !!v || 'Required field',
@@ -261,39 +284,10 @@ export default class ApplicantInfo2 extends NameRequestMixin {
     }
   }
 
-  get applicant () {
-    return newReqModule.applicant
-  }
   get corpNum () {
-    return newReqModule.corpNum
+    return this.getCorpNum
   }
-  get isPersonsName () {
-    return newReqModule.isPersonsName
-  }
-  get location () {
-    return newReqModule.location
-  }
-  get priorityRequest () {
-    return newReqModule.priorityRequest
-  }
-  get request_action_cd () {
-    return newReqModule.request_action_cd
-  }
-  get showAllFields () {
-    return (!this.editMode || this.nrState === 'DRAFT')
-  }
-  get showCorpNum () {
-    return newReqModule.showCorpNum
-  }
-  get showPriorityRequest () {
-    return newReqModule.showPriorityRequest
-  }
-  get submissionType () {
-    return newReqModule.submissionType
-  }
-  get xproJurisdiction () {
-    return (newReqModule.nrData || {}).xproJurisdiction
-  }
+
   set corpNum (num) {
     if (!this.corpNumDirty) {
       this.corpNumDirty = true
@@ -304,13 +298,26 @@ export default class ApplicantInfo2 extends NameRequestMixin {
     if (this.hideCorpNum !== 'auto') {
       this.hideCorpNum = 'auto'
     }
-    newReqModule.mutateCorpNum(num)
-  }
-  set priorityRequest (value) {
-    newReqModule.mutatePriorityRequest(value)
+    this.setCorpNum(num)
   }
 
-  async getCorpNum (num) {
+  get priorityRequest () {
+    return this.getIsPriorityRequest
+  }
+
+  set priorityRequest (value) {
+    this.setPriorityRequest(value)
+  }
+
+  get showAllFields () {
+    return (!this.getEditMode || this.getNrState === 'DRAFT')
+  }
+
+  get xproJurisdiction () {
+    return (this.getNrData || {}).xproJurisdiction
+  }
+
+  async validateCorpNum (num) {
     this.isEditingCorpNum = false
     if (!num) {
       return
@@ -321,7 +328,7 @@ export default class ApplicantInfo2 extends NameRequestMixin {
     }
     this.loading = true
     try {
-      let resp = await newReqModule.getCorpNum(num)
+      let resp = await this.corpNumRequest(num)
       this.corpNumError = ''
       this.loading = false
       this.corpNumDirty = false
@@ -333,15 +340,11 @@ export default class ApplicantInfo2 extends NameRequestMixin {
       return false
     }
   }
-  mutateApplicant (key, value) {
-    newReqModule.mutateApplicant({ key, value })
-  }
-  mutateNRData (key, value) {
-    newReqModule.mutateNRData({ key, value })
-  }
+
   setError (error) {
     this.error = error
   }
+
   validate () {
     if (this.hideCorpNum !== 'auto') {
       this.hideCorpNum = 'auto'
@@ -367,14 +370,15 @@ export default class ApplicantInfo2 extends NameRequestMixin {
   }
 
   async nextAction () {
-    newReqModule.mutateIsLoadingSubmission(true)
+    this.setIsLoadingSubmission(true)
     this.validate()
     if (this.isValid) {
+      console.log('Inside valid Submit')
       await this.submit()
     }
     // hang on to the loading state for a bit
     // to prevent users clicking button again while next component displays
-    setTimeout(() => newReqModule.mutateIsLoadingSubmission(false), 1000)
+    setTimeout(() => this.setIsLoadingSubmission(false), 1000)
   }
 }
 </script>

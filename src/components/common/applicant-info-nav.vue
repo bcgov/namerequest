@@ -9,7 +9,7 @@
     </v-btn>
     <v-btn x-large
            @click="nextAction()"
-           :loading="loading"
+           :loading="getIsLoadingSubmission"
            id="submit-continue-btn">
       {{ nextText }}
     </v-btn>
@@ -17,50 +17,61 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit } from 'vue-property-decorator'
-import newRequestModule from '@/store/new-request-module'
-import { NameRequestMixin } from '@/mixins'
+import { Component, Emit, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+import { SubmissionTypeT } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
-export default class ApplicantInfoNav extends NameRequestMixin {
-  @Emit('nextAction')
-  private nextAction () : void {}
+export default class ApplicantInfoNav extends Vue {
+  // Global Getters
+  @Getter getEditMode!: boolean
+  @Getter getIsLoadingSubmission!: boolean
+  @Getter getNrState!: string
+  @Getter getSubmissionTabNumber!: number
+  @Getter getSubmissionType!: SubmissionTypeT
 
-  get loading (): boolean {
-    return newRequestModule.isLoadingSubmission
-  }
+  // Global Actions
+  @Action setSubmissionTabNumber!: ActionBindingIF
 
   get backText () {
-    if (this.editMode) {
+    if (this.getEditMode) {
       return 'Previous'
     }
     return 'Back'
   }
 
   get nextText () {
-    if (this.submissionTabNumber === 3) {
-      if (this.editMode) {
+    if (this.getSubmissionTabNumber === 3) {
+      if (this.getEditMode) {
         return 'Submit Changes'
       }
       return 'Review and Confirm'
     }
-    if (this.editMode) {
+    if (this.getEditMode) {
       return 'Next'
     }
     return 'Continue'
   }
 
   get showBack () {
-    if (this.submissionTabNumber < 2) {
+    if (this.getSubmissionTabNumber < 2) {
       return false
     }
-    if (this.submissionTabNumber === 2) {
-      return (this.type === 'examination' || this.nrState === 'DRAFT')
+    if (this.getSubmissionTabNumber === 2) {
+      return (this.getSubmissionType === 'examination' || this.getNrState === 'DRAFT')
     }
-    if (this.submissionTabNumber === 3) {
+    if (this.getSubmissionTabNumber === 3) {
       return true
     }
     return false
   }
+
+  back () {
+    this.setSubmissionTabNumber(this.getSubmissionTabNumber - 1)
+  }
+
+  @Emit('nextAction')
+  private nextAction () : void {}
 }
 </script>

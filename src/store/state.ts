@@ -135,7 +135,8 @@ export const stateModel: StateModelIF = {
     submissionType: null,
     tabNumber: 0,
     userCancelledAnalysis: false,
-    waitingAddressSearch: null
+    waitingAddressSearch: null,
+    isLoadingSubmission: false
   },
   errorModel: {},
   paymentModel: {}

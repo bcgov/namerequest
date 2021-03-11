@@ -11,26 +11,27 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/new-request-module'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
 import MainContainer from '@/components/new-request/main-container.vue'
 import { NrState } from '@/enums'
+import { NameRequestI } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: { MainContainer }
 })
 export default class InvalidActionMessage extends Vue {
-  /* mounted () {
-    setTimeout(() => {
-      newReqModule.mutateDisplayedComponent('ExistingRequestDisplay')
-    }, 10000)
-  } */
-  get nr () {
-    return newReqModule.nr
-  }
+  // Global Getter
+  @Getter getNr!: Partial<NameRequestI>
+
+  // Global Action
+  @Action setActiveComponent!: ActionBindingIF
+
   get stateCd (): string {
-    return (this.nr?.stateCd || '')
+    return (this.getNr?.stateCd || '')
   }
+
   get details () {
     switch (this.stateCd) {
       case NrState.APPROVED:
@@ -57,7 +58,7 @@ export default class InvalidActionMessage extends Vue {
   }
 
   async goBack () {
-    newReqModule.setActiveComponent('ExistingRequestDisplay')
+    this.setActiveComponent('ExistingRequestDisplay')
   }
 }
 </script>

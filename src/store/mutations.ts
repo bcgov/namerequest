@@ -194,6 +194,10 @@ export const mutateNameIsEnglish = (state: StateIF, nameIsEnglish: boolean) => {
   state.stateModel.newRequestModel.nameIsEnglish = nameIsEnglish
 }
 
+export const mutateIsLoadingSubmission = (state: StateIF, isLoadingSubmission: boolean) => {
+  state.stateModel.newRequestModel.isLoadingSubmission = isLoadingSubmission
+}
+
 export const mutateNameRequest = (state: StateIF, nr: NameRequestI) => {
   state.stateModel.newRequestModel.nr = nr
 }
@@ -359,7 +363,7 @@ export const setNrResponse = (state: StateIF, data: NameRequestI): boolean => {
     } else {
       // applicants is null/undefined
     }
-
+    console.log('Completed')
     return true
   } catch (err) {
     console.error('setNrResponse() =', err) // eslint-disable-line no-console

@@ -12,7 +12,7 @@
                             :rules="firstLastNameRules"
                             :value="applicant.firstName"
                             @blur="messages = {}"
-                            @input="mutateApplicant('firstName', $event)"
+                            @input="setApplicant('firstName', $event)"
                             dense
                             filled
                             height="50"
@@ -28,7 +28,7 @@
                             :value="applicant.middleName"
                             :rules="middleNameRules"
                             @blur="messages = {}"
-                            @input="mutateApplicant('middleName', $event)"
+                            @input="setApplicant('middleName', $event)"
                             dense
                             filled
                             height="50"
@@ -44,7 +44,7 @@
                             :rules="firstLastNameRules"
                             :value="applicant.lastName"
                             @blur="messages = {}"
-                            @input="mutateApplicant('lastName', $event)"
+                            @input="setApplicant('lastName', $event)"
                             dense
                             filled
                             height="50"
@@ -84,13 +84,13 @@
                                 ref="Line1" />
                 </template>
                 <v-list class="ma-0 pa-0" style="border-radius: 0">
-                  <v-list-item dense v-if="!addressSuggestions && applicant.addrLine1" class="pa-2">
+                  <v-list-item dense v-if="!getAddressSuggestions && applicant.addrLine1" class="pa-2">
                     <v-progress-circular color="orange" id="address-suggest-spinner" indeterminate size="25" />
                     <span class="pl-2">Searching...</span>
                   </v-list-item>
                   <v-list-item class="pa-2"
                                dense
-                               v-if="!addressSuggestions && !applicant.addrLine1">
+                               v-if="!getAddressSuggestions && !applicant.addrLine1">
                     Start typing an address to get suggestions
                   </v-list-item>
                   <v-list-item :class="getClass(address.Id)"
@@ -98,9 +98,9 @@
                                :key="address.Text + '-' + i"
                                dense
                                style="cursor: pointer"
-                               v-for="(address, i) of addressSuggestions">
+                               v-for="(address, i) of getAddressSuggestions">
                     <a :ref="address.Id"
-                       @click.prevent="queryAddress(address.Id)"
+                       @click.prevent="setAddressDetails(address.Id)"
                        @focus="highlightedSuggestion = address.Id"
                        class="link-sm-dk-text"
                        href="#">{{ address.Text + ', ' + address.Description }}</a>
@@ -288,7 +288,7 @@
             </v-col>
           </v-row>
 
-          <v-row class="mt-2" v-if="showXproJurisdiction && showAllFields && editMode">
+          <v-row class="mt-2" v-if="getShowXproJurisdiction && showAllFields && getEditMode">
             <v-col cols="6" class="py-0 my-0">
               <label for="xprojurisdiction" class="hidden">Business Jurisdiction</label>
               <v-select :messages="messages['xproJurisdiction']"
@@ -297,7 +297,7 @@
                         :value="nrData.xproJurisdiction"
                         @blur="messages = {}"
                         @focus="handleFocus('xproJurisdiction', 'Business xproJurisdiction')"
-                        @input="updateBusinessInfo('xproJurisdiction', $event)"
+                        @input="setNRData('xproJurisdiction', $event)"
                         dense
                         eager
                         filled
@@ -329,10 +329,15 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import newReqModule from '@/store/new-request-module'
+import { Action, Getter } from 'vuex-class'
+
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { Location } from '@/enums'
 import { NameRequestMixin } from '@/mixins'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { ApplicantI, NameRequestI, SubmissionTypeT } from '@/interfaces'
+import $canJurisdictions from '@/store/list-data/canada-jurisdictions'
+import $intJurisdictions from '@/store/list-data/intl-jurisdictions'
 
 const _debounce = require('lodash/debounce')
 
@@ -341,7 +346,30 @@ const _debounce = require('lodash/debounce')
     ApplicantInfoNav
   }
 })
-export default class ApplicantInfo1 extends NameRequestMixin {
+export default class ApplicantInfo1 extends Vue {
+  // Global Getters
+  @Getter getActingOnOwnBehalf!: boolean
+  @Getter getAddressSuggestions!: {} | null
+  @Getter getApplicant!: ApplicantI
+  @Getter getDisplayedComponent!: string
+  @Getter getEditMode!: boolean
+  @Getter getLocation!: string
+  @Getter getNr!: Partial<NameRequestI>
+  @Getter getNrData!: any
+  @Getter getNrState!: string
+  @Getter getSubmissionTabNumber!: number
+  @Getter getShowXproJurisdiction!: boolean
+
+  // Global Actions
+  @Action setAddressDetails!: ActionBindingIF
+  @Action setAddressSuggestions!: ActionBindingIF
+  @Action setActingOnOwnBehalf!: ActionBindingIF
+  @Action setApplicant!: ActionBindingIF
+  @Action setApplicantDetails!: ActionBindingIF
+  @Action setCorpNum!: ActionBindingIF
+  @Action setNRData!: ActionBindingIF
+  @Action setSubmissionTabNumber!: ActionBindingIF
+
   debouncedGetAddressSuggestions = _debounce(this.getAddressSuggestions, 400)
   highlightedSuggestion: string | null = null
   isValid: boolean = false
@@ -362,35 +390,6 @@ export default class ApplicantInfo1 extends NameRequestMixin {
   ]
   showAddressMenu: boolean = false
 
-  @Watch('countryTypeCd')
-  handleProvince (newVal, oldVal) {
-    if (newVal !== oldVal) {
-      newReqModule.updateApplicantDetails({ key: 'stateProvinceCd', value: '' })
-    }
-  }
-
-  @Watch('showAddressMenu')
-  supressMenu (newVal, oldVal) {
-    if (newVal) {
-      this.clearValidation()
-      return
-    }
-    this.highlightedSuggestion = null
-    let ref: any = this.$refs.Line1
-    ref.focus()
-  }
-
-  @Watch('xproJurisdiction')
-  watchXproJurisdiction (newVal, oldVal) {
-    if (newVal !== oldVal) {
-      if (this.editMode && newVal === this.nr.xproJurisdiction) {
-        newReqModule.mutateCorpNum(this.nr.corpNum)
-        return
-      }
-      newReqModule.mutateCorpNum('')
-    }
-  }
-
   mounted () {
     // add event listener when this component is mounted
     // eg, when user continues to send for review
@@ -405,89 +404,73 @@ export default class ApplicantInfo1 extends NameRequestMixin {
 
   get isVisible (): boolean {
     const myComponent = (
-      newReqModule.displayedComponent === 'SubmissionTabs' ||
-      newReqModule.displayedComponent === 'ExistingRequestEdit'
+      this.getDisplayedComponent === 'SubmissionTabs' ||
+      this.getDisplayedComponent === 'ExistingRequestEdit'
     )
-    const myTab = (newReqModule.submissionTabNumber === 2)
+    const myTab = (this.getSubmissionTabNumber === 2)
     return (myComponent && myTab)
   }
 
-  @Watch('isVisible')
-  private onVisibleChanged (val: boolean) {
-    if (val) {
-      // add event listener when this component is displayed
-      // eg, when user comes back from next tab
-      this.$el.addEventListener('keydown', this.handleKeydown)
-    } else {
-      // remove the event listener when this component is hidden
-      // eg, when user continues to next tab
-      this.$el.removeEventListener('keydown', this.handleKeydown)
-    }
+  get actingOnOwnBehalf () {
+    return this.getActingOnOwnBehalf
   }
 
-  get actingOnOwnBehalf () {
-    return newReqModule.actingOnOwnBehalf
+  set actingOnOwnBehalf (value) {
+    this.setActingOnOwnBehalf(value)
   }
-  get addressSuggestions () {
-    return newReqModule.addressSuggestions
+
+  getAddressSuggestions (key, value) {
+    this.setAddressSuggestions({ key, value })
   }
+
   get applicant () {
     // if applicant is null/undefined then return an object
     // to prevent dereference errors (ie, cannot read property X of undefined)
-    return newReqModule.applicant || {}
+    return this.getApplicant || {}
   }
   get countryOptions () {
-    return this.$intJurisdictions
+    return $intJurisdictions
   }
   get countryTypeCd () {
-    return newReqModule.applicant?.countryTypeCd || ''
+    return this.getApplicant?.countryTypeCd || ''
   }
   get jurisdictionOptions () {
-    return this.location === Location.Canadian
+    return this.getLocation === Location.Canadian
       ? this.$canJurisdictions.filter(jur => jur.value !== Location.BC)
         .map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
       : this.$intJurisdictions.filter(jur => jur.value !== Location.Canadian)
         .map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
   }
-  get location () {
-    return newReqModule.location
-  }
+
   get provinceOptions () {
-    return this.$canJurisdictions.map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
+    return $canJurisdictions.map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
   }
+
   get showAllFields () {
-    return (!this.editMode || this.nrState === 'DRAFT')
+    return (!this.getEditMode || this.getNrState === 'DRAFT')
   }
-  get showXproJurisdiction () {
-    return newReqModule.showXproJurisdiction
-  }
+
   get state () {
-    if (newReqModule.nr && newReqModule.nr.state) {
-      return newReqModule.nr.state
+    if (this.getNr && this.getNrState) {
+      return this.getNrState
     }
     return null
   }
-  get submissionType () {
-    return newReqModule.submissionType
-  }
+
   get xproJurisdiction () {
-    return newReqModule.nrData.xproJurisdiction
-  }
-  set actingOnOwnBehalf (value) {
-    newReqModule.mutateActingOnOwnBehalf(value)
+    return this.getNrData?.xproJurisdiction
   }
 
   blurAddress1 () {
     this.messages = {}
   }
+
   clearValidation () {
     if (this.$refs.step1 as any) {
       (this.$refs.step1 as any).resetValidation()
     }
   }
-  getAddressSuggestions (key, value) {
-    newReqModule.getAddressSuggestions({ key, value })
-  }
+
   getClass (Id) {
     if (this.highlightedSuggestion) {
       if (Id === this.highlightedSuggestion) {
@@ -496,15 +479,14 @@ export default class ApplicantInfo1 extends NameRequestMixin {
     }
     return ''
   }
-  getCorpNum (num) {
-    newReqModule.getCorpNum(num)
-  }
+
   handleFocus (id, message) {
     this.messages[id] = message
     if (id !== 'addrLine1') {
       this.showAddressMenu = false
     }
   }
+
   handleKeydown (event) {
     if (!this.showAddressMenu) {
       return event
@@ -512,54 +494,46 @@ export default class ApplicantInfo1 extends NameRequestMixin {
     if (this.showAddressMenu && event.key === 'Escape') {
       this.showAddressMenu = false
     }
-    if (this.addressSuggestions?.[0] && this.showAddressMenu) {
+    if (this.getAddressSuggestions?.[0] && this.showAddressMenu) {
       if (event.key === 'Tab') {
         event.preventDefault()
         if (!this.highlightedSuggestion) {
-          let { Id } = this.addressSuggestions[0]
+          let { Id } = this.getAddressSuggestions[0]
           this.highlightedSuggestion = Id
           let ref: any = this.$refs[Id][0]
           ref.focus()
           return
         }
         if (this.highlightedSuggestion === 'Country2') {
-          let { Id } = this.addressSuggestions[0]
+          let { Id } = this.getAddressSuggestions[0]
           let ref: any = this.$refs[Id][0]
           ref.focus()
           return
         }
-        let index = this.addressSuggestions.findIndex(suggestion => suggestion.Id === this.highlightedSuggestion)
+        let index = this.getAddressSuggestions?.findIndex(suggestion => suggestion.Id === this.highlightedSuggestion)
         if (index === 2) {
           this.highlightedSuggestion = 'Country2'
           let ref: any = this.$refs.Country2
           ref.focus()
           return
         }
-        let { Id } = this.addressSuggestions[index + 1]
+        let { Id } = this.getAddressSuggestions[index + 1]
         let ref: any = this.$refs[Id][0]
         ref.focus()
         return
       }
       if (event.key === 'Enter' && this.highlightedSuggestion && this.highlightedSuggestion !== 'Country2') {
         event.preventDefault()
-        this.queryAddress(this.highlightedSuggestion)
+        this.setAddressDetails(this.highlightedSuggestion)
         this.showAddressMenu = false
       }
       return event
     }
   }
-  mutateApplicant (key, value) {
-    newReqModule.mutateApplicant({ key, value })
-  }
-  mutateCorpNum (num) {
-    newReqModule.mutateCorpNum(num)
-  }
-  queryAddress (id) {
-    newReqModule.getAddressDetails(id)
-  }
+
   updateApplicant (key, value) {
     this.clearValidation()
-    newReqModule.updateApplicantDetails({ key, value })
+    this.setApplicantDetails({ key, value })
     if (key === 'addrLine1') {
       this.showAddressMenu = true
       this.debouncedGetAddressSuggestions(key, value)
@@ -570,17 +544,15 @@ export default class ApplicantInfo1 extends NameRequestMixin {
         this.showAddressMenu = true
         let appKV = {
           key: 'addrLine1',
-          value: this.applicant.addrLine1
+          value: this.getApplicant?.addrLine1
         }
-        newReqModule.getAddressSuggestions(appKV)
+        this.setAddressSuggestions(appKV)
       })
       return
     }
     this.showAddressMenu = false
   }
-  updateBusinessInfo (key, value) {
-    newReqModule.mutateNRData({ key, value })
-  }
+
   validate () {
     if (this.$refs.step1 as Vue) {
       (this.$refs.step1 as any).validate()
@@ -605,7 +577,49 @@ export default class ApplicantInfo1 extends NameRequestMixin {
   nextAction () {
     this.validate()
     if (this.isValid) {
-      newReqModule.mutateSubmissionTabNumber(this.submissionTabNumber + 1)
+      this.setSubmissionTabNumber(this.getSubmissionTabNumber + 1)
+    }
+  }
+
+  @Watch('countryTypeCd')
+  handleProvince (newVal, oldVal) {
+    if (newVal !== oldVal) {
+      this.setApplicantDetails({ key: 'stateProvinceCd', value: '' })
+    }
+  }
+
+  @Watch('showAddressMenu')
+  suppressMenu (newVal) {
+    if (newVal) {
+      this.clearValidation()
+      return
+    }
+    this.highlightedSuggestion = null
+    let ref: any = this.$refs.Line1
+    ref.focus()
+  }
+
+  @Watch('xproJurisdiction')
+  watchXproJurisdiction (newVal, oldVal) {
+    if (newVal !== oldVal) {
+      if (this.getEditMode && newVal === this.getNr?.xproJurisdiction) {
+        this.setCorpNum(this.getNr?.corpNum)
+        return
+      }
+      this.setCorpNum('')
+    }
+  }
+
+  @Watch('isVisible')
+  private onVisibleChanged (val: boolean) {
+    if (val) {
+      // add event listener when this component is displayed
+      // eg, when user comes back from next tab
+      this.$el.addEventListener('keydown', this.handleKeydown)
+    } else {
+      // remove the event listener when this component is hidden
+      // eg, when user continues to next tab
+      this.$el.removeEventListener('keydown', this.handleKeydown)
     }
   }
 }
