@@ -56,8 +56,10 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
   }
 })
 export default class Tabs extends Vue {
-  // Global Getter and Action
+  // Global getter
   @Getter getTabNumber!: number
+
+  // Global action
   @Action setTabNumber!: ActionBindingIF
 
   get tabNumber () {
@@ -68,7 +70,6 @@ export default class Tabs extends Vue {
     this.setTabNumber(tab)
   }
 }
-
 </script>
 
 <style lang="scss" scoped>

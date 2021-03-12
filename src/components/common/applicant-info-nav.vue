@@ -24,14 +24,14 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class ApplicantInfoNav extends Vue {
-  // Global Getters
+  // Global getters
   @Getter getEditMode!: boolean
   @Getter getIsLoadingSubmission!: boolean
   @Getter getNrState!: string
   @Getter getSubmissionTabNumber!: number
   @Getter getSubmissionType!: SubmissionTypeT
 
-  // Global Actions
+  // Global actions
   @Action setSubmissionTabNumber!: ActionBindingIF
 
   get backText () {

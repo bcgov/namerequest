@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import newReqModule from '@/store/new-request-module'
+// import newReqModule from '@/store/new-request-module'
 
 @Component({})
 export default class AffiliationErrorDialog extends Vue {

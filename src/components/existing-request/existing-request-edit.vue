@@ -56,7 +56,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
   }
 })
 export default class ExistingRequestEdit extends Vue {
-  // Global Getters
+  // Global getters
   @Getter getActingOnOwnBehalf!: boolean
   @Getter getEditMode!: boolean
   @Getter getSubmissionTabNumber!: number

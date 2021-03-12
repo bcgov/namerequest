@@ -57,10 +57,10 @@ import { RequestActions } from '@/store/list-data'
 
 @Component({})
 export default class PickRequestTypeDialog extends Vue {
-  // Global Getters
+  // Global getter
   @Getter getPickRequestTypeModalVisible!: boolean
 
-  // Global Actions
+  // Global actions
   @Action setClearErrors!: ActionBindingIF
   @Action setExtendedRequestType!: ActionBindingIF
   @Action setPickRequestTypeModalVisible!: ActionBindingIF

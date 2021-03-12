@@ -13,7 +13,7 @@ interface RequestNameMapI extends RequestNameI {}
 
 export interface NewRequestIF {
   actingOnOwnBehalf: boolean,
-  addressSuggestions: object | null,
+  addressSuggestions: any[],
   allowAutoApprove: boolean,
   analysisJSON: AnalysisJSONI | null,
   analyzePending: boolean,

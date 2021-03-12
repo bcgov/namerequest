@@ -275,7 +275,7 @@ import $intJurisdictions from '@/store/list-data/intl-jurisdictions'
   components: { NameInput }
 })
 export default class NewSearch extends Vue {
-  // Global Getters
+  // Global getters
   @Getter getConversionType!: string
   @Getter getConversionTypeOptions!: ConversionTypesI[]
   @Getter getEntityBlurbs!: Array<EntityI>
@@ -297,7 +297,7 @@ export default class NewSearch extends Vue {
   @Getter getRequestText!: string
   @Getter getShowNoCorpDesignation!: boolean
 
-  // Global Actions
+  // Global actions
   @Action setConversionType!: ActionBindingIF
   @Action setCorpSearch!: ActionBindingIF
   @Action setClearErrors!: ActionBindingIF
@@ -314,13 +314,13 @@ export default class NewSearch extends Vue {
   @Action setRequestAction!: ActionBindingIF
   @Action startAnalyzeName!: ActionBindingIF
 
-  // Local Properties
+  // Local properties
   private corpNumValid = true
   private corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
   private locationDisabled = false
   private RequestActions = RequestActions
 
-  // Local Enum
+  // Local enum
   private request_action_enum = [
     'NEW',
     'MVE',

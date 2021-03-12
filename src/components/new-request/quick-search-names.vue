@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import MainContainer from '@/components/new-request/main-container.vue'
-import newReqModule from '@/store/new-request-module'
+// import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
 @Component({

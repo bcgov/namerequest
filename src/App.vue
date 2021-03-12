@@ -119,16 +119,15 @@ export default class App extends Vue {
 
   private showSpinner = false
 
-  // Global Getters
+  // Global getters
   @Getter getIncorporateLoginModalVisible!: boolean
 
-  // Global Actions
+  // Global actions
   @Action resetAnalyzeName!: ActionBindingIF
   @Action setName!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
   @Action setIncorporateLoginModalVisible!: ActionBindingIF
 
-  // Local Getters
   get nameRequestUrl (): string {
     return `${window.location.origin}${process.env.VUE_APP_PATH}`
   }

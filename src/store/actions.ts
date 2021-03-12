@@ -3,7 +3,6 @@ import axios, { AxiosError } from 'axios'
 import errorModule from '@/modules/error'
 import paymentModule from '@/modules/payment'
 import { ErrorI } from '@/modules/error/store/actions'
-import canadaPostAPIKey from '@/store/config'
 import {
   ConversionTypesI,
   ExistingRequestSearchI,
@@ -136,100 +135,6 @@ export const setActiveComponent: any = ({ commit }, component): void => {
   }
 
   commit('mutateDisplayedComponent', component)
-}
-
-export const setAddressDetails: ActionIF = async ({ commit }, id) => {
-  try {
-    const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Retrieve/v2.11/json3.ws'
-    let params = {
-      Key: canadaPostAPIKey,
-      Id: id
-    }
-
-    let resp = await axios.post(url, qs.stringify(params), {
-      headers: { 'Content-type': 'application/x-www-form-urlencoded' }
-    })
-    if (resp.data.Items && Array.isArray(resp.data.Items)) {
-      let addressData = resp.data.Items.find(item => item.Language === 'ENG')
-      let canadaPostFieldsMapping = {
-        CountryIso2: 'countryTypeCd',
-        PostalCode: 'postalCd',
-        ProvinceCode: 'stateProvinceCd',
-        City: 'city',
-        Line1: 'addrLine1',
-        Line2: 'addrLine2'
-      }
-
-      for (let ln of ['2', '3']) {
-        if (!addressData[`Line${ln}`]) {
-          commit('mutateApplicant', { key: `addrLine${ln}`, value: '' })
-        }
-      }
-
-      if (addressData['ProvinceCode']) {
-        if (addressData['ProvinceCode'].length > 2) {
-          commit('mutateApplicant', { key: 'stateProvinceCd', value: '' })
-          if (!addressData['ProvinceName']) {
-            canadaPostFieldsMapping['ProvinceCode'] = 'addrLine3'
-          } else {
-            delete canadaPostFieldsMapping.ProvinceCode
-            canadaPostFieldsMapping['ProvinceName'] = 'addrLine3'
-          }
-        }
-      } else {
-        delete canadaPostFieldsMapping.ProvinceCode
-        commit('mutateApplicant', { key: 'stateProvinceCd', value: '' })
-        if (addressData['ProvinceName']) {
-          canadaPostFieldsMapping['ProvinceName'] = 'addrLine3'
-        }
-      }
-
-      let fields = Object.keys(canadaPostFieldsMapping)
-      for (let field of fields) {
-        if (addressData[field]) {
-          let value = addressData[field]
-          let mappedField = canadaPostFieldsMapping[field]
-          commit('mutateApplicant', { key: mappedField, value })
-        }
-      }
-    }
-  } catch (err) {
-    const msg = await handleApiError(err, 'Could not get address details')
-    // AddressComplete problem - use console.log not console.error
-    console.log('getAddressDetails() =', msg) // eslint-disable-line no-console
-  }
-}
-
-export const setAddressSuggestions: ActionIF = async ({ commit, getters }, appKV) => {
-  try {
-    if (!appKV.value) return
-
-    const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Find/v2.10/json3.ws'
-    let params = {
-      Key: canadaPostAPIKey,
-      SearchTerm: appKV.value,
-      MaxSuggestions: 3,
-      Country: getters.getApplicant.countryTypeCd
-    }
-
-    let resp = await axios.post(url, qs.stringify(params), {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    })
-
-    if (Array.isArray(resp.data.Items)) {
-      let filteredItems = resp.data.Items.filter(item => item.Next === 'Retrieve')
-      if (getters.getApplicant.addrLine1) {
-        commit('mutateAddressSuggestions', filteredItems)
-      }
-      return
-    }
-
-    commit('mutateAddressSuggestions', null)
-  } catch (err) {
-    const msg = await handleApiError(err, 'Could not get address suggestions')
-    // AddressComplete problem - use console.log not console.error
-    console.log('getAddressSuggestions() =', msg) // eslint-disable-line no-console
-  }
 }
 
 export const getNameAnalysis: ActionIF = async ({ commit, getters }) => {
@@ -1082,7 +987,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
 
 export const setApplicantDetails: ActionIF = ({ commit }, appKV) => {
   commit('mutateApplicant', appKV)
-  if (!appKV.value || appKV.key !== 'addrLine1') {
+  if (!appKV || !appKV.value || appKV.key !== 'addrLine1') {
     commit('mutateAddressSuggestions', null)
   }
 }

@@ -216,13 +216,13 @@ export default class ExistingRequestDisplay extends Mixins(
   DateMixin,
   PaymentMixin
 ) {
-  // Global Getters
+  // Global getters
   @Getter getDisplayedComponent!: string
   @Getter getExistingRequestSearch!: ExistingRequestSearchI
   @Getter getNr!: Partial<NameRequestI>
   @Getter getNrState!: NrState
 
-  // Global Actions
+  // Global actions
   @Action checkoutNameRequest!: ActionBindingIF
   @Action downloadOutputs!: ActionBindingIF
   @Action editExistingRequest!: ActionBindingIF
@@ -572,7 +572,8 @@ export default class ExistingRequestDisplay extends Mixins(
             const { dispatch } = this.$store
             // Check out the NR - this sets the INPROGRESS lock on the NR
             // and needs to be done before you can edit the Name Request
-            success = await this.checkoutNameRequest(null)
+            // *** TODO: declare checkoutNameRequest differently so it's not void
+            success = await this.checkoutNameRequest(null) as unknown as boolean
           }
 
           // Only proceed with editing if the checkout was successful,
@@ -611,7 +612,8 @@ export default class ExistingRequestDisplay extends Mixins(
           this.$root.$emit('showSpinner', false)
           break
         default:
-          if (await this.patchNameRequestsByAction(action)) {
+          // *** TODO: declare patchNameRequestsByAction differently so it's not void
+          if (await this.patchNameRequestsByAction(action) as unknown as boolean) {
             this.setDisplayedComponent('Success')
             await sleep(1000)
             this.setDisplayedComponent('ExistingRequestDisplay')
@@ -638,7 +640,7 @@ export default class ExistingRequestDisplay extends Mixins(
     this.refreshCount += 1
     this.checking = true
     try {
-      const resp = await this.getNameRequest(this.nr.id)
+      const resp = await this.getNameRequest(this.nr.id) as any // *** TODO use a real type here
       this.checking = false
       if (resp?.furnished === 'Y') {
         this.furnished = 'furnished'

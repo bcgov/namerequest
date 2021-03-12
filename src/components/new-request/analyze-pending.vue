@@ -42,7 +42,7 @@
 <script lang="ts">
 import MainContainer from '@/components/new-request/main-container.vue'
 import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
-import newReqModule from '@/store/new-request-module'
+// import newReqModule from '@/store/new-request-module'
 import NameInput from '@/components/new-request/name-input.vue'
 import { Component, Vue } from 'vue-property-decorator'
 

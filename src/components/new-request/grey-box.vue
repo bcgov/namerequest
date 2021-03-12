@@ -137,7 +137,7 @@
 
 <script lang="ts">
 import allDesignations, { allDesignationsList } from '@/store/list-data/designations'
-import newReqModule from '@/store/new-request-module'
+// import newReqModule from '@/store/new-request-module'
 import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { IssueI, OptionI } from '@/interfaces'

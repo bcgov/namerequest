@@ -288,7 +288,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
   }
 })
 export default class NamesCapture extends Vue {
-  // Global Getters
+  // Global getters
   @Getter getDisplayedComponent!: string
   @Getter getEditMode!: boolean
   @Getter getErrors!: string[]
@@ -304,7 +304,7 @@ export default class NamesCapture extends Vue {
   @Getter getRequestTypeOptions!: RequestActionsI[]
   @Getter getSubmissionTabNumber!: number
 
-  // Global Actions
+  // Global actions
   @Action setClearErrors!: ActionBindingIF
   @Action setEntityTypeCd!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF

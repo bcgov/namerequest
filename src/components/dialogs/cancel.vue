@@ -41,7 +41,7 @@ import PaymentModule from '@/modules/payment'
 import * as PaymentTypes from '@/modules/payment/store/types'
 import { NrAction } from '@/enums'
 import { NameRequestMixin, PaymentMixin } from '@/mixins'
-import NewReqModule from '@/store/new-request-module'
+// import NewReqModule from '@/store/new-request-module'
 import { sleep } from '@/plugins'
 
 @Component({})

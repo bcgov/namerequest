@@ -328,28 +328,26 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue, Watch, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { Location } from '@/enums'
-import { NameRequestMixin } from '@/mixins'
+import { ActionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { ApplicantI, NameRequestI, SubmissionTypeT } from '@/interfaces'
+import { ApplicantI, NameRequestI } from '@/interfaces'
 import $canJurisdictions from '@/store/list-data/canada-jurisdictions'
 import $intJurisdictions from '@/store/list-data/intl-jurisdictions'
-
-const _debounce = require('lodash/debounce')
 
 @Component({
   components: {
     ApplicantInfoNav
   }
 })
-export default class ApplicantInfo1 extends Vue {
-  // Global Getters
+export default class ApplicantInfo1 extends Mixins(ActionMixin) {
+  // Global getters
   @Getter getActingOnOwnBehalf!: boolean
-  @Getter getAddressSuggestions!: {} | null
+  @Getter getAddressSuggestions!: any[]
   @Getter getApplicant!: ApplicantI
   @Getter getDisplayedComponent!: string
   @Getter getEditMode!: boolean
@@ -360,9 +358,8 @@ export default class ApplicantInfo1 extends Vue {
   @Getter getSubmissionTabNumber!: number
   @Getter getShowXproJurisdiction!: boolean
 
-  // Global Actions
+  // Global actions
   @Action setAddressDetails!: ActionBindingIF
-  @Action setAddressSuggestions!: ActionBindingIF
   @Action setActingOnOwnBehalf!: ActionBindingIF
   @Action setApplicant!: ActionBindingIF
   @Action setApplicantDetails!: ActionBindingIF
@@ -370,8 +367,7 @@ export default class ApplicantInfo1 extends Vue {
   @Action setNRData!: ActionBindingIF
   @Action setSubmissionTabNumber!: ActionBindingIF
 
-  debouncedGetAddressSuggestions = _debounce(this.getAddressSuggestions, 400)
-  highlightedSuggestion: string | null = null
+  highlightedSuggestion: string = null
   isValid: boolean = false
   messages = {}
   provStateRules = [
@@ -417,10 +413,6 @@ export default class ApplicantInfo1 extends Vue {
 
   set actingOnOwnBehalf (value) {
     this.setActingOnOwnBehalf(value)
-  }
-
-  getAddressSuggestions (key, value) {
-    this.setAddressSuggestions({ key, value })
   }
 
   get applicant () {
@@ -531,22 +523,22 @@ export default class ApplicantInfo1 extends Vue {
     }
   }
 
-  updateApplicant (key, value) {
+  async updateApplicant (key, value) {
     this.clearValidation()
     this.setApplicantDetails({ key, value })
     if (key === 'addrLine1') {
       this.showAddressMenu = true
-      this.debouncedGetAddressSuggestions(key, value)
+      await this.fetchAddressSuggestions({ key, value })
       return
     }
     if (this.showAddressMenu && key === 'countryTypeCd') {
-      this.$nextTick(function () {
+      this.$nextTick(async () => {
         this.showAddressMenu = true
         let appKV = {
           key: 'addrLine1',
           value: this.getApplicant?.addrLine1
         }
-        this.setAddressSuggestions(appKV)
+        await this.fetchAddressSuggestions(appKV)
       })
       return
     }

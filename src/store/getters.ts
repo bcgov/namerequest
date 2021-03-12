@@ -19,7 +19,6 @@ import {
 import designations from '@/store/list-data/designations'
 import { ConversionTypes, EntityTypesBCData, EntityTypesXPROData, Locations, RequestActions } from './list-data'
 import { $mrasJurisdictions } from '@/store/list-data/canada-jurisdictions'
-import { NameRequestMixin } from '@/mixins'
 
 /** Returns the name. */
 export const getName = (state: StateIF): string => {
@@ -292,7 +291,7 @@ export const getIsLoadingSubmission = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.isLoadingSubmission
 }
 
-export const getAddressSuggestions = (state: StateIF): object | null => {
+export const getAddressSuggestions = (state: StateIF): any[] => {
   return state.stateModel.newRequestModel.addressSuggestions
 }
 
@@ -652,7 +651,7 @@ export const getLocationOptions = (state: StateIF): Array<any> => {
 }
 
 /** Return true if the name is Slashed */
-export const getNameIsSlashed = (state: StateIF) => {
+export const getNameIsSlashed = (state: StateIF): boolean => {
   if (getName(state)) {
     let name = getName(state)
     if (name.includes('/') && name.split('/').length === 2) {
@@ -732,6 +731,10 @@ export const getPickRequestTypeModalVisible = (state: StateIF): boolean => {
 
 export const getExitModalVisible = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.exitModalVisible
+}
+
+export const getNameAnalysisTimeout = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.nameAnalysisTimedOut
 }
 
 // JSON Request constructors

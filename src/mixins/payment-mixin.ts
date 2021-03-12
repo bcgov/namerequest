@@ -1,15 +1,16 @@
-import { Component, Vue } from 'vue-property-decorator'
-import * as paymentTypes from '@/modules/payment/store/types'
-import * as paymentService from '@/modules/payment/services'
-import paymentModule from '@/modules/payment'
-import { CreatePaymentParams } from '@/modules/payment/models'
+import { Component, Mixins } from 'vue-property-decorator'
+import axios, { AxiosRequestConfig } from 'axios'
+import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import { PaymentStatus } from '@/enums'
+import { ApiErrorMixin } from '@/mixins'
+import paymentModule from '@/modules/payment'
+import * as paymentTypes from '@/modules/payment/store/types'
+import { CreatePaymentParams, NameRequestPaymentResponse } from '@/modules/payment/models'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
-import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 @Component
-export class PaymentMixin extends Vue {
+export class PaymentMixin extends Mixins(ApiErrorMixin) {
   get sbcPayment () {
     return this.$store.getters[paymentTypes.GET_SBC_PAYMENT]
   }
@@ -82,7 +83,7 @@ export class PaymentMixin extends Vue {
     const { corpType, filingType, jurisdiction, priorityRequest } = paymentConfig
     try {
       // NB: params uses snake_case
-      const response = await paymentService.getPaymentFees({
+      const response = await this.getPaymentFees({
         'corp_type': corpType,
         'filing_type_code': filingType,
         'jurisdiction': jurisdiction,
@@ -143,7 +144,7 @@ export class PaymentMixin extends Vue {
     }
     req.headers = headers
     try {
-      const paymentResponse = await paymentService.createPaymentRequest(nrId, action, req)
+      const paymentResponse = await this.createPaymentRequest(nrId, action, req)
       const { payment, sbcPayment = { receipts: [] } } = paymentResponse
 
       await paymentModule.setPayment(payment)
@@ -186,7 +187,7 @@ export class PaymentMixin extends Vue {
    */
   async downloadReceiptPdf (paymentId) {
     try {
-      const response = await paymentService.generateReceiptRequest(paymentId)
+      const response = await this.generateReceiptRequest(paymentId)
       const url = window.URL.createObjectURL(new Blob([response], { type: 'application/pdf' }))
       const link = document.createElement('a')
       link.href = url
@@ -220,7 +221,7 @@ export class PaymentMixin extends Vue {
           'Account-Id': parsedAccountInfo.id
         }
       }
-      const paymentResponse = await paymentService.getNameRequestPayment(nrId, paymentId, headers)
+      const paymentResponse = await this.getNameRequestPayment(nrId, paymentId, headers)
       if (!paymentResponse) throw new Error('Got error from getNameRequestPayment()')
 
       const { payment, sbcPayment =
@@ -251,7 +252,7 @@ export class PaymentMixin extends Vue {
    */
   async fetchNrPayments (nrId: number): Promise<boolean> {
     try {
-      const paymentsResponse = await paymentService.getNameRequestPayments(nrId, {})
+      const paymentsResponse = await this.getNameRequestPayments(nrId, {})
       if (!paymentsResponse) throw new Error('Got error from getNameRequestPayments()')
 
       await paymentModule.setPayments(paymentsResponse)
@@ -262,6 +263,68 @@ export class PaymentMixin extends Vue {
         { id: 'fetch-nr-payments-error', error: 'Could not fetch NR payments' }
       )
       return false
+    }
+  }
+
+  async createPaymentRequest (nrId, action, data): Promise<NameRequestPaymentResponse> {
+    const url = `/payments/${nrId}/${action}`
+    try {
+      const response = await axios.post(url, data)
+      return response.data
+    } catch (err) {
+      console.error('createPaymentRequest() =', err) // eslint-disable-line no-console
+      const msg = await this.handleApiError(err, 'Could not create payment request')
+      // console.error('createPaymentRequest() =', msg) // eslint-disable-line no-console
+      throw new Error(msg)
+    }
+  }
+
+  async getNameRequestPayment (nrId, paymentId, params): Promise<NameRequestPaymentResponse> {
+    const url = `/payments/${nrId}/payment/${paymentId}`
+    try {
+      const response = await axios.get(url, params)
+      return response.data
+    } catch (err) {
+      const msg = await this.handleApiError(err, 'Could not get name request payment')
+      console.error('getNameRequestPayment() =', msg) // eslint-disable-line no-console
+      throw new Error(msg)
+    }
+  }
+
+  async getNameRequestPayments (nrId, params): Promise<NameRequestPaymentResponse[]> {
+    const url = `/payments/${nrId}`
+    try {
+      const response = await axios.get(url, params)
+      return response.data
+    } catch (err) {
+      const msg = await this.handleApiError(err, 'Could not get name request payments')
+      console.error('getNameRequestPayments() =', msg) // eslint-disable-line no-console
+      throw new Error(msg)
+    }
+  }
+
+  async getPaymentFees (params): Promise<any> {
+    const url = '/payments/fees'
+    try {
+      const response = await axios.post(url, params)
+      return response.data
+    } catch (err) {
+      const msg = await this.handleApiError(err, 'Could not get payment fees')
+      console.error('getPaymentFees() =', msg) // eslint-disable-line no-console
+      throw new Error(msg)
+    }
+  }
+
+  async generateReceiptRequest (paymentId): Promise<any> {
+    const params = { responseType: 'arraybuffer' } as AxiosRequestConfig
+    const url = `/payments/${paymentId}/receipt`
+    try {
+      const response = await axios.post(url, {}, params)
+      return response.data
+    } catch (err) {
+      const msg = await this.handleApiError(err, 'Could not generate payment receipt')
+      console.error('generateReceiptRequest() =', msg) // eslint-disable-line no-console
+      throw new Error(msg)
     }
   }
 }

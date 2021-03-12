@@ -67,10 +67,10 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class Stats extends Vue {
-  // Global Getters
+  // Global getter
   @Getter getStats!: StatsI
 
-  // Global Actions
+  // Global action
   @Action setStats!: ActionBindingIF
 
   created (): void {

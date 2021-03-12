@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/new-request-module'
+// import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
 import NameInput from '@/components/new-request/name-input.vue'
 import { BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'

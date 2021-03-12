@@ -215,6 +215,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
   }
 })
 export default class ApplicantInfo2 extends Vue {
+  // Global getters
   @Getter getCorpNum!: string // USED
   @Getter getIsPersonsName!: boolean
   @Getter getApplicant!: ApplicantI // USED
@@ -227,7 +228,7 @@ export default class ApplicantInfo2 extends Vue {
   @Getter getShowPriorityRequest!: boolean
   @Getter getShowCorpNum!: string
 
-  // Global Actions
+  // Global actions
   @Action setCorpNum!: ActionBindingIF
   @Action setPriorityRequest!: ActionBindingIF
   @Action corpNumRequest!: ActionBindingIF

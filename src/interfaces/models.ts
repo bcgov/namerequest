@@ -92,12 +92,12 @@ export interface DraftReqI {
 }
 
 export interface EntityI {
-  blurbs?: string[] | string
+  blurbs?: string | string[] | string[][] // TODO: fix wtf here
   intBlurbs?: string[]
   mveBlurbs?: string[]
   rehBlurbs?: string[]
-  amlBlurbs?: string[]
-  chgBlurbs?: string[]
+  amlBlurbs?: string[] | string[][]
+  chgBlurbs?: string[] | string[][]
   cat?: string
   rank?: number
   shortlist?: boolean

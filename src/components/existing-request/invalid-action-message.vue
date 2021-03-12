@@ -22,10 +22,10 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
   components: { MainContainer }
 })
 export default class InvalidActionMessage extends Vue {
-  // Global Getter
+  // Global getter
   @Getter getNr!: Partial<NameRequestI>
 
-  // Global Action
+  // Global action
   @Action setActiveComponent!: ActionBindingIF
 
   get stateCd (): string {

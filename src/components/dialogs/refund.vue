@@ -48,7 +48,7 @@ import RefundSummary from '@/components/payment/refund-summary.vue'
 import * as PaymentTypes from '@/modules/payment/store/types'
 import { NrAction } from '@/enums'
 import { NameRequestMixin, PaymentMixin, PaymentSessionMixin } from '@/mixins'
-import NewReqModule from '@/store/new-request-module'
+// import NewReqModule from '@/store/new-request-module'
 import { sleep } from '@/plugins'
 
 @Component({

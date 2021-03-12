@@ -48,10 +48,12 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
   }
 })
 export default class SendToExamination extends Vue {
+  // Global getters
   @Getter getEntityTextFromValue!: string
   @Getter getLocation!: string
   @Getter getLocationOptions!: string[]
 
+  // Global actions
   @Action setDisplayedComponent!: ActionBindingIF
   @Action setSubmissionTabComponent!: ActionBindingIF
 

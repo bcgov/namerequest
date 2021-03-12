@@ -65,12 +65,12 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
   }
 })
 export default class SubmissionTabs extends Vue {
-  // Global Getters
+  // Global getters
   @Getter getActingOnOwnBehalf!: boolean
   @Getter getEditMode!: boolean
   @Getter getSubmissionTabNumber!: number
 
-  // Global Actions
+  // Global actions
   @Action setSubmissionTabNumber!: ActionBindingIF
 
   private mounted (): void {

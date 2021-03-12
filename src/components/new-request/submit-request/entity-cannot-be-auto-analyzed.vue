@@ -37,16 +37,33 @@
 </template>
 
 <script lang="ts">
-import designations from '@/store/list-data/designations'
-import newReqModule from '@/store/new-request-module'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+// import newReqModule from '@/store/new-request-module'
+import { Component, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+import { RequestActionsI } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NameInput from '@/components/new-request/name-input.vue'
 
 @Component({
   components: { NameInput }
 })
 export default class EntityCannotBeAutoAnalyzed extends Vue {
-  englishOnlyName: string = ''
+  englishOnlyName = ''
+
+  // Global getters
+  @Getter getNameAnalysisTimeout!: boolean
+  @Getter getDoNotAnalyzeEntities!: string[]
+  @Getter getEntityTextFromValue!: string
+  @Getter getEntityTypeCd!: string
+  @Getter getIsPersonsName!: boolean
+  @Getter getName!: string
+  @Getter getNameIsEnglish!: boolean
+  @Getter getNameIsSlashed!: boolean
+  @Getter getRequestActionCd!: string
+  @Getter getRequestTypeOptions!: RequestActionsI[]
+
+  // Global actions
+  @Action startAnalyzeName!: ActionBindingIF
 
   mounted () {
     if (this.nameIsSlashed) {
@@ -55,8 +72,9 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   }
 
   get nameAnalysisTimedOut () {
-    return newReqModule.nameAnalysisTimedOut
+    return this.nameAnalysisTimedOut
   }
+
   get boxes () {
     let timeoutExplanation1 = {
       title: 'Option 1',
@@ -106,13 +124,13 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
     return []
   }
   get doNotAnalyzeEntities () {
-    return newReqModule.doNotAnalyzeEntities
+    return this.getDoNotAnalyzeEntities
   }
   get entityText () {
-    return newReqModule.entityTextFromValue
+    return this.getEntityTextFromValue
   }
   get entity_type_cd () {
-    return newReqModule.entity_type_cd
+    return this.getEntityTypeCd
   }
   get entityTypeNotAnalyzed () {
     if (this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
@@ -121,26 +139,30 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
     return false
   }
   get isPersonsName () {
-    return newReqModule.isPersonsName
+    return this.getIsPersonsName
   }
   get name () {
-    return newReqModule.name
+    return this.getName
   }
   set name (value) {
     newReqModule.mutateName(value)
   }
   get nameIsEnglish () {
-    return newReqModule.nameIsEnglish
+    return this.getNameIsEnglish
   }
   get nameIsSlashed () {
-    return newReqModule.nameIsSlashed
+    return this.getNameIsSlashed
   }
   get requestActionNotSupported () {
-    return !(['NEW', 'DBA', 'CHG'].includes(newReqModule.request_action_cd))
+    return !(['NEW', 'DBA', 'CHG'].includes(this.getRequestActionCd))
   }
-  get requestActionText () {
-    return newReqModule.requestTextFromValue
+  get requestActionText (): string {
+    if (this.getRequestActionCd && this.getRequestTypeOptions.find(req => req.value === this.getRequestActionCd)) {
+      return this.getRequestTypeOptions.find(req => req.value === this.getRequestActionCd).text
+    }
+    return null
   }
+
   get title () {
     if (this.nameAnalysisTimedOut) {
       return 'Your name took too long to analyze'

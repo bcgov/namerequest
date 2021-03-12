@@ -22,11 +22,12 @@ import { IssueI } from '@/interfaces'
 
 @Component({})
 export default class ReserveSubmitButton extends Vue {
-  // Global Getters
+  // Global getters
   @Getter getCurrentIssue!: IssueI
   @Getter getLocation!: string
   @Getter getShowActualInput!: boolean
 
+  // Global actions
   @Action cancelAnalyzeName!: ActionBindingIF
   @Action userClickedStopAnalysis!: ActionBindingIF
   @Action postNameRequests!: ActionBindingIF

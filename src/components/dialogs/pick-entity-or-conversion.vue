@@ -90,7 +90,7 @@ import { ConversionTypes } from '@/store/list-data'
 
 @Component({})
 export default class PickEntityOrConversionDialog extends Vue {
-  // Global Getters
+  // Global getters
   @Getter getConversionTypeOptions!: ConversionTypesI[]
   @Getter getEntityBlurbs!: Array<EntityI>
   @Getter getEntityTypeCd!: string
@@ -102,7 +102,7 @@ export default class PickEntityOrConversionDialog extends Vue {
   @Getter getLocationText!: string
   @Getter getPickEntityModalVisible!: boolean
 
-  // Global Actions
+  // Global actions
   @Action setConversionType!: ActionBindingIF
   @Action setConversionTypeAddToSelect!: ActionBindingIF
   @Action setEntityTypeCd!: ActionBindingIF
@@ -198,7 +198,7 @@ export default class PickEntityOrConversionDialog extends Vue {
     return `${210 * cols > maxThreshold ? maxThreshold : 210 * cols}px`
   }
 
-  entityBlurbs (entity_type_cd: string): string[] | string {
+  entityBlurbs (entity_type_cd: string): string[][] | string[] | string {
     return this.getEntityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || []
   }
 

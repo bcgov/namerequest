@@ -5,8 +5,10 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component
 export class DisplayedComponentMixin extends Vue {
+  // Global getter
   @Getter getDisplayedComponent!: string
 
+  // Global actions
   @Action cancelAnalyzeName!: ActionBindingIF
   @Action cancelEditExistingRequest!: ActionBindingIF
   @Action checkinNameRequest!: ActionBindingIF

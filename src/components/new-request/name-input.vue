@@ -45,7 +45,7 @@ export default class NameInput extends Vue {
     nameInput: any
   }
 
-  // Global Getters
+  // Global getters
   @Getter getCorpSearch!: string
   @Getter getErrors!: string[]
   @Getter getLocation!: string
@@ -53,14 +53,14 @@ export default class NameInput extends Vue {
   @Getter getRequestActionCd!: string
   @Getter getIsXproMras!: boolean
 
-  // Global Actions
+  // Global actions
   @Action setClearErrors!: ActionBindingIF
   @Action setCorpSearch!: ActionBindingIF
   @Action setName!: ActionBindingIF
   @Action setMrasSearchInfoModalVisible!: ActionBindingIF
   @Action startAnalyzeName!: ActionBindingIF
 
-  /** Local Properties */
+  // Props
   @Prop({ default: false }) isSearchAgain: boolean
   @Prop({ default: false }) isMrasSearch: boolean
   @Prop({ default: false }) isReadOnly: boolean

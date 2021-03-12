@@ -114,11 +114,11 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class ExistingRequestSearch extends Vue {
-  // Global Getters
+  // Global getters
   @Getter getNr!: Partial<NameRequestI>
   @Getter getExistingRequestSearch!: ExistingRequestSearchI
 
-  // Global Actions
+  // Global actions
   @Action findNameRequest!: ActionBindingIF
   @Action setExistingRequestSearch!: ActionBindingIF
   @Action setNameRequest!: ActionBindingIF

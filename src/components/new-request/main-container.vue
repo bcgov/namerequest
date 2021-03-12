@@ -29,12 +29,12 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class MainContainer extends Mixins(DisplayedComponentMixin) {
-  // Global Getters
+  // Global getters
   @Getter getEditMode!: boolean
   @Getter getDisplayedComponent!: string
   @Getter getSubmissionTabNumber!: number
 
-  // Global Actions
+  // Global action
   @Action setExitModalVisible!: ActionBindingIF
 
   componentName: string = ''

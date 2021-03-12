@@ -74,7 +74,7 @@ import MainContainer from '@/components/new-request/main-container.vue'
 import NameInput from '@/components/new-request/name-input.vue'
 import QuickSearchNames from '@/components/new-request/quick-search-names.vue'
 import allDesignations, { allDesignationsList } from '@/store/list-data/designations'
-import newReqModule from '@/store/new-request-module'
+// import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
 @Component({

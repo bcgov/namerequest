@@ -64,8 +64,10 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
   }
 })
 export default class Landing extends Vue {
+  // Global getter
   @Getter getDisplayedComponent!: string
 
+  // Global actions
   @Action getNameRequest!: ActionBindingIF
   @Action loadExistingNameRequest!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF

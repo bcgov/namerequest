@@ -13,17 +13,22 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/new-request-module'
+// import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
 import MainContainer from '@/components/new-request/main-container.vue'
+import { Action } from 'vuex-class'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: { MainContainer }
 })
 export default class Timeout extends Vue {
+  @Action resetAnalyzeName!: ActionBindingIF
+  @Action setActiveComponent!: ActionBindingIF
+
   async restart () {
-    await newReqModule.resetAnalyzeName()
-    newReqModule.setActiveComponent('Tabs')
+    await this.resetAnalyzeName(null)
+    this.setActiveComponent('Tabs')
   }
 }
 </script>

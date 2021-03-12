@@ -22,9 +22,9 @@ export const mutateActingOnOwnBehalf = (state: StateIF, actingOnOwnBehalf: boole
 export const mutateAddressSuggestions = (state: StateIF, addressSuggestions: object | null) => {
   if (!addressSuggestions) {
     state.stateModel.newRequestModel.actingOnOwnBehalf = null
-    return
+  } else {
+    state.stateModel.newRequestModel.addressSuggestions = Object.assign([], addressSuggestions)
   }
-  state.stateModel.newRequestModel.addressSuggestions = Object.assign([], addressSuggestions)
 }
 
 export const mutateAnalysisJSON = (state: StateIF, analysisJSON: AnalysisJSONI) => {
