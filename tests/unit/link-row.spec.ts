@@ -9,7 +9,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('link-row.vue', () => {
+xdescribe('link-row', () => {
   let wrapper: any
 
   beforeEach(async () => {

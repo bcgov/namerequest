@@ -10,7 +10,7 @@ const vuetify = new Vuetify()
 localVue.use(Vuetify)
 localVue.prototype.$designations = designations
 
-describe('send-for-examination.vue', () => {
+xdescribe('names-capture', () => {
   describe('It initially renders correctly', () => {
     let wrapper
 

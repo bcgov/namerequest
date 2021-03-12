@@ -1,6 +1,7 @@
 import store from '@/store/new-request-module'
 
-describe('Testing behavior of getters.showCorpNum: (state) => return value', () => {
+// Testing behavior of getters.showCorpNum: (state) => return value
+xdescribe('new-request-module', () => {
   /* -- SETUP CONSTANTS FOR TESTING -- */
   function setState ({ entityType, requestAction, location, jurisdiction }) {
     store.mutateEntityType(entityType)

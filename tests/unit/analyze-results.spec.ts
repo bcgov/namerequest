@@ -23,7 +23,7 @@ function setState (data) {
   })
 }
 
-describe('AnalyzeResults', () => {
+xdescribe('analyze-results', () => {
   let lengthTestData = testData.length
   let wrapper: any
 

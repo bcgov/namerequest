@@ -11,7 +11,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('pick-request-type.vue', (): void => {
+xdescribe('pick-request-type-modal', (): void => {
   let wrapper: any
 
   beforeEach(() => {

@@ -8,7 +8,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('analyze-pending.vue', () => {
+xdescribe('analyze-pending', () => {
   let wrapper: any
   beforeAll(async () => {
     newReqModule.mutateEntityType('CR')

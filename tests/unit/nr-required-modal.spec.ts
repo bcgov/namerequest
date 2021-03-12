@@ -7,7 +7,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('nr-not-required.vue', () => {
+xdescribe('nr-required-modal', () => {
   let wrapper: any
 
   beforeEach(() => {

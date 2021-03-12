@@ -12,7 +12,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('applicant-info-1.vue', () => {
+xdescribe('applicant-info-1', () => {
   let wrapper
 
   beforeAll(async (done) => {

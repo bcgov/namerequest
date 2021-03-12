@@ -8,7 +8,7 @@ const localVue = createLocalVue()
 const vuetify = new Vuetify()
 localVue.use(Vuetify)
 
-describe('It initially renders correctly', () => {
+xdescribe('applicant-info-2', () => {
   let wrapper: any
 
   beforeEach(async (done) => {

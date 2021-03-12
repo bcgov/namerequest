@@ -11,7 +11,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('name-input.vue', () => {
+xdescribe('pick-entity-modal', () => {
   let wrapper: any
 
   beforeEach(() => {

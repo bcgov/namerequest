@@ -18,7 +18,7 @@ const stubs = {
   quillEditor: true
 }
 
-describe('landing.vue', () => {
+xdescribe('landing part 1', () => {
   let wrapper: any
 
   beforeAll(() => {
@@ -39,7 +39,7 @@ describe('landing.vue', () => {
   })
 })
 
-describe('landing.vue', () => {
+xdescribe('landing part 2', () => {
   let wrapper: any
 
   beforeAll(() => {
@@ -63,7 +63,7 @@ describe('landing.vue', () => {
   })
 })
 
-describe('landing.vue', () => {
+xdescribe('landing part 3', () => {
   let wrapper: any
 
   beforeAll(() => {

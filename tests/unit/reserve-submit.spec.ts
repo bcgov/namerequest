@@ -30,7 +30,7 @@ async function provideWrapper (setup) {
 }
 let sandbox = sinon.createSandbox()
 
-describe('reserve-submit', () => {
+xdescribe('reserve-submit', () => {
   describe('Case: it handles the NORMAL route (!setup) properly', () => {
     sandbox.spy(newReqModule, 'postNameRequests')
     let wrapper: any

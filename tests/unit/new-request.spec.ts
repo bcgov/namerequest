@@ -8,7 +8,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('search.vue', () => {
+xdescribe('new-request', () => {
   let wrapper: any
 
   beforeEach(async (done) => {

@@ -8,7 +8,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('name-input.vue', () => {
+xdescribe('name-input', () => {
   let wrapper: any
 
   beforeEach(async () => {
