@@ -2,7 +2,7 @@ import { Component, Mixins } from 'vue-property-decorator'
 import axios, { AxiosRequestConfig } from 'axios'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import { PaymentStatus } from '@/enums'
-import { ApiErrorMixin } from '@/mixins'
+import { ActionMixin } from '@/mixins'
 import paymentModule from '@/modules/payment'
 import * as paymentTypes from '@/modules/payment/store/types'
 import { CreatePaymentParams, NameRequestPaymentResponse } from '@/modules/payment/models'
@@ -10,7 +10,7 @@ import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 
 @Component
-export class PaymentMixin extends Mixins(ApiErrorMixin) {
+export class PaymentMixin extends Mixins(ActionMixin) {
   get sbcPayment () {
     return this.$store.getters[paymentTypes.GET_SBC_PAYMENT]
   }
