@@ -73,6 +73,7 @@ export default class PaymentCompleteDialog extends Mixins(
 ) {
   // Global getters
   @Getter getName!: string
+  @Getter getNrId!: number
   @Getter getNrNum!: string
   @Getter getApplicant!: ApplicantI
   @Getter getNameChoices!: NameChoicesIF
@@ -99,8 +100,7 @@ export default class PaymentCompleteDialog extends Mixins(
   }
 
   async hideModal () {
-    const { nrId } = this
-    await this.fetchNr(+nrId)
+    await this.fetchNr(+this.getNrId)
     await paymentModule.toggleReceiptModal(false)
   }
 
@@ -126,7 +126,7 @@ export default class PaymentCompleteDialog extends Mixins(
   async fetchPaymentData (paymentId: number, nameReqId: number) {
     if (nameReqId && paymentId) {
       await this.fetchNrPayment(nameReqId, paymentId)
-      const { nrId, paymentStatus, sbcPaymentStatus } = this
+      const { getNrId, paymentStatus, sbcPaymentStatus } = this
       if (sbcPaymentStatus === SbcPaymentStatus.COMPLETED && paymentStatus === PaymentStatus.CREATED) {
         await this.completePayment(nameReqId, paymentId, this.sessionPaymentAction)
       }

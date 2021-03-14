@@ -27,6 +27,8 @@
 
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
+
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 import PaymentModule from '@/modules/payment'
@@ -35,8 +37,9 @@ import * as PaymentTypes from '@/modules/payment/store/types'
 import * as FilingTypes from '@/modules/payment/filing-types'
 import * as Jurisdictions from '@/modules/payment/jurisdictions'
 import { PaymentAction } from '@/enums'
-import { NameRequestMixin, PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
+import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
+import { ApplicantI } from '@/interfaces'
 
 @Component({
   components: {
@@ -45,11 +48,15 @@ import { getBaseUrl } from '@/components/payment/payment-utils'
   }
 })
 export default class UpgradeDialog extends Mixins(
-  NameRequestMixin,
   PaymentMixin,
   PaymentSessionMixin,
   DisplayedComponentMixin
 ) {
+  // Global getters
+  @Getter getNrId!: number
+  @Getter getApplicant!: ApplicantI
+  @Getter getPriorityRequest!: boolean
+
   private isLoadingPayment: boolean = false
   /** The model value for the dialog component. */
   private isVisible = false
@@ -72,7 +79,7 @@ export default class UpgradeDialog extends Mixins(
       const paymentConfig = {
         filingType: FilingTypes.NM606,
         jurisdiction: Jurisdictions.BC,
-        priorityRequest: this.priorityRequest || false
+        priorityRequest: this.getPriorityRequest
       }
 
       // only make visible on success, otherwise hide it
@@ -89,14 +96,14 @@ export default class UpgradeDialog extends Mixins(
   /** Called when user clicks "Accept" button. */
   private async confirmPayment () {
     this.isLoadingPayment = true
-    const { nrId, priorityRequest } = this
+    const { getNrId, getPriorityRequest } = this
     const onSuccess = (paymentResponse) => {
       const { paymentId, paymentToken } = this
       // Save response to session
       this.savePaymentResponseToSession(PaymentAction.UPGRADE, paymentResponse)
       // see if redirect is needed else go to existing NR screen
       const baseUrl = getBaseUrl()
-      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${paymentId}`)
+      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${getNrId}/?paymentId=${paymentId}`)
       if (paymentResponse.sbcPayment.isPaymentActionRequired) {
         this.redirectToPaymentPortal(paymentId, paymentToken, redirectUrl)
       } else {
@@ -106,14 +113,14 @@ export default class UpgradeDialog extends Mixins(
 
     const success = await this.createPayment({
       action: PaymentAction.UPGRADE,
-      nrId: nrId,
+      nrId: getNrId,
       filingType: FilingTypes.NM606,
-      priorityRequest: priorityRequest
+      priorityRequest: getPriorityRequest
     } as CreatePaymentParams, onSuccess)
 
     // on error, close this modal so error modal is visible
     if (!success) {
-      this.hideModal()
+      await this.hideModal()
     }
   }
 
