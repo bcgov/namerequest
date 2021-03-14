@@ -21,22 +21,18 @@ import { ConversionTypes, EntityTypesBCData, EntityTypesXPROData, Locations, Req
 import $canJurisdictions, { $mrasJurisdictions } from '@/store/list-data/canada-jurisdictions'
 import $intJurisdictions from '@/store/list-data/intl-jurisdictions'
 
-/** Returns the name. */
 export const getName = (state: StateIF): string => {
   return state.stateModel.newRequestModel.name
 }
 
-/** Returns the original name. */
 export const getOriginalName = (state: StateIF): string => {
   return state.stateModel.newRequestModel.nameOriginal
 }
 
-/** Returns the assumed name. */
 export const getAssumedName = (state: StateIF): string => {
   return state.stateModel.newRequestModel.assumedNameOriginal
 }
 
-/** Returns the nr. */
 export const getNr = (state: StateIF): Partial<NameRequestI> => {
   return state.stateModel.newRequestModel.nr
 }
@@ -49,7 +45,6 @@ export const getNrData = (state: StateIF): any => {
   return state.stateModel.newRequestModel.nrData
 }
 
-/** Returns the nr id. */
 export const getNrId = (state: StateIF): string => {
   return state.stateModel.newRequestModel.nr.id
 }
@@ -58,12 +53,10 @@ export const getNrNum = (state: StateIF): string => {
   return state.stateModel.newRequestModel.nr.nrNum
 }
 
-/** Returns the nr state. */
 export const getNrState = (state: StateIF): string => {
   return state.stateModel.newRequestModel.nr.state
 }
 
-/** Returns the location. */
 export const getLocation = (state: StateIF): LocationT => {
   return state.stateModel.newRequestModel.location
 }
@@ -72,7 +65,6 @@ export const getLocationText = (state: StateIF): string => {
   return getLocationOptions(state).find(options => options.value === getLocation(state))?.text
 }
 
-/** Return the current jurisdiction code. */
 export const getJurisdiction = (state: StateIF): string => {
   return state.stateModel.newRequestModel.request_jurisdiction_cd
 }
@@ -87,71 +79,61 @@ export const getMrasSearchResultCode = (state: StateIF): number => {
   return state.stateModel.newRequestModel.mrasSearchResultCode
 }
 
-/** Returns the entity type code. */
 export const getEntityTypeCd = (state: StateIF): string => {
   return state.stateModel.newRequestModel.entity_type_cd
 }
 
-/** Returns the current action code. */
 export const getRequestActionCd = (state: StateIF): string => {
   return state.stateModel.newRequestModel.request_action_cd
 }
 
-/** Return the request text. */
+/** The request text for the current request action code. */
 export const getRequestText = (state: StateIF): string => {
   return RequestActions.find(options => options.value === getRequestActionCd(state))?.text
 }
 
-/** Returns the current request jurisdiction code. */
 export const getRequestJurisdictionCd = (state: StateIF): string => {
   return state.stateModel.newRequestModel.request_jurisdiction_cd
 }
 
-/** Returns the original request action code. */
 export const getRequestActionOriginal = (state: StateIF): string => {
   return state.stateModel.newRequestModel.requestActionOriginal
 }
 
-/** Returns the applicant info. */
 export const getApplicant = (state: StateIF): ApplicantI => {
   return state.stateModel.newRequestModel.applicant
 }
 
-/** Returns the corp seracho. */
 export const getCorpSearch = (state: StateIF): string => {
   return state.stateModel.newRequestModel.corpSearch
 }
 
-/** Returns the analyze pending boolean. */
 export const getAnalyzePending = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.analyzePending
 }
 
+/** True if current request action code is "conversion". */
 export const getIsConversion = (state: StateIF): boolean => {
   return getRequestActionCd(state) === 'CNV'
 }
 
-/** Return the existing request data. */
 export const getExistingRequestSearch = (state: StateIF): ExistingRequestSearchI => {
   return state.stateModel.newRequestModel.existingRequestSearch
 }
 
-/** Return the current quick search flag. */
 export const getQuickSearch = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.quickSearch
 }
 
-/** Return the current errors. */
 export const getErrors = (state: StateIF): string[] => {
   return state.stateModel.newRequestModel.errors
 }
 
-/** Return true if XproMras. */
+/** True if XproMras. */
 export const getIsXproMras = (state: StateIF): boolean => {
   return (['CA', 'IN'].includes(getLocation(state)) && getRequestActionCd(state) !== 'MVE')
 }
 
-/** Return noCorpNum flag. */
 export const getHasNoCorpNum = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.noCorpNum
 }
@@ -160,7 +142,6 @@ export const getCorpNum = (state: StateIF): string => {
   return state.stateModel.newRequestModel.corpNum
 }
 
-/** Return english name flag. */
 export const getNameIsEnglish = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.nameIsEnglish
 }
@@ -200,17 +181,16 @@ export const getRequestTypeOptions = (state: StateIF): RequestActionsI[] => {
 export const getNameChoices = (state: StateIF): NameChoicesIF => {
   return state.stateModel.newRequestModel.nameChoices
 
-  // TODO: Good Grief, do we need this?
-  // /** Test
-  //  {
-  //     name1: 'ACME Construction',
-  //     name2: 'ACME Home Construction',
-  //     name3: 'ACME Commercial Construction',
-  //     designation1: 'Ltd.',
-  //     designation2: 'Ltd.',
-  //     designation3: 'Ltd.'
-  //  }
-  //  */
+  // *** TODO: if useful then move this to unit tests, else delete
+  // {
+  // name1: 'ACME Construction',
+  // name2: 'ACME Home Construction',
+  // name3: 'ACME Commercial Construction',
+  // designation1: 'Ltd.',
+  // designation2: 'Ltd.',
+  // designation3: 'Ltd.'
+  // }
+
   // const parseNameChoices = (nameChoices: NameChoicesIF) => {
   //   return Object.keys(nameChoices)
   //     .reduce((names, key, idx) => {
@@ -240,12 +220,10 @@ export const getIsPersonsName = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.isPersonsName
 }
 
-/** Return the array of entities to NOT analyze. */
 export const getDoNotAnalyzeEntities = (state: StateIF): string[] => {
   return state.stateModel.newRequestModel.doNotAnalyzeEntities
 }
 
-/** Return the cancelled analysis boolean. */
 export const getUserCancelledAnalysis = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.userCancelledAnalysis
 }
@@ -323,11 +301,13 @@ export const getIsPriorityRequest = (state: StateIF): boolean => {
 }
 
 export const getCurrentIssue = (state: StateIF): IssueI => {
-  if (!getAnalysisJSON(state)) return
+  if (!getAnalysisJSON(state)) return null
 
   if (getAnalysisJSON(state) && getAnalysisJSON(state).issues && Array.isArray(getAnalysisJSON(state).issues)) {
     return getAnalysisJSON(state).issues[this.issueIndex]
   }
+
+  return null
 }
 
 export const getRequestExaminationOrProvideConsent = (state: StateIF): RequestOrConsentIF => {
@@ -367,8 +347,7 @@ export const getConversionTypeOptions = (state: StateIF): ConversionTypesI[] => 
 /** Map the appropriate Blurb based on the request action and location */
 export const getEntityBlurbs = (state: StateIF): Array<EntityI> => {
   switch (getRequestActionCd(state)) {
-  // NEW REQUEST
-    case 'NEW':
+    case 'NEW': // NEW REQUEST
       if (['BC'].includes(getLocation(state))) {
         return EntityTypesBCData
       }
@@ -379,14 +358,12 @@ export const getEntityBlurbs = (state: StateIF): Array<EntityI> => {
         return EntityTypesXPROData.map(x => ({ ...x, blurbs: x.intBlurbs }))
       }
       break
-      // MOVE REQUEST
-    case 'MVE':
+    case 'MVE': // MOVE REQUEST
       if (['BC'].includes(getLocation(state))) {
         return EntityTypesBCData.map(x => ({ ...x, blurbs: x.mveBlurbs }))
       }
       break
-      // RESTORE OR REINSTATE REQUEST
-    case 'REH':
+    case 'REH': // RESTORE OR REINSTATE REQUEST
       if (['BC'].includes(getLocation(state))) {
         return EntityTypesBCData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
       }
@@ -394,8 +371,7 @@ export const getEntityBlurbs = (state: StateIF): Array<EntityI> => {
         return EntityTypesXPROData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
       }
       break
-      // AMALGAMATE REQUEST
-    case 'AML':
+    case 'AML': // AMALGAMATE REQUEST
       if (['BC'].includes(getLocation(state))) {
         return EntityTypesBCData.map(x => ({ ...x, blurbs: x.amlBlurbs }))
       }
@@ -407,8 +383,7 @@ export const getEntityBlurbs = (state: StateIF): Array<EntityI> => {
         return EntityTypesXPROData.map(x => ({ ...x, blurbs: x.amlBlurbs[1] || x.amlBlurbs[0] }))
       }
       break
-      // CHANGE NAME REQUEST
-    case 'CHG':
+    case 'CHG': // CHANGE NAME REQUEST
       if (['BC'].includes(getLocation(state))) {
         return EntityTypesBCData.map(x => ({ ...x, blurbs: x.chgBlurbs }))
       }
@@ -420,8 +395,7 @@ export const getEntityBlurbs = (state: StateIF): Array<EntityI> => {
         return EntityTypesXPROData.map(x => ({ ...x, blurbs: x.chgBlurbs[1] || x.chgBlurbs[0] }))
       }
       break
-      // CONVERSION REQUEST
-    case 'CNV':
+    case 'CNV': // CONVERSION REQUEST
       if (['BC'].includes(getLocation(state))) {
         return ConversionTypes
       }
@@ -430,7 +404,7 @@ export const getEntityBlurbs = (state: StateIF): Array<EntityI> => {
   return null
 }
 
-/** Return the BC Entity Types. */
+/** The BC Entity Types. */
 export const getEntityTypesBC = (state: StateIF): EntityI[] => {
   try {
     let generateEntities = (entities) => {
@@ -529,24 +503,16 @@ export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
 }
 
 export const getShowXproJurisdiction = (state: StateIF): boolean => {
-  if (getLocation(state) !== 'BC') {
-    return true
-  }
-  if (getRequestActionCd(state) === 'MVE') {
-    return true
-  }
+  if (getLocation(state) !== 'BC') return true
+  if (getRequestActionCd(state) === 'MVE') return true
   return false
 }
 
 export const getXproRequestTypeCd = (state: StateIF): string => {
   if (getIsAssumedName(state)) {
     switch (getEntityTypeCd(state)) {
-      case 'RLC':
-        return 'AL'
-      case 'XCR':
-        return 'AS'
-      default:
-        return ''
+      case 'RLC': return 'AL'
+      case 'XCR': return 'AS'
     }
   }
   return ''
@@ -658,7 +624,7 @@ export const getLocationOptions = (state: StateIF): Array<any> => {
   if (['MVE'].includes(getRequestActionCd(state))) {
     return Locations.filter(location => location.value === 'BC')
   }
-  return Locations
+  return Locations // return all locations
 }
 
 /** Return true if the name is Slashed */
