@@ -27,6 +27,7 @@
 
 <script lang='ts'>
 import { Component, Mixins, Watch } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 import PaymentModule from '@/modules/payment'
@@ -37,6 +38,7 @@ import * as Jurisdictions from '@/modules/payment/jurisdictions'
 import { PaymentAction } from '@/enums'
 import { NameRequestMixin, PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
+import { ApplicantI, NameChoicesIF } from '@/interfaces'
 
 @Component({
   components: {
@@ -45,11 +47,15 @@ import { getBaseUrl } from '@/components/payment/payment-utils'
   }
 })
 export default class ReapplyDialog extends Mixins(
-  NameRequestMixin,
   PaymentMixin,
   PaymentSessionMixin,
   DisplayedComponentMixin
 ) {
+  // Global getters
+  @Getter getName!: string
+  @Getter getNrId!: number
+  @Getter getPriorityRequest!: boolean
+
   private isLoadingPayment: boolean = false
   /** The model value for the dialog component. */
   private isVisible = false
@@ -72,7 +78,7 @@ export default class ReapplyDialog extends Mixins(
       const paymentConfig = {
         filingType: FilingTypes.NM620,
         jurisdiction: Jurisdictions.BC,
-        priorityRequest: this.priorityRequest || false
+        priorityRequest: this.getPriorityRequest
       }
 
       // only make visible on success, otherwise hide it
@@ -89,14 +95,14 @@ export default class ReapplyDialog extends Mixins(
   /** Called when user clicks "Accept" button. */
   private async confirmPayment () {
     this.isLoadingPayment = true
-    const { nrId, priorityRequest } = this
+    const { getNrId, getPriorityRequest } = this
     const onSuccess = (paymentResponse) => {
       const { paymentId, paymentToken } = this
       // Save response to session
       this.savePaymentResponseToSession(PaymentAction.REAPPLY, paymentResponse)
       // see if redirect is needed else go to existing NR screen
       const baseUrl = getBaseUrl()
-      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${paymentId}`)
+      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${getNrId}/?paymentId=${paymentId}`)
       if (paymentResponse.sbcPayment.isPaymentActionRequired) {
         this.redirectToPaymentPortal(paymentId, paymentToken, redirectUrl)
       } else {
@@ -106,14 +112,14 @@ export default class ReapplyDialog extends Mixins(
 
     const success = await this.createPayment({
       action: PaymentAction.REAPPLY,
-      nrId: nrId,
+      nrId: getNrId,
       filingType: FilingTypes.NM620,
-      priorityRequest: priorityRequest
+      priorityRequest: getPriorityRequest
     } as CreatePaymentParams, onSuccess)
 
     // on error, close this modal so error modal is visible
     if (!success) {
-      this.hideModal()
+      await this.hideModal()
     }
   }
 

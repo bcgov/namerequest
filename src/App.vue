@@ -56,7 +56,7 @@
     <LocationInfoDialog />
     <MrasSearchInfoDialog />
     <NrNotRequiredDialog />
-<!--    <PaymentDialog :onCancel="onPaymentCancelled" />-->
+    <PaymentDialog :onCancel="onPaymentCancelled" />
     <PaymentCompleteDialog />
     <PickEntityOrConversionDialog />
     <PickRequestTypeDialog />
@@ -121,9 +121,12 @@ export default class App extends Vue {
 
   // Global getters
   @Getter getIncorporateLoginModalVisible!: boolean
+  @Getter getDisplayedComponent!: string
+  @Getter getNrId!: number
 
   // Global actions
   @Action resetAnalyzeName!: ActionBindingIF
+  @Action rollbackNameRequest!: ActionBindingIF
   @Action setName!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
   @Action setIncorporateLoginModalVisible!: ActionBindingIF
@@ -167,18 +170,18 @@ export default class App extends Vue {
   }
 
   // TODO: Update Pay module
-  // async onPaymentCancelled () {
-  //   const { nrId } = newRequestModule
-  //   const componentName = newRequestModule.displayedComponent
-  //   // Only do this for New NRs!!!
-  //   if (nrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
-  //     // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-  //     await newRequestModule.rollbackNameRequest({ nrId, action: RollbackActions.CANCEL })
-  //     // Direct the user back to the start
-  //     await this.resetAppState()
-  //   }
-  //   await paymentModule.togglePaymentModal(false)
-  // }
+  async onPaymentCancelled () {
+    const { getNrId } = this
+    const componentName = this.getDisplayedComponent
+    // Only do this for New NRs!!!
+    if (getNrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
+      // Cancel the NR using the rollback endpoint if we were processing a NEW NR
+      await this.rollbackNameRequest({ getNrId, action: RollbackActions.CANCEL })
+      // Direct the user back to the start
+      await this.resetAppState()
+    }
+    await paymentModule.togglePaymentModal(false)
+  }
 }
 </script>
 

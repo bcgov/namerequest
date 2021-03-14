@@ -81,7 +81,7 @@
               <div v-on="on">
                 <v-textarea :messages="messages['nature']"
                             :rules="businessNatureRules"
-                            :value="nrData.natureBusinessInfo"
+                            :value="getNrData.natureBusinessInfo"
                             @blur="messages = {}"
                             @input="mutateNRData('natureBusinessInfo', $event)"
                             filled
@@ -105,7 +105,7 @@
             <template v-slot:activator="{ on }">
               <div v-on="on">
                 <v-textarea :messages="messages['additional']"
-                            :value="nrData.additionalInfo"
+                            :value="getNrData.additionalInfo"
                             :rules="additionalInfoRules"
                             @blur="messages = {}"
                             @input="mutateNRData('additionalInfo', $event)"
@@ -165,7 +165,7 @@
             <template v-slot:activator="{ on }">
               <div v-on="on">
                 <v-text-field :messages="messages['tradeMark']"
-                              :value="nrData.tradeMark"
+                              :value="getNrData.tradeMark"
                               :rules="trademarkRules"
                               @blur="messages = {}"
                               @input="mutateNRData('tradeMark', $event)"
@@ -218,9 +218,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
-// import newReqModule, { NewRequestModule } from '@/store/new-request-module'
 import paymentModule from '@/modules/payment'
-import { NameRequestMixin } from '@/mixins'
 import { ApplicantI, SubmissionTypeT } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
@@ -229,7 +227,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
     ApplicantInfoNav
   }
 })
-export default class ApplicantInfo3 extends NameRequestMixin {
+export default class ApplicantInfo3 extends Vue {
   // Global getters
   @Getter getCorpNum!: string // USED
   @Getter getIsPersonsName!: boolean
@@ -264,7 +262,7 @@ export default class ApplicantInfo3 extends NameRequestMixin {
   ]
   corpNumRules = [
     v => !!v || 'Required field',
-    v => !!this.getCorpNum(v) || 'Cannot validate number. Please try again.'
+    v => !!this.fetchCorpNum(v) || 'Cannot validate number. Please try again.'
   ]
   emailRules = [
     (v: string) => !!v || 'Required field',
@@ -348,7 +346,7 @@ export default class ApplicantInfo3 extends NameRequestMixin {
     this.setPriorityRequest(value)
   }
 
-  async getCorpNum (num) {
+  async fetchCorpNum (num) {
     if (!num) {
       return
     }

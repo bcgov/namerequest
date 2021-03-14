@@ -36,18 +36,21 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
-// import newReqModule from '@/store/new-request-module'
+import { Action } from 'vuex-class'
 import { CommonMixin } from '@/mixins'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class LinkRow extends Mixins(CommonMixin) {
+  @Action setNrRequiredModalVisible!: ActionBindingIF
+
   /** Entity Selector Tool */
   private get entitySelectorUrl (): string {
     return sessionStorage.getItem('ENTITY_SELECTOR_URL')
   }
 
   activateNRRModal () {
-    newReqModule.mutateNrRequiredModalVisible(true)
+    this.setNrRequiredModalVisible(true)
   }
 }
 </script>

@@ -231,7 +231,6 @@ export default class ApplicantInfo2 extends Vue {
   @Action corpNumRequest!: ActionBindingIF
   @Action setApplicant!: ActionBindingIF
   @Action submit!: ActionBindingIF
-  @Action setCorpNum!: ActionBindingIF
   @Action setNRData!: ActionBindingIF
   @Action setIsLoadingSubmission!: ActionBindingIF
 

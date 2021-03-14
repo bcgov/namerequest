@@ -554,7 +554,7 @@ export default class NamesCapture extends Vue {
       }
       let outcome = true
       for (let choice of [1, 2, 3]) {
-        if (nameChoices[`name${choice}`] === this.name) {
+        if (nameChoices[`name${choice}`] === this.getName) {
           messages[`name${choice}`] = 'This is identical to the name you originally entered. Please enter a new name.'
           this.hide = 'auto'
           outcome = false

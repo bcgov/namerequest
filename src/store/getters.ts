@@ -772,6 +772,10 @@ export const getNameAnalysisTimeout = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.nameAnalysisTimedOut
 }
 
+export const getPriorityRequest = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.priorityRequest
+}
+
 // JSON Request constructors
 export const getNrRequestNames = (state: StateIF): RequestNameI[] => {
   const nameChoices = getNameChoices(state)
