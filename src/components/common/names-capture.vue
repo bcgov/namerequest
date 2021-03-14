@@ -531,7 +531,7 @@ export default class NamesCapture extends Vue {
   }
 
   get isValid () {
-    let { nameChoices, messages, designationAtEnd, validatePhrases, location, getIsAssumedName } = this
+    let { nameChoices, messages, designationAtEnd, validatePhrases, location } = this
     if (this.getIsAssumedName && this.getEditMode) {
       if (!nameChoices['name1']) {
         messages['name1'] = 'Please enter at least one name'
@@ -640,7 +640,7 @@ export default class NamesCapture extends Vue {
           for (let choice of [1, 2, 3]) {
             if (nameChoices[`name${choice}`]) {
               if (!nameChoices[`designation${choice}`]) {
-                if (location === 'BC' || getIsAssumedName) {
+                if (location === 'BC' || this.getIsAssumedName) {
                   messages[`des${choice}`] = 'Please choose a designation'
                   this.showDesignationErrors[`des${choice}`] = true
                   outcome = false
@@ -661,6 +661,7 @@ export default class NamesCapture extends Vue {
     let step1 = name1()
     let step2 = name2()
     let step3 = name3()
+
     this.$nextTick(function () {
       if (!(step1 && step2 && step3)) {
         this.hideDetails = 'auto'

@@ -137,14 +137,14 @@ export default class ExistingRequestSearch extends Vue {
       }
     })
 
-    if (this.getNr && this.getNr.failed) {
+    if (this.getNr?.failed) {
       this.errorMessage = this.getNr.text
       this.setNameRequest({})
       return
     }
+
     for (let key of ['emailAddress', 'phoneNumber']) {
-      let value = ''
-      this.setExistingRequestSearch({ key, value })
+      this.setExistingRequestSearch({ key, value: '' })
     }
   }
 
