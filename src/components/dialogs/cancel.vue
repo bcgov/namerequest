@@ -43,14 +43,19 @@ import { NrAction } from '@/enums'
 import { NameRequestMixin, PaymentMixin } from '@/mixins'
 // import NewReqModule from '@/store/new-request-module'
 import { sleep } from '@/plugins'
+import { Getter } from 'vuex-class'
+import { ApplicantI } from '@/interfaces'
 
 @Component({})
 export default class CancelDialog extends Mixins(NameRequestMixin, PaymentMixin) {
+  // Global Getters
+  @Getter getApplicant!: ApplicantI
+
   /** Used to show loading state on button. */
   private loading = false
 
   private get emailAddress (): string {
-    return this.applicant?.emailAddress
+    return this.getApplicant?.emailAddress
   }
 
   private get isVisible (): boolean {

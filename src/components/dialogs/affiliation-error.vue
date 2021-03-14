@@ -21,15 +21,19 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-// import newReqModule from '@/store/new-request-module'
+import { Action, Getter } from 'vuex-class'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class AffiliationErrorDialog extends Vue {
+  @Getter getAffiliationErrorModalVisible!: boolean
+  @Action setAffiliationErrorModalVisible!: ActionBindingIF
+
   get showModal () {
-    return newReqModule.affiliationErrorModalVisible
+    return this.getAffiliationErrorModalVisible
   }
   set showModal (value: boolean) {
-    newReqModule.mutateAffiliationErrorModalVisible(value)
+    this.setAffiliationErrorModalVisible(value)
   }
 }
 </script>

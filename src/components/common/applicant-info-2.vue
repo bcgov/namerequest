@@ -216,13 +216,10 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 })
 export default class ApplicantInfo2 extends Vue {
   // Global getters
-  @Getter getCorpNum!: string // USED
-  @Getter getIsPersonsName!: boolean
-  @Getter getApplicant!: ApplicantI // USED
+  @Getter getCorpNum!: string
+  @Getter getApplicant!: ApplicantI
   @Getter getIsPriorityRequest!: boolean
   @Getter getEditMode!: boolean
-  // @Getter getLocation!: string
-  // @Getter getNr!: Partial<NameRequestI>
   @Getter getNrData!: any
   @Getter getNrState!: string
   @Getter getShowPriorityRequest!: boolean
@@ -234,7 +231,7 @@ export default class ApplicantInfo2 extends Vue {
   @Action corpNumRequest!: ActionBindingIF
   @Action setApplicant!: ActionBindingIF
   @Action submit!: ActionBindingIF
-  // @Action setCorpNum!: ActionBindingIF
+  @Action setCorpNum!: ActionBindingIF
   @Action setNRData!: ActionBindingIF
   @Action setIsLoadingSubmission!: ActionBindingIF
 
@@ -375,7 +372,7 @@ export default class ApplicantInfo2 extends Vue {
     this.validate()
     if (this.isValid) {
       console.log('Inside valid Submit')
-      await this.submit()
+      await this.submit(null)
     }
     // hang on to the loading state for a bit
     // to prevent users clicking button again while next component displays
