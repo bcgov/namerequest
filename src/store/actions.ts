@@ -992,6 +992,10 @@ export const setApplicantDetails: ActionIF = ({ commit }, appKV) => {
   }
 }
 
+export const setAddressSuggestions: ActionIF = ({ commit }, addressSuggestions: any[]) => {
+  commit('mutateAddressSuggestions', addressSuggestions)
+}
+
 // TODO: Not a real action?
 export const corpNumRequest = async ({ getters }, corpNum: string) => {
   if (getters.getShowCorpNum) {
