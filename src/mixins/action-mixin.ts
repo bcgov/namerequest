@@ -16,6 +16,7 @@ export class ActionMixin extends Vue {
 
   // Global action
   @Action setApplicantDetails!: ActionBindingIF
+  @Action setAddressSuggestions!: ActionBindingIF
 
   private isAxiosError (err: AxiosError | Error): boolean {
     return (err as AxiosError).isAxiosError !== undefined
@@ -61,68 +62,70 @@ export class ActionMixin extends Vue {
     }
   }
 
-  // async fetchAddressDetails (id): Promise<void> {
-  //   try {
-  //     const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Retrieve/v2.11/json3.ws'
-  //     const params = {
-  //       Key: canadaPostAPIKey,
-  //       Id: id
-  //     }
+  async fetchAddressDetails (id): Promise<void> {
+    try {
+      const url = 'https://ws1.postescanada-canadapost.ca/AddressComplete/Interactive/Retrieve/v2.11/json3.ws'
+      const params = {
+        Key: canadaPostAPIKey,
+        Id: id
+      }
 
-  //     const resp = await axios.post(url, this.qs.stringify(params), {
-  //       headers: { 'Content-type': 'application/x-www-form-urlencoded' }
-  //     })
+      const resp = await axios.post(url, this.qs.stringify(params), {
+        headers: { 'Content-type': 'application/x-www-form-urlencoded' }
+      })
 
-  //     if (resp.data.Items && Array.isArray(resp.data.Items)) {
-  //       const addressData = resp.data.Items.find(item => item.Language === 'ENG')
-  //       const canadaPostFieldsMapping = {
-  //         CountryIso2: 'countryTypeCd',
-  //         PostalCode: 'postalCd',
-  //         ProvinceCode: 'stateProvinceCd',
-  //         City: 'city',
-  //         Line1: 'addrLine1',
-  //         Line2: 'addrLine2'
-  //       }
+      // *** TODO: error handling in case post() failed
 
-  //       for (let ln of ['2', '3']) {
-  //         if (!addressData[`Line${ln}`]) {
-  //           this.setApplicantDetails({ key: `addrLine${ln}`, value: '' })
-  //         }
-  //       }
+      if (resp.data.Items && Array.isArray(resp.data.Items)) {
+        const addressData = resp.data.Items.find(item => item.Language === 'ENG')
+        const canadaPostFieldsMapping = {
+          CountryIso2: 'countryTypeCd',
+          PostalCode: 'postalCd',
+          ProvinceCode: 'stateProvinceCd',
+          City: 'city',
+          Line1: 'addrLine1',
+          Line2: 'addrLine2'
+        }
 
-  //       if (addressData['ProvinceCode']) {
-  //         if (addressData['ProvinceCode'].length > 2) {
-  //           this.setApplicantDetails({ key: 'stateProvinceCd', value: '' })
-  //           if (!addressData['ProvinceName']) {
-  //             canadaPostFieldsMapping['ProvinceCode'] = 'addrLine3'
-  //           } else {
-  //             delete canadaPostFieldsMapping.ProvinceCode
-  //             canadaPostFieldsMapping['ProvinceName'] = 'addrLine3'
-  //           }
-  //         }
-  //       } else {
-  //         delete canadaPostFieldsMapping.ProvinceCode
-  //         this.setApplicantDetails({ key: 'stateProvinceCd', value: '' })
-  //         if (addressData['ProvinceName']) {
-  //           canadaPostFieldsMapping['ProvinceName'] = 'addrLine3'
-  //         }
-  //       }
+        for (let ln of ['2', '3']) {
+          if (!addressData[`Line${ln}`]) {
+            this.setApplicantDetails({ key: `addrLine${ln}`, value: '' })
+          }
+        }
 
-  //       const fields = Object.keys(canadaPostFieldsMapping)
-  //       for (let field of fields) {
-  //         if (addressData[field]) {
-  //           const value = addressData[field]
-  //           const mappedField = canadaPostFieldsMapping[field]
-  //           this.setApplicantDetails({ key: mappedField, value })
-  //         }
-  //       }
-  //     }
-  //   } catch (err) {
-  //     const msg = await this.handleApiError(err, 'Could not get address details')
-  //     // AddressComplete problem - use console.log not console.error
-  //     console.log('fetchAddressDetails() =', msg) // eslint-disable-line no-console
-  //   }
-  // }
+        if (addressData['ProvinceCode']) {
+          if (addressData['ProvinceCode'].length > 2) {
+            this.setApplicantDetails({ key: 'stateProvinceCd', value: '' })
+            if (!addressData['ProvinceName']) {
+              canadaPostFieldsMapping['ProvinceCode'] = 'addrLine3'
+            } else {
+              delete canadaPostFieldsMapping.ProvinceCode
+              canadaPostFieldsMapping['ProvinceName'] = 'addrLine3'
+            }
+          }
+        } else {
+          delete canadaPostFieldsMapping.ProvinceCode
+          this.setApplicantDetails({ key: 'stateProvinceCd', value: '' })
+          if (addressData['ProvinceName']) {
+            canadaPostFieldsMapping['ProvinceName'] = 'addrLine3'
+          }
+        }
+
+        const fields = Object.keys(canadaPostFieldsMapping)
+        for (let field of fields) {
+          if (addressData[field]) {
+            const value = addressData[field]
+            const mappedField = canadaPostFieldsMapping[field]
+            this.setApplicantDetails({ key: mappedField, value })
+          }
+        }
+      }
+    } catch (err) {
+      const msg = await this.handleApiError(err, 'Could not get address details')
+      // AddressComplete problem - use console.log not console.error
+      console.log('fetchAddressDetails() =', msg) // eslint-disable-line no-console
+    }
+  }
 
   @Debounce(250)
   async fetchAddressSuggestions (appKV: { key, value }): Promise<void> {
@@ -141,10 +144,13 @@ export class ActionMixin extends Vue {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
 
+      // *** TODO: error handling in case post() failed
+
       if (Array.isArray(resp.data.Items)) {
         let filteredItems = resp.data.Items.filter(item => item.Next === 'Retrieve')
         if (this.getApplicant.addrLine1) {
-          this.setApplicantDetails(filteredItems)
+          // this.setApplicantDetails(filteredItems)
+          this.setAddressSuggestions(filteredItems)
         }
         return
       }

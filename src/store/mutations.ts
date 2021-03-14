@@ -2,7 +2,6 @@ import Vue from 'vue'
 import { StateIF } from '@/interfaces/state-interface'
 import {
   AnalysisJSONI,
-  ApplicantI,
   ConversionTypesI,
   LocationT,
   NameRequestI,
@@ -19,9 +18,9 @@ export const mutateActingOnOwnBehalf = (state: StateIF, actingOnOwnBehalf: boole
   state.stateModel.newRequestModel.actingOnOwnBehalf = actingOnOwnBehalf
 }
 
-export const mutateAddressSuggestions = (state: StateIF, addressSuggestions: object | null) => {
+export const mutateAddressSuggestions = (state: StateIF, addressSuggestions: any[]) => {
   if (!addressSuggestions) {
-    state.stateModel.newRequestModel.actingOnOwnBehalf = null
+    state.stateModel.newRequestModel.addressSuggestions = null
   } else {
     state.stateModel.newRequestModel.addressSuggestions = Object.assign([], addressSuggestions)
   }
