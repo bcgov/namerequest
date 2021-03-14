@@ -161,7 +161,7 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   }
   get requestActionText (): string {
     if (this.getRequestActionCd && this.getRequestTypeOptions.find(req => req.value === this.getRequestActionCd)) {
-      return this.getRequestTypeOptions.find(req => req.value === this.getRequestActionCd).text
+      return this.getRequestTypeOptions.find(req => req.value === this.getRequestActionCd)?.text
     }
     return null
   }

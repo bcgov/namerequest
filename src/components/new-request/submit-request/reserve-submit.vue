@@ -63,7 +63,7 @@ export default class ReserveSubmitButton extends Vue {
   }
 
   handleSubmit () {
-    let { setup, getLocation } = this
+    let { setup } = this
 
     if (setup === 'cancel') {
       this.sendToExamination()
@@ -84,7 +84,7 @@ export default class ReserveSubmitButton extends Vue {
     }
     this.setDisplayedComponent('SubmissionTabs')
 
-    if (getLocation !== 'BC' && setup !== 'assumed') {
+    if (this.getLocation !== 'BC' && setup !== 'assumed') {
       goToNames()
       return
     }
