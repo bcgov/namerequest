@@ -8,7 +8,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { ApplicantI } from '@/interfaces'
 import { ApiErrorMixin } from '@/mixins'
 
-@Component
+@Component({})
 export class ActionMixin extends Mixins(ApiErrorMixin) {
   qs: any = querystring
 
