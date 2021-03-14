@@ -1,7 +1,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { AxiosError } from 'axios'
 
-@Component
+@Component({})
 export class ApiErrorMixin extends Vue {
   private isAxiosError (err: AxiosError | Error): boolean {
     return (err as AxiosError).isAxiosError !== undefined

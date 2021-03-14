@@ -1250,3 +1250,7 @@ export const setHelpMeChooseModalVisible: ActionIF = ({ commit }, isVisible: boo
 export const setLocationInfoModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
   commit('mutateLocationInfoModalVisible', isVisible)
 }
+
+export const setNrRequiredModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
+  commit('mutateNrRequiredModalVisible', isVisible)
+}

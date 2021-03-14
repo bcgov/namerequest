@@ -31,8 +31,9 @@
 </template>
 
 <script lang="ts">
-// import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NameInput from '@/components/new-request/name-input.vue'
 import { BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
 
@@ -40,6 +41,25 @@ import { BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
   components: { NameInput }
 })
 export default class MrasSearchInfoDialog extends Vue {
+  // Global getters
+  @Getter getCorpSearch!: string
+  @Getter getErrors!: string[]
+  @Getter getHasNoCorpNum!: boolean
+  @Getter getIsXproMras!: boolean
+  @Getter getJurisdictionText!: string
+  @Getter getLocation!: string
+  @Getter getMrasSearchResultCode!: number
+  @Getter getName!: string
+  @Getter getRequestActionCd!: string
+  @Getter getMrasSearchInfoModalVisible!: boolean
+
+  // Global actions
+  @Action setCorpSearch!: ActionBindingIF
+  @Action setMrasSearchInfoModalVisible!: ActionBindingIF
+  @Action setName!: ActionBindingIF
+  @Action setNoCorpNum!: ActionBindingIF
+  @Action startAnalyzeName!: ActionBindingIF
+
   private resultConfig: any = {
     [BAD_REQUEST]: {
       desc: null,
@@ -59,43 +79,43 @@ export default class MrasSearchInfoDialog extends Vue {
     }
   }
   get showModal () {
-    return newReqModule.mrasSearchInfoModalVisible
+    return this.getMrasSearchInfoModalVisible
   }
   set showModal (value: boolean) {
-    newReqModule.mutateMrasSearchInfoModalVisible(value)
+    this.setMrasSearchInfoModalVisible(value)
   }
   get name () {
-    return newReqModule.name
+    return this.getName
   }
   get corpSearch () {
-    return newReqModule.corpSearch
+    return this.getCorpSearch
   }
   get jurisdictionText () {
-    return newReqModule.jurisdictionText
+    return this.getJurisdictionText
   }
   get resultDesc () {
-    return this.resultConfig[newReqModule.mrasSearchResultCode]?.desc || this.resultConfig.default.desc
+    return this.resultConfig[this.getMrasSearchResultCode]?.desc || this.resultConfig.default.desc
   }
   get resultAct () {
-    return this.resultConfig[newReqModule.mrasSearchResultCode]?.action || this.resultConfig.default.action
+    return this.resultConfig[this.getMrasSearchResultCode]?.action || this.resultConfig.default.action
   }
   get isNameSearch (): boolean {
-    return (newReqModule.noCorpNum || newReqModule.mrasSearchResultCode !== NOT_FOUND)
+    return (this.getHasNoCorpNum || this.getMrasSearchResultCode !== NOT_FOUND)
   }
   get errors () {
-    return newReqModule.errors
+    return this.getErrors
   }
   async handleSubmit (): Promise<void> {
     this.showModal = false
-    if (this.name) await newReqModule.startAnalyzeName()
-    newReqModule.mutateCorpSearch('')
-    newReqModule.mutateNoCorpNum(false)
+    if (this.name) await this.startAnalyzeName(null)
+    this.setCorpSearch('')
+    this.setNoCorpNum(false)
   }
   private clearAndClose (): void {
     this.showModal = false
-    newReqModule.mutateName('')
-    newReqModule.mutateCorpSearch('')
-    newReqModule.mutateNoCorpNum(false)
+    this.setName('')
+    this.setCorpSearch('')
+    this.setNoCorpNum(false)
   }
 }
 </script>

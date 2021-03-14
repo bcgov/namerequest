@@ -18,7 +18,8 @@ import {
 // List Data
 import designations from '@/store/list-data/designations'
 import { ConversionTypes, EntityTypesBCData, EntityTypesXPROData, Locations, RequestActions } from './list-data'
-import { $mrasJurisdictions } from '@/store/list-data/canada-jurisdictions'
+import $canJurisdictions, { $mrasJurisdictions } from '@/store/list-data/canada-jurisdictions'
+import $intJurisdictions from '@/store/list-data/intl-jurisdictions'
 
 /** Returns the name. */
 export const getName = (state: StateIF): string => {
@@ -74,6 +75,16 @@ export const getLocationText = (state: StateIF): string => {
 /** Return the current jurisdiction code. */
 export const getJurisdiction = (state: StateIF): string => {
   return state.stateModel.newRequestModel.request_jurisdiction_cd
+}
+
+export const getJurisdictionText = (state: StateIF): string => {
+  return getLocation(state) === 'CA'
+    ? $canJurisdictions.find(jur => jur.value === getRequestJurisdictionCd(state))?.text
+    : $intJurisdictions.find(jur => jur.value === getRequestJurisdictionCd(state))?.text
+}
+
+export const getMrasSearchResultCode = (state: StateIF): number => {
+  return state.stateModel.newRequestModel.mrasSearchResultCode
 }
 
 /** Returns the entity type code. */
@@ -731,6 +742,30 @@ export const getPickRequestTypeModalVisible = (state: StateIF): boolean => {
 
 export const getExitModalVisible = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.exitModalVisible
+}
+
+export const getAffiliationErrorModalVisible = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.affiliationErrorModalVisible
+}
+
+export const getConditionsModalVisible = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.conditionsModalVisible
+}
+
+export const getHelpMeChooseModalVisible = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.helpMeChooseModalVisible
+}
+
+export const getLocationInfoModalVisible = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.locationInfoModalVisible
+}
+
+export const getMrasSearchInfoModalVisible = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.mrasSearchInfoModalVisible
+}
+
+export const getNrRequiredModalVisible = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.nrRequiredModalVisible
 }
 
 export const getNameAnalysisTimeout = (state: StateIF): boolean => {

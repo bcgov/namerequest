@@ -35,19 +35,23 @@
 </template>
 
 <script lang="ts">
-// import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class NrNotRequiredDialog extends Vue {
+  @Getter getNrRequiredModalVisible!: boolean
+  @Action setNrRequiredModalVisible!: ActionBindingIF
+
   private corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
   private businessRegistryLink = 'https://www.bcregistry.ca/business'
 
   get showModal () {
-    return newReqModule.nrRequiredModalVisible
+    return this.getNrRequiredModalVisible
   }
   set showModal (value: boolean) {
-    newReqModule.mutateNrRequiredModalVisible(value)
+    this.setNrRequiredModalVisible(value)
   }
 }
 

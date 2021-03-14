@@ -23,7 +23,7 @@
               <v-btn x-large
                      id="restart-btn"
                      v-if="box.button === 'restart'"
-                     @click="cancelAnalyzeName()">Start Search Over</v-btn>
+                     @click="localCancelAnalyzeName()">Start Search Over</v-btn>
                <v-btn x-large
                       id="english-btn"
                       v-if="box.button === 'english'"
@@ -63,7 +63,10 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   @Getter getRequestTypeOptions!: RequestActionsI[]
 
   // Global actions
+  @Action cancelAnalyzeName!: ActionBindingIF
   @Action startAnalyzeName!: ActionBindingIF
+  @Action setName!: ActionBindingIF
+  @Action setSubmissionTabComponent!: ActionBindingIF
 
   mounted () {
     if (this.nameIsSlashed) {
@@ -72,7 +75,7 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   }
 
   get nameAnalysisTimedOut () {
-    return this.nameAnalysisTimedOut
+    return this.getNameAnalysisTimeout
   }
 
   get boxes () {
@@ -145,7 +148,7 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
     return this.getName
   }
   set name (value) {
-    newReqModule.mutateName(value)
+    this.setName(value)
   }
   get nameIsEnglish () {
     return this.getNameIsEnglish
@@ -190,14 +193,14 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   }
   async newSearch () {
     this.name = this.englishOnlyName
-    await newReqModule.startAnalyzeName()
+    await this.startAnalyzeName(null)
   }
   showNextTab () {
-    newReqModule.mutateSubmissionTabComponent('NamesCapture')
+    this.setSubmissionTabComponent('NamesCapture')
   }
-  cancelAnalyzeName () {
+  localCancelAnalyzeName () {
     this.$root.$emit('start-search-again')
-    newReqModule.cancelAnalyzeName('Tabs')
+    this.cancelAnalyzeName('Tabs')
   }
 }
 </script>
