@@ -12,7 +12,7 @@
           </span>
           <span class="link-std-sans-ul" v-else>
             <v-icon class="mr-n1 mini-back-arrow">mdi-chevron-left</v-icon>
-            {{ editMode ? 'Return' : 'Start Over' }}
+            {{ getEditMode ? 'Return' : 'Start Over' }}
           </span>
         </button>
       </v-col>
@@ -23,22 +23,30 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
-
+import { Action, Getter } from 'vuex-class'
 import { DisplayedComponentMixin } from '@/mixins'
-import newReqModule from '@/store/new-request-module'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class MainContainer extends Mixins(DisplayedComponentMixin) {
+  // Global getters
+  @Getter getEditMode!: boolean
+  @Getter getDisplayedComponent!: string
+  @Getter getSubmissionTabNumber!: number
+
+  // Global action
+  @Action setExitModalVisible!: ActionBindingIF
+
   componentName: string = ''
 
   private mounted () {
     this.$nextTick(() => {
-      if (this.$el?.querySelector) {
+      if (this.$el?.querySelector instanceof Function) {
         // add classname to button text (for more detail in Sentry breadcrumbs)
         if (this.showExit) {
           const exitBtn = this.$el.querySelector('#back-to-search-btn > span')
           if (exitBtn) exitBtn.classList.add('exit-btn')
-        } else if (this.editMode) {
+        } else if (this.getEditMode) {
           const returnBtn = this.$el.querySelector('#back-to-search-btn > span')
           if (returnBtn) returnBtn.classList.add('return-btn')
         } else {
@@ -49,19 +57,15 @@ export default class MainContainer extends Mixins(DisplayedComponentMixin) {
     })
   }
 
-  get editMode () {
-    return newReqModule.editMode
-  }
-
   get showExit (): boolean {
-    return [2, 3].includes(newReqModule.submissionTabNumber) ||
-      newReqModule.displayedComponent === 'ExistingRequestDisplay'
+    return [2, 3].includes(this.getSubmissionTabNumber) ||
+      this.getDisplayedComponent === 'ExistingRequestDisplay'
   }
 
   backToSearch () {
-    if ([2, 3].includes(newReqModule.submissionTabNumber) && !this.editMode &&
-      newReqModule.displayedComponent !== 'ExistingRequestDisplay') {
-      newReqModule.mutateExitModalVisible(true)
+    if ([2, 3].includes(this.getSubmissionTabNumber) && !this.getEditMode &&
+      this.getDisplayedComponent !== 'ExistingRequestDisplay') {
+      this.setExitModalVisible(true)
     } else {
       this.cancelAndResetState()
     }

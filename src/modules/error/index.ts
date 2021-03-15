@@ -1,7 +1,9 @@
 import { Module, VuexModule, getModule } from 'vuex-module-decorators'
-import store from '@/store'
+import { getVuexStore } from '@/store'
 
 import errorStore from './store'
+
+const store = getVuexStore()
 
 @Module({ dynamic: true, namespaced: false, store, name: 'errorModule' })
 export class ErrorModule extends VuexModule {

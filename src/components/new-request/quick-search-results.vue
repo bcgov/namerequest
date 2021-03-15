@@ -16,9 +16,9 @@
           <b>Quick Search Results</b>
         </v-col>
       </v-row>
-      <v-row v-if="namesList.length" justify="center" class="ma-0 pa-0">
+      <v-row v-if="getQuickSearchNames.length" justify="center" class="ma-0 pa-0">
         <v-col cols="12" class="quick-search-info">
-          We found <b>{{namesList.length}}</b> corporations using these, or similar, words.
+          We found <b>{{getQuickSearchNames.length}}</b> corporations using these, or similar, words.
         </v-col>
         <v-col cols="12" class="quick-search-info" v-if="location.value==='BC'">
           Research your name here to see if other businesses are using a similar name within
@@ -70,52 +70,52 @@
 </template>
 
 <script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+
 import MainContainer from '@/components/new-request/main-container.vue'
 import NameInput from '@/components/new-request/name-input.vue'
 import QuickSearchNames from '@/components/new-request/quick-search-names.vue'
-import allDesignations, { allDesignationsList } from '@/store/list-data/designations'
-import newReqModule from '@/store/new-request-module'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { EntityI } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: { MainContainer, NameInput, QuickSearchNames }
 })
 export default class QuickSearchResults extends Vue {
-  config = {
-    modules: {
-      toolbar: false
-    },
-    placeholder: '',
-    scrollingContainer: false
-  }
-  contents: string = ''
+  // Global getter
+  @Getter getQuickSearchNames!: object[]
+  // @Getter getEntityTypeOptions!: Array<EntityI>
+  @Getter getEntityTextFromValue!: string
+  @Getter getLocation!: string
+  @Getter getLocationOptions!: Array<any>
+  @Getter getName!: string
+  // @Getter getRequestActionCd!: string
+
+  // Global actions
+  @Action setQuickSearch!: ActionBindingIF
+  @Action setNoCorpNum!: ActionBindingIF
+  @Action startAnalyzeName!: ActionBindingIF
+
   originalName: string = ''
   private isLoadingAnalysis: boolean = false
 
-  get entity_type_cd () {
-    return newReqModule.entity_type_cd
-  }
   get entityText () {
-    return newReqModule.entityTextFromValue
+    return this.getEntityTextFromValue
   }
+
   get location () {
-    let value = newReqModule.location
-    let options = newReqModule.locationOptions
-    return options.find((opt: any) => opt.value === value)
+    return this.getLocationOptions.find((opt: any) => opt.value === this.getLocation)
   }
-  get namesList () {
-    return newReqModule.quickSearchNames
-  }
-  get searchName () {
-    return newReqModule.name
-  }
+
   get nameChanged () {
-    return this.originalName === this.searchName
+    return this.originalName === this.getName
   }
+
   mounted () {
-    this.originalName = this.searchName
+    this.originalName = this.getName
     this.$nextTick(() => {
-      if (this.$el?.querySelector) {
+      if (this.$el?.querySelector instanceof Function) {
         // add classname to button text (for more detail in Sentry breadcrumbs)
         const searchAgainBtn = this.$el.querySelector('#search-again-button > span')
         if (searchAgainBtn) searchAgainBtn.classList.add('search-again-btn')
@@ -125,14 +125,14 @@ export default class QuickSearchResults extends Vue {
     })
   }
   async searchAgain () {
-    newReqModule.mutateQuickSearch(true)
-    await newReqModule.startAnalyzeName()
+    this.setQuickSearch(true)
+    await this.startAnalyzeName(null)
   }
   async detailedSearch () {
     this.isLoadingAnalysis = true
-    newReqModule.mutateNoCorpNum(true)
-    newReqModule.mutateQuickSearch(false)
-    await newReqModule.startAnalyzeName()
+    this.setNoCorpNum(true)
+    this.setQuickSearch(false)
+    await this.startAnalyzeName(null)
     this.isLoadingAnalysis = false
   }
 }

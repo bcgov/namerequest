@@ -23,17 +23,23 @@
 
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
+
 import PaymentSummary from '@/components/payment/payment-summary.vue'
 import PaymentModule from '@/modules/payment'
 import * as PaymentTypes from '@/modules/payment/store/types'
-import { NameRequestMixin, PaymentMixin, PaymentSessionMixin } from '@/mixins'
+import { PaymentMixin, PaymentSessionMixin } from '@/mixins'
+import { ApplicantI, NameChoicesIF } from '@/interfaces'
 
 @Component({
   components: {
     PaymentSummary
   }
 })
-export default class ReceiptsDialog extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
+export default class ReceiptsDialog extends Mixins(PaymentMixin, PaymentSessionMixin) {
+  // Global getters
+  @Getter getNrId!: number
+
   /** Used to display a fetch error, if any. */
   protected fetchError = ''
 
@@ -70,10 +76,9 @@ export default class ReceiptsDialog extends Mixins(NameRequestMixin, PaymentMixi
    * @returns True if successful, otherwise False
    */
   private async fetchData (): Promise<boolean> {
-    const { nrId } = this
-    if (!nrId) return false
+    if (!this.getNrId) return false
     // NB: errors are handled by PaymentMixin
-    return this.fetchNrPayments(nrId)
+    return this.fetchNrPayments(this.getNrId)
   }
 }
 </script>

@@ -28,16 +28,20 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class LocationInfoDialog extends Vue {
+  @Getter getLocationInfoModalVisible!: boolean
+  @Action setLocationInfoModalVisible!: ActionBindingIF
+
   get showModal () {
-    return newReqModule.locationInfoModalVisible
+    return this.getLocationInfoModalVisible
   }
   set showModal (value: boolean) {
-    newReqModule.mutateLocationInfoModalVisible(value)
+    this.setLocationInfoModalVisible(value)
   }
 }
 

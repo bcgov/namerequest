@@ -3,8 +3,8 @@
     <template v-slot:container-header>
       <v-col cols="auto h4 py-0 mt-1">
         You are searching for a name for a
-        {{ entityText === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }}
-        {{ entityText }}
+        {{ getEntityTextFromValue === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }}
+        {{ getEntityTextFromValue }}
       </v-col>
     </template>
     <template v-slot:content>
@@ -38,49 +38,32 @@
 </template>
 
 <script lang="ts">
-import MainContainer from '@/components/new-request/main-container.vue'
-import newReqModule from '@/store/new-request-module'
-import NameInput from '@/components/new-request/name-input.vue'
 import { Component, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+
+import MainContainer from '@/components/new-request/main-container.vue'
+import NameInput from '@/components/new-request/name-input.vue'
+
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: { MainContainer, NameInput }
 })
 export default class AnalyzeCharacters extends Vue {
-  get entityObject () {
-    return newReqModule.entityTypeOptions.find((ent: any) => ent.value === this.entity_type_cd)
-  }
-  get entityText () {
-    return newReqModule.entityTextFromValue
-  }
-  get entity_type_cd () {
-    return newReqModule.entity_type_cd
-  }
-  get nameStartsWithSymbol () {
-    // eslint-disable-next-line no-useless-escape
-    return !!this.name.match(/^[\[\]\^*\+-\/\=&\(\)\.,"'#@\!\?;:]/)
-  }
-  get name () {
-    return newReqModule.name
-  }
+  // Global getters
+  @Getter getEntityTextFromValue!: string
+  @Getter getLocation!: string
+  @Getter getLocationOptions!: Array<any>
+
+  // Global actions
+  @Action cancelAnalyzeName!: ActionBindingIF
+
   get location () {
-    let value = newReqModule.location
-    let options = newReqModule.locationOptions
-    return options.find((opt: any) => opt.value === value)
-  }
-  get request_action_cd () {
-    switch (newReqModule.request_action_cd) {
-      case 'new':
-        return 'a new'
-      case 'existing':
-        return 'an existing'
-      default:
-        return 'a new'
-    }
+    return this.getLocationOptions.find((opt: any) => opt.value === this.getLocation)
   }
 
   startOver () {
-    newReqModule.cancelAnalyzeName('Tabs')
+    this.cancelAnalyzeName('Tabs')
   }
 }
 

@@ -7,7 +7,7 @@
         <div class="main-container-style mt-3">
           <transition name="fade" mode="out-in" :duration="{ enter: 100, leave: 100 }">
             <keep-alive :include="['Tabs']">
-              <component :is="displayedComponent" :key="displayedComponent" transition="fade-transition" />
+              <component :is="getDisplayedComponent" :key="getDisplayedComponent" transition="fade-transition" />
             </keep-alive>
           </transition>
         </div>
@@ -22,7 +22,9 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
 
+// Components
 import { AppTitleCols } from '@/components/common'
 import LowerContainer from '@/components/lower-info-area/lower-container.vue'
 
@@ -39,7 +41,8 @@ import Stats from '@/components/new-request/stats.vue'
 import SubmissionTabs from '@/components/new-request/submit-request/submission-tabs.vue'
 import Success from '@/components/common/success.vue'
 import Tabs from '@/components/tabs.vue'
-import newRequestModule from '@/store/new-request-module'
+
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: {
@@ -61,10 +64,22 @@ import newRequestModule from '@/store/new-request-module'
   }
 })
 export default class Landing extends Vue {
-  @Prop(String) id: string
+  // Global getter
+  @Getter getDisplayedComponent!: string
+
+  // Global actions
+  @Action getNameRequest!: ActionBindingIF
+  @Action loadExistingNameRequest!: ActionBindingIF
+  @Action setDisplayedComponent!: ActionBindingIF
+
+  // TODO: IS THIS USED?
+  @Prop(String)
+  readonly id: string
+
   private agileUrl = 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business' +
     '/permits-licences/news-updates/modernization'
 
+  // TODO: IS THIS USED?
   async mounted () {
     const { id } = this
     // If the ID prop is set, load the existing NR
@@ -73,20 +88,15 @@ export default class Landing extends Vue {
     }
   }
 
+  // TODO: IS THIS USED?
   async fetchNr (nrId: number): Promise<void> {
-    const nrData = await newRequestModule.getNameRequest(nrId)
-    await newRequestModule.loadExistingNameRequest(nrData)
-  }
-
-  get displayedComponent () {
-    return newRequestModule.displayedComponent
+    const nrData = await this.getNameRequest(nrId)
+    await this.loadExistingNameRequest(nrData)
   }
 }
 </script>
 
 <style lang="scss" scoped>
-/*@import '@/assets/scss/theme.scss';*/
-
 .landing-content-container {
   min-width: 940px;
   max-width: 1140px;

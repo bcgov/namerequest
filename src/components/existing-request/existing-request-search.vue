@@ -49,8 +49,8 @@
             </v-col>
             <v-col class="max-height">
               <v-text-field :rules="nrRules"
-                            :value="search.nrNum"
-                            @input="setExistingRequestSearch('nrNum', $event)"
+                            :value="getExistingRequestSearch.nrNum"
+                            @input="handleExistingRequestSearch('nrNum', $event)"
                             class="copy-normal"
                             filled
                             id="nr-num-text-field"
@@ -68,8 +68,8 @@
             </v-col>
             <v-col class="max-height">
               <v-text-field :rules="phoneRules"
-                            :value="search.phoneNumber"
-                            @input="setExistingRequestSearch('phoneNumber', $event)"
+                            :value="getExistingRequestSearch.phoneNumber"
+                            @input="handleExistingRequestSearch('phoneNumber', $event)"
                             class="copy-normal"
                             filled
                             id="phone-number-text-field"
@@ -81,8 +81,8 @@
             <v-col class="copy-normal text-center shrink mx-4"> or </v-col>
             <v-col class="max-height">
               <v-text-field :rules="emailRules"
-                            :value="search.emailAddress"
-                            @input="setExistingRequestSearch('emailAddress', $event)"
+                            :value="getExistingRequestSearch.emailAddress"
+                            @input="handleExistingRequestSearch('emailAddress', $event)"
                             class="copy-normal"
                             filled
                             id="email-address-text-field"
@@ -107,69 +107,68 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import newReqModule from '@/store/new-request-module'
-// import ErrorModule from '@/modules/error' // *** TODO: delete this?
-// import { NameRequestI, SearchDataI, NrDataResponseT, NrDataT } from '@/interfaces' // *** TODO: delete this?
+import { Action, Getter } from 'vuex-class'
 
-// eslint-disable-next-line no-useless-escape
-const NR_REGEX = /^(NR\ ?L?|L?)?([\d]{6,8})$/
+import { NameRequestI, ExistingRequestSearchI } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
+
 @Component({})
 export default class ExistingRequestSearch extends Vue {
+  // Global getters
+  @Getter getNr!: Partial<NameRequestI>
+  @Getter getExistingRequestSearch!: ExistingRequestSearchI
+
+  // Global actions
+  @Action findNameRequest!: ActionBindingIF
+  @Action setExistingRequestSearch!: ActionBindingIF
+  @Action setNameRequest!: ActionBindingIF
+
   private errorMessage = ''
   private isValid = false
+  // eslint-disable-next-line no-useless-escape
+  private NR_REGEX = /^(NR\ ?L?|L?)?([\d]{6,8})$/
 
   mounted () {
     this.$nextTick(() => {
-      if (this.$el?.querySelector) {
+      if (this.$el?.querySelector instanceof Function) {
         // add classname to button text (for more detail in Sentry breadcrumbs)
         const retrieveNrBtn = this.$el.querySelector('#retrieve-name-btn > span')
         if (retrieveNrBtn) retrieveNrBtn.classList.add('retrieve-nr-btn')
       }
     })
 
-    if (this.nr && this.nr.failed) {
-      this.errorMessage = this.nr.text
-      newReqModule.mutateNameRequest({})
+    if (this.getNr?.failed) {
+      this.errorMessage = this.getNr.text
+      this.setNameRequest({})
       return
     }
+
     for (let key of ['emailAddress', 'phoneNumber']) {
-      let value = ''
-      newReqModule.mutateExistingRequestSearch({ key, value })
+      this.setExistingRequestSearch({ key, value: '' })
     }
   }
 
   private emailRules = [
-    v => (!!v || !!this.search.phoneNumber) || 'Please enter either the phone or the email',
-    v => !!this.search.phoneNumber || (!!v && /.+@.+\..+/.test(v)) || 'Please be sure to enter a valid email'
+    v => (!!v || !!this.getExistingRequestSearch?.phoneNumber) || 'Please enter either the phone or the email',
+    v => !!this.getExistingRequestSearch?.phoneNumber || (!!v && /.+@.+\..+/.test(v)) ||
+      'Please be sure to enter a valid email'
   ]
   private nrRules = [
-    v => NR_REGEX.test(v) || 'Please enter a valid NR number'
+    v => this.NR_REGEX.test(v) || 'Please enter a valid NR number'
   ]
   private phoneRules = [
     v => (!v || v.length <= 30) || 'Cannot exceed 30 characters'
   ]
 
-  private get nr () {
-    return newReqModule.nr
-  }
-
-  private get search () {
-    return newReqModule.existingRequestSearch
-  }
-
-  private get allowSubmit () {
-    return (this.search.nrNum && (this.search.emailAddress || this.search.phoneNumber))
-  }
-
   private async handleSubmit (): Promise<void> {
     this.$refs['existing-nr-form']['validate']()
     await this.$nextTick()
     if (this.isValid) {
-      await newReqModule.findNameRequest()
-      if (this.nr?.failed) {
+      await this.findNameRequest(null)
+      if (this.getNr?.failed) {
         // capture error text and then clear out the NR data
-        this.errorMessage = this.nr.text
-        newReqModule.mutateNameRequest({})
+        this.errorMessage = this.getNr.text
+        this.setNameRequest({})
       }
       // FUTURE: clear out applicant's phone and email ?
       // for (let key of ['emailAddress', 'phoneNumber']) {
@@ -179,12 +178,12 @@ export default class ExistingRequestSearch extends Vue {
     }
   }
 
-  private setExistingRequestSearch (key: string, value: string) {
+  private handleExistingRequestSearch (key: string, value: string) {
     // auto-capitalize the entered NR number
     if (key === 'nrNum') value = value.toUpperCase()
 
     this.$refs['existing-nr-form']['resetValidation']()
-    newReqModule.mutateExistingRequestSearch({ key, value })
+    this.setExistingRequestSearch({ key, value })
     if (this.errorMessage) {
       this.errorMessage = ''
     }

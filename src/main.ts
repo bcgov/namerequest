@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import Hotjar from 'vue-hotjar'
 import { getVueRouter } from '@/router'
-import store from './store'
+import { getVuexStore } from '@/store'
 import { getConfig, getVuetify, initLdClient } from '@/plugins'
 import KeycloakService from 'sbc-common-components/src/services/keycloak.services'
 import * as Sentry from '@sentry/browser'
@@ -18,11 +18,11 @@ import '@/assets/scss/base.scss'
 import '@/assets/scss/layout.scss'
 import '@/assets/scss/overrides.scss'
 
-import designations from '@/store/list-data/designations'
-import canJurisdictions from '@/store/list-data/canada-jurisdictions'
-import intJurisdictions from '@/store/list-data/intl-jurisdictions'
-import USAStateCodes from '@/store/list-data/us-states'
-import * as mapping from '@/store/list-data/request-action-mapping'
+import {
+  Designations, AllDesignationsList, CanJurisdictions, MrasJurisdictions, IntlJurisdictions,
+  ConversionTypes, EntityTypesBcData, EntityTypesXproData, RequestActions, Locations, UsaStateCodes,
+  BcMapping, XproMapping, ColinRequestActions, ColinRequestTypes, XproColinRequestTypes
+} from '@/list-data'
 
 Vue.config.productionTip = true
 Vue.config.devtools = true
@@ -35,20 +35,31 @@ Vue.config.devtools = true
 async function startVue () {
   // Fetch the configuration
   const envConfig = await getConfig()
-  //
+  const store = await getVuexStore()
+
   // *** TODO: remove these config assignments if possible
-  //
   // Load environment config
   Vue.prototype.$PAYMENT_PORTAL_URL = envConfig.$PAYMENT_PORTAL_URL
   // Load Vuex config
   store.state.config = envConfig
 
   // Load global data
-  Vue.prototype.$designations = designations
-  Vue.prototype.$canJurisdictions = canJurisdictions
-  Vue.prototype.$intJurisdictions = intJurisdictions
-  Vue.prototype.$USAStateCodes = USAStateCodes
-  Vue.prototype.$xproMapping = mapping.xproMapping
+  Vue.prototype.$designations = Designations
+  Vue.prototype.$canJurisdictions = CanJurisdictions
+  Vue.prototype.$mrasJurisdictions = MrasJurisdictions
+  Vue.prototype.$intlJurisdictions = IntlJurisdictions
+  Vue.prototype.$usaStateCodes = UsaStateCodes
+  Vue.prototype.$bcMapping = BcMapping
+  Vue.prototype.$xproMapping = XproMapping
+  Vue.prototype.$conversionTypes = ConversionTypes
+  Vue.prototype.$allDesignationsList = AllDesignationsList
+  Vue.prototype.$entityTypesBcData = EntityTypesBcData
+  Vue.prototype.$entityTypesXproData = EntityTypesXproData
+  Vue.prototype.$requestActions = RequestActions
+  Vue.prototype.$locations = Locations
+  Vue.prototype.$colinRequestActions = ColinRequestActions
+  Vue.prototype.$colinRequestTypes = ColinRequestTypes
+  Vue.prototype.$xproColinRequestTypes = XproColinRequestTypes
 
   // Initialize Hotjar
   if (window['hotjarId']) {

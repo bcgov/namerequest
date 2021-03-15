@@ -92,12 +92,12 @@ export interface DraftReqI {
 }
 
 export interface EntityI {
-  blurbs?: string[] | string
+  blurbs?: string | string[] | string[][] // TODO: fix wtf here
   intBlurbs?: string[]
   mveBlurbs?: string[]
   rehBlurbs?: string[]
-  amlBlurbs?: string[] | [string[], string[]?]
-  chgBlurbs?: string [] | [string[], string[]?]
+  amlBlurbs?: string[] | string[][]
+  chgBlurbs?: string[] | string[][]
   cat?: string
   rank?: number
   shortlist?: boolean
@@ -176,7 +176,7 @@ export interface QuillOpsI {
 }
 
 export interface RequestActionMappingI {
-  [propName: string]: string[] // excess properties // *** TODO: this should just be `any`
+  [propName: string]: string[] // misc properties that are arrays of strings
 }
 
 export interface RequestActionsI {
@@ -246,9 +246,11 @@ export interface SetupI {
 }
 
 export interface StatsI {
-  auto_approved_count: number
-  priority_wait_time: number
-  regular_wait_time: number
+  data: {
+    auto_approved_count: number
+    priority_wait_time: number
+    regular_wait_time: number
+  }
 }
 
 export interface WaitingAddressSearchI {

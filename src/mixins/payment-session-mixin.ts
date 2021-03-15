@@ -4,7 +4,7 @@ import { Component } from 'vue-property-decorator'
 import { NameRequestPaymentResponse } from '@/modules/payment/models'
 import { PaymentAction } from '@/enums'
 
-@Component
+@Component({})
 export class PaymentSessionMixin extends Vue {
   get paymentInProgress (): boolean {
     return (sessionStorage.getItem('paymentInProgress') === 'true')

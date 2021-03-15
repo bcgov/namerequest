@@ -81,7 +81,7 @@
               <div v-on="on">
                 <v-textarea :messages="messages['nature']"
                             :rules="businessNatureRules"
-                            :value="nrData.natureBusinessInfo"
+                            :value="getNrData.natureBusinessInfo"
                             @blur="messages = {}"
                             @input="mutateNRData('natureBusinessInfo', $event)"
                             filled
@@ -105,7 +105,7 @@
             <template v-slot:activator="{ on }">
               <div v-on="on">
                 <v-textarea :messages="messages['additional']"
-                            :value="nrData.additionalInfo"
+                            :value="getNrData.additionalInfo"
                             :rules="additionalInfoRules"
                             @blur="messages = {}"
                             @input="mutateNRData('additionalInfo', $event)"
@@ -165,7 +165,7 @@
             <template v-slot:activator="{ on }">
               <div v-on="on">
                 <v-text-field :messages="messages['tradeMark']"
-                              :value="nrData.tradeMark"
+                              :value="getNrData.tradeMark"
                               :rules="trademarkRules"
                               @blur="messages = {}"
                               @input="mutateNRData('tradeMark', $event)"
@@ -215,17 +215,41 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
-import newReqModule, { NewRequestModule } from '@/store/new-request-module'
-import paymentModule from '@/modules/payment'
-import { NameRequestMixin } from '@/mixins'
+import { ApplicantI, SubmissionTypeT } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: {
     ApplicantInfoNav
   }
 })
-export default class ApplicantInfo3 extends NameRequestMixin {
+export default class ApplicantInfo3 extends Vue {
+  // Global getters
+  @Getter getCorpNum!: string
+  @Getter getIsPersonsName!: boolean
+  @Getter getApplicant!: ApplicantI
+  @Getter getIsPriorityRequest!: boolean
+  @Getter getEditMode!: boolean
+  @Getter getLocation!: string
+  @Getter getNrData!: any
+  @Getter getNrState!: string
+  @Getter getRequestActionCd!: string
+  @Getter getShowPriorityRequest!: boolean
+  @Getter getShowCorpNum!: string
+  @Getter getSubmissionType!: SubmissionTypeT
+
+  // Global actions
+  @Action setApplicant!: ActionBindingIF
+  @Action setCorpNum!: ActionBindingIF
+  @Action setIsLoadingSubmission!: ActionBindingIF
+  @Action setNRData!: ActionBindingIF
+  @Action setPriorityRequest!: ActionBindingIF
+  @Action fetchCorpNum!: ActionBindingIF
+  @Action submit!: ActionBindingIF
+
   corpNumDirty: boolean = false
   corpNumError: string = ''
   additionalInfoRules = [
@@ -237,7 +261,7 @@ export default class ApplicantInfo3 extends NameRequestMixin {
   ]
   corpNumRules = [
     v => !!v || 'Required field',
-    v => !!this.getCorpNum(v) || 'Cannot validate number. Please try again.'
+    v => !!this.validateCorpNum(v) || 'Cannot validate number. Please try again.'
   ]
   emailRules = [
     (v: string) => !!v || 'Required field',
@@ -273,37 +297,37 @@ export default class ApplicantInfo3 extends NameRequestMixin {
   }
 
   get applicant () {
-    return newReqModule.applicant
+    return this.getApplicant
   }
   get corpNum () {
-    return newReqModule.corpNum
+    return this.getCorpNum
   }
   get isPersonsName () {
-    return newReqModule.isPersonsName
+    return this.getIsPersonsName
   }
   get location () {
-    return newReqModule.location
+    return this.getLocation
   }
   get priorityRequest () {
-    return newReqModule.priorityRequest
+    return this.getIsPriorityRequest
   }
   get request_action_cd () {
-    return newReqModule.request_action_cd
+    return this.getRequestActionCd
   }
   get showAllFields () {
-    return (!this.editMode || this.nrState === 'DRAFT')
+    return (!this.getEditMode || this.getNrState === 'DRAFT')
   }
   get showCorpNum () {
-    return newReqModule.showCorpNum
+    return this.getShowCorpNum
   }
   get showPriorityRequest () {
-    return newReqModule.showPriorityRequest
+    return this.getShowPriorityRequest
   }
   get submissionType () {
-    return newReqModule.submissionType
+    return this.getSubmissionType
   }
   get xproJurisdiction () {
-    return (newReqModule.nrData || {}).xproJurisdiction
+    return (this.getNrData || {}).xproJurisdiction
   }
   set corpNum (num) {
     if (!this.corpNumDirty) {
@@ -315,13 +339,13 @@ export default class ApplicantInfo3 extends NameRequestMixin {
     if (this.hideCorpNum !== 'auto') {
       this.hideCorpNum = 'auto'
     }
-    newReqModule.mutateCorpNum(num)
+    this.setCorpNum(num)
   }
   set priorityRequest (value) {
-    newReqModule.mutatePriorityRequest(value)
+    this.setPriorityRequest(value)
   }
 
-  async getCorpNum (num) {
+  async validateCorpNum (num): Promise<boolean> {
     if (!num) {
       return
     }
@@ -331,7 +355,7 @@ export default class ApplicantInfo3 extends NameRequestMixin {
     }
     this.loading = true
     try {
-      let resp = await newReqModule.getCorpNum(num)
+      await this.fetchCorpNum(num)
       this.corpNumError = ''
       this.loading = false
       this.corpNumDirty = false
@@ -344,10 +368,10 @@ export default class ApplicantInfo3 extends NameRequestMixin {
     }
   }
   mutateApplicant (key, value) {
-    newReqModule.mutateApplicant({ key, value })
+    this.setApplicant({ key, value })
   }
   mutateNRData (key, value) {
-    newReqModule.mutateNRData({ key, value })
+    this.setNRData({ key, value })
   }
   setError (error) {
     this.error = error
@@ -365,7 +389,7 @@ export default class ApplicantInfo3 extends NameRequestMixin {
   onValidChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {
-        if (this.$el?.querySelector) {
+        if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
           const clientReviewBackBtn = this.$el.querySelector('#submit-back-btn > span')
           if (clientReviewBackBtn) clientReviewBackBtn.classList.add('client-review-back-btn')
@@ -377,14 +401,14 @@ export default class ApplicantInfo3 extends NameRequestMixin {
   }
 
   async nextAction () {
-    newReqModule.mutateIsLoadingSubmission(true)
+    this.setIsLoadingSubmission(true)
     this.validate()
     if (this.isValid) {
-      await this.submit()
+      await this.submit(null)
     }
     // hang on to the loading state for a bit
     // to prevent users clicking button again while next component displays
-    setTimeout(() => newReqModule.mutateIsLoadingSubmission(false), 1000)
+    setTimeout(() => this.setIsLoadingSubmission(false), 1000)
   }
 }
 </script>

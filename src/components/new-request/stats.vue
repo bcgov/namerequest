@@ -58,26 +58,30 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/new-request-module'
+import { Vue, Component, Watch } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+
 import { StatsI } from '@/interfaces'
-import { Vue, Component } from 'vue-property-decorator'
 import { getFeatureFlag } from '@/plugins'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class Stats extends Vue {
+  // Global getter
+  @Getter getStats!: StatsI
+
+  // Global action
+  @Action fetchStats!: ActionBindingIF
+
   created (): void {
     if (getFeatureFlag('hardcoded_regular_wait_time') === 0 ||
         getFeatureFlag('hardcoded_priority_wait_time') === 0) {
-      newReqModule.getStats()
+      this.fetchStats(null)
     }
   }
 
-  get stats (): StatsI {
-    return newReqModule.stats
-  }
-
   get autoApprovedCount (): string | number {
-    return (this.stats?.auto_approved_count || '0')
+    return (this.getStats?.data?.auto_approved_count ?? '-')
   }
 
   /** The regular wait time, in days. */
@@ -86,7 +90,7 @@ export default class Stats extends Vue {
     if (regularWaitTime > 0) {
       return regularWaitTime
     } else {
-      return (this.stats?.regular_wait_time || '-')
+      return (this.getStats?.data?.regular_wait_time ?? '-')
     }
   }
 
@@ -96,7 +100,7 @@ export default class Stats extends Vue {
     if (priorityWaitTime > 0) {
       return priorityWaitTime
     } else {
-      return (this.stats?.priority_wait_time || '-')
+      return (this.getStats?.data?.priority_wait_time ?? '-')
     }
   }
 }

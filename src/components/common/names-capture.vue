@@ -1,39 +1,34 @@
 <template>
   <v-form @keydown="validate" id="send-to-examination-form">
     <v-container fluid class="pa-0" id="send-to-examination-container">
-      <template v-if="editMode">
+      <template v-if="getEditMode">
         <v-row class="mt-5">
           <v-col cols="6" class="font-weight-bold py-0">I need a name to:</v-col>
-          <v-col cols="6" class="d-flex justify-end py-0">
-            <!-- REMOVED FOR MVP: -->
-            <!-- <button id="help-me-choose-activator"
-                    class="link-std"
-                    @change="activateHMCModal()">Help Me Choose</button> -->
-          </v-col>
+          <v-col cols="6" class="d-flex justify-end py-0"></v-col>
         </v-row>
 
         <v-row class="mt-3">
           <v-col cols="5" class="py-0">
-            <v-select :error-messages="errors.includes('request_action_cd') ? 'Please select a type' : ''"
-                      :hide-details="!errors.includes('request_action_cd')"
-                      :items="requestTypeOptions"
+            <v-select :error-messages="getErrors.includes('request_action_cd') ? 'Please select a type' : ''"
+                      :hide-details="!getErrors.includes('request_action_cd')"
+                      :items="getRequestTypeOptions"
                       @change="clearErrors()"
                       filled
                       id="search-type-options-select"
                       v-model="request_action_cd" />
           </v-col>
           <v-col cols="2" class="py-0">
-            <v-select :error-messages="errors.includes('location') ? 'Please select a location' : ''"
-                      :hide-details="!errors.includes('location')"
-                      :items="locationOptions"
+            <v-select :error-messages="getErrors.includes('location') ? 'Please select a location' : ''"
+                      :hide-details="!getErrors.includes('location')"
+                      :items="getLocationOptions"
                       filled
                       id="location-options-select"
                       v-model="location" />
           </v-col>
           <v-col cols="5" class="py-0">
-            <v-select :error-messages="errors.includes('entity_type_cd') ? 'Please select a type' : ''"
-                      :hide-details="!errors.includes('entity_type_cd')"
-                      :items="entityTypeOptions"
+            <v-select :error-messages="getErrors.includes('entity_type_cd') ? 'Please select a type' : ''"
+                      :hide-details="!getErrors.includes('entity_type_cd')"
+                      :items="getEntityTypeOptions"
                       @change="clearErrors()"
                       filled
                       id="entity-type-options-select"
@@ -42,12 +37,12 @@
         </v-row>
       </template>
 
-      <v-row class="mt-5" v-if="editMode || isAssumedName">
-        <v-col cols="auto" class="font-weight-bold h5 py-0" v-if="editMode">
+      <v-row class="mt-5" v-if="getEditMode || getIsAssumedName">
+        <v-col cols="auto" class="font-weight-bold h5 py-0" v-if="getEditMode">
           Name Choices
         </v-col>
-        <v-col cols="auto" class="text-body-3 py-0" v-else-if="isAssumedName">
-          Name in Home Jurisdiction: {{name}}
+        <v-col cols="auto" class="text-body-3 py-0" v-else-if="getIsAssumedName">
+          Name in Home Jurisdiction: {{getName}}
         </v-col>
       </v-row>
 
@@ -60,7 +55,7 @@
             <v-row class="ma-0 pa-0" v-if="location === 'BC'">
               <v-col :cols="designationAtEnd ? 8 : 12" class="py-0" >
                 <v-text-field :error-messages="messages.name1"
-                              :hide-details="hide"
+                              :hide-details="hideDetails"
                               :value="nameChoices.name1"
                               @blur="handleBlur()"
                               @input="editChoices('name1', $event, true)"
@@ -77,9 +72,9 @@
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
                       <v-select :error-messages="des1Message"
-                                :hide-details="hide"
+                                :hide-details="hideDetails"
                                 :items="items"
-                                :menu-props="props"
+                                :menu-props="menuProps"
                                 :value="nameChoices.designation1"
                                 @blur="handleBlur(); showDesignationErrors.des1 = true"
                                 @input="editChoices('designation1', $event, true)"
@@ -95,19 +90,19 @@
               </v-col>
             </v-row>
             <v-row class="ma-0 pa-0" v-else>
-              <v-col :cols="isAssumedName ? 8 : 12" class="py-0" >
+              <v-col :cols="getIsAssumedName ? 8 : 12" class="py-0" >
                 <v-text-field :error-messages="messages.name1"
-                              :hide-details="hide"
+                              :hide-details="hideDetails"
                               :value="xproNameWithoutConflict"
                               @blur="handleBlur()"
                               @input="editChoices('name1', $event, true)"
-                              :filled="isAssumedName"
+                              :filled="getIsAssumedName"
                               id="choice-1-text-field"
                               :label="choicesLabelsAndHints[0].hint"
-                              :disabled="!isAssumedName"
+                              :disabled="!getIsAssumedName"
                               :name="Math.random()"/>
               </v-col>
-              <v-col cols="4" class="py-0" v-if="isAssumedName">
+              <v-col cols="4" class="py-0" v-if="getIsAssumedName">
                 <v-tooltip top
                   transition="fade-transition"
                   content-class="top-tooltip"
@@ -115,9 +110,9 @@
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
                       <v-select :error-messages="des1Message"
-                                :hide-details="hide"
+                                :hide-details="hideDetails"
                                 :items="items"
-                                :menu-props="props"
+                                :menu-props="menuProps"
                                 :value="nameChoices.designation1"
                                 @blur="handleBlur(); showDesignationErrors.des1 = true"
                                 @input="editChoices('designation1', $event, true)"
@@ -136,11 +131,11 @@
         </transition>
       </v-row>
 
-      <v-row v-if="!editMode" class="my-1 py-0 colour-text mt-5">
+      <v-row v-if="!getEditMode" class="my-1 py-0 colour-text mt-5">
         <v-col cols="2" class="py-0"></v-col>
         <v-col cols="10" class="py-0 text-body-3">
           <span v-if="location!=='BC'">
-            <span v-if="isAssumedName">
+            <span v-if="getIsAssumedName">
               You may provide up to two additional assumed names which will be considered at no further
               cost, in the order provided, if your first choice cannot be approved. Be sure to follow all
               <a :href="buildNameURL" target="_blank">
@@ -186,7 +181,7 @@
             <v-row class="ma-0 pa-0">
               <v-col :cols="designationAtEnd ? 8: 12" class="py-0">
                 <v-text-field :error-messages="messages.name2"
-                              :hide-details="hide"
+                              :hide-details="hideDetails"
                               :value="nameChoices.name2"
                               @blur="handleBlur()"
                               @input="editChoices('name2', $event, true)"
@@ -203,9 +198,9 @@
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
                       <v-select :error-messages="des2Message"
-                                :hide-details="hide"
+                                :hide-details="hideDetails"
                                 :items="items"
-                                :menu-props="props"
+                                :menu-props="menuProps"
                                 :value="nameChoices.designation2"
                                 @blur="handleBlur(); showDesignationErrors.des2 = true"
                                 @input="editChoices('designation2', $event, true)"
@@ -233,7 +228,7 @@
             <v-row class="ma-0 pa-0">
               <v-col :cols="designationAtEnd? 8: 12" class="py-0" style="height:60px">
                 <v-text-field :error-messages="messages.name3"
-                              :hide-details="hide"
+                              :hide-details="hideDetails"
                               :value="nameChoices.name3"
                               @blur="handleBlur()"
                               @input="editChoices('name3', $event)"
@@ -250,7 +245,7 @@
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
                       <v-select :error-messages="des3Message"
-                                :hide-details="hide"
+                                :hide-details="hideDetails"
                                 :items="items"
                                 :value="nameChoices.designation3"
                                 @blur="handleBlur(); showDesignationErrors.des3 = true"
@@ -280,19 +275,51 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
-import { LocationT } from '@/interfaces'
+import { EntityI, LocationT, NameChoicesIF, NameRequestI, RequestActionsI } from '@/interfaces'
 import { sanitizeName } from '@/plugins'
-import newReqModule from '@/store/new-request-module'
-import { NameRequestMixin } from '@/mixins'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: {
     ApplicantInfoNav
   }
 })
-export default class NamesCapture extends NameRequestMixin {
-  hide: boolean | 'auto' = true
+export default class NamesCapture extends Vue {
+  // Global getters
+  @Getter getDisplayedComponent!: string
+  @Getter getEditMode!: boolean
+  @Getter getErrors!: string[]
+  @Getter getEntityTypeCd!: string
+  @Getter getEntityTypeOptions!: Array<EntityI>
+  @Getter getIsAssumedName!: boolean
+  @Getter getLocation!: LocationT
+  @Getter getLocationOptions!: Array<any>
+  @Getter getName!: string
+  @Getter getNameChoices!: NameChoicesIF
+  @Getter getNr!: Partial<NameRequestI>
+  @Getter getRequestActionCd!: string
+  @Getter getRequestTypeOptions!: RequestActionsI[]
+  @Getter getSubmissionTabNumber!: number
+
+  // Global actions
+  @Action setClearErrors!: ActionBindingIF
+  @Action setEntityTypeCd!: ActionBindingIF
+  @Action setDisplayedComponent!: ActionBindingIF
+  @Action setLocation!: ActionBindingIF
+  @Action setLocationInfoModalVisible!: ActionBindingIF
+  @Action setNameChoices!: ActionBindingIF
+  @Action setNameChoicesToInitialState!: ActionBindingIF
+  @Action setNRData!: ActionBindingIF
+  @Action setPickEntityModalVisible!: ActionBindingIF
+  @Action setPickRequestTypeModalVisible!: ActionBindingIF
+  @Action setRequestAction!: ActionBindingIF
+  @Action setSubmissionTabComponent!: ActionBindingIF
+  @Action setSubmissionType!: ActionBindingIF
+
+  hideDetails: boolean | 'auto' = true
   messages = {
     des1: '',
     des2: '',
@@ -301,7 +328,7 @@ export default class NamesCapture extends NameRequestMixin {
     name2: '',
     name3: ''
   }
-  props = {
+  menuProps = {
     disableKeys: false
   }
   showDesignationErrors = {
@@ -310,41 +337,42 @@ export default class NamesCapture extends NameRequestMixin {
     des3: false
   }
 
-  mounted () {
+  async mounted (): Promise<void> {
     // add event listener when this component is mounted
     // eg, when user continues to send for review
     this.$el.addEventListener('keydown', this.handleKeydown)
 
-    newReqModule.mutateNameChoicesToInitialState()
-    if (this.isAssumedName && !this.editMode) {
-      this.$nextTick(() => { this.hide = true })
+    this.setNameChoicesToInitialState(null)
+    if (this.getIsAssumedName && !this.getEditMode) {
+      await this.$nextTick() // *** TODO: this should not be needed
+      this.hideDetails = true
       return
     }
 
-    this.$nextTick(() => {
-      if (this.editMode) {
-        this.populateNames()
-        return
-      }
-      newReqModule.mutateSubmissionType('examination')
-      if (this.designationAtEnd) {
-        for (let item of this.items) {
-          let { name } = this
-          if ([' LTD', ' INC', ' CORP'].some(des => name.endsWith(des))) {
-            name = name + '.'
-          }
-          if (item) {
-            if (name.endsWith(item)) {
-              newReqModule.mutateNameChoices({ key: 'designation1', value: item })
-              let value = name.replace(item, '').trim()
-              newReqModule.mutateNameChoices({ key: 'name1', value })
-              return
-            }
+    await this.$nextTick() // *** TODO: this should not be needed
+    if (this.getEditMode) {
+      this.populateNames()
+      return
+    }
+
+    this.setSubmissionType('examination')
+    if (this.designationAtEnd) {
+      for (let item of this.items) {
+        let name = this.getName
+        if ([' LTD', ' INC', ' CORP'].some(des => name.endsWith(des))) {
+          name = name + '.'
+        }
+        if (item) {
+          if (name.endsWith(item)) {
+            this.setNameChoices({ key: 'designation1', value: item })
+            let value = name.replace(item, '').trim()
+            this.setNameChoices({ key: 'name1', value })
+            return
           }
         }
       }
-      newReqModule.mutateNameChoices({ key: 'name1', value: this.name })
-    })
+    }
+    this.setNameChoices({ key: 'name1', value: this.getName })
   }
 
   destroyed () {
@@ -355,58 +383,11 @@ export default class NamesCapture extends NameRequestMixin {
 
   get isVisible (): boolean {
     const myComponent = (
-      newReqModule.displayedComponent === 'SubmissionTabs' ||
-      newReqModule.displayedComponent === 'ExistingRequestEdit'
+      this.getDisplayedComponent === 'SubmissionTabs' ||
+      this.getDisplayedComponent === 'ExistingRequestEdit'
     )
-    const myTab = (newReqModule.submissionTabNumber === 1)
+    const myTab = (this.getSubmissionTabNumber === 1)
     return (myComponent && myTab)
-  }
-
-  @Watch('isVisible')
-  private onVisibleChanged (val: boolean) {
-    if (val) {
-      // add event listener when this component is displayed
-      // eg, when user comes back from next tab
-      this.$el.addEventListener('keydown', this.handleKeydown)
-    } else {
-      // remove the event listener when this component is hidden
-      // eg, when user continues to next tab
-      this.$el.removeEventListener('keydown', this.handleKeydown)
-    }
-  }
-
-  @Watch('request_action_cd')
-  updateLocationOnAssumedName (newVal, oldVal) {
-    if (newVal === 'ASSUMED') {
-      if (this.location === 'BC') this.location = 'CA'
-    }
-  }
-  @Watch('entity_type_cd')
-  handleEntityType (newVal, oldVal) {
-    if (newVal === 'INFO') {
-      newReqModule.mutatePickEntityModalVisible(true)
-      this.entity_type_cd = oldVal
-    }
-  }
-  @Watch('location')
-  handleLocation (newVal, oldVal) {
-    if (newVal !== oldVal) {
-      newReqModule.mutateNRData({ key: 'xproJurisdiction', value: '' })
-    }
-    if (newVal === 'INFO') {
-      let type = this.entity_type_cd
-      newReqModule.mutateLocationInfoModalVisible(true)
-      this.$nextTick(function () {
-        this.location = oldVal
-        this.entity_type_cd = type
-      })
-    } else {
-      this.$nextTick(function () {
-        if (this.editMode) {
-          this.populateNames()
-        }
-      })
-    }
   }
 
   get showSecondAndThirdNameChoices () {
@@ -420,7 +401,7 @@ export default class NamesCapture extends NameRequestMixin {
   }
 
   get autofocusField () {
-    if (this.isAssumedName) {
+    if (this.getIsAssumedName) {
       return 'name1'
     }
     let output = 'name2'
@@ -441,24 +422,28 @@ export default class NamesCapture extends NameRequestMixin {
     }
     return output
   }
+
   get des1Message (): string {
     if (this.showDesignationErrors.des1) {
       return this.messages.des1
     }
     return ''
   }
+
   get des2Message (): string {
     if (this.showDesignationErrors.des2) {
       return this.messages.des2
     }
     return ''
   }
+
   get des3Message (): string {
     if (this.showDesignationErrors.des3) {
       return this.messages.des3
     }
     return ''
   }
+
   get designationAtEnd () {
     if (this.entity_type_cd && this.$designations[this.entity_type_cd]) {
       return this.$designations[this.entity_type_cd].end
@@ -483,7 +468,7 @@ export default class NamesCapture extends NameRequestMixin {
         }
       ]
     } else {
-      if (this.isAssumedName) {
+      if (this.getIsAssumedName) {
         return [
           {
             'label': 'Assumed Name First Choice',
@@ -527,31 +512,27 @@ export default class NamesCapture extends NameRequestMixin {
     // the CR designations for the purposes of this getter
     return basePhrases.filter(phrase => !this.$designations['CR'].words.includes(phrase))
   }
+
   get entityPhraseRequired () {
     if (!this.entity_type_cd) return false
     return ['CC', 'CP'].includes(this.entity_type_cd)
   }
+
   get entityPhraseText () {
     return this.entityPhraseChoices.join(', ')
   }
+
   get entity_type_cd () {
-    return newReqModule.entity_type_cd
+    return this.getEntityTypeCd
   }
+
   get entityTypeText () {
     return (this.entity_type_cd === 'CC') ? 'Community Contribution Company' : 'Cooperative'
   }
-  get entityTypeOptions () {
-    return newReqModule.entityTypeOptions
-  }
-  get errors () {
-    return newReqModule.errors
-  }
-  get isAssumedName () {
-    return newReqModule.isAssumedName
-  }
+
   get isValid () {
-    let { nameChoices, messages, designationAtEnd, validatePhrases, location, isAssumedName } = this
-    if (this.isAssumedName && this.editMode) {
+    let { nameChoices, messages, designationAtEnd, validatePhrases, location } = this
+    if (this.getIsAssumedName && this.getEditMode) {
       if (!nameChoices['name1']) {
         messages['name1'] = 'Please enter at least one name'
         return false
@@ -559,7 +540,7 @@ export default class NamesCapture extends NameRequestMixin {
       messages['name1'] = ''
       return true
     }
-    if (this.isAssumedName) {
+    if (this.getIsAssumedName) {
       if (!nameChoices['name1']) {
         if (!nameChoices['name2'] && !nameChoices['name3']) {
           return false
@@ -574,9 +555,9 @@ export default class NamesCapture extends NameRequestMixin {
       }
       let outcome = true
       for (let choice of [1, 2, 3]) {
-        if (nameChoices[`name${choice}`] === this.name) {
+        if (nameChoices[`name${choice}`] === this.getName) {
           messages[`name${choice}`] = 'This is identical to the name you originally entered. Please enter a new name.'
-          this.hide = 'auto'
+          this.hideDetails = 'auto'
           outcome = false
         }
       }
@@ -650,7 +631,7 @@ export default class NamesCapture extends NameRequestMixin {
       return true
     }
 
-    if (this.editMode) {
+    if (this.getEditMode) {
       let outcome = true
       if (designationAtEnd) {
         if (!name1() || !name2() || !name3()) {
@@ -659,7 +640,7 @@ export default class NamesCapture extends NameRequestMixin {
           for (let choice of [1, 2, 3]) {
             if (nameChoices[`name${choice}`]) {
               if (!nameChoices[`designation${choice}`]) {
-                if (location === 'BC' || isAssumedName) {
+                if (location === 'BC' || this.getIsAssumedName) {
                   messages[`des${choice}`] = 'Please choose a designation'
                   this.showDesignationErrors[`des${choice}`] = true
                   outcome = false
@@ -671,7 +652,7 @@ export default class NamesCapture extends NameRequestMixin {
           }
         }
         if (!outcome) {
-          this.hide = 'auto'
+          this.hideDetails = 'auto'
         }
       }
       return outcome
@@ -680,13 +661,15 @@ export default class NamesCapture extends NameRequestMixin {
     let step1 = name1()
     let step2 = name2()
     let step3 = name3()
+
     this.$nextTick(function () {
       if (!(step1 && step2 && step3)) {
-        this.hide = 'auto'
+        this.hideDetails = 'auto'
       }
     })
     return (step1 && step2 && step3)
   }
+
   get items () {
     let output: string[] = this.$designations[this.entity_type_cd].words
     if (this.entity_type_cd === 'CC') {
@@ -694,67 +677,61 @@ export default class NamesCapture extends NameRequestMixin {
     }
     return output
   }
+
   get location () {
-    return newReqModule.location
+    return this.getLocation
   }
-  get locationOptions () {
-    return newReqModule.locationOptions
+
+  set location (location: LocationT) {
+    this.setLocation(location)
   }
+
   get nameChoices () {
-    return newReqModule.nameChoices
+    return this.getNameChoices
   }
+
   get request_action_cd () {
-    return newReqModule.request_action_cd
+    return this.getRequestActionCd
   }
-  get requestTypeOptions () {
-    return newReqModule.requestTypeOptions
+
+  set request_action_cd (value: string) {
+    this.setRequestAction(value)
+    if (value === 'INFO') {
+      this.setPickRequestTypeModalVisible(true)
+    }
   }
+
   get xproNameWithoutConflict () {
     var name = this.nameChoices.name1
-    if (!this.isAssumedName && this.nameChoices.designation1) {
+    if (!this.getIsAssumedName && this.nameChoices.designation1) {
       name = `${name} ${this.nameChoices.designation1}`
     }
     return name
   }
+
   get buildNameURL () {
     return 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business/' +
     'permits-licences/businesses-incorporated-companies/approval-business-name/how-to-name-business'
   }
+
   set entity_type_cd (type: string) {
-    newReqModule.mutateEntityType(type)
-  }
-  set location (location: LocationT) {
-    newReqModule.mutateLocation(location)
-  }
-  set request_action_cd (value: string) {
-    newReqModule.mutateRequestAction(value)
-    if (value === 'INFO') {
-      newReqModule.mutatePickRequestTypeModalVisible(true)
-    }
+    this.setEntityTypeCd(type)
   }
 
-  activateHMCModal () {
-    newReqModule.mutateHelpMeChooseModalVisible(true)
-  }
-  activateNRRModal () {
-    newReqModule.mutateNrRequiredModalVisible(true)
-  }
-  autoCapitalize (key: string) {
-    let value = sanitizeName(this.nameChoices[key])
-    newReqModule.mutateNameChoices({ key, value })
-  }
   clearErrors () {
-    newReqModule.clearErrors()
+    this.setClearErrors(null)
   }
+
   editChoices (key, value, userInitiated = false) {
     if (userInitiated) {
-      this.hide = true
+      this.hideDetails = true
       for (let key in this.messages) {
         this.messages[key] = ''
       }
     }
-    newReqModule.mutateNameChoices({ key, value })
+    this.setNameChoices({ key, value })
   }
+
   handleBlur () {
     for (let key in this.nameChoices) {
       let value = this.nameChoices[key] ? sanitizeName(this.nameChoices[key]) : ''
@@ -762,20 +739,22 @@ export default class NamesCapture extends NameRequestMixin {
     }
     this.validate()
   }
+
   handleKeydown (event) {
     if (event.key === 'Enter') {
-      this.props.disableKeys = true
+      this.menuProps.disableKeys = true
       this.validateButton()
     }
   }
+
   populateNames () {
-    let { nr } = this
+    let nr = this.getNr
     for (let name of nr.names) {
       let { choice } = name
       if (name.designation) {
-        newReqModule.mutateNameChoices({ key: `designation${choice}`, value: name.designation })
+        this.setNameChoices({ key: `designation${choice}`, value: name.designation })
       }
-      newReqModule.mutateNameChoices({ key: `name${choice}`, value: name.name })
+      this.setNameChoices({ key: `name${choice}`, value: name.name })
     }
     const { nameChoices } = this
     if (nr && nr.names && Array.isArray(nr.names)) {
@@ -783,8 +762,8 @@ export default class NamesCapture extends NameRequestMixin {
         if (nr.names.find(name => name.choice === choice)) {
           let { name } = nr.names.find(name => name.choice === choice)
           if (name.designation && name.name) {
-            newReqModule.mutateNameChoices({ key: `name${choice}`, value: name.name })
-            newReqModule.mutateNameChoices({ key: `designation${choice}`, value: name.designation })
+            this.setNameChoices({ key: `name${choice}`, value: name.name })
+            this.setNameChoices({ key: `designation${choice}`, value: name.designation })
             continue
           }
           if (this.designationAtEnd) {
@@ -794,61 +773,66 @@ export default class NamesCapture extends NameRequestMixin {
               }
               if (item) {
                 if (name.endsWith(item)) {
-                  newReqModule.mutateNameChoices({ key: `designation${choice}`, value: item })
+                  this.setNameChoices({ key: `designation${choice}`, value: item })
                   let value = name.replace(item, '').trim()
-                  newReqModule.mutateNameChoices({ key: `name${choice}`, value })
+                  this.setNameChoices({ key: `name${choice}`, value })
                 }
               }
             }
             if (!nameChoices[`name${choice}`]) {
-              newReqModule.mutateNameChoices({ key: `name${choice}`, value: name })
+              this.setNameChoices({ key: `name${choice}`, value: name })
             }
           } else {
-            newReqModule.mutateNameChoices({ key: `name${choice}`, value: name })
+            this.setNameChoices({ key: `name${choice}`, value: name })
           }
         }
         if (this.designationAtEnd) {
           if (nameChoices[`name${choice}`] && nameChoices[`designation${choice}`]) {
             if (nameChoices[`name${choice}`].endsWith(' ' + nameChoices[`designation${choice}`])) {
               let newName = nameChoices[`name${choice}`].replace(nameChoices[`designation${choice}`], '').trim()
-              newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })
+              this.setNameChoices({ key: `name${choice}`, value: newName })
             }
           }
         } else if (this.designationAtEnd && nameChoices[`designation${choice}`]) {
           if (!nameChoices[`name${choice}`].endsWith(nameChoices[`designation${choice}`])) {
             let newName = nameChoices[`name${choice}`] + ' ' + nameChoices[`designation${choice}`]
-            newReqModule.mutateNameChoices({ key: `name${choice}`, value: newName })
+            this.setNameChoices({ key: `name${choice}`, value: newName })
           }
         }
       }
     }
   }
+
   showNextTab () {
-    newReqModule.mutateSubmissionTabComponent('ApplicantInfo1')
+    this.setSubmissionTabComponent('ApplicantInfo1')
   }
+
   transitionKey (i) {
     if (this.designationAtEnd) {
       return `transition-state-1-${i}`
     }
     return `transition-state-2-${i}`
   }
+
   validate (next = false) {
     if (!this.isValid) {
-      this.hide = 'auto'
-      this.props.disableKeys = false
+      this.hideDetails = 'auto'
+      this.menuProps.disableKeys = false
       return
     }
-    this.hide = true
+    this.hideDetails = true
     if (next) {
       this.showNextTab()
     }
   }
+
   validateButton () {
     for (let key in this.showDesignationErrors) {
       this.showDesignationErrors[key] = true
     }
     this.validate(true)
   }
+
   validatePhrases (choice: string) {
     if (this.entityPhraseRequired) {
       const name = this.nameChoices[choice].toUpperCase()
@@ -870,10 +854,59 @@ export default class NamesCapture extends NameRequestMixin {
   onValidChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {
-        if (this.$el?.querySelector) {
+        if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
           const choicesContinueBtn = this.$el.querySelector('#submit-continue-btn > span')
           if (choicesContinueBtn) choicesContinueBtn.classList.add('choices-continue-btn')
+        }
+      })
+    }
+  }
+
+  @Watch('isVisible')
+  private onVisibleChanged (val: boolean) {
+    if (val) {
+      // add event listener when this component is displayed
+      // eg, when user comes back from next tab
+      this.$el.addEventListener('keydown', this.handleKeydown)
+    } else {
+      // remove the event listener when this component is hidden
+      // eg, when user continues to next tab
+      this.$el.removeEventListener('keydown', this.handleKeydown)
+    }
+  }
+
+  @Watch('request_action_cd')
+  updateLocationOnAssumedName (newVal, oldVal) {
+    if (newVal === 'ASSUMED') {
+      if (this.location === 'BC') this.location = 'CA'
+    }
+  }
+
+  @Watch('entity_type_cd')
+  handleEntityType (newVal, oldVal) {
+    if (newVal === 'INFO') {
+      this.setPickEntityModalVisible(true)
+      this.entity_type_cd = oldVal
+    }
+  }
+
+  @Watch('location')
+  handleLocation (newVal, oldVal) {
+    if (newVal !== oldVal) {
+      this.setNRData({ key: 'xproJurisdiction', value: '' })
+    }
+    if (newVal === 'INFO') {
+      let type = this.entity_type_cd
+      this.setLocationInfoModalVisible(true)
+      this.$nextTick(function () {
+        this.location = oldVal
+        this.entity_type_cd = type
+      })
+    } else {
+      this.$nextTick(function () {
+        if (this.getEditMode) {
+          this.populateNames()
         }
       })
     }

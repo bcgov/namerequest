@@ -72,14 +72,23 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component({})
 export default class RequestDetails extends Vue {
-  @Prop(Object) applicant: ApplicantI
-  @Prop(Array) nameChoices: {
+  @Prop(Object)
+  readonly applicant: ApplicantI
+
+  @Prop(Array)
+  readonly nameChoices: {
     type: any[]
     required: false
   }
-  @Prop(String) name: string
-  // @Prop(Boolean) priorityRequest: boolean
-  // @Prop(Object) payment: any
+
+  @Prop(String)
+  readonly name: string
+
+  // @Prop(Boolean)
+  // readonly priorityRequest: boolean
+
+  // @Prop(Object)
+  // readonly payment: any
 
   get applicantName (): string {
     const applicant = this.applicant

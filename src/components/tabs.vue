@@ -37,11 +37,16 @@
 </template>
 
 <script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+
+// Components
 import NewSearch from '@/components/new-request/search.vue'
 import ExistingRequestSearch from './existing-request/existing-request-search.vue'
-import newReqModule from '../store/new-request-module'
-import { Component, Vue } from 'vue-property-decorator'
 import LinkRow from '@/components/common/link-row.vue'
+
+// Interfaces
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: {
@@ -51,14 +56,20 @@ import LinkRow from '@/components/common/link-row.vue'
   }
 })
 export default class Tabs extends Vue {
+  // Global getter
+  @Getter getTabNumber!: number
+
+  // Global action
+  @Action setTabNumber!: ActionBindingIF
+
   get tabNumber () {
-    return newReqModule.tabNumber
+    return this.getTabNumber
   }
+
   set tabNumber (tab: number) {
-    newReqModule.mutateTabNumber(tab)
+    this.setTabNumber(tab)
   }
 }
-
 </script>
 
 <style lang="scss" scoped>

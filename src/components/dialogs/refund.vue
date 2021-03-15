@@ -43,20 +43,31 @@
 
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+
 import PaymentModule from '@/modules/payment'
 import RefundSummary from '@/components/payment/refund-summary.vue'
 import * as PaymentTypes from '@/modules/payment/store/types'
 import { NrAction } from '@/enums'
-import { NameRequestMixin, PaymentMixin, PaymentSessionMixin } from '@/mixins'
-import NewReqModule from '@/store/new-request-module'
+import { PaymentMixin, PaymentSessionMixin } from '@/mixins'
 import { sleep } from '@/plugins'
+import { ApplicantI, NameChoicesIF } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: {
     RefundSummary
   }
 })
-export default class RefundDialog extends Mixins(NameRequestMixin, PaymentMixin, PaymentSessionMixin) {
+export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMixin) {
+  // Global getters
+  @Getter getNrId!: number
+  @Getter getApplicant!: ApplicantI
+
+  // Global actions
+  @Action setDisplayedComponent!: ActionBindingIF
+  @Action patchNameRequestsByAction: ActionBindingIF
+
   /** Used to display a fetch error, if any. */
   protected fetchError = ''
 
@@ -67,7 +78,7 @@ export default class RefundDialog extends Mixins(NameRequestMixin, PaymentMixin,
   private isVisible = false
 
   private get emailAddress (): string {
-    return this.applicant?.emailAddress
+    return this.getApplicant?.emailAddress
   }
 
   /** Whether this modal should be shown (per store property). */
@@ -98,15 +109,15 @@ export default class RefundDialog extends Mixins(NameRequestMixin, PaymentMixin,
   /** Called when user clicks "Cancel this NR" button. */
   private async confirmRefund (): Promise<void> {
     this.loading = true
-    if (await NewReqModule.patchNameRequestsByAction(NrAction.REFUND)) {
+    if (await this.patchNameRequestsByAction(NrAction.REFUND)) {
       this.loading = false
-      this.hideModal()
-      NewReqModule.mutateDisplayedComponent('Success')
+      await this.hideModal()
+      this.setDisplayedComponent('Success')
       await sleep(1000)
-      NewReqModule.mutateDisplayedComponent('ExistingRequestDisplay')
+      this.setDisplayedComponent('ExistingRequestDisplay')
     } else {
       this.loading = false
-      this.hideModal()
+      await this.hideModal()
     }
   }
 
@@ -115,17 +126,16 @@ export default class RefundDialog extends Mixins(NameRequestMixin, PaymentMixin,
    * @returns True if successful, otherwise False
    */
   private async fetchData (): Promise<boolean> {
-    const { nrId } = this
-    if (!nrId) return false
+    if (!this.getNrId) return false
     // NB: errors are handled by PaymentMixin
-    return this.fetchNrPayments(nrId)
+    return this.fetchNrPayments(this.getNrId)
   }
 
   @Watch('isVisible')
   onVisibleChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {
-        if (this.$el?.querySelector) {
+        if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
           const refundCancelBtn = this.$el.querySelector('#cancel-nr-btn > span')
           if (refundCancelBtn) refundCancelBtn.classList.add('refund-cancel-btn')

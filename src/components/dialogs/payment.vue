@@ -11,9 +11,9 @@
 
       <v-card-text class="copy-normal pt-0">
         <request-details
-          :applicant="applicant"
-          :name="name"
-          :nameChoices="nameChoices"
+          :applicant="getApplicant"
+          :name="getName"
+          :nameChoices="getNameChoices"
         />
         <fee-summary
           :filingData="[...paymentDetails]"
@@ -46,6 +46,7 @@
 
 <script lang='ts'>
 import { Component, Mixins, Watch } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 import PaymentModule from '@/modules/payment'
@@ -54,8 +55,10 @@ import * as PaymentTypes from '@/modules/payment/store/types'
 import * as FilingTypes from '@/modules/payment/filing-types'
 import * as Jurisdictions from '@/modules/payment/jurisdictions'
 import { PaymentAction } from '@/enums'
-import { NameRequestMixin, PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
+import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
+import { ApplicantI, NameChoicesIF } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: {
@@ -74,11 +77,17 @@ import { getBaseUrl } from '@/components/payment/payment-utils'
   }
 })
 export default class PaymentDialog extends Mixins(
-  NameRequestMixin,
   PaymentMixin,
   PaymentSessionMixin,
   DisplayedComponentMixin
 ) {
+  // Global getters
+  @Getter getName!: string
+  @Getter getNrId!: number
+  @Getter getApplicant!: ApplicantI
+  @Getter getNameChoices!: NameChoicesIF
+  @Getter getPriorityRequest!: boolean
+
   private isLoadingPayment: boolean = false
 
   /** The model value for the dialog component. */
@@ -106,7 +115,7 @@ export default class PaymentDialog extends Mixins(
       const paymentConfig = {
         filingType: FilingTypes.NM620,
         jurisdiction: Jurisdictions.BC,
-        priorityRequest: this.priorityRequest || false
+        priorityRequest: this.getPriorityRequest || false
       }
 
       const { onActivate } = this.$props
@@ -128,7 +137,7 @@ export default class PaymentDialog extends Mixins(
   /** Called when user clicks "Continue to Payment" button. */
   private async confirmPayment () {
     this.isLoadingPayment = true
-    const { nrId, priorityRequest } = this
+    const { getNrId, getPriorityRequest } = this
 
     const onSuccess = (paymentResponse) => {
       const { paymentId, paymentToken } = this
@@ -136,7 +145,7 @@ export default class PaymentDialog extends Mixins(
       this.savePaymentResponseToSession(PaymentAction.CREATE, paymentResponse)
       // see if redirect is needed else go to existing NR screen
       const baseUrl = getBaseUrl()
-      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${paymentId}`)
+      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${getNrId}/?paymentId=${paymentId}`)
       if (paymentResponse.sbcPayment.isPaymentActionRequired) {
         this.redirectToPaymentPortal(paymentId, paymentToken, redirectUrl)
       } else {
@@ -146,14 +155,14 @@ export default class PaymentDialog extends Mixins(
 
     const success = await this.createPayment({
       action: PaymentAction.CREATE,
-      nrId: nrId,
+      nrId: getNrId,
       filingType: FilingTypes.NM620,
-      priorityRequest: priorityRequest
+      priorityRequest: getPriorityRequest
     } as CreatePaymentParams, onSuccess)
 
     // on error, close this modal so error modal is visible
     if (!success) {
-      this.hideModal()
+      await this.hideModal()
     }
   }
 
@@ -162,14 +171,14 @@ export default class PaymentDialog extends Mixins(
     // rollback the NR
     this.$props.onCancel()
     // close this modal
-    this.hideModal()
+    await this.hideModal()
   }
 
   @Watch('isVisible')
   onVisibleChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {
-        if (this.$el?.querySelector) {
+        if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
           const confirmNrCancelBtn = this.$el.querySelector('#payment-cancel-btn > span')
           if (confirmNrCancelBtn) confirmNrCancelBtn.classList.add('confirm-nr-cancel-btn')

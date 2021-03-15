@@ -1,5 +1,4 @@
 import { NameRequestI, StateModelIF } from '@/interfaces'
-import { ConversionTypes, EntityTypesBCData, EntityTypesXPROData, RequestActions } from '@/store/list-data'
 
 export const stateModel: StateModelIF = {
   newRequestModel: {
@@ -34,7 +33,6 @@ export const stateModel: StateModelIF = {
     conflictId: null,
     conversionType: '',
     conversionTypeAddToSelect: null,
-    conversionTypes: ConversionTypes,
     corpNum: '',
     corpSearch: '',
     designationIssueTypes: [
@@ -48,8 +46,6 @@ export const stateModel: StateModelIF = {
     editMode: false,
     entity_type_cd: '',
     entityTypeAddToSelect: null,
-    entityTypesBCData: EntityTypesBCData,
-    entityTypesXPROData: EntityTypesXPROData,
     errors: [],
     existingRequestSearch: {
       emailAddress: '',
@@ -127,7 +123,6 @@ export const stateModel: StateModelIF = {
         assumed_name: false
       }
     },
-    requestActions: RequestActions,
     requestActionOriginal: '',
     showActualInput: false,
     stats: null,
@@ -135,7 +130,8 @@ export const stateModel: StateModelIF = {
     submissionType: null,
     tabNumber: 0,
     userCancelledAnalysis: false,
-    waitingAddressSearch: null
+    waitingAddressSearch: null,
+    isLoadingSubmission: false
   },
   errorModel: {},
   paymentModel: {}

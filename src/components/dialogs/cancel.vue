@@ -37,20 +37,30 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+
 import PaymentModule from '@/modules/payment'
-import * as PaymentTypes from '@/modules/payment/store/types'
-import { NrAction } from '@/enums'
 import { NameRequestMixin, PaymentMixin } from '@/mixins'
-import NewReqModule from '@/store/new-request-module'
 import { sleep } from '@/plugins'
+
+import { NrAction } from '@/enums'
+import { ApplicantI } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import * as PaymentTypes from '@/modules/payment/store/types'
 
 @Component({})
 export default class CancelDialog extends Mixins(NameRequestMixin, PaymentMixin) {
+  // Global Getters
+  @Getter getApplicant!: ApplicantI
+
+  @Action patchNameRequestsByAction: ActionBindingIF
+  @Action setDisplayedComponent!: ActionBindingIF
+
   /** Used to show loading state on button. */
   private loading = false
 
   private get emailAddress (): string {
-    return this.applicant?.emailAddress
+    return this.getApplicant?.emailAddress
   }
 
   private get isVisible (): boolean {
@@ -64,15 +74,15 @@ export default class CancelDialog extends Mixins(NameRequestMixin, PaymentMixin)
   /** Called when user clicks "Cancel this NR" button. */
   private async confirmCancel (): Promise<void> {
     this.loading = true
-    if (await NewReqModule.patchNameRequestsByAction(NrAction.CANCEL)) {
+    if (await this.patchNameRequestsByAction(NrAction.CANCEL)) {
       this.loading = false
-      this.hideModal()
-      NewReqModule.mutateDisplayedComponent('Success')
+      await this.hideModal()
+      this.setDisplayedComponent('Success')
       await sleep(1000)
-      NewReqModule.mutateDisplayedComponent('ExistingRequestDisplay')
+      this.setDisplayedComponent('ExistingRequestDisplay')
     } else {
       this.loading = false
-      this.hideModal()
+      await this.hideModal()
     }
   }
 

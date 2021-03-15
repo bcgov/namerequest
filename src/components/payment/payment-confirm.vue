@@ -53,15 +53,26 @@ import { ApplicantI } from '@/interfaces'
   }
 })
 export default class PaymentConfirm extends Vue {
-  @Prop(String) nrNum: string
-  @Prop(Object) summary: any
-  @Prop(Object) receipt: any
-  @Prop(Object) applicant: ApplicantI
-  @Prop(Array) nameChoices: {
+  @Prop(String)
+  readonly nrNum: string
+
+  @Prop(Object)
+  readonly summary: any
+
+  @Prop(Object)
+  readonly receipt: any
+
+  @Prop(Object)
+  readonly applicant: ApplicantI
+
+  @Prop(Array)
+  readonly nameChoices: {
     type: any[]
     required: false
   }
-  @Prop(String) name: string
+
+  @Prop(String)
+  readonly name: string
 
   protected fetchError = ''
 }

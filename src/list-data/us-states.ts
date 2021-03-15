@@ -1,4 +1,6 @@
-const USAStateCodes = [
+import { JurisdictionI } from '@/interfaces'
+
+export const UsaStateCodes: JurisdictionI[] = [
   {
     text: 'Alabama',
     SHORT_DESC: 'Alabama',
@@ -265,5 +267,3 @@ const USAStateCodes = [
     value: 'WY'
   }
 ]
-
-export default USAStateCodes

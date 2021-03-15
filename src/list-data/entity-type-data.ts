@@ -1,6 +1,6 @@
 import { EntityI } from '@/interfaces/models'
 
-export const EntityTypesBCData: EntityI[] = [
+export const EntityTypesBcData: EntityI[] = [
   {
     text: 'Sole proprietorship',
     value: 'FR',
@@ -277,7 +277,8 @@ export const EntityTypesBCData: EntityI[] = [
     value: 'PAR'
   }
 ]
-export const EntityTypesXPROData: EntityI[] = [
+
+export const EntityTypesXproData: EntityI[] = [
   {
     text: 'Limited company',
     cat: 'Corporations',

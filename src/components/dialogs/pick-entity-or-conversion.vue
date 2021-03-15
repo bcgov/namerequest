@@ -10,13 +10,13 @@
         </v-col>
       </v-row>
 
-      <template v-if="isConversion">
+      <template v-if="getIsConversion">
         <v-card-text>
           <v-container>
             <v-row class="category-bg">
               <v-col cols="12" class="font-weight-bold">Alterations</v-col>
             </v-row>
-            <v-row v-for="(conversion, i) in conversionTypes" :key="'conv-' + i">
+            <v-row v-for="(conversion, i) in $conversionTypes" :key="'conv-' + i">
               <v-col cols="12" class="clickable-cell"
                      :id="conversion.value"
                      @click="chooseConversion(conversion)">
@@ -81,13 +81,34 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/new-request-module'
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { SelectOptionsI } from '@/interfaces'
+import { Action, Getter } from 'vuex-class'
+
+import { ConversionTypesI, EntityI, SelectOptionsI } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class PickEntityOrConversionDialog extends Vue {
-  showSocietiesInfo = false
+  // Global getters
+  @Getter getConversionTypeOptions!: ConversionTypesI[]
+  @Getter getEntityBlurbs!: Array<EntityI>
+  @Getter getEntityTypeCd!: string
+  @Getter getEntityTypeOptions!: Array<EntityI>
+  @Getter getEntityTypesBC!: Array<EntityI>
+  @Getter getEntityTypesXPRO!: Array<EntityI>
+  @Getter getIsConversion!: boolean
+  @Getter getLocation!: string
+  @Getter getLocationText!: string
+  @Getter getPickEntityModalVisible!: boolean
+
+  // Global actions
+  @Action setConversionType!: ActionBindingIF
+  @Action setConversionTypeAddToSelect!: ActionBindingIF
+  @Action setEntityTypeCd!: ActionBindingIF
+  @Action setEntityTypeAddToSelect!: ActionBindingIF
+  @Action setPickEntityModalVisible!: ActionBindingIF
+
+  private showSocietiesInfo = false
 
   @Watch('showModal')
   handleModalClose (newVal) {
@@ -96,40 +117,28 @@ export default class PickEntityOrConversionDialog extends Vue {
     }
   }
 
-  get conversionTypes () {
-    return newReqModule.conversionTypes
-  }
-
   get entity_type_cd () {
-    return newReqModule.entity_type_cd
+    return this.getEntityTypeCd
   }
 
   set entity_type_cd (value) {
-    newReqModule.mutateEntityType(value)
-  }
-
-  get isConversion () {
-    return (newReqModule.request_action_cd === 'CNV')
-  }
-
-  get location () {
-    return newReqModule.location
+    this.setEntityTypeCd(value)
   }
 
   get locationText () {
-    return newReqModule.locationText === 'BC' ? 'British Columbia' : newReqModule.locationText
+    return this.getLocationText === 'BC' ? 'British Columbia' : this.getLocationText
   }
 
   get showModal () {
-    return newReqModule.pickEntityModalVisible
+    return this.getPickEntityModalVisible
   }
 
   set showModal (value: boolean) {
-    newReqModule.mutatePickEntityModalVisible(value)
+    this.setPickEntityModalVisible(value)
   }
 
   get tableData () {
-    if (this.location === 'BC') {
+    if (this.getLocation === 'BC') {
       return this.tableDataBC
     } else {
       return this.tableDataXPRO
@@ -137,15 +146,47 @@ export default class PickEntityOrConversionDialog extends Vue {
   }
 
   get tableDataBC () {
-    return newReqModule.pickEntityTableBC
+    let categories = []
+    for (let type of this.getEntityTypesBC) {
+      let i = categories.indexOf(type.cat)
+      if (i === -1) {
+        categories.push(type.cat)
+      }
+    }
+    const getEntities = (category) => {
+      return this.getEntityTypesBC.filter(type => type.cat === category)
+    }
+    let output = categories.map(cat =>
+      ({
+        text: cat,
+        entities: getEntities(cat)
+      })
+    )
+    return output
   }
 
   get tableDataXPRO () {
-    return newReqModule.pickEntityTableXPRO
+    let categories = []
+    for (let type of this.getEntityTypesXPRO) {
+      let i = categories.indexOf(type.cat)
+      if (i === -1) {
+        categories.push(type.cat)
+      }
+    }
+    const getEntities = (category) => {
+      return this.getEntityTypesXPRO.filter(type => type.cat === category)
+    }
+    let output = categories.map(cat =>
+      ({
+        text: cat,
+        entities: getEntities(cat)
+      })
+    )
+    return output
   }
 
   get width () {
-    if (this.showSocietiesInfo || this.isConversion) {
+    if (this.showSocietiesInfo || this.getIsConversion) {
       return '550px'
     }
     let cols = this.tableData.length
@@ -155,8 +196,8 @@ export default class PickEntityOrConversionDialog extends Vue {
     return `${210 * cols > maxThreshold ? maxThreshold : 210 * cols}px`
   }
 
-  entityBlurbs (entity_type_cd: string): string[] {
-    return newReqModule.entityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || []
+  entityBlurbs (entity_type_cd: string): string[][] | string[] | string {
+    return this.getEntityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || []
   }
 
   clearEntitySelection () {
@@ -164,14 +205,14 @@ export default class PickEntityOrConversionDialog extends Vue {
   }
 
   chooseConversion (conversion) {
-    let index = newReqModule.conversionTypeOptions.findIndex((conv: any) => conv.value === conversion.value)
+    let index = this.getConversionTypeOptions.findIndex((conv: any) => conv.value === conversion.value)
     if (index === -1) {
-      newReqModule.mutateConversionTypeAddToSelect(conversion)
+      this.setConversionTypeAddToSelect(conversion)
     }
     if (conversion.value !== 'INFO') {
-      newReqModule.mutateEntityType(conversion.entity_type_cd)
+      this.setEntityTypeCd(conversion.entity_type_cd)
     }
-    newReqModule.mutateConversionType(conversion.value)
+    this.setConversionType(conversion.value)
     this.showModal = false
   }
 
@@ -181,11 +222,11 @@ export default class PickEntityOrConversionDialog extends Vue {
       this.clearEntitySelection()
       return
     }
-    let index = newReqModule.entityTypeOptions.findIndex((ent: any) => ent.value === entity.value)
+    let index = this.getEntityTypeOptions.findIndex((ent: any) => ent.value === entity.value)
     if (index === -1) {
-      newReqModule.mutateEntityTypeAddToSelect(entity)
+      this.setEntityTypeAddToSelect(entity)
     }
-    newReqModule.mutateEntityType(entity.value)
+    this.setEntityTypeCd(entity.value)
     this.showModal = false
   }
 }

@@ -182,9 +182,10 @@
 
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
 import Moment from 'moment-timezone'
+
 import MainContainer from '@/components/new-request/main-container.vue'
-import newReqModule from '@/store/new-request-module'
 import { NrAffiliationMixin, CommonMixin, DateMixin, PaymentMixin } from '@/mixins'
 import paymentModule from '@/modules/payment'
 import NamesGrayBox from './names-gray-box.vue'
@@ -195,6 +196,10 @@ import { NameState, NrAction, NrState, PaymentStatus } from '@/enums'
 import { sleep } from '@/plugins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
+
+// Interfaces
+import { ExistingRequestSearchI, NameRequestI } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: {
@@ -211,6 +216,23 @@ export default class ExistingRequestDisplay extends Mixins(
   DateMixin,
   PaymentMixin
 ) {
+  // Global getters
+  @Getter getDisplayedComponent!: string
+  @Getter getExistingRequestSearch!: ExistingRequestSearchI
+  @Getter getNr!: Partial<NameRequestI>
+  @Getter getNrState!: NrState
+
+  // Global actions
+  @Action checkoutNameRequest!: ActionBindingIF
+  @Action downloadOutputs!: ActionBindingIF
+  @Action editExistingRequest!: ActionBindingIF
+  @Action getNameRequest!: ActionBindingIF
+  @Action patchNameRequestsByAction!: ActionBindingIF
+  @Action setDisplayedComponent!: ActionBindingIF
+  @Action setConditionsModalVisible!: ActionBindingIF
+  @Action setIncorporateLoginModalVisible!: ActionBindingIF
+  @Action setNrResponse!: ActionBindingIF
+
   // enums used in the template
   NameState = NameState
   NrAction = NrAction
@@ -244,7 +266,7 @@ export default class ExistingRequestDisplay extends Mixins(
     // move 'REFUND' or 'CANCEL' action (if present) to bottom of list
     // eg ['EDIT', 'REFUND', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'REFUND']
     // or ['EDIT', 'CANCEL', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'CANCEL']
-    return actions.sort((a, b) => {
+    return actions.sort((a: any, b: any) => {
       if ([NrAction.REFUND, NrAction.CANCEL].includes(b)) return -1
       return 0
     })
@@ -346,7 +368,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** The current NR object. */
   private get nr () {
-    return newReqModule.nr
+    return this.getNr
   }
 
   /**
@@ -510,11 +532,11 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   private get isNotPaid () {
-    return this.pendingPayment?.sbcPayment?.statusCode === PaymentStatus.CREATED
+    return (this.pendingPayment?.sbcPayment?.statusCode === PaymentStatus.CREATED)
   }
 
   private get isPaymentProcessing () {
-    return this.pendingPayment?.sbcPayment?.statusCode === PaymentStatus.COMPLETED
+    return (this.pendingPayment?.sbcPayment?.statusCode === PaymentStatus.COMPLETED)
   }
 
   /** Returns True if the specified action should display a red button. */
@@ -543,20 +565,21 @@ export default class ExistingRequestDisplay extends Mixins(
       switch (action) {
         case NrAction.EDIT:
           // eslint-disable-next-line no-case-declarations
-          const doCheckout = ([NrState.DRAFT, NrState.IN_PROGRESS].indexOf(newReqModule.nrState) > -1)
+          const doCheckout = ([NrState.DRAFT, NrState.IN_PROGRESS].indexOf(this.getNrState) > -1)
           // eslint-disable-next-line no-case-declarations
           let success: boolean | undefined
           if (doCheckout) {
             const { dispatch } = this.$store
             // Check out the NR - this sets the INPROGRESS lock on the NR
             // and needs to be done before you can edit the Name Request
-            success = await newReqModule.checkoutNameRequest()
+            // *** TODO: declare checkoutNameRequest differently so it's not void
+            success = await this.checkoutNameRequest(null) as unknown as boolean
           }
 
           // Only proceed with editing if the checkout was successful,
           // as the Name Request could be locked by another user session!
           if (!doCheckout || (doCheckout && success)) {
-            await newReqModule.editExistingRequest()
+            await this.editExistingRequest(null)
           }
           break
         case NrAction.UPGRADE:
@@ -584,15 +607,16 @@ export default class ExistingRequestDisplay extends Mixins(
           // show spinner since the network calls below can take a few seconds
           this.$root.$emit('showSpinner', true)
           // download the outputs
-          await newReqModule.downloadOutputs(this.nr.id)
+          await this.downloadOutputs(this.nr.id)
           // hide spinner
           this.$root.$emit('showSpinner', false)
           break
         default:
-          if (await newReqModule.patchNameRequestsByAction(action)) {
-            newReqModule.mutateDisplayedComponent('Success')
+          // *** TODO: declare patchNameRequestsByAction differently so it's not void
+          if (await this.patchNameRequestsByAction(action) as unknown as boolean) {
+            this.setDisplayedComponent('Success')
             await sleep(1000)
-            newReqModule.mutateDisplayedComponent('ExistingRequestDisplay')
+            this.setDisplayedComponent('ExistingRequestDisplay')
           }
           break
       }
@@ -616,11 +640,11 @@ export default class ExistingRequestDisplay extends Mixins(
     this.refreshCount += 1
     this.checking = true
     try {
-      const resp = await newReqModule.getNameRequest(this.nr.id)
+      const resp = await this.getNameRequest(this.nr.id) as any // *** TODO use a real type here
       this.checking = false
       if (resp?.furnished === 'Y') {
         this.furnished = 'furnished'
-        newReqModule.setNrResponse(resp)
+        this.setNrResponse(resp)
       }
     } catch (error) {
       // NB: errors are handled by newReqModule
@@ -629,7 +653,7 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   private showConditionsModal () {
-    newReqModule.mutateConditionsModalVisible(true)
+    this.setConditionsModalVisible(true)
   }
 
   /** Affiliates the current NR if authenticated, or prompts login if unauthenticated. */
@@ -639,12 +663,12 @@ export default class ExistingRequestDisplay extends Mixins(
     } else {
       // Persist NR in session for use in affiliation upon authentication via Signin component
       sessionStorage.setItem('NR_DATA', JSON.stringify(this.nr))
-      newReqModule.mutateIncorporateLoginModalVisible(true)
+      this.setIncorporateLoginModalVisible(true)
     }
   }
 
   private get isVisible () {
-    const componentName = newReqModule.displayedComponent
+    const componentName = this.getDisplayedComponent
     return (componentName === 'ExistingRequestDisplay')
   }
 
@@ -652,7 +676,7 @@ export default class ExistingRequestDisplay extends Mixins(
   onVisibleChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {
-        if (this.$el?.querySelector) {
+        if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
           const existingNrCancelBtn = this.$el.querySelector('#CANCEL-btn > span')
           if (existingNrCancelBtn) existingNrCancelBtn.classList.add('existing-nr-cancel-btn')
@@ -688,7 +712,7 @@ export default class ExistingRequestDisplay extends Mixins(
   async mounted () {
     if (this.nr.id && this.nr.state !== NrState.CANCELLED) {
       await this.fetchNrPayments(this.nr.id)
-      this.pendingPayment = this.payments.find(sbcPayment => (sbcPayment.statusCode !== PaymentStatus.COMPLETED))
+      this.pendingPayment = this.payments?.find(sbcPayment => (sbcPayment.statusCode !== PaymentStatus.COMPLETED))
     }
   }
 }

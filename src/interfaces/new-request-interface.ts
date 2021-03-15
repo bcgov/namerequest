@@ -2,9 +2,8 @@ import {
   AnalysisJSONI,
   ApplicantI,
   ConversionTypesI,
-  EntityI,
   ExistingRequestSearchI,
-  LocationT, NameRequestI, RequestActionsI, RequestNameI,
+  LocationT, NameRequestI, RequestNameI,
   SelectOptionsI, StatsI, SubmissionTypeT, WaitingAddressSearchI
 } from '@/interfaces/models'
 import { NameChoicesIF, NrDataIF, RequestOrConsentIF } from '@/interfaces'
@@ -13,7 +12,7 @@ interface RequestNameMapI extends RequestNameI {}
 
 export interface NewRequestIF {
   actingOnOwnBehalf: boolean,
-  addressSuggestions: object | null,
+  addressSuggestions: any[],
   allowAutoApprove: boolean,
   analysisJSON: AnalysisJSONI | null,
   analyzePending: boolean,
@@ -24,7 +23,6 @@ export interface NewRequestIF {
   conflictId: string | null,
   conversionType: string,
   conversionTypeAddToSelect: ConversionTypesI | null,
-  conversionTypes: ConversionTypesI[],
   corpNum: string,
   corpSearch: string,
   designationIssueTypes: string[],
@@ -33,8 +31,6 @@ export interface NewRequestIF {
   editMode: boolean,
   entity_type_cd: string,
   entityTypeAddToSelect: SelectOptionsI | null,
-  entityTypesBCData: EntityI[],
-  entityTypesXPROData: EntityI[],
   errors: string[],
   existingRequestSearch: ExistingRequestSearchI,
   extendedRequestType: SelectOptionsI | null,
@@ -68,7 +64,6 @@ export interface NewRequestIF {
   request_action_cd: string,
   request_jurisdiction_cd: string,
   requestExaminationOrProvideConsent: RequestOrConsentIF,
-  requestActions: RequestActionsI[],
   requestActionOriginal: string,
   showActualInput: boolean,
   stats: StatsI | null,
@@ -76,5 +71,6 @@ export interface NewRequestIF {
   submissionType: SubmissionTypeT | null,
   tabNumber: number,
   userCancelledAnalysis: boolean,
+  isLoadingSubmission: boolean
   waitingAddressSearch: WaitingAddressSearchI | null
 }

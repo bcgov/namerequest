@@ -2,7 +2,6 @@ import Vue from 'vue'
 import { StateIF } from '@/interfaces/state-interface'
 import {
   AnalysisJSONI,
-  ApplicantI,
   ConversionTypesI,
   LocationT,
   NameRequestI,
@@ -19,12 +18,12 @@ export const mutateActingOnOwnBehalf = (state: StateIF, actingOnOwnBehalf: boole
   state.stateModel.newRequestModel.actingOnOwnBehalf = actingOnOwnBehalf
 }
 
-export const mutateAddressSuggestions = (state: StateIF, addressSuggestions: object | null) => {
+export const mutateAddressSuggestions = (state: StateIF, addressSuggestions: any[]) => {
   if (!addressSuggestions) {
-    state.stateModel.newRequestModel.actingOnOwnBehalf = null
-    return
+    state.stateModel.newRequestModel.addressSuggestions = null
+  } else {
+    state.stateModel.newRequestModel.addressSuggestions = Object.assign([], addressSuggestions)
   }
-  state.stateModel.newRequestModel.addressSuggestions = Object.assign([], addressSuggestions)
 }
 
 export const mutateAnalysisJSON = (state: StateIF, analysisJSON: AnalysisJSONI) => {
@@ -108,7 +107,6 @@ export const mutateHelpMeChooseModalVisible = (state: StateIF, helpMeChooseModal
 }
 
 export const mutateIncorporateLoginModalVisible = (state: StateIF, incorporateLoginModalVisible: boolean) => {
-  console.log('inside mutation')
   state.stateModel.newRequestModel.incorporateLoginModalVisible = incorporateLoginModalVisible
 }
 
@@ -125,7 +123,7 @@ export const mutateLocation = (state: StateIF, location: LocationT) => {
     return
   }
   // entity type needs to be reset when the location changes (options depend on location)
-  this.entity_type_cd = ''
+  state.stateModel.newRequestModel.entity_type_cd = ''
   if (location === 'INFO') {
     state.stateModel.newRequestModel.location = location
     return
@@ -193,6 +191,10 @@ export const mutateNameChoicesToInitialState = (state: StateIF) => {
 
 export const mutateNameIsEnglish = (state: StateIF, nameIsEnglish: boolean) => {
   state.stateModel.newRequestModel.nameIsEnglish = nameIsEnglish
+}
+
+export const mutateIsLoadingSubmission = (state: StateIF, isLoadingSubmission: boolean) => {
+  state.stateModel.newRequestModel.isLoadingSubmission = isLoadingSubmission
 }
 
 export const mutateNameRequest = (state: StateIF, nr: NameRequestI) => {
@@ -339,7 +341,7 @@ export const resetRequestExaminationOrProvideConsent = (state: StateIF) => {
 }
 
 export const setErrors = (state: StateIF, errors: string) => {
-  if (Array.isArray(this.errors) && state.stateModel.newRequestModel.errors.length > 0) {
+  if (Array.isArray(state.stateModel.newRequestModel.errors) && state.stateModel.newRequestModel.errors.length > 0) {
     state.stateModel.newRequestModel.errors = state.stateModel.newRequestModel.errors.concat(errors)
     return
   }
@@ -360,7 +362,7 @@ export const setNrResponse = (state: StateIF, data: NameRequestI): boolean => {
     } else {
       // applicants is null/undefined
     }
-
+    console.log('Completed')
     return true
   } catch (err) {
     console.error('setNrResponse() =', err) // eslint-disable-line no-console

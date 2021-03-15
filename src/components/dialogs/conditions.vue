@@ -15,24 +15,26 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
 import { NameState } from '@/enums'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class ConditionsDialog extends Vue {
+  @Getter getConditionsModalVisible!: boolean
+  @Getter getNrNames!: any
+  @Action setConditionsModalVisible!: ActionBindingIF
+
   get nameObject () {
-    const name = (this.nrNames || []).find(name => name.state === NameState.CONDITIONAL && name.decision_text)
+    const name = (this.getNrNames || []).find(name => name.state === NameState.CONDITIONAL && name.decision_text)
     return name || {}
   }
   get showModal () {
-    return newReqModule.conditionsModalVisible
+    return this.getConditionsModalVisible
   }
   set showModal (value: boolean) {
-    newReqModule.mutateConditionsModalVisible(value)
-  }
-  get nrNames () {
-    return newReqModule.nrNames
+    this.setConditionsModalVisible(value)
   }
 }
 </script>

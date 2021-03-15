@@ -14,16 +14,19 @@
 </template>
 
 <script lang="ts">
-import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class HelpMeChooseDialog extends Vue {
+  @Getter getHelpMeChooseModalVisible!: boolean
+  @Action setHelpMeChooseModalVisible!: ActionBindingIF
   get showModal () {
-    return newReqModule.helpMeChooseModalVisible
+    return this.getHelpMeChooseModalVisible
   }
   set showModal (value: boolean) {
-    newReqModule.mutateHelpMeChooseModalVisible(value)
+    this.setHelpMeChooseModalVisible(value)
   }
 }
 

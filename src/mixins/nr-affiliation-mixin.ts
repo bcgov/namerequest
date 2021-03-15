@@ -1,12 +1,14 @@
 import Vue from 'vue'
 import { Component } from 'vue-property-decorator'
+import { Action } from 'vuex-class'
 import AuthServices from '@/services/auth.services'
 import BusinessServices from '@/services/business.services'
-import newReqModule from '@/store/new-request-module'
 import { BusinessRequest, CreateNRAffiliationRequestBody, NameRequestI } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
-@Component
+@Component({})
 export class NrAffiliationMixin extends Vue {
+  @Action setAffiliationErrorModalVisible!: ActionBindingIF
   /**
    * Create an affiliation between current authenticated Account and current Nr
    * @param nr The Nr to affiliate
@@ -60,7 +62,7 @@ export class NrAffiliationMixin extends Vue {
 
       // clear NR Data and show error dialog
       sessionStorage.removeItem('NR_DATA')
-      newReqModule.mutateAffiliationErrorModalVisible(true)
+      this.setAffiliationErrorModalVisible(true)
     }
   }
 }
