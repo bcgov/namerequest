@@ -13,13 +13,13 @@ import {
 import { NrAction, NrState, RollbackActions } from '@/enums'
 import { NameRequestPayment } from '@/modules/payment/models'
 import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
-import $canJurisdictions from '@/store/list-data/canada-jurisdictions'
-import $intJurisdictions from '@/store/list-data/intl-jurisdictions'
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
 import { getFeatureFlag, sleep } from '@/plugins'
 
 // List Data
-import { RequestActions } from './list-data'
+import { RequestActions } from '@/list-data'
+import $canJurisdictions from '@/list-data/canada-jurisdictions'
+import $intJurisdictions from '@/list-data/intl-jurisdictions'
 
 // Interfaces & Enums
 import { ActionIF } from '@/interfaces/store-interfaces'

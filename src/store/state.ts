@@ -1,5 +1,5 @@
 import { NameRequestI, StateModelIF } from '@/interfaces'
-import { ConversionTypes, EntityTypesBCData, EntityTypesXPROData, RequestActions } from '@/store/list-data'
+import { ConversionTypes, EntityTypesBCData, EntityTypesXPROData, RequestActions } from '@/list-data'
 
 export const stateModel: StateModelIF = {
   newRequestModel: {

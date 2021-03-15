@@ -389,8 +389,8 @@ import { Location } from '@/enums'
 import { ActionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { ApplicantI, NameRequestI } from '@/interfaces'
-import $canJurisdictions from '@/store/list-data/canada-jurisdictions'
-import $intJurisdictions from '@/store/list-data/intl-jurisdictions'
+import $canJurisdictions from '@/list-data/canada-jurisdictions'
+import $intJurisdictions from '@/list-data/intl-jurisdictions'
 
 @Component({
   components: {

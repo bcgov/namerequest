@@ -86,7 +86,7 @@ import { Action, Getter } from 'vuex-class'
 
 import { ConversionTypesI, EntityI, SelectOptionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { ConversionTypes } from '@/store/list-data'
+import { ConversionTypes } from '@/list-data'
 
 @Component({})
 export default class PickEntityOrConversionDialog extends Vue {

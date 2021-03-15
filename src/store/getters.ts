@@ -11,15 +11,15 @@ import { NrState } from '@/enums'
 import {
   ApplicantI, EntityI, ExistingRequestSearchI, NameRequestI, RequestActionMappingI, SelectOptionsI
 } from '@/interfaces/models'
-import {
-  $colinRequestActions, $colinRequestTypes, $xproColinRequestTypes, bcMapping, xproMapping
-} from '@/store/list-data/request-action-mapping'
 
 // List Data
-import designations from '@/store/list-data/designations'
-import { ConversionTypes, EntityTypesBCData, EntityTypesXPROData, Locations, RequestActions } from './list-data'
-import $canJurisdictions, { $mrasJurisdictions } from '@/store/list-data/canada-jurisdictions'
-import $intJurisdictions from '@/store/list-data/intl-jurisdictions'
+import {
+  $colinRequestActions, $colinRequestTypes, $xproColinRequestTypes, bcMapping, xproMapping
+} from '@/list-data/request-action-mapping'
+import designations from '@/list-data/designations'
+import { ConversionTypes, EntityTypesBCData, EntityTypesXPROData, Locations, RequestActions } from '@/list-data'
+import $canJurisdictions, { $mrasJurisdictions } from '@/list-data/canada-jurisdictions'
+import $intJurisdictions from '@/list-data/intl-jurisdictions'
 
 export const getName = (state: StateIF): string => {
   return state.stateModel.newRequestModel.name
@@ -442,7 +442,7 @@ export const getEntityTypesBC = (state: StateIF): EntityI[] => {
       return output
     }
 
-    // see 'src/store/list-data/request-action-mapping.ts'
+    // see 'src/list-data/request-action-mapping.ts'
     let mapping: RequestActionMappingI = bcMapping
     let cds = Object.keys(mapping)
     if (cds.includes(getRequestActionCd(state))) {
@@ -495,7 +495,7 @@ export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
       return output
     }
 
-    // see 'src/store/list-data/request-action-mapping.ts'
+    // see 'src/list-data/request-action-mapping.ts'
     let mapping: RequestActionMappingI = xproMapping
     let cds = Object.keys(mapping)
 

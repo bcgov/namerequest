@@ -53,7 +53,7 @@ import { Action, Getter } from 'vuex-class'
 // Interfaces / enums / list data
 import { SelectOptionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { RequestActions } from '@/store/list-data'
+import { RequestActions } from '@/list-data'
 
 @Component({})
 export default class PickRequestTypeDialog extends Vue {

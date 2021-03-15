@@ -18,11 +18,11 @@ import '@/assets/scss/base.scss'
 import '@/assets/scss/layout.scss'
 import '@/assets/scss/overrides.scss'
 
-import designations from '@/store/list-data/designations'
-import canJurisdictions from '@/store/list-data/canada-jurisdictions'
-import intJurisdictions from '@/store/list-data/intl-jurisdictions'
-import USAStateCodes from '@/store/list-data/us-states'
-import * as mapping from '@/store/list-data/request-action-mapping'
+import designations from '@/list-data/designations'
+import canJurisdictions from '@/list-data/canada-jurisdictions'
+import intJurisdictions from '@/list-data/intl-jurisdictions'
+import USAStateCodes from '@/list-data/us-states'
+import * as mapping from '@/list-data/request-action-mapping'
 
 Vue.config.productionTip = true
 Vue.config.devtools = true

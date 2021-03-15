@@ -2,7 +2,7 @@ import ReserveSubmit from '@/components/new-request/submit-request/reserve-submi
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuetify from 'vuetify'
 import sinon from 'sinon'
-import { xproMapping } from '@/store/list-data/request-action-mapping'
+import { xproMapping } from '@/list-data/request-action-mapping'
 
 const localVue = createLocalVue()
 const vuetify = new Vuetify()

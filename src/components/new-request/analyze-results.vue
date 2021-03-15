@@ -193,7 +193,7 @@ import MainContainer from '@/components/new-request/main-container.vue'
 import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
 
 import { AnalysisJSONI, IssueI, QuillOpsI, SelectionI } from '@/interfaces'
-import allDesignations, { allDesignationsList } from '@/store/list-data/designations'
+import allDesignations, { allDesignationsList } from '@/list-data/designations'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({

@@ -33,10 +33,10 @@
 //   $xproColinRequestTypes,
 //   bcMapping,
 //   xproMapping
-// } from '@/store/list-data/request-action-mapping'
-// import $canJurisdictions, { $mrasJurisdictions } from './list-data/canada-jurisdictions'
-// import $designations from './list-data/designations'
-// import $intJurisdictions from './list-data/intl-jurisdictions'
+// } from '@/list-data/request-action-mapping'
+// import $canJurisdictions, { $mrasJurisdictions } from '@/list-data/canada-jurisdictions'
+// import $designations from '@/list-data/designations'
+// import $intJurisdictions from '@/list-data/intl-jurisdictions'
 // import canadaPostAPIKey from './config'
 //
 // import { removeExcessSpaces, sanitizeName, getFeatureFlag } from '@/plugins'
@@ -1031,7 +1031,7 @@
 //         return output
 //       }
 //
-//       // see 'src/store/list-data/request-action-mapping.ts'
+//       // see 'src/list-data/request-action-mapping.ts'
 //       let mapping: RequestActionMappingI = bcMapping
 //       let cds = Object.keys(mapping)
 //       if (cds.includes(this.request_action_cd)) {
@@ -1083,7 +1083,7 @@
 //         return output
 //       }
 //
-//       // see 'src/store/list-data/request-action-mapping.ts'
+//       // see 'src/list-data/request-action-mapping.ts'
 //       let mapping: RequestActionMappingI = xproMapping
 //       let cds = Object.keys(mapping)
 //

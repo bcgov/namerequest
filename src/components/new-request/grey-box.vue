@@ -143,7 +143,7 @@ import ReserveSubmit from '@/components/new-request/submit-request/reserve-submi
 
 import { AnalysisJSONI, OptionI } from '@/interfaces'
 import { replaceWord } from '@/plugins'
-import allDesignations, { allDesignationsList } from '@/store/list-data/designations'
+import allDesignations, { allDesignationsList } from '@/list-data/designations'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({

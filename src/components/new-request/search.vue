@@ -267,9 +267,9 @@ import NameInput from './name-input.vue'
 // Interfaces / Enums / List Data
 import { ConversionTypesI, EntityI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { ConversionTypes, RequestActions } from '@/store/list-data'
-import $canJurisdictions, { $mrasJurisdictions } from '@/store/list-data/canada-jurisdictions'
-import $intJurisdictions from '@/store/list-data/intl-jurisdictions'
+import { ConversionTypes, RequestActions } from '@/list-data'
+import $canJurisdictions from '@/list-data/canada-jurisdictions'
+import $intJurisdictions from '@/list-data/intl-jurisdictions'
 
 @Component({
   components: { NameInput }
