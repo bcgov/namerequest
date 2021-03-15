@@ -676,7 +676,7 @@ export default class ExistingRequestDisplay extends Mixins(
   onVisibleChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {
-        if (this.$el?.querySelector) {
+        if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
           const existingNrCancelBtn = this.$el.querySelector('#CANCEL-btn > span')
           if (existingNrCancelBtn) existingNrCancelBtn.classList.add('existing-nr-cancel-btn')

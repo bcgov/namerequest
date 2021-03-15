@@ -7,7 +7,7 @@ import canadaPostAPIKey from '@/store/config'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { ApplicantI } from '@/interfaces'
 
-@Component
+@Component({})
 export class ActionMixin extends Vue {
   qs: any = querystring
 

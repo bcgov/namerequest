@@ -90,7 +90,7 @@ import { ConversionTypes } from '@/store/list-data'
 
 @Component({})
 export default class PickEntityOrConversionDialog extends Vue {
-  // list data used in template
+  // attach list data to 'this'
   readonly ConversionTypes = ConversionTypes
 
   // Global getters

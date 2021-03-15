@@ -9,7 +9,7 @@ import { CreatePaymentParams, NameRequestPaymentResponse } from '@/modules/payme
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 
-@Component
+@Component({})
 export class PaymentMixin extends Mixins(ActionMixin) {
   get sbcPayment () {
     return this.$store.getters[paymentTypes.GET_SBC_PAYMENT]
@@ -61,7 +61,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
 
   get paymentSummaries () {
     const payments = this.$store.getters[paymentTypes.GET_PAYMENTS]
-    const summaries = payments && payments.map(payment => {
+    const summaries = payments?.map(payment => {
       const { id, sbcPayment } = payment
       let receipt
       if (sbcPayment &&

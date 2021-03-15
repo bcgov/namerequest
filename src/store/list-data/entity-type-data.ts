@@ -277,6 +277,7 @@ export const EntityTypesBCData: EntityI[] = [
     value: 'PAR'
   }
 ]
+
 export const EntityTypesXPROData: EntityI[] = [
   {
     text: 'Limited company',

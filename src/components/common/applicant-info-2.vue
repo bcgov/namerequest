@@ -203,10 +203,9 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import paymentModule from '@/modules/payment'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { Action, Getter } from 'vuex-class'
-import { ApplicantI, NameRequestI } from '@/interfaces'
+import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
@@ -228,7 +227,7 @@ export default class ApplicantInfo2 extends Vue {
   // Global actions
   @Action setCorpNum!: ActionBindingIF
   @Action setPriorityRequest!: ActionBindingIF
-  @Action corpNumRequest!: ActionBindingIF
+  @Action fetchCorpNum!: ActionBindingIF
   @Action setApplicant!: ActionBindingIF
   @Action submit!: ActionBindingIF
   @Action setNRData!: ActionBindingIF
@@ -325,7 +324,7 @@ export default class ApplicantInfo2 extends Vue {
     }
     this.loading = true
     try {
-      let resp = await this.corpNumRequest(num)
+      await this.fetchCorpNum(num)
       this.corpNumError = ''
       this.loading = false
       this.corpNumDirty = false
@@ -355,7 +354,7 @@ export default class ApplicantInfo2 extends Vue {
   onValidChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {
-        if (this.$el?.querySelector) {
+        if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
           const selfReviewBackBtn = this.$el.querySelector('#submit-back-btn > span')
           if (selfReviewBackBtn) selfReviewBackBtn.classList.add('self-review-back-btn')

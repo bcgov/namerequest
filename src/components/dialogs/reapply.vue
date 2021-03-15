@@ -127,7 +127,7 @@ export default class ReapplyDialog extends Mixins(
   onVisibleChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {
-        if (this.$el?.querySelector) {
+        if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
           const reapplyAcceptBtn = this.$el.querySelector('#payment-pay-btn > span')
           if (reapplyAcceptBtn) reapplyAcceptBtn.classList.add('reapply-accept-btn')

@@ -178,7 +178,7 @@ export default class PaymentDialog extends Mixins(
   onVisibleChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {
-        if (this.$el?.querySelector) {
+        if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
           const confirmNrCancelBtn = this.$el.querySelector('#payment-cancel-btn > span')
           if (confirmNrCancelBtn) confirmNrCancelBtn.classList.add('confirm-nr-cancel-btn')

@@ -607,7 +607,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   onValidChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {
-        if (this.$el?.querySelector) {
+        if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
           const applicantBackBtn = this.$el.querySelector('#submit-back-btn > span')
           if (applicantBackBtn) applicantBackBtn.classList.add('applicant-back-btn')

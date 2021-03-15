@@ -73,7 +73,8 @@ export default class Landing extends Vue {
   @Action setDisplayedComponent!: ActionBindingIF
 
   // TODO: IS THIS USED?
-  @Prop(String) id: string
+  @Prop(String)
+  readonly id: string
 
   private agileUrl = 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business' +
     '/permits-licences/news-updates/modernization'
@@ -96,8 +97,6 @@ export default class Landing extends Vue {
 </script>
 
 <style lang="scss" scoped>
-/*@import '@/assets/scss/theme.scss';*/
-
 .landing-content-container {
   min-width: 940px;
   max-width: 1140px;

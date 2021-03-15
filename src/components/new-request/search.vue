@@ -265,7 +265,7 @@ import { Action, Getter } from 'vuex-class'
 import NameInput from './name-input.vue'
 
 // Interfaces / Enums / List Data
-import { ConversionTypesI, EntityI, RequestActionsI } from '@/interfaces'
+import { ConversionTypesI, EntityI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { ConversionTypes, RequestActions } from '@/store/list-data'
 import $canJurisdictions, { $mrasJurisdictions } from '@/store/list-data/canada-jurisdictions'
@@ -275,7 +275,7 @@ import $intJurisdictions from '@/store/list-data/intl-jurisdictions'
   components: { NameInput }
 })
 export default class NewSearch extends Vue {
-  // list data used in template
+  // attach list data to 'this'
   readonly RequestActions = RequestActions
 
   // Global getters
@@ -290,7 +290,7 @@ export default class NewSearch extends Vue {
   @Getter getIsConversion!: boolean
   @Getter getIsPersonsName!: boolean
   @Getter getIsXproMras!: boolean
-  @Getter getJurisdiction!: string
+  @Getter getJurisdictionCd!: string
   @Getter getLocation!: string
   @Getter getLocationOptions!: object[]
   @Getter getLocationText!: string
@@ -412,7 +412,7 @@ export default class NewSearch extends Vue {
   }
 
   get jurisdiction () {
-    return this.getJurisdiction
+    return this.getJurisdictionCd
   }
 
   set jurisdiction (jurisdiction: string) {

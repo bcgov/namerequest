@@ -218,7 +218,6 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
-import paymentModule from '@/modules/payment'
 import { ApplicantI, SubmissionTypeT } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
@@ -229,9 +228,9 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 })
 export default class ApplicantInfo3 extends Vue {
   // Global getters
-  @Getter getCorpNum!: string // USED
+  @Getter getCorpNum!: string
   @Getter getIsPersonsName!: boolean
-  @Getter getApplicant!: ApplicantI // USED
+  @Getter getApplicant!: ApplicantI
   @Getter getIsPriorityRequest!: boolean
   @Getter getEditMode!: boolean
   @Getter getLocation!: string
@@ -248,7 +247,7 @@ export default class ApplicantInfo3 extends Vue {
   @Action setIsLoadingSubmission!: ActionBindingIF
   @Action setNRData!: ActionBindingIF
   @Action setPriorityRequest!: ActionBindingIF
-  @Action corpNumRequest!: ActionBindingIF
+  @Action fetchCorpNum!: ActionBindingIF
   @Action submit!: ActionBindingIF
 
   corpNumDirty: boolean = false
@@ -262,7 +261,7 @@ export default class ApplicantInfo3 extends Vue {
   ]
   corpNumRules = [
     v => !!v || 'Required field',
-    v => !!this.fetchCorpNum(v) || 'Cannot validate number. Please try again.'
+    v => !!this.validateCorpNum(v) || 'Cannot validate number. Please try again.'
   ]
   emailRules = [
     (v: string) => !!v || 'Required field',
@@ -346,7 +345,7 @@ export default class ApplicantInfo3 extends Vue {
     this.setPriorityRequest(value)
   }
 
-  async fetchCorpNum (num) {
+  async validateCorpNum (num): Promise<boolean> {
     if (!num) {
       return
     }
@@ -356,7 +355,7 @@ export default class ApplicantInfo3 extends Vue {
     }
     this.loading = true
     try {
-      let resp = await this.corpNumRequest(num)
+      await this.fetchCorpNum(num)
       this.corpNumError = ''
       this.loading = false
       this.corpNumDirty = false
@@ -390,7 +389,7 @@ export default class ApplicantInfo3 extends Vue {
   onValidChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {
-        if (this.$el?.querySelector) {
+        if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
           const clientReviewBackBtn = this.$el.querySelector('#submit-back-btn > span')
           if (clientReviewBackBtn) clientReviewBackBtn.classList.add('client-review-back-btn')

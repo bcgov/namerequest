@@ -61,9 +61,14 @@ export default class NameInput extends Vue {
   @Action startAnalyzeName!: ActionBindingIF
 
   // Props
-  @Prop({ default: false }) isSearchAgain: boolean
-  @Prop({ default: false }) isMrasSearch: boolean
-  @Prop({ default: false }) isReadOnly: boolean
+  @Prop({ default: false })
+  readonly isSearchAgain: boolean
+
+  @Prop({ default: false })
+  readonly isMrasSearch: boolean
+
+  @Prop({ default: false })
+  readonly isReadOnly: boolean
 
   /** The array of validation rules for the MRAS corp num. */
   private get mrasRules (): Function[] {

@@ -61,7 +61,9 @@ import Stats from '@/components/new-request/stats.vue'
   }
 })
 export default class AppTitleCols extends Vue {
-  @Prop(String) id: string
+  @Prop(String)
+  readonly id: string
+
   private agileUrl = 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business' +
     '/permits-licences/news-updates/modernization'
 }

@@ -36,12 +36,14 @@ export default class ReserveSubmitButton extends Vue {
   @Action setSubmissionType!: ActionBindingIF
   @Action setSubmissionTabComponent!: ActionBindingIF
 
-  @Prop(String) setup: string
+  @Prop(String)
+  readonly setup: string
+
   private isContinue: boolean = true
 
   private mounted () {
     this.$nextTick(() => {
-      if (this.$el?.querySelector) {
+      if (this.$el?.querySelector instanceof Function) {
         // add classname to button text (for more detail in Sentry breadcrumbs)
         const reserveSubmitBtn = this.$el.querySelector('#reserve-submit-btn > span')
         if (reserveSubmitBtn) reserveSubmitBtn.classList.add('reserve-submit-btn')

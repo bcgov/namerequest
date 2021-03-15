@@ -854,7 +854,7 @@ export default class NamesCapture extends Vue {
   onValidChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {
-        if (this.$el?.querySelector) {
+        if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
           const choicesContinueBtn = this.$el.querySelector('#submit-continue-btn > span')
           if (choicesContinueBtn) choicesContinueBtn.classList.add('choices-continue-btn')

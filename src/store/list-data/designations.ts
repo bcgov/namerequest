@@ -113,4 +113,5 @@ function getAllDesignations () {
 // a string[] containing each designation code used in namex
 // eg. [ 'CR', 'BC', 'CCC', etc... ]
 export const allDesignationsList = getAllDesignations()
+
 export default designations

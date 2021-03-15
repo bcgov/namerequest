@@ -18,9 +18,14 @@ import { NrAffiliationMixin } from '@/mixins'
   }
 })
 export default class Signin extends Mixins(NrAffiliationMixin) {
-  @Prop({ default: 'bcsc' }) idpHint: string
-  @Prop({ default: '' }) redirectUrl: string
-  @Prop({ default: '' }) redirectUrlLoginFail: string
+  @Prop({ default: 'bcsc' })
+  readonly idpHint: string
+
+  @Prop({ default: '' })
+  readonly redirectUrl: string
+
+  @Prop({ default: '' })
+  readonly redirectUrlLoginFail: string
 
   /** called when keycloak session is ready. */
   private async onReady () {

@@ -3,7 +3,6 @@ import App from './App.vue'
 import Hotjar from 'vue-hotjar'
 import { getVueRouter } from '@/router'
 import { getVuexStore } from '@/store'
-import { EnvConfigI } from '@/interfaces'
 import { getConfig, getVuetify, initLdClient } from '@/plugins'
 import KeycloakService from 'sbc-common-components/src/services/keycloak.services'
 import * as Sentry from '@sentry/browser'
@@ -93,7 +92,7 @@ async function startVue () {
   new Vue({
     vuetify: getVuetify(),
     router: getVueRouter(),
-    store: store,
+    store,
     render: h => h(App)
   }).$mount('#app')
 }

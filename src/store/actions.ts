@@ -999,23 +999,15 @@ export const setAddressSuggestions: ActionIF = ({ commit }, addressSuggestions: 
   commit('mutateAddressSuggestions', addressSuggestions)
 }
 
-// TODO: Not a real action?
-export const corpNumRequest = async ({ getters }, corpNum: string) => {
+// TODO: Not a real action
+export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> => {
   if (getters.getShowCorpNum) {
     if (getters.getShowCorpNum === 'mras') {
-      return this.checkMRAS(corpNum)
+      return checkMRAS(corpNum)
     } else {
-      return this.checkCOLIN(corpNum)
+      return checkCOLIN(corpNum)
     }
   }
-}
-
-// TODO: Not a real action
-export const checkCOLIN = (corpNum: string) => {
-  // Remove BC prefix as Colin only supports base number with no prefix for BC's
-  const cleanedCorpNum = corpNum.replace(/^BC+/i, '')
-  let url = `colin/${cleanedCorpNum}`
-  return axios.post(url, {})
 }
 
 // TODO: Not a real action
@@ -1024,6 +1016,14 @@ export const checkMRAS = (corpNum: string) => {
   let { SHORT_DESC } = $canJurisdictions.find(jur => jur.text === xproJurisdiction)
   let url = `mras-profile/${SHORT_DESC}/${corpNum}`
   return axios.get(url)
+}
+
+// TODO: Not a real action
+export const checkCOLIN = (corpNum: string) => {
+  // Remove BC prefix as Colin only supports base number with no prefix for BC's
+  const cleanedCorpNum = corpNum.replace(/^BC+/i, '')
+  let url = `colin/${cleanedCorpNum}`
+  return axios.post(url, {})
 }
 
 export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {

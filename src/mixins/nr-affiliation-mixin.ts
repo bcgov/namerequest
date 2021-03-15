@@ -6,7 +6,7 @@ import BusinessServices from '@/services/business.services'
 import { BusinessRequest, CreateNRAffiliationRequestBody, NameRequestI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
-@Component
+@Component({})
 export class NrAffiliationMixin extends Vue {
   @Action setAffiliationErrorModalVisible!: ActionBindingIF
   /**

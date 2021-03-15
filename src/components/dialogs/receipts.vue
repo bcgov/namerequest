@@ -76,10 +76,9 @@ export default class ReceiptsDialog extends Mixins(PaymentMixin, PaymentSessionM
    * @returns True if successful, otherwise False
    */
   private async fetchData (): Promise<boolean> {
-    const { getNrId } = this
-    if (!getNrId) return false
+    if (!this.getNrId) return false
     // NB: errors are handled by PaymentMixin
-    return this.fetchNrPayments(getNrId)
+    return this.fetchNrPayments(this.getNrId)
   }
 }
 </script>

@@ -65,7 +65,7 @@ export const getLocationText = (state: StateIF): string => {
   return getLocationOptions(state).find(options => options.value === getLocation(state))?.text
 }
 
-export const getJurisdiction = (state: StateIF): string => {
+export const getJurisdictionCd = (state: StateIF): string => {
   return state.stateModel.newRequestModel.request_jurisdiction_cd
 }
 

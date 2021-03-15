@@ -126,17 +126,16 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
    * @returns True if successful, otherwise False
    */
   private async fetchData (): Promise<boolean> {
-    const { getNrId } = this
-    if (!getNrId) return false
+    if (!this.getNrId) return false
     // NB: errors are handled by PaymentMixin
-    return this.fetchNrPayments(getNrId)
+    return this.fetchNrPayments(this.getNrId)
   }
 
   @Watch('isVisible')
   onVisibleChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {
-        if (this.$el?.querySelector) {
+        if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
           const refundCancelBtn = this.$el.querySelector('#cancel-nr-btn > span')
           if (refundCancelBtn) refundCancelBtn.classList.add('refund-cancel-btn')

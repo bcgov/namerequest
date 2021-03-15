@@ -115,9 +115,10 @@ import { RollbackActions } from '@/enums'
   }
 })
 export default class App extends Vue {
+  // attach method to 'this'
   readonly getFeatureFlag = getFeatureFlag
 
-  private showSpinner = false
+  showSpinner = false
 
   // Global getters
   @Getter getIncorporateLoginModalVisible!: boolean

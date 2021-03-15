@@ -54,6 +54,7 @@ import axios from 'axios'
 
 @Component({})
 export default class ChatPopup extends Vue {
+  // attach window to 'this'
   readonly window = window
 
   chatStatus = null

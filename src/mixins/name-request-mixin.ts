@@ -6,7 +6,7 @@ import paymentModule from '@/modules/payment'
 import { sleep } from '@/plugins'
 import { NrState } from '@/enums'
 
-@Component
+@Component({})
 export class NameRequestMixin extends Vue {
   // get nr () {
   //   const nameRequest: NewRequestModule = newRequestModule

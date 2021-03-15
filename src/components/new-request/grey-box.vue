@@ -147,13 +147,26 @@ import { matchWord, removeExcessSpaces, replaceWord } from '@/plugins'
   components: { ReserveSubmit }
 })
 export default class GreyBox extends Vue {
-  @Prop(Boolean) changesInBaseName: boolean
-  @Prop(Boolean) designationIsFixed: boolean
-  @Prop(String) finalName: string
-  @Prop(Number) i: number
-  @Prop(Number) issueIndex: number
-  @Prop(Object) option: OptionI
-  @Prop(String) originalName: string
+  @Prop(Boolean)
+  readonly changesInBaseName: boolean
+
+  @Prop(Boolean)
+  readonly designationIsFixed: boolean
+
+  @Prop(String)
+  readonly finalName: string
+
+  @Prop(Number)
+  readonly i: number
+
+  @Prop(Number)
+  readonly issueIndex: number
+
+  @Prop(Object)
+  readonly option: OptionI
+
+  @Prop(String)
+  readonly originalName: string
 
   clickedDesignation: string = ''
   originalNameBase: string = ''

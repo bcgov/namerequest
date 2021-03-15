@@ -94,7 +94,7 @@ export default class PaymentCompleteDialog extends Mixins(
     if (sessionPaymentId && sessionPaymentAction) {
       // Make sure edit mode is disabled or it will screw up the back button
       await this.setEditMode(false)
-      // Call fetchData to load the NR and the payment
+      // Load the NR and the payment
       await this.fetchData()
     }
   }
@@ -164,7 +164,7 @@ export default class PaymentCompleteDialog extends Mixins(
   onVisibleChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {
-        if (this.$el?.querySelector) {
+        if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
           const paymentSuccessfulDoneBtn = this.$el.querySelector('#receipt-close-btn > span')
           if (paymentSuccessfulDoneBtn) {
