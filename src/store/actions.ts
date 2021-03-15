@@ -408,13 +408,14 @@ export const loadExistingNameRequest:ActionIF = async ({ commit }, nrData: any) 
   }
 }
 
-export const setStats: ActionIF = async ({ commit }) => {
+// *** TODO: this should not be an "action"
+export const fetchStats: ActionIF = async ({ commit }) => {
   try {
     let resp = await axios.get('/statistics')
     commit('mutateStats', resp)
   } catch (err) {
     const msg = await handleApiError(err, 'Could not get stats')
-    console.error('setStats() =', msg) // eslint-disable-line no-console
+    console.error('fetchStats() =', msg) // eslint-disable-line no-console
   }
 }
 
@@ -566,6 +567,7 @@ export const putNameReservation: any = async ({ commit, getters }, nrId) => {
       case NrState.DRAFT:
         data = getters.getDraftNameReservation
         break
+      // *** TODO: restore this after fixes
       // case NrState.COND_RESERVED:
       //   data = this.conditionalNameReservation
       //   break
@@ -942,6 +944,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
       }
     }
   }
+  // *** TODO: restore this after fixes
   // if (getters.getQuickSearch) {
   //   await startQuickSearch()
   //   return

@@ -169,14 +169,12 @@ export default class App extends Vue {
     await this.setDisplayedComponent('Tabs')
   }
 
-  // TODO: Update Pay module
   async onPaymentCancelled () {
-    const { getNrId } = this
     const componentName = this.getDisplayedComponent
     // Only do this for New NRs!!!
-    if (getNrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
+    if (this.getNrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
       // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-      await this.rollbackNameRequest({ getNrId, action: RollbackActions.CANCEL })
+      await this.rollbackNameRequest({ nrId: this.getNrId, action: RollbackActions.CANCEL })
       // Direct the user back to the start
       await this.resetAppState()
     }

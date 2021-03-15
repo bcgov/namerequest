@@ -16,7 +16,7 @@
             <v-row class="category-bg">
               <v-col cols="12" class="font-weight-bold">Alterations</v-col>
             </v-row>
-            <v-row v-for="(conversion, i) in conversionTypes" :key="'conv-' + i">
+            <v-row v-for="(conversion, i) in ConversionTypes" :key="'conv-' + i">
               <v-col cols="12" class="clickable-cell"
                      :id="conversion.value"
                      @click="chooseConversion(conversion)">
@@ -90,6 +90,9 @@ import { ConversionTypes } from '@/store/list-data'
 
 @Component({})
 export default class PickEntityOrConversionDialog extends Vue {
+  // list data used in template
+  readonly ConversionTypes = ConversionTypes
+
   // Global getters
   @Getter getConversionTypeOptions!: ConversionTypesI[]
   @Getter getEntityBlurbs!: Array<EntityI>
@@ -110,7 +113,6 @@ export default class PickEntityOrConversionDialog extends Vue {
   @Action setPickEntityModalVisible!: ActionBindingIF
 
   private showSocietiesInfo = false
-  private conversionTypes = ConversionTypes
 
   @Watch('showModal')
   handleModalClose (newVal) {

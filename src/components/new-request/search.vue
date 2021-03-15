@@ -275,6 +275,9 @@ import $intJurisdictions from '@/store/list-data/intl-jurisdictions'
   components: { NameInput }
 })
 export default class NewSearch extends Vue {
+  // list data used in template
+  readonly RequestActions = RequestActions
+
   // Global getters
   @Getter getConversionType!: string
   @Getter getConversionTypeOptions!: ConversionTypesI[]
@@ -318,7 +321,6 @@ export default class NewSearch extends Vue {
   private corpNumValid = true
   private corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
   private locationDisabled = false
-  private RequestActions = RequestActions
 
   // Local enum
   private request_action_enum = [
@@ -345,7 +347,7 @@ export default class NewSearch extends Vue {
   }
 
   entityBlurbs (entity_type_cd: string): string | string[] | string[][] {
-    return this.getEntityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || []
+    return this.getEntityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs
   }
 
   get entity_type_cd () {

@@ -55,7 +55,7 @@
             <v-row class="ma-0 pa-0" v-if="location === 'BC'">
               <v-col :cols="designationAtEnd ? 8 : 12" class="py-0" >
                 <v-text-field :error-messages="messages.name1"
-                              :hide-details="hide"
+                              :hide-details="hideDetails"
                               :value="nameChoices.name1"
                               @blur="handleBlur()"
                               @input="editChoices('name1', $event, true)"
@@ -72,9 +72,9 @@
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
                       <v-select :error-messages="des1Message"
-                                :hide-details="hide"
+                                :hide-details="hideDetails"
                                 :items="items"
-                                :menu-props="props"
+                                :menu-props="menuProps"
                                 :value="nameChoices.designation1"
                                 @blur="handleBlur(); showDesignationErrors.des1 = true"
                                 @input="editChoices('designation1', $event, true)"
@@ -92,7 +92,7 @@
             <v-row class="ma-0 pa-0" v-else>
               <v-col :cols="getIsAssumedName ? 8 : 12" class="py-0" >
                 <v-text-field :error-messages="messages.name1"
-                              :hide-details="hide"
+                              :hide-details="hideDetails"
                               :value="xproNameWithoutConflict"
                               @blur="handleBlur()"
                               @input="editChoices('name1', $event, true)"
@@ -110,9 +110,9 @@
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
                       <v-select :error-messages="des1Message"
-                                :hide-details="hide"
+                                :hide-details="hideDetails"
                                 :items="items"
-                                :menu-props="props"
+                                :menu-props="menuProps"
                                 :value="nameChoices.designation1"
                                 @blur="handleBlur(); showDesignationErrors.des1 = true"
                                 @input="editChoices('designation1', $event, true)"
@@ -181,7 +181,7 @@
             <v-row class="ma-0 pa-0">
               <v-col :cols="designationAtEnd ? 8: 12" class="py-0">
                 <v-text-field :error-messages="messages.name2"
-                              :hide-details="hide"
+                              :hide-details="hideDetails"
                               :value="nameChoices.name2"
                               @blur="handleBlur()"
                               @input="editChoices('name2', $event, true)"
@@ -198,9 +198,9 @@
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
                       <v-select :error-messages="des2Message"
-                                :hide-details="hide"
+                                :hide-details="hideDetails"
                                 :items="items"
-                                :menu-props="props"
+                                :menu-props="menuProps"
                                 :value="nameChoices.designation2"
                                 @blur="handleBlur(); showDesignationErrors.des2 = true"
                                 @input="editChoices('designation2', $event, true)"
@@ -228,7 +228,7 @@
             <v-row class="ma-0 pa-0">
               <v-col :cols="designationAtEnd? 8: 12" class="py-0" style="height:60px">
                 <v-text-field :error-messages="messages.name3"
-                              :hide-details="hide"
+                              :hide-details="hideDetails"
                               :value="nameChoices.name3"
                               @blur="handleBlur()"
                               @input="editChoices('name3', $event)"
@@ -245,7 +245,7 @@
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
                       <v-select :error-messages="des3Message"
-                                :hide-details="hide"
+                                :hide-details="hideDetails"
                                 :items="items"
                                 :value="nameChoices.designation3"
                                 @blur="handleBlur(); showDesignationErrors.des3 = true"
@@ -319,7 +319,7 @@ export default class NamesCapture extends Vue {
   @Action setSubmissionTabComponent!: ActionBindingIF
   @Action setSubmissionType!: ActionBindingIF
 
-  hide: boolean | 'auto' = true
+  hideDetails: boolean | 'auto' = true
   messages = {
     des1: '',
     des2: '',
@@ -328,7 +328,7 @@ export default class NamesCapture extends Vue {
     name2: '',
     name3: ''
   }
-  props = {
+  menuProps = {
     disableKeys: false
   }
   showDesignationErrors = {
@@ -337,41 +337,42 @@ export default class NamesCapture extends Vue {
     des3: false
   }
 
-  mounted () {
+  async mounted (): Promise<void> {
     // add event listener when this component is mounted
     // eg, when user continues to send for review
     this.$el.addEventListener('keydown', this.handleKeydown)
 
     this.setNameChoicesToInitialState(null)
     if (this.getIsAssumedName && !this.getEditMode) {
-      this.$nextTick(() => { this.hide = true })
+      await this.$nextTick() // *** TODO: this should not be needed
+      this.hideDetails = true
       return
     }
 
-    this.$nextTick(() => {
-      if (this.getEditMode) {
-        this.populateNames()
-        return
-      }
-      this.setSubmissionType('examination')
-      if (this.designationAtEnd) {
-        for (let item of this.items) {
-          let name = this.getName
-          if ([' LTD', ' INC', ' CORP'].some(des => name.endsWith(des))) {
-            name = name + '.'
-          }
-          if (item) {
-            if (name.endsWith(item)) {
-              this.setNameChoices({ key: 'designation1', value: item })
-              let value = name.replace(item, '').trim()
-              this.setNameChoices({ key: 'name1', value })
-              return
-            }
+    await this.$nextTick() // *** TODO: this should not be needed
+    if (this.getEditMode) {
+      this.populateNames()
+      return
+    }
+
+    this.setSubmissionType('examination')
+    if (this.designationAtEnd) {
+      for (let item of this.items) {
+        let name = this.getName
+        if ([' LTD', ' INC', ' CORP'].some(des => name.endsWith(des))) {
+          name = name + '.'
+        }
+        if (item) {
+          if (name.endsWith(item)) {
+            this.setNameChoices({ key: 'designation1', value: item })
+            let value = name.replace(item, '').trim()
+            this.setNameChoices({ key: 'name1', value })
+            return
           }
         }
       }
-      this.setNameChoices({ key: 'name1', value: this.getName })
-    })
+    }
+    this.setNameChoices({ key: 'name1', value: this.getName })
   }
 
   destroyed () {
@@ -530,7 +531,7 @@ export default class NamesCapture extends Vue {
   }
 
   get isValid () {
-    let { nameChoices, messages, designationAtEnd, validatePhrases, location, getIsAssumedName } = this
+    let { nameChoices, messages, designationAtEnd, validatePhrases, location } = this
     if (this.getIsAssumedName && this.getEditMode) {
       if (!nameChoices['name1']) {
         messages['name1'] = 'Please enter at least one name'
@@ -556,7 +557,7 @@ export default class NamesCapture extends Vue {
       for (let choice of [1, 2, 3]) {
         if (nameChoices[`name${choice}`] === this.getName) {
           messages[`name${choice}`] = 'This is identical to the name you originally entered. Please enter a new name.'
-          this.hide = 'auto'
+          this.hideDetails = 'auto'
           outcome = false
         }
       }
@@ -639,7 +640,7 @@ export default class NamesCapture extends Vue {
           for (let choice of [1, 2, 3]) {
             if (nameChoices[`name${choice}`]) {
               if (!nameChoices[`designation${choice}`]) {
-                if (location === 'BC' || getIsAssumedName) {
+                if (location === 'BC' || this.getIsAssumedName) {
                   messages[`des${choice}`] = 'Please choose a designation'
                   this.showDesignationErrors[`des${choice}`] = true
                   outcome = false
@@ -651,7 +652,7 @@ export default class NamesCapture extends Vue {
           }
         }
         if (!outcome) {
-          this.hide = 'auto'
+          this.hideDetails = 'auto'
         }
       }
       return outcome
@@ -660,9 +661,10 @@ export default class NamesCapture extends Vue {
     let step1 = name1()
     let step2 = name2()
     let step3 = name3()
+
     this.$nextTick(function () {
       if (!(step1 && step2 && step3)) {
-        this.hide = 'auto'
+        this.hideDetails = 'auto'
       }
     })
     return (step1 && step2 && step3)
@@ -722,7 +724,7 @@ export default class NamesCapture extends Vue {
 
   editChoices (key, value, userInitiated = false) {
     if (userInitiated) {
-      this.hide = true
+      this.hideDetails = true
       for (let key in this.messages) {
         this.messages[key] = ''
       }
@@ -740,7 +742,7 @@ export default class NamesCapture extends Vue {
 
   handleKeydown (event) {
     if (event.key === 'Enter') {
-      this.props.disableKeys = true
+      this.menuProps.disableKeys = true
       this.validateButton()
     }
   }
@@ -814,11 +816,11 @@ export default class NamesCapture extends Vue {
 
   validate (next = false) {
     if (!this.isValid) {
-      this.hide = 'auto'
-      this.props.disableKeys = false
+      this.hideDetails = 'auto'
+      this.menuProps.disableKeys = false
       return
     }
-    this.hide = true
+    this.hideDetails = true
     if (next) {
       this.showNextTab()
     }

@@ -532,11 +532,11 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   private get isNotPaid () {
-    return this.pendingPayment?.sbcPayment?.statusCode === PaymentStatus.CREATED
+    return (this.pendingPayment?.sbcPayment?.statusCode === PaymentStatus.CREATED)
   }
 
   private get isPaymentProcessing () {
-    return this.pendingPayment?.sbcPayment?.statusCode === PaymentStatus.COMPLETED
+    return (this.pendingPayment?.sbcPayment?.statusCode === PaymentStatus.COMPLETED)
   }
 
   /** Returns True if the specified action should display a red button. */
