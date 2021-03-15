@@ -1,81 +1,81 @@
-const jurisdictions = [
+import { JurisdictionI } from '@/interfaces'
+
+export const CanJurisdictions: JurisdictionI[] = [
   {
-    'value': 'AB',
-    'SHORT_DESC': 'AB',
-    'text': 'Alberta'
+    value: 'AB',
+    SHORT_DESC: 'AB',
+    text: 'Alberta'
   },
   {
-    'value': 'BC',
-    'SHORT_DESC': 'BC',
-    'text': 'British Columbia'
+    value: 'BC',
+    SHORT_DESC: 'BC',
+    text: 'British Columbia'
   },
   {
-    'value': 'MB',
-    'SHORT_DESC': 'MB',
-    'text': 'Manitoba'
+    value: 'MB',
+    SHORT_DESC: 'MB',
+    text: 'Manitoba'
   },
   {
-    'value': 'NB',
-    'SHORT_DESC': 'NB',
-    'text': 'New Brunswick'
+    value: 'NB',
+    SHORT_DESC: 'NB',
+    text: 'New Brunswick'
   },
   {
-    'value': 'NF',
-    'SHORT_DESC': 'NF',
-    'text': 'Newfoundland And Labrador'
+    value: 'NF',
+    SHORT_DESC: 'NF',
+    text: 'Newfoundland And Labrador'
   },
   {
-    'value': 'NT',
-    'SHORT_DESC': 'NT',
-    'text': 'Northwest Territories'
+    value: 'NT',
+    SHORT_DESC: 'NT',
+    text: 'Northwest Territories'
   },
   {
-    'value': 'NS',
-    'SHORT_DESC': 'NS',
-    'text': 'Nova Scotia'
+    value: 'NS',
+    SHORT_DESC: 'NS',
+    text: 'Nova Scotia'
   },
   {
-    'value': 'NU',
-    'SHORT_DESC': 'NU',
-    'text': 'Nunavut'
+    value: 'NU',
+    SHORT_DESC: 'NU',
+    text: 'Nunavut'
   },
   {
-    'value': 'ON',
-    'SHORT_DESC': 'ON',
-    'text': 'Ontario'
+    value: 'ON',
+    SHORT_DESC: 'ON',
+    text: 'Ontario'
   },
   {
-    'value': 'PE',
-    'SHORT_DESC': 'PE',
-    'text': 'Prince Edward Island'
+    value: 'PE',
+    SHORT_DESC: 'PE',
+    text: 'Prince Edward Island'
   },
   {
-    'value': 'QC',
-    'SHORT_DESC': 'QC',
-    'text': 'Quebec'
+    value: 'QC',
+    SHORT_DESC: 'QC',
+    text: 'Quebec'
   },
   {
-    'value': 'SK',
-    'SHORT_DESC': 'SK',
-    'text': 'Saskatchewan'
+    value: 'SK',
+    SHORT_DESC: 'SK',
+    text: 'Saskatchewan'
   },
   {
-    'value': 'YT',
-    'SHORT_DESC': 'YT',
-    'text': 'Yukon'
+    value: 'YT',
+    SHORT_DESC: 'YT',
+    text: 'Yukon'
   },
   {
-    'value': 'FD',
-    'SHORT_DESC': 'FED',
-    'text': 'Federal'
+    value: 'FD',
+    SHORT_DESC: 'FED',
+    text: 'Federal'
   }
 ]
 
-export const $mrasJurisdictions = [
+export const MrasJurisdictions: string[] = [
   'alberta',
   'manitoba',
   'saskatchewan',
   'quebec'
 ]
-
-export default jurisdictions

@@ -176,7 +176,7 @@ export interface QuillOpsI {
 }
 
 export interface RequestActionMappingI {
-  [propName: string]: string[] // excess properties // *** TODO: this should just be `any`
+  [propName: string]: string[] // misc properties that are arrays of strings
 }
 
 export interface RequestActionsI {

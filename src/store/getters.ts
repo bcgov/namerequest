@@ -13,13 +13,12 @@ import {
 } from '@/interfaces/models'
 
 // List Data
+// *** TODO: replace with `this.$xxx`
 import {
-  $colinRequestActions, $colinRequestTypes, $xproColinRequestTypes, bcMapping, xproMapping
-} from '@/list-data/request-action-mapping'
-import designations from '@/list-data/designations'
-import { ConversionTypes, EntityTypesBCData, EntityTypesXPROData, Locations, RequestActions } from '@/list-data'
-import $canJurisdictions, { $mrasJurisdictions } from '@/list-data/canada-jurisdictions'
-import $intJurisdictions from '@/list-data/intl-jurisdictions'
+  CanJurisdictions, IntlJurisdictions, ConversionTypes, MrasJurisdictions,
+  ColinRequestActions, ColinRequestTypes, XproColinRequestTypes, BcMapping, XproMapping,
+  Designations, EntityTypesBcData, EntityTypesXproData, Locations, RequestActions
+} from '@/list-data'
 
 export const getName = (state: StateIF): string => {
   return state.stateModel.newRequestModel.name
@@ -71,8 +70,8 @@ export const getJurisdictionCd = (state: StateIF): string => {
 
 export const getJurisdictionText = (state: StateIF): string => {
   return getLocation(state) === 'CA'
-    ? $canJurisdictions.find(jur => jur.value === getRequestJurisdictionCd(state))?.text
-    : $intJurisdictions.find(jur => jur.value === getRequestJurisdictionCd(state))?.text
+    ? CanJurisdictions.find(jur => jur.value === getRequestJurisdictionCd(state))?.text
+    : IntlJurisdictions.find(jur => jur.value === getRequestJurisdictionCd(state))?.text
 }
 
 export const getMrasSearchResultCode = (state: StateIF): number => {
@@ -357,50 +356,50 @@ export const getEntityBlurbs = (state: StateIF): Array<EntityI> => {
   switch (getRequestActionCd(state)) {
     case 'NEW': // NEW REQUEST
       if (['BC'].includes(getLocation(state))) {
-        return EntityTypesBCData
+        return EntityTypesBcData
       }
       if (['CA'].includes(getLocation(state))) {
-        return EntityTypesXPROData
+        return EntityTypesXproData
       }
       if (['IN'].includes(getLocation(state))) {
-        return EntityTypesXPROData.map(x => ({ ...x, blurbs: x.intBlurbs }))
+        return EntityTypesXproData.map(x => ({ ...x, blurbs: x.intBlurbs }))
       }
       break
     case 'MVE': // MOVE REQUEST
       if (['BC'].includes(getLocation(state))) {
-        return EntityTypesBCData.map(x => ({ ...x, blurbs: x.mveBlurbs }))
+        return EntityTypesBcData.map(x => ({ ...x, blurbs: x.mveBlurbs }))
       }
       break
     case 'REH': // RESTORE OR REINSTATE REQUEST
       if (['BC'].includes(getLocation(state))) {
-        return EntityTypesBCData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
+        return EntityTypesBcData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
       }
       if (['CA', 'IN'].includes(getLocation(state))) {
-        return EntityTypesXPROData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
+        return EntityTypesXproData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
       }
       break
     case 'AML': // AMALGAMATE REQUEST
       if (['BC'].includes(getLocation(state))) {
-        return EntityTypesBCData.map(x => ({ ...x, blurbs: x.amlBlurbs }))
+        return EntityTypesBcData.map(x => ({ ...x, blurbs: x.amlBlurbs }))
       }
       if (['CA'].includes(getLocation(state))) {
-        return EntityTypesXPROData.map(x => ({ ...x, blurbs: x.amlBlurbs[0] }))
+        return EntityTypesXproData.map(x => ({ ...x, blurbs: x.amlBlurbs[0] }))
       }
       if (['IN'].includes(getLocation(state))) {
         // If international blurb is the same as national, map that blurb
-        return EntityTypesXPROData.map(x => ({ ...x, blurbs: x.amlBlurbs[1] || x.amlBlurbs[0] }))
+        return EntityTypesXproData.map(x => ({ ...x, blurbs: x.amlBlurbs[1] || x.amlBlurbs[0] }))
       }
       break
     case 'CHG': // CHANGE NAME REQUEST
       if (['BC'].includes(getLocation(state))) {
-        return EntityTypesBCData.map(x => ({ ...x, blurbs: x.chgBlurbs }))
+        return EntityTypesBcData.map(x => ({ ...x, blurbs: x.chgBlurbs }))
       }
       if (['CA'].includes(getLocation(state))) {
-        return EntityTypesXPROData.map(x => ({ ...x, blurbs: x.chgBlurbs[0] }))
+        return EntityTypesXproData.map(x => ({ ...x, blurbs: x.chgBlurbs[0] }))
       }
       if (['IN'].includes(getLocation(state))) {
         // If international blurb is the same as national, map that blurb
-        return EntityTypesXPROData.map(x => ({ ...x, blurbs: x.chgBlurbs[1] || x.chgBlurbs[0] }))
+        return EntityTypesXproData.map(x => ({ ...x, blurbs: x.chgBlurbs[1] || x.chgBlurbs[0] }))
       }
       break
     case 'CNV': // CONVERSION REQUEST
@@ -418,7 +417,7 @@ export const getEntityTypesBC = (state: StateIF): EntityI[] => {
     let generateEntities = (entities) => {
       let output = []
       for (let entity of entities) {
-        let obj = EntityTypesBCData.find(ent => ent.value === entity)
+        let obj = EntityTypesBcData.find(ent => ent.value === entity)
         // "CR" type is shortlisted. if CR exists in filtered entity_types, preserve its rank and shortlist keys
         if (entity === 'CR') {
           output.push(obj)
@@ -443,32 +442,32 @@ export const getEntityTypesBC = (state: StateIF): EntityI[] => {
     }
 
     // see 'src/list-data/request-action-mapping.ts'
-    let mapping: RequestActionMappingI = bcMapping
+    let mapping: RequestActionMappingI = BcMapping
     let cds = Object.keys(mapping)
     if (cds.includes(getRequestActionCd(state))) {
       return generateEntities(mapping[getRequestActionCd(state)])
     }
 
-    return EntityTypesBCData
+    return EntityTypesBcData
   } catch (err) {
     console.error('entityTypesBC() =', err) // eslint-disable-line no-console
-    return this.entityTypesBCData
+    return EntityTypesBcData
   }
 }
 
 /** Get Xpro entity types. */
 export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
-  let entityTypesXPROData = EntityTypesXPROData
+  let _entityTypesXproData = EntityTypesXproData
   if (getLocation(state) === 'CA') {
-    entityTypesXPROData = entityTypesXPROData.filter(ent => ent.value !== 'RLC')
+    _entityTypesXproData = _entityTypesXproData.filter(ent => ent.value !== 'RLC')
   }
 
   try {
     let generateEntities = (entities) => {
       let output = []
       for (let entity of entities) {
-      // using this.entityTypesXPROData instead of scoped entityTypesXPROData here so that RLC can be included
-        let obj = entityTypesXPROData.find(ent => ent.value === entity)
+      // using this.$entityTypesXproData instead of scoped _entityTypesXproData here so that RLC can be included
+        let obj = EntityTypesXproData.find(ent => ent.value === entity)
         // "CR" type is shortlisted. if XCR exists in filtered entity_types, preserve its rank and shortlist keys
         if (entity === 'XCR') {
           output.push(obj)
@@ -496,17 +495,17 @@ export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
     }
 
     // see 'src/list-data/request-action-mapping.ts'
-    let mapping: RequestActionMappingI = xproMapping
+    let mapping: RequestActionMappingI = XproMapping
     let cds = Object.keys(mapping)
 
     if (cds.includes(getRequestActionCd(state))) {
       return generateEntities(mapping[getRequestActionCd(state)])
     }
 
-    return entityTypesXPROData
+    return _entityTypesXproData
   } catch (err) {
     console.error('entityTypesXPRO() =', err) // eslint-disable-line no-console
-    return entityTypesXPROData
+    return _entityTypesXproData
   }
 }
 
@@ -652,18 +651,21 @@ export const getNameIsSlashed = (state: StateIF): boolean => {
 }
 
 export const getShowCorpNum = (state: StateIF): 'colin' | 'mras' | false => {
-  if (($colinRequestActions.includes(getRequestActionCd(state)) &&
-    $colinRequestTypes.includes(getEntityTypeCd(state))) || getEntityTypeCd(state) === 'DBA') {
+  if ((ColinRequestActions.includes(getRequestActionCd(state)) &&
+    ColinRequestTypes.includes(getEntityTypeCd(state))) || getEntityTypeCd(state) === 'DBA') {
     return 'colin'
   }
-  if ($colinRequestActions.includes(getRequestActionCd(state)) &&
-    $xproColinRequestTypes.includes(getEntityTypeCd(state))) {
+  if (ColinRequestActions.includes(getRequestActionCd(state)) &&
+    XproColinRequestTypes.includes(getEntityTypeCd(state))) {
     return 'colin'
   }
   let mrasEntities = ['XCR', 'XLP', 'UL', 'CR', 'CP', 'BC', 'CC']
   let { xproJurisdiction } = getNrData(state)
 
-  if ($mrasJurisdictions.includes(xproJurisdiction?.toLowerCase()) && mrasEntities.includes(getEntityTypeCd(state))) {
+  if (
+    MrasJurisdictions.includes(xproJurisdiction?.toLowerCase()) &&
+    mrasEntities.includes(getEntityTypeCd(state))
+  ) {
     if (getLocation(state) === 'CA' && ['NEW', 'ASSUMED'].includes(getRequestActionCd(state))) {
       return 'mras'
     }
@@ -772,7 +774,7 @@ export const getNrRequestNames = (state: StateIF): RequestNameI[] => {
     while (choiceIdx <= 3) {
       if (nameChoices[`name${choiceIdx}`] as boolean) {
         let combinedName = nameChoices[`name${choiceIdx}`]
-        if (getEntityTypeCd(state) && designations[getEntityTypeCd(state)]?.end) {
+        if (getEntityTypeCd(state) && Designations[getEntityTypeCd(state)]?.end) {
           let des = nameChoices[`designation${choiceIdx}`]
           if (des && !combinedName.endsWith(des)) {
             combinedName = combinedName + ' ' + des
@@ -796,7 +798,7 @@ export const getNrRequestNames = (state: StateIF): RequestNameI[] => {
     }
   } else {
     // Just use the 'name' property to fill in the requestName
-    if (getEntityTypeCd(state) && getLocation(state) === 'BC' && designations[getEntityTypeCd(state)]?.end) {
+    if (getEntityTypeCd(state) && getLocation(state) === 'BC' && Designations[getEntityTypeCd(state)]?.end) {
       requestNames.push({
         name: getName(state),
         designation: this.splitNameDesignation.designation,

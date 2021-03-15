@@ -15,7 +15,7 @@
           <template v-slot:activator="scope">
             <div v-on="scope.on">
               <v-select :error-messages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
-                        :items="RequestActions"
+                        :items="$requestActions"
                         @change="clearErrors()"
                         label="Select an Action"
                         filled
@@ -267,17 +267,11 @@ import NameInput from './name-input.vue'
 // Interfaces / Enums / List Data
 import { ConversionTypesI, EntityI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { ConversionTypes, RequestActions } from '@/list-data'
-import $canJurisdictions from '@/list-data/canada-jurisdictions'
-import $intJurisdictions from '@/list-data/intl-jurisdictions'
 
 @Component({
   components: { NameInput }
 })
 export default class NewSearch extends Vue {
-  // attach list data to 'this'
-  readonly RequestActions = RequestActions
-
   // Global getters
   @Getter getConversionType!: string
   @Getter getConversionTypeOptions!: ConversionTypesI[]
@@ -363,7 +357,7 @@ export default class NewSearch extends Vue {
     }
     if (type && this.getIsConversion) {
       if (type !== 'INFO') {
-        let { entity_type_cd } = ConversionTypes.find(conv => conv.value === type)
+        let { entity_type_cd } = this.$conversionTypes.find(conv => conv.value === type)
         this.setEntityTypeCd(entity_type_cd)
       }
       this.setConversionType(type)
@@ -380,7 +374,7 @@ export default class NewSearch extends Vue {
   }
 
   get entityConversionText () {
-    return ConversionTypes.find(conversion => conversion.value === this.getConversionType)?.text
+    return this.$conversionTypes.find(conversion => conversion.value === this.getConversionType)?.text
   }
 
   get inputCompClass () {
@@ -448,12 +442,12 @@ export default class NewSearch extends Vue {
   }
 
   set request_action_cd (value: string) {
-    const request = RequestActions.find(request => request.value === value)
+    const request = this.$requestActions.find(request => request.value === value)
     this.location = null
     if (this.entity_type_cd) {
       this.entity_type_cd = ''
     }
-    if (request.value !== 'NEW') {
+    if (request?.value !== 'NEW') {
       this.setExtendedRequestType(request)
     }
     this.setRequestAction(value)
@@ -461,8 +455,8 @@ export default class NewSearch extends Vue {
 
   get jurisdictionOptions () {
     return this.location === 'CA'
-      ? $canJurisdictions.filter(jur => jur.value !== 'BC')
-      : $intJurisdictions.filter(jur => jur.value !== 'CA')
+      ? this.$canJurisdictions.filter(jur => jur.value !== 'BC')
+      : this.$intlJurisdictions.filter(jur => jur.value !== 'CA')
   }
 
   get entityTextFromValue (): string {

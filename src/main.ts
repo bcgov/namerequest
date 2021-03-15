@@ -18,11 +18,11 @@ import '@/assets/scss/base.scss'
 import '@/assets/scss/layout.scss'
 import '@/assets/scss/overrides.scss'
 
-import designations from '@/list-data/designations'
-import canJurisdictions from '@/list-data/canada-jurisdictions'
-import intJurisdictions from '@/list-data/intl-jurisdictions'
-import USAStateCodes from '@/list-data/us-states'
-import * as mapping from '@/list-data/request-action-mapping'
+import {
+  Designations, AllDesignationsList, CanJurisdictions, MrasJurisdictions, IntlJurisdictions,
+  ConversionTypes, EntityTypesBcData, EntityTypesXproData, RequestActions, Locations, UsaStateCodes,
+  BcMapping, XproMapping, ColinRequestActions, ColinRequestTypes, XproColinRequestTypes
+} from '@/list-data'
 
 Vue.config.productionTip = true
 Vue.config.devtools = true
@@ -44,11 +44,22 @@ async function startVue () {
   store.state.config = envConfig
 
   // Load global data
-  Vue.prototype.$designations = designations
-  Vue.prototype.$canJurisdictions = canJurisdictions
-  Vue.prototype.$intJurisdictions = intJurisdictions
-  Vue.prototype.$USAStateCodes = USAStateCodes
-  Vue.prototype.$xproMapping = mapping.xproMapping
+  Vue.prototype.$designations = Designations
+  Vue.prototype.$canJurisdictions = CanJurisdictions
+  Vue.prototype.$mrasJurisdictions = MrasJurisdictions
+  Vue.prototype.$intlJurisdictions = IntlJurisdictions
+  Vue.prototype.$usaStateCodes = UsaStateCodes
+  Vue.prototype.$bcMapping = BcMapping
+  Vue.prototype.$xproMapping = XproMapping
+  Vue.prototype.$conversionTypes = ConversionTypes
+  Vue.prototype.$allDesignationsList = AllDesignationsList
+  Vue.prototype.$entityTypesBcData = EntityTypesBcData
+  Vue.prototype.$entityTypesXproData = EntityTypesXproData
+  Vue.prototype.$requestActions = RequestActions
+  Vue.prototype.$locations = Locations
+  Vue.prototype.$colinRequestActions = ColinRequestActions
+  Vue.prototype.$colinRequestTypes = ColinRequestTypes
+  Vue.prototype.$xproColinRequestTypes = XproColinRequestTypes
 
   // Initialize Hotjar
   if (window['hotjarId']) {

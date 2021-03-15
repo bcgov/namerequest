@@ -16,7 +16,7 @@
             <v-row class="category-bg">
               <v-col cols="12" class="font-weight-bold">Alterations</v-col>
             </v-row>
-            <v-row v-for="(conversion, i) in ConversionTypes" :key="'conv-' + i">
+            <v-row v-for="(conversion, i) in $conversionTypes" :key="'conv-' + i">
               <v-col cols="12" class="clickable-cell"
                      :id="conversion.value"
                      @click="chooseConversion(conversion)">
@@ -86,13 +86,9 @@ import { Action, Getter } from 'vuex-class'
 
 import { ConversionTypesI, EntityI, SelectOptionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { ConversionTypes } from '@/list-data'
 
 @Component({})
 export default class PickEntityOrConversionDialog extends Vue {
-  // attach list data to 'this'
-  readonly ConversionTypes = ConversionTypes
-
   // Global getters
   @Getter getConversionTypeOptions!: ConversionTypesI[]
   @Getter getEntityBlurbs!: Array<EntityI>

@@ -193,7 +193,6 @@ import MainContainer from '@/components/new-request/main-container.vue'
 import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
 
 import { AnalysisJSONI, IssueI, QuillOpsI, SelectionI } from '@/interfaces'
-import allDesignations, { allDesignationsList } from '@/list-data/designations'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
@@ -391,25 +390,26 @@ export default class AnalyzeResults extends Vue {
       if (this.userCancelled) return false
       if (this.finalName && this.name === this.finalName) return true
       if (!this.changesInBaseName) {
-        // creating a new version of allDesignationsList because we are going to modify it but still need the original
-        let AllDesignationsList = allDesignationsList
-        // allDesignations is an array of objects containing {words, end} keys, set designationEntityTypes to the
+        // creating a new version of $allDesignationsList because we are going to modify it but still need the original
+        // TODO: *** this DOES NOT create a new version; fix this (cloneDeep?)
+        let AllDesignationsList2 = this.$allDesignationsList
+        // $designations is an array of objects containing {words, end} keys, set designationEntityTypes to the
         // relevant object
-        const designationEntityTypes = allDesignations[this.getEntityTypeCd]
+        const designationEntityTypes = this.$designations[this.getEntityTypeCd]
         /* designationEntityTypes.words.length === 0 is true for types 'PAR', 'FI', 'PA', and the proprietorships so
          the designation issue is fixed as long as there are no designations present and no nameAction words which in
          this situation would only be designation-like words to be removed */
         if (designationEntityTypes && designationEntityTypes.words.length === 0) {
           if (this.nameActionWords.length > 0) {
             for (let word of this.nameActionWords) {
-              // so we add any nameActionWords onto the allDesignationsList that were not already part of it
-              if (!AllDesignationsList.includes(word)) {
-                AllDesignationsList = AllDesignationsList.concat(word)
+              // so we add any nameActionWords onto the $allDesignationsList that were not already part of it
+              if (!AllDesignationsList2.includes(word)) {
+                AllDesignationsList2 = AllDesignationsList2.concat(word)
               }
             }
           }
-          // and then fail the test if this.name includes any of the consolodated AllDesignationsList
-          for (let designation of AllDesignationsList) {
+          // and then fail the test if this.name includes any of the consolidated AllDesignationsList2
+          for (let designation of AllDesignationsList2) {
             if (matchWord(this.name, designation)) {
               return false
             }
@@ -418,7 +418,7 @@ export default class AnalyzeResults extends Vue {
         }
         let end: string
         // here we determine which valid end designation is being used in this.name
-        AllDesignationsList.forEach(designation => {
+        AllDesignationsList2.forEach(designation => {
           if (this.name.endsWith(' ' + designation)) {
             end = designation
           }
@@ -430,13 +430,13 @@ export default class AnalyzeResults extends Vue {
         }
         if (this.nameActionWords.length > 0) {
           for (let word of this.nameActionWords) {
-            if (!AllDesignationsList.includes(word)) {
-              AllDesignationsList = AllDesignationsList.concat(word)
+            if (!AllDesignationsList2.includes(word)) {
+              AllDesignationsList2 = AllDesignationsList2.concat(word)
             }
           }
         }
         let matches = []
-        for (let designation of AllDesignationsList) {
+        for (let designation of AllDesignationsList2) {
           if (matches.includes(designation)) {
             continue
           }
@@ -802,7 +802,7 @@ export default class AnalyzeResults extends Vue {
   }
 
   stripAllDesignations (name) {
-    for (let word of allDesignationsList) {
+    for (let word of this.$allDesignationsList) {
       name = replaceWord(name, word)
     }
     return name

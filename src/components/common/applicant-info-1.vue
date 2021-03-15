@@ -254,7 +254,7 @@
             <v-col cols="6" class="py-0 my-0" v-else-if="applicant.countryTypeCd === 'US'">
               <label for="state" class="hidden">State</label>
               <v-select
-                :items="$USAStateCodes"
+                :items="$usaStateCodes"
                 :messages="messages['State']"
                 :rules="requiredRules"
                 :value="applicant.stateProvinceCd"
@@ -389,8 +389,6 @@ import { Location } from '@/enums'
 import { ActionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { ApplicantI, NameRequestI } from '@/interfaces'
-import $canJurisdictions from '@/list-data/canada-jurisdictions'
-import $intJurisdictions from '@/list-data/intl-jurisdictions'
 
 @Component({
   components: {
@@ -473,7 +471,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
     return this.getApplicant || {}
   }
   get countryOptions () {
-    return $intJurisdictions
+    return this.$intlJurisdictions
   }
   get countryTypeCd () {
     return this.getApplicant?.countryTypeCd || ''
@@ -482,12 +480,12 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
     return this.getLocation === Location.Canadian
       ? this.$canJurisdictions.filter(jur => jur.value !== Location.BC)
         .map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
-      : this.$intJurisdictions.filter(jur => jur.value !== Location.Canadian)
+      : this.$intlJurisdictions.filter(jur => jur.value !== Location.Canadian)
         .map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
   }
 
   get provinceOptions () {
-    return $canJurisdictions.map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
+    return this.$canJurisdictions.map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
   }
 
   get showAllFields () {

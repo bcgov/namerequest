@@ -17,9 +17,8 @@ import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
 import { getFeatureFlag, sleep } from '@/plugins'
 
 // List Data
+// *** TODO: replace with `this.$requestActions`
 import { RequestActions } from '@/list-data'
-import $canJurisdictions from '@/list-data/canada-jurisdictions'
-import $intJurisdictions from '@/list-data/intl-jurisdictions'
 
 // Interfaces & Enums
 import { ActionIF } from '@/interfaces/store-interfaces'
@@ -742,11 +741,11 @@ export const editExistingRequest: ActionIF = ({ commit, getters }) => {
     let { xproJurisdiction } = getters.getNr
     let location: LocationT
     for (let key of ['value', 'text']) {
-      if ($canJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
+      if (this.$canJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
         location = 'CA'
         break
       }
-      if ($intJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
+      if (this.$intlJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
         location = 'IN'
         break
       }
@@ -1013,7 +1012,7 @@ export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> =
 // TODO: Not a real action
 export const checkMRAS = (corpNum: string) => {
   let { xproJurisdiction } = this.nrData
-  let { SHORT_DESC } = $canJurisdictions.find(jur => jur.text === xproJurisdiction)
+  let { SHORT_DESC } = this.$canJurisdictions.find(jur => jur.text === xproJurisdiction)
   let url = `mras-profile/${SHORT_DESC}/${corpNum}`
   return axios.get(url)
 }

@@ -1,4 +1,4 @@
 export interface MappingI {
   ASSUMED: string[]
-  [propName: string]: any // excess properties
+  [propName: string]: string[] // misc properties that are arrays of strings
 }

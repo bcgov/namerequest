@@ -1,8 +1,7 @@
 import ApplicantInfo1 from '@/components/common/applicant-info-1.vue'
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import Vuetify from 'vuetify'
-import $intJurisdictions from '@/list-data/intl-jurisdictions'
-import $canJurisdictions from '@/list-data/canada-jurisdictions'
+import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
 
 // Prevent the warning "[Vuetify] Unable to locate target [data-app]"
 document.body.setAttribute('data-app', 'true')
@@ -21,8 +20,8 @@ describe('applicant-info-1', () => {
   //     localVue,
   //     vuetify,
   //     mocks: {
-  //       $canJurisdictions,
-  //       $intJurisdictions
+  //       $canJurisdictions: CanJurisdictions,
+  //       $intlJurisdictions: IntlJurisdictions
   //     }
   //   })
   //   await wrapper.vm.$nextTick()

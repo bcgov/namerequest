@@ -1,6 +1,6 @@
 import NamesCapture from '@/components/common/names-capture.vue'
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
-import designations from '@/list-data/designations'
+import { Designations } from '@/list-data'
 // import store from '@/store/new-request-module'
 import Vuetify from 'vuetify'
 
@@ -8,7 +8,6 @@ const localVue = createLocalVue()
 const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
-localVue.prototype.$designations = designations
 
 describe('names-capture', () => {
   it('is an empty test', () => {})
@@ -19,7 +18,10 @@ describe('names-capture', () => {
   //     store.mutateName('Test Name')
   //     wrapper = mount(NamesCapture, {
   //       localVue,
-  //       vuetify
+  //       vuetify,
+  //       mocks: {
+  //         $designations: Designations
+  //       }
   //     })
   //     store.mutateRequestAction('NEW')
   //     store.mutateLocation('BC')

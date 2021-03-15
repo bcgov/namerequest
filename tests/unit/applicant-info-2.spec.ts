@@ -21,7 +21,6 @@ describe('applicant-info-2', () => {
   //   done()
   // })
   // it('checks the corpNum against the appropriate database given the setup: BC location', async () => {
-  //   const mrasJurisdictions = ['Alberta', 'Saskatchewan', 'Manitoba']
   //   const mrasActions = []
   //   function setStore (jurisdiction, action) {
   //     module.mutateNRData({ key: 'xproJurisdiction', value: 'Alberta' })

@@ -57,7 +57,6 @@ describe('new-request-module', () => {
   // ]
 
   // const testJurisdictions = ['ALBERTA', 'SASKATCHEWAN', 'MANITOBA', 'ONTARIO', 'QUEBEC', 'NEW BRUNSWICK']
-  // const mrasJurisdictions = ['ALBERTA', 'SASKATCHEWAN', 'MANITOBA']
 
   // let testData = []
   // for (let row of spreadSheetData) {

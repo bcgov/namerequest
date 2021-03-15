@@ -53,7 +53,6 @@ import { Action, Getter } from 'vuex-class'
 // Interfaces / enums / list data
 import { SelectOptionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { RequestActions } from '@/list-data'
 
 @Component({})
 export default class PickRequestTypeDialog extends Vue {
@@ -75,12 +74,12 @@ export default class PickRequestTypeDialog extends Vue {
   }
 
   get tableData () {
-    let { length } = RequestActions
-    let midIndex = length % 2 ? (length + 1) / 2 : (length / 2)
+    const length = this.$requestActions.length
+    const midIndex = length % 2 ? (length + 1) / 2 : (length / 2)
 
     return {
-      col1: RequestActions.slice(0, midIndex),
-      col2: RequestActions.slice(midIndex, length)
+      col1: this.$requestActions.slice(0, midIndex),
+      col2: this.$requestActions.slice(midIndex, length)
     }
   }
 

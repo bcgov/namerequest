@@ -1,4 +1,4 @@
-export const Locations = [
+export const Locations: any[] = [
   {
     text: 'BC',
     value: 'BC',

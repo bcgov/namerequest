@@ -143,7 +143,6 @@ import ReserveSubmit from '@/components/new-request/submit-request/reserve-submi
 
 import { AnalysisJSONI, OptionI } from '@/interfaces'
 import { replaceWord } from '@/plugins'
-import allDesignations, { allDesignationsList } from '@/list-data/designations'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
@@ -213,7 +212,7 @@ export default class GreyBox extends Vue {
       this.originalNameBase = originalName
       return
     }
-    for (let word of allDesignationsList) {
+    for (let word of this.$allDesignationsList) {
       originalName = replaceWord(originalName, word)
     }
     this.originalNameBase = originalName
@@ -501,7 +500,7 @@ export default class GreyBox extends Vue {
   }
 
   extractInnerDesignation (name, designation = null) {
-    let { words } = allDesignations[this.entity_type_cd]
+    let { words } = this.$designations[this.entity_type_cd]
     let index, length
     if (!designation) {
       for (let word of words) {
@@ -545,7 +544,7 @@ export default class GreyBox extends Vue {
   }
 
   stripAllDesignations (name) {
-    for (let word of allDesignationsList) {
+    for (let word of this.$allDesignationsList) {
       name = replaceWord(name, word)
     }
     return name

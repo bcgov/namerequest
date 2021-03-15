@@ -1,4 +1,6 @@
-const corporateDesignations = {
+import { DesignationI } from '@/interfaces'
+
+const CorporateDesignations: DesignationI = {
   words: [
     'CORP.',
     'CORPORATION',
@@ -13,7 +15,7 @@ const corporateDesignations = {
   end: true
 }
 
-const cooperativeDesignations = {
+const CooperativeDesignations: DesignationI = {
   words: [
     'CO-OP',
     'CO-OPERATIVE',
@@ -23,18 +25,18 @@ const cooperativeDesignations = {
   end: false
 }
 
-const designations = {
-  BC: corporateDesignations,
+export const Designations = {
+  BC: CorporateDesignations,
   CC: {
     words: [
       'CCC',
       'COMMUNITY CONTRIBUTION COMPANY',
-      ...corporateDesignations.words
+      ...CorporateDesignations.words
     ],
     end: true
   },
-  CP: cooperativeDesignations,
-  CR: corporateDesignations,
+  CP: CooperativeDesignations,
+  CR: CorporateDesignations,
   DBA: {
     words: [],
     end: false
@@ -94,14 +96,14 @@ const designations = {
     ],
     end: true
   },
-  XCP: cooperativeDesignations,
-  XCR: corporateDesignations
+  XCP: CooperativeDesignations,
+  XCR: CorporateDesignations
 }
 
 function getAllDesignations () {
   let output = []
-  for (let entity in designations) {
-    for (let word of designations[entity].words) {
+  for (let entity in Designations) {
+    for (let word of Designations[entity].words) {
       if (!output.includes(word)) {
         output.push(word)
       }
@@ -112,6 +114,4 @@ function getAllDesignations () {
 
 // a string[] containing each designation code used in namex
 // eg. [ 'CR', 'BC', 'CCC', etc... ]
-export const allDesignationsList = getAllDesignations()
-
-export default designations
+export const AllDesignationsList = getAllDesignations()

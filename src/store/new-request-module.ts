@@ -27,16 +27,6 @@
 // } from '@/interfaces'
 //
 // import store from '@/store'
-// import {
-//   $colinRequestActions,
-//   $colinRequestTypes,
-//   $xproColinRequestTypes,
-//   bcMapping,
-//   xproMapping
-// } from '@/list-data/request-action-mapping'
-// import $canJurisdictions, { $mrasJurisdictions } from '@/list-data/canada-jurisdictions'
-// import $designations from '@/list-data/designations'
-// import $intJurisdictions from '@/list-data/intl-jurisdictions'
 // import canadaPostAPIKey from './config'
 //
 // import { removeExcessSpaces, sanitizeName, getFeatureFlag } from '@/plugins'
@@ -207,7 +197,7 @@
 //   editMode: boolean = false
 //   entity_type_cd: string = ''
 //   entityTypeAddToSelect: SelectOptionsI | null = null
-//   entityTypesBCData: EntityI[] = [
+//   EntityTypesBcData: EntityI[] = [
 //     {
 //       text: 'Sole proprietorship',
 //       value: 'FR',
@@ -484,7 +474,7 @@
 //       value: 'PAR'
 //     }
 //   ]
-//   entityTypesXPROData: EntityI[] = [
+//   EntityTypesXproData: EntityI[] = [
 //     {
 //       text: 'Limited company',
 //       cat: 'Corporations',
@@ -853,17 +843,21 @@
 //   }
 //
 //   get showCorpNum (): 'colin' | 'mras' | false {
-//     if (($colinRequestActions.includes(this.request_action_cd) && $colinRequestTypes.includes(this.entity_type_cd)) ||
-//       this.entity_type_cd === 'DBA') {
+//     if ((this.$colinRequestActions.includes(this.request_action_cd) &&
+//       this.$colinRequestTypes.includes(this.entity_type_cd)) ||
+//       this.entity_type_cd === 'DBA'
+//     ) {
 //       return 'colin'
 //     }
-//     if ($colinRequestActions.includes(this.request_action_cd) && $xproColinRequestTypes.includes(this.entity_type_cd)) {
+//     if (this.$colinRequestActions.includes(this.request_action_cd) &&
+//       this.$xproColinRequestTypes.includes(this.entity_type_cd)
+//     ) {
 //       return 'colin'
 //     }
 //     let mrasEntities = ['XCR', 'XLP', 'UL', 'CR', 'CP', 'BC', 'CC']
 //     let { xproJurisdiction } = this.nrData
 //
-//     if ($mrasJurisdictions.includes(xproJurisdiction?.toLowerCase()) && mrasEntities.includes(this.entity_type_cd)) {
+//     if (this.$mrasJurisdictions.includes(xproJurisdiction?.toLowerCase()) && mrasEntities.includes(this.entity_type_cd)) {
 //       if (this.location === 'CA' && ['NEW', 'ASSUMED'].includes(this.request_action_cd)) {
 //         return 'mras'
 //       }
@@ -922,8 +916,8 @@
 //
 //   get allDesignationWords () {
 //     let output = []
-//     for (let des in $designations) {
-//       $designations[des].words.forEach(word => {
+//     for (let des in this.$designations) {
+//       this.$designations[des].words.forEach(word => {
 //         if (!output.includes(word)) {
 //           output.push(word)
 //         }
@@ -967,7 +961,7 @@
 //   }
 //
 //   get conversionTypeOptions () {
-//     let options = [...this.conversionTypes].filter(type => type.shortlist)
+//     let options = [...this.$conversionTypes].filter(type => type.shortlist)
 //     let n = 3
 //
 //     if (this.conversionTypeAddToSelect) {
@@ -988,16 +982,16 @@
 //   }
 //
 //   get designationItems () {
-//     if (this.entity_type_cd && $designations[this.entity_type_cd]) {
-//       let { words } = $designations[this.entity_type_cd]
+//     if (this.entity_type_cd && this.$designations[this.entity_type_cd]) {
+//       let { words } = this.$designations[this.entity_type_cd]
 //       return words.map(des => ({ value: des, text: des }))
 //     }
 //     return []
 //   }
 //
 //   get designationObject () {
-//     if (this.entity_type_cd && $designations[this.entity_type_cd]) {
-//       return $designations[this.entity_type_cd]
+//     if (this.entity_type_cd && this.$designations[this.entity_type_cd]) {
+//       return this.$designations[this.entity_type_cd]
 //     }
 //     return ''
 //   }
@@ -1007,7 +1001,7 @@
 //       let generateEntities = (entities) => {
 //         let output = []
 //         for (let entity of entities) {
-//           let obj = this.entityTypesBCData.find(ent => ent.value === entity)
+//           let obj = this.$entityTypesBcData.find(ent => ent.value === entity)
 //           // "CR" type is shortlisted. if CR exists in filtered entity_types, preserve its rank and shortlist keys
 //           if (entity === 'CR') {
 //             output.push(obj)
@@ -1032,31 +1026,31 @@
 //       }
 //
 //       // see 'src/list-data/request-action-mapping.ts'
-//       let mapping: RequestActionMappingI = bcMapping
+//       let mapping: RequestActionMappingI = this.$bcMapping
 //       let cds = Object.keys(mapping)
 //       if (cds.includes(this.request_action_cd)) {
 //         return generateEntities(mapping[this.request_action_cd])
 //       }
 //
-//       return this.entityTypesBCData
+//       return this.$entityTypesBcData
 //     } catch (err) {
 //       console.error('entityTypesBC() =', err) // eslint-disable-line no-console
-//       return this.entityTypesBCData
+//       return this.$entityTypesBcData
 //     }
 //   }
 //
 //   get entityTypesXPRO (): Array<EntityI> {
-//     let { entityTypesXPROData } = this
+//     let { EntityTypesXproData } = this
 //     if (this.location === 'CA') {
-//       entityTypesXPROData = entityTypesXPROData.filter(ent => ent.value !== 'RLC')
+//       EntityTypesXproData = EntityTypesXproData.filter(ent => ent.value !== 'RLC')
 //     }
 //
 //     try {
 //       let generateEntities = (entities) => {
 //         let output = []
 //         for (let entity of entities) {
-//           // using this.entityTypesXPROData instead of scoped entityTypesXPROData here so that RLC can be included
-//           let obj = this.entityTypesXPROData.find(ent => ent.value === entity)
+//           // using this.EntityTypesXproData instead of scoped EntityTypesXproData here so that RLC can be included
+//           let obj = this.EntityTypesXproData.find(ent => ent.value === entity)
 //           // "CR" type is shortlisted. if XCR exists in filtered entity_types, preserve its rank and shortlist keys
 //           if (entity === 'XCR') {
 //             output.push(obj)
@@ -1084,17 +1078,17 @@
 //       }
 //
 //       // see 'src/list-data/request-action-mapping.ts'
-//       let mapping: RequestActionMappingI = xproMapping
+//       let mapping: RequestActionMappingI = this.$xproMapping
 //       let cds = Object.keys(mapping)
 //
 //       if (cds.includes(this.request_action_cd)) {
 //         return generateEntities(mapping[this.request_action_cd])
 //       }
 //
-//       return entityTypesXPROData
+//       return EntityTypesXproData
 //     } catch (err) {
 //       console.error('entityTypesXPRO() =', err) // eslint-disable-line no-console
-//       return entityTypesXPROData
+//       return EntityTypesXproData
 //     }
 //   }
 //
@@ -1561,8 +1555,8 @@
 //
 //   get jurisdictionText () {
 //     return this.location === 'CA'
-//       ? $canJurisdictions.find(jur => jur.value === this.request_jurisdiction_cd)?.text
-//       : $intJurisdictions.find(jur => jur.value === this.request_jurisdiction_cd)?.text
+//       ? this.$canJurisdictions.find(jur => jur.value === this.request_jurisdiction_cd)?.text
+//       : this.$intlJurisdictions.find(jur => jur.value === this.request_jurisdiction_cd)?.text
 //   }
 //
 //   get nrNames () {
@@ -1593,7 +1587,7 @@
 //       while (choiceIdx <= 3) {
 //         if (nameChoices[`name${choiceIdx}`] as boolean) {
 //           let combinedName = nameChoices[`name${choiceIdx}`]
-//           if (this.entity_type_cd && $designations[this.entity_type_cd]?.end) {
+//           if (this.entity_type_cd && this.$designations[this.entity_type_cd]?.end) {
 //             let des = nameChoices[`designation${choiceIdx}`]
 //             if (des && !combinedName.endsWith(des)) {
 //               combinedName = combinedName + ' ' + des
@@ -1617,7 +1611,7 @@
 //       }
 //     } else {
 //       // Just use the 'name' property to fill in the requestName
-//       if (this.entity_type_cd && this.location === 'BC' && $designations[this.entity_type_cd]?.end) {
+//       if (this.entity_type_cd && this.location === 'BC' && this.$designations[this.entity_type_cd]?.end) {
 //         requestNames.push({
 //           name: this.name,
 //           designation: this.splitNameDesignation.designation,
@@ -1694,60 +1688,60 @@
 //       // NEW REQUEST
 //       case 'NEW':
 //         if (['BC'].includes(this.location)) {
-//           return this.entityTypesBCData
+//           return this.$entityTypesBcData
 //         }
 //         if (['CA'].includes(this.location)) {
-//           return this.entityTypesXPROData
+//           return this.EntityTypesXproData
 //         }
 //         if (['IN'].includes(this.location)) {
-//           return this.entityTypesXPROData.map(x => ({ ...x, blurbs: x.intBlurbs }))
+//           return this.EntityTypesXproData.map(x => ({ ...x, blurbs: x.intBlurbs }))
 //         }
 //         break
 //       // MOVE REQUEST
 //       case 'MVE':
 //         if (['BC'].includes(this.location)) {
-//           return this.entityTypesBCData.map(x => ({ ...x, blurbs: x.mveBlurbs }))
+//           return this.$entityTypesBcData.map(x => ({ ...x, blurbs: x.mveBlurbs }))
 //         }
 //         break
 //       // RESTORE OR REINSTATE REQUEST
 //       case 'REH':
 //         if (['BC'].includes(this.location)) {
-//           return this.entityTypesBCData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
+//           return this.$entityTypesBcData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
 //         }
 //         if (['CA', 'IN'].includes(this.location)) {
-//           return this.entityTypesXPROData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
+//           return this.EntityTypesXproData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
 //         }
 //         break
 //       // AMALGAMATE REQUEST
 //       case 'AML':
 //         if (['BC'].includes(this.location)) {
-//           return this.entityTypesBCData.map(x => ({ ...x, blurbs: x.amlBlurbs }))
+//           return this.$entityTypesBcData.map(x => ({ ...x, blurbs: x.amlBlurbs }))
 //         }
 //         if (['CA'].includes(this.location)) {
-//           return this.entityTypesXPROData.map(x => ({ ...x, blurbs: x.amlBlurbs[0] }))
+//           return this.EntityTypesXproData.map(x => ({ ...x, blurbs: x.amlBlurbs[0] }))
 //         }
 //         if (['IN'].includes(this.location)) {
 //           // If international blurb is the same as national, map that blurb
-//           return this.entityTypesXPROData.map(x => ({ ...x, blurbs: x.amlBlurbs[1] || x.amlBlurbs[0] }))
+//           return this.EntityTypesXproData.map(x => ({ ...x, blurbs: x.amlBlurbs[1] || x.amlBlurbs[0] }))
 //         }
 //         break
 //       // CHANGE NAME REQUEST
 //       case 'CHG':
 //         if (['BC'].includes(this.location)) {
-//           return this.entityTypesBCData.map(x => ({ ...x, blurbs: x.chgBlurbs }))
+//           return this.$entityTypesBcData.map(x => ({ ...x, blurbs: x.chgBlurbs }))
 //         }
 //         if (['CA'].includes(this.location)) {
-//           return this.entityTypesXPROData.map(x => ({ ...x, blurbs: x.chgBlurbs[0] }))
+//           return this.EntityTypesXproData.map(x => ({ ...x, blurbs: x.chgBlurbs[0] }))
 //         }
 //         if (['IN'].includes(this.location)) {
 //           // If international blurb is the same as national, map that blurb
-//           return this.entityTypesXPROData.map(x => ({ ...x, blurbs: x.chgBlurbs[1] || x.chgBlurbs[0] }))
+//           return this.EntityTypesXproData.map(x => ({ ...x, blurbs: x.chgBlurbs[1] || x.chgBlurbs[0] }))
 //         }
 //         break
 //       // CONVERSION REQUEST
 //       case 'CNV':
 //         if (['BC'].includes(this.location)) {
-//           return this.conversionTypes
+//           return this.$conversionTypes
 //         }
 //         break
 //     }
@@ -2566,11 +2560,11 @@
 //       let { xproJurisdiction } = this.nr
 //       let location: LocationT
 //       for (let key of ['value', 'text']) {
-//         if ($canJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
+//         if (this.$canJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
 //           location = 'CA'
 //           break
 //         }
-//         if ($intJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
+//         if (this.$intlJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
 //           location = 'IN'
 //           break
 //         }
@@ -2839,7 +2833,7 @@
 //   @Action
 //   checkMRAS (corpNum: string) {
 //     let { xproJurisdiction } = this.nrData
-//     let { SHORT_DESC } = $canJurisdictions.find(jur => jur.text === xproJurisdiction)
+//     let { SHORT_DESC } = this.$canJurisdictions.find(jur => jur.text === xproJurisdiction)
 //     let url = `mras-profile/${SHORT_DESC}/${this.corpNum}`
 //     return axios.get(url)
 //   }
