@@ -300,6 +300,10 @@ export const getIsPriorityRequest = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.priorityRequest
 }
 
+export const getQuickSearchNames = (state: StateIF): object[] => {
+  return state.stateModel.newRequestModel.quickSearchNames
+}
+
 export const getCurrentIssue = (state: StateIF): IssueI => {
   if (!getAnalysisJSON(state)) return null
 
@@ -321,6 +325,10 @@ export const getEntityTextFromValue = (state: StateIF): string => {
     return type?.text
   }
   return ''
+}
+
+export const getDesignationIssueTypes = (state: StateIF): string[] => {
+  return state.stateModel.newRequestModel.designationIssueTypes
 }
 
 export const getConversionTypeOptions = (state: StateIF): ConversionTypesI[] => {

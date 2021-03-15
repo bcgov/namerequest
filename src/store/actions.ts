@@ -1213,6 +1213,14 @@ export const setIsLoadingSubmission: ActionIF = ({ commit }, isLoading: boolean)
   commit('mutateIsLoadingSubmission', isLoading)
 }
 
+export const setShowActualInput: ActionIF = ({ commit }, showInput: boolean): void => {
+  commit('mutateShowActualInput', showInput)
+}
+
+export const setQuickSearch: ActionIF = ({ commit }, quickSearch: boolean): void => {
+  commit('mutateQuickSearch', quickSearch)
+}
+
 // *** Dialog Actions ***
 export const setIncorporateLoginModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
   commit('mutateIncorporateLoginModalVisible', isVisible)
@@ -1256,4 +1264,8 @@ export const setLocationInfoModalVisible: ActionIF = ({ commit }, isVisible: boo
 
 export const setNrRequiredModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
   commit('mutateNrRequiredModalVisible', isVisible)
+}
+
+export const setRequestExaminationOrProvideConsent: ActionIF = ({ commit }, requestExamOrConsent: any): void => {
+  commit('mutateRequestExaminationOrProvideConsent', requestExamOrConsent)
 }

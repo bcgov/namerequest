@@ -36,31 +36,41 @@
 </template>
 
 <script lang="ts">
-import MainContainer from '@/components/new-request/main-container.vue'
-// import newReqModule from '@/store/new-request-module'
-import NameInput from '@/components/new-request/name-input.vue'
 import { Component, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+
+import MainContainer from '@/components/new-request/main-container.vue'
+import NameInput from '@/components/new-request/name-input.vue'
+import { EntityI } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: { MainContainer, NameInput }
 })
 export default class QuickSearchPending extends Vue {
-  get entityObject () {
-    return newReqModule.entityTypeOptions.find((ent: any) => ent.value === this.entity_type_cd)
-  }
+  // Global getter
+  @Getter getQuickSearchNames!: object[]
+  @Getter getEntityTypeOptions!: Array<EntityI>
+  @Getter getEntityTypeCd!: string
+  @Getter getEntityTextFromValue!: string
+  @Getter getLocation!: string
+  @Getter getLocationOptions!: Array<any>
+  @Getter getRequestActionCd!: string
+
+  // Global actions
+  @Action setQuickSearch!: ActionBindingIF
+  @Action startAnalyzeName!: ActionBindingIF
+
   get entityText () {
-    return newReqModule.entityTextFromValue
+    return this.getEntityTextFromValue
   }
-  get entity_type_cd () {
-    return newReqModule.entity_type_cd
-  }
+
   get location () {
-    let value = newReqModule.location
-    let options = newReqModule.locationOptions
-    return options.find((opt: any) => opt.value === value)
+    return this.getLocationOptions.find((opt: any) => opt.value === this.getLocation)
   }
+
   get request_action_cd () {
-    switch (newReqModule.request_action_cd) {
+    switch (this.getRequestActionCd) {
       case 'new':
         return 'a new'
       case 'existing':
@@ -70,8 +80,8 @@ export default class QuickSearchPending extends Vue {
     }
   }
   async skip () {
-    newReqModule.mutateQuickSearch(false)
-    await newReqModule.startAnalyzeName()
+    this.setQuickSearch(false)
+    await this.startAnalyzeName(null)
   }
 }
 

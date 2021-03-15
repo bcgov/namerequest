@@ -136,12 +136,15 @@
 </template>
 
 <script lang="ts">
-import allDesignations, { allDesignationsList } from '@/store/list-data/designations'
-// import newReqModule from '@/store/new-request-module'
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+
 import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { IssueI, OptionI } from '@/interfaces'
-import { matchWord, removeExcessSpaces, replaceWord } from '@/plugins'
+
+import { AnalysisJSONI, OptionI } from '@/interfaces'
+import { replaceWord } from '@/plugins'
+import allDesignations, { allDesignationsList } from '@/store/list-data/designations'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: { ReserveSubmit }
@@ -167,6 +170,19 @@ export default class GreyBox extends Vue {
 
   @Prop(String)
   readonly originalName: string
+
+  // Global getters
+  @Getter getAnalysisJSON!: AnalysisJSONI
+  @Getter getDesignationIssueTypes!: string[]
+  @Getter getEntityTypeCd!: string
+  @Getter getName!: string
+  @Getter getRequestExaminationOrProvideConsent!: boolean
+
+  // Global actions
+  @Action cancelAnalyzeName!: ActionBindingIF
+  @Action setName!: ActionBindingIF
+  @Action setRequestExaminationOrProvideConsent!: ActionBindingIF
+  @Action setShowActualInput!: ActionBindingIF
 
   clickedDesignation: string = ''
   originalNameBase: string = ''
@@ -219,7 +235,7 @@ export default class GreyBox extends Vue {
 
   set boxIsChecked (value) {
     for (let type of this.types) {
-      newReqModule.mutateRequestExaminationOrProvideConsent({
+      this.setRequestExaminationOrProvideConsent({
         value: false,
         type,
         index: this.issueIndex
@@ -231,7 +247,7 @@ export default class GreyBox extends Vue {
       }
       this.showLastStepButtons[this.option.type] = true
     }
-    newReqModule.mutateRequestExaminationOrProvideConsent({
+    this.setRequestExaminationOrProvideConsent({
       value,
       type: this.option.type,
       index: this.issueIndex
@@ -260,26 +276,11 @@ export default class GreyBox extends Vue {
   }
 
   get entity_type_cd () {
-    return newReqModule.entity_type_cd
-  }
-
-  get examinationRequested () {
-    if (this.issueLength > 1) {
-      for (let n of [0, 1, 2]) {
-        if (this.requestExaminationOrProvideConsent[n]['send_to_examiner']) {
-          return true
-        }
-      }
-    }
-    return false
-  }
-
-  get isAssumedName () {
-    return this.issue.setup.some(box => box.type === 'assumed_name')
+    return this.getEntityTypeCd
   }
 
   get isDesignationIssueType () {
-    if (newReqModule.designationIssueTypes.includes(this.issueType)) {
+    if (this.getDesignationIssueTypes.includes(this.issueType)) {
       return true
     }
     return false
@@ -289,13 +290,13 @@ export default class GreyBox extends Vue {
     return (this.issueIndex === this.lastIndex)
   }
 
-  get issue () {
-    return newReqModule.analysisJSON.issues[this.issueIndex]
+  get issue (): any {
+    return this.getAnalysisJSON.issues[this.issueIndex]
   }
 
   get issueLength () {
-    if (Array.isArray(newReqModule.analysisJSON.issues)) {
-      return newReqModule.analysisJSON.issues.length
+    if (Array.isArray(this.getAnalysisJSON.issues)) {
+      return this.getAnalysisJSON.issues.length
     }
     return 1
   }
@@ -327,15 +328,15 @@ export default class GreyBox extends Vue {
   }
 
   get name () {
-    return newReqModule.name
+    return this.getName
   }
 
   set name (name) {
-    newReqModule.mutateName(name)
+    this.setName(name)
     this.$root.$emit('updatecontents', name)
   }
 
-  get nameActions () {
+  get nameActions (): any {
     if (this.issue && Array.isArray(this.issue.name_actions)) {
       return this.issue.name_actions
     }
@@ -373,7 +374,7 @@ export default class GreyBox extends Vue {
   }
 
   get requestExaminationOrProvideConsent () {
-    return newReqModule.requestExaminationOrProvideConsent
+    return this.getRequestExaminationOrProvideConsent
   }
 
   get reserveSubmitConfig () {
@@ -472,12 +473,8 @@ export default class GreyBox extends Vue {
     return ''
   }
 
-  cancelAnalyzeName (destination) {
-    newReqModule.cancelAnalyzeName(destination)
-  }
-
   changeDesignation (designation) {
-    newReqModule.mutateShowActualInput(true)
+    this.setShowActualInput(true)
     designation = designation.toUpperCase()
     this.clickedDesignation = designation
     if (this.issueType === 'designation_mismatch') {
@@ -517,7 +514,7 @@ export default class GreyBox extends Vue {
   }
 
   moveDesignation () {
-    newReqModule.mutateShowActualInput(true)
+    this.setShowActualInput(true)
     let baseName: string
     if (this.originalNameBase) {
       baseName = this.originalNameBase

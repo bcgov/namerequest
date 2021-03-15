@@ -1,6 +1,6 @@
 <template>
   <v-col id="quick-search-names">
-      <v-row class="quickSearchNames" v-for="name of namesList" :key="name.name">
+      <v-row class="quickSearchNames" v-for="name of getQuickSearchNames" :key="name.name">
         <b v-if="name.type==='exact'">{{name.name}}</b>
         <span v-else>{{name.name}}</span>
       </v-row>
@@ -8,17 +8,16 @@
 </template>
 
 <script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
 import MainContainer from '@/components/new-request/main-container.vue'
-// import newReqModule from '@/store/new-request-module'
-import { Component, Vue, Watch } from 'vue-property-decorator'
 
 @Component({
   components: { MainContainer }
 })
 export default class QuickSearchNames extends Vue {
-  get namesList () {
-    return newReqModule.quickSearchNames
-  }
+  // Global getter
+  @Getter getQuickSearchNames!: object[]
 }
 
 </script>
