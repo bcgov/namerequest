@@ -3,15 +3,15 @@
     <template v-slot:container-header>
       <v-col cols="auto" class="h6 py-0 mt-1">
         You are searching for a name for a
-        {{ entityText === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }}
-        {{ entityText }}
+        {{ getEntityTextFromValue === ' BC Corporation' && location.text === ' BC' ? '' : ' ' + location.text }}
+        {{ getEntityTextFromValue }}
       </v-col>
     </template>
     <template v-slot:content>
       <v-row class="mt-5">
         <v-col cols="12" class="pb-0" @click="clickNameField">
           <quill-editor :contents="contents"
-                        :options="config"
+                        :options="quillConfig"
                         :disabled="!!finalName || isApproved"
                         @change="handleChange($event)"
                         @keydown.native.capture="handleEnterKey"
@@ -182,22 +182,43 @@
 </template>
 
 <script lang="ts">
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+import { quillEditor } from 'vue-quill-editor'
+import Moment from 'moment'
+
+import { matchWord, removeExcessSpaces, replaceWord } from '@/plugins'
 import GreyBox from '@/components/new-request/grey-box.vue'
 import MainContainer from '@/components/new-request/main-container.vue'
-import allDesignations, { allDesignationsList } from '@/store/list-data/designations'
-import Moment from 'moment'
-// import newReqModule from '@/store/new-request-module'
 import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
-import { Component, Vue, Watch } from 'vue-property-decorator'
-import { IssueI, QuillOpsI, SelectionI } from '@/interfaces'
-import { quillEditor } from 'vue-quill-editor'
-import { matchWord, removeExcessSpaces, replaceWord } from '@/plugins'
+
+import { AnalysisJSONI, IssueI, QuillOpsI, SelectionI } from '@/interfaces'
+import allDesignations, { allDesignationsList } from '@/store/list-data/designations'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: { GreyBox, MainContainer, quillEditor, ReserveSubmit }
 })
 export default class AnalyzeResults extends Vue {
-  config = {
+  // Global getters
+  @Getter getAnalysisJSON!: AnalysisJSONI
+  @Getter getDesignationIssueTypes!: string[]
+  @Getter getEntityTypeCd!: string
+  @Getter getEntityTextFromValue!: string
+  @Getter getName!: string
+  @Getter getLocation!: string
+  @Getter getLocationOptions!: Array<any>
+  @Getter getUserCancelledAnalysis!: boolean
+  @Getter getRequestExaminationOrProvideConsent!: boolean
+  @Getter getShowActualInput!: boolean
+
+  // Global actions
+  @Action setName!: ActionBindingIF
+  @Action setRequestExaminationOrProvideConsent!: ActionBindingIF
+  @Action setShowActualInput!: ActionBindingIF
+  @Action startAnalyzeName!: ActionBindingIF
+
+  private quillConfig = {
     modules: {
       toolbar: false
     },
@@ -212,7 +233,7 @@ export default class AnalyzeResults extends Vue {
   originalOps = []
 
   created () {
-    this.originalName = newReqModule.name
+    this.originalName = this.getName
   }
 
   mounted () {
@@ -276,7 +297,7 @@ export default class AnalyzeResults extends Vue {
     if (newVal === this.issueLength - 1) {
       let keys = Object.keys(this.requestExaminationOrProvideConsent[newVal])
       keys.forEach(key => {
-        newReqModule.mutateRequestExaminationOrProvideConsent({
+        this.setRequestExaminationOrProvideConsent({
           value: false,
           type: key,
           index: newVal
@@ -374,7 +395,7 @@ export default class AnalyzeResults extends Vue {
         let AllDesignationsList = allDesignationsList
         // allDesignations is an array of objects containing {words, end} keys, set designationEntityTypes to the
         // relevant object
-        const designationEntityTypes = allDesignations[this.entity_type_cd]
+        const designationEntityTypes = allDesignations[this.getEntityTypeCd]
         /* designationEntityTypes.words.length === 0 is true for types 'PAR', 'FI', 'PA', and the proprietorships so
          the designation issue is fixed as long as there are no designations present and no nameAction words which in
          this situation would only be designation-like words to be removed */
@@ -436,8 +457,8 @@ export default class AnalyzeResults extends Vue {
         }
         if (this.isMisplacedPrecedingMismatch) {
           let nextWords = []
-          if (Array.isArray(newReqModule.analysisJSON.issues[this.issueIndex + 1].name_actions)) {
-            nextWords = newReqModule.analysisJSON.issues[this.issueIndex + 1].name_actions.map(
+          if (Array.isArray(this.getAnalysisJSON.issues[this.issueIndex + 1].name_actions)) {
+            nextWords = this.getAnalysisJSON.issues[this.issueIndex + 1].name_actions.map(
               action => action.word.toUpperCase()
             )
             nextWords = nextWords.filter(word => word !== end)
@@ -469,7 +490,7 @@ export default class AnalyzeResults extends Vue {
   }
 
   get hasDesignationIssue () {
-    return (this.json.issues.some(issue => newReqModule.designationIssueTypes.includes(issue.issue_type)))
+    return (this.json.issues.some(issue => this.getDesignationIssueTypes.includes(issue.issue_type)))
   }
 
   get enableNextForAssumedName () {
@@ -477,14 +498,6 @@ export default class AnalyzeResults extends Vue {
       return (this.issue.setup[0].type === 'assumed_name' && !this.isLastIndex)
     }
     return false
-  }
-
-  get entity_type_cd () {
-    return newReqModule.entity_type_cd
-  }
-
-  get entityText () {
-    return newReqModule.entityTextFromValue
   }
 
   get examinationOrConsentCompleted () {
@@ -564,31 +577,15 @@ export default class AnalyzeResults extends Vue {
     return (this.json.status === 'Available')
   }
 
-  get isDesignationIssue () {
-    if (this.issue && this.issue.issue_type) {
-      return (newReqModule.designationIssueTypes.some(issue => issue.issue_type === this.issue.issue_type))
-    }
-    return false
-  }
-
   get isLastIndex () {
     return (this.issueIndex === this.issueLength - 1)
-  }
-
-  get isMismatchFollowingMisplaced () {
-    if (this.issueIndex > 0 &&
-    this.issueType === 'designation_mismatch' &&
-    newReqModule.analysisJSON.issues[this.issueIndex - 1].issue_type === 'designation_misplaced') {
-      return true
-    }
-    return false
   }
 
   get isMisplacedPrecedingMismatch () {
     if (this.issueLength > 1 && this.issueIndex < this.issueLength) {
       if (['designation_misplaced', 'end_designation_more_than_once'].includes(this.issueType)) {
-        if (newReqModule.analysisJSON.issues[this.issueIndex + 1]) {
-          return (newReqModule.analysisJSON.issues[this.issueIndex + 1].issue_type === 'designation_mismatch')
+        if (this.getAnalysisJSON.issues[this.issueIndex + 1]) {
+          return (this.getAnalysisJSON.issues[this.issueIndex + 1].issue_type === 'designation_mismatch')
         }
       }
     }
@@ -616,18 +613,16 @@ export default class AnalyzeResults extends Vue {
     return ''
   }
 
-  get json () {
-    return newReqModule.analysisJSON
+  get json (): any {
+    return this.getAnalysisJSON
   }
 
   get location () {
-    let value = newReqModule.location
-    let options = newReqModule.locationOptions
-    return options.find((opt: any) => opt.value === value)
+    return this.getLocationOptions.find((opt: any) => opt.value === this.getLocation)
   }
 
   get name () {
-    return newReqModule.name
+    return this.getName
   }
 
   get nameActions () {
@@ -670,11 +665,11 @@ export default class AnalyzeResults extends Vue {
   }
 
   get requestExaminationOrProvideConsent () {
-    return newReqModule.requestExaminationOrProvideConsent
+    return this.getRequestExaminationOrProvideConsent
   }
 
   get showActualInput () {
-    return newReqModule.showActualInput
+    return this.getShowActualInput
   }
 
   get showGreyBoxes () {
@@ -692,19 +687,15 @@ export default class AnalyzeResults extends Vue {
   }
 
   set name (name: string) {
-    newReqModule.mutateName(name)
+    this.setName(name)
   }
 
   set showActualInput (value) {
-    newReqModule.mutateShowActualInput(value)
+    this.setShowActualInput(value)
   }
 
   get userCancelled () {
-    return newReqModule.userCancelledAnalysis
-  }
-
-  cancelAnalyzeName () {
-    newReqModule.cancelAnalyzeName('Tabs')
+    return this.getUserCancelledAnalysis
   }
 
   clickNameField () {
@@ -800,14 +791,14 @@ export default class AnalyzeResults extends Vue {
         let replace = '[' + Action.message + ']'
         this.name = removeExcessSpaces(this.name.replace(replace, ''))
       }
-      await newReqModule.startAnalyzeName()
+      await this.startAnalyzeName(null)
     }
   }
 
   async handleSubmit (event: Event) {
     event.preventDefault()
     this.name = this.quill.getText()
-    await newReqModule.startAnalyzeName()
+    await this.startAnalyzeName(null)
   }
 
   stripAllDesignations (name) {

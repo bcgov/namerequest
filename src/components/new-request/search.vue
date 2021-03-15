@@ -344,7 +344,7 @@ export default class NewSearch extends Vue {
     return this.$vuetify.breakpoint.lgAndUp
   }
 
-  entityBlurbs (entity_type_cd: string): string[] | string {
+  entityBlurbs (entity_type_cd: string): string | string[] | string[][] {
     return this.getEntityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || []
   }
 

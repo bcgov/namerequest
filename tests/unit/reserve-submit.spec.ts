@@ -1,6 +1,5 @@
 import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
-import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
-import newReqModule from '@/store/new-request-module'
+import { createLocalVue, mount } from '@vue/test-utils'
 import Vuetify from 'vuetify'
 import sinon from 'sinon'
 import { xproMapping } from '@/store/list-data/request-action-mapping'
