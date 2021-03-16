@@ -312,15 +312,10 @@ export default class ExistingRequestDisplay extends Mixins(
     if (this.nr.waiting_time) {
       let queueTime = this.nr.waiting_time
       let submittedDate = Moment(this.nr.submittedDate)
-      let todaysDate = Moment()
       // get number of days since the nr was submitted
-      let diffDays = todaysDate.diff(submittedDate, 'days')
-      let waitingTime = queueTime - diffDays + 1
+      let diffDays = Math.abs(this.daysFromToday(this.nr.submittedDate))
+      let waitingTime = Math.max(queueTime - diffDays, 1)
 
-      // make sure minimum waiting time is 1
-      if (waitingTime < 1) {
-        waitingTime = 1
-      }
       // add the waiting time dats to the date submitted
       let waitingDate = submittedDate.add(waitingTime, 'days')
       return waitingDate.tz('America/Vancouver')
