@@ -11,7 +11,6 @@
         type="hidden"
         :id="window['webChatId']"
         name="Reason"
-        class="form-control"
         value="SBC_WebChat"
       />
       <input
@@ -86,7 +85,6 @@ export default class ChatPopup extends Vue {
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
     background-color: #ffffff !important;
-
   }
 
   .v-tooltip__content {
