@@ -362,7 +362,6 @@ export const setNrResponse = (state: StateIF, data: NameRequestI): boolean => {
     } else {
       // applicants is null/undefined
     }
-    console.log('Completed')
     return true
   } catch (err) {
     console.error('setNrResponse() =', err) // eslint-disable-line no-console

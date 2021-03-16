@@ -85,7 +85,7 @@ export const downloadOutputs = async (id: string): Promise<void> => {
     if (window.navigator && window.navigator.msSaveOrOpenBlob) {
       window.navigator.msSaveOrOpenBlob(blob)
     } else {
-    // for other browsers, create a link pointing to the ObjectURL containing the blob
+      // for other browsers, create a link pointing to the ObjectURL containing the blob
       const url = window.URL.createObjectURL(blob)
       const a = window.document.createElement('a')
       window.document.body.appendChild(a)
@@ -851,7 +851,7 @@ export const getQuickSearch = async ({ commit, getters }, cleanedName: {exactMat
     }
   }
   commit('mutateQuickSearch', false)
-  await this.startAnalyzeName()
+  await startAnalyzeName({ commit, getters })
 }
 
 // TODO: Not an Action
@@ -886,8 +886,7 @@ export const startQuickSearch = async ({ commit, getters }) => {
       .replace(/¢/g, 'C')
       .replace(/(`|~|!|\||\(|\)|\[|\]|\{|\}|:|"|\^|#|%|\?|,)/g, '')
 
-    // TODO: Refactor into metho that calls an action
-    await this.getQuickSearch({ 'exactMatch': exactMatchName, 'synonymMatch': synonymsName })
+    await getQuickSearch({ commit, getters }, { 'exactMatch': exactMatchName, 'synonymMatch': synonymsName })
   }
 }
 
@@ -943,11 +942,10 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
       }
     }
   }
-  // *** TODO: restore this after fixes
-  // if (getters.getQuickSearch) {
-  //   await startQuickSearch()
-  //   return
-  // }
+  if (getters.getQuickSearch) {
+    await startQuickSearch({ commit, getters })
+    return
+  }
   let testName = getters.getName.toUpperCase()
   testName = removeExcessSpaces(testName)
   // eslint-disable-next-line no-useless-escape
@@ -998,23 +996,15 @@ export const setAddressSuggestions: ActionIF = ({ commit }, addressSuggestions: 
   commit('mutateAddressSuggestions', addressSuggestions)
 }
 
-// TODO: Not a real action
-export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> => {
+// TODO: Not a real action?
+export const corpNumRequest = async ({ getters }, corpNum: string) => {
   if (getters.getShowCorpNum) {
     if (getters.getShowCorpNum === 'mras') {
-      return checkMRAS(corpNum)
+      return this.checkMRAS(corpNum)
     } else {
-      return checkCOLIN(corpNum)
+      return this.checkCOLIN(corpNum)
     }
   }
-}
-
-// TODO: Not a real action
-export const checkMRAS = (corpNum: string) => {
-  let { xproJurisdiction } = this.nrData
-  let { SHORT_DESC } = this.$canJurisdictions.find(jur => jur.text === xproJurisdiction)
-  let url = `mras-profile/${SHORT_DESC}/${corpNum}`
-  return axios.get(url)
 }
 
 // TODO: Not a real action
@@ -1023,6 +1013,14 @@ export const checkCOLIN = (corpNum: string) => {
   const cleanedCorpNum = corpNum.replace(/^BC+/i, '')
   let url = `colin/${cleanedCorpNum}`
   return axios.post(url, {})
+}
+
+// TODO: Not a real action
+export const checkMRAS = (corpNum: string) => {
+  let { xproJurisdiction } = this.nrData
+  let { SHORT_DESC } = this.$canJurisdictions.find(jur => jur.text === xproJurisdiction)
+  let url = `mras-profile/${SHORT_DESC}/${corpNum}`
+  return axios.get(url)
 }
 
 export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
@@ -1053,31 +1051,33 @@ export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
 /** Submits an edited NR or a new name submission. */
 export const submit: any = async ({ commit, getters }): Promise<any> => {
   // TODO: Handle Edit Submit
-  // if (getters.isEditMode) {
-  //   if (await newRequestModule.patchNameRequests()) {
-  //     if (await newRequestModule.checkinNameRequest()) {
-  //       newRequestModule.mutateDisplayedComponent('Success')
-  //       await sleep(1000) // wait for a second to show the update success
-  //       await this.fetchNr(+getters.getNrId)
-  //     }
-  //   }
-  // } else {
-  let request
-  if (!getters.getNrId) {
-    request = await postNameRequests({ commit, getters }, 'draft')
-  } else {
-    if (!getters.isEditMode && [NrState.COND_RESERVED, NrState.RESERVED].includes(getters.getNrState)) {
-      request = await getNameRequest(getters.getNrId)
-      if (request?.stateCd === NrState.CANCELLED) {
-        await setActiveComponent('Timeout')
-        return
+  if (getters.isEditMode) {
+    // TODO-CAM: Refactor the way these async requests are used to provide conditional booleans
+    // @ts-ignore
+    if (await patchNameRequests()) {
+      // @ts-ignore
+      if (await checkinNameRequest()) {
+        commit('mutateDisplayedComponent', 'Success')
+        await sleep(1000) // wait for a second to show the update success
+        await this.fetchNr(+getters.getNrId)
       }
     }
-    request = await putNameReservation(getters.getNrId)
+  } else {
+    let request
+    if (!getters.getNrId) {
+      request = await postNameRequests({ commit, getters }, 'draft')
+    } else {
+      if (!getters.isEditMode && [NrState.COND_RESERVED, NrState.RESERVED].includes(getters.getNrState)) {
+        request = await getNameRequest(getters.getNrId)
+        if (request?.stateCd === NrState.CANCELLED) {
+          await setActiveComponent('Timeout')
+          return
+        }
+      }
+      request = await putNameReservation(getters.getNrId)
+    }
+    if (request) await paymentModule.togglePaymentModal(true)
   }
-  console.log('got Somewhere')
-  if (request) await paymentModule.togglePaymentModal(true)
-  // }
 }
 
 export const setName: ActionIF = ({ commit }, name: string): void => {
@@ -1121,7 +1121,7 @@ export const setNameIsEnglish: ActionIF = ({ commit }, isEnglishName: boolean): 
 }
 
 export const setNoCorpNum: ActionIF = ({ commit }, noCorpNum: boolean): void => {
-  commit('mutateNameIsEnglish', noCorpNum)
+  commit('mutateNoCorpNum', noCorpNum)
 }
 
 export const setNoCorpDesignation: ActionIF = ({ commit }, noCorpDesignation: boolean): void => {
