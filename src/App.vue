@@ -131,6 +131,7 @@ export default class App extends Vue {
   @Action setName!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
   @Action setIncorporateLoginModalVisible!: ActionBindingIF
+  @Action togglePaymentModal!: ActionBindingIF
 
   get nameRequestUrl (): string {
     return `${window.location.origin}${process.env.VUE_APP_PATH}`
@@ -179,7 +180,7 @@ export default class App extends Vue {
       // Direct the user back to the start
       await this.resetAppState()
     }
-    await paymentModule.togglePaymentModal(false)
+    await this.togglePaymentModal(false)
   }
 }
 </script>

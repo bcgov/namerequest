@@ -232,6 +232,11 @@ export default class ExistingRequestDisplay extends Mixins(
   @Action setConditionsModalVisible!: ActionBindingIF
   @Action setIncorporateLoginModalVisible!: ActionBindingIF
   @Action setNrResponse!: ActionBindingIF
+  @Action toggleUpgradeModal!: ActionBindingIF
+  @Action toggleReapplyModal!: ActionBindingIF
+  @Action togglePaymentHistoryModal!: ActionBindingIF
+  @Action toggleRefundModal!: ActionBindingIF
+  @Action toggleCancelModal!: ActionBindingIF
 
   // enums used in the template
   NameState = NameState
@@ -583,19 +588,19 @@ export default class ExistingRequestDisplay extends Mixins(
           }
           break
         case NrAction.UPGRADE:
-          await paymentModule.toggleUpgradeModal(true)
+          await this.toggleUpgradeModal(true)
           break
         case NrAction.REAPPLY:
-          await paymentModule.toggleReapplyModal(true)
+          await this.toggleReapplyModal(true)
           break
         case NrAction.RECEIPTS:
-          await paymentModule.togglePaymentHistoryModal(true)
+          await this.togglePaymentHistoryModal(true)
           break
         case NrAction.REFUND:
-          await paymentModule.toggleRefundModal(true)
+          await this.toggleRefundModal(true)
           break
         case NrAction.CANCEL:
-          await paymentModule.toggleCancelModal(true)
+          await this.toggleCancelModal(true)
           break
         case NrAction.INCORPORATE:
           await this.affiliateOrLogin()

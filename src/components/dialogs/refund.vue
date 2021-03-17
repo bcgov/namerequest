@@ -67,6 +67,7 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
   // Global actions
   @Action setDisplayedComponent!: ActionBindingIF
   @Action patchNameRequestsByAction: ActionBindingIF
+  @Action toggleRefundModal!: ActionBindingIF
 
   /** Used to display a fetch error, if any. */
   protected fetchError = ''
@@ -83,12 +84,12 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
 
   /** Whether this modal should be shown (per store property). */
   private get showModal (): boolean {
-    return PaymentModule[PaymentTypes.REFUND_MODAL_IS_VISIBLE]
+    return this.$store.getters['refundModalIsVisible']
   }
 
   /** Clears store property to hide this modal. */
   private async hideModal (): Promise<void> {
-    await PaymentModule.toggleRefundModal(false)
+    await this.toggleRefundModal(false)
   }
 
   /** Depending on value, fetches data and makes this modal visible or hides it. */

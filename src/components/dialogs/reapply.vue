@@ -27,7 +27,7 @@
 
 <script lang='ts'>
 import { Component, Mixins, Watch } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Action, Getter } from 'vuex-class'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 import PaymentModule from '@/modules/payment'
@@ -39,6 +39,7 @@ import { PaymentAction } from '@/enums'
 import { NameRequestMixin, PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
 import { ApplicantI, NameChoicesIF } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: {
@@ -56,19 +57,21 @@ export default class ReapplyDialog extends Mixins(
   @Getter getNrId!: number
   @Getter getPriorityRequest!: boolean
 
+  @Action toggleReapplyModal!: ActionBindingIF
+
   private isLoadingPayment: boolean = false
   /** The model value for the dialog component. */
   private isVisible = false
 
   /** Whether this modal should be shown (per store property). */
   private get showModal (): boolean {
-    return PaymentModule[PaymentTypes.REAPPLY_MODAL_IS_VISIBLE]
+    return this.$store.getters['reapplyModalIsVisible']
   }
 
   /** Clears store property to hide this modal. */
   async hideModal () {
     this.isLoadingPayment = false
-    await PaymentModule.toggleReapplyModal(false)
+    await this.toggleReapplyModal(false)
   }
 
   /** Depending on value, fetches fees and makes this modal visible or hides it. */

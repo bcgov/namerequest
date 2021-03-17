@@ -55,6 +55,7 @@ export default class CancelDialog extends Mixins(NameRequestMixin, PaymentMixin)
 
   @Action patchNameRequestsByAction: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
+  @Action toggleCancelModal!: ActionBindingIF
 
   /** Used to show loading state on button. */
   private loading = false
@@ -64,11 +65,11 @@ export default class CancelDialog extends Mixins(NameRequestMixin, PaymentMixin)
   }
 
   private get isVisible (): boolean {
-    return PaymentModule[PaymentTypes.CANCEL_MODAL_IS_VISIBLE]
+    return this.$store.getters['cancelModalIsVisible']
   }
 
   async showModal (): Promise<void> {
-    await PaymentModule.toggleCancelModal(true)
+    await this.toggleCancelModal(true)
   }
 
   /** Called when user clicks "Cancel this NR" button. */
@@ -88,7 +89,7 @@ export default class CancelDialog extends Mixins(NameRequestMixin, PaymentMixin)
 
   /** Called when user clicks "Keep this NR" button. */
   private async hideModal (): Promise<void> {
-    await PaymentModule.toggleCancelModal(false)
+    await this.toggleCancelModal(false)
   }
 }
 </script>

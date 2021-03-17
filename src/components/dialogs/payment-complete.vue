@@ -83,6 +83,7 @@ export default class PaymentCompleteDialog extends Mixins(
   @Action getNameRequest!: ActionBindingIF
   @Action loadExistingNameRequest!: ActionBindingIF
   @Action setEditMode!: ActionBindingIF
+  @Action toggleReceiptModal!: ActionBindingIF
 
   /** Used to show loading state on button. */
   private loading = false
@@ -101,7 +102,7 @@ export default class PaymentCompleteDialog extends Mixins(
 
   async hideModal () {
     await this.fetchNr(+this.getNrId)
-    await paymentModule.toggleReceiptModal(false)
+    await this.toggleReceiptModal(false)
   }
 
   async fetchNr (nrId: number): Promise<void> {
@@ -139,7 +140,7 @@ export default class PaymentCompleteDialog extends Mixins(
 
     if (paymentSuccess) {
       this.$root.$emit('paymentComplete', true)
-      await paymentModule.toggleReceiptModal(true)
+      await this.toggleReceiptModal(true)
     } else if (!paymentSuccess && result?.paymentErrors) {
       // Setting the errors to state will update any subscribing components, like the main ErrorModal
       await errorModule.setAppErrors(result.paymentErrors)

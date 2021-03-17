@@ -88,6 +88,9 @@ export default class PaymentDialog extends Mixins(
   @Getter getNameChoices!: NameChoicesIF
   @Getter getPriorityRequest!: boolean
 
+  // Global actions
+  @Action togglePaymentModal!: ActionBindingIF
+
   private isLoadingPayment: boolean = false
 
   /** The model value for the dialog component. */
@@ -99,13 +102,13 @@ export default class PaymentDialog extends Mixins(
 
   /** Whether this modal should be shown (per store property). */
   private get showModal (): boolean {
-    return PaymentModule[PaymentTypes.PAYMENT_MODAL_IS_VISIBLE]
+    return this.$store.getters['paymentModalIsVisible']
   }
 
   /** Clears store property to hide this modal. */
   async hideModal () {
     this.isLoadingPayment = false
-    await PaymentModule.togglePaymentModal(false)
+    await this.togglePaymentModal(false)
   }
 
   /** Depending on value, fetches fees and makes this modal visible or hides it. */

@@ -1053,7 +1053,7 @@ export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
 }
 
 /** Submits an edited NR or a new name submission. */
-export const submit: any = async ({ commit, getters }): Promise<any> => {
+export const submit: any = async ({ commit, getters, dispatch }): Promise<any> => {
   // TODO: Handle Edit Submit
   if (getters.isEditMode) {
     // TODO-CAM: Refactor the way these async requests are used to provide conditional booleans
@@ -1080,7 +1080,7 @@ export const submit: any = async ({ commit, getters }): Promise<any> => {
       }
       request = await putNameReservation(getters.getNrId)
     }
-    if (request) await paymentModule.togglePaymentModal(true)
+    if (request) await dispatch('togglePaymentModal', true)
   }
 }
 
