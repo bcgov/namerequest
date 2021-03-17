@@ -310,7 +310,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   private get reviewDate () {
     if (this.nr.waiting_time) {
-      let queueTime = this.nr.waiting_time + 1
+      let queueTime = this.nr.waiting_time
       // get number of days since the nr was submitted
       let diffDays = Math.abs(this.daysFromToday(this.nr.submittedDate))
       // get the waiting time by subtracking the current wait time from the amount that we have been waiting
