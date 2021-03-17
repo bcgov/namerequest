@@ -45,7 +45,7 @@ import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 import { NrAction, NrState, RollbackActions } from '@/enums'
 import { featureFlags } from '@/plugins/featureFlags'
-import { OK, BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
+import { OK, BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE, CREATED } from 'http-status-codes'
 
 const qs: any = querystring
 const ANALYSIS_TIMEOUT_MS = 3 * 60 * 1000 // 3 minutes
@@ -2464,6 +2464,36 @@ export class NewRequestModule extends VuexModule {
       const msg = await handleApiError(err, 'Could not complete payment')
       console.error('completePayment() =', msg) // eslint-disable-line no-console
       await errorModule.setAppError({ id: 'complete-payment-error', error: msg } as ErrorI)
+      return null
+    }
+  }
+
+  @Action
+  async cancelPayment ({ nrId, paymentId }): Promise<NameRequestPayment> {
+    const paymentResponse: NameRequestPayment = {
+      paymentSuccess: false
+    }
+    try {
+      const response = await axios.put(`/payments/${nrId}/cancel-payment/${paymentId}`, {}, {
+        headers: { 'Content-Type': 'application/json' }
+      })
+
+      if (response?.status === CREATED) {
+        paymentResponse.payment = response.data
+        paymentResponse.httpStatusCode = response.status.toString()
+        paymentResponse.paymentSuccess = true
+      } else {
+        // eslint-disable-next-line no-console
+        console.error('cancelPayment(), status was not 201, response =', response)
+        paymentResponse.httpStatusCode = response.status.toString()
+        paymentResponse.paymentSuccess = false
+      }
+
+      return paymentResponse
+    } catch (err) {
+      const msg = await handleApiError(err, 'Could not cancel payment')
+      console.error('cancelPayment() =', msg) // eslint-disable-line no-console
+      await errorModule.setAppError({ id: 'cancel-payment-error', error: msg } as ErrorI)
       return null
     }
   }

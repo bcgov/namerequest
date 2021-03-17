@@ -667,6 +667,19 @@ export default class ExistingRequestDisplay extends Mixins(
     }
   }
 
+  private cancelledUpgrade (status: string, payments: any): string {
+    let paymentId = null
+    if (status === 'PAYMENT_CANCELLED') {
+      for (let i = 0; i < payments.length; i++) {
+        if (payments[i].action === 'UPGRADE' && payments[i].sbcPayment.statusCode === 'CREATED') {
+          paymentId = payments[i].sbcPayment.id
+          break
+        }
+      }
+    }
+    return paymentId
+  }
+
   private get isVisible () {
     const componentName = newReqModule.displayedComponent
     return (componentName === 'ExistingRequestDisplay')
@@ -710,7 +723,20 @@ export default class ExistingRequestDisplay extends Mixins(
   async mounted () {
     if (this.nr.id && this.nr.state !== NrState.CANCELLED) {
       await this.fetchNrPayments(this.nr.id)
-      this.pendingPayment = this.payments.find(sbcPayment => (sbcPayment.statusCode !== PaymentStatus.COMPLETED))
+      const status = this.$route?.query?.status?.toString()
+      const paymentId = status ? this.cancelledUpgrade(atob(status), this.payments) : null
+      if (paymentId) {
+        // cancel the upgrade invoice
+        const nrId = this.nr.id
+        await newReqModule.cancelPayment({ nrId, paymentId })
+        // fetch updated payments
+        await this.fetchNrPayments(nrId)
+      }
+      this.pendingPayment = this.payments.find(
+        payment => (
+          ![PaymentStatus.COMPLETED, PaymentStatus.CANCELLED].includes(payment.statusCode)
+        )
+      )
     }
   }
 }

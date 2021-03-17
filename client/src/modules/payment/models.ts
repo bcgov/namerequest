@@ -2,7 +2,8 @@ import { ErrorI } from '@/modules/error/store/actions'
 
 export const SbcPaymentStatus = {
   CREATED: 'CREATED',
-  COMPLETED: 'COMPLETED'
+  COMPLETED: 'COMPLETED',
+  DELETED: 'DELETED'
 }
 
 export interface NameRequestPaymentResponse {
