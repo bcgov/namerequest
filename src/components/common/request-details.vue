@@ -73,7 +73,9 @@ import { Getter } from 'vuex-class'
 
 @Component({})
 export default class RequestDetails extends Vue {
-  @Prop() applicant: ApplicantI
+  @Prop(Array)
+  readonly applicant: ApplicantI
+
   @Prop() nameChoices: {
     type: any[]
     required: false

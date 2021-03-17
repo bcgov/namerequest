@@ -997,7 +997,7 @@ export const setAddressSuggestions: ActionIF = ({ commit }, addressSuggestions: 
 }
 
 // TODO: Not a real action?
-export const corpNumRequest = async ({ getters }, corpNum: string) => {
+export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> => {
   if (getters.getShowCorpNum) {
     if (getters.getShowCorpNum === 'mras') {
       return this.checkMRAS(corpNum)
