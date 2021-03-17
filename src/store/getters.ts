@@ -1,8 +1,8 @@
 import {
-  AnalysisJSONI,
+  AnalysisJSONI, ConditionalReqI, ConsentConflictI,
   ConversionTypesI, DraftReqI, IssueI,
   LocationT,
-  NameChoicesIF, RequestActionsI, RequestNameI, RequestOrConsentIF,
+  NameChoicesIF, NameDesignationI, RequestActionsI, RequestNameI, RequestOrConsentIF, ReservedReqI,
   StateIF,
   StatsI,
   SubmissionTypeT
@@ -303,11 +303,15 @@ export const getQuickSearchNames = (state: StateIF): object[] => {
   return state.stateModel.newRequestModel.quickSearchNames
 }
 
+export const getIssueIndex = (state: StateIF): number => {
+  return state.stateModel.newRequestModel.issueIndex
+}
+
 export const getCurrentIssue = (state: StateIF): IssueI => {
   if (!getAnalysisJSON(state)) return null
 
   if (getAnalysisJSON(state) && getAnalysisJSON(state).issues && Array.isArray(getAnalysisJSON(state).issues)) {
-    return getAnalysisJSON(state).issues[this.issueIndex]
+    return getAnalysisJSON(state).issues[getIssueIndex(state)]
   }
 
   return null
@@ -752,6 +756,62 @@ export const getPriorityRequest = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.priorityRequest
 }
 
+export const getDesignationObject = (state: StateIF): any => {
+  if (getEntityTypeCd(state) && this.$designations[getEntityTypeCd(state)]) {
+    return this.$designations[getEntityTypeCd(state)]
+  }
+  return ''
+}
+
+export const getSplitNameDesignation = (state: StateIF): NameDesignationI => {
+  if (getName(state) && getDesignationObject(state)?.end) {
+    let { words } = getDesignationObject(state)
+    for (let word of words) {
+      if (getName(state).endsWith(word)) {
+        let designation = word
+        let name = getName(state).replace(word, '')
+        name = name.trim()
+        return ({ name, designation })
+      }
+    }
+  }
+  return ({
+    name: '',
+    designation: ''
+  })
+}
+export const getConsentWords = (state: StateIF): any => {
+  let consentWords = []
+
+  if (!getAnalysisJSON(state)) return consentWords
+
+  for (let step in getRequestExaminationOrProvideConsent(state)) {
+    if (getRequestExaminationOrProvideConsent(state)[step].obtain_consent) {
+      let words = getAnalysisJSON(state).issues[step].name_actions.map(action => action.word)
+      consentWords = consentWords.concat(words)
+    }
+  }
+  return consentWords
+}
+
+export const getConsentConflicts = (state: StateIF): ConsentConflictI => {
+  let output: ConsentConflictI = {
+    name: ''
+  }
+
+  if (!getAnalysisJSON(state)) return output
+
+  for (let key in getRequestExaminationOrProvideConsent(state)) {
+    if (getRequestExaminationOrProvideConsent(state)[key].conflict_self_consent) {
+      output.name = getAnalysisJSON(state).issues[key].conflicts[0].name
+      if (getAnalysisJSON(state).issues[key].conflicts[0].id) {
+        output.corpNum = getAnalysisJSON(state).issues[key].conflicts[0].id
+      }
+    }
+  }
+  return output
+}
+
 // JSON Request constructors
 export const getNrRequestNames = (state: StateIF): RequestNameI[] => {
   const nameChoices = getNameChoices(state)
@@ -801,7 +861,7 @@ export const getNrRequestNames = (state: StateIF): RequestNameI[] => {
     if (getEntityTypeCd(state) && getLocation(state) === 'BC' && Designations[getEntityTypeCd(state)]?.end) {
       requestNames.push({
         name: getName(state),
-        designation: this.splitNameDesignation.designation,
+        designation: getSplitNameDesignation(state).designation,
         choice: 1,
         ...defaultValues
       })
@@ -824,10 +884,10 @@ export const getNrRequestNames = (state: StateIF): RequestNameI[] => {
           ...requestName,
           // Merge conflicts and consent words
           consent_words: !existingName.consent_words
-            ? this.consentWords.length > 0 ? this.consentWords : ''
+            ? getConsentWords(state).length > 0 ? getConsentWords(state) : ''
             : existingName.consent_words,
           conflict1: !existingName.conflict1
-            ? this.consentConflicts.name
+            ? getConsentConflicts(state).name
             : existingName.conflict1,
           conflict1_num: existingName.conflict1_num ? existingName.conflict1_num : ''
         } as RequestNameI
@@ -903,6 +963,68 @@ export const getDraftNameReservation = (state: StateIF): DraftReqI => {
         }
       }
     }
+  }
+  return data
+}
+
+export const getReservedNameReservation = (state: StateIF): ReservedReqI => {
+  const data: ReservedReqI = {
+    applicants: [getApplicant(state)],
+    names: getNrNames(state),
+    ...getNrData(state),
+    priorityCd: 'N',
+    // @ts-ignore TODO: This is not typed correctly!
+    entity_type_cd: getEntityTypeCd(state),
+    request_action_cd: getRequestActionCd(state),
+    stateCd: NrState.RESERVED,
+    english: getNameIsEnglish(state),
+    nameFlag: getIsPersonsName(state),
+    submit_count: 0,
+    ...getCorpNumForReservation(state)
+  }
+  return data
+}
+
+/**
+ * This getter combines the NR response data objects names against nameChoices,
+ * which contains the actual form values, building the request object required for a Name.
+ * nameChoices are identified by the 'choice' index, which is what we use to map values.
+ */
+export const getConditionalNameReservation = (state: StateIF): ConditionalReqI => {
+  // const { applicant, nrData, nrNames } = this
+  let names
+  if (getNrNames(state) && getNrNames(state).length > 0) {
+    // If we're updating use these mapped names -> nrRequestNames
+    names = getNrRequestNames(state)
+  } else {
+    // Otherwise we're creating a new conditional, there won't be a multiple name inputs, build as follows...
+    const name: RequestNameI = {
+      name: getName(state),
+      choice: 1,
+      designation: getSplitNameDesignation(state).designation,
+      name_type_cd: getIsAssumedName(state) ? 'AS' : 'CO',
+      consent_words: getConsentWords(state).length > 0 ? getConsentWords(state) : '',
+      conflict1: getConsentConflicts(state).name,
+      conflict1_num: getConsentConflicts(state).corpNum ? getConsentConflicts(state).corpNum : ''
+    }
+
+    names = [name]
+  }
+
+  const data: ConditionalReqI = {
+    applicants: [getApplicant(state)],
+    names: names,
+    ...getNrData(state),
+    priorityCd: 'N',
+    // @ts-ignore TODO: This is not typed correctly!
+    entity_type_cd: getEntityTypeCd(state),
+    request_action_cd: getRequestActionCd(state),
+    request_type_cd: getXproRequestTypeCd(state) ? getXproRequestTypeCd(state) : '',
+    stateCd: NrState.COND_RESERVED,
+    english: getNameIsEnglish(state),
+    nameFlag: getIsPersonsName(state),
+    submit_count: 0,
+    ...getCorpNumForReservation(state)
   }
   return data
 }

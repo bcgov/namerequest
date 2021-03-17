@@ -157,7 +157,7 @@ export const getNameAnalysis: ActionIF = async ({ commit, getters }) => {
       timeout: ANALYSIS_TIMEOUT_MS
     })
 
-    if (this.analyzePending) {
+    if (getters.getAnalyzePending) {
       const json = resp.data
       commit('mutateAnalysisJSON', json)
       if (Array.isArray(json.issues) && json.issues.length > 0) {
@@ -193,9 +193,9 @@ export const getNameAnalysis: ActionIF = async ({ commit, getters }) => {
 
 export const getNameAnalysisXPRO: ActionIF = async ({ commit, getters }) => {
   try {
-    this.mutateAnalyzePending(true)
-    this.mutateDisplayedComponent('AnalyzePending')
-    this.resetRequestExaminationOrProvideConsent()
+    commit('mutateAnalyzePending', true)
+    commit('mutateDisplayedComponent', 'AnalyzePending')
+    commit('resetRequestExaminationOrProvideConsent')
 
     const params: NewRequestNameSearchI = {
       name: getters.getName,
@@ -206,7 +206,7 @@ export const getNameAnalysisXPRO: ActionIF = async ({ commit, getters }) => {
     const { CancelToken } = axios
     const source = CancelToken.source()
 
-    const resp = await axios.get('/xpro-name-analysis', {
+    const resp: any = await axios.get('/xpro-name-analysis', {
       params,
       cancelToken: source.token,
       timeout: ANALYSIS_TIMEOUT_MS
@@ -479,13 +479,17 @@ export const checkinNameRequest = async ({ getters }): Promise<boolean> => {
 export const patchNameRequests: ActionIF = async ({ commit, getters }): Promise<boolean> => {
   try {
     const nr = this.editNameReservation
-    const requestData = nr && await this.addRequestActionComment(nr)
+    const requestData: any = nr && await addRequestActionComment({ commit, getters }, nr)
 
-    const response = requestData &&
+    // TODO-CAM: Fix request response usage as booleans
+    // @ts-ignore
+    const response: any = requestData &&
       await axios.patch(`/namerequests/${getters.getNrId}/edit`, requestData, {
         headers: { 'Content-Type': 'application/json' }
       })
 
+    // TODO-CAM: Fix request response usage as booleans
+    // @ts-ignore
     if (response?.data) {
       commit('mutateNameRequest', response.data)
       return true
@@ -531,10 +535,10 @@ export const postNameRequests: any = async ({ commit, getters }, type: string): 
         data = getters.getDraftNameReservation
         break
       case 'conditional':
-        data = this.conditionalNameReservation
+        data = getters.conditionalNameReservation
         break
       case 'reserved':
-        data = this.reservedNameReservation
+        data = getters.reservedNameReservation
         break
     }
 
@@ -567,30 +571,30 @@ export const putNameReservation: any = async ({ commit, getters }, nrId) => {
         data = getters.getDraftNameReservation
         break
       // *** TODO: restore this after fixes
-      // case NrState.COND_RESERVED:
-      //   data = this.conditionalNameReservation
-      //   break
-      // case NrState.RESERVED:
-      //   data = this.reservedNameReservation
-      //   break
-      // case 'ASSUMED':
-      //   data = this.editNameReservation
-      //   break
+      case NrState.COND_RESERVED:
+        data = getters.conditionalNameReservation
+        break
+      case NrState.RESERVED:
+        data = getters.reservedNameReservation
+        break
+      case 'ASSUMED':
+        data = getters.editNameReservation
+        break
       case NrState.PENDING_PAYMENT:
         // The user clicked Review and Confirm, which POSTed the draft NR.
         // Then they closed the modal (eg, so they could fix something),
         // and now they clicked Review and Confirm again.
         // Treat this like a new NR, but keep the same state.
-        data = this.draftNameReservation
+        data = getters.getDraftNameReservation
         data['stateCd'] = NrState.PENDING_PAYMENT
         break
     }
 
-    if (this.showCorpNum && this.corpNum) {
-      data['corpNum'] = this.corpNum
+    if (getters.getShowCorpNum && getters.getCorpNum) {
+      data['corpNum'] = getters.getCorpNum
     }
 
-    const requestData = data && await this.addRequestActionComment(data)
+    const requestData = data && await this.addRequestActionComment({ commit, getters }, data)
     const response = requestData && await axios.put(`/namerequests/${nrId}`, requestData, {
       headers: { 'Content-Type': 'application/json' }
     })
@@ -967,7 +971,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
       if (['NEW', 'MVE', 'DBA', 'CHG'].includes(getters.getRequestActionCd)) {
         getFeatureFlag('disable-analysis')
           ? commit('mutateDisplayedComponent', 'SendToExamination')
-          : this.getNameAnalysis()
+          : getNameAnalysis({ commit, getters })
         return
       }
     }
@@ -980,7 +984,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
       }
       getFeatureFlag('disable-analysis')
         ? commit('mutateDisplayedComponent', 'SendToExamination')
-        : this.getNameAnalysisXPRO()
+        : getNameAnalysisXPRO({ commit, getters })
     }
   }
 }
