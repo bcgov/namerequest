@@ -311,13 +311,14 @@ export default class ExistingRequestDisplay extends Mixins(
   private get reviewDate () {
     if (this.nr.waiting_time) {
       let queueTime = this.nr.waiting_time
-      let submittedDate = Moment(this.nr.submittedDate)
       // get number of days since the nr was submitted
       let diffDays = Math.abs(this.daysFromToday(this.nr.submittedDate))
+      // get the waiting time by subtracking the current wait time from the amount that we have been waiting
       let waitingTime = Math.max(queueTime - diffDays, 1)
 
-      // add the waiting time dats to the date submitted
-      let waitingDate = submittedDate.add(waitingTime, 'days')
+      // add the waiting time days to todays date
+      let todaysDate = Moment()
+      let waitingDate = todaysDate.add(waitingTime, 'days')
       return waitingDate.tz('America/Vancouver')
         .format('MMMM D[,] YYYY') + ' (' + this.nr.waiting_time + ' days)'
     }
