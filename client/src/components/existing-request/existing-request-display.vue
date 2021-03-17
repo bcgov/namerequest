@@ -310,15 +310,15 @@ export default class ExistingRequestDisplay extends Mixins(
 
   private get reviewDate () {
     if (this.nr.waiting_time) {
-      let waitingTime = this.nr.waiting_time
-      // make sure minimum waiting time is 1
-      if (waitingTime < 1) {
-        waitingTime = 1
-      }
-      let reviewDate = new Date()
-      // add the number of days to the current date to get the review date
-      reviewDate.setDate(reviewDate.getDate() + waitingTime)
-      return Moment(reviewDate).tz('America/Vancouver')
+      let queueTime = this.nr.waiting_time
+      let submittedDate = Moment(this.nr.submittedDate)
+      // get number of days since the nr was submitted
+      let diffDays = Math.abs(this.daysFromToday(this.nr.submittedDate))
+      let waitingTime = Math.max(queueTime - diffDays, 1)
+
+      // add the waiting time dats to the date submitted
+      let waitingDate = submittedDate.add(waitingTime, 'days')
+      return waitingDate.tz('America/Vancouver')
         .format('MMMM D[,] YYYY') + ' (' + this.nr.waiting_time + ' days)'
     }
     return ''
