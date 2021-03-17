@@ -45,7 +45,8 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import RequestDetails from '@/components/common/request-details.vue'
-import { ApplicantI } from '@/interfaces'
+import { ApplicantI, NameChoicesIF } from '@/interfaces'
+import { Getter } from 'vuex-class'
 
 @Component({
   components: {
@@ -73,6 +74,8 @@ export default class PaymentConfirm extends Vue {
 
   @Prop(String)
   readonly name: string
+
+  @Getter getNameChoices!: NameChoicesIF
 
   protected fetchError = ''
 }

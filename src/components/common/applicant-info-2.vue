@@ -369,7 +369,6 @@ export default class ApplicantInfo2 extends Vue {
     this.setIsLoadingSubmission(true)
     this.validate()
     if (this.isValid) {
-      console.log('Inside valid Submit')
       await this.submit(null)
     }
     // hang on to the loading state for a bit
