@@ -2474,17 +2474,17 @@ export class NewRequestModule extends VuexModule {
       paymentSuccess: false
     }
     try {
-      const response = await axios.put(`/payments/${nrId}/cancel-payment/${paymentId}`, {}, {
+      const response = await axios.delete(`/payments/${nrId}/payment/${paymentId}`, {
         headers: { 'Content-Type': 'application/json' }
       })
 
-      if (response?.status === CREATED) {
+      if (response?.status === OK) {
         paymentResponse.payment = response.data
         paymentResponse.httpStatusCode = response.status.toString()
         paymentResponse.paymentSuccess = true
       } else {
         // eslint-disable-next-line no-console
-        console.error('cancelPayment(), status was not 201, response =', response)
+        console.error('cancelPayment(), status was not 200, response =', response)
         paymentResponse.httpStatusCode = response.status.toString()
         paymentResponse.paymentSuccess = false
       }
