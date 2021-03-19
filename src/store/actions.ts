@@ -1054,7 +1054,6 @@ export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
 
 /** Submits an edited NR or a new name submission. */
 export const submit: any = async ({ commit, getters, dispatch }): Promise<any> => {
-  // TODO: Handle Edit Submit
   if (getters.isEditMode) {
     // TODO-CAM: Refactor the way these async requests are used to provide conditional booleans
     // @ts-ignore
@@ -1188,8 +1187,8 @@ export const setApplicant: ActionIF = ({ commit }, applicant: any): void => {
   commit('mutateApplicant', applicant)
 }
 
-export const setNRData: ActionIF = ({ commit }, applicant: any): void => {
-  commit('mutateNRData', applicant)
+export const setNRData: ActionIF = ({ commit }, nrData: any): void => {
+  commit('mutateNRData', nrData)
 }
 
 export const setEditMode: ActionIF = ({ commit }, editMode: boolean): void => {

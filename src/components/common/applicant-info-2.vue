@@ -8,7 +8,7 @@
                         :rules="emailRules"
                         :value="getApplicant.emailAddress"
                         @blur="messages = {}"
-                        @input="setApplicant('emailAddress', $event)"
+                        @input="updateApplicant('emailAddress', $event)"
                         id="emailAddress"
                         filled
                         hide-details="auto"
@@ -27,7 +27,7 @@
                         type="tel"
                         :rules="phoneRules"
                         @blur="messages = {}"
-                        @input="setApplicant('phoneNumber', $event)"
+                        @input="updateApplicant('phoneNumber', $event)"
                         id="phoneNumber"
                         :name="Math.random()"
                         autocomplete="chrome-off"
@@ -40,7 +40,7 @@
                         :value="getApplicant.faxNumber"
                         :rules="faxRules"
                         @blur="messages = {}"
-                        @input="setApplicant('faxNumber', $event)"
+                        @input="updateApplicant('faxNumber', $event)"
                         id="faxNumber"
                         :name="Math.random()"
                         autocomplete="chrome-off"
@@ -228,7 +228,7 @@ export default class ApplicantInfo2 extends Vue {
   @Action setCorpNum!: ActionBindingIF
   @Action setPriorityRequest!: ActionBindingIF
   @Action fetchCorpNum!: ActionBindingIF
-  @Action setApplicant!: ActionBindingIF
+  @Action setApplicantDetails: ActionBindingIF
   @Action submit!: ActionBindingIF
   @Action setNRData!: ActionBindingIF
   @Action setIsLoadingSubmission!: ActionBindingIF
@@ -339,6 +339,10 @@ export default class ApplicantInfo2 extends Vue {
 
   setError (error) {
     this.error = error
+  }
+
+  async updateApplicant (key, value) {
+    this.setApplicantDetails({ key, value })
   }
 
   validate () {

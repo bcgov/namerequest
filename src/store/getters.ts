@@ -903,7 +903,7 @@ export const getNrRequestNames = (state: StateIF): RequestNameI[] => {
 export const getDraftNameReservation = (state: StateIF): DraftReqI => {
   const nrRequestNames = getNrRequestNames(state)
   const applicant = getApplicant(state)
-
+  console.log(applicant)
   let nrData = {}
   for (let key in getNrData(state)) {
     if (getNrData(state)[key]) {

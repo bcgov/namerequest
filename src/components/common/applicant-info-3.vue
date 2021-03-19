@@ -242,7 +242,7 @@ export default class ApplicantInfo3 extends Vue {
   @Getter getSubmissionType!: SubmissionTypeT
 
   // Global actions
-  @Action setApplicant!: ActionBindingIF
+  @Action setApplicantDetails!: ActionBindingIF
   @Action setCorpNum!: ActionBindingIF
   @Action setIsLoadingSubmission!: ActionBindingIF
   @Action setNRData!: ActionBindingIF
@@ -368,7 +368,7 @@ export default class ApplicantInfo3 extends Vue {
     }
   }
   mutateApplicant (key, value) {
-    this.setApplicant({ key, value })
+    this.setApplicantDetails({ key, value })
   }
   mutateNRData (key, value) {
     this.setNRData({ key, value })
