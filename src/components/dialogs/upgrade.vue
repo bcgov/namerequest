@@ -31,9 +31,8 @@ import { Action, Getter } from 'vuex-class'
 
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
-import PaymentModule from '@/modules/payment'
 import { CreatePaymentParams } from '@/modules/payment/models'
-import * as PaymentTypes from '@/modules/payment/store/types'
+import { UPGRADE_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import * as FilingTypes from '@/modules/payment/filing-types'
 import * as Jurisdictions from '@/modules/payment/jurisdictions'
 import { PaymentAction } from '@/enums'
@@ -66,7 +65,7 @@ export default class UpgradeDialog extends Mixins(
 
   /** Whether this modal should be shown (per store property). */
   private get showModal (): boolean {
-    return this.$store.getters['upgradeModalIsVisible']
+    return this.$store.getters[UPGRADE_MODAL_IS_VISIBLE]
   }
 
   /** Clears store property to hide this modal. */

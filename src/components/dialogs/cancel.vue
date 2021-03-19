@@ -39,14 +39,13 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
-import PaymentModule from '@/modules/payment'
 import { NameRequestMixin, PaymentMixin } from '@/mixins'
 import { sleep } from '@/plugins'
 
 import { NrAction } from '@/enums'
 import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import * as PaymentTypes from '@/modules/payment/store/types'
+import { UPGRADE_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 
 @Component({})
 export default class CancelDialog extends Mixins(NameRequestMixin, PaymentMixin) {
@@ -65,7 +64,7 @@ export default class CancelDialog extends Mixins(NameRequestMixin, PaymentMixin)
   }
 
   private get isVisible (): boolean {
-    return this.$store.getters['cancelModalIsVisible']
+    return this.$store.getters[UPGRADE_MODAL_IS_VISIBLE]
   }
 
   async showModal (): Promise<void> {
