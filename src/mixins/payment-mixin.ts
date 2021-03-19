@@ -1,4 +1,5 @@
 import { Component, Mixins } from 'vue-property-decorator'
+import { Action } from 'vuex-class'
 import axios, { AxiosRequestConfig } from 'axios'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import { PaymentStatus } from '@/enums'
@@ -8,9 +9,18 @@ import * as paymentTypes from '@/modules/payment/store/types'
 import { CreatePaymentParams, NameRequestPaymentResponse } from '@/modules/payment/models'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export class PaymentMixin extends Mixins(ActionMixin) {
+  // Global actions
+  @Action setPayment!: ActionBindingIF
+  @Action setPayments!: ActionBindingIF
+  @Action setPaymentFees!: ActionBindingIF
+  @Action setPaymentReceipt!: ActionBindingIF
+  @Action setPaymentRequest!: ActionBindingIF
+  @Action setSbcPayment!: ActionBindingIF
+
   get sbcPayment () {
     return this.$store.getters[paymentTypes.GET_SBC_PAYMENT]
   }
@@ -90,7 +100,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
         'date': new Date().toISOString(),
         'priority': priorityRequest
       })
-      await paymentModule.setPaymentFees(response)
+      await this.setPaymentFees(response)
       return true
     } catch (err) {
       // don't console.error - getPaymentFees() already did that
@@ -147,9 +157,9 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       const paymentResponse = await this.createPaymentRequest(nrId, action, req)
       const { payment, sbcPayment = { receipts: [] } } = paymentResponse
 
-      await paymentModule.setPayment(payment)
+      await this.setPayment(payment)
       // await paymentModule.setPaymentReceipt(sbcPayment.receipts[0])
-      await paymentModule.setPaymentRequest(req)
+      await this.setPaymentRequest(req)
 
       if (onSuccess) {
         // Execute callback
@@ -227,13 +237,13 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       const { payment, sbcPayment =
       { receipts: [], status_code: '' }, statusCode, completionDate } = paymentResponse
 
-      await paymentModule.setPayment(payment)
-      await paymentModule.setSbcPayment(sbcPayment)
+      await this.setPayment(payment)
+      await this.setSbcPayment(sbcPayment)
       if (sbcPayment &&
         sbcPayment.receipts instanceof Array &&
         sbcPayment.receipts.length > 0) {
         const receipt = sbcPayment.receipts[0]
-        await paymentModule.setPaymentReceipt(receipt)
+        await this.setPaymentReceipt(receipt)
       }
       return true
     } catch (err) {
@@ -255,7 +265,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       const paymentsResponse = await this.getNameRequestPayments(nrId, {})
       if (!paymentsResponse) throw new Error('Got error from getNameRequestPayments()')
 
-      await paymentModule.setPayments(paymentsResponse)
+      await this.setPayments(paymentsResponse)
       return true
     } catch (err) {
       // don't console.error - getNameRequestPayments() already did that

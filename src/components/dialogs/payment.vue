@@ -49,9 +49,8 @@ import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
-import PaymentModule from '@/modules/payment'
 import { CreatePaymentParams } from '@/modules/payment/models'
-import * as PaymentTypes from '@/modules/payment/store/types'
+import { PAYMENT_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import * as FilingTypes from '@/modules/payment/filing-types'
 import * as Jurisdictions from '@/modules/payment/jurisdictions'
 import { PaymentAction } from '@/enums'
@@ -88,6 +87,9 @@ export default class PaymentDialog extends Mixins(
   @Getter getNameChoices!: NameChoicesIF
   @Getter getPriorityRequest!: boolean
 
+  // Global actions
+  @Action togglePaymentModal!: ActionBindingIF
+
   private isLoadingPayment: boolean = false
 
   /** The model value for the dialog component. */
@@ -99,13 +101,13 @@ export default class PaymentDialog extends Mixins(
 
   /** Whether this modal should be shown (per store property). */
   private get showModal (): boolean {
-    return PaymentModule[PaymentTypes.PAYMENT_MODAL_IS_VISIBLE]
+    return this.$store.getters[PAYMENT_MODAL_IS_VISIBLE]
   }
 
   /** Clears store property to hide this modal. */
   async hideModal () {
     this.isLoadingPayment = false
-    await PaymentModule.togglePaymentModal(false)
+    await this.togglePaymentModal(false)
   }
 
   /** Depending on value, fetches fees and makes this modal visible or hides it. */

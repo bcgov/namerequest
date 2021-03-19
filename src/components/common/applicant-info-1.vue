@@ -14,7 +14,7 @@
                 :rules="firstLastNameRules"
                 :value="applicant.firstName"
                 @blur="messages = {}"
-                @input="setApplicant('firstName', $event)"
+                @input="updateApplicant('firstName', $event)"
                 dense
                 filled
                 height="50"
@@ -33,7 +33,7 @@
                 :value="applicant.middleName"
                 :rules="middleNameRules"
                 @blur="messages = {}"
-                @input="setApplicant('middleName', $event)"
+                @input="updateApplicant('middleName', $event)"
                 dense
                 filled
                 height="50"
@@ -52,7 +52,7 @@
                 :rules="firstLastNameRules"
                 :value="applicant.lastName"
                 @blur="messages = {}"
-                @input="setApplicant('lastName', $event)"
+                @input="updateApplicant('lastName', $event)"
                 dense
                 filled
                 height="50"
@@ -344,7 +344,7 @@
                 :messages="messages['xproJurisdiction']"
                 :items="jurisdictionOptions"
                 :rules="requiredRules"
-                :value="nrData.xproJurisdiction"
+                :value="xproJurisdiction"
                 @blur="messages = {}"
                 @focus="handleFocus('xproJurisdiction', 'Business xproJurisdiction')"
                 @input="setNRData('xproJurisdiction', $event)"
@@ -411,7 +411,6 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
 
   // Global actions
   @Action setActingOnOwnBehalf!: ActionBindingIF
-  @Action setApplicant!: ActionBindingIF
   @Action setApplicantDetails!: ActionBindingIF
   @Action setCorpNum!: ActionBindingIF
   @Action setNRData!: ActionBindingIF

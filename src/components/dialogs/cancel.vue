@@ -39,14 +39,13 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
-import PaymentModule from '@/modules/payment'
 import { NameRequestMixin, PaymentMixin } from '@/mixins'
 import { sleep } from '@/plugins'
 
 import { NrAction } from '@/enums'
 import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import * as PaymentTypes from '@/modules/payment/store/types'
+import { UPGRADE_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 
 @Component({})
 export default class CancelDialog extends Mixins(NameRequestMixin, PaymentMixin) {
@@ -55,6 +54,7 @@ export default class CancelDialog extends Mixins(NameRequestMixin, PaymentMixin)
 
   @Action patchNameRequestsByAction: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
+  @Action toggleCancelModal!: ActionBindingIF
 
   /** Used to show loading state on button. */
   private loading = false
@@ -64,11 +64,11 @@ export default class CancelDialog extends Mixins(NameRequestMixin, PaymentMixin)
   }
 
   private get isVisible (): boolean {
-    return PaymentModule[PaymentTypes.CANCEL_MODAL_IS_VISIBLE]
+    return this.$store.getters[UPGRADE_MODAL_IS_VISIBLE]
   }
 
   async showModal (): Promise<void> {
-    await PaymentModule.toggleCancelModal(true)
+    await this.toggleCancelModal(true)
   }
 
   /** Called when user clicks "Cancel this NR" button. */
@@ -88,7 +88,7 @@ export default class CancelDialog extends Mixins(NameRequestMixin, PaymentMixin)
 
   /** Called when user clicks "Keep this NR" button. */
   private async hideModal (): Promise<void> {
-    await PaymentModule.toggleCancelModal(false)
+    await this.toggleCancelModal(false)
   }
 }
 </script>

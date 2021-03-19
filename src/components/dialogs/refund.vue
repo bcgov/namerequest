@@ -45,13 +45,12 @@
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
-import PaymentModule from '@/modules/payment'
 import RefundSummary from '@/components/payment/refund-summary.vue'
-import * as PaymentTypes from '@/modules/payment/store/types'
+import { REFUND_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import { NrAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin } from '@/mixins'
 import { sleep } from '@/plugins'
-import { ApplicantI, NameChoicesIF } from '@/interfaces'
+import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
@@ -67,6 +66,7 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
   // Global actions
   @Action setDisplayedComponent!: ActionBindingIF
   @Action patchNameRequestsByAction: ActionBindingIF
+  @Action toggleRefundModal!: ActionBindingIF
 
   /** Used to display a fetch error, if any. */
   protected fetchError = ''
@@ -83,12 +83,12 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
 
   /** Whether this modal should be shown (per store property). */
   private get showModal (): boolean {
-    return PaymentModule[PaymentTypes.REFUND_MODAL_IS_VISIBLE]
+    return this.$store.getters[REFUND_MODAL_IS_VISIBLE]
   }
 
   /** Clears store property to hide this modal. */
   private async hideModal (): Promise<void> {
-    await PaymentModule.toggleRefundModal(false)
+    await this.toggleRefundModal(false)
   }
 
   /** Depending on value, fetches data and makes this modal visible or hides it. */

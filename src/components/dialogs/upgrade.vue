@@ -27,19 +27,19 @@
 
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Action, Getter } from 'vuex-class'
 
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
-import PaymentModule from '@/modules/payment'
 import { CreatePaymentParams } from '@/modules/payment/models'
-import * as PaymentTypes from '@/modules/payment/store/types'
+import { UPGRADE_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import * as FilingTypes from '@/modules/payment/filing-types'
 import * as Jurisdictions from '@/modules/payment/jurisdictions'
 import { PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
 import { ApplicantI } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: {
@@ -57,19 +57,21 @@ export default class UpgradeDialog extends Mixins(
   @Getter getApplicant!: ApplicantI
   @Getter getPriorityRequest!: boolean
 
+  @Action toggleUpgradeModal!: ActionBindingIF
+
   private isLoadingPayment: boolean = false
   /** The model value for the dialog component. */
   private isVisible = false
 
   /** Whether this modal should be shown (per store property). */
   private get showModal (): boolean {
-    return PaymentModule[PaymentTypes.UPGRADE_MODAL_IS_VISIBLE]
+    return this.$store.getters[UPGRADE_MODAL_IS_VISIBLE]
   }
 
   /** Clears store property to hide this modal. */
   async hideModal () {
     this.isLoadingPayment = false
-    await PaymentModule.toggleUpgradeModal(false)
+    await this.toggleUpgradeModal(false)
   }
 
   /** Depending on value, fetches fees and makes this modal visible or hides it. */

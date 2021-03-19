@@ -8,6 +8,7 @@ import * as States from './state'
 import * as Getters from './getters'
 import * as Mutations from './mutations'
 import * as Actions from './actions'
+import PaymentModule from '@/modules/payment'
 
 Vue.use(Vuex)
 
@@ -22,6 +23,9 @@ export function getVuexStore () {
   Vue.use(Vuex)
 
   const store = new Vuex.Store<any>({
+    modules: {
+      payment: PaymentModule
+    },
     state: {
       ...States,
       config: {} as EnvConfigI
