@@ -192,7 +192,7 @@ import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
-import { NameState, NrAction, NrState, PaymentStatus } from '@/enums'
+import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction } from '@/enums'
 import { sleep } from '@/plugins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
@@ -678,7 +678,10 @@ export default class ExistingRequestDisplay extends Mixins(
     let paymentId = null
     if (status === 'PAYMENT_CANCELLED') {
       for (let i = 0; i < payments.length; i++) {
-        if (payments[i].action === 'UPGRADE' && payments[i].sbcPayment.statusCode === 'CREATED') {
+        if (
+          payments[i].action === PaymentAction.UPGRADE &&
+          payments[i].sbcPayment.statusCode === SbcPaymentStatus.CREATED
+        ) {
           paymentId = payments[i].sbcPayment.id
           break
         }
