@@ -192,7 +192,7 @@ import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
-import { NameState, NrAction, NrState, PaymentStatus } from '@/enums'
+import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction } from '@/enums'
 import { sleep } from '@/plugins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
@@ -223,6 +223,7 @@ export default class ExistingRequestDisplay extends Mixins(
   @Getter getNrState!: NrState
 
   // Global actions
+  @Action cancelPayment!: ActionBindingIF
   @Action checkoutNameRequest!: ActionBindingIF
   @Action downloadOutputs!: ActionBindingIF
   @Action editExistingRequest!: ActionBindingIF
@@ -323,15 +324,16 @@ export default class ExistingRequestDisplay extends Mixins(
 
   private get reviewDate () {
     if (this.nr.waiting_time) {
-      let waitingTime = this.nr.waiting_time
-      // make sure minimum waiting time is 1
-      if (waitingTime < 1) {
-        waitingTime = 1
-      }
-      const reviewDate = new Date()
-      // add the number of days to the current date to get the review date
-      reviewDate.setDate(reviewDate.getDate() + waitingTime)
-      return Moment(reviewDate).tz('America/Vancouver').format('MMMM D[,] YYYY') + ` (${this.nr.waiting_time} days)`
+      let queueTime = this.nr.waiting_time
+      // get number of days since the nr was submitted
+      let diffDays = Math.abs(this.daysFromToday(this.nr.submittedDate))
+      // get the waiting time by subtracking the current wait time from the amount that we have been waiting
+      let waitingTime = queueTime - diffDays
+      // add the waiting time days to todays date
+      let todaysDate = Moment()
+      let waitingDate = todaysDate.add(waitingTime, 'days')
+      return waitingDate.tz('America/Vancouver')
+        .format('MMMM D[,] YYYY') + ' (' + this.nr.waiting_time + ' days)'
     }
     return ''
   }
@@ -672,6 +674,22 @@ export default class ExistingRequestDisplay extends Mixins(
     }
   }
 
+  private cancelledUpgrade (status: string, payments: any): string {
+    let paymentId = null
+    if (status === 'PAYMENT_CANCELLED') {
+      for (let i = 0; i < payments.length; i++) {
+        if (
+          payments[i].action === PaymentAction.UPGRADE &&
+          payments[i].sbcPayment.statusCode === SbcPaymentStatus.CREATED
+        ) {
+          paymentId = payments[i].sbcPayment.id
+          break
+        }
+      }
+    }
+    return paymentId
+  }
+
   private get isVisible () {
     const componentName = this.getDisplayedComponent
     return (componentName === 'ExistingRequestDisplay')
@@ -717,7 +735,20 @@ export default class ExistingRequestDisplay extends Mixins(
   async mounted () {
     if (this.nr.id && this.nr.state !== NrState.CANCELLED) {
       await this.fetchNrPayments(this.nr.id)
-      this.pendingPayment = this.payments?.find(sbcPayment => (sbcPayment.statusCode !== PaymentStatus.COMPLETED))
+      const status = this.$route?.query?.status?.toString()
+      const paymentId = status ? this.cancelledUpgrade(atob(status), this.payments) : null
+      if (paymentId) {
+        // cancel the upgrade invoice
+        const nrId = this.nr.id
+        await this.cancelPayment({ nrId, paymentId })
+        // fetch updated payments
+        await this.fetchNrPayments(nrId)
+      }
+      this.pendingPayment = this.payments.find(
+        payment => (
+          ![PaymentStatus.COMPLETED, PaymentStatus.CANCELLED].includes(payment.statusCode)
+        )
+      )
     }
   }
 }

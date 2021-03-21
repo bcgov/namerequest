@@ -630,7 +630,7 @@ export const setCompletePayment = async ({ nrId, paymentId, action }): Promise<N
       paymentResponse.paymentSuccess = true
     } else {
       // eslint-disable-next-line no-console
-      console.error('completePayment(), status was not 200, response =', response)
+      console.error('setCompletePayment(), status was not 200, response =', response)
       paymentResponse.httpStatusCode = response.status.toString()
       paymentResponse.paymentSuccess = false
     }
@@ -638,8 +638,38 @@ export const setCompletePayment = async ({ nrId, paymentId, action }): Promise<N
     return paymentResponse
   } catch (err) {
     const msg = await handleApiError(err, 'Could not complete payment')
-    console.error('completePayment() =', msg) // eslint-disable-line no-console
-    await errorModule.setAppError({ id: 'complete-payment-error', error: msg } as ErrorI)
+    console.error('setCompletePayment() =', msg) // eslint-disable-line no-console
+    await errorModule.setAppError({ id: 'set-complete-payment-error', error: msg } as ErrorI)
+    return null
+  }
+}
+
+// TODO: Not a real action
+export const cancelPayment = async ({ nrId, paymentId }): Promise<NameRequestPayment> => {
+  const paymentResponse: NameRequestPayment = {
+    paymentSuccess: false
+  }
+  try {
+    const response = await axios.delete(`/payments/${nrId}/payment/${paymentId}`, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+
+    if (response?.status === OK) {
+      paymentResponse.payment = response.data
+      paymentResponse.httpStatusCode = response.status.toString()
+      paymentResponse.paymentSuccess = true
+    } else {
+      // eslint-disable-next-line no-console
+      console.error('cancelPayment(), status was not 200, response =', response)
+      paymentResponse.httpStatusCode = response.status.toString()
+      paymentResponse.paymentSuccess = false
+    }
+
+    return paymentResponse
+  } catch (err) {
+    const msg = await handleApiError(err, 'Could not cancel payment')
+    console.error('cancelPayment() =', msg) // eslint-disable-line no-console
+    await errorModule.setAppError({ id: 'cancel-payment-error', error: msg } as ErrorI)
     return null
   }
 }
