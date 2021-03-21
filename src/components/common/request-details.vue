@@ -4,16 +4,16 @@
       <div>
         <h4>Requested Name <span v-if="nameChoices.name2">Choices</span></h4>
         <ul class="pl-0">
-          <li v-if="name && !nameChoices.name2">{{nameChoices.name1}} {{nameChoices.designation1}}</li>
+          <li v-if="name && !nameChoices.name2">{{name}}</li>
           <template v-else>
             <li v-if="nameChoices.name1">
-              <span>1. </span>{{nameChoices.name1}} {{nameChoices.designation1}}
+              <span>1. </span>{{nameChoices.name1}}
             </li>
             <li v-if="nameChoices.name2">
-              <span>2. </span>{{nameChoices.name2}} {{nameChoices.designation2}}
+              <span>2. </span>{{nameChoices.name2}}
             </li>
             <li v-if="nameChoices.name3">
-              <span>3. </span>{{nameChoices.name2}} {{nameChoices.designation3}}
+              <span>3. </span>{{nameChoices.name2}}
             </li>
           </template>
         </ul>

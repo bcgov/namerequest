@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="45rem" :value="isVisible" persistent>
+  <v-dialog max-width="45rem" :value="showModal" persistent>
     <v-card>
       <v-card-title class="d-flex justify-space-between mt-n3">
         <div>Payment Successful</div>
@@ -44,6 +44,7 @@ import { PaymentStatus, SbcPaymentStatus } from '@/enums'
 import { CommonMixin, PaymentMixin, PaymentSessionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { ApplicantI, NameChoicesIF } from '@/interfaces'
+import { PAYMENT_COMPLETE_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 
 /**
  * Makes debugging the receipt easier.
@@ -60,10 +61,6 @@ const DEBUG_RECEIPT = false
   components: {
     RequestDetails,
     PaymentConfirm
-  },
-
-  computed: {
-    isVisible: () => paymentModule[paymentTypes.PAYMENT_COMPLETE_MODAL_IS_VISIBLE]
   }
 })
 export default class PaymentCompleteDialog extends Mixins(
@@ -87,6 +84,11 @@ export default class PaymentCompleteDialog extends Mixins(
 
   /** Used to show loading state on button. */
   private loading = false
+
+  /** Whether this modal should be shown (per store property). */
+  private get showModal (): boolean {
+    return this.$store.getters[PAYMENT_COMPLETE_MODAL_IS_VISIBLE]
+  }
 
   async mounted () {
     const { sessionPaymentId, sessionPaymentAction } = this
@@ -135,10 +137,6 @@ export default class PaymentCompleteDialog extends Mixins(
   }
 
   async completePayment (nrId: number, paymentId: number, action: string) {
-    console.log(nrId)
-    console.log(paymentId)
-    console.log(action)
-
     const result: NameRequestPayment = await this.setCompletePayment({ nrId, paymentId, action })
     const paymentSuccess = result?.paymentSuccess
 
@@ -165,7 +163,7 @@ export default class PaymentCompleteDialog extends Mixins(
     this.loading = false
   }
 
-  @Watch('isVisible')
+  @Watch('showModal')
   onVisibleChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {

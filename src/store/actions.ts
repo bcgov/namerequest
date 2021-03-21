@@ -568,7 +568,6 @@ export const putNameReservation: any = async ({ commit, getters }, nrId) => {
     let data: any
     switch (nrState) {
       case NrState.DRAFT:
-        console.log('inside draft')
         data = getters.getDraftNameReservation
         break
       // *** TODO: restore this after fixes
@@ -590,7 +589,7 @@ export const putNameReservation: any = async ({ commit, getters }, nrId) => {
         data['stateCd'] = NrState.PENDING_PAYMENT
         break
     }
-    console.log(data)
+
     if (getters.getShowCorpNum && getters.getCorpNum) {
       data['corpNum'] = getters.getCorpNum
     }

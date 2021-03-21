@@ -66,7 +66,7 @@ export default class PaymentConfirm extends Vue {
   @Prop(Object)
   readonly applicant: ApplicantI
 
-  @Prop(Array)
+  @Prop(Object)
   readonly nameChoices: {
     type: any[]
     required: false
