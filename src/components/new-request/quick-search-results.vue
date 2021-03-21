@@ -88,7 +88,7 @@ export default class QuickSearchResults extends Vue {
   // @Getter getEntityTypeOptions!: Array<EntityI>
   @Getter getEntityTextFromValue!: string
   @Getter getLocation!: string
-  @Getter getLocationOptions!: Array<any>
+  @Getter getLocationOptions!: any[]
   @Getter getName!: string
   // @Getter getRequestActionCd!: string
 

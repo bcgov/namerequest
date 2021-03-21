@@ -182,11 +182,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { quillEditor } from 'vue-quill-editor'
-import Moment from 'moment'
 
+import { DateMixin } from '@/mixins'
 import { matchWord, removeExcessSpaces, replaceWord } from '@/plugins'
 import GreyBox from '@/components/new-request/grey-box.vue'
 import MainContainer from '@/components/new-request/main-container.vue'
@@ -198,7 +198,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 @Component({
   components: { GreyBox, MainContainer, quillEditor, ReserveSubmit }
 })
-export default class AnalyzeResults extends Vue {
+export default class AnalyzeResults extends Mixins(DateMixin) {
   // Global getters
   @Getter getAnalysisJSON!: AnalysisJSONI
   @Getter getDesignationIssueTypes!: string[]
@@ -206,7 +206,7 @@ export default class AnalyzeResults extends Vue {
   @Getter getEntityTextFromValue!: string
   @Getter getName!: string
   @Getter getLocation!: string
-  @Getter getLocationOptions!: Array<any>
+  @Getter getLocationOptions!: any[]
   @Getter getUserCancelledAnalysis!: boolean
   @Getter getRequestExaminationOrProvideConsent!: boolean
   @Getter getShowActualInput!: boolean
@@ -217,18 +217,19 @@ export default class AnalyzeResults extends Vue {
   @Action setShowActualInput!: ActionBindingIF
   @Action startAnalyzeName!: ActionBindingIF
 
-  private quillConfig = {
+  /** Config object for Quill Editor. */
+  quillConfig = {
     modules: {
       toolbar: false
     },
     placeholder: '',
     scrollingContainer: false
   }
-  contents: string = ''
-  finalName: string = ''
-  highlightCheckboxes: boolean = false
-  issueIndex: number = 0
-  originalName: string = ''
+  contents = ''
+  finalName = ''
+  highlightCheckboxes = false
+  issueIndex = 0
+  originalName = ''
   originalOps = []
 
   created () {
@@ -355,10 +356,15 @@ export default class AnalyzeResults extends Vue {
     return this.name.split(' ')
   }
 
-  get conflictDate () {
+  get conflictDate (): string {
     if (Array.isArray(this.issue.conflicts) && this.issue.conflicts.length >= 1) {
       if (this.issue.conflicts[0].source === 'corp') {
-        return Moment(this.issue.conflicts[0].start_date).utc().local().format('MMMM Do YYYY')
+        if (this.issue.conflicts[0].start_date) {
+          const date = new Date(this.issue.conflicts[0].start_date)
+          return this.dateToPacificDate(date)
+        }
+        // eslint-disable-next-line no-console
+        console.error('start date is invalid, conflict = ', this.issue.conflicts[0])
       }
     }
     return null

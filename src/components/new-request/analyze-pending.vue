@@ -56,7 +56,7 @@ export default class AnalyzePending extends Vue {
   // Global getters
   @Getter getEntityTextFromValue!: string
   @Getter getLocation!: string
-  @Getter getLocationOptions!: Array<any>
+  @Getter getLocationOptions!: any[]
   @Getter getRequestActionCd!: string
 
   // Global actions

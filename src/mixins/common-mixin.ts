@@ -3,6 +3,11 @@ import { EntityType } from '@/enums'
 
 @Component({})
 export class CommonMixin extends Vue {
+  /** True if Jest is running the code. */
+  get isJestRunning (): boolean {
+    return (process.env.JEST_WORKER_ID !== undefined)
+  }
+
   /** Returns the specified string in Title Case. */
   toTitleCase (str: string): string {
     return str && str

@@ -5,6 +5,9 @@ export interface StateIF {
 }
 
 export interface StateModelIF {
+  common: {
+    currentJsDate: Date
+  },
   newRequestModel: NewRequestIF
   errorModel?: {},
   paymentModel?: {}

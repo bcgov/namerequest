@@ -54,7 +54,7 @@ export default class QuickSearchPending extends Vue {
   @Getter getEntityTypeCd!: string
   @Getter getEntityTextFromValue!: string
   @Getter getLocation!: string
-  @Getter getLocationOptions!: Array<any>
+  @Getter getLocationOptions!: any[]
   @Getter getRequestActionCd!: string
 
   // Global actions

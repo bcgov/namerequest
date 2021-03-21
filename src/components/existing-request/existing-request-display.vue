@@ -68,8 +68,7 @@
                         v-bind="attrs"
                         v-on="on"
                         class="dotted-underline app-blue font-weight-regular cursor-default"
-                        >{{ reviewDate }}</span
-                      >
+                      >{{ reviewDate }}</span>
                     </template>
                     This is an estimate only, actual review date may vary. Staff are
                     currently reviewing Name Requests submitted on {{ queueDate }}.
@@ -183,7 +182,6 @@
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import Moment from 'moment-timezone'
 
 import MainContainer from '@/components/new-request/main-container.vue'
 import { NrAffiliationMixin, CommonMixin, DateMixin, PaymentMixin } from '@/mixins'
@@ -221,6 +219,7 @@ export default class ExistingRequestDisplay extends Mixins(
   @Getter getExistingRequestSearch!: ExistingRequestSearchI
   @Getter getNr!: Partial<NameRequestI>
   @Getter getNrState!: NrState
+  @Getter getCurrentJsDate!: Date
 
   // Global actions
   @Action cancelPayment!: ActionBindingIF
@@ -250,20 +249,15 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   /** This is True while refreshing the NR. (Not used in template at the moment.) */
-  private checking = false
+  checking = false
 
-  /**
-   * This is used in the template as the transition key for the affected template,
-   * triggering a fade in/out.
-   */
-  private refreshCount = 0
+  /** This is used in the template as the transition key for the affected template, triggering a fade in/out. */
+  refreshCount = 0
 
-  /**
-   * This is used in the template at the transition key for the affected template,
-   * triggering a fade in/out.
-   */
-  private furnished = 'notfurnished'
+  /** This is used in the template as the transition key for the affected template, triggering a fade in/out. */
+  furnished = 'notfurnished'
 
+  /** The pending payment, if any. See mounted(). */
   private pendingPayment = null
 
   /** The actions list, with some buttons forced to the bottom. */
@@ -303,54 +297,64 @@ export default class ExistingRequestDisplay extends Mixins(
     return output
   }
 
-  private get cityProvPostal () {
+  private get cityProvPostal (): string {
     const { applicants } = this.nr
     return applicants.city + ', ' + applicants.stateProvinceCd + ', ' + applicants.postalCd
   }
 
-  private get consentDate () {
+  private get consentDate (): string {
+    let ret: string
     if (this.nr.consent_dt) {
-      return Moment(this.nr.consent_dt).tz('America/Vancouver').format('MMMM D[,] YYYY')
+      const date = new Date(this.nr.consent_dt)
+      ret = this.dateToPacificDate(date)
     }
-    return 'Not Yet Received'
+    return ret || 'Not Yet Received'
   }
 
-  private get expiryDate () {
+  private get expiryDate (): string {
+    let ret: string
     if (this.nr.expirationDate) {
-      return Moment(this.nr.expirationDate).tz('America/Vancouver').format('MMMM D[,] YYYY')
+      const date = new Date(this.nr.expirationDate)
+      ret = this.dateToPacificDate(date)
     }
-    return ''
+    return ret || ''
   }
 
-  private get reviewDate () {
+  private get reviewDate (): string {
     if (this.nr.waiting_time) {
-      let queueTime = this.nr.waiting_time
-      // get number of days since the nr was submitted
-      let diffDays = Math.abs(this.daysFromToday(this.nr.submittedDate))
-      // get the waiting time by subtracking the current wait time from the amount that we have been waiting
-      let waitingTime = queueTime - diffDays
-      // add the waiting time days to todays date
-      let todaysDate = Moment()
-      let waitingDate = todaysDate.add(waitingTime, 'days')
-      return waitingDate.tz('America/Vancouver')
-        .format('MMMM D[,] YYYY') + ' (' + this.nr.waiting_time + ' days)'
+      // get current wait days
+      const waitDays: number = this.nr.waiting_time
+      // get number of days since the NR was submitted
+      const daysSince = -this.daysFromToday(new Date(this.nr.submittedDate))
+      // subtract the current wait days from the amount that we have already been waiting
+      let remainingDays = waitDays - daysSince
+      // safety check
+      if (!isNaN(remainingDays)) {
+        // add the diff to today's date
+        let date = new Date(this.getCurrentJsDate)
+        date.setDate(this.getCurrentJsDate.getDate() + remainingDays)
+        return this.dateToPacificDate(date) + ` (${this.nr.waiting_time} days)`
+      }
     }
-    return ''
+    return 'Unknown'
   }
 
-  private get queueDate () {
+  private get queueDate (): string {
+    let ret: string
     if (this.nr.oldest_draft) {
-      let oldest_draft = Moment(this.nr.oldest_draft)
-      return oldest_draft.tz('America/Vancouver').format('MMMM D[,] YYYY')
+      const date = new Date(this.nr.oldest_draft)
+      ret = this.dateToPacificDate(date)
     }
-    return ''
+    return ret || 'Unknown'
   }
 
-  private get submittedDate () {
+  private get submittedDate (): string {
+    let ret: string
     if (this.nr.submittedDate) {
-      return Moment(this.nr.submittedDate).tz('America/Vancouver').format('MMMM D[,] YYYY, h:mm a') + ' Pacific time'
+      const date = new Date(this.nr.submittedDate)
+      ret = this.dateToPacificDateTime(date)
     }
-    return ''
+    return ret || 'Unknown'
   }
 
   private get disableUnfurnished (): boolean {
@@ -360,7 +364,7 @@ export default class ExistingRequestDisplay extends Mixins(
     )
   }
 
-  /** The names list, sorted by choice number. */
+  /** The names list, sorted by choice number. Used by names-gray-box. */
   private get names () {
     return this.nr.names.sort((a, b) => {
       if (a.choice > b.choice) {
