@@ -12,7 +12,7 @@ import {
 } from '@/interfaces'
 import { NrAction, NrState, RollbackActions } from '@/enums'
 import { NameRequestPayment } from '@/modules/payment/models'
-import { BAD_REQUEST, NOT_FOUND, OK, CREATED } from 'http-status-codes'
+import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
 import { getFeatureFlag, sleep } from '@/plugins'
 
