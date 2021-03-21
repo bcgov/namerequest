@@ -361,7 +361,7 @@ export const addRequestActionComment: ActionIF = async ({ commit, getters }, dat
  * @param nrId the NR id
  * @returns the NR object (or null in case of error)
  */
-export const getNameRequest = async (nrId: number): Promise<any> => {
+export const getNameRequest = async ({ commit, getters }, nrId: number): Promise<any> => {
   try {
     const response = await axios.get(`/namerequests/${nrId}`, {
       headers: { 'Content-Type': 'application/json' }
@@ -568,6 +568,7 @@ export const putNameReservation: any = async ({ commit, getters }, nrId) => {
     let data: any
     switch (nrState) {
       case NrState.DRAFT:
+        console.log('inside draft')
         data = getters.getDraftNameReservation
         break
       // *** TODO: restore this after fixes
@@ -589,12 +590,12 @@ export const putNameReservation: any = async ({ commit, getters }, nrId) => {
         data['stateCd'] = NrState.PENDING_PAYMENT
         break
     }
-
+    console.log(data)
     if (getters.getShowCorpNum && getters.getCorpNum) {
       data['corpNum'] = getters.getCorpNum
     }
 
-    const requestData = data && await this.addRequestActionComment({ commit, getters }, data)
+    const requestData: any = data && await addRequestActionComment({ commit, getters }, data)
     const response = requestData && await axios.put(`/namerequests/${nrId}`, requestData, {
       headers: { 'Content-Type': 'application/json' }
     })
@@ -613,11 +614,11 @@ export const putNameReservation: any = async ({ commit, getters }, nrId) => {
   }
 }
 
-// TODO: Not a real Action
-export const setCompletePayment = async ({ nrId, paymentId, action }): Promise<NameRequestPayment> => {
+export const setCompletePayment = async ({ commit, getters }, paymentDetails): Promise<NameRequestPayment> => {
   const paymentResponse: NameRequestPayment = {
     paymentSuccess: false
   }
+  const { nrId, paymentId, action } = paymentDetails
 
   try {
     const response = await axios.patch(`/payments/${nrId}/payment/${paymentId}/${action}`, {}, {
@@ -675,11 +676,8 @@ export const cancelPayment = async ({ nrId, paymentId }): Promise<NameRequestPay
 }
 
 // TODO: Not a real action
-export const rollbackNameRequest = async ({ nrId, action }): Promise<boolean> => {
+export const rollbackNameRequest = async ({ commit }, nrId): Promise<boolean> => {
   try {
-    // only cancel action is supported atm
-    const validRollbackActions = [RollbackActions.CANCEL]
-
     // safety checks
     if (!nrId) {
       // NB: use console.error to capture issues to Sentry
@@ -687,14 +685,8 @@ export const rollbackNameRequest = async ({ nrId, action }): Promise<boolean> =>
       console.error('rollbackNameRequest(), invalid NR id') // eslint-disable-line no-console
       return false
     }
-    if (!validRollbackActions.includes(action)) {
-      // NB: use console.error to capture issues to Sentry
-      // ultimately this should never happen
-      console.error('rollbackNameRequest(), invalid action =', action) // eslint-disable-line no-console
-      return false
-    }
 
-    const response = await axios.patch(`/namerequests/${nrId}/rollback/${action}`, {}, {
+    const response = await axios.patch(`/namerequests/${nrId}/rollback/${RollbackActions.CANCEL}`, {}, {
       headers: { 'Content-Type': 'application/json' }
     })
 
@@ -1101,13 +1093,13 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
       request = await postNameRequests({ commit, getters }, 'draft')
     } else {
       if (!getters.isEditMode && [NrState.COND_RESERVED, NrState.RESERVED].includes(getters.getNrState)) {
-        request = await getNameRequest(getters.getNrId)
+        request = await getNameRequest({ commit, getters }, getters.getNrId)
         if (request?.stateCd === NrState.CANCELLED) {
           await setActiveComponent('Timeout')
           return
         }
       }
-      request = await putNameReservation(getters.getNrId)
+      request = await putNameReservation({ commit, getters }, getters.getNrId)
     }
     if (request) await dispatch('togglePaymentModal', true)
   }

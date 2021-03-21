@@ -143,6 +143,7 @@ export default class PaymentDialog extends Mixins(
 
     const onSuccess = (paymentResponse) => {
       const { paymentId, paymentToken } = this
+      console.log(paymentResponse)
       // Save response to session
       this.savePaymentResponseToSession(PaymentAction.CREATE, paymentResponse)
       // see if redirect is needed else go to existing NR screen

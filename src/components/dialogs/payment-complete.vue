@@ -135,6 +135,10 @@ export default class PaymentCompleteDialog extends Mixins(
   }
 
   async completePayment (nrId: number, paymentId: number, action: string) {
+    console.log(nrId)
+    console.log(paymentId)
+    console.log(action)
+
     const result: NameRequestPayment = await this.setCompletePayment({ nrId, paymentId, action })
     const paymentSuccess = result?.paymentSuccess
 

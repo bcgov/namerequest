@@ -176,7 +176,7 @@ export default class App extends Vue {
     // Only do this for New NRs!!!
     if (this.getNrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
       // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-      await this.rollbackNameRequest({ nrId: this.getNrId, action: RollbackActions.CANCEL })
+      await this.rollbackNameRequest(this.getNrId)
       // Direct the user back to the start
       await this.resetAppState()
     }
