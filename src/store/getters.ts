@@ -702,6 +702,29 @@ export const getCorpNumForReservation = (state: StateIF): any => {
   }
 }
 
+export const getEditNameReservation = (state: StateIF): NameRequestI => {
+  let nrData = {}
+  for (let key in getNrData(state)) {
+    if (getNrData(state)[key]) {
+      nrData[key] = getNrData(state)[key]
+    }
+  }
+  let data = {
+    applicants: [getApplicant(state)],
+    request_action_cd: getRequestActionCd(state),
+    entity_type_cd: getEntityTypeCd(state),
+    ...nrData,
+    ...getCorpNumForReservation(state)
+  }
+  if (getXproRequestTypeCd(state)) {
+    data['request_type_cd'] = getXproRequestTypeCd(state)
+  }
+  if (getNrState(state) === 'DRAFT') {
+    data['names'] = getNrRequestNames(state)
+  }
+  return data
+}
+
 export const getShowPriorityRequest = (state: StateIF): boolean => {
   return (!getEditMode(state) && getNrState(state) === 'DRAFT') ||
     (!getEditMode(state) && getSubmissionType(state) === 'examination')
