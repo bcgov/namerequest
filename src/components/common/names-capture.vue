@@ -3,7 +3,7 @@
     <v-container fluid class="pa-0" id="send-to-examination-container">
       <template v-if="getEditMode">
         <v-row class="mt-5">
-          <v-col cols="6" class="font-weight-bold py-0">I need a name to: {{request_action_cd}}{{location}} {{entity_type_cd}}</v-col>
+          <v-col cols="6" class="font-weight-bold py-0">I need a name to:</v-col>
           <v-col cols="6" class="d-flex justify-end py-0"></v-col>
         </v-row>
 
