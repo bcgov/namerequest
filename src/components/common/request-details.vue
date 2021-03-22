@@ -2,18 +2,20 @@
   <div>
     <div class="mt-4">
       <div>
-        <h4>Requested Name <span v-if="nameChoices && nameChoices.length > 0">Choices</span></h4>
+        <h4>Requested Name <span v-if="nameChoices.name2">Choices</span></h4>
         <ul class="pl-0">
-          <li v-if="nameChoices && nameChoices.length === 0">{{name}}</li>
-          <li v-if="nameChoices[0]">
-            <span v-if="nameChoices && nameChoices.length > 0">1. </span>{{nameChoices[0]}}
-          </li>
-          <li v-if="nameChoices[1]">
-            <span v-if="nameChoices && nameChoices.length > 1">2. </span>{{nameChoices[1]}}
-          </li>
-          <li v-if="nameChoices[2]">
-            <span v-if="nameChoices && nameChoices.length > 2">3. </span>{{nameChoices[2]}}
-          </li>
+          <li v-if="name && !nameChoices.name2">{{name}}</li>
+          <template v-else>
+            <li v-if="nameChoices.name1">
+              <span>1. </span>{{nameChoices.name1}}
+            </li>
+            <li v-if="nameChoices.name2">
+              <span>2. </span>{{nameChoices.name2}}
+            </li>
+            <li v-if="nameChoices.name3">
+              <span>3. </span>{{nameChoices.name3}}
+            </li>
+          </template>
         </ul>
       </div>
     </div>
@@ -77,10 +79,7 @@ export default class RequestDetails extends Vue {
   readonly applicant: ApplicantI
 
   @Prop(Object)
-  readonly nameChoices: {
-    type: any[]
-    required: false
-  }
+  readonly nameChoices: NameChoicesIF
 
   @Prop(String)
   readonly name: string
