@@ -361,7 +361,7 @@ export const addRequestActionComment: ActionIF = async ({ commit, getters }, dat
  * @param nrId the NR id
  * @returns the NR object (or null in case of error)
  */
-export const getNameRequest = async ({ commit, getters }, nrId: number): Promise<any> => {
+export const getNameRequest = async ({ commit }, nrId: number): Promise<any> => {
   try {
     const response = await axios.get(`/namerequests/${nrId}`, {
       headers: { 'Content-Type': 'application/json' }
@@ -478,7 +478,7 @@ export const checkinNameRequest = async ({ getters }): Promise<boolean> => {
 
 export const patchNameRequests: ActionIF = async ({ commit, getters }): Promise<boolean> => {
   try {
-    const nr = this.editNameReservation
+    const nr = getters.getEditNameReservation
     const requestData: any = nr && await addRequestActionComment({ commit, getters }, nr)
 
     // TODO-CAM: Fix request response usage as booleans
@@ -759,7 +759,7 @@ export const editExistingRequest: ActionIF = ({ commit, getters }) => {
   if (['clientFirstName', 'clientLastName', 'contact'].some(field => !!getters.getNr.applicants[field])) {
     commit('mutateActingOnOwnBehalf', false)
   }
-  let { entity_type_cd } = this.nr
+  let { entity_type_cd } = getters.getNr
   if (getters.getEntityTypesBC.some(type => type.value === entity_type_cd)) {
     commit('mutateLocation', 'BC')
   } else if (getters.getNr.xproJurisdiction) {
@@ -778,18 +778,19 @@ export const editExistingRequest: ActionIF = ({ commit, getters }) => {
     commit('mutateLocation', location)
   }
   commit('mutateEntityType', entity_type_cd)
-  if (!this.entityTypeOptions.some(option => option.value === entity_type_cd)) {
+  if (!getters.getEntityTypeOptions.some(option => option.value === entity_type_cd)) {
     let obj = getters.getEntityTypesBC.find(entity => entity.value === entity_type_cd)
       ? getters.getEntityTypesBC.find(entity => entity.value === entity_type_cd)
       : getters.getEntityTypesXPRO.find(entity => entity.value === entity_type_cd)
     commit('mutateEntityTypeAddToSelect', obj)
   }
   let { requestTypeCd, request_action_cd } = getters.getNr
+
   if (['AS', 'AL', 'XASO', 'XCASO', 'UA'].includes(requestTypeCd)) {
     request_action_cd = 'ASSUMED'
   }
+  commit('mutateRequestAction', request_action_cd)
   if (request_action_cd !== 'NEW') {
-    commit('mutateRequestAction', request_action_cd)
     let reqObj = RequestActions.find(type => type.value === request_action_cd)
     commit('mutateExtendedRequestType', reqObj)
   }
@@ -1075,15 +1076,16 @@ export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
 
 /** Submits an edited NR or a new name submission. */
 export const submit: any = async ({ commit, getters, dispatch }): Promise<any> => {
-  if (getters.isEditMode) {
+  if (getters.getEditMode) {
     // TODO-CAM: Refactor the way these async requests are used to provide conditional booleans
     // @ts-ignore
-    if (await patchNameRequests()) {
+    if (await patchNameRequests({ commit, getters })) {
       // @ts-ignore
-      if (await checkinNameRequest()) {
+      if (await checkinNameRequest({ commit, getters })) {
         commit('mutateDisplayedComponent', 'Success')
         await sleep(1000) // wait for a second to show the update success
-        await this.fetchNr(+getters.getNrId)
+        const nrData = await getNameRequest({ commit }, +getters.getNrId)
+        loadExistingNameRequest({ commit }, nrData)
       }
     }
   } else {
@@ -1092,7 +1094,7 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
       request = await postNameRequests({ commit, getters }, 'draft')
     } else {
       if (!getters.isEditMode && [NrState.COND_RESERVED, NrState.RESERVED].includes(getters.getNrState)) {
-        request = await getNameRequest({ commit, getters }, getters.getNrId)
+        request = await getNameRequest({ commit }, getters.getNrId)
         if (request?.stateCd === NrState.CANCELLED) {
           await setActiveComponent('Timeout')
           return
