@@ -6,5 +6,5 @@ export interface ActionIF {
 }
 
 export interface ActionBindingIF {
-  (x: any | null, y?: any | null, z?: any | null): any
+  (x: any | null, y?: any | null): any
 }

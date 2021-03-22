@@ -13,7 +13,7 @@
               <span>2. </span>{{nameChoices.name2}}
             </li>
             <li v-if="nameChoices.name3">
-              <span>3. </span>{{nameChoices.name2}}
+              <span>3. </span>{{nameChoices.name3}}
             </li>
           </template>
         </ul>
