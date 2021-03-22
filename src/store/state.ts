@@ -1,6 +1,9 @@
 import { NameRequestI, StateModelIF } from '@/interfaces'
 
 export const stateModel: StateModelIF = {
+  common: {
+    currentJsDate: null
+  },
   newRequestModel: {
     actingOnOwnBehalf: true,
     addressSuggestions: null,

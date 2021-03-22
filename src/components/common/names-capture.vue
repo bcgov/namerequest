@@ -296,7 +296,7 @@ export default class NamesCapture extends Vue {
   @Getter getEntityTypeOptions!: Array<EntityI>
   @Getter getIsAssumedName!: boolean
   @Getter getLocation!: LocationT
-  @Getter getLocationOptions!: Array<any>
+  @Getter getLocationOptions!: any[]
   @Getter getName!: string
   @Getter getNameChoices!: NameChoicesIF
   @Getter getNr!: Partial<NameRequestI>

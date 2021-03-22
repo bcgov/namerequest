@@ -53,7 +53,7 @@ export default class AnalyzeCharacters extends Vue {
   // Global getters
   @Getter getEntityTextFromValue!: string
   @Getter getLocation!: string
-  @Getter getLocationOptions!: Array<any>
+  @Getter getLocationOptions!: any[]
 
   // Global actions
   @Action cancelAnalyzeName!: ActionBindingIF

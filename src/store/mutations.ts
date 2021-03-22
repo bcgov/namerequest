@@ -154,6 +154,10 @@ export const mutateJurisdiction = (state: StateIF, request_jurisdiction_cd: stri
   state.stateModel.newRequestModel.request_jurisdiction_cd = request_jurisdiction_cd
 }
 
+export const mutateCurrentJsDate = (state: StateIF, date: Date) => {
+  state.stateModel.common.currentJsDate = date
+}
+
 export const mutateName = (state: StateIF, name: string) => {
   state.stateModel.newRequestModel.name = name
 }

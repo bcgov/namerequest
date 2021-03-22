@@ -13,7 +13,6 @@ module.exports = {
   configureWebpack: {
     devtool: 'eval-source-map',
     plugins: [
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
       new webpack.DefinePlugin({
         'process.env': {
           ABOUT_TEXT:

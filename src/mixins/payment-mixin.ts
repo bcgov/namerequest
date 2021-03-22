@@ -1,10 +1,9 @@
 import { Component, Mixins } from 'vue-property-decorator'
-import { Action } from 'vuex-class'
+import { Action, Getter } from 'vuex-class'
 import axios, { AxiosRequestConfig } from 'axios'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import { PaymentStatus } from '@/enums'
 import { ActionMixin } from '@/mixins'
-import paymentModule from '@/modules/payment'
 import * as paymentTypes from '@/modules/payment/store/types'
 import { CreatePaymentParams, NameRequestPaymentResponse } from '@/modules/payment/models'
 import errorModule from '@/modules/error'
@@ -20,6 +19,9 @@ export class PaymentMixin extends Mixins(ActionMixin) {
   @Action setPaymentReceipt!: ActionBindingIF
   @Action setPaymentRequest!: ActionBindingIF
   @Action setSbcPayment!: ActionBindingIF
+
+  // Global getter
+  @Getter getCurrentJsDate!: Date
 
   get sbcPayment () {
     return this.$store.getters[paymentTypes.GET_SBC_PAYMENT]
@@ -97,7 +99,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
         'corp_type': corpType,
         'filing_type_code': filingType,
         'jurisdiction': jurisdiction,
-        'date': new Date().toISOString(),
+        'date': this.getCurrentJsDate.toISOString(), // "now" in UTC
         'priority': priorityRequest
       })
       await this.setPaymentFees(response)
@@ -158,7 +160,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       const { payment, sbcPayment = { receipts: [] } } = paymentResponse
 
       await this.setPayment(payment)
-      // await paymentModule.setPaymentReceipt(sbcPayment.receipts[0])
+      // await paymentModule.setPaymentReceipt(sbcPayment.receipts[0]) // *** TODO: new code != old code ???
       await this.setPaymentRequest(req)
 
       if (onSuccess) {

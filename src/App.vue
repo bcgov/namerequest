@@ -69,10 +69,10 @@
 
 <script lang="ts">
 // libraries, etc
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { getFeatureFlag } from '@/plugins'
-import paymentModule from '@/modules/payment'
+import { DateMixin } from '@/mixins'
 
 // dialogs and other components
 import ChatPopup from '@/components/common/chat-popup.vue'
@@ -114,7 +114,7 @@ import { RollbackActions } from '@/enums'
     SbcFooter
   }
 })
-export default class App extends Vue {
+export default class App extends Mixins(DateMixin) {
   // attach method to 'this'
   readonly getFeatureFlag = getFeatureFlag
 
@@ -132,6 +132,10 @@ export default class App extends Vue {
   @Action setDisplayedComponent!: ActionBindingIF
   @Action setIncorporateLoginModalVisible!: ActionBindingIF
   @Action togglePaymentModal!: ActionBindingIF
+  @Action setCurrentJsDate!: ActionBindingIF
+
+  /** The Update Current JS Date timer id. */
+  private updateCurrentJsDateId = 0
 
   get nameRequestUrl (): string {
     return `${window.location.origin}${process.env.VUE_APP_PATH}`
@@ -148,12 +152,25 @@ export default class App extends Vue {
     return process.env.ABOUT_TEXT
   }
 
-  created (): void {
+  async created (): Promise<void> {
+    // update Current Js Date now and every 1 minute thereafter
+    await this.updateCurrentJsDate()
+    this.updateCurrentJsDateId = window.setInterval(this.updateCurrentJsDate, 60000)
+
     // listen for spinner show/hide events
     this.$root.$on('showSpinner', (flag = false) => { this.showSpinner = flag })
   }
 
+  /** Fetches and stores the current JS date. */
+  private async updateCurrentJsDate (): Promise<void> {
+    const jsDate = await this.getServerDate()
+    this.setCurrentJsDate(jsDate)
+  }
+
   destroyed (): void {
+    // stop Update Current Js Date timer
+    window.clearInterval(this.updateCurrentJsDateId)
+
     // stop listening for spinner show/hide events
     this.$root.$off('showSpinner')
   }

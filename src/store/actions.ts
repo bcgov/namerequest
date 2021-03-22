@@ -1106,6 +1106,10 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
   }
 }
 
+export const setCurrentJsDate: ActionIF = ({ commit }, date: Date): void => {
+  commit('mutateCurrentJsDate', date)
+}
+
 export const setName: ActionIF = ({ commit }, name: string): void => {
   commit('mutateName', name)
 }

@@ -20,6 +20,10 @@ import {
   Designations, EntityTypesBcData, EntityTypesXproData, Locations, RequestActions
 } from '@/list-data'
 
+export const getCurrentJsDate = (state: StateIF): Date => {
+  return state.stateModel.common.currentJsDate
+}
+
 export const getName = (state: StateIF): string => {
   return state.stateModel.newRequestModel.name
 }
