@@ -64,7 +64,7 @@ export class DateMixin extends Mixins(CommonMixin) {
    * @example "2021-01-01 07:00:00 GMT" -> "2020-12-31"
    * @example "2021-01-01 08:00:00 GMT" -> "2021-01-01"
    */
-  dateToDateString (date: Date): string {
+  dateToYyyyMmDd (date: Date): string {
     // safety check
     if (!isDate(date) || isNaN(date.getTime())) return null
 
@@ -119,7 +119,7 @@ export class DateMixin extends Mixins(CommonMixin) {
   }
 
   /**
-   * Converts a Date object to a date and time string (Month DD, YYYY at HH:MM am/pm Pacific time).
+   * Converts a Date object to a date and time string (Month Day, Year at HH:MM am/pm Pacific time).
    * @example "2020-10-27T18:45:00Z" -> "October 27, 2020 at 11:45 am Pacific time"
    */
   dateToPacificDateTime (date: Date): string {
@@ -145,8 +145,8 @@ export class DateMixin extends Mixins(CommonMixin) {
     if (!isDate(date) || isNaN(date.getTime())) return NaN
 
     // convert Dates to dates to Pacific tz
-    const todayPacific = this.dateToDateString(this.getCurrentJsDate)
-    const datePacific = this.dateToDateString(date)
+    const todayPacific = this.dateToYyyyMmDd(this.getCurrentJsDate)
+    const datePacific = this.dateToYyyyMmDd(date)
 
     // get milliseconds for start of "today" and start of "date"
     const todayPacificMs = new Date(todayPacific).setHours(0, 0, 0, 0)
