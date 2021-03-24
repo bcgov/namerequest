@@ -45,7 +45,7 @@ import { sleep } from '@/plugins'
 import { NrAction } from '@/enums'
 import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { UPGRADE_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
+import { CANCEL_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 
 @Component({})
 export default class CancelDialog extends Mixins(NameRequestMixin, PaymentMixin) {
@@ -64,7 +64,7 @@ export default class CancelDialog extends Mixins(NameRequestMixin, PaymentMixin)
   }
 
   private get isVisible (): boolean {
-    return this.$store.getters[UPGRADE_MODAL_IS_VISIBLE]
+    return this.$store.getters[CANCEL_MODAL_IS_VISIBLE]
   }
 
   async showModal (): Promise<void> {

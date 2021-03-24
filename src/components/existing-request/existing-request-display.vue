@@ -594,6 +594,7 @@ export default class ExistingRequestDisplay extends Mixins(
           }
           break
         case NrAction.UPGRADE:
+          console.log('inside Upgrade')
           await this.toggleUpgradeModal(true)
           break
         case NrAction.REAPPLY:
@@ -606,6 +607,7 @@ export default class ExistingRequestDisplay extends Mixins(
           await this.toggleRefundModal(true)
           break
         case NrAction.CANCEL:
+          console.log('inside cancel')
           await this.toggleCancelModal(true)
           break
         case NrAction.INCORPORATE:
