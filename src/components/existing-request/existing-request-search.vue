@@ -4,46 +4,37 @@
 
       <!-- Help Info -->
       <v-col cols="3" class="existing-request-info copy-small">
-        <div class="ma-8">
-          <ul class="mt-3">
-            <li>
-              Check review time and approval status
-            </li>
-            <li>
-              Upgrade Name Request to Priority ($100.00)
-            </li>
-            <li>
-              Extend Name Request for an additional 56 days before it expires ($30.00)
-            </li>
-            <li>
-              Cancel your Name Request
-            </li>
-            <li>
-              Edit details, download receipts, and more
-            </li>
+        <div class="mx-8 my-10">
+          <ul>
+            <li>Check review time and approval status</li>
+            <li>Upgrade Name Request to Priority ($100.00)</li>
+            <li>Extend Name Request for an additional 56 days before it expires ($30.00)</li>
+            <li>Cancel your Name Request</li>
+            <li>Edit details, download receipts, and more</li>
           </ul>
         </div>
       </v-col>
 
       <!-- Existing Request Search -->
       <v-col cols="9">
-        <v-form v-model="isValid" lazy-validation @submit="handleSubmit()" class="pa-10" ref="existing-nr-form">
+        <v-form v-model="isValid" lazy-validation @submit="handleSubmit()" class="pa-10" ref="existingNrForm">
+
+          <!-- FIRST LINE -->
           <v-row no-gutters>
-            <!-- FIRST LINE -->
-            <v-col cols="1" class="max-width"></v-col>
+            <v-col cols="1" class="max-width" />
             <v-col cols="11" class="h6">
-             Enter your information to manage an existing Name Request:
+              Enter your information to manage an existing Name Request:
             </v-col>
           </v-row>
 
           <!-- SECOND LINE -->
           <v-row class="mt-4" no-gutters v-if="errorMessage">
-            <v-col cols="1" class="max-width"></v-col>
+            <v-col cols="1" class="max-width" />
             <v-col cols="11" class="error-message copy-small" v-html="errorMessage" />
           </v-row>
 
           <!-- THIRD LINE -->
-          <v-row class="mt-4 mb-6" no-gutters align="center">
+          <v-row class="mt-4" no-gutters align="center">
             <v-col cols="1" class="max-width">
               <v-img src="../../assets/images/number1.svg" contain width="34" height="34" />
             </v-col>
@@ -57,12 +48,13 @@
                             label="NR Number"
                             hint="Example: NR 1234567"
                             persistent-hint
-                            validate-on-blur />
+                            validate-on-blur
+              />
             </v-col>
           </v-row>
 
           <!-- FOURTH LINE -->
-          <v-row class="mt-5" no-gutters align="center">
+          <v-row class="mt-6" no-gutters align="center">
             <v-col cols="1" class="max-width">
               <v-img src="../../assets/images/number2.svg" contain width="34" height="34" />
             </v-col>
@@ -76,7 +68,8 @@
                             label="Applicant's Phone Number"
                             hint="Example: 555-555-5555"
                             persistent-hint
-                            validate-on-blur />
+                            validate-on-blur
+              />
             </v-col>
             <v-col class="copy-normal text-center shrink mx-4"> or </v-col>
             <v-col class="max-height">
@@ -89,7 +82,8 @@
                             label="Applicant's Notification Email"
                             hint="Example: name@email.com"
                             persistent-hint
-                            validate-on-blur />
+                            validate-on-blur
+              />
             </v-col>
           </v-row>
 
@@ -99,8 +93,10 @@
               <v-btn id="retrieve-name-btn" @click="handleSubmit()">Retrieve Name Request</v-btn>
             </v-col>
           </v-row>
+
         </v-form>
       </v-col>
+
     </v-row>
   </div>
 </template>
@@ -109,11 +105,16 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
-import { NameRequestI, ExistingRequestSearchI } from '@/interfaces'
+import { FormType, NameRequestI, ExistingRequestSearchI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class ExistingRequestSearch extends Vue {
+  // Refs
+  $refs!: {
+    existingNrForm: FormType
+  }
+
   // Global getters
   @Getter getNr!: Partial<NameRequestI>
   @Getter getExistingRequestSearch!: ExistingRequestSearchI
@@ -161,7 +162,7 @@ export default class ExistingRequestSearch extends Vue {
   ]
 
   private async handleSubmit (): Promise<void> {
-    this.$refs['existing-nr-form']['validate']()
+    this.$refs.existingNrForm.validate()
     await this.$nextTick()
     if (this.isValid) {
       await this.findNameRequest(null)
@@ -179,14 +180,12 @@ export default class ExistingRequestSearch extends Vue {
   }
 
   private handleExistingRequestSearch (key: string, value: string) {
-    // auto-capitalize the entered NR number
+    // uppercase the NR number
     if (key === 'nrNum') value = value.toUpperCase()
 
-    this.$refs['existing-nr-form']['resetValidation']()
+    this.$refs.existingNrForm.resetValidation()
     this.setExistingRequestSearch({ key, value })
-    if (this.errorMessage) {
-      this.errorMessage = ''
-    }
+    this.errorMessage = ''
   }
 }
 </script>

@@ -1,5 +1,5 @@
 import Vuetify from 'vuetify'
-import Landing from '@/views/landing.vue'
+import { Landing } from '@/views'
 import AnalyzeResults from './mocks/analyze-results.vue'
 import { mount, createLocalVue } from '@vue/test-utils'
 // import newReqModule from '@/store/new-request-module'

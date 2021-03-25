@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import { Component } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { ApplicantI } from '@/interfaces'
 import * as filingTypes from '@/modules/payment/filing-types'
 import paymentModule from '@/modules/payment'

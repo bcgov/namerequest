@@ -70,7 +70,7 @@ async function handleApiError (err: any, defaultMessage = ''): Promise<string> {
 }
 
 // TODO: Not a real Action
-export const downloadOutputs = async (id: string): Promise<void> => {
+export const downloadOutputs = async ({ getters }, id: number): Promise<void> => {
   try {
     const url = `namerequests/${id}/result`
     const headers = { 'Accept': 'application/pdf' }
@@ -381,29 +381,20 @@ export const getNameRequest = async ({ commit }, nrId: number): Promise<any> => 
  * @param nrData the NR data object
  */
 export const loadExistingNameRequest:ActionIF = async ({ commit }, nrData: any) => {
-  const handleEmptyResults = () => {
-    commit('mutateNameRequest',
-      {
-        text: 'No records were found that match the information you entered.<br>' +
-          'Please verify the NR Number and the phone / email and try again.',
-        failed: true
-      }
-    )
-    commit('mutateDisplayedComponent', 'Tabs')
-  }
-
-  const handleResults = (data) => {
-    const { names } = data
-    commit('resetApplicantDetails')
-    commit('setNrResponse', data)
-    commit('updateReservationNames', names)
-    commit('mutateDisplayedComponent', 'ExistingRequestDisplay')
-  }
-
   if (!nrData) {
-    handleEmptyResults()
+    commit('mutateNameRequest', {
+      text: 'No records were found that match the information you entered.<br>' +
+        'Please verify the NR Number and the phone / email and try again.',
+      failed: true
+    })
+    commit('mutateDisplayedComponent', 'Tabs')
   } else {
-    handleResults(nrData)
+    const { names } = nrData
+    commit('resetApplicantDetails')
+    commit('setNrResponse', nrData)
+    commit('updateReservationNames', names)
+    // *** TODO: instead of "mutating the component", route to "/existing/:id"
+    commit('mutateDisplayedComponent', 'ExistingRequestDisplay')
   }
 }
 

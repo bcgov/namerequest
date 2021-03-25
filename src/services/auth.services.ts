@@ -5,19 +5,28 @@ import { CreateNRAffiliationRequestBody } from '@/interfaces'
 const axios = addAxiosInterceptors(Axios.create())
 
 export default class AuthServices {
-  /** Auth API URL. */
+  /** The Auth API URL. */
   static authApiUrl = sessionStorage.getItem('AUTH_API_URL')
 
-  /** Create an NR Affiliation */
+  /** Creates an NR Affiliation */
   static async createNRAffiliation (orgIdentifier: number, affiliation: CreateNRAffiliationRequestBody): Promise<any> {
-    return axios.post(
-      `${AuthServices.authApiUrl}/orgs/${orgIdentifier}/affiliations?newBusiness=true`, affiliation
-    )
+    const url = `${this.authApiUrl}/orgs/${orgIdentifier}/affiliations?newBusiness=true`
+    return axios.post(url, affiliation)
   }
-  /** Delete an NR Affiliation */
+
+  /** Deletes an NR Affiliation */
   static async removeAffiliation (orgIdentifier: number, incorporationNumber: string): Promise<any> {
-    return axios.delete(
-      `${AuthServices.authApiUrl}/orgs/${orgIdentifier}/affiliations/${incorporationNumber}`
-    )
+    const url = `${this.authApiUrl}/orgs/${orgIdentifier}/affiliations/${incorporationNumber}`
+    return axios.delete(url)
+  }
+
+  /** Fetches current user info. */
+  static async fetchUserInfo (): Promise<any> {
+    const url = `${this.authApiUrl}/users/@me`
+    return axios.get(url)
+      .then(response => {
+        if (response?.data) return response.data
+        else throw new Error('Invalid user info')
+      })
   }
 }

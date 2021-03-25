@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import { Component } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { Action } from 'vuex-class'
 import AuthServices from '@/services/auth.services'
 import BusinessServices from '@/services/business.services'
@@ -8,10 +7,12 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export class NrAffiliationMixin extends Vue {
+  // Global action
   @Action setAffiliationErrorModalVisible!: ActionBindingIF
+
   /**
-   * Create an affiliation between current authenticated Account and current Nr
-   * @param nr The Nr to affiliate
+   * Creates an affiliation between the current authenticated account and the current NR.
+   * @param nr the NR to affiliate
    */
   async createAffiliation (nr: NameRequestI): Promise<any> {
     try {

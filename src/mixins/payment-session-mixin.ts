@@ -1,6 +1,4 @@
-import Vue from 'vue'
-import { Component } from 'vue-property-decorator'
-
+import { Component, Vue } from 'vue-property-decorator'
 import { NameRequestPaymentResponse } from '@/modules/payment/models'
 import { PaymentAction } from '@/enums'
 

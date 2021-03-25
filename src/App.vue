@@ -3,6 +3,7 @@
     <div id="main-column">
       <SbcAuthenticationOptionsDialog
         attach="#app"
+        :inAuth="false"
         :showModal="getIncorporateLoginModalVisible"
         :redirectUrl="nameRequestUrl"
         @close="setIncorporateLoginModalVisible(false)"
@@ -20,13 +21,10 @@
       </v-fade-transition>
 
       <!-- SBC Common Components header -->
-      <sbc-header
+      <SbcHeader
         class="sbc-header"
-        :in-auth="false"
-        :redirectOnLoginSuccess="nameRequestUrl"
-        :redirect-on-login-fail="nameRequestUrl"
-        :redirect-on-logout="nameRequestUrl"
-        :show-actions="true"
+        :inAuth="false"
+        :showActions="true"
       />
 
       <!-- Alert banner -->
@@ -41,8 +39,8 @@
       <!-- Components according to route -->
       <router-view />
 
-      <!-- SBC Common Components header -->
-      <sbc-footer :aboutText=aboutText />
+      <!-- SBC Common Components footer -->
+      <SbcFooter :aboutText=aboutText />
     </div>
 
     <!-- All dialogs app-wide -->
@@ -87,7 +85,6 @@ import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 
 // Interfaces / Enums
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { RollbackActions } from '@/enums'
 
 @Component({
   components: {
