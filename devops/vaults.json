@@ -1,0 +1,16 @@
+[
+    {
+        "vault": "keycloak",
+        "application": [
+            "base",
+            "web-base",
+            "name-requests-web"
+        ]
+    },
+    {
+        "vault": "name-request",
+        "application": [
+            "namerequest-ui"
+        ]
+    }
+]
