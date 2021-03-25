@@ -3,6 +3,7 @@
     <div id="main-column">
       <SbcAuthenticationOptionsDialog
         attach="#app"
+        :inAuth="false"
         :showModal="getIncorporateLoginModalVisible"
         :redirectUrl="nameRequestUrl"
         @close="setIncorporateLoginModalVisible(false)"
