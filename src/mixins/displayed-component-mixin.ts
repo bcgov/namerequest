@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import { Component } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
@@ -16,6 +15,7 @@ export class DisplayedComponentMixin extends Vue {
   @Action setSubmissionTabComponent!: ActionBindingIF
 
   componentName: string = ''
+
   get displayedComponent () {
     // We can't watch a computed property directly, and we don't want to inject displayedComponent as a prop
     // so we're using an intermediate data property, which we CAN watch - set its value here
@@ -24,7 +24,6 @@ export class DisplayedComponentMixin extends Vue {
       // Update the active component name
       this.componentName = componentName
     }
-
     return componentName
   }
 

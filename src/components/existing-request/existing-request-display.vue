@@ -185,7 +185,6 @@ import { Action, Getter } from 'vuex-class'
 
 import MainContainer from '@/components/new-request/main-container.vue'
 import { NrAffiliationMixin, CommonMixin, DateMixin, PaymentMixin } from '@/mixins'
-import paymentModule from '@/modules/payment'
 import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
@@ -196,7 +195,7 @@ import { getBaseUrl } from '@/components/payment/payment-utils'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 // Interfaces
-import { ExistingRequestSearchI, NameRequestI } from '@/interfaces'
+import { NameRequestI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
@@ -216,7 +215,6 @@ export default class ExistingRequestDisplay extends Mixins(
 ) {
   // Global getters
   @Getter getDisplayedComponent!: string
-  @Getter getExistingRequestSearch!: ExistingRequestSearchI
   @Getter getNr!: Partial<NameRequestI>
   @Getter getNrState!: NrState
   @Getter getCurrentJsDate!: Date

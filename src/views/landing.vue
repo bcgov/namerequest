@@ -72,26 +72,17 @@ export default class Landing extends Vue {
   @Action loadExistingNameRequest!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
 
-  // TODO: IS THIS USED?
+  /** ID parameter passed in on "/nr" route. */
   @Prop(String)
   readonly id: string
 
-  private agileUrl = 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business' +
-    '/permits-licences/news-updates/modernization'
-
-  // TODO: IS THIS USED?
   async mounted () {
     const { id } = this
-    // If the ID prop is set, load the existing NR
+    // if an id was specified then get and load the subject NR
     if (id) {
-      await this.fetchNr(+id)
+      const nrData = await this.getNameRequest(+id)
+      await this.loadExistingNameRequest(nrData)
     }
-  }
-
-  // TODO: IS THIS USED?
-  async fetchNr (nrId: number): Promise<void> {
-    const nrData = await this.getNameRequest(nrId)
-    await this.loadExistingNameRequest(nrData)
   }
 }
 </script>
