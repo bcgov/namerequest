@@ -70,7 +70,7 @@ async function handleApiError (err: any, defaultMessage = ''): Promise<string> {
 }
 
 // TODO: Not a real Action
-export const downloadOutputs = async (id: string): Promise<void> => {
+export const downloadOutputs = async ({ getters }, id: number): Promise<void> => {
   try {
     const url = `namerequests/${id}/result`
     const headers = { 'Accept': 'application/pdf' }
