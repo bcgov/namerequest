@@ -66,7 +66,7 @@
                             filled
                             id="phone-number-text-field"
                             label="Applicant's Phone Number"
-                            hint="Example: 555-555-5555 or 555 555 5555"
+                            hint="Example: 555-555-5555"
                             persistent-hint
                             validate-on-blur
               />
@@ -177,7 +177,6 @@ export default class ExistingRequestSearch extends Vue {
     this.phoneRules = (phoneNumber || !emailAddress)
       ? [
         v => !!v || 'Please enter a phone number',
-        v => (/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/.test(v)) || 'A valid phone number is required',
         v => (v.length <= 30) || 'Cannot exceed 30 characters'
       ]
       : []
