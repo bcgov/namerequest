@@ -1,24 +1,22 @@
-[
-  {
-    "URL": "https://namex-dev.pathfinder.gov.bc.ca",
-    "PAYMENT_PORTAL_URL": "https://dev.bcregistry.ca/business/auth/makepayment",
-    "BUSINESSES_URL": "https://dev.bcregistry.ca/business/auth/",
-    "KEYCLOAK_CONFIG_PATH": "/local-keycloak-config-url/keycloak.json",
-    "AUTH_API_URL": "https://auth-api-dev.pathfinder.gov.bc.ca/api/v1",
-    "LEGAL_API_URL": "https://legal-api-dev.pathfinder.gov.bc.ca/api/v1",
-    "VUE_APP_PAY_ROOT_API": "https://pay-api-dev.pathfinder.gov.bc.ca/api/v1",
-    "VUE_APP_STATUS_ROOT_API": "https://status-api-dev.apps.silver.devops.gov.bc.ca/api/v1",
-    "SENTRY_DSN": "",
-    "LD_CLIENT_ID": "",
-    "NAME_REQUEST_URL": "https://dev.bcregistry.ca/namerequest",
-    "NRO_URL": "https://dev.bcregistrynames.gov.bc.ca/nro/",
-    "AUTH_TOKEN_URL": "https://dev.oidc.gov.bc.ca/auth/realms/fcf0kpqr/protocol/openid-connect/token",
-    "QUICK_SEARCH_PUBLIC_ID": "",
-    "QUICK_SEARCH_PUBLIC_SECRET": "",
-    "HOTJAR_ID": "2284327",
-    "ENTITY_SELECTOR_URL": "https://entity-selection-dev.pathfinder.gov.bc.ca/",
-    "WEBCHAT_URL": "",
-    "WEBCHAT_ID": "",
-    "WEBCHAT_STATUS_URL": ""
-  }
-]
+{
+  "URL": "https://namex-dev.pathfinder.gov.bc.ca",
+  "PAYMENT_PORTAL_URL": "https://dev.bcregistry.ca/business/auth/makepayment",
+  "BUSINESSES_URL": "https://dev.bcregistry.ca/business/auth/",
+  "KEYCLOAK_CONFIG_PATH": "/local-keycloak-config-url/keycloak.json",
+  "AUTH_API_URL": "https://auth-api-dev.pathfinder.gov.bc.ca/api/v1",
+  "LEGAL_API_URL": "https://legal-api-dev.pathfinder.gov.bc.ca/api/v1",
+  "VUE_APP_PAY_ROOT_API": "https://pay-api-dev.pathfinder.gov.bc.ca/api/v1",
+  "VUE_APP_STATUS_ROOT_API": "https://status-api-dev.apps.silver.devops.gov.bc.ca/api/v1",
+  "SENTRY_DSN": "",
+  "LD_CLIENT_ID": "5fbec4b5d998e30990020007",
+  "NAME_REQUEST_URL": "https://dev.bcregistry.ca/namerequest",
+  "NRO_URL": "https://dev.bcregistrynames.gov.bc.ca/nro/",
+  "AUTH_TOKEN_URL": "https://dev.oidc.gov.bc.ca/auth/realms/fcf0kpqr/protocol/openid-connect/token",
+  "QUICK_SEARCH_PUBLIC_ID": "",
+  "QUICK_SEARCH_PUBLIC_SECRET": "",
+  "HOTJAR_ID": "2284327",
+  "ENTITY_SELECTOR_URL": "https://entity-selection-dev.pathfinder.gov.bc.ca/",
+  "WEBCHAT_URL": "",
+  "WEBCHAT_ID": "",
+  "WEBCHAT_STATUS_URL": ""
+}
