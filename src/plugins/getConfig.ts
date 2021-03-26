@@ -21,63 +21,63 @@ export async function getConfig (): Promise<EnvConfigI> {
     return Promise.reject(new Error('Could not fetch configuration.json'))
   })
 
-  const baseURL = response.data[0]['URL'] + '/api/v1'
+  const baseURL = response.data['URL'] + '/api/v1'
   axios.defaults.baseURL = baseURL
 
-  const paymentPortalUrl = response.data[0]['PAYMENT_PORTAL_URL']
+  const paymentPortalUrl = response.data['PAYMENT_PORTAL_URL']
   sessionStorage.setItem('PAYMENT_PORTAL_URL', paymentPortalUrl)
 
-  const businessesUrl = response.data[0]['BUSINESSES_URL']
+  const businessesUrl = response.data['BUSINESSES_URL']
   sessionStorage.setItem('BUSINESSES_URL', businessesUrl)
 
-  const keycloakConfigPath = response.data[0]['KEYCLOAK_CONFIG_PATH']
+  const keycloakConfigPath = response.data['KEYCLOAK_CONFIG_PATH']
   sessionStorage.setItem('KEYCLOAK_CONFIG_PATH', keycloakConfigPath)
 
-  const authApiUrl = response.data[0]['AUTH_API_URL']
+  const authApiUrl = response.data['AUTH_API_URL']
   sessionStorage.setItem('AUTH_API_URL', authApiUrl)
 
-  const legalApiUrl = response.data[0]['LEGAL_API_URL']
+  const legalApiUrl = response.data['LEGAL_API_URL']
   sessionStorage.setItem('LEGAL_API_URL', legalApiUrl)
 
-  const vueAppPayRootApi = response.data[0]['VUE_APP_PAY_ROOT_API']
+  const vueAppPayRootApi = response.data['VUE_APP_PAY_ROOT_API']
   sessionStorage.setItem('VUE_APP_PAY_ROOT_API', vueAppPayRootApi)
 
-  const sentryDsn: string = response.data[0]['SENTRY_DSN'];
+  const sentryDsn: string = response.data['SENTRY_DSN'];
   (<any>window).sentryDsn = sentryDsn
 
-  const hotjarId: string = response.data[0]['HOTJAR_ID'];
+  const hotjarId: string = response.data['HOTJAR_ID'];
   (<any>window).hotjarId = hotjarId
 
-  const ldClientId: string = response.data[0]['LD_CLIENT_ID'];
+  const ldClientId: string = response.data['LD_CLIENT_ID'];
   (<any>window).ldClientId = ldClientId
 
-  const authTokenUrl: string = response.data[0]['AUTH_TOKEN_URL'];
+  const authTokenUrl: string = response.data['AUTH_TOKEN_URL'];
   (<any>window).authTokenUrl = authTokenUrl
 
-  const quickSearchPublicId: string = response.data[0]['QUICK_SEARCH_PUBLIC_ID'];
+  const quickSearchPublicId: string = response.data['QUICK_SEARCH_PUBLIC_ID'];
   (<any>window).quickSearchPublicId = quickSearchPublicId
 
-  const quickSearchPublicSecret: string = response.data[0]['QUICK_SEARCH_PUBLIC_SECRET'];
+  const quickSearchPublicSecret: string = response.data['QUICK_SEARCH_PUBLIC_SECRET'];
   (<any>window).quickSearchPublicSecret = quickSearchPublicSecret
 
-  const webChatUrl: string = response.data[0]['WEBCHAT_URL'];
+  const webChatUrl: string = response.data['WEBCHAT_URL'];
   (<any>window).webChatUrl = webChatUrl
 
-  const webChatId: string = response.data[0]['WEBCHAT_ID'];
+  const webChatId: string = response.data['WEBCHAT_ID'];
   (<any>window).webChatId = webChatId
 
-  const webChatStatusUrl: string = response.data[0]['WEBCHAT_STATUS_URL'];
+  const webChatStatusUrl: string = response.data['WEBCHAT_STATUS_URL'];
   (<any>window).webChatStatusUrl = webChatStatusUrl
 
-  const entitySelectorUrl = response.data[0]['ENTITY_SELECTOR_URL']
+  const entitySelectorUrl = response.data['ENTITY_SELECTOR_URL']
   entitySelectorUrl && sessionStorage.setItem('ENTITY_SELECTOR_URL', entitySelectorUrl)
 
   /**
    * "authConfig" is a workaround to fix the user settings call as it expects a URL with no trailing slash.
    * This can be removed when a fix is made to sbc-common-components to handle this.
    */
-  const nameRequestUrl = response.data[0]['NAME_REQUEST_URL']
-  const nroUrl = response.data[0]['NRO_URL']
+  const nameRequestUrl = response.data['NAME_REQUEST_URL']
+  const nroUrl = response.data['NRO_URL']
   const authConfig = {
     'AUTH_URL': businessesUrl,
     'VUE_APP_PAY_ROOT_API': vueAppPayRootApi,
