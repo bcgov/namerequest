@@ -234,7 +234,7 @@ export const getNameAnalysisXPRO: ActionIF = async ({ commit, getters }) => {
     // (should not display "send to examination")
     if (err?.code === 'ECONNABORTED' || err?.message === 'Network Error') {
       commit('mutateNameAnalysisTimedOut', true)
-      commit('mutateName', this.getName)
+      commit('mutateName', getters.getName)
       commit('mutateDisplayedComponent', 'SendToExamination')
       return
     }
@@ -251,9 +251,9 @@ export const getNameAnalysisXPRO: ActionIF = async ({ commit, getters }) => {
  * @param action the action to confirm
  * @returns True if confirmed, otherwise False
  */
-export const confirmAction: ActionIF = async ({ commit }, action: string): Promise<boolean> => {
+export const confirmAction: ActionIF = async ({ commit, getters }, action: string): Promise<boolean> => {
   try {
-    const nrData = await this.getNameRequest(this.nr.id)
+    const nrData = await getNameRequest({ commit }, getters.getNrId)
     if (!nrData) throw new Error('Got error from getNameRequest()')
     commit('setNrResponse', nrData)
     return Boolean(nrData.actions.includes(action))
@@ -443,7 +443,8 @@ export const checkoutNameRequest: ActionIF = async ({ commit, getters }): Promis
 
 export const checkinNameRequest = async ({ getters }): Promise<boolean> => {
   try {
-    // Return if approved Name Request because it was never checked out
+    // Approved Name Requests are not checked out due to limited data that is editable.
+    // Return out of checkIn because the NR was never checked out.
     if (getters.getNrState === NameState.APPROVED) return true
 
     const checkedOutBy = sessionStorage.getItem('checkedOutBy')
@@ -955,7 +956,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
           ? sanitizeName(profile?.LegalEntity?.names[0]?.legalName)
           : sanitizeName(profile?.LegalEntity?.names?.legalName)
         commit('mutateName', name)
-        commit('mutateNRData', { key: 'homeJurisNum', value: this.corpSearch })
+        commit('mutateNRData', { key: 'homeJurisNum', value: getters.getCorpSearch })
       } else {
         commit('mutateNoCorpNum', true)
         return
@@ -1020,15 +1021,15 @@ export const setAddressSuggestions: ActionIF = ({ commit }, addressSuggestions: 
 export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> => {
   if (getters.getShowCorpNum) {
     if (getters.getShowCorpNum === 'mras') {
-      return this.checkMRAS(corpNum)
+      return checkMRAS({ getters }, corpNum)
     } else {
-      return this.checkCOLIN(corpNum)
+      return checkCOLIN({ getters }, corpNum)
     }
   }
 }
 
 // TODO: Not a real action
-export const checkCOLIN = (corpNum: string) => {
+export const checkCOLIN = ({ getters }, corpNum: string) => {
   // Remove BC prefix as Colin only supports base number with no prefix for BC's
   const cleanedCorpNum = corpNum.replace(/^BC+/i, '')
   let url = `colin/${cleanedCorpNum}`
@@ -1036,8 +1037,8 @@ export const checkCOLIN = (corpNum: string) => {
 }
 
 // TODO: Not a real action
-export const checkMRAS = (corpNum: string) => {
-  let { xproJurisdiction } = this.nrData
+export const checkMRAS = ({ getters }, corpNum: string) => {
+  let { xproJurisdiction } = getters.getNrData
   let { SHORT_DESC } = this.$canJurisdictions.find(jur => jur.text === xproJurisdiction)
   let url = `mras-profile/${SHORT_DESC}/${corpNum}`
   return axios.get(url)
