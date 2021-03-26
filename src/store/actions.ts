@@ -10,7 +10,7 @@ import {
   NewRequestNameSearchI,
   SelectOptionsI, SubmissionTypeT
 } from '@/interfaces'
-import { NrAction, NrState, RollbackActions } from '@/enums'
+import { NrAction, NrState, RollbackActions, NameState } from '@/enums'
 import { NameRequestPayment } from '@/modules/payment/models'
 import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
@@ -443,6 +443,9 @@ export const checkoutNameRequest: ActionIF = async ({ commit, getters }): Promis
 
 export const checkinNameRequest = async ({ getters }): Promise<boolean> => {
   try {
+    // Return if approved Name Request because it was never checked out
+    if (getters.getNrState === NameState.APPROVED) return true
+
     const checkedOutBy = sessionStorage.getItem('checkedOutBy')
     const checkedOutDt = sessionStorage.getItem('checkedOutDt')
 
