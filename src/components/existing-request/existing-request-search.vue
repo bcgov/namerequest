@@ -66,7 +66,7 @@
                             filled
                             id="phone-number-text-field"
                             label="Applicant's Phone Number"
-                            hint="Example: 555-555-5555"
+                            hint="Example: 555-555-5555 or 555 555 5555"
                             persistent-hint
                             validate-on-blur
               />
@@ -149,21 +149,17 @@ export default class ExistingRequestSearch extends Vue {
     }
   }
 
-  private emailRules = [
-    v => (!!v || !!this.getExistingRequestSearch?.phoneNumber) || 'Please enter either the phone or the email',
-    v => !!this.getExistingRequestSearch?.phoneNumber || (!!v && /.+@.+\..+/.test(v)) ||
-      'Please be sure to enter a valid email'
-  ]
   private nrRules = [
     v => this.NR_REGEX.test(v) || 'Please enter a valid NR number'
   ]
-  private phoneRules = [
-    v => (!v || v.length <= 30) || 'Cannot exceed 30 characters'
-  ]
+  private emailRules = []
+  private phoneRules = []
 
   private async handleSubmit (): Promise<void> {
+    this.applyRules()
     this.$refs.existingNrForm.validate()
     await this.$nextTick()
+
     if (this.isValid) {
       await this.findNameRequest(null)
       if (this.getNr?.failed) {
@@ -171,12 +167,27 @@ export default class ExistingRequestSearch extends Vue {
         this.errorMessage = this.getNr.text
         this.setNameRequest({})
       }
-      // FUTURE: clear out applicant's phone and email ?
-      // for (let key of ['emailAddress', 'phoneNumber']) {
-      //   let value = ''
-      //   newReqModule.mutateExistingRequestSearch({ key, value })
-      // }
     }
+  }
+
+  /** Apply the field rules to request search inputs. */
+  private applyRules (): void {
+    const { emailAddress, phoneNumber } = this.getExistingRequestSearch
+
+    this.phoneRules = (phoneNumber || !emailAddress)
+      ? [
+        v => !!v || 'Please enter a phone number',
+        v => (/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/.test(v)) || 'A valid phone number is required',
+        v => (v.length <= 30) || 'Cannot exceed 30 characters'
+      ]
+      : []
+
+    this.emailRules = (!phoneNumber || emailAddress)
+      ? [
+        v => !!v || 'Please enter an email',
+        v => (/.+@.+\..+/.test(v)) || 'A valid email is required'
+      ]
+      : []
   }
 
   private handleExistingRequestSearch (key: string, value: string) {
