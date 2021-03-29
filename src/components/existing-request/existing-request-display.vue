@@ -123,10 +123,12 @@
                   <v-col cols="12" v-if="isNotPaid">
                     <v-btn block
                            class="button button-blue"
-                           @click="handleButtonClick('RETRY_PAYMENT')">Retry Payment</v-btn>
+                           @click="handleButtonClick(NrAction.RETRY_PAYMENT)"
+                    >{{ actionText(NrAction.RETRY_PAYMENT) }}</v-btn>
                     <v-btn block
-                           class="button button-red  mt-8"
-                           @click="handleButtonClick('CANCEL')">Cancel Name Request</v-btn>
+                           class="button button-red mt-8"
+                           @click="handleButtonClick(NrAction.CANCEL)"
+                    >{{ actionText(NrAction.CANCEL) }}</v-btn>
                   </v-col>
                 </template>
                 <template v-for="action of actions" v-else>
@@ -562,6 +564,7 @@ export default class ExistingRequestDisplay extends Mixins(
       case NrAction.REFUND: return 'Cancel and Refund'
       case NrAction.RESEND: return 'Resend Email' // FUTURE: will be removed
       case NrAction.RESULTS: return 'Download Results' // FUTURE: will be implemented
+      case NrAction.RETRY_PAYMENT: return 'Retry Payment'
       case NrAction.UPGRADE: return 'Upgrade Priority ($100)'
       default: return this.toTitleCase(action)
     }

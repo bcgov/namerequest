@@ -61,12 +61,6 @@ async function startVue () {
   Vue.prototype.$colinRequestTypes = ColinRequestTypes
   Vue.prototype.$xproColinRequestTypes = XproColinRequestTypes
 
-  // Initialize Hotjar
-  if (window['hotjarId']) {
-    console.info('Initializing Hotjar...') // eslint-disable-line no-console
-    Vue.use(Hotjar, { id: window['hotjarId'] })
-  }
-
   // Initialize Sentry
   if (window['sentryDsn']) {
     console.info('Initializing Sentry...') // eslint-disable-line no-console
@@ -88,15 +82,21 @@ async function startVue () {
     })
   }
 
+  // Initialize Keyloak Service
+  console.info('Starting Keycloak service...') // eslint-disable-line no-console
+  await KeycloakService.setKeycloakConfigUrl(sessionStorage.getItem('KEYCLOAK_CONFIG_PATH'))
+
+  // Initialize Hotjar
+  if (window['hotjarId']) {
+    console.info('Initializing Hotjar...') // eslint-disable-line no-console
+    Vue.use(Hotjar, { id: window['hotjarId'] })
+  }
+
   // Initialize Launch Darkly
   if (window['ldClientId']) {
     console.info('Initializing Launch Darkly...') // eslint-disable-line no-console
     await initLdClient()
   }
-
-  // Initialize Keyloak Service
-  console.info('Starting Keycloak service...') // eslint-disable-line no-console
-  await KeycloakService.setKeycloakConfigUrl(sessionStorage.getItem('KEYCLOAK_CONFIG_PATH'))
 
   // Start Vue application
   console.info('Starting app...') // eslint-disable-line no-console
