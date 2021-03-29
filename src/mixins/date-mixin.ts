@@ -1,14 +1,13 @@
-import { Component, Mixins } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
 import { isDate } from 'lodash'
-import { CommonMixin } from './common-mixin'
 
 /**
  * Mixin that provides some useful date utilities.
  * Ref: https://github.com/bcgov/business-edit-ui/blob/master/src/mixins/date-mixin.ts
  */
 @Component({})
-export class DateMixin extends Mixins(CommonMixin) {
+export class DateMixin extends Vue {
   readonly MS_IN_A_DAY = (1000 * 60 * 60 * 24)
 
   // Global getter
@@ -24,21 +23,17 @@ export class DateMixin extends Mixins(CommonMixin) {
     const input = `${window.location.origin}${process.env.VUE_APP_PATH}/`
     const init: RequestInit = { cache: 'no-store', method: 'HEAD' }
 
-    // don't call fetch() during Jest tests
-    // because it's not defined
-    if (this.isJestRunning) return new Date()
-
-    const { headers, ok, statusText } = await fetch(input, init)
-
-    if (!ok) {
+    try {
+      const { headers, ok, statusText } = await fetch(input, init)
+      if (!ok) throw new Error(statusText)
+      return new Date(headers.get('Date'))
+    } catch (err) {
       // eslint-disable-next-line no-console
       console.warn('Unable to get server date - using browser date instead')
       // fall back to local date
       // NB: filing  may contain invalid dates/times
       return new Date()
     }
-
-    return new Date(headers.get('Date'))
   }
 
   /**

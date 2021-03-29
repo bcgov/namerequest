@@ -1,17 +1,17 @@
 <template>
-  <div class="button-container">
-    <form
+  <div class="button-container" v-if="webChatUrl">
+    <v-form
       id="webchat"
       target="webchat_window"
       method="post"
-      :action="window['webChatUrl']"
-      onSubmit="window.open('about:blank','webchat_window','width=400,height=500');"
+      :action="webChatUrl"
+      @submit="onSubmit()"
     >
       <input
         type="hidden"
-        :id="window['webChatId']"
         name="Reason"
         value="SBC_WebChat"
+        :id="webChatId"
       />
       <input
         type="hidden"
@@ -21,7 +21,7 @@
       <input
         type="hidden"
         name="Parameters[TimeZoneOffset]"
-        value="8"
+        :value="timeZoneOffset"
       />
 
       <v-tooltip top content-class="top-tooltip" nudge-top="5">
@@ -36,14 +36,14 @@
             type="submit"
             v-bind="attrs"
             v-on="on"
-            aria-label="Chat with Helpdesk Staff">
+            aria-label="Chat with Helpdesk staff">
             <v-icon class="mr-2 ml-n2">mdi-forum-outline</v-icon>
             <span class="font-weight-bold">Chat</span>
           </v-btn>
         </template>
         <span>Click here to chat live with Helpdesk staff about Name Requests.</span>
       </v-tooltip>
-    </form>
+    </v-form>
   </div>
 </template>
 
@@ -53,20 +53,31 @@ import axios from 'axios'
 
 @Component({})
 export default class ChatPopup extends Vue {
-  // attach window to 'this'
-  readonly window = window
-
-  chatStatus = null
+  readonly webChatId: string = window['webChatId']
+  readonly webChatStatusUrl: string = window['webChatStatusUrl']
+  readonly webChatUrl: string = window['webChatUrl']
   chatError = false
+  chatStatus = ''
 
-  mounted (): void {
-    axios
-      .get(window['webChatStatusUrl'])
-      .then(response => (this.chatStatus = response.data.status))
-      .catch(error => {
-        console.error('failed to get webchat status, error =', error) // eslint-disable-line no-console
-        this.chatError = true
-      })
+  /** The user's browser's tz offset (not necessarily Pacific time). */
+  get timeZoneOffset (): number {
+    return new Date().getTimezoneOffset() / 60
+  }
+
+  async mounted (): Promise<void> {
+    if (this.webChatStatusUrl) {
+      this.chatStatus = await axios
+        .get(this.webChatStatusUrl)
+        .then(response => (this.chatStatus = response.data.status))
+        .catch(error => {
+          console.error('failed to get webchat status, error =', error) // eslint-disable-line no-console
+          this.chatError = true
+        })
+    }
+  }
+
+  onSubmit (): void {
+    window.open('about:blank', 'webchat_window', 'width=400, height=500')
   }
 }
 </script>
