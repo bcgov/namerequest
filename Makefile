@@ -53,7 +53,7 @@ push: #build ## Push the docker container to the registry & tag latest
 
 VAULTS=`cat devops/vaults.json`
 update-env: ## Update env from 1pass
-	oc -n "$(OPS_REPOSITORY)-tools" exec bcros-cli -- ./scripts/1pass.sh $(OP_PARAMETERS) \
+	oc -n "$(OPS_REPOSITORY)-tools" exec dc/bcros-cli -- ./scripts/1pass.sh \
 		-m "secret" \
 		-e "$(TAG_NAME)" \
 		-a "$(DOCKER_NAME)-$(TAG_NAME)" \
