@@ -1,15 +1,7 @@
 import querystring from 'qs'
 import axios, { AxiosError } from 'axios'
 import errorModule from '@/modules/error'
-import paymentModule from '@/modules/payment'
 import { ErrorI } from '@/modules/error/store/actions'
-import {
-  ConversionTypesI,
-  ExistingRequestSearchI,
-  LocationT, NameRequestI,
-  NewRequestNameSearchI,
-  SelectOptionsI, SubmissionTypeT
-} from '@/interfaces'
 import { NrAction, NrState, RollbackActions, NameState } from '@/enums'
 import { NameRequestPayment } from '@/modules/payment/models'
 import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
@@ -17,10 +9,16 @@ import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
 import { getFeatureFlag, sleep } from '@/plugins'
 
 // List Data
-// *** TODO: replace with `this.$requestActions`
-import { RequestActions } from '@/list-data'
+import { CanJurisdictions, IntlJurisdictions, RequestActions } from '@/list-data'
 
 // Interfaces & Enums
+import {
+  ConversionTypesI,
+  ExistingRequestSearchI,
+  LocationT, NameRequestI,
+  NewRequestNameSearchI,
+  SelectOptionsI, SubmissionTypeT
+} from '@/interfaces'
 import { ActionIF } from '@/interfaces/store-interfaces'
 import get = Reflect.get;
 
@@ -761,11 +759,11 @@ export const editExistingRequest: ActionIF = ({ commit, getters }) => {
     let { xproJurisdiction } = getters.getNr
     let location: LocationT
     for (let key of ['value', 'text']) {
-      if (this.$canJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
+      if (CanJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
         location = 'CA'
         break
       }
-      if (this.$intlJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
+      if (IntlJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
         location = 'IN'
         break
       }
@@ -1039,7 +1037,7 @@ export const checkCOLIN = ({ getters }, corpNum: string) => {
 // TODO: Not a real action
 export const checkMRAS = ({ getters }, corpNum: string) => {
   let { xproJurisdiction } = getters.getNrData
-  let { SHORT_DESC } = this.$canJurisdictions.find(jur => jur.text === xproJurisdiction)
+  let { SHORT_DESC } = CanJurisdictions.find(jur => jur.text === xproJurisdiction)
   let url = `mras-profile/${SHORT_DESC}/${corpNum}`
   return axios.get(url)
 }
