@@ -638,10 +638,12 @@ export const setCompletePayment = async ({ commit, getters }, paymentDetails): P
 }
 
 // TODO: Not a real action
-export const cancelPayment = async ({ nrId, paymentId }): Promise<NameRequestPayment> => {
+export const cancelPayment = async ({ getters }, cancelDetails): Promise<NameRequestPayment> => {
   const paymentResponse: NameRequestPayment = {
     paymentSuccess: false
   }
+  const { nrId, paymentId } = cancelDetails
+
   try {
     const response = await axios.delete(`/payments/${nrId}/payment/${paymentId}`, {
       headers: { 'Content-Type': 'application/json' }
@@ -807,6 +809,7 @@ export const parseExactNames = (json: { names: [string] }) => {
   }
   return names
 }
+
 // TODO: Not an action
 export const parseSynonymNames = (json: { names: [string], exactNames: [{ name: string, type: string }] }) => {
   let duplicateNames = []
