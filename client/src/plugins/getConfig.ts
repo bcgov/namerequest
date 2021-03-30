@@ -75,8 +75,8 @@ export function getConfig (): Promise<EnvConfigI> {
     const webChatUrl: string = response.data[0]['WEBCHAT_URL'];
     (<any>window).webChatUrl = webChatUrl
 
-    const webChatId: string = response.data[0]['WEBCHAT_ID'];
-    (<any>window).webChatId = webChatId
+    const webChatReason: string = response.data[0]['WEBCHAT_REASON'];
+    (<any>window).webChatReason = webChatReason
 
     const webChatStatusUrl: string = response.data[0]['WEBCHAT_STATUS_URL'];
     (<any>window).webChatStatusUrl = webChatStatusUrl

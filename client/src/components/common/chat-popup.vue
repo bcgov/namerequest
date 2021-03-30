@@ -1,12 +1,16 @@
 <template>
-  <div class="button-container">
-    <form id="webchat" target="webchat_window" method="post" :action="window['webChatUrl']"
-      onSubmit="window.open('about:blank','webchat_window','width=400,height=500');">
+  <div class="button-container" v-if="webChatUrl && webChatReason">
+    <v-form
+      id="webchat"
+      target="webchat_window"
+      method="post"
+      :action="webChatUrl"
+      @submit="onSubmit()"
+    >
       <input
         type="hidden"
-        :id="window['webChatId']"
         name="Reason"
-        value="SBC_WebChat"
+        :value="webChatReason"
       />
       <input
         type="hidden"
@@ -16,8 +20,9 @@
       <input
         type="hidden"
         name="Parameters[TimeZoneOffset]"
-        value="8"
+        :value="timeZoneOffset"
       />
+
       <v-tooltip top content-class="top-tooltip" nudge-top="5">
         <template v-slot:activator="{ on, attrs }">
           <v-btn
@@ -30,42 +35,48 @@
             type="submit"
             v-bind="attrs"
             v-on="on"
-            aria-label="Chat with Helpdesk Staff">
+            aria-label="Chat with Helpdesk staff">
             <v-icon class="mr-2 ml-n2">mdi-forum-outline</v-icon>
             <span class="font-weight-bold">Chat</span>
           </v-btn>
         </template>
         <span>Click here to chat live with Helpdesk staff about Name Requests.</span>
       </v-tooltip>
-    </form>
+    </v-form>
   </div>
 </template>
 
 <script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
 import axios from 'axios'
-import { Component, Vue, Watch } from 'vue-property-decorator'
-import MainContainer from '@/components/new-request/main-container.vue'
 
-@Component({
-  components: {
-    MainContainer
-  }
-})
-
+@Component({})
 export default class ChatPopup extends Vue {
-  chatStatus = null
+  readonly webChatReason: string = window['webChatReason']
+  readonly webChatStatusUrl: string = window['webChatStatusUrl']
+  readonly webChatUrl: string = window['webChatUrl']
   chatError = false
+  chatStatus = 'unknown'
 
-  readonly window = window
+  /** The user's browser's tz offset (not necessarily Pacific time). */
+  get timeZoneOffset (): number {
+    return new Date().getTimezoneOffset() / 60
+  }
 
-  mounted () {
-    axios
-      .get(window['webChatStatusUrl'])
-      .then(response => (this.chatStatus = response.data.status))
-      .catch(error => {
-        console.log(error)
-        this.chatError = true
-      })
+  async mounted (): Promise<void> {
+    if (this.webChatStatusUrl) {
+      this.chatStatus = await axios
+        .get(this.webChatStatusUrl)
+        .then(response => (this.chatStatus = response.data.status))
+        .catch(error => {
+          console.error('failed to get webchat status, error =', error) // eslint-disable-line no-console
+          this.chatError = true
+        })
+    }
+  }
+
+  onSubmit (): void {
+    window.open('about:blank', 'webchat_window', 'width=400, height=500')
   }
 }
 </script>
@@ -97,7 +108,6 @@ export default class ChatPopup extends Vue {
   }
 
   .top-tooltip:after {
-    border-top: 8px solid rgba(0,0,0,0.85) !important
+    border-top: 8px solid rgba(0,0,0,0.85) !important;
   }
-
 </style>
