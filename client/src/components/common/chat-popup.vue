@@ -82,32 +82,40 @@ export default class ChatPopup extends Vue {
 </script>
 
 <style scoped lang="scss">
-  .button-container {
-    position: fixed;
-    bottom: -1px;
-    right: 1rem;
-    z-index: 999;
-  }
+@import "@/assets/scss/theme.scss";
 
-  .chat-button {
-    margin-bottom: -1px;
-    min-height: 40px;
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-    background-color: #ffffff !important;
-  }
+.button-container {
+  position: fixed;
+  bottom: -1px;
+  right: 1rem;
+  z-index: 999;
+}
 
-  .v-tooltip__content {
-    padding: 1rem !important;
-    background-color: rgba(0,0,0,0.85) !important;
-    line-height: 1.75rem;
-  }
+.chat-button {
+  margin-bottom: -1px;
+  min-height: 40px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  background-color: #ffffff !important;
+}
 
-  .top-tooltip {
-    max-width: 12rem;
-  }
+.v-tooltip__content {
+  padding: 1rem !important;
+  background-color: rgba(0,0,0,0.85) !important;
+  line-height: 1.75rem;
+}
 
-  .top-tooltip:after {
-    border-top: 8px solid rgba(0,0,0,0.85) !important;
-  }
+.top-tooltip {
+  max-width: 12rem;
+}
+
+.top-tooltip:after {
+  border-top: 8px solid rgba(0,0,0,0.85) !important;
+}
+
+/** Vuetify var() colors don't work in IE11, so just specify them here */
+.bcgovblue--text {
+  color: $BCgovBlue5 !important;
+  caret-color: $BCgovBlue5 !important;
+}
 </style>

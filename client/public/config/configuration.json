@@ -10,7 +10,7 @@
     "NAME_REQUEST_URL": "https://dev.bcregistry.ca/namerequest",
     "NRO_URL": "https://dev.bcregistrynames.gov.bc.ca/nro/",
     "ENTITY_SELECTOR_URL": "https://entity-selection-dev.pathfinder.gov.bc.ca/",
-    "LD_CLIENT_ID": "",
+    "LD_CLIENT_ID": "5fbec4b5d998e30990020007",
     "SENTRY_DSN": "",
     "NR_COMPLETION_TIMER_NAME": "nrCompletionTimer",
     "NR_COMPLETION_TIMEOUT_MS": 0,
