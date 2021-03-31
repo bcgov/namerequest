@@ -8,7 +8,7 @@
   "EXISTING_NR_TIMEOUT_MS": "0",
   "EXISTING_NR_TIMER_NAME": "existingNrTimer",
   "HOTJAR_ID": "2278126",
-  "KEYCLOAK_CONFIG_PATH": "https://dev.bcregistry.ca/namerequest/config/kc/keycloak.json",
+  "KEYCLOAK_CONFIG_PATH": "/local-keycloak-config-url/keycloak.json",
   "LD_CLIENT_ID": "5fbec4b5d998e30990020007",
   "LEGAL_API_URL": "https://legal-api-dev.apps.silver.devops.gov.bc.ca/api/v1",
   "NAME_REQUEST_URL": "https://dev.bcregistry.ca/namerequest",
