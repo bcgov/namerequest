@@ -739,6 +739,9 @@ export default class ExistingRequestDisplay extends Mixins(
 
   async mounted () {
     if (this.nr.id && this.nr.state !== NrState.CANCELLED) {
+      // show spinner since the network calls below can take a few seconds
+      this.$root.$emit('showSpinner', true)
+
       await this.fetchNrPayments(this.nr.id)
       const status = this.$route?.query?.status?.toString()
       const paymentId = status ? this.cancelledUpgrade(atob(status), this.payments) : null
@@ -754,6 +757,9 @@ export default class ExistingRequestDisplay extends Mixins(
           ![PaymentStatus.COMPLETED, PaymentStatus.CANCELLED].includes(payment.statusCode)
         )
       )
+
+      // hide spinner
+      this.$root.$emit('showSpinner', false)
     }
   }
 }
