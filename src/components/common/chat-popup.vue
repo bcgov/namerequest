@@ -26,7 +26,7 @@
       <v-tooltip top content-class="top-tooltip" nudge-top="5">
         <template v-slot:activator="{ on, attrs }">
           <v-btn
-            :disabled="chatError"
+            :disabled="(chatStatus !== 'open')"
             large
             outlined
             color="bcgovblue"
@@ -55,7 +55,7 @@ export default class ChatPopup extends Vue {
   readonly webChatReason: string = window['webChatReason']
   readonly webChatStatusUrl: string = window['webChatStatusUrl']
   readonly webChatUrl: string = window['webChatUrl']
-  chatError = false
+
   chatStatus = 'unknown'
 
   /** The user's browser's tz offset (not necessarily Pacific time). */
@@ -67,10 +67,12 @@ export default class ChatPopup extends Vue {
     if (this.webChatStatusUrl) {
       this.chatStatus = await axios
         .get(this.webChatStatusUrl)
-        .then(response => (this.chatStatus = response.data.status))
+        .then(response => {
+          return response.data?.status || 'response error'
+        })
         .catch(error => {
           console.error('failed to get webchat status, error =', error) // eslint-disable-line no-console
-          this.chatError = true
+          return error.response?.statusText || 'network error'
         })
     }
   }
