@@ -441,7 +441,7 @@ export const checkoutNameRequest: ActionIF = async ({ commit, getters }): Promis
 
 export const checkinNameRequest = async ({ getters }): Promise<boolean> => {
   try {
-    // Approved Name Requests are not checked out due to limited data that is editable.
+    // Approved or Rejected Name Requests are not checked out due to limited data that is editable.
     // Return out of checkIn because the NR was never checked out.
     if (getters.getNrState === NameState.APPROVED || getters.getNrState === NameState.REJECTED) return true
 
