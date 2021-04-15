@@ -63,7 +63,7 @@
                             :rules="businessNatureRules"
                             :value="getNrData.natureBusinessInfo"
                             @blur="messages = {}"
-                            @input="setNRData('natureBusinessInfo', $event)"
+                            @input="updateNrData('natureBusinessInfo', $event)"
                             id="natureBusinessInfo"
                             name="natureBusinessInfo"
                             filled
@@ -90,7 +90,7 @@
                             :value="getNrData.additionalInfo"
                             :rules="additionalInfoRules"
                             @blur="messages = {}"
-                            @input="setNRData('additionalInfo', $event)"
+                            @input="updateNrData('additionalInfo', $event)"
                             id="additionalInfo"
                             name="additionalInfo"
                             filled
@@ -153,7 +153,7 @@
                               :value="getNrData.tradeMark"
                               :rules="trademarkRules"
                               @blur="messages = {}"
-                              @input="setNRData('tradeMark', $event)"
+                              @input="updateNrData('tradeMark', $event)"
                               id="tradeMark"
                               :name="Math.random()"
                               autocomplete="chrome-off"
@@ -343,6 +343,10 @@ export default class ApplicantInfo2 extends Vue {
 
   async updateApplicant (key, value) {
     this.setApplicantDetails({ key, value })
+  }
+
+  async updateNrData (key, value) {
+    this.setNRData({ key, value })
   }
 
   validate () {
