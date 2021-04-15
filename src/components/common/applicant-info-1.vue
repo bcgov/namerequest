@@ -347,7 +347,7 @@
                 :value="xproJurisdiction"
                 @blur="messages = {}"
                 @focus="handleFocus('xproJurisdiction', 'Business xproJurisdiction')"
-                @input="mutateNRData('xproJurisdiction', $event)"
+                @input="updateNrData('xproJurisdiction', $event)"
                 dense
                 eager
                 filled
@@ -594,7 +594,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
     this.showAddressMenu = false
   }
 
-  mutateNRData (key, value) {
+  updateNrData (key, value) {
     this.setNRData({ key, value })
   }
 
