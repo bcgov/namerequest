@@ -16,8 +16,8 @@
                     <div>{{lineItem.filingType}}</div>
                   </v-col>
                   <v-col cols="4">
-                    <div v-if="lineItem.filingFees > 0" style="float: right;">${{lineItem.filingFees.toFixed(2)}}</div>
-                    <div v-else>No Fee</div>
+                    <div v-if="lineItem.filingFees > 0" class="float-right">${{lineItem.filingFees.toFixed(2)}}</div>
+                    <div v-else class="float-right">No Fee</div>
                   </v-col>
                 </v-row>
                 <v-row v-if="lineItem.priorityFees" no-gutters>
@@ -25,7 +25,7 @@
                     <div>Priority Request fee</div>
                   </v-col>
                   <v-col cols="4">
-                    <div style="float: right;">${{lineItem.priorityFees.toFixed(2)}}</div>
+                    <div class="float-right">${{lineItem.priorityFees.toFixed(2)}}</div>
                   </v-col>
                 </v-row>
                 <v-row v-if="lineItem.serviceFees" no-gutters>
@@ -33,7 +33,7 @@
                     <div>Service fee</div>
                   </v-col>
                   <v-col cols="4">
-                    <div style="float: right;">${{lineItem.serviceFees.toFixed(2)}}</div>
+                    <div class="float-right">${{lineItem.serviceFees.toFixed(2)}}</div>
                   </v-col>
                 </v-row>
               </v-col>
@@ -65,7 +65,7 @@
             </div>
           </v-col>
           <v-col cols="4">
-            <div class="payment-total" style="float: right;">
+            <div class="payment-total float-right">
               <v-slide-y-reverse-transition name="slide" mode="out-in">
                 <div><b>${{total.toFixed(2)}}</b></div>
               </v-slide-y-reverse-transition>
