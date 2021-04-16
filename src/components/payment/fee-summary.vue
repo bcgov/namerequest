@@ -1,39 +1,61 @@
 <template>
   <div class="fee-summary">
-    <v-row align="center" justify="center">
+    <v-row no-gutters align="center" justify="center">
       <v-col cols="10">
-        <div class="font-weight-bold px-3 pb-3 header">Payment Details</div>
-
-        <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
-
-        <v-slide-y-transition group tag="ul" class="fee-list py-2" v-show="!fetchError">
-          <template
-            v-for="lineItem in fees"
-            v-show="(totalFees > 0 && lineItem.filingFees) || (totalFees === 0)"
-            >
-            <li class="container fee-list__item"
-              :key="lineItem.filingType"
-              >
-              <div class="fee-list__item-name">{{lineItem.filingType}}</div>
-              <div class="fee-list__item-value" v-if="lineItem.filingFees > 0">${{lineItem.filingFees.toFixed(2)}}</div>
-              <div class="fee-list__item-value" v-else>No Fee</div>
-            </li>
-            <li class="container fee-list__item"
-              v-if="lineItem.priorityFees"
-              :key="lineItem.filingTypeCode+'-priority'"
-              >
-              <div class="fee-list__item-name">Priority Request fee</div>
-              <div class="fee-list__item-value">${{lineItem.priorityFees.toFixed(2)}}</div>
-            </li>
-            <li class="container fee-list__item"
-              v-if="lineItem.serviceFees"
-              :key="lineItem.filingTypeCode+'-transaction'"
-              >
-              <div class="fee-list__item-name">Service fee</div>
-              <div class="fee-list__item-value">${{lineItem.serviceFees.toFixed(2)}}</div>
-            </li>
-          </template>
-        </v-slide-y-transition>
+        <v-row no-gutters class="pt-8 pb-4 header">
+          <div class="font-weight-bold">Payment Details</div>
+        </v-row>
+        <v-row no-gutters class="my-0">
+          <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
+        </v-row>
+        <v-row no-gutters class="fee-list py-4">
+          <v-col v-show="!fetchError">
+            <v-row v-for="lineItem, index in fees"
+                    :key="index"
+                    no-gutters
+                    v-show="(totalFees > 0 && lineItem.filingFees) || (totalFees === 0)">
+              <v-col>
+                <v-row no-gutters>
+                  <v-col cols="8">
+                    <v-row no-gutters justify="start">
+                      <div>{{lineItem.filingType}}</div>
+                    </v-row>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-row no-gutters justify="end">
+                      <div v-if="lineItem.filingFees > 0">${{lineItem.filingFees.toFixed(2)}}</div>
+                      <div v-else>No Fee</div>
+                    </v-row>
+                  </v-col>
+                </v-row>
+                <v-row v-if="lineItem.priorityFees" no-gutters>
+                  <v-col cols="8">
+                    <v-row no-gutters justify="start">
+                      <div>Priority Request fee</div>
+                    </v-row>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-row no-gutters justify="end">
+                      <div>${{lineItem.priorityFees.toFixed(2)}}</div>
+                    </v-row>
+                  </v-col>
+                </v-row>
+                <v-row v-if="lineItem.serviceFees" no-gutters>
+                  <v-col cols="8">
+                    <v-row no-gutters justify="start">
+                      <div>Service fee</div>
+                    </v-row>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-row no-gutters justify="end">
+                      <div>${{lineItem.serviceFees.toFixed(2)}}</div>
+                    </v-row>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
 
         <!--<div class="container fee-total" v-show="!fetchError">
           <div class="fee-total__name">Fees</div>
@@ -52,16 +74,24 @@
             </v-slide-y-reverse-transition>
           </div>
         </div> -->
-
-        <div class="container fee-total payment-total pt-5" v-show="!fetchError">
-          <div class="fee-total__name">Total Amount (CAD)</div>
-          <!--<div class="fee-total__currency">CAD</div>-->
-          <div class="fee-total__value">
-            <v-slide-y-reverse-transition name="slide" mode="out-in">
-              <div><b>${{total.toFixed(2)}}</b></div>
-            </v-slide-y-reverse-transition>
-          </div>
-        </div>
+        <v-row no-gutters class="pt-4 pb-8">
+          <v-col cols="8">
+            <v-row no-gutters justify="start">
+              <div class="payment-total" v-show="!fetchError">
+                Total Amount (CAD)
+              </div>
+            </v-row>
+          </v-col>
+          <v-col cols="4">
+            <v-row no-gutters justify="end">
+              <div class="payment-total">
+                <v-slide-y-reverse-transition name="slide" mode="out-in">
+                  <div><b>${{total.toFixed(2)}}</b></div>
+                </v-slide-y-reverse-transition>
+              </div>
+            </v-row>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </div>
@@ -108,72 +138,14 @@ export default class FeeSummary extends Vue {
   background-color: $gray1;
 }
 
-.container {
-  display: flex;
-  flex-flow: row nowrap;
-  line-height: 0;
-  font-size: 1rem;
-}
 .fee-list {
   padding-left: 0 !important;
   border-bottom: 1px solid $gray4;
 }
 
-.filing_fees-list {
-  border-bottom: 1px solid $gray3;
-}
-
-.filing_fees-list__item {
-  &-name, &-value {
-    font-weight: bold;
-  }
-
-  &-name {
-    flex: 1 1 auto;
-    margin-right: 2rem;
-  }
-
-  &-value {
-    flex: 0 0 auto;
-    text-align: right;
-  }
-}
-
-.filing_fees-list__item + .filing_fees-list__item {
-  border-top: 1px solid $gray3;
-}
-
-.filing_fees-total {
-  align-items: center;
-  letter-spacing: -0.01rem;
-  line-height: auto;
-
-  &__name {
-    flex: 1 1 auto;
-    margin-right: auto;
-    font-weight: bold;
-  }
-
-  &__currency {
-    margin-right: 0.5rem;
-    color: $gray5;
-    font-weight: normal;
-  }
-
-  &__value {
-    font-size: 1.65rem;
-    font-weight: bold700;
-  }
-}
-
-.container.payment-total {
+.payment-total {
   font-weight: bold;
   color: $dk-text;
-}
-
-.container.fee-total,
-.container.fee-list__item {
-  justify-content: space-between;
 }
 
 .header {

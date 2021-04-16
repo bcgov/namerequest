@@ -1,10 +1,19 @@
 <template>
-  <v-dialog max-width="40%" :value="isVisible" persistent>
+  <v-dialog max-width="35rem" :value="isVisible" persistent>
     <v-card>
 
       <v-card-title class="d-flex justify-space-between">
-        <div>Re-apply for Name</div>
+        <div>Renew Name Request</div>
+        <v-btn icon large class="dialog-close float-right pa-0" @click="hideModal()">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
       </v-card-title>
+
+      <v-row no-gutters>
+        <div class="copy-normal pt-8">
+          Renew your Name Request for an additional 56 days from the current expiry date.
+        </div>
+      </v-row>
 
       <v-card-text class="copy-normal">
         <fee-summary
@@ -13,13 +22,16 @@
         />
       </v-card-text>
 
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn @click="confirmPayment()" id="payment-pay-btn" class="primary" text :loading="isLoadingPayment">
-          Accept
-        </v-btn>
-        <v-btn @click="hideModal()" id="payment-close-btn" class="normal" text>Cancel</v-btn>
-      </v-card-actions>
+      <v-row no-gutters justify="center" class="pt-8">
+        <v-col cols="auto">
+          <v-btn @click="confirmPayment()" id="payment-pay-btn" class="primary" text :loading="isLoadingPayment">
+            Continue to Payment
+          </v-btn>
+        </v-col>
+        <v-col cols="auto" class="pl-3">
+          <v-btn @click="hideModal()" id="payment-close-btn" class="button button-blue" text>Cancel</v-btn>
+        </v-col>
+      </v-row>
 
     </v-card>
   </v-dialog>
