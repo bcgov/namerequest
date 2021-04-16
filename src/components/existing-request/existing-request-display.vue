@@ -85,16 +85,17 @@
                 </v-col>
 
                 <v-col cols="12" v-if="extensionsRemainingText">
-                  <span>Expiry Extensions Remaining:</span>&nbsp;
+                  <span>Renewals Remaining:</span>&nbsp;
                   <v-tooltip right transition="fade-transition" content-class="tooltip">
                     <template v-slot:activator="{ on, attrs }">
                       <span v-bind="attrs" v-on="on"
                         class="dotted-underline app-blue font-weight-regular cursor-default"
                       >{{ extensionsRemainingText }}</span>
                     </template>
-                    Once approved, you normally have 56 days to use your Name Request.
-                    However, within 5 days of expiry, you can renew a Name Request two
-                    times for an additional 56 days each time.
+                    Once approved, you have 56 days to use your Name Request.
+                    Within 5 days of expiry you can renew a Name Request two
+                    times for an additional 56 days each time. <b>A $30.00 fee is applied for
+                    each renewal.</b>
                   </v-tooltip>
                 </v-col>
 
@@ -315,7 +316,7 @@ export default class ExistingRequestDisplay extends Mixins(
     let ret: string
     if (this.nr.expirationDate) {
       const date = new Date(this.nr.expirationDate)
-      ret = this.dateToPacificDate(date)
+      ret = this.dateToPacificDateTime(date)
     }
     return ret || ''
   }
@@ -559,7 +560,7 @@ export default class ExistingRequestDisplay extends Mixins(
   private actionText (action: NrAction): string {
     switch (action) {
       case NrAction.CANCEL: return 'Cancel Name Request'
-      case NrAction.REAPPLY: return 'Extend Expiry ($30)'
+      case NrAction.REAPPLY: return 'Renew Name Request ($30)'
       case NrAction.RECEIPTS: return 'Download Receipts'
       case NrAction.REFUND: return 'Cancel and Refund'
       case NrAction.RESEND: return 'Resend Email' // FUTURE: will be removed
