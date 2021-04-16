@@ -2,12 +2,8 @@
   <div class="fee-summary">
     <v-row no-gutters align="center" justify="center">
       <v-col cols="10">
-        <v-row no-gutters class="pt-8 pb-4 header">
-          <div class="font-weight-bold">Payment Details</div>
-        </v-row>
-        <v-row no-gutters class="my-0">
-          <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
-        </v-row>
+        <div class="font-weight-bold header pt-8 pb-4">Payment Details</div>
+        <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
         <v-row no-gutters class="fee-list py-4">
           <v-col v-show="!fetchError">
             <v-row v-for="lineItem, index in fees"
