@@ -13,39 +13,27 @@
               <v-col>
                 <v-row no-gutters>
                   <v-col cols="8">
-                    <v-row no-gutters justify="start">
-                      <div>{{lineItem.filingType}}</div>
-                    </v-row>
+                    <div>{{lineItem.filingType}}</div>
                   </v-col>
                   <v-col cols="4">
-                    <v-row no-gutters justify="end">
-                      <div v-if="lineItem.filingFees > 0">${{lineItem.filingFees.toFixed(2)}}</div>
-                      <div v-else>No Fee</div>
-                    </v-row>
+                    <div v-if="lineItem.filingFees > 0" style="float: right;">${{lineItem.filingFees.toFixed(2)}}</div>
+                    <div v-else>No Fee</div>
                   </v-col>
                 </v-row>
                 <v-row v-if="lineItem.priorityFees" no-gutters>
                   <v-col cols="8">
-                    <v-row no-gutters justify="start">
-                      <div>Priority Request fee</div>
-                    </v-row>
+                    <div>Priority Request fee</div>
                   </v-col>
                   <v-col cols="4">
-                    <v-row no-gutters justify="end">
-                      <div>${{lineItem.priorityFees.toFixed(2)}}</div>
-                    </v-row>
+                    <div style="float: right;">${{lineItem.priorityFees.toFixed(2)}}</div>
                   </v-col>
                 </v-row>
                 <v-row v-if="lineItem.serviceFees" no-gutters>
                   <v-col cols="8">
-                    <v-row no-gutters justify="start">
-                      <div>Service fee</div>
-                    </v-row>
+                    <div>Service fee</div>
                   </v-col>
                   <v-col cols="4">
-                    <v-row no-gutters justify="end">
-                      <div>${{lineItem.serviceFees.toFixed(2)}}</div>
-                    </v-row>
+                    <div style="float: right;">${{lineItem.serviceFees.toFixed(2)}}</div>
                   </v-col>
                 </v-row>
               </v-col>
@@ -72,20 +60,16 @@
         </div> -->
         <v-row no-gutters class="pt-4 pb-8">
           <v-col cols="8">
-            <v-row no-gutters justify="start">
-              <div class="payment-total" v-show="!fetchError">
-                Total Amount (CAD)
-              </div>
-            </v-row>
+            <div class="payment-total" v-show="!fetchError">
+              Total Amount (CAD)
+            </div>
           </v-col>
           <v-col cols="4">
-            <v-row no-gutters justify="end">
-              <div class="payment-total">
-                <v-slide-y-reverse-transition name="slide" mode="out-in">
-                  <div><b>${{total.toFixed(2)}}</b></div>
-                </v-slide-y-reverse-transition>
-              </div>
-            </v-row>
+            <div class="payment-total" style="float: right;">
+              <v-slide-y-reverse-transition name="slide" mode="out-in">
+                <div><b>${{total.toFixed(2)}}</b></div>
+              </v-slide-y-reverse-transition>
+            </div>
           </v-col>
         </v-row>
       </v-col>
