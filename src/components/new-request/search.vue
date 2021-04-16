@@ -386,7 +386,7 @@ export default class NewSearch extends Vue {
   }
 
   get isFederal () {
-    return this.jurisdiction === 'FD'
+    return this.location === 'CA' && this.jurisdiction === 'FD'
   }
 
   get isPersonsName () {
