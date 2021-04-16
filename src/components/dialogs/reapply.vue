@@ -9,9 +9,11 @@
         </v-btn>
       </v-card-title>
 
-      <div class="copy-normal pt-8">
-        Renew your Name Request for an additional 56 days from the current expiry date.
-      </div>
+      <v-row no-gutters>
+        <div class="copy-normal pt-8">
+          Renew your Name Request for an additional 56 days from the current expiry date.
+        </div>
+      </v-row>
 
       <v-card-text class="copy-normal">
         <fee-summary
