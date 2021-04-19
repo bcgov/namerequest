@@ -249,9 +249,6 @@ export default class ExistingRequestDisplay extends Mixins(
     return Boolean(sessionStorage.getItem(SessionStorageKeys.KeyCloakToken))
   }
 
-  /** This is True while refreshing the NR. (Not used in template at the moment.) */
-  checking = false
-
   /** This is used in the template as the transition key for the affected template, triggering a fade in/out. */
   refreshCount = 0
 
@@ -650,18 +647,18 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   private async refresh (event) {
+    this.$root.$emit('showSpinner', true)
     this.refreshCount += 1
-    this.checking = true
     try {
       const resp = await this.getNameRequest(this.nr.id) as any // *** TODO use a real type here
-      this.checking = false
+      this.$root.$emit('showSpinner', false)
       if (resp?.furnished === 'Y') {
         this.furnished = 'furnished'
         this.setNrResponse(resp)
       }
     } catch (error) {
       // NB: errors are handled by newReqModule
-      this.checking = false
+      this.$root.$emit('showSpinner', false)
     }
   }
 

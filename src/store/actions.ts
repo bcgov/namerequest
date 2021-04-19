@@ -397,13 +397,15 @@ export const loadExistingNameRequest:ActionIF = async ({ commit }, nrData: any) 
 }
 
 // *** TODO: this should not be an "action"
-export const fetchStats: ActionIF = async ({ commit }) => {
+export const fetchStats: ActionIF = async ({ commit }): Promise<boolean> => {
   try {
-    let resp = await axios.get('/statistics')
+    const resp = await axios.get('/statistics')
     commit('mutateStats', resp)
+    return true
   } catch (err) {
     const msg = await handleApiError(err, 'Could not get stats')
     console.error('fetchStats() =', msg) // eslint-disable-line no-console
+    return false
   }
 }
 

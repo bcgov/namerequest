@@ -107,7 +107,9 @@ export default class PaymentCompleteDialog extends Mixins(
 
   async fetchNr (nrId: number): Promise<void> {
     const nrData = await this.getNameRequest(nrId)
-    await this.loadExistingNameRequest(nrData)
+    if (nrData) {
+      await this.loadExistingNameRequest(nrData)
+    }
   }
 
   /**

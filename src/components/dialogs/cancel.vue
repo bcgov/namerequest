@@ -39,7 +39,7 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
-import { NameRequestMixin, PaymentMixin } from '@/mixins'
+import { PaymentMixin } from '@/mixins'
 import { sleep } from '@/plugins'
 
 import { NrAction } from '@/enums'
@@ -48,7 +48,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { CANCEL_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 
 @Component({})
-export default class CancelDialog extends Mixins(NameRequestMixin, PaymentMixin) {
+export default class CancelDialog extends Mixins(PaymentMixin) {
   // Global Getters
   @Getter getApplicant!: ApplicantI
 

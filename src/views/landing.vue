@@ -80,8 +80,12 @@ export default class Landing extends Vue {
     const { id } = this
     // if an id was specified then get and load the subject NR
     if (id) {
+      this.$root.$emit('showSpinner', true)
       const nrData = await this.getNameRequest(+id)
-      await this.loadExistingNameRequest(nrData)
+      this.$root.$emit('showSpinner', false)
+      if (nrData) {
+        await this.loadExistingNameRequest(nrData)
+      }
     }
   }
 }
