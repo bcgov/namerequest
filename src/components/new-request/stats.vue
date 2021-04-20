@@ -74,8 +74,10 @@ export default class Stats extends Vue {
   @Action fetchStats!: ActionBindingIF
 
   created (): void {
-    if (getFeatureFlag('hardcoded_regular_wait_time') === 0 ||
-        getFeatureFlag('hardcoded_priority_wait_time') === 0) {
+    if (
+      getFeatureFlag('hardcoded_regular_wait_time') === 0 ||
+      getFeatureFlag('hardcoded_priority_wait_time') === 0
+    ) {
       this.fetchStats(null)
     }
   }

@@ -13,7 +13,6 @@
 </template>
 
 <script lang="ts">
-// import newReqModule from '@/store/new-request-module'
 import { Component, Vue } from 'vue-property-decorator'
 import MainContainer from '@/components/new-request/main-container.vue'
 import { Action } from 'vuex-class'
