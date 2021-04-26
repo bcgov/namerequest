@@ -46,8 +46,8 @@
           Click here to chat live with Helpdesk staff about Name Requests.
         </span>
         <span v-else-if="chatStatus === 'closed'" id="closed-tooltip-message" >
-          We are closed. The Service BC Contact Centre is open Monday through Friday 7:30am – 5:00pm PST excluding BC
-          statutory holidays.
+          We are closed. The Service BC Contact Centre is open Monday through Friday 7:30am – 5:00pm Pacific Time
+          excluding BC statutory holidays.
         </span>
         <span v-else id="unavailable-tooltip-message">Webchat is temporarily unavailable.</span>
       </v-tooltip>
