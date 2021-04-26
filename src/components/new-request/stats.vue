@@ -64,6 +64,7 @@ import { Action, Getter } from 'vuex-class'
 import { StatsI } from '@/interfaces'
 import { getFeatureFlag } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import NamexServices from '@/services/namex.services'
 
 @Component({})
 export default class Stats extends Vue {
@@ -71,14 +72,15 @@ export default class Stats extends Vue {
   @Getter getStats!: StatsI
 
   // Global action
-  @Action fetchStats!: ActionBindingIF
+  @Action setStats!: ActionBindingIF
 
-  created (): void {
+  async created (): Promise<void> {
     if (
       getFeatureFlag('hardcoded_regular_wait_time') === 0 ||
       getFeatureFlag('hardcoded_priority_wait_time') === 0
     ) {
-      this.fetchStats(null)
+      const stats = await NamexServices.fetchStats()
+      if (stats) this.setStats(stats)
     }
   }
 

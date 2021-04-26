@@ -196,10 +196,12 @@ import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentA
 import { sleep } from '@/plugins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
+import NamexServices from '@/services/namex.services'
 
 // Interfaces
 import { NameRequestI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import error from '@/modules/error'
 
 @Component({
   components: {
@@ -219,16 +221,12 @@ export default class ExistingRequestDisplay extends Mixins(
   // Global getters
   @Getter getDisplayedComponent!: string
   @Getter getNr!: Partial<NameRequestI>
+  @Getter getNrId!: number
   @Getter getNrState!: NrState
   @Getter getCurrentJsDate!: Date
 
   // Global actions
-  @Action cancelPayment!: ActionBindingIF
-  @Action checkoutNameRequest!: ActionBindingIF
-  @Action downloadOutputs!: ActionBindingIF
   @Action editExistingRequest!: ActionBindingIF
-  @Action getNameRequest!: ActionBindingIF
-  @Action patchNameRequestsByAction!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
   @Action setConditionsModalVisible!: ActionBindingIF
   @Action setIncorporateLoginModalVisible!: ActionBindingIF
@@ -583,7 +581,7 @@ export default class ExistingRequestDisplay extends Mixins(
             // Check out the NR - this sets the INPROGRESS lock on the NR
             // and needs to be done before you can edit the Name Request
             // *** TODO: declare checkoutNameRequest differently so it's not void
-            success = await this.checkoutNameRequest(null) as unknown as boolean
+            success = await NamexServices.checkoutNameRequest(this.getNrId) as unknown as boolean
           }
 
           // Only proceed with editing if the checkout was successful,
@@ -617,13 +615,13 @@ export default class ExistingRequestDisplay extends Mixins(
           // show spinner since the network calls below can take a few seconds
           this.$root.$emit('showSpinner', true)
           // download the outputs
-          await this.downloadOutputs(this.nr.id)
+          await NamexServices.downloadOutputs(this.nr.id)
           // hide spinner
           this.$root.$emit('showSpinner', false)
           break
         default:
           // *** TODO: declare patchNameRequestsByAction differently so it's not void
-          if (await this.patchNameRequestsByAction(action) as unknown as boolean) {
+          if (await NamexServices.patchNameRequestsByAction(this.getNrId, action) as unknown as boolean) {
             this.setDisplayedComponent('Success')
             await sleep(1000)
             this.setDisplayedComponent('ExistingRequestDisplay')
@@ -650,7 +648,7 @@ export default class ExistingRequestDisplay extends Mixins(
     this.$root.$emit('showSpinner', true)
     this.refreshCount += 1
     try {
-      const resp = await this.getNameRequest(this.nr.id) as any // *** TODO use a real type here
+      const resp = await NamexServices.getNameRequest(true) as any // *** TODO use a real type here
       this.$root.$emit('showSpinner', false)
       if (resp?.furnished === 'Y') {
         this.furnished = 'furnished'
@@ -746,7 +744,7 @@ export default class ExistingRequestDisplay extends Mixins(
       if (paymentId) {
         // cancel the upgrade invoice
         const nrId = this.nr.id
-        await this.cancelPayment({ nrId, paymentId })
+        await NamexServices.cancelPayment(nrId, paymentId)
         // fetch updated payments
         await this.fetchNrPayments(nrId)
       }

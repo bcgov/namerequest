@@ -1,16 +1,19 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import NamexServices from '@/services/namex.services'
+import { NrState } from '@/enums'
 
 @Component({})
 export class DisplayedComponentMixin extends Vue {
   // Global getter
   @Getter getDisplayedComponent!: string
+  @Getter getNrId!: number
+  @Getter getNrState!: NrState
 
   // Global actions
   @Action cancelAnalyzeName!: ActionBindingIF
   @Action cancelEditExistingRequest!: ActionBindingIF
-  @Action checkinNameRequest!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
   @Action setSubmissionTabComponent!: ActionBindingIF
 
@@ -41,7 +44,7 @@ export class DisplayedComponentMixin extends Vue {
       // We're editing
       // Check in the NR to release the INPROGRESS lock on the NR
       await this.cancelEditExistingRequest(null)
-      await this.checkinNameRequest(null)
+      await NamexServices.checkinNameRequest(this.getNrId, this.getNrState)
       this.redirectToStart()
     } else {
       await this.cancelAnalyzeName('Tabs')

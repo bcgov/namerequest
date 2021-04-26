@@ -147,6 +147,7 @@ export default class PaymentDialog extends Mixins(
       // Save response to session
       this.savePaymentResponseToSession(PaymentAction.CREATE, paymentResponse)
       // see if redirect is needed else go to existing NR screen
+
       const baseUrl = getBaseUrl()
       const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${getNrId}/?paymentId=${paymentId}`)
       if (paymentResponse.sbcPayment.isPaymentActionRequired) {
