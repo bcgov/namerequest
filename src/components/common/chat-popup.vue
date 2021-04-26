@@ -25,22 +25,31 @@
 
       <v-tooltip top content-class="top-tooltip" nudge-top="5">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            :disabled="(chatStatus !== 'open')"
-            large
-            outlined
-            color="bcgovblue"
-            elevation="4"
-            class="chat-button"
-            type="submit"
-            v-bind="attrs"
-            v-on="on"
-            aria-label="Chat with Helpdesk staff">
-            <v-icon class="mr-2 ml-n2">mdi-forum-outline</v-icon>
-            <span class="font-weight-bold">Chat</span>
-          </v-btn>
+          <div id="chat-button-wrapper" v-on="on" v-bind="attrs">
+            <v-btn
+              :disabled="(chatStatus !== 'open')"
+              large
+              outlined
+              color="bcgovblue"
+              elevation="4"
+              class="chat-button"
+              type="submit"
+              v-bind="attrs"
+              v-on="on"
+              aria-label="Chat with Helpdesk staff">
+              <v-icon class="mr-2 ml-n2">mdi-forum-outline</v-icon>
+              <span class="font-weight-bold">Chat</span>
+            </v-btn>
+          </div>
         </template>
-        <span>Click here to chat live with Helpdesk staff about Name Requests.</span>
+        <span v-if="chatStatus === 'open'" id="open-tooltip-message" >
+          Click here to chat live with Helpdesk staff about Name Requests.
+        </span>
+        <span v-else-if="chatStatus === 'closed'" id="closed-tooltip-message" >
+          We are closed. The Service BC Contact Centre is open Monday through Friday 7:30am – 5:00pm Pacific Time
+          excluding BC statutory holidays.
+        </span>
+        <span v-else id="unavailable-tooltip-message">Webchat is temporarily unavailable.</span>
       </v-tooltip>
     </v-form>
   </div>
