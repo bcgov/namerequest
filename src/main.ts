@@ -3,7 +3,7 @@ import App from './App.vue'
 import Hotjar from 'vue-hotjar'
 import { getVueRouter } from '@/router'
 import { getVuexStore } from '@/store'
-import { getConfig, getVuetify, initLdClient } from '@/plugins'
+import { getConfig, getVuetify, initLdClient, isSigningIn, isSigningOut } from '@/plugins'
 import KeycloakService from 'sbc-common-components/src/services/keycloak.services'
 import * as Sentry from '@sentry/browser'
 import * as Integrations from '@sentry/integrations'
@@ -82,9 +82,8 @@ async function startVue () {
     })
   }
 
-  // Initialize Keyloak Service
-  console.info('Starting Keycloak service...') // eslint-disable-line no-console
-  await KeycloakService.setKeycloakConfigUrl(sessionStorage.getItem('KEYCLOAK_CONFIG_PATH'))
+  // Initialize Keycloak / sync SSO
+  await syncSession()
 
   // Initialize Hotjar
   if (window['hotjarId']) {
@@ -106,6 +105,21 @@ async function startVue () {
     store,
     render: h => h(App)
   }).$mount('#app')
+}
+
+async function syncSession () {
+  console.info('Starting Keycloak service...') // eslint-disable-line no-console
+  await KeycloakService.setKeycloakConfigUrl(sessionStorage.getItem('KEYCLOAK_CONFIG_PATH'))
+
+  // Auto authenticate user only if they are not trying a login or logout
+  if (!isSigningIn() && !isSigningOut()) {
+    // Initialize token service which will do a check-sso to initiate session
+    await KeycloakService.initializeToken(null).then(() => {}).catch(err => {
+      if (err?.message !== 'NOT_AUTHENTICATED') {
+        throw err
+      }
+    })
+  }
 }
 
 // NB: the .then() makes sure linter doesn't pick up on an un-awaited promise

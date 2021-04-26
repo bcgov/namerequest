@@ -108,3 +108,13 @@ export function containsLongAndShortDesignation (name: string, word: string): bo
   }
   return false
 }
+
+export function isSigningIn (): boolean {
+  const path = window.location.pathname
+  return path.includes('/signin') || path.includes('/signin-redirect') || path.includes('/signin-redirect-full')
+}
+
+export function isSigningOut (): boolean {
+  const path = window.location.pathname
+  return path.includes('/signout')
+}
