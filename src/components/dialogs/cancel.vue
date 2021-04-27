@@ -46,14 +46,16 @@ import { NrAction } from '@/enums'
 import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { CANCEL_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
+import NamexServices from '@/services/namex.services'
 
 @Component({})
 export default class CancelDialog extends Mixins(PaymentMixin) {
   // Global Getters
   @Getter getApplicant!: ApplicantI
+  @Getter getNrId!: number
 
-  @Action patchNameRequestsByAction: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
+  @Action setNameRequest!: ActionBindingIF
   @Action toggleCancelModal!: ActionBindingIF
 
   /** Used to show loading state on button. */
@@ -74,7 +76,9 @@ export default class CancelDialog extends Mixins(PaymentMixin) {
   /** Called when user clicks "Cancel this NR" button. */
   private async confirmCancel (): Promise<void> {
     this.loading = true
-    if (await this.patchNameRequestsByAction(NrAction.CANCEL)) {
+    const data = await NamexServices.patchNameRequestsByAction(this.getNrId, NrAction.CANCEL)
+    if (data) {
+      this.setNameRequest(data)
       this.loading = false
       await this.hideModal()
       this.setDisplayedComponent('Success')

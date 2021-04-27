@@ -1,6 +1,8 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import axios, { AxiosRequestConfig } from 'axios'
+import { AxiosRequestConfig } from 'axios'
+import { ACCEPTED, CREATED, NO_CONTENT, OK } from 'http-status-codes'
+
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import { PaymentStatus } from '@/enums'
 import { ActionMixin } from '@/mixins'
@@ -9,6 +11,7 @@ import { CreatePaymentParams, NameRequestPaymentResponse } from '@/modules/payme
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import NamexServices from '@/services/namex.services'
 
 @Component({})
 export class PaymentMixin extends Mixins(ActionMixin) {
@@ -157,6 +160,15 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     req.headers = headers
     try {
       const paymentResponse = await this.createPaymentRequest(nrId, action, req)
+      // set nr in session storage before redirecting to pay (this is how we find our way back afterwards)
+      if (paymentResponse.nrNum?.includes('NR L')) {
+        sessionStorage.setItem('BCREG-NRL', paymentResponse.nrNum)
+        sessionStorage.setItem('BCREG-nrNum', null)
+      } else if (paymentResponse.nrNum) {
+        sessionStorage.setItem('BCREG-NRL', null)
+        sessionStorage.setItem('BCREG-nrNum', paymentResponse.nrNum)
+      }
+
       const { payment, sbcPayment = { receipts: [] } } = paymentResponse
 
       await this.setPayment(payment)
@@ -278,11 +290,15 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
   }
 
+  // TODO: move to NamexServices
   async createPaymentRequest (nrId, action, data): Promise<NameRequestPaymentResponse> {
-    const url = `/payments/${nrId}/${action}`
+    const url = `${NamexServices.namexUrl()}/payments/${nrId}/${action}`
     try {
-      const response = await axios.post(url, data)
-      return response.data
+      const response = await NamexServices.axios.post(url, data)
+      if (response?.data && [OK, CREATED, ACCEPTED, NO_CONTENT].includes(response?.status)) {
+        return response.data
+      }
+      throw new Error(`Invalid response = ${response}`)
     } catch (err) {
       console.error('createPaymentRequest() =', err) // eslint-disable-line no-console
       const msg = await this.handleApiError(err, 'Could not create payment request')
@@ -291,10 +307,12 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
   }
 
+  // TODO: move to NamexServices
   async getNameRequestPayment (nrId, paymentId, params): Promise<NameRequestPaymentResponse> {
-    const url = `/payments/${nrId}/payment/${paymentId}`
+    const url = `${NamexServices.namexUrl()}/payments/${nrId}/payment/${paymentId}`
     try {
-      const response = await axios.get(url, params)
+      const response = await NamexServices.axios.get(url, params)
+      // TODO: check response status and data - make sure error handling is not changed
       return response.data
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not get name request payment')
@@ -303,10 +321,12 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
   }
 
+  // TODO: move to NamexServices
   async getNameRequestPayments (nrId, params): Promise<NameRequestPaymentResponse[]> {
-    const url = `/payments/${nrId}`
+    const url = `${NamexServices.namexUrl()}/payments/${nrId}`
     try {
-      const response = await axios.get(url, params)
+      const response = await NamexServices.axios.get(url, params)
+      // TODO: check response status and data - make sure error handling is not changed
       return response.data
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not get name request payments')
@@ -315,10 +335,12 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
   }
 
+  // TODO: move to NamexServices
   async getPaymentFees (params): Promise<any> {
-    const url = '/payments/fees'
+    const url = `${NamexServices.namexUrl()}/payments/fees`
     try {
-      const response = await axios.post(url, params)
+      // TODO: check response status and data - make sure error handling is not changed
+      const response = await NamexServices.axios.post(url, params)
       return response.data
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not get payment fees')
@@ -327,11 +349,13 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
   }
 
+  // TODO: move to NamexServices
   async generateReceiptRequest (paymentId): Promise<any> {
     const params = { responseType: 'arraybuffer' } as AxiosRequestConfig
-    const url = `/payments/${paymentId}/receipt`
+    const url = `${NamexServices.namexUrl()}/payments/${paymentId}/receipt`
     try {
-      const response = await axios.post(url, {}, params)
+      const response = await NamexServices.axios.post(url, {}, params)
+      // TODO: check response status and data - make sure error handling is not changed
       return response.data
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not generate payment receipt')

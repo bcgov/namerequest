@@ -52,6 +52,7 @@ import { PaymentMixin, PaymentSessionMixin } from '@/mixins'
 import { sleep } from '@/plugins'
 import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import NamexServices from '@/services/namex.services'
 
 @Component({
   components: {
@@ -64,8 +65,8 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
   @Getter getApplicant!: ApplicantI
 
   // Global actions
+  @Action loadExistingNameRequest!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
-  @Action patchNameRequestsByAction: ActionBindingIF
   @Action toggleRefundModal!: ActionBindingIF
 
   /** Used to display a fetch error, if any. */
@@ -109,10 +110,12 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
   /** Called when user clicks "Cancel this NR" button. */
   private async confirmRefund (): Promise<void> {
     this.loading = true
-    if (await this.patchNameRequestsByAction(NrAction.REFUND)) {
+    const data = await NamexServices.patchNameRequestsByAction(this.getNrId, NrAction.REFUND)
+    if (data) {
       this.loading = false
       await this.hideModal()
       this.setDisplayedComponent('Success')
+      await this.loadExistingNameRequest(data)
       await sleep(1000)
       this.setDisplayedComponent('ExistingRequestDisplay')
     } else {

@@ -22,6 +22,7 @@ export async function getConfig (): Promise<EnvConfigI> {
   })
 
   const baseURL = response.data['URL'] + '/api/v1'
+  sessionStorage.setItem('BASE_URL', baseURL)
   axios.defaults.baseURL = baseURL
 
   const paymentPortalUrl = response.data['PAYMENT_PORTAL_URL']

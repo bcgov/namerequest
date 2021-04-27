@@ -85,6 +85,7 @@ import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 
 // Interfaces / Enums
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import NamexServices from './services/namex.services'
 
 @Component({
   components: {
@@ -124,7 +125,6 @@ export default class App extends Mixins(DateMixin) {
 
   // Global actions
   @Action resetAnalyzeName!: ActionBindingIF
-  @Action rollbackNameRequest!: ActionBindingIF
   @Action setName!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
   @Action setIncorporateLoginModalVisible!: ActionBindingIF
@@ -190,7 +190,7 @@ export default class App extends Mixins(DateMixin) {
     // Only do this for New NRs!!!
     if (this.getNrId && ['SubmissionTabs'].indexOf(componentName) > -1) {
       // Cancel the NR using the rollback endpoint if we were processing a NEW NR
-      await this.rollbackNameRequest(this.getNrId)
+      await NamexServices.rollbackNameRequest(this.getNrId)
       // Direct the user back to the start
       await this.resetAppState()
     }

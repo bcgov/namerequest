@@ -42,6 +42,7 @@ import SubmissionTabs from '@/components/new-request/submit-request/submission-t
 import Success from '@/components/common/success.vue'
 import Tabs from '@/components/tabs.vue'
 
+import NamexServices from '@/services/namex.services'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
@@ -68,7 +69,6 @@ export default class Landing extends Vue {
   @Getter getDisplayedComponent!: string
 
   // Global actions
-  @Action getNameRequest!: ActionBindingIF
   @Action loadExistingNameRequest!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
 
@@ -81,11 +81,9 @@ export default class Landing extends Vue {
     // if an id was specified then get and load the subject NR
     if (id) {
       this.$root.$emit('showSpinner', true)
-      const nrData = await this.getNameRequest(+id)
+      const nrData = await NamexServices.getNameRequest(true)
       this.$root.$emit('showSpinner', false)
-      if (nrData) {
-        await this.loadExistingNameRequest(nrData)
-      }
+      if (nrData) await this.loadExistingNameRequest(nrData)
     }
   }
 }

@@ -18,21 +18,29 @@
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { IssueI } from '@/interfaces'
+import { ConditionalReqI, DraftReqI, IssueI, NameRequestI, ReservedReqI } from '@/interfaces'
+import NamexServices from '@/services/namex.services'
+import { NrAction } from '@/enums'
 
 @Component({})
 export default class ReserveSubmitButton extends Vue {
   // Global getters
+  @Getter getAssumedName!: string
+  @Getter getConditionalNameReservation!: ConditionalReqI
   @Getter getCurrentIssue!: IssueI
+  @Getter getDraftNameReservation!: DraftReqI
   @Getter getLocation!: string
+  @Getter getReservedNameReservation!: ReservedReqI
+  @Getter getRequestActionCd!: NrAction
+  @Getter getRequestActionOriginal!: NrAction
   @Getter getShowActualInput!: boolean
 
   // Global actions
   @Action cancelAnalyzeName!: ActionBindingIF
   @Action userClickedStopAnalysis!: ActionBindingIF
-  @Action postNameRequests!: ActionBindingIF
   @Action setAssumedNameOriginal!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
+  @Action setNrResponse!: ActionBindingIF
   @Action setSubmissionType!: ActionBindingIF
   @Action setSubmissionTabComponent!: ActionBindingIF
 
@@ -64,7 +72,25 @@ export default class ReserveSubmitButton extends Vue {
     this.cancelAnalyzeName('NamesCapture')
   }
 
-  handleSubmit () {
+  getData (type: string): any {
+    if (this.getAssumedName) type = 'assumed'
+    let data: any
+    switch (type) {
+      case 'assumed':
+      case 'draft':
+        data = this.getDraftNameReservation
+        break
+      case 'conditional':
+        data = this.getConditionalNameReservation
+        break
+      case 'reserved':
+        data = this.getReservedNameReservation
+        break
+    }
+    return data
+  }
+
+  async handleSubmit () {
     let { setup } = this
 
     if (setup === 'cancel') {
@@ -100,6 +126,9 @@ export default class ReserveSubmitButton extends Vue {
       return
     }
 
+    let data: any
+    let request: NameRequestI
+    const requestAction = this.getRequestActionOriginal || this.getRequestActionCd
     switch (setup) {
       case 'assumed':
         this.setAssumedNameOriginal(null)
@@ -111,14 +140,22 @@ export default class ReserveSubmitButton extends Vue {
         return
       // @ts-ignore - typescript knows setup can only === 'assumed' at this point and gives error
       case 'consent':
-        this.postNameRequests('conditional')
-        this.setSubmissionType('consent')
-        this.setSubmissionTabComponent('ApplicantInfo1')
+        data = this.getData('conditional')
+        request = await NamexServices.postNameRequests(requestAction, data)
+        if (request) {
+          this.setNrResponse(request)
+          this.setSubmissionType('consent')
+          this.setSubmissionTabComponent('ApplicantInfo1')
+        }
         return
       default:
         this.setSubmissionType('normal')
-        this.postNameRequests('reserved')
-        this.setSubmissionTabComponent('ApplicantInfo1')
+        data = this.getData('reserved')
+        request = await NamexServices.postNameRequests(requestAction, data)
+        if (request) {
+          this.setNrResponse(request)
+          this.setSubmissionTabComponent('ApplicantInfo1')
+        }
     }
   }
 }

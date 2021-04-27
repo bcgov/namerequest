@@ -43,6 +43,7 @@ import { CommonMixin, PaymentMixin, PaymentSessionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { ApplicantI, NameChoicesIF } from '@/interfaces'
 import { PAYMENT_COMPLETE_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
+import NamexServices from '@/services/namex.services'
 
 /**
  * Makes debugging the receipt easier.
@@ -74,8 +75,6 @@ export default class PaymentCompleteDialog extends Mixins(
   @Getter getNameChoices!: NameChoicesIF
 
   // Global actions
-  @Action setCompletePayment!: ActionBindingIF
-  @Action getNameRequest!: ActionBindingIF
   @Action loadExistingNameRequest!: ActionBindingIF
   @Action setEditMode!: ActionBindingIF
   @Action toggleReceiptModal!: ActionBindingIF
@@ -101,12 +100,12 @@ export default class PaymentCompleteDialog extends Mixins(
   }
 
   async hideModal () {
-    await this.fetchNr(+this.getNrId)
+    await this.fetchNr()
     await this.toggleReceiptModal(false)
   }
 
-  async fetchNr (nrId: number): Promise<void> {
-    const nrData = await this.getNameRequest(nrId)
+  async fetchNr (): Promise<void> {
+    const nrData = await NamexServices.getNameRequest(true)
     if (nrData) {
       await this.loadExistingNameRequest(nrData)
     }
@@ -117,7 +116,7 @@ export default class PaymentCompleteDialog extends Mixins(
    */
   async fetchData () {
     const { sessionPaymentId, sessionNrId } = this
-    await this.fetchNr(+sessionNrId)
+    await this.fetchNr()
     await this.fetchPaymentData(sessionPaymentId, +sessionNrId)
     sessionStorage.removeItem('payment')
     sessionStorage.removeItem('paymentInProgress')
@@ -131,13 +130,13 @@ export default class PaymentCompleteDialog extends Mixins(
       await this.fetchNrPayment(nameReqId, paymentId)
       const { getNrId, paymentStatus, sbcPaymentStatus } = this
       if (sbcPaymentStatus === SbcPaymentStatus.COMPLETED && paymentStatus === PaymentStatus.CREATED) {
-        await this.completePayment(nameReqId, paymentId, this.sessionPaymentAction)
+        await this.setCompletePayment(nameReqId, paymentId, this.sessionPaymentAction)
       }
     }
   }
 
-  async completePayment (nrId: number, paymentId: number, action: string) {
-    const result: NameRequestPayment = await this.setCompletePayment({ nrId, paymentId, action })
+  async setCompletePayment (nrId: number, paymentId: number, action: string) {
+    const result: NameRequestPayment = await NamexServices.completePayment(nrId, paymentId, action)
     const paymentSuccess = result?.paymentSuccess
 
     if (paymentSuccess) {

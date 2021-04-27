@@ -3,6 +3,7 @@ import { ErrorI } from '@/modules/error/store/actions'
 export interface NameRequestPaymentResponse {
   id: number
   nrId: string
+  nrNum: string
   token: number
   statusCode: string
   completionDate: string

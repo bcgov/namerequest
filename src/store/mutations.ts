@@ -40,6 +40,8 @@ export const mutateApplicant = (state: StateIF, appKV: any) => {
     appKV.value = appKV.value.toUpperCase()
   }
   state.stateModel.newRequestModel.applicant[appKV.key] = appKV.value
+  // sessionStorage.setItem('BCREG-emailAddress', state.stateModel.newRequestModel.applicant?.emailAddress)
+  // sessionStorage.setItem('BCREG-phoneNumber', state.stateModel.newRequestModel.applicant?.phoneNumber)
 }
 
 export const mutateConflictId = (state: StateIF, conflictId: string) => {
@@ -203,6 +205,15 @@ export const mutateIsLoadingSubmission = (state: StateIF, isLoadingSubmission: b
 
 export const mutateNameRequest = (state: StateIF, nr: NameRequestI) => {
   state.stateModel.newRequestModel.nr = nr
+  // TODO: have 1 mutation for nr / applicant info and put these there
+  const nrNum = state.stateModel.newRequestModel.nr?.nrNum
+  if (nrNum?.includes('NR L')) {
+    sessionStorage.setItem('BCREG-NRL', nrNum)
+    sessionStorage.setItem('BCREG-nrNum', null)
+  } else if (nrNum) {
+    sessionStorage.setItem('BCREG-NRL', null)
+    sessionStorage.setItem('BCREG-nrNum', nrNum)
+  }
 }
 
 export const mutateNameRequestByKey = (state: StateIF, kv: any) => {
@@ -211,18 +222,19 @@ export const mutateNameRequestByKey = (state: StateIF, kv: any) => {
     kv.key,
     kv.value
   )
+  // TODO: have 1 mutation for nr / applicant info and put these there
+  const nrNum = state.stateModel.newRequestModel.nr?.nrNum
+  if (nrNum?.includes('NR L')) {
+    sessionStorage.setItem('BCREG-NRL', nrNum)
+    sessionStorage.setItem('BCREG-nrNum', null)
+  } else if (nrNum) {
+    sessionStorage.setItem('BCREG-NRL', null)
+    sessionStorage.setItem('BCREG-nrNum', nrNum)
+  }
 }
 
 export const mutateNRData = (state: StateIF, { key, value }) => {
   state.stateModel.newRequestModel.nrData[key] = value
-}
-
-export const mutateNRDataByKey = (state: StateIF, kv: any) => {
-  Vue.set(
-    state.stateModel.newRequestModel.nr,
-    kv.key,
-    kv.value
-  )
 }
 
 export const mutateNrRequiredModalVisible = (state: StateIF, nrRequiredModalVisible: boolean) => {
@@ -297,6 +309,9 @@ export const populateApplicantData = (state: StateIF) => {
       state.stateModel.newRequestModel.nr.applicants[key]
     )
   }
+  // TODO: have 1 mutation for nr / applicant info and put these there
+  sessionStorage.setItem('BCREG-emailAddress', state.stateModel.newRequestModel.applicant?.emailAddress)
+  sessionStorage.setItem('BCREG-phoneNumber', state.stateModel.newRequestModel.applicant?.phoneNumber)
 }
 
 export const populateNrData = (state: StateIF) => {
@@ -366,6 +381,17 @@ export const setNrResponse = (state: StateIF, data: NameRequestI): boolean => {
     } else {
       // applicants is null/undefined
     }
+    // TODO: have 1 mutation for nr / applicant info and put these there
+    const nrNum = state.stateModel.newRequestModel.nr?.nrNum
+    if (nrNum?.includes('NR L')) {
+      sessionStorage.setItem('BCREG-NRL', nrNum)
+      sessionStorage.setItem('BCREG-nrNum', null)
+    } else if (nrNum) {
+      sessionStorage.setItem('BCREG-NRL', null)
+      sessionStorage.setItem('BCREG-nrNum', nrNum)
+    }
+    sessionStorage.setItem('BCREG-emailAddress', state.stateModel.newRequestModel.applicant?.emailAddress)
+    sessionStorage.setItem('BCREG-phoneNumber', state.stateModel.newRequestModel.applicant?.phoneNumber)
     return true
   } catch (err) {
     console.error('setNrResponse() =', err) // eslint-disable-line no-console
