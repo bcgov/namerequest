@@ -165,9 +165,11 @@ export default class NamexServices {
     }
 
     try {
-      const response = await this.axios.patch(`${this.namexUrl()}/payments/${nrId}/payment/${paymentId}/${action}`, {}, {
-        headers: { 'Content-Type': 'application/json' }
-      })
+      const response = await this.axios.patch(
+        `${this.namexUrl()}/payments/${nrId}/payment/${paymentId}/${action}`,
+        {},
+        { headers: { 'Content-Type': 'application/json' } }
+      )
 
       if (response?.status === OK) {
         paymentResponse.payment = response.data
@@ -237,7 +239,6 @@ export default class NamexServices {
     try {
       const { CancelToken } = Axios
       const source = CancelToken.source()
-      console.log(this.namexUrl())
       const response = await this.axios.get(`${this.namexUrl()}/namerequests`, {
         cancelToken: source.token
       })
@@ -346,7 +347,6 @@ export default class NamexServices {
       sessionStorage.setItem('BCREG-emailAddress', null)
       sessionStorage.setItem('BCREG-phoneNumber', null)
       const requestData: any = data && await this.addRequestActionComment(action, data)
-      console.log(this.namexUrl())
       const response: any = requestData && await this.axios.post(`${this.namexUrl()}/namerequests`, requestData, {
         headers: { 'Content-Type': 'application/json' }
       })
@@ -361,12 +361,18 @@ export default class NamexServices {
       return null
     }
   }
-  static async putNameReservation (nrId: number, action: NrAction, data: NameRequestI): Promise<NameRequestI> {
+  static async putNameReservation (
+    nrId: number,
+    action: NrAction,
+    data: NameRequestI
+  ): Promise<NameRequestI> {
     try {
       const requestData: any = data && await this.addRequestActionComment(action, data)
-      const response: any = requestData && await this.axios.put(`${this.namexUrl()}/namerequests/${nrId}`, requestData, {
-        headers: { 'Content-Type': 'application/json' }
-      })
+      const response: any = requestData && await this.axios.put(
+        `${this.namexUrl()}/namerequests/${nrId}`,
+        requestData,
+        { headers: { 'Content-Type': 'application/json' } }
+      )
       if (response?.data && [OK, CREATED, ACCEPTED, NO_CONTENT].includes(response?.status)) {
         return response.data
       }
@@ -387,9 +393,11 @@ export default class NamexServices {
         console.error('rollbackNameRequest(), invalid NR id') // eslint-disable-line no-console
         return false
       }
-      const response = await this.axios.patch(`${this.namexUrl()}/namerequests/${nrId}/rollback/${RollbackActions.CANCEL}`, {}, {
-        headers: { 'Content-Type': 'application/json' }
-      })
+      const response = await this.axios.patch(
+        `${this.namexUrl()}/namerequests/${nrId}/rollback/${RollbackActions.CANCEL}`,
+        {},
+        { headers: { 'Content-Type': 'application/json' } }
+      )
 
       if (!response || response.status !== OK) {
         throw new Error(`Status was not 200, response = ${response}`)

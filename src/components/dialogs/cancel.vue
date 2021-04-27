@@ -47,7 +47,6 @@ import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { CANCEL_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import NamexServices from '@/services/namex.services'
-import getters from '@/modules/payment/store/getters'
 
 @Component({})
 export default class CancelDialog extends Mixins(PaymentMixin) {

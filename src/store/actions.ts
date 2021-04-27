@@ -125,11 +125,6 @@ export const findNameRequest: ActionIF = async ({ commit, getters }): Promise<vo
     commit('mutateQuickSearch', true)
     commit('mutateDisplayedComponent', 'SearchPending')
 
-    // const params: ExistingRequestSearchI = {
-    //   nrNum: getters.getExistingRequestSearch?.nrNum,
-    //   phoneNumber: getters.getExistingRequestSearch?.phoneNumber,
-    //   emailAddress: getters.getExistingRequestSearch?.emailAddress
-    // }
     const request = await NamexServices.getNameRequest(false)
     if (!request) {
       commit('mutateNameRequest',
@@ -623,7 +618,7 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
     const requestAction = getters.getRequestActionOriginal || getters.getRequestActionCd
     const data = await NamexServices.patchNameRequests(getters.getNrId, requestAction, getters.getEditNameReservation)
     if (data) {
-      // TODO: change this flow to use the patch response instead of getting the request again and then we can remove code below
+      // TODO: change this flow to use the patch response instead of getting the request again and remove code below
       // TODO: cases where applicants can be a list or object -> make this consistent (api) + update UI accordingly
       // need to set phone/email in case they changed in the patch
       if (data.applicants instanceof Array && data.applicants.length > 0) {
@@ -747,9 +742,12 @@ export const setNameRequest: ActionIF = ({ commit }, nameRequest: NameRequestI):
   commit('mutateNameRequest', nameRequest)
 }
 
-export const setExistingRequestSearch: ActionIF = ({ commit, getters }, existingRequest: { key: string, value: string }): void => {
+export const setExistingRequestSearch: ActionIF = (
+  { commit, getters },
+  existingRequest: { key: string, value: string }
+): void => {
   const prefix = 'BCREG-'
-  // if nr is changing set session storage email and phone to whatever is in store (prevents previous values from interfering)
+  // if nr changes set session email/phone to whatever is in store (prevents previous values from interfering)
   if (existingRequest.value.includes('NR')) {
     sessionStorage.setItem(prefix + 'emailAddress', getters.getExistingRequestSearch.emailAddress)
     sessionStorage.setItem(prefix + 'phoneNumber', getters.getExistingRequestSearch.phoneNumber)
