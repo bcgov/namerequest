@@ -19,7 +19,7 @@
   "QUICK_SEARCH_PUBLIC_ID": "",
   "QUICK_SEARCH_PUBLIC_SECRET": "",
   "SENTRY_DSN": "",
-  "URL": "https://namex-test.apps.silver.devops.gov.bc.ca",
+  "URL": "https://namex-dev.apps.silver.devops.gov.bc.ca",
   "VUE_APP_PAY_ROOT_API": "https://pay-api-dev.apps.silver.devops.gov.bc.ca/api/v1",
   "VUE_APP_STATUS_ROOT_API": "https://status-api-dev.apps.silver.devops.gov.bc.ca/api/v1",
   "WEBCHAT_REASON": "",
