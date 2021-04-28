@@ -18,6 +18,7 @@ axiosNamex.interceptors.request.use(
     config.headers.common['BCREG-NRL'] = sessionStorage.getItem('BCREG-NRL')
     config.headers.common['BCREG-User-Phone'] = sessionStorage.getItem('BCREG-phoneNumber')
     config.headers.common['BCREG-User-Email'] = sessionStorage.getItem('BCREG-emailAddress')
+    console.log('in interceptor, headers: ', config?.headers?.common) // eslint-disable-line
     return config
   },
   error => {
@@ -77,6 +78,7 @@ export default class NamexServices {
     }
 
     try {
+      console.log('delete ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
       const response = await this.axios.delete(`${this.namexUrl()}/payments/${nrId}/payment/${paymentId}`, {
         headers: { 'Content-Type': 'application/json' }
       })
@@ -110,6 +112,7 @@ export default class NamexServices {
       const checkedOutDt = sessionStorage.getItem('checkedOutDt')
 
       if (checkedOutBy) {
+        console.log('checkin ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
         await this.axios.patch(`${this.namexUrl()}/namerequests/${nrId}/checkin`, {
           checkedOutBy: checkedOutBy,
           checkedOutDt: checkedOutDt
@@ -135,6 +138,7 @@ export default class NamexServices {
 
       let response: any
       if (checkedOutBy) {
+        console.log('checkOut ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
         response = await this.axios.patch(`${this.namexUrl()}/namerequests/${nrId}/checkout`, {
           checkedOutBy: checkedOutBy,
           checkedOutDt: checkedOutDt
@@ -165,6 +169,7 @@ export default class NamexServices {
     }
 
     try {
+      console.log('completePayment ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
       const response = await this.axios.patch(
         `${this.namexUrl()}/payments/${nrId}/payment/${paymentId}/${action}`,
         {},
@@ -239,6 +244,7 @@ export default class NamexServices {
     try {
       const { CancelToken } = Axios
       const source = CancelToken.source()
+      console.log('get ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
       const response = await this.axios.get(`${this.namexUrl()}/namerequests`, {
         cancelToken: source.token
       })
@@ -304,7 +310,7 @@ export default class NamexServices {
     try {
       // const nr = getters.getEditNameReservation
       const requestData: any = nr && await this.addRequestActionComment(action, nr)
-
+      console.log('patch ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
       const response: any = requestData &&
         await this.axios.patch(`${this.namexUrl()}/namerequests/${nrId}/edit`, requestData, {
           headers: { 'Content-Type': 'application/json' }
@@ -323,6 +329,7 @@ export default class NamexServices {
   }
   static async patchNameRequestsByAction (nrId: number, action: NrAction): Promise<any> {
     try {
+      console.log('patch by action ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
       const response: any = await this.axios.patch(`${this.namexUrl()}/namerequests/${nrId}/${action}`, {}, {
         headers: { 'Content-Type': 'application/json' }
       })
@@ -347,6 +354,7 @@ export default class NamexServices {
       sessionStorage.setItem('BCREG-emailAddress', null)
       sessionStorage.setItem('BCREG-phoneNumber', null)
       const requestData: any = data && await this.addRequestActionComment(action, data)
+      console.log('post ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
       const response: any = requestData && await this.axios.post(`${this.namexUrl()}/namerequests`, requestData, {
         headers: { 'Content-Type': 'application/json' }
       })
@@ -368,6 +376,7 @@ export default class NamexServices {
   ): Promise<NameRequestI> {
     try {
       const requestData: any = data && await this.addRequestActionComment(action, data)
+      console.log('put ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
       const response: any = requestData && await this.axios.put(
         `${this.namexUrl()}/namerequests/${nrId}`,
         requestData,
@@ -393,6 +402,7 @@ export default class NamexServices {
         console.error('rollbackNameRequest(), invalid NR id') // eslint-disable-line no-console
         return false
       }
+      console.log('rollback ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
       const response = await this.axios.patch(
         `${this.namexUrl()}/namerequests/${nrId}/rollback/${RollbackActions.CANCEL}`,
         {},

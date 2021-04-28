@@ -246,11 +246,9 @@ export interface SetupI {
 }
 
 export interface StatsI {
-  data: {
-    auto_approved_count: number
-    priority_wait_time: number
-    regular_wait_time: number
-  }
+  auto_approved_count: number
+  priority_wait_time: number
+  regular_wait_time: number
 }
 
 export interface WaitingAddressSearchI {

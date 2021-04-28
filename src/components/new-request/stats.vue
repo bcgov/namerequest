@@ -85,7 +85,7 @@ export default class Stats extends Vue {
   }
 
   get autoApprovedCount (): string | number {
-    return (this.getStats?.data?.auto_approved_count ?? '-')
+    return (this.getStats?.auto_approved_count ?? '-')
   }
 
   /** The regular wait time, in days. */
@@ -94,7 +94,7 @@ export default class Stats extends Vue {
     if (regularWaitTime > 0) {
       return regularWaitTime
     } else {
-      return (this.getStats?.data?.regular_wait_time ?? '-')
+      return (this.getStats?.regular_wait_time ?? '-')
     }
   }
 
@@ -104,7 +104,7 @@ export default class Stats extends Vue {
     if (priorityWaitTime > 0) {
       return priorityWaitTime
     } else {
-      return (this.getStats?.data?.priority_wait_time ?? '-')
+      return (this.getStats?.priority_wait_time ?? '-')
     }
   }
 }
