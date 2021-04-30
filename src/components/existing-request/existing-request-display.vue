@@ -543,7 +543,7 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   private get isPaymentProcessing () {
-    return (this.pendingPayment?.sbcPayment?.statusCode === PaymentStatus.COMPLETED)
+    return ([PaymentStatus.APPROVED, PaymentStatus.COMPLETED].includes(this.pendingPayment?.sbcPayment?.statusCode))
   }
 
   /** Returns True if the specified action should display a red button. */
@@ -750,7 +750,7 @@ export default class ExistingRequestDisplay extends Mixins(
       }
       this.pendingPayment = this.payments.find(
         payment => (
-          ![PaymentStatus.COMPLETED, PaymentStatus.CANCELLED].includes(payment.statusCode)
+          ![PaymentStatus.APPROVED, PaymentStatus.COMPLETED, PaymentStatus.CANCELLED].includes(payment.statusCode)
         )
       )
 
