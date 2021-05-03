@@ -6,7 +6,7 @@
         <div class="col1 align-self-center">{{receiptNumber}}</div>
         <div class="col2 align-self-center">{{receiptDate}}</div>
         <div class="col3 align-self-center">{{receiptDescription}}</div>
-        <div class="col4 align-self-center">${{receiptAmount}}</div>
+        <div class="col4 align-self-center">{{receiptAmount}}</div>
         <div class="col5 align-self-center">
           <v-btn class="download-receipt-btn float-right" :loading="loading" @click="downloadReceipt()">
             <span>Download PDF</span>
@@ -44,7 +44,10 @@ export default class PaymentSummary extends Mixins(PaymentMixin) {
   }
 
   private get receiptAmount (): string {
-    return `${this.summary?.receipt.receiptAmount.toFixed(2)} CAD`
+    if (this.summary?.receipt?.receiptAmount) {
+      return `$${this.summary?.receipt.receiptAmount.toFixed(2)} CAD`
+    }
+    return null
   }
 
   private async downloadReceipt () {
