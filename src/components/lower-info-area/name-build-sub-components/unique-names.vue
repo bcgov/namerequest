@@ -41,9 +41,11 @@ import { Component, Vue } from 'vue-property-decorator'
 export default class UniqueNames extends Vue {}
 </script>
 
-<style scoped lang="sass">
-  #unique-names
-    p
-      font-size: 14px
-      margin-bottom: 0
+<style scoped lang="scss">
+  #unique-names {
+    p {
+      font-size: 14px;
+      margin-bottom: 0;
+    }
+  }
 </style>

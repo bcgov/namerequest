@@ -15,8 +15,10 @@ import { Component, Vue } from 'vue-property-decorator'
 export default class UnknownWords extends Vue {}
 </script>
 
-<style scoped lang="sass">
-#unknown-words
-  p
-    font-size: 14px
+<style scoped lang="scss">
+#unknown-words {
+  p {
+    font-size: 14px;
+  }
+}
 </style>

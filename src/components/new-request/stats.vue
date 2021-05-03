@@ -110,50 +110,60 @@ export default class Stats extends Vue {
 }
 </script>
 
-<style lang="sass" scoped>
-.stats-content-inner-1
-  height: fit-content
-  width: 68px
-  display: inline-block
+<style lang="scss" scoped>
+.stats-content-inner-1 {
+  height: fit-content;
+  width: 68px;
+  display: inline-block;
+}
 
-.stats-content-inner-2
-  height: fit-content
-  white-space: nowrap
-  padding-left: 8px
-  font-size: 12px
-  line-height: 18px
+.stats-content-inner-2 {
+  height: fit-content;
+  white-space: nowrap;
+  padding-left: 8px;
+  font-size: 12px;
+  line-height: 18px;
+}
 
-.stats-content-outer
-  width: fit-content
-  margin-left: 10px
-  background: url('~@/assets/images/stats-circle.png')
-  background-repeat: no-repeat
-  display: flex
-  align-items: center
-  &:hover
-    cursor: default
+.stats-content-outer {
+  width: fit-content;
+  margin-left: 10px;
+  background: url('~@/assets/images/stats-circle.png');
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
 
-.stats-unit
-  display: block
-  position: relative
-  top: -8px
-  font-size: 12px
-  font-weight: bold
+  &:hover {
+    cursor: default;
+  }
+}
 
-.stats-v-row
-  height: 68px
+.stats-unit {
+  display: block;
+  position: relative;
+  top: -8px;
+  font-size: 12px;
+  font-weight: bold;
+}
 
-.stats-value
-  display: block
-  margin: 0
-  padding: 0
-  font-size: 24px
-  font-weight: bold
+.stats-v-row {
+  height: 68px;
+}
 
-.wait-time-tooltip
-  text-align: center
-  max-width: 175px
+.stats-value {
+  display: block;
+  margin: 0;
+  padding: 0;
+  font-size: 24px;
+  font-weight: bold;
+}
 
-.new-submission-wait-time-tooltip
-  width: 410px !important
+.wait-time-tooltip {
+  text-align: center;
+  max-width: 175px;
+}
+
+.new-submission-wait-time-tooltip {
+  width: 410px !important;
+}
 </style>

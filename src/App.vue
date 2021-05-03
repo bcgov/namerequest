@@ -199,28 +199,36 @@ export default class App extends Mixins(DateMixin) {
 }
 </script>
 
-<style lang="sass">
-#main-column
-  display: flex
-  flex-flow: column nowrap
-  min-height: 100vh
+<style lang="scss">
+#main-column {
+  display: flex;
+  flex-flow: column nowrap;
+  min-height: 100vh;
 
-  .sbc-header
-    .v-btn
-      box-shadow: none !important
+  .sbc-header {
+    .v-btn {
+      box-shadow: none !important;
+    }
+  }
+}
 
-.loading-container.grayed-out
-  opacity: 0.46
-  background-color: rgb(33, 33, 33) // grey darken-4
-  border-color: rgb(33, 33, 33) // grey darken-4
+.loading-container.grayed-out {
+  opacity: 0.46;
+  background-color: rgb(33, 33, 33);
+  border-color: rgb(33, 33, 33);
+}
 
-.app-header
-  .v-btn
-    box-shadow: unset !important
+.app-header {
+  .v-btn {
+    box-shadow: unset !important;
+  }
+}
 
-.app-footer
-  .container
-    max-width: 1300px
-    padding-right: 1rem
-    padding-left: 1rem
+.app-footer {
+  .container {
+    max-width: 1300px;
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+}
 </style>

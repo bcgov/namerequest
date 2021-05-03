@@ -87,33 +87,42 @@ export default class BusinessDesignation extends Vue {
 }
 </script>
 
-<style scoped lang="sass">
-  #business-designation
-    p
-      font-size: 14px
-      margin-bottom: 0
+<style scoped lang="scss">
+  @import '@/assets/scss/theme.scss';
 
-    .business-designation-list
-      background: inherit
+  #business-designation {
+    p {
+      font-size: 14px;
+      margin-bottom: 0;
+    }
 
-      .business-designation-list-item
-        color: $text
-        font-size: 14px
-        letter-spacing: 0
-        line-height: 22px
-        min-height: 0!important
-        padding-left: 0
+    .business-designation-list {
+      background: inherit;
 
-      .business-designation-list-item:before
-        background: white
+      .business-designation-list-item {
+        color: $text;
+        font-size: 14px;
+        letter-spacing: 0;
+        line-height: 22px;
+        min-height: 0!important;
+        padding-left: 0;
+      }
 
-      .business-designation-list-item-title
-        font-size: 14px
-        color: $app-blue
-        margin-bottom: 0
-        text-decoration: underline
+      .business-designation-list-item:before {
+        background: white;
+      }
 
-      .business-designation-list-item-title-active
-        font-weight: bolder
-        text-decoration: none
+      .business-designation-list-item-title {
+        font-size: 14px;
+        color: $app-blue;
+        margin-bottom: 0;
+        text-decoration: underline;
+      }
+
+      .business-designation-list-item-title-active {
+        font-weight: bolder;
+        text-decoration: none;
+      }
+    }
+  }
 </style>
