@@ -86,11 +86,6 @@
   top: 0px;
 }
 
-.designation-buttons button {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
 .designation-error-col {
   padding: 5px 10px 0px 10px;
 }
@@ -123,11 +118,11 @@
 
 .sbc-header {
   .v-btn {
-    background-color: rgba(0, 0, 0, 0)!important;
-    text-transform: none!important;
+    background-color: rgba(0, 0, 0, 0) !important;
+    text-transform: none !important;
     font-weight: normal !important;
-    letter-spacing: normal!important;
-    font-size: .875rem!important;
+    letter-spacing: normal !important;
+    font-size: .875rem !important;
   }
 }
 

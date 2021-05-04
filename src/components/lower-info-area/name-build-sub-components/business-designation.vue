@@ -104,7 +104,7 @@ export default class BusinessDesignation extends Vue {
         font-size: 14px;
         letter-spacing: 0;
         line-height: 22px;
-        min-height: 0!important;
+        min-height: 0 !important;
         padding-left: 0;
       }
 
