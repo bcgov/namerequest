@@ -72,6 +72,10 @@ export default class AppTitleCols extends Vue {
 <style lang="scss" scoped>
 @import '@/assets/scss/theme.scss';
 
+.colour-white {
+  color: white !important;
+}
+
 .beta-tag {
   top: -1rem;
   color: $BCgovGold5;

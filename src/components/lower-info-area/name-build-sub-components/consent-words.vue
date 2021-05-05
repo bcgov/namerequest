@@ -40,19 +40,25 @@ export default class ConsentWords extends Vue {
 }
 </script>
 
-<style scoped lang="sass">
-#consent-words
-  p
-    font-size: 14px
+<style scoped lang="scss">
+@import '@/assets/scss/theme.scss';
 
-  .consent-words-list
-    background: inherit
+#consent-words {
+  p {
+    font-size: 14px;
+  }
 
-    .consent-words-list-item
-      color: $text
-      font-size: 14px
-      letter-spacing: 0
-      line-height: 22px
-      min-height: 0!important
-      padding-left: 0
+  .consent-words-list {
+    background: inherit;
+
+    .consent-words-list-item {
+      color: $text;
+      font-size: 14px;
+      letter-spacing: 0;
+      line-height: 22px;
+      min-height: 0 !important;
+      padding-left: 0;
+    }
+  }
+}
 </style>

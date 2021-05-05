@@ -39,19 +39,25 @@ export default class UnavailableWords extends Vue {
 }
 </script>
 
-<style scoped lang="sass">
-#unavailable-words
-  p
-    font-size: 14px
+<style scoped lang="scss">
+@import '@/assets/scss/theme.scss';
 
-  .unavailable-words-list
-    background: inherit
+#unavailable-words {
+  p {
+    font-size: 14px;
+  }
 
-    .unavailable-words-list-item
-      color: $text
-      font-size: 14px
-      letter-spacing: 0
-      line-height: 22px
-      min-height: 0!important
-      padding-left: 0
+  .unavailable-words-list {
+    background: inherit;
+
+    .unavailable-words-list-item {
+      color: $text;
+      font-size: 14px;
+      letter-spacing: 0;
+      line-height: 22px;
+      min-height: 0 !important;
+      padding-left: 0;
+    }
+  }
+}
 </style>

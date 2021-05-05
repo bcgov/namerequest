@@ -232,27 +232,42 @@ export default class PickEntityOrConversionDialog extends Vue {
 }
 </script>
 
-<style lang="sass" scoped>
-.v-data-table
-  margin: 0 -3px
-.category-bg
-  background-color: $gray1
-.cell
-  padding: 10px
-  color: $dk-text
-  display: flex
-.entity-link
-  width: 100%
-  text-decoration: none
-  text-align: left
-.clickable-cell
-  min-width: 180px
-  width: 100%
-  padding: 10px
-  &:hover
-    background-color: $grey-2
-    cursor: pointer
-.no-border
-  border-radius: 0 !important
-  text-decoration: none !important
+<style lang="scss" scoped>
+@import '@/assets/scss/theme.scss';
+
+.v-data-table {
+  margin: 0 -3px;
+}
+
+.category-bg {
+  background-color: $gray1;
+}
+
+.cell {
+  padding: 10px;
+  color: $dk-text;
+  display: flex;
+}
+
+.entity-link {
+  width: 100%;
+  text-decoration: none;
+  text-align: left;
+}
+
+.clickable-cell {
+  min-width: 180px;
+  width: 100%;
+  padding: 10px;
+
+  &:hover {
+    background-color: $app-lt-blue;
+    cursor: pointer;
+  }
+}
+
+.no-border {
+  border-radius: 0 !important;
+  text-decoration: none !important;
+}
 </style>

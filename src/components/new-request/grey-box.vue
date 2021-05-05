@@ -53,11 +53,11 @@
                        class="text-center designation-error-col"
                        key="designation-error-col">
                   <template v-if="Array.isArray(designations) && designations.length > 0">
-                    <div class="designation-buttons pa-0">
+                    <div class="pa-0">
                       <button :id="'designation-btn-'+d"
                               :key="'designation-'+d"
                               @click.once.prevent="changeDesignation(des)"
-                              class="link-sm"
+                              class="link-sm ma-0 pa-0"
                               tag="div"
                               v-for="(des, d) in designations">
                       <span :class="d > 0 ? 'ml-1' : '' ">

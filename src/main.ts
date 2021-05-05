@@ -11,8 +11,6 @@ import * as Integrations from '@sentry/integrations'
 // NB: order matters - do not change
 import 'quill/dist/quill.core.css'
 import '@mdi/font/css/materialdesignicons.min.css'
-import '@/assets/sass/main.sass'
-import '@/assets/sass/overrides.sass'
 
 import '@/assets/scss/base.scss'
 import '@/assets/scss/layout.scss'
