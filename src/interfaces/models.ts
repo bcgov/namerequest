@@ -255,3 +255,16 @@ export interface WaitingAddressSearchI {
   text: string
   value: string
 }
+
+export interface AdvancedSearchI {
+  businessName: string
+  applicantFirstName: string
+  applicantLastName: string
+  startDate: string
+  endDate: string
+}
+
+export interface StartEndDatesI {
+  startDate: string
+  endDate: string
+}

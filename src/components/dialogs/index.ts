@@ -1,3 +1,4 @@
+export { default as AdvancedSearch } from './advanced-search.vue'
 export { default as AffiliationErrorDialog } from './affiliation-error.vue'
 export { default as CancelDialog } from './cancel.vue'
 export { default as ConditionsDialog } from './conditions.vue'
