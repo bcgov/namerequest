@@ -272,12 +272,4 @@ export default class ExistingRequestSearch extends Vue {
   padding: 0 30px !important;
   font-size: 1rem !important;
 }
-
-#advanced-search-btn {
-  color: $app-blue !important;
-  font-size: .875rem;
-  &:hover {
-    cursor: pointer;
-  }
-}
 </style>
