@@ -105,13 +105,14 @@
           <!-- SIXTH LINE -->
           <v-row v-if="false" class="mt-3" no-gutters> <!-- Condition to be: getIsAuthenticated -->
             <v-col class="text-center">
-              <span
+              <v-btn
                 id="advanced-search-btn"
-                class="text-decoration-underline"
+                class="button-text"
+                text
                 @click="advancedSearchDialog = true"
               >
                 I don't know my NR Number
-              </span>
+              </v-btn>
             </v-col>
           </v-row>
 

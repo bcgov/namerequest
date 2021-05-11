@@ -26,8 +26,8 @@
         </v-col>
       </v-row>
       <v-card-actions class="my-0 py-0 float-right">
-          <v-btn id="btn-done" text color="primary" :ripple="false" @click="submitDates()"><strong>OK</strong></v-btn>
-          <v-btn id="btn-cancel" text color="primary" :ripple="false" @click="emitClose()">Cancel</v-btn>
+          <v-btn id="btn-done" text color="primary" @click="submitDates()"><strong>OK</strong></v-btn>
+          <v-btn id="btn-cancel" text color="primary" @click="emitClose()">Cancel</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

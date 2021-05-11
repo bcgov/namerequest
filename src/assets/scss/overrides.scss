@@ -135,6 +135,15 @@
   border: thin solid $app-red !important;
 }
 
+// blue button: blue on white
+.button-text {
+  color: $app-blue !important;
+  background-color: transparent !important;
+  border: thin solid transparent !important;
+  text-decoration: underline;
+  box-shadow: none !important;
+}
+
 .v-label {
   color: $text !important;
 }

@@ -85,7 +85,7 @@
           <v-btn
             id="adv-search-btn-1"
             class="mr-2"
-            :class="{ 'clear-btn': isTabResultsTable || isTabRetrieve }"
+            :class="{ 'button-blue': isTabResultsTable || isTabRetrieve }"
             text
             outlined
             @click="advSearchBtn1Actions()"
@@ -98,7 +98,7 @@
           </v-btn>
           <v-btn
             id="adv-search-btn-2"
-            :class="{ 'clear-btn' : !isTabRetrieve }"
+            :class="{ 'button-blue' : !isTabRetrieve }"
             text
             outlined
             @click="advSearchBtn2Actions()"
@@ -244,13 +244,6 @@ export default class AdvancedSearch extends Vue {
   .v-btn {
     min-width: 100px !important;
   }
-}
-
-.clear-btn {
-  color: $app-blue !important;
-  background-color: white !important;
-  border: 1px solid $app-blue !important;
-  box-shadow: none !important;
 }
 
 .results-text {
