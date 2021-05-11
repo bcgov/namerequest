@@ -46,7 +46,7 @@ import { StartEndDatesI } from '@/interfaces/models'
 @Component({})
 export default class AdvancedSearchDates extends Mixins(DateMixin) {
   /** Prop to display the dialog. */
-  @Prop() private dialog: boolean
+  @Prop() readonly dialog: boolean
 
   // Global getters
   @Getter getCurrentJsDate: Date
@@ -108,7 +108,7 @@ export default class AdvancedSearchDates extends Mixins(DateMixin) {
   .v-btn {
     height: 2rem !important;
     background-color: white !important;
-    color: $gray7 !important;
+    color: $text !important;
     box-shadow: none !important;
   }
 }

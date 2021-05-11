@@ -88,7 +88,6 @@
             :class="{ 'clear-btn': isTabResultsTable || isTabRetrieve }"
             text
             outlined
-            :ripple="false"
             @click="advSearchBtn1Actions()"
           >
             <span class="px-1">
@@ -102,7 +101,6 @@
             :class="{ 'clear-btn' : !isTabRetrieve }"
             text
             outlined
-            :ripple="false"
             @click="advSearchBtn2Actions()"
           >
             <span>
@@ -133,10 +131,10 @@ import { AdvancedSearchTabs } from '@/enums'
 })
 export default class AdvancedSearch extends Vue {
   /** Prop to display the dialog. */
-  @Prop() private dialog: boolean
+  @Prop() readonly dialog: boolean
 
   /** Prop to provide attachment selector. */
-  @Prop() private attach: string
+  @Prop() readonly attach: string
 
   // Local Properties
   private advSearchTab = 0

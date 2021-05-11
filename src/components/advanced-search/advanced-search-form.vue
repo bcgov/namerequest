@@ -102,7 +102,7 @@ export default class AdvancedSearchForm extends Vue {
   }
 
   /** Prompt the form to pass up the form data. */
-  @Prop() private promptSubmit: boolean
+  @Prop() readonly promptSubmit: boolean
 
   // Local Properties
   private isValid = false

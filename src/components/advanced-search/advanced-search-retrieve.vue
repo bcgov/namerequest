@@ -65,7 +65,7 @@ export default class AdvancedSearchRetrieve extends Vue {
   }
 
   /** Prompt the form to pass up the form data. */
-  @Prop() private promptSubmit: boolean
+  @Prop() readonly promptSubmit: boolean
 
   // Global getter
   @Getter getNr!: Partial<NameRequestI>
