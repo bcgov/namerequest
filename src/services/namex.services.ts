@@ -369,9 +369,9 @@ export default class NamexServices {
       throw new Error(`Invalid response = ${response}`)
     } catch (err) {
       // extra logging to help find errors
-      err.message && console.log('postNameRequests(), message =', err.message) // eslint-disable-line no-console
-      err.request && console.log('postNameRequests(), request =', err.request) // eslint-disable-line no-console
-      err.response && console.log('postNameRequests(), response =', err.response) // eslint-disable-line no-console
+      err?.message && console.log('postNameRequests(), message =', err.message) // eslint-disable-line no-console
+      err?.request && console.log('postNameRequests(), request =', err.request) // eslint-disable-line no-console
+      err?.response && console.log('postNameRequests(), response =', err.response) // eslint-disable-line no-console
       const msg = await this.handleApiError(err, 'Could not post name requests')
       console.error('postNameRequests() =', msg) // eslint-disable-line no-console
       await errorModule.setAppError({ id: 'post-name-requests-error', error: msg } as ErrorI)
