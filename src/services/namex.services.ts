@@ -348,12 +348,17 @@ export default class NamexServices {
   }
   static async postNameRequests (action: NrAction, data: NameRequestI): Promise<NameRequestI> {
     try {
+      if (!data) throw new Error('postNameRequests() - invalid data') // safety check
+
       // set to null (in case these were set from a previous user action) since this will be a new nr/nrl
       sessionStorage.setItem('BCREG-NRL', null)
       sessionStorage.setItem('BCREG-nrNum', null)
       sessionStorage.setItem('BCREG-emailAddress', null)
       sessionStorage.setItem('BCREG-phoneNumber', null)
+
       const requestData: any = data && await this.addRequestActionComment(action, data)
+      if (!requestData) throw new Error('postNameRequests() - invalid request data') // safety check
+
       console.log('post ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
       const response: any = requestData && await this.axios.post(`${this.namexUrl()}/namerequests`, requestData, {
         headers: { 'Content-Type': 'application/json' }
@@ -363,6 +368,10 @@ export default class NamexServices {
       }
       throw new Error(`Invalid response = ${response}`)
     } catch (err) {
+      // extra logging to help find errors
+      err.message && console.log('postNameRequests(), message =', err.message) // eslint-disable-line no-console
+      err.request && console.log('postNameRequests(), request =', err.request) // eslint-disable-line no-console
+      err.response && console.log('postNameRequests(), response =', err.response) // eslint-disable-line no-console
       const msg = await this.handleApiError(err, 'Could not post name requests')
       console.error('postNameRequests() =', msg) // eslint-disable-line no-console
       await errorModule.setAppError({ id: 'post-name-requests-error', error: msg } as ErrorI)

@@ -85,27 +85,6 @@ html {
   color: $app-green !important;
 }
 
-// normal button: white on blue
-.button-normal {
-  color: white !important;
-  background-color: $app-blue  !important;
-  border: thin solid $app-blue !important;
-}
-
-// blue button: blue on white
-.button-blue {
-  color: $app-blue !important;
-  background-color: transparent !important;
-  border: thin solid $app-blue !important;
-}
-
-// red button: red on white
-.button-red {
-  color: $app-red !important;
-  background-color: transparent !important;
-  border: thin solid $app-red !important;
-}
-
 .dotted-underline {
   border-bottom: 1px dotted;
 }

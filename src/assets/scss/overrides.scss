@@ -107,9 +107,32 @@
   padding: inherit 28px !important;
 }
 
-.v-btn.normal {
+// gray button: white on gray
+.button-gray {
   color: white !important;
   background-color: $gray6 !important;
+  border: thin solid $gray6 !important;
+}
+
+// normal button: white on blue
+.button-normal {
+  color: white !important;
+  background-color: $app-blue  !important;
+  border: thin solid $app-blue !important;
+}
+
+// blue button: blue on white
+.button-blue {
+  color: $app-blue !important;
+  background-color: transparent !important;
+  border: thin solid $app-blue !important;
+}
+
+// red button: red on white
+.button-red {
+  color: $app-red !important;
+  background-color: transparent !important;
+  border: thin solid $app-red !important;
 }
 
 .v-label {
