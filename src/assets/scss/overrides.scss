@@ -137,8 +137,7 @@
 
 // blue button: blue on white
 .button-text {
-  color: $app-blue !important;
-  background-color: transparent !important;
+  @extend .button-blue;
   border: thin solid transparent !important;
   text-decoration: underline;
   box-shadow: none !important;
