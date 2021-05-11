@@ -353,13 +353,15 @@ export default class NewSearch extends Vue {
 
   set entity_type_cd (type: string) {
     if (type === 'INFO') {
+      // clear current value until user chooses a new one
+      this.setEntityTypeCd(null)
+      // show the "View all business types" modal
       this.setPickEntityModalVisible(true)
+      return
     }
     if (type && this.getIsConversion) {
-      if (type !== 'INFO') {
-        let { entity_type_cd } = this.$conversionTypes.find(conv => conv.value === type)
-        this.setEntityTypeCd(entity_type_cd)
-      }
+      let { entity_type_cd } = this.$conversionTypes.find(conv => conv.value === type)
+      this.setEntityTypeCd(entity_type_cd)
       this.setConversionType(type)
       return
     }
