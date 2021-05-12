@@ -14,7 +14,7 @@
           </v-date-picker>
         </v-col>
         <v-col>
-          <span class="title-bold-16" :class="{ 'error-message': validate && !hasEndDate }">Select Start Date:</span>
+          <span class="title-bold-16" :class="{ 'error-message': validate && !hasEndDate }">Select End Date:</span>
           <v-date-picker
             id="end-date-calendar"
             class="mt-2"
@@ -111,6 +111,15 @@ export default class AdvancedSearchDates extends Mixins(DateMixin) {
     color: $text !important;
     box-shadow: none !important;
   }
+
+  .v-date-picker-table__current {
+    border-color: $app-blue !important;
+    color: $app-blue !important;
+  }
+
+  .v-btn:not(.v-btn--text):not(.v-btn--outlined).v-btn--active:before {
+    opacity: 0;
+  }
 }
 
 ::v-deep .v-picker .v-btn--disabled {
@@ -121,19 +130,10 @@ export default class AdvancedSearchDates extends Mixins(DateMixin) {
   color: $gray9
 }
 
-::v-deep .v-date-picker-table__current {
-  border-color: $app-blue !important;
-  color: $app-blue !important;
-}
-
 ::v-deep .theme--light.v-btn:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
   background-color: $app-blue !important;
   border-color: $app-blue !important;
   color: white !important;
-}
-
-::v-deep .v-btn:not(.v-btn--text):not(.v-btn--outlined).v-btn--active:before {
-  opacity: 0;
 }
 
 </style>

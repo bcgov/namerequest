@@ -90,7 +90,7 @@
             outlined
             @click="advSearchBtn1Actions()"
           >
-            <span class="px-1">
+            <span class="px-3">
               <v-icon v-if="!isTabSearchForm">mdi-chevron-left</v-icon>
               {{ advSearchBtn1 }}
               <v-icon v-if="isTabSearchForm">mdi-chevron-right</v-icon>
@@ -130,6 +130,9 @@ import { AdvancedSearchTabs } from '@/enums'
   }
 })
 export default class AdvancedSearch extends Vue {
+  // Declarations for template
+  readonly AdvancedSearchTabs = AdvancedSearchTabs
+
   /** Prop to display the dialog. */
   @Prop() readonly dialog: boolean
 
@@ -141,7 +144,6 @@ export default class AdvancedSearch extends Vue {
   private toggleSearchSubmit = false
   private toggleRetrieveSubmit = false
   private invalidSearch = false
-  private readonly AdvancedSearchTabs = AdvancedSearchTabs
 
   /** The current action button text dependant on tab state. */
   private get advSearchBtn1 (): string {
@@ -259,5 +261,9 @@ export default class AdvancedSearch extends Vue {
 
 ::v-deep .v-tabs > .v-tabs-bar {
   display: none;
+}
+
+::v-deep .v-icon.v-icon {
+  font-size: 1.25rem;
 }
 </style>

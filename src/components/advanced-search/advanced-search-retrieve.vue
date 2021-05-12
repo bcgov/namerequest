@@ -104,8 +104,8 @@ export default class AdvancedSearchRetrieve extends Vue {
   }
 
   /** Clear field level validations. */
-  private clearValidations (): void {
-    this.$refs.advancedSearchRetrieveForm.resetValidation()
+  private async clearValidations (): void {
+    await this.$refs.advancedSearchRetrieveForm.resetValidation()
     this.phoneRules = []
     this.emailRules = []
     this.errorMessage = ''
@@ -114,8 +114,7 @@ export default class AdvancedSearchRetrieve extends Vue {
   /** Apply rules dynamically and await form validation. */
   private async validateForm (): Promise<void> {
     this.applyRules()
-    this.$refs.advancedSearchRetrieveForm.validate()
-    await this.$nextTick()
+    await this.$refs.advancedSearchRetrieveForm.validate()
   }
 
   /** Update store values with search parameters.
