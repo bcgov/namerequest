@@ -103,7 +103,7 @@
           </v-row>
 
           <!-- SIXTH LINE -->
-          <v-row v-if="getIsAuthenticated" class="mt-3" no-gutters> <!-- Condition to be: getIsAuthenticated -->
+          <v-row v-if="false" class="mt-3" no-gutters> <!-- Condition to be: getIsAuthenticated -->
             <v-col class="text-center">
               <v-btn
                 id="advanced-search-btn"
