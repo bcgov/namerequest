@@ -34,7 +34,7 @@ export default class QuickSearchNames extends Vue {
 }
 .quickSearchNames {
     font-size: 1rem;
-    color: $gray7;
+    color: $text;
     padding-left: 0.3125rem;
     padding-top: 0.9375rem;
 }

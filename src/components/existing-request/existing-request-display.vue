@@ -220,6 +220,7 @@ export default class ExistingRequestDisplay extends Mixins(
 ) {
   // Global getters
   @Getter getDisplayedComponent!: string
+  @Getter getIsAuthenticated!: boolean
   @Getter getNr!: Partial<NameRequestI>
   @Getter getNrId!: number
   @Getter getNrState!: NrState
@@ -241,11 +242,6 @@ export default class ExistingRequestDisplay extends Mixins(
   NameState = NameState
   NrAction = NrAction
   NrState = NrState
-
-  /** True if user is authenticated, else False. */
-  get isAuthenticated (): boolean {
-    return Boolean(sessionStorage.getItem(SessionStorageKeys.KeyCloakToken))
-  }
 
   /** This is used in the template as the transition key for the affected template, triggering a fade in/out. */
   refreshCount = 0
@@ -666,7 +662,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** Affiliates the current NR if authenticated, or prompts login if unauthenticated. */
   private async affiliateOrLogin (): Promise<any> {
-    if (this.isAuthenticated) {
+    if (this.getIsAuthenticated) {
       await this.createAffiliation(this.nr)
     } else {
       // Persist NR in session for use in affiliation upon authentication via Signin component

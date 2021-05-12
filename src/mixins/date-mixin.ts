@@ -55,22 +55,6 @@ export class DateMixin extends Vue {
   }
 
   /**
-   * Converts a Date object to a date string (YYYY-MM-DD) in Pacific timezone.
-   * @example "2021-01-01 07:00:00 GMT" -> "2020-12-31"
-   * @example "2021-01-01 08:00:00 GMT" -> "2021-01-01"
-   */
-  dateToYyyyMmDd (date: Date): string {
-    // safety check
-    if (!isDate(date) || isNaN(date.getTime())) return null
-
-    const dateStr = date.toLocaleDateString('en-CA', {
-      timeZone: 'America/Vancouver'
-    })
-
-    return dateStr
-  }
-
-  /**
    * Converts a Date object to a date string (Month Day, Year) in Pacific timezone.
    * @example "2021-01-01 07:00:00 GMT" -> "December 31, 2020"
    * @example "2021-01-01 08:00:00 GMT" -> "January 1, 2021"
@@ -140,8 +124,8 @@ export class DateMixin extends Vue {
     if (!isDate(date) || isNaN(date.getTime())) return NaN
 
     // convert Dates to dates to Pacific tz
-    const todayPacific = this.dateToYyyyMmDd(this.getCurrentJsDate)
-    const datePacific = this.dateToYyyyMmDd(date)
+    const todayPacific = this.dateToDateString(this.getCurrentJsDate)
+    const datePacific = this.dateToDateString(date)
 
     // get milliseconds for start of "today" and start of "date"
     const todayPacificMs = new Date(todayPacific).setHours(0, 0, 0, 0)
@@ -149,5 +133,23 @@ export class DateMixin extends Vue {
 
     // return diff in days
     return Math.round((datePacificMs - todayPacificMs) / this.MS_IN_A_DAY)
+  }
+
+  /**
+   * Converts a Date object to a date string (YYYY-MM-DD) in Pacific timezone.
+   * @example "2021-01-01 07:00:00 GMT" -> "2020-12-31"
+   * @example "2021-01-01 08:00:00 GMT" -> "2021-01-01"
+   * @example "2021-01-01 00:00:00 PST" -> "2021-01-01"
+   * @example "2021-01-01 23:59:59 PST" -> "2021-01-01"
+   */
+  dateToDateString (date: Date): string {
+    // safety check
+    if (!isDate(date) || isNaN(date.getTime())) return null
+
+    const dateStr = date.toLocaleDateString('en-CA', {
+      timeZone: 'America/Vancouver'
+    })
+
+    return dateStr
   }
 }

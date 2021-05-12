@@ -135,8 +135,16 @@
   border: thin solid $app-red !important;
 }
 
+// text button: blue text
+.button-text {
+  @extend .button-blue;
+  border: thin solid transparent !important;
+  text-decoration: underline;
+  box-shadow: none !important;
+}
+
 .v-label {
-  color: rgba(73, 80, 87, .95) !important;
+  color: $text !important;
 }
 
 .sbc-header {

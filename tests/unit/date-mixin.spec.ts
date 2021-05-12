@@ -29,24 +29,24 @@ describe('Date Mixin', () => {
     expect(vm.createUtcDate(2021, 6, 1, 0, 0).toISOString()).toBe('2021-07-01T07:00:00.000Z')
   })
 
-  it('returns correct values for dateToYyyyMmDd()', () => {
-    expect(vm.dateToYyyyMmDd(null)).toBeNull()
-    expect(vm.dateToYyyyMmDd(new Date('not a date'))).toBeNull()
+  it('returns correct values for dateToDateString()', () => {
+    expect(vm.dateToDateString(null)).toBeNull()
+    expect(vm.dateToDateString(new Date('not a date'))).toBeNull()
     // verify that GMT/UTC is correctly converted to Pacific
-    expect(vm.dateToYyyyMmDd(new Date('2021-01-01 07:00:00 GMT'))).toBe('2020-12-31') // Standard Time
-    expect(vm.dateToYyyyMmDd(new Date('2021-01-01 08:00:00 GMT'))).toBe('2021-01-01') // Standard Time
-    expect(vm.dateToYyyyMmDd(new Date('2021-07-01 06:00:00 GMT'))).toBe('2021-06-30') // Daylight Time
-    expect(vm.dateToYyyyMmDd(new Date('2021-07-01 07:00:00 GMT'))).toBe('2021-07-01') // Daylight Time
+    expect(vm.dateToDateString(new Date('2021-01-01 07:00:00 GMT'))).toBe('2020-12-31') // Standard Time
+    expect(vm.dateToDateString(new Date('2021-01-01 08:00:00 GMT'))).toBe('2021-01-01') // Standard Time
+    expect(vm.dateToDateString(new Date('2021-07-01 06:00:00 GMT'))).toBe('2021-06-30') // Daylight Time
+    expect(vm.dateToDateString(new Date('2021-07-01 07:00:00 GMT'))).toBe('2021-07-01') // Daylight Time
     // verify that Pacific is correctly converted to Pacific
-    expect(vm.dateToYyyyMmDd(new Date('2021-01-01 00:00:00 PST'))).toBe('2021-01-01')
-    expect(vm.dateToYyyyMmDd(new Date('2021-01-01 23:59:59 PST'))).toBe('2021-01-01')
-    expect(vm.dateToYyyyMmDd(new Date('2021-07-01 00:00:00 PDT'))).toBe('2021-07-01')
-    expect(vm.dateToYyyyMmDd(new Date('2021-07-01 23:59:59 PDT'))).toBe('2021-07-01')
+    expect(vm.dateToDateString(new Date('2021-01-01 00:00:00 PST'))).toBe('2021-01-01')
+    expect(vm.dateToDateString(new Date('2021-01-01 23:59:59 PST'))).toBe('2021-01-01')
+    expect(vm.dateToDateString(new Date('2021-07-01 00:00:00 PDT'))).toBe('2021-07-01')
+    expect(vm.dateToDateString(new Date('2021-07-01 23:59:59 PDT'))).toBe('2021-07-01')
     // verify that Eastern is correctly converted to Pacific
-    expect(vm.dateToYyyyMmDd(new Date('2021-01-01 02:00:00 EST'))).toBe('2020-12-31')
-    expect(vm.dateToYyyyMmDd(new Date('2021-01-01 03:00:00 EST'))).toBe('2021-01-01')
-    expect(vm.dateToYyyyMmDd(new Date('2021-07-01 02:00:00 EDT'))).toBe('2021-06-30')
-    expect(vm.dateToYyyyMmDd(new Date('2021-07-01 03:00:00 EDT'))).toBe('2021-07-01')
+    expect(vm.dateToDateString(new Date('2021-01-01 02:00:00 EST'))).toBe('2020-12-31')
+    expect(vm.dateToDateString(new Date('2021-01-01 03:00:00 EST'))).toBe('2021-01-01')
+    expect(vm.dateToDateString(new Date('2021-07-01 02:00:00 EDT'))).toBe('2021-06-30')
+    expect(vm.dateToDateString(new Date('2021-07-01 03:00:00 EDT'))).toBe('2021-07-01')
   })
 
   it('returns correct values for dateToPacificTime()', () => {

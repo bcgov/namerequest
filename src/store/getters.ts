@@ -11,6 +11,7 @@ import { NrState } from '@/enums'
 import {
   ApplicantI, EntityI, ExistingRequestSearchI, NameRequestI, RequestActionMappingI, SelectOptionsI
 } from '@/interfaces/models'
+import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 // List Data
 // *** TODO: replace with `this.$xxx`
@@ -19,6 +20,11 @@ import {
   ColinRequestActions, ColinRequestTypes, XproColinRequestTypes, BcMapping, XproMapping,
   Designations, EntityTypesBcData, EntityTypesXproData, Locations, RequestActions
 } from '@/list-data'
+
+/** True if user is authenticated, else False. */
+export const getIsAuthenticated = (): boolean => {
+  return Boolean(sessionStorage.getItem(SessionStorageKeys.KeyCloakToken))
+}
 
 export const getCurrentJsDate = (state: StateIF): Date => {
   return state.stateModel.common.currentJsDate

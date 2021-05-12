@@ -255,3 +255,18 @@ export interface WaitingAddressSearchI {
   text: string
   value: string
 }
+
+// For advanced search query where all parameters *values* are optional
+export interface AdvancedSearchI {
+  businessName: string
+  applicantFirstName: string
+  applicantLastName: string
+  startDate: string
+  endDate: string
+}
+
+// Used for Date collection subcomponent. Both are required when collecting dates.
+export interface StartEndDatesI {
+  startDate: string
+  endDate: string
+}

@@ -1,5 +1,13 @@
 <template>
-  <div>
+  <div id="existing-request-search">
+
+    <!-- Advanced Search Dialog -->
+    <advanced-search
+      attach="#existing-request-search"
+      :dialog="advancedSearchDialog"
+      @closeDialog="advancedSearchDialog = false"
+    />
+
     <v-row no-gutters>
 
       <!-- Help Info -->
@@ -94,6 +102,20 @@
             </v-col>
           </v-row>
 
+          <!-- SIXTH LINE -->
+          <v-row v-if="false" class="mt-3" no-gutters> <!-- Condition to be: getIsAuthenticated -->
+            <v-col class="text-center">
+              <v-btn
+                id="advanced-search-btn"
+                class="button-text"
+                text
+                @click="advancedSearchDialog = true"
+              >
+                I don't know my NR Number
+              </v-btn>
+            </v-col>
+          </v-row>
+
         </v-form>
       </v-col>
 
@@ -105,10 +127,16 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
+import { AdvancedSearch } from '@/components/dialogs'
+
 import { FormType, NameRequestI, ExistingRequestSearchI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
-@Component({})
+@Component({
+  components: {
+    AdvancedSearch
+  }
+})
 export default class ExistingRequestSearch extends Vue {
   // Refs
   $refs!: {
@@ -116,6 +144,7 @@ export default class ExistingRequestSearch extends Vue {
   }
 
   // Global getters
+  @Getter getIsAuthenticated!: boolean
   @Getter getNr!: Partial<NameRequestI>
   @Getter getExistingRequestSearch!: ExistingRequestSearchI
 
@@ -126,6 +155,8 @@ export default class ExistingRequestSearch extends Vue {
 
   private errorMessage = ''
   private isValid = false
+  private advancedSearchDialog = false
+
   // eslint-disable-next-line no-useless-escape
   private NR_REGEX = /^(NR\ ?L?|L?)?([\d]{6,8})$/
 
@@ -238,6 +269,7 @@ export default class ExistingRequestSearch extends Vue {
 
 #retrieve-name-btn {
   min-height: 45px !important;
-  padding: 0 50px !important;
+  padding: 0 30px !important;
+  font-size: 1rem !important;
 }
 </style>
