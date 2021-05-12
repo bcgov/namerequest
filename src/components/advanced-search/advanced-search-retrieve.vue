@@ -104,7 +104,7 @@ export default class AdvancedSearchRetrieve extends Vue {
   }
 
   /** Clear field level validations. */
-  private async clearValidations (): void {
+  private async clearValidations (): Promise<void> {
     await this.$refs.advancedSearchRetrieveForm.resetValidation()
     this.phoneRules = []
     this.emailRules = []
