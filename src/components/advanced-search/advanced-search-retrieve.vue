@@ -67,6 +67,9 @@ export default class AdvancedSearchRetrieve extends Vue {
   /** Prompt the form to pass up the form data. */
   @Prop() readonly promptSubmit: boolean
 
+  /** Reset form as the tab changes. */
+  @Prop() readonly formReset: boolean
+
   // Global getter
   @Getter getNr!: Partial<NameRequestI>
 
@@ -103,18 +106,18 @@ export default class AdvancedSearchRetrieve extends Vue {
       : []
   }
 
+  /** Apply rules dynamically and await form validation. */
+  private async validateForm (): Promise<void> {
+    this.applyRules()
+    await this.$refs.advancedSearchRetrieveForm.validate()
+  }
+
   /** Clear field level validations. */
   private async clearValidations (): Promise<void> {
     await this.$refs.advancedSearchRetrieveForm.resetValidation()
     this.phoneRules = []
     this.emailRules = []
     this.errorMessage = ''
-  }
-
-  /** Apply rules dynamically and await form validation. */
-  private async validateForm (): Promise<void> {
-    this.applyRules()
-    await this.$refs.advancedSearchRetrieveForm.validate()
   }
 
   /** Update store values with search parameters.
@@ -145,6 +148,14 @@ export default class AdvancedSearchRetrieve extends Vue {
       }
       this.$root.$emit('showSpinner', false)
     }
+  }
+
+  /** Clear form. */
+  @Watch('formReset')
+  private clearForm (): void {
+    this.clearValidations()
+    this.phoneNumber = ''
+    this.emailAddress = ''
   }
 
   @Emit('closeDialog')

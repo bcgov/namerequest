@@ -15,7 +15,7 @@
           filled
           class="mt-2"
           label="Requested Business Name"
-          v-model="businessName"
+          v-model="compName"
         />
       </v-col>
     </v-row>
@@ -104,12 +104,15 @@ export default class AdvancedSearchForm extends Vue {
   /** Prompt the form to pass up the form data. */
   @Prop() readonly promptSubmit: boolean
 
+  /** Reset form as the tab changes. */
+  @Prop() readonly formReset: boolean
+
   // Local Properties
   private isValid = false
   private dateDialog = false
 
   // Local model
-  private businessName = ''
+  private compName = ''
   private applicantFirstName = ''
   private applicantLastName = ''
   private startDate = ''
@@ -125,7 +128,7 @@ export default class AdvancedSearchForm extends Vue {
 
   /** Is true when the minimum search criteria is met. */
   private get hasMinimumSearchCriteria (): boolean {
-    return !!this.businessName || !!this.applicantLastName || (!!this.startDate && !!this.endDate)
+    return !!this.compName || !!this.applicantLastName || (!!this.startDate && !!this.endDate)
   }
 
   /** Apply the date selections to local model. */
@@ -141,8 +144,7 @@ export default class AdvancedSearchForm extends Vue {
         v => !!v || 'Last name is required'
       ]
     }
-    this.$refs.advancedSearchForm.validate()
-    await Vue.nextTick()
+    await this.$refs.advancedSearchForm.validate()
 
     return this.hasMinimumSearchCriteria && this.isValid
   }
@@ -158,6 +160,15 @@ export default class AdvancedSearchForm extends Vue {
     if (!this.applicantFirstName) this.applicantLastNameRules = []
   }
 
+  /** Clear form. */
+  @Watch('formReset')
+  private clearForm (): void {
+    this.compName = ''
+    this.applicantFirstName = ''
+    this.applicantLastName = ''
+    this.clearDates()
+  }
+
   @Watch('hasMinimumSearchCriteria')
   @Emit('isInvalid')
   private emitInvalid (): boolean {
@@ -169,11 +180,11 @@ export default class AdvancedSearchForm extends Vue {
   private async emitSubmit () : Promise<AdvancedSearchI> {
     if (await this.isValidForm()) {
       return {
-        businessName: this.businessName,
-        applicantFirstName: this.applicantFirstName,
-        applicantLastName: this.applicantLastName,
-        startDate: this.startDate,
-        endDate: this.endDate
+        compName: this.compName,
+        firstName: this.applicantFirstName,
+        lastName: this.applicantLastName,
+        submittedStartDate: this.startDate,
+        submittedEndDate: this.endDate
       }
     } return null
   }

@@ -258,11 +258,28 @@ export interface WaitingAddressSearchI {
 
 // For advanced search query where all parameters *values* are optional
 export interface AdvancedSearchI {
-  businessName: string
-  applicantFirstName: string
-  applicantLastName: string
-  startDate: string
-  endDate: string
+  compName: string
+  firstName: string
+  lastName: string
+  submittedStartDate: string
+  submittedEndDate: string
+}
+
+// The complete results from advanced nr search
+export interface AdvancedSearchResultsI {
+  nameRequests: NameRequestI
+  response: AdvancedSearchResponseI
+}
+
+// Meta data on the advanced search results
+export interface AdvancedSearchResponseI {
+  numFound: number
+  numPriorities: number
+  numUpdatedToday: number
+  order: string
+  queue: number
+  rows: number
+  start: number
 }
 
 // Used for Date collection subcomponent. Both are required when collecting dates.

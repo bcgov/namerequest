@@ -3,7 +3,14 @@ import { ACCEPTED, CREATED, NO_CONTENT, OK } from 'http-status-codes'
 
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
-import { AnalysisJSONI, NameRequestI, NewRequestNameSearchI, StatsI } from '@/interfaces'
+import {
+  AdvancedSearchI,
+  AdvancedSearchResultsI,
+  AnalysisJSONI,
+  NameRequestI,
+  NewRequestNameSearchI,
+  StatsI
+} from '@/interfaces'
 import { RequestActions } from '@/list-data'
 import { NrAction, NrState, RollbackActions } from '@/enums'
 import { NameRequestPayment } from '@/modules/payment/models'
@@ -255,6 +262,29 @@ export default class NamexServices {
         const msg = await this.handleApiError(err, 'Could not get name request')
         console.error('getNameRequest() =', msg) // eslint-disable-line no-console
         await errorModule.setAppError({ id: 'get-name-request-error', error: msg } as ErrorI)
+      }
+      return null
+    }
+  }
+  static async searchNameRequests (params: AdvancedSearchI, handleError: boolean): Promise<AdvancedSearchResultsI> {
+    try {
+      const token = sessionStorage.getItem('KEYCLOAK_TOKEN')
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        'Accept': 'application/pdf'
+      }
+      const response = await this.axios.get(`${this.namexUrl()}/requests?rows=1000`, {
+        params,
+        headers
+      })
+
+      if (response?.status === OK && response?.data) return response.data
+      throw new Error(`Invalid response = ${response}`)
+    } catch (err) {
+      if (handleError) {
+        const msg = await this.handleApiError(err, 'Could not find Name Requests.')
+        console.error('searchNameRequests() =', msg) // eslint-disable-line no-console
+        await errorModule.setAppError({ id: 'search-name-request-error', error: msg } as ErrorI)
       }
       return null
     }
