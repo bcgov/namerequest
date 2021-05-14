@@ -26,7 +26,7 @@
       <v-tabs-items class="rounded-b tab-items" v-model="tabNumber">
         <v-tab-item>
           <NewSearch />
-          <link-row />
+          <LinkRow />
         </v-tab-item>
         <v-tab-item>
           <ExistingRequestSearch/>

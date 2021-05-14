@@ -1,5 +1,5 @@
 <template>
-  <div class="fee-summary">
+  <div id="fee-summary">
     <v-row no-gutters align="center" justify="center">
       <v-col cols="10">
         <div class="font-weight-bold header pt-8 pb-4">Payment Details</div>
@@ -114,7 +114,8 @@ export default class FeeSummary extends Vue {
 
 <style lang="scss" scoped>
 @import "@/assets/scss/theme";
-.fee-summary {
+
+#fee-summary {
   background-color: $gray1;
 }
 

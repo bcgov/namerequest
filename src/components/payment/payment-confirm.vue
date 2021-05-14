@@ -11,10 +11,10 @@
       </li>
     </ul>
 
-    <request-details
-      v-bind:applicant="applicant"
-      v-bind:nameChoices="nameChoices"
-      v-bind:name="name"
+    <RequestDetails
+      :applicant="applicant"
+      :nameChoices="nameChoices"
+      :name="name"
     />
 
     <v-container>
@@ -83,6 +83,7 @@ export default class PaymentConfirm extends Vue {
 
 <style lang="scss" scoped>
 @import "@/assets/scss/theme";
+
 .receipt-summary {
   background-color: $gray1;
 }

@@ -1,14 +1,16 @@
 import Vue from 'vue'
-import { StateIF } from '@/interfaces/state-interface'
 import {
   AnalysisJSONI,
   ConversionTypesI,
   LocationT,
   NameRequestI,
   SelectOptionsI,
+  StaffPaymentIF,
+  StateIF,
   StatsI,
-  SubmissionTypeT, WaitingAddressSearchI
-} from '@/interfaces/models'
+  SubmissionTypeT,
+  WaitingAddressSearchI
+} from '@/interfaces'
 
 export const clearErrors = (state: StateIF) => {
   state.stateModel.newRequestModel.errors = []
@@ -454,4 +456,12 @@ export const mutateQuickSearchNames = (state: StateIF, quickSearchNames: object[
 
 export const mutateAnalyzePending = (state: StateIF, analyzePending: boolean) => {
   state.stateModel.newRequestModel.analyzePending = analyzePending
+}
+
+export const mutateKeycloakRoles = (state: StateIF, keyCloakRoles: Array<string>) => {
+  state.stateModel.common.keycloakRoles = keyCloakRoles
+}
+
+export const mutateStaffPayment = (state: StateIF, staffPayment: StaffPaymentIF) => {
+  state.stateModel.staffPayment = staffPayment
 }

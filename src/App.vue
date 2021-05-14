@@ -69,7 +69,7 @@
 // libraries, etc
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { getFeatureFlag } from '@/plugins'
+import { getFeatureFlag, getKeycloakRoles } from '@/plugins'
 import { DateMixin } from '@/mixins'
 
 // dialogs and other components
@@ -130,6 +130,7 @@ export default class App extends Mixins(DateMixin) {
   @Action setIncorporateLoginModalVisible!: ActionBindingIF
   @Action togglePaymentModal!: ActionBindingIF
   @Action setCurrentJsDate!: ActionBindingIF
+  @Action setKeycloakRoles!: ActionBindingIF
 
   /** The Update Current JS Date timer id. */
   private updateCurrentJsDateId = 0
@@ -156,6 +157,17 @@ export default class App extends Mixins(DateMixin) {
 
     // listen for spinner show/hide events
     this.$root.$on('showSpinner', (flag = false) => { this.showSpinner = flag })
+
+    // in case user is already logged in,
+    // get and store keycloak roles
+    try {
+      const keycloakRoles = getKeycloakRoles()
+      this.setKeycloakRoles(keycloakRoles)
+      console.info('Got roles!') // eslint-disable-line no-console
+    } catch (error) {
+      // just log the error message
+      console.log(`Did not get roles (${error.message})`) // eslint-disable-line no-console
+    }
   }
 
   /** Fetches and stores the current JS date. */

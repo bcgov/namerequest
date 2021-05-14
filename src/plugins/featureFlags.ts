@@ -13,7 +13,8 @@ const defaultFlagSet: LDFlagSet = {
   'hardcoded_regular_wait_time': 0, // by default, use actual wait time
   'hardcoded_priority_wait_time': 0, // by default, use actual wait time
   'banner-text': '', // by default, there is no banner text
-  'advanced-search-enabled': false // by default don't show advanced search. TB Removed when feature is ready.
+  'advanced-search-enabled': false, // by default don't show advanced search // TODO: remove when feature is ready
+  'staff-payment-enabled': false // by default don't show staff payment // TODO: remove when feature is ready
 }
 
 /**

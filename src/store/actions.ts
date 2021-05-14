@@ -9,12 +9,15 @@ import NamexServices from '@/services/namex.services'
 // List Data
 import { CanJurisdictions, IntlJurisdictions, RequestActions } from '@/list-data'
 
-// Interfaces & Enums
+// Interfaces
 import {
   ConversionTypesI,
   LocationT, NameRequestI,
   NewRequestNameSearchI,
-  SelectOptionsI, StatsI, SubmissionTypeT
+  SelectOptionsI,
+  StatsI,
+  SubmissionTypeT,
+  StaffPaymentIF
 } from '@/interfaces'
 import { ActionIF } from '@/interfaces/store-interfaces'
 
@@ -866,4 +869,12 @@ export const setNrRequiredModalVisible: ActionIF = ({ commit }, isVisible: boole
 
 export const setRequestExaminationOrProvideConsent: ActionIF = ({ commit }, requestExamOrConsent: any): void => {
   commit('mutateRequestExaminationOrProvideConsent', requestExamOrConsent)
+}
+
+export const setKeycloakRoles: ActionIF = ({ commit }, keycloakRoles: string[]): void => {
+  commit('mutateKeycloakRoles', keycloakRoles)
+}
+
+export const setStaffPayment: ActionIF = ({ commit }, staffPayment: StaffPaymentIF): void => {
+  commit('mutateStaffPayment', staffPayment)
 }
