@@ -37,7 +37,7 @@
           <!-- Advanced Search Table -->
           <v-tab-item class="set-height-tab mb-2">
             <v-card-title>
-              <span>Name Requests Found ({{searchResultCount}})</span>
+              <span>Name Requests Found ({{ searchResultCount }})</span>
             </v-card-title>
 
             <v-card-text class="copy-normal pt-5">

@@ -9,7 +9,7 @@
     hide-default-footer
   >
     <template v-slot:item="{ item }">
-      <tr @click="SelectNR(item.nrNum)">
+      <tr @click="setNrNum(item.nrNum)">
         <td class="copy-normal">{{apiToDateString(item.submittedDate)}}</td>
         <td class="copy-normal">
           <span v-for="(name, index) in item.names" :key="`business-name-${index}`">{{name.name}}<br></span>
@@ -62,6 +62,17 @@ export default class AdvancedSearchTable extends Mixins(DateMixin) {
    * @param isDesc A boolean indicated if sort is Asc or Desc.
    * */
   private sortTable (items: Array<NameRequestI>, columnValue: Array<string>, isDesc: boolean): NameRequestI[] {
+    // Sort by date
+    if (columnValue[0] === 'date') {
+      items.sort((a, b) => {
+        if (!isDesc[0]) {
+          return this.sortByDate(a.submittedDate, b.submittedDate)
+        } else {
+          return this.sortByDate(b.submittedDate, a.submittedDate)
+        }
+      })
+    }
+
     // Sort by last name, first name AND date
     // Currently DISABLED in the header options until further refinement. ie last name in conjunction with date.
     if (columnValue[0] === 'applicantName') {
@@ -77,24 +88,13 @@ export default class AdvancedSearchTable extends Mixins(DateMixin) {
       })
     }
 
-    // Sort by date
-    if (columnValue[0] === 'date') {
-      items.sort((a, b) => {
-        if (!isDesc[0]) {
-          return this.sortByDate(a.submittedDate, b.submittedDate)
-        } else {
-          return this.sortByDate(b.submittedDate, a.submittedDate)
-        }
-      })
-    }
-
     return items
   }
 
   /** Sort helper for Dates.
    * @param a Date A
    * @param b Date B
-   * @return a integer
+   * @return An integer
    * */
   private sortByDate (a, b): number {
     const dateA = new Date(a).getTime()
@@ -115,7 +115,7 @@ export default class AdvancedSearchTable extends Mixins(DateMixin) {
 
   /** Set Name Request to store. */
   @Emit('selectNameRequest')
-  private SelectNR (nrNum: string): void {
+  private setNrNum (nrNum: string): void {
     this.setExistingRequestSearch({ key: 'nrNum', value: nrNum.toUpperCase() })
   }
 }
@@ -124,13 +124,13 @@ export default class AdvancedSearchTable extends Mixins(DateMixin) {
 @import '@/assets/scss/theme.scss';
 
 #advanced-search-results-table {
-  max-height: 20rem !important;
-  overflow-y:scroll !important;
+  max-height: 20rem;
+  overflow-y: scroll;
 
   ::v-deep th {
-    font-size: 14px !important;
-    font-weight: bold !important;
-    color: $dk-text !important;
+    font-size: .875rem;
+    font-weight: bold;
+    color: $dk-text;
   }
 
   tbody {
