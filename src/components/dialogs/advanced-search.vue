@@ -2,7 +2,7 @@
   <v-dialog id="advanced-search-dialog" v-model="dialog" width="55rem" persistent :attach="attach">
 
     <v-card :class="{'retrieve-card-height': isTabRetrieve, 'tab-card-height': !isTabRetrieve}">
-      <v-btn icon large class="dialog-close float-right" @click="emitClose()" >
+      <v-btn icon large class="dialog-close" @click="emitClose()" >
         <v-icon>mdi-close</v-icon>
       </v-btn>
 
@@ -10,7 +10,7 @@
         <v-tabs-items v-model="advSearchTab">
 
           <!-- Advanced Search Form -->
-          <v-tab-item>
+          <v-tab-item class="set-height-tab mb-2">
             <v-card-title>
               <span>Find an Existing Name Request</span>
             </v-card-title>
@@ -27,6 +27,7 @@
             <AdvancedSearchForm
               class="mt-4"
               :promptSubmit="toggleSearchSubmit"
+              :advSearchDialogState="dialog"
               @isInvalid="invalidSearch = $event"
               @submitForm="submitForm($event)"
               @closeDialog="emitClose()"
@@ -34,9 +35,9 @@
           </v-tab-item>
 
           <!-- Advanced Search Table -->
-          <v-tab-item>
+          <v-tab-item class="set-height-tab mb-2">
             <v-card-title>
-              <span>Name Requests Found (18)</span>
+              <span>Name Requests Found ({{ searchResultCount }})</span>
             </v-card-title>
 
             <v-card-text class="copy-normal pt-5">
@@ -46,7 +47,9 @@
 
             <AdvancedSearchTable
               class="mt-6"
-              @selectNameRequest="advSearchTab = AdvancedSearchTabs.ADVANCED_SEACH_RETRIEVE"
+              :nameRequestResults="nameRequestResults"
+              :isApplicantNameSearch="isApplicantNameSearch"
+              @selectNameRequest="advSearchTab = AdvancedSearchTabs.ADVANCED_SEARCH_RETRIEVE"
             />
           </v-tab-item>
 
@@ -64,17 +67,27 @@
             <AdvancedSearchRetrieve
               class="mt-6"
               :promptSubmit="toggleRetrieveSubmit"
+              :advSearchTabState="advSearchTab"
               @closeDialog="emitClose()"
             />
           </v-tab-item>
 
-          <!-- Invalid Results -->
+          <!-- Too Many Results -->
           <v-tab-item>
-            <v-card-text class="copy-normal results-text">
+            <v-card-text class="copy-normal results-text py-4">
               <h3>Too Many Name Requests Found</h3>
               <span class="my-6">Your search returned more than 1000 results.</span>
               <span class="mb-4">Please return to the previous screen and narrow your search by selecting more than
                   one search criteria and/or reducing your date range.</span>
+            </v-card-text>
+          </v-tab-item>
+
+          <!-- No Results Found -->
+          <v-tab-item>
+            <v-card-text class="copy-normal results-text py-4">
+              <h3>No Name Requests Found</h3>
+              <span class="my-6">Your search returned no results.</span>
+              <span class="mb-4">Please return to the previous screen and try your search again.</span>
             </v-card-text>
           </v-tab-item>
 
@@ -92,7 +105,7 @@
           >
             <span class="px-3">
               <v-icon v-if="!isTabSearchForm">mdi-chevron-left</v-icon>
-              {{ advSearchBtn1 }}
+              {{ advSearchBtn1Text }}
               <v-icon v-if="isTabSearchForm">mdi-chevron-right</v-icon>
             </span>
           </v-btn>
@@ -103,8 +116,8 @@
             outlined
             @click="advSearchBtn2Actions()"
           >
-            <span>
-              {{ cancelBtnText }}<v-icon v-if="isTabRetrieve">mdi-chevron-right</v-icon>
+            <span class="px-3">
+              {{ advSearchBtn2Text }}<v-icon v-if="isTabRetrieve">mdi-chevron-right</v-icon>
             </span>
           </v-btn>
       </v-card-actions>
@@ -114,12 +127,12 @@
 </template>
 
 <script lang='ts'>
-import { Component, Emit, Prop, Vue } from 'vue-property-decorator'
-import { sleep } from '@/plugins'
+import { Component, Emit, Prop, Watch, Vue } from 'vue-property-decorator'
+import NamexServices from '@/services/namex.services'
 import { AdvancedSearchForm, AdvancedSearchRetrieve, AdvancedSearchTable } from '@/components/advanced-search'
 
 // Interfaces & Enums
-import { AdvancedSearchI } from '@/interfaces/models'
+import { AdvancedSearchI, AdvancedSearchResultsI } from '@/interfaces/models'
 import { AdvancedSearchTabs } from '@/enums'
 
 @Component({
@@ -144,84 +157,104 @@ export default class AdvancedSearch extends Vue {
   private toggleSearchSubmit = false
   private toggleRetrieveSubmit = false
   private invalidSearch = false
+  private searchResultCount = 0
+  private nameRequestResults = []
+  private isApplicantNameSearch = false
 
   /** The current action button text dependant on tab state. */
-  private get advSearchBtn1 (): string {
+  private get advSearchBtn1Text (): string {
     switch (this.advSearchTab) {
-      case AdvancedSearchTabs.ADVANCED_SEACH_FORM: return 'Find Name Request'
-      case AdvancedSearchTabs.ADVANCED_SEACH_TABLE: return `Back`
+      case AdvancedSearchTabs.ADVANCED_SEARCH_FORM: return 'Find Name Request'
+      case AdvancedSearchTabs.ADVANCED_SEARCH_TABLE: return `Back`
       default: return 'Back'
     }
   }
 
   /** The current cancel button text dependant on tab state. */
-  private get cancelBtnText (): string {
+  private get advSearchBtn2Text (): string {
     switch (this.advSearchTab) {
-      case AdvancedSearchTabs.ADVANCED_SEACH_FORM: return 'Cancel'
-      case AdvancedSearchTabs.ADVANCED_SEACH_TABLE: return `Exit`
-      case AdvancedSearchTabs.ADVANCED_SEACH_RETRIEVE: return `Retrieve Name Request`
+      case AdvancedSearchTabs.ADVANCED_SEARCH_FORM: return 'Cancel'
+      case AdvancedSearchTabs.ADVANCED_SEARCH_TABLE: return `Exit`
+      case AdvancedSearchTabs.ADVANCED_SEARCH_RETRIEVE: return `Retrieve Name Request`
       default: return 'Exit'
     }
   }
 
   /** Is true when NR retrieval is the current tab. */
   private get isTabSearchForm (): boolean {
-    return this.advSearchTab === AdvancedSearchTabs.ADVANCED_SEACH_FORM
+    return this.advSearchTab === AdvancedSearchTabs.ADVANCED_SEARCH_FORM
   }
 
   /** Is true when NR retrieval is the current tab. */
   private get isTabResultsTable (): boolean {
-    return this.advSearchTab === AdvancedSearchTabs.ADVANCED_SEACH_TABLE
+    return this.advSearchTab === AdvancedSearchTabs.ADVANCED_SEARCH_TABLE
   }
 
   /** Is true when NR retrieval is the current tab. */
   private get isTabRetrieve (): boolean {
-    return this.advSearchTab === AdvancedSearchTabs.ADVANCED_SEACH_RETRIEVE
+    return this.advSearchTab === AdvancedSearchTabs.ADVANCED_SEARCH_RETRIEVE
   }
 
   /** Advanced search btn 1 actions. */
   private advSearchBtn1Actions (): void {
     switch (this.advSearchTab) {
-      case AdvancedSearchTabs.ADVANCED_SEACH_FORM: this.toggleSearchSubmit = !this.toggleSearchSubmit
+      case AdvancedSearchTabs.ADVANCED_SEARCH_FORM: this.toggleSearchSubmit = !this.toggleSearchSubmit
         break
-      case AdvancedSearchTabs.ADVANCED_SEACH_TABLE: this.advSearchTab--
+      case AdvancedSearchTabs.ADVANCED_SEARCH_TABLE: this.advSearchTab--
         break
-      case AdvancedSearchTabs.ADVANCED_SEACH_RETRIEVE: this.advSearchTab--
+      case AdvancedSearchTabs.ADVANCED_SEARCH_RETRIEVE: this.advSearchTab--
         break
-      default: this.advSearchTab = AdvancedSearchTabs.ADVANCED_SEACH_FORM
+      default: this.advSearchTab = AdvancedSearchTabs.ADVANCED_SEARCH_FORM
     }
   }
 
   /** Advanced search btn 2 actions. */
   private advSearchBtn2Actions (): void {
     switch (this.advSearchTab) {
-      case AdvancedSearchTabs.ADVANCED_SEACH_RETRIEVE: this.toggleRetrieveSubmit = !this.toggleRetrieveSubmit
+      case AdvancedSearchTabs.ADVANCED_SEARCH_RETRIEVE: this.toggleRetrieveSubmit = !this.toggleRetrieveSubmit
         break
       default: this.emitClose()
     }
   }
 
+  /** Handle the response data from an Advanced Name Request search
+   * @param results The result object from an Advanced Search request
+   */
+  private searchResultsHandler (results: AdvancedSearchResultsI): void {
+    // Apply results to local model
+    this.searchResultCount = results.response.numFound
+    this.nameRequestResults = results.nameRequests[0]
+
+    // Navigate to the appropriate tab based on search results.
+    switch (true) {
+      case (this.searchResultCount > 1000): this.advSearchTab = AdvancedSearchTabs.ADVANCED_SEARCH_INVALID
+        break
+      case (this.searchResultCount > 0): this.advSearchTab = AdvancedSearchTabs.ADVANCED_SEARCH_TABLE
+        break
+      default: this.advSearchTab = AdvancedSearchTabs.ADVANCED_SEARCH_NO_RESULTS
+    }
+  }
+
   /** Validate criteria and submit form for request. */
   private async submitForm (formData: AdvancedSearchI): Promise<void> {
+    // Validate minimum search criteria
     if (!formData) {
       this.invalidSearch = true
       return
-    }
+    } else this.invalidSearch = false
 
-    // TODO: WIP...Make Request here for Advanced name search and handle results
+    // Set flag if the search criteria contains Applicant Name
+    this.isApplicantNameSearch = !!formData.lastName
+
+    // Set loading state and perform search request with parameters
     this.$root.$emit('showSpinner', true)
-    await sleep(400) // Just Mocked for now
-    const request = 'Success' // Mock request/response
+    this.searchResultsHandler(await NamexServices.searchNameRequests(formData, true))
     this.$root.$emit('showSpinner', false)
+  }
 
-    // Direct to appropriate tab based on search results
-    // WIP
-    switch (!!request) {
-      case true: this.advSearchTab = AdvancedSearchTabs.ADVANCED_SEACH_TABLE
-        break
-      case false: this.advSearchTab = AdvancedSearchTabs.ADVANCED_SEACH_INVALID
-        break
-    }
+  @Watch('dialog')
+  private formReset (): void {
+    this.invalidSearch = false
   }
 
   @Emit('closeDialog')
@@ -240,6 +273,18 @@ export default class AdvancedSearch extends Vue {
 
 .retrieve-card-height {
   max-height: 32rem;
+}
+
+.set-height-tab {
+  min-height: 28rem;
+}
+
+.dialog-close {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  margin-right: 30px;
+  z-index: 2;
 }
 
 #advanced-search-actions {

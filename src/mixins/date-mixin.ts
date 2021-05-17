@@ -152,4 +152,25 @@ export class DateMixin extends Vue {
 
     return dateStr
   }
+
+  /**
+   * Converts an API datetime string to a date and time string (YYYY-MM-DD at HH:MM am/pm)
+   * in Pacific timezone.
+   * @example "2021-01-01T00:00:00.000000+00:00" -> "2020-12-31 at 04:00 pm" (PST example)
+   * @example "2021-07-01T00:00:00.000000+00:00" -> "2021-06-30 at 05:00 pm" (PDT example)
+   */
+  apiToDateString (dateString: string): string {
+    if (!dateString) return null // safety check
+
+    // convert to ISO format
+    // then create a Date object
+    // eg, 2021-03-04T04:41:00Z
+    dateString = dateString.slice(0, 19) + 'Z'
+    const utc = new Date(dateString)
+
+    // build date string, eg, "2021-03-03"
+    const dateStr = this.dateToDateString(utc)
+
+    return `${dateStr}`
+  }
 }

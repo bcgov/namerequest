@@ -12,7 +12,8 @@ const defaultFlagSet: LDFlagSet = {
   'disable-analysis': true, // by default, analysis is disabled
   'hardcoded_regular_wait_time': 0, // by default, use actual wait time
   'hardcoded_priority_wait_time': 0, // by default, use actual wait time
-  'banner-text': '' // by default, there is no banner text
+  'banner-text': '', // by default, there is no banner text
+  'advanced-search-enabled': false // by default don't show advanced search. TB Removed when feature is ready.
 }
 
 /**
