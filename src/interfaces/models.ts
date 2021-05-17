@@ -261,8 +261,8 @@ export interface AdvancedSearchI {
   compName: string
   firstName: string
   lastName: string
-  submittedStartDate: string
-  submittedEndDate: string
+  submittedStartDateTime: string
+  submittedEndDateTime: string
 }
 
 // The complete results from advanced nr search
