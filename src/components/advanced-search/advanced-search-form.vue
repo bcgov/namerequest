@@ -183,8 +183,8 @@ export default class AdvancedSearchForm extends Vue {
         compName: this.compName,
         firstName: this.applicantFirstName,
         lastName: this.applicantLastName,
-        submittedStartDateTime: this.startDate,
-        submittedEndDateTime: this.endDate
+        submittedStartDate: this.startDate,
+        submittedEndDate: this.endDate
       }
     } return null
   }
