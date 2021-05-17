@@ -6,6 +6,7 @@
     :items-per-page="1000"
     :custom-sort="sortTable"
     fixed-header
+    height="20rem"
     hide-default-footer
   >
     <template v-slot:item="{ item }">
@@ -124,9 +125,6 @@ export default class AdvancedSearchTable extends Mixins(DateMixin) {
 @import '@/assets/scss/theme.scss';
 
 #advanced-search-results-table {
-  max-height: 20rem;
-  overflow-y: scroll;
-
   ::v-deep th {
     font-size: .875rem;
     font-weight: bold;
