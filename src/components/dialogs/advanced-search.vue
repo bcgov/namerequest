@@ -49,7 +49,7 @@
               class="mt-6"
               :nameRequestResults="nameRequestResults"
               :isApplicantNameSearch="isApplicantNameSearch"
-              @selectNameRequest="advSearchTab = AdvancedSearchTabs.ADVANCED_SEACH_RETRIEVE"
+              @selectNameRequest="advSearchTab = AdvancedSearchTabs.ADVANCED_SEARCH_RETRIEVE"
             />
           </v-tab-item>
 
@@ -164,8 +164,8 @@ export default class AdvancedSearch extends Vue {
   /** The current action button text dependant on tab state. */
   private get advSearchBtn1Text (): string {
     switch (this.advSearchTab) {
-      case AdvancedSearchTabs.ADVANCED_SEACH_FORM: return 'Find Name Request'
-      case AdvancedSearchTabs.ADVANCED_SEACH_TABLE: return `Back`
+      case AdvancedSearchTabs.ADVANCED_SEARCH_FORM: return 'Find Name Request'
+      case AdvancedSearchTabs.ADVANCED_SEARCH_TABLE: return `Back`
       default: return 'Back'
     }
   }
@@ -173,45 +173,45 @@ export default class AdvancedSearch extends Vue {
   /** The current cancel button text dependant on tab state. */
   private get advSearchBtn2Text (): string {
     switch (this.advSearchTab) {
-      case AdvancedSearchTabs.ADVANCED_SEACH_FORM: return 'Cancel'
-      case AdvancedSearchTabs.ADVANCED_SEACH_TABLE: return `Exit`
-      case AdvancedSearchTabs.ADVANCED_SEACH_RETRIEVE: return `Retrieve Name Request`
+      case AdvancedSearchTabs.ADVANCED_SEARCH_FORM: return 'Cancel'
+      case AdvancedSearchTabs.ADVANCED_SEARCH_TABLE: return `Exit`
+      case AdvancedSearchTabs.ADVANCED_SEARCH_RETRIEVE: return `Retrieve Name Request`
       default: return 'Exit'
     }
   }
 
   /** Is true when NR retrieval is the current tab. */
   private get isTabSearchForm (): boolean {
-    return this.advSearchTab === AdvancedSearchTabs.ADVANCED_SEACH_FORM
+    return this.advSearchTab === AdvancedSearchTabs.ADVANCED_SEARCH_FORM
   }
 
   /** Is true when NR retrieval is the current tab. */
   private get isTabResultsTable (): boolean {
-    return this.advSearchTab === AdvancedSearchTabs.ADVANCED_SEACH_TABLE
+    return this.advSearchTab === AdvancedSearchTabs.ADVANCED_SEARCH_TABLE
   }
 
   /** Is true when NR retrieval is the current tab. */
   private get isTabRetrieve (): boolean {
-    return this.advSearchTab === AdvancedSearchTabs.ADVANCED_SEACH_RETRIEVE
+    return this.advSearchTab === AdvancedSearchTabs.ADVANCED_SEARCH_RETRIEVE
   }
 
   /** Advanced search btn 1 actions. */
   private advSearchBtn1Actions (): void {
     switch (this.advSearchTab) {
-      case AdvancedSearchTabs.ADVANCED_SEACH_FORM: this.toggleSearchSubmit = !this.toggleSearchSubmit
+      case AdvancedSearchTabs.ADVANCED_SEARCH_FORM: this.toggleSearchSubmit = !this.toggleSearchSubmit
         break
-      case AdvancedSearchTabs.ADVANCED_SEACH_TABLE: this.advSearchTab--
+      case AdvancedSearchTabs.ADVANCED_SEARCH_TABLE: this.advSearchTab--
         break
-      case AdvancedSearchTabs.ADVANCED_SEACH_RETRIEVE: this.advSearchTab--
+      case AdvancedSearchTabs.ADVANCED_SEARCH_RETRIEVE: this.advSearchTab--
         break
-      default: this.advSearchTab = AdvancedSearchTabs.ADVANCED_SEACH_FORM
+      default: this.advSearchTab = AdvancedSearchTabs.ADVANCED_SEARCH_FORM
     }
   }
 
   /** Advanced search btn 2 actions. */
   private advSearchBtn2Actions (): void {
     switch (this.advSearchTab) {
-      case AdvancedSearchTabs.ADVANCED_SEACH_RETRIEVE: this.toggleRetrieveSubmit = !this.toggleRetrieveSubmit
+      case AdvancedSearchTabs.ADVANCED_SEARCH_RETRIEVE: this.toggleRetrieveSubmit = !this.toggleRetrieveSubmit
         break
       default: this.emitClose()
     }
@@ -227,11 +227,11 @@ export default class AdvancedSearch extends Vue {
 
     // Navigate to the appropriate tab based on search results.
     switch (true) {
-      case (this.searchResultCount > 1000): this.advSearchTab = AdvancedSearchTabs.ADVANCED_SEACH_INVALID
+      case (this.searchResultCount > 1000): this.advSearchTab = AdvancedSearchTabs.ADVANCED_SEARCH_INVALID
         break
-      case (this.searchResultCount > 0): this.advSearchTab = AdvancedSearchTabs.ADVANCED_SEACH_TABLE
+      case (this.searchResultCount > 0): this.advSearchTab = AdvancedSearchTabs.ADVANCED_SEARCH_TABLE
         break
-      default: this.advSearchTab = AdvancedSearchTabs.ADVANCED_SEACH_NO_RESULTS
+      default: this.advSearchTab = AdvancedSearchTabs.ADVANCED_SEARCH_NO_RESULTS
     }
   }
 
