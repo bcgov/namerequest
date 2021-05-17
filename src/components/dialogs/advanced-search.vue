@@ -27,7 +27,7 @@
             <AdvancedSearchForm
               class="mt-4"
               :promptSubmit="toggleSearchSubmit"
-              :formReset="dialog"
+              :advSearchDialogState="dialog"
               @isInvalid="invalidSearch = $event"
               @submitForm="submitForm($event)"
               @closeDialog="emitClose()"
@@ -67,7 +67,7 @@
             <AdvancedSearchRetrieve
               class="mt-6"
               :promptSubmit="toggleRetrieveSubmit"
-              :formReset="advSearchTab"
+              :advSearchTabState="advSearchTab"
               @closeDialog="emitClose()"
             />
           </v-tab-item>

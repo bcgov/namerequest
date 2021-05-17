@@ -67,8 +67,8 @@ export default class AdvancedSearchRetrieve extends Vue {
   /** Prompt the form to pass up the form data. */
   @Prop() readonly promptSubmit: boolean
 
-  /** Reset form as the tab changes. */
-  @Prop() readonly formReset: boolean
+  /** Advanced Search tab state. */
+  @Prop() readonly advSearchTabState: boolean
 
   // Global getter
   @Getter getNr!: Partial<NameRequestI>
@@ -151,7 +151,7 @@ export default class AdvancedSearchRetrieve extends Vue {
   }
 
   /** Clear form. */
-  @Watch('formReset')
+  @Watch('advSearchTabState')
   private clearForm (): void {
     this.clearValidations()
     this.phoneNumber = ''

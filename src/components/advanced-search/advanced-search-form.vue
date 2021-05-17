@@ -104,8 +104,8 @@ export default class AdvancedSearchForm extends Vue {
   /** Prompt the form to pass up the form data. */
   @Prop() readonly promptSubmit: boolean
 
-  /** Reset form as the tab changes. */
-  @Prop() readonly formReset: boolean
+  /** Advanced search dialog state. */
+  @Prop() readonly advSearchDialogState: boolean
 
   // Local Properties
   private isValid = false
@@ -161,7 +161,7 @@ export default class AdvancedSearchForm extends Vue {
   }
 
   /** Clear form. */
-  @Watch('formReset')
+  @Watch('advSearchDialogState')
   private clearForm (): void {
     this.compName = ''
     this.applicantFirstName = ''
