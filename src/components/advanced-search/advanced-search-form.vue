@@ -126,6 +126,7 @@ export default class AdvancedSearchForm extends Vue {
     return !!this.startDate && !!this.endDate
   }
 
+  /** True when the form is validating Names. */
   private get hasAppliedNameRules (): boolean {
     return !!this.applicantFirstName && !this.applicantLastName
   }
