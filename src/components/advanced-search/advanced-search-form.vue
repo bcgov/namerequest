@@ -128,7 +128,7 @@ export default class AdvancedSearchForm extends Vue {
 
   /** True when the form is validating Names. */
   private get hasAppliedNameRules (): boolean {
-    return !!this.applicantFirstName && !this.applicantLastName
+    return this.applicantLastNameRules.length > 0
   }
 
   /** Is true when the minimum search criteria is met. */
@@ -151,6 +151,7 @@ export default class AdvancedSearchForm extends Vue {
     }
     await this.$refs.advancedSearchForm.validate()
 
+    this.emitInvalid()
     return this.hasMinimumSearchCriteria && this.isValid
   }
 
@@ -175,7 +176,6 @@ export default class AdvancedSearchForm extends Vue {
   }
 
   /** Emit form validity when the form is submitted or minimum requirements change thereafter. */
-  @Watch('promptSubmit')
   @Watch('hasMinimumSearchCriteria')
   @Emit('isInvalid')
   private emitInvalid (): boolean {
