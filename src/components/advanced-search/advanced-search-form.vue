@@ -20,7 +20,7 @@
       </v-col>
     </v-row>
 
-    <v-row no-gutters class="mt-n4">
+    <v-row no-gutters class="mt-n2">
       <v-col>
         <span class="title-bold-16">Applicant Name</span>
         <v-row>
@@ -126,6 +126,10 @@ export default class AdvancedSearchForm extends Vue {
     return !!this.startDate && !!this.endDate
   }
 
+  private get hasAppliedNameRules (): boolean {
+    return !!this.applicantFirstName && !this.applicantLastName
+  }
+
   /** Is true when the minimum search criteria is met. */
   private get hasMinimumSearchCriteria (): boolean {
     return !!this.compName || !!this.applicantLastName || (!!this.startDate && !!this.endDate)
@@ -169,9 +173,12 @@ export default class AdvancedSearchForm extends Vue {
     this.clearDates()
   }
 
+  @Watch('promptSubmit')
   @Watch('hasMinimumSearchCriteria')
   @Emit('isInvalid')
   private emitInvalid (): boolean {
+    if (this.hasAppliedNameRules) return false
+
     return !this.hasMinimumSearchCriteria
   }
 

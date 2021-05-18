@@ -16,12 +16,13 @@
             </v-card-title>
 
             <v-card-text class="copy-normal py-4">
-              Find an existing Name Request by searching for one or more of the following criteria:
+              Find an existing Name Request by searching for <strong>one or more</strong> of the following criteria:
             </v-card-text>
 
             <!-- Validation error message -->
-            <div v-if="invalidSearch" class="error-message copy-small my-n2">
-              Enter at least one search criteria
+            <div class="my-n2">
+              <span v-if="invalidSearch" class="copy-small error-message">Enter at least one search criteria</span>
+              <br v-else> <!-- Preserve Spacing when no errors present -->
             </div>
 
             <AdvancedSearchForm
@@ -37,7 +38,7 @@
           <!-- Advanced Search Table -->
           <v-tab-item class="set-height-tab mb-2">
             <v-card-title>
-              <span>Name Requests Found ({{ searchResultCount }})</span>
+              Name Requests Found <span class="searchResultCounter pl-2">({{ searchResultCount }})</span>
             </v-card-title>
 
             <v-card-text class="copy-normal pt-5">
@@ -74,7 +75,7 @@
 
           <!-- Too Many Results -->
           <v-tab-item>
-            <v-card-text class="copy-normal results-text py-4">
+            <v-card-text class="copy-normal results-text mt-7 py-4">
               <h3>Too Many Name Requests Found</h3>
               <span class="my-6">Your search returned more than 1000 results.</span>
               <span class="mb-4">Please return to the previous screen and narrow your search by selecting more than
@@ -84,7 +85,7 @@
 
           <!-- No Results Found -->
           <v-tab-item>
-            <v-card-text class="copy-normal results-text py-4">
+            <v-card-text class="copy-normal results-text mt-6 py-6">
               <h3>No Name Requests Found</h3>
               <span class="my-6">Your search returned no results.</span>
               <span class="mb-4">Please return to the previous screen and try your search again.</span>
@@ -103,7 +104,7 @@
             outlined
             @click="advSearchBtn1Actions()"
           >
-            <span class="px-3">
+            <span :class="isTabSearchForm ? 'pl-2' : 'pr-2'">
               <v-icon v-if="!isTabSearchForm">mdi-chevron-left</v-icon>
               {{ advSearchBtn1Text }}
               <v-icon v-if="isTabSearchForm">mdi-chevron-right</v-icon>
@@ -224,11 +225,13 @@ export default class AdvancedSearch extends Vue {
     // Fetch search results count
     let results = await NamexServices.searchNameRequests(formData, true, true)
     this.searchResultCount = results.response.numFound
+
     // Fetch the Name Requests when the count is 1000 or less.
     if (this.searchResultCount <= 1000) {
       results = await NamexServices.searchNameRequests(formData, true)
       this.nameRequestResults = results.nameRequests[0]
     }
+
     // Navigate to the appropriate tab based on search results
     switch (true) {
       case (this.searchResultCount > 1000): this.advSearchTab = AdvancedSearchTabs.ADVANCED_SEARCH_INVALID
@@ -242,10 +245,7 @@ export default class AdvancedSearch extends Vue {
   /** Validate criteria and submit form for request. */
   private async submitForm (formData: AdvancedSearchI): Promise<void> {
     // Validate minimum search criteria
-    if (!formData) {
-      this.invalidSearch = true
-      return
-    } else this.invalidSearch = false
+    if (!formData) return
 
     // Set flag if the search criteria contains Applicant Name
     this.isApplicantNameSearch = !!formData.lastName
@@ -256,6 +256,7 @@ export default class AdvancedSearch extends Vue {
   }
 
   @Watch('dialog')
+  @Watch('advSearchTab')
   private formReset (): void {
     this.invalidSearch = false
   }
@@ -264,6 +265,7 @@ export default class AdvancedSearch extends Vue {
   private emitClose (): void {
     this.advSearchTab = 0
     this.invalidSearch = false
+    this.toggleSearchSubmit = false
   }
 }
 </script>
@@ -271,7 +273,7 @@ export default class AdvancedSearch extends Vue {
 @import '@/assets/scss/theme.scss';
 
 .tab-card-height {
-  height: 35rem;
+  height: 36rem;
 }
 
 .retrieve-card-height {
@@ -279,7 +281,7 @@ export default class AdvancedSearch extends Vue {
 }
 
 .set-height-tab {
-  min-height: 28rem;
+  min-height: 29rem;
 }
 
 .dialog-close {
@@ -294,6 +296,10 @@ export default class AdvancedSearch extends Vue {
   .v-btn {
     min-width: 100px !important;
   }
+}
+
+.searchResultCounter {
+  font-weight: normal;
 }
 
 .results-text {
@@ -311,7 +317,11 @@ export default class AdvancedSearch extends Vue {
   display: none;
 }
 
-::v-deep .v-icon.v-icon {
-  font-size: 1.25rem;
+::v-deep .v-btn:not(.dialog-close) .v-icon.v-icon {
+  font-size: 1.25rem !important;
+}
+
+::v-deep .v-btn__content {
+  line-height: inherit;
 }
 </style>
