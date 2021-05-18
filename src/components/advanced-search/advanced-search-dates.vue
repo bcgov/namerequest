@@ -10,6 +10,7 @@
             v-model="startDateText"
             :max="currentDateString"
             elevation="5"
+            @input="validateDates()"
           >
           </v-date-picker>
         </v-col>
@@ -19,8 +20,10 @@
             id="end-date-calendar"
             class="mt-2"
             v-model="endDateText"
+            :min="startDateText"
             :max="currentDateString"
             elevation="5"
+            @input="validateDates()"
           >
           </v-date-picker>
         </v-col>
@@ -69,6 +72,16 @@ export default class AdvancedSearchDates extends Mixins(DateMixin) {
   /** The current server date in string format. */
   get currentDateString (): string {
     return this.dateToDateString(this.getCurrentJsDate)
+  }
+
+  /** Is true when the End Date is less then the selected Start Date. */
+  get isEndDateInvalid (): boolean {
+    return new Date(this.startDateText) > new Date(this.endDateText)
+  }
+
+  /** Validate and handle end date out of range. */
+  private validateDates (): void {
+    if (this.isEndDateInvalid) this.endDateText = ''
   }
 
   /** Validate and submit form. */
