@@ -174,6 +174,7 @@ export default class AdvancedSearchForm extends Vue {
     this.clearDates()
   }
 
+  /** Emit form validity when the form is submitted or minimum requirements change thereafter. */
   @Watch('promptSubmit')
   @Watch('hasMinimumSearchCriteria')
   @Emit('isInvalid')
@@ -183,6 +184,7 @@ export default class AdvancedSearchForm extends Vue {
     return !this.hasMinimumSearchCriteria
   }
 
+  /** Emit submission data to parent if form passes validation. */
   @Watch('promptSubmit')
   @Emit('submitForm')
   private async emitSubmit () : Promise<AdvancedSearchI> {
