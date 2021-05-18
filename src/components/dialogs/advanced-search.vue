@@ -130,9 +130,11 @@
 import { Component, Emit, Prop, Watch, Vue } from 'vue-property-decorator'
 import NamexServices from '@/services/namex.services'
 import { AdvancedSearchForm, AdvancedSearchRetrieve, AdvancedSearchTable } from '@/components/advanced-search'
+
 // Interfaces & Enums
-import { AdvancedSearchI, AdvancedSearchResultsI } from '@/interfaces/models'
+import { AdvancedSearchI } from '@/interfaces/models'
 import { AdvancedSearchTabs } from '@/enums'
+
 @Component({
   components: {
     AdvancedSearchForm,
@@ -224,7 +226,7 @@ export default class AdvancedSearch extends Vue {
     this.searchResultCount = results.response.numFound
     // Fetch the Name Requests when the count is 1000 or less.
     if (this.searchResultCount <= 1000) {
-      results = await NamexServices.searchNameRequests(formData, true, false)
+      results = await NamexServices.searchNameRequests(formData, true)
       this.nameRequestResults = results.nameRequests[0]
     }
     // Navigate to the appropriate tab based on search results
@@ -244,6 +246,7 @@ export default class AdvancedSearch extends Vue {
       this.invalidSearch = true
       return
     } else this.invalidSearch = false
+
     // Set flag if the search criteria contains Applicant Name
     this.isApplicantNameSearch = !!formData.lastName
     // Set loading state and perform a search for the potential NR Match count.
