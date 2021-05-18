@@ -266,14 +266,23 @@ export default class NamexServices {
       return null
     }
   }
-  static async searchNameRequests (params: AdvancedSearchI, handleError: boolean): Promise<AdvancedSearchResultsI> {
+  static async searchNameRequests (
+    params: AdvancedSearchI,
+    handleError: boolean,
+    isCountCheck: boolean = false
+  ): Promise<AdvancedSearchResultsI> {
     try {
       const token = sessionStorage.getItem('KEYCLOAK_TOKEN')
       const headers = {
         Authorization: `Bearer ${token}`,
         'Accept': 'application/pdf'
       }
-      const response = await this.axios.get(`${this.namexUrl()}/requests?rows=1000`, {
+
+      // Integer to determine the amount of NR selections for the query to return.
+      // Is 0 when we only want the NR count.
+      let rowCount = isCountCheck ? 0 : 1000
+
+      const response = await this.axios.get(`${this.namexUrl()}/requests?rows=${rowCount}`, {
         params,
         headers
       })

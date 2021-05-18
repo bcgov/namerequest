@@ -132,7 +132,7 @@ import NamexServices from '@/services/namex.services'
 import { AdvancedSearchForm, AdvancedSearchRetrieve, AdvancedSearchTable } from '@/components/advanced-search'
 
 // Interfaces & Enums
-import { AdvancedSearchI, AdvancedSearchResultsI } from '@/interfaces/models'
+import { AdvancedSearchI } from '@/interfaces/models'
 import { AdvancedSearchTabs } from '@/enums'
 
 @Component({
@@ -217,15 +217,19 @@ export default class AdvancedSearch extends Vue {
     }
   }
 
-  /** Handle the response data from an Advanced Name Request search
-   * @param results The result object from an Advanced Search request
+  /** Handle the response data from an Advanced Name Request search.
+   * @param formData The form data to provide the search query parameters.
    */
-  private searchResultsHandler (results: AdvancedSearchResultsI): void {
-    // Apply results to local model
+  private async searchHandler (formData: AdvancedSearchI): Promise<void> {
+    // Fetch search results count
+    let results = await NamexServices.searchNameRequests(formData, true, true)
     this.searchResultCount = results.response.numFound
-    this.nameRequestResults = results.nameRequests[0]
-
-    // Navigate to the appropriate tab based on search results.
+    // Fetch the Name Requests when the count is 1000 or less.
+    if (this.searchResultCount <= 1000) {
+      results = await NamexServices.searchNameRequests(formData, true)
+      this.nameRequestResults = results.nameRequests[0]
+    }
+    // Navigate to the appropriate tab based on search results
     switch (true) {
       case (this.searchResultCount > 1000): this.advSearchTab = AdvancedSearchTabs.ADVANCED_SEARCH_INVALID
         break
@@ -245,10 +249,9 @@ export default class AdvancedSearch extends Vue {
 
     // Set flag if the search criteria contains Applicant Name
     this.isApplicantNameSearch = !!formData.lastName
-
-    // Set loading state and perform search request with parameters
+    // Set loading state and perform a search for the potential NR Match count.
     this.$root.$emit('showSpinner', true)
-    this.searchResultsHandler(await NamexServices.searchNameRequests(formData, true))
+    await this.searchHandler(formData)
     this.$root.$emit('showSpinner', false)
   }
 
