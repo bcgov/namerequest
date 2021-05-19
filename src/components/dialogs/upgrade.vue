@@ -7,7 +7,7 @@
       </v-card-title>
 
       <v-card-text class="copy-normal">
-        <fee-summary
+        <FeeSummary
           :filingData="[...paymentDetails]"
           :fees="[...paymentFees]"
         />
@@ -30,7 +30,6 @@ import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 import FeeSummary from '@/components/payment/fee-summary.vue'
-import RequestDetails from '@/components/common/request-details.vue'
 import { CreatePaymentParams } from '@/modules/payment/models'
 import { UPGRADE_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import * as FilingTypes from '@/modules/payment/filing-types'
@@ -43,7 +42,6 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: {
-    RequestDetails,
     FeeSummary
   }
 })

@@ -1,20 +1,33 @@
 import {
-  AnalysisJSONI, ConditionalReqI, ConsentConflictI,
-  ConversionTypesI, DraftReqI, IssueI,
+  AnalysisJSONI,
+  ApplicantI,
+  ConditionalReqI,
+  ConsentConflictI,
+  ConversionTypesI,
+  DraftReqI,
+  EntityI,
+  ExistingRequestSearchI,
+  IssueI,
   LocationT,
-  NameChoicesIF, NameDesignationI, RequestActionsI, RequestNameI, RequestOrConsentIF, ReservedReqI,
+  NameChoicesIF,
+  NameDesignationI,
+  NameRequestI,
+  RequestActionMappingI,
+  RequestActionsI,
+  RequestNameI,
+  RequestOrConsentIF,
+  ReservedReqI,
+  SelectOptionsI,
+  StaffPaymentIF,
   StateIF,
   StatsI,
   SubmissionTypeT
 } from '@/interfaces'
 import { NrState } from '@/enums'
-import {
-  ApplicantI, EntityI, ExistingRequestSearchI, NameRequestI, RequestActionMappingI, SelectOptionsI
-} from '@/interfaces/models'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 // List Data
-// *** TODO: replace with `this.$xxx`
+// NB: can't use `this.$xxx` because we don't have `this` (ie, Vue)
 import {
   CanJurisdictions, IntlJurisdictions, ConversionTypes, MrasJurisdictions,
   ColinRequestActions, ColinRequestTypes, XproColinRequestTypes, BcMapping, XproMapping,
@@ -790,8 +803,8 @@ export const getPriorityRequest = (state: StateIF): boolean => {
 }
 
 export const getDesignationObject = (state: StateIF): any => {
-  if (getEntityTypeCd(state) && this.$designations[getEntityTypeCd(state)]) {
-    return this.$designations[getEntityTypeCd(state)]
+  if (getEntityTypeCd(state) && Designations[getEntityTypeCd(state)]) {
+    return Designations[getEntityTypeCd(state)]
   }
   return ''
 }
@@ -813,6 +826,7 @@ export const getSplitNameDesignation = (state: StateIF): NameDesignationI => {
     designation: ''
   })
 }
+
 export const getConsentWords = (state: StateIF): any => {
   let consentWords = []
 
@@ -991,7 +1005,7 @@ export const getDraftNameReservation = (state: StateIF): DraftReqI => {
         }
         if (!data['additionalInfo'].includes('*** Legal Name:')) {
           data['additionalInfo'] += '\n\n'
-          let notice = `*** Legal Name: ${this.nameChoices.name1} ***`
+          let notice = `*** Legal Name: ${getNameChoices(state)?.name1} ***`
           data['additionalInfo'] += ' ' + notice
         }
       }
@@ -1060,4 +1074,14 @@ export const getConditionalNameReservation = (state: StateIF): ConditionalReqI =
     ...getCorpNumForReservation(state)
   }
   return data
+}
+
+/** Whether the user has "staff" keycloak role. */
+export const isRoleStaff = (state: StateIF): boolean => {
+  return state.stateModel.common.keycloakRoles.includes('staff')
+}
+
+/** The staff payment. */
+export const getStaffPayment = (state: StateIF): StaffPaymentIF => {
+  return state.stateModel.staffPayment
 }

@@ -10,3 +10,6 @@ export * from './request-code'
 export * from './routes'
 export * from './rollback-actions'
 export * from './sbc-payment-status'
+
+// external enums
+export { StaffPaymentOptions } from '@bcrs-shared-components/enums'

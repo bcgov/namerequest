@@ -1,8 +1,10 @@
 import { NameRequestI, StateModelIF } from '@/interfaces'
+import { StaffPaymentOptions } from '@/enums'
 
 export const stateModel: StateModelIF = {
   common: {
-    currentJsDate: null
+    currentJsDate: null,
+    keycloakRoles: []
   },
   newRequestModel: {
     actingOnOwnBehalf: true,
@@ -135,6 +137,14 @@ export const stateModel: StateModelIF = {
     userCancelledAnalysis: false,
     waitingAddressSearch: null,
     isLoadingSubmission: false
+  },
+  staffPayment: {
+    option: StaffPaymentOptions.NONE,
+    routingSlipNumber: '',
+    bcolAccountNumber: '',
+    datNumber: '',
+    folioNumber: '',
+    isPriority: false // not used in this UI
   },
   errorModel: {},
   paymentModel: {}

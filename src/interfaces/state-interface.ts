@@ -1,4 +1,5 @@
 import { NewRequestIF } from '@/interfaces/new-request-interface'
+import { StaffPaymentIF } from '@/interfaces'
 
 export interface StateIF {
   stateModel: StateModelIF
@@ -6,9 +7,11 @@ export interface StateIF {
 
 export interface StateModelIF {
   common: {
-    currentJsDate: Date
-  },
+    currentJsDate: Date,
+    keycloakRoles: Array<string>
+  }
   newRequestModel: NewRequestIF
-  errorModel?: {},
+  staffPayment: StaffPaymentIF
+  errorModel?: {}
   paymentModel?: {}
 }

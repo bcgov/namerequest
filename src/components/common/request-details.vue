@@ -1,24 +1,17 @@
 <template>
-  <div>
+  <div id="request-details">
     <div class="mt-4">
-      <div>
-        <h4>Requested Name <span v-if="nameChoices.name2">Choices</span></h4>
-        <ul class="pl-0">
-          <li v-if="name && !nameChoices.name2">{{name}}</li>
-          <template v-else>
-            <li v-if="nameChoices.name1">
-              <span>1. </span>{{nameChoices.name1}}
-            </li>
-            <li v-if="nameChoices.name2">
-              <span>2. </span>{{nameChoices.name2}}
-            </li>
-            <li v-if="nameChoices.name3">
-              <span>3. </span>{{nameChoices.name3}}
-            </li>
-          </template>
-        </ul>
-      </div>
+      <h4>Requested Name <span v-if="nameChoices.name2">Choices</span></h4>
+      <ul class="pl-0">
+        <li v-if="name && !nameChoices.name2">{{name}}</li>
+        <template v-else>
+          <li v-if="nameChoices.name1">1. {{nameChoices.name1}}</li>
+          <li v-if="nameChoices.name2">2. {{nameChoices.name2}}</li>
+          <li v-if="nameChoices.name3">3. {{nameChoices.name3}}</li>
+        </template>
+      </ul>
     </div>
+
     <v-row>
       <v-col col="6">
         <h4>Applicant Information</h4>
@@ -37,6 +30,7 @@
           </li>
         </ul>
       </v-col>
+
       <v-col col="6">
         <ul class="pl-0">
           <li v-if="client">

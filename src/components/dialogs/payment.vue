@@ -1,54 +1,96 @@
 <template>
   <v-dialog max-width="45rem" :value="isVisible" persistent>
     <v-card>
+      <v-tabs id="payment-tabs">
+        <v-tabs-items v-model="paymentTab">
 
-      <v-card-title class="d-flex justify-space-between">
-        <div>Confirm Name Request</div>
-        <v-btn icon large class="dialog-close float-right" @click="hideModal()">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </v-card-title>
+          <v-tab-item>
+            <v-card-title class="d-flex justify-space-between">
+              <div>Staff Payment</div>
+              <v-btn icon large class="dialog-close float-right" @click="hideModal()">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </v-card-title>
 
-      <v-card-text class="copy-normal pt-0">
-        <request-details
-          :applicant="getApplicant"
-          :name="getName"
-          :nameChoices="getNameChoices"
-        />
-        <fee-summary
-          :filingData="[...paymentDetails]"
-          :fees="[...paymentFees]"
-        />
-      </v-card-text>
+            <v-card-text class="copy-normal pt-0">
+              <StaffPayment
+                :doValidate="validateStaffPayment"
+                @isValid="isStaffPaymentValid = $event"
+              />
+            </v-card-text>
 
-      <v-card-actions class="pt-4">
-        <v-btn v-if="allowCancel"
-               @click="cancelPayment()"
-               id="payment-cancel-btn"
-               class="button-red px-4"
-               text
-               :disabled="isLoadingPayment">Cancel Name Request</v-btn>
-        <v-spacer></v-spacer>
-        <v-btn @click="confirmPayment()"
-               id="payment-pay-btn"
-               class="primary px-4"
-               text
-               :loading="isLoadingPayment">Continue to Payment</v-btn>
-        <v-btn @click="hideModal()"
-               id="payment-close-btn"
-               class="button-blue"
-               :disabled="isLoadingPayment">Close</v-btn>
-      </v-card-actions>
+            <v-card-actions class="justify-center pa-0">
+              <v-btn
+                @click="confirmPayment()"
+                id="payment-pay-btn"
+                class="primary px-4"
+                text
+                :loading="isLoadingPayment">Submit Name Request</v-btn>
+              <v-btn
+                @click="hideModal()"
+                id="payment-close-btn"
+                class="button-blue"
+                :disabled="isLoadingPayment">Exit Payment</v-btn>
+            </v-card-actions>
+          </v-tab-item>
 
+          <v-tab-item>
+            <v-card-title class="d-flex justify-space-between">
+              <div>Confirm Name Request</div>
+              <v-btn icon large class="dialog-close float-right" @click="hideModal()">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </v-card-title>
+
+            <v-card-text class="copy-normal pt-4">
+              <RequestDetails
+                :applicant="getApplicant"
+                :name="getName"
+                :nameChoices="getNameChoices"
+              />
+              <FeeSummary
+                class="mt-2"
+                :filingData="[...paymentDetails]"
+                :fees="[...paymentFees]"
+              />
+            </v-card-text>
+
+            <v-card-actions class="pt-6">
+              <v-btn
+                v-if="allowCancel"
+                @click="cancelPayment()"
+                id="payment-cancel-btn"
+                class="button-red px-4"
+                text
+                :disabled="isLoadingPayment">Cancel Name Request</v-btn>
+              <v-spacer />
+              <v-btn
+                @click="confirmPayment()"
+                id="payment-pay-btn"
+                class="primary px-4"
+                text
+                :loading="isLoadingPayment">Continue to Payment</v-btn>
+              <v-btn
+                @click="hideModal()"
+                id="payment-close-btn"
+                class="button-blue"
+                :disabled="isLoadingPayment">Close</v-btn>
+            </v-card-actions>
+          </v-tab-item>
+
+        </v-tabs-items>
+      </v-tabs>
     </v-card>
   </v-dialog>
 </template>
 
 <script lang='ts'>
-import { Component, Mixins, Watch } from 'vue-property-decorator'
+import { Component, Mixins, Prop, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
+import { getFeatureFlag } from '@/plugins'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
+import StaffPayment from '@/components/payment/staff-payment.vue'
 import { CreatePaymentParams } from '@/modules/payment/models'
 import { PAYMENT_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import * as FilingTypes from '@/modules/payment/filing-types'
@@ -62,17 +104,8 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 @Component({
   components: {
     RequestDetails,
-    FeeSummary
-  },
-  props: {
-    onActivate: {
-      type: Function,
-      default: async () => undefined
-    },
-    onCancel: {
-      type: Function,
-      default: async () => {}
-    }
+    FeeSummary,
+    StaffPayment
   }
 })
 export default class PaymentDialog extends Mixins(
@@ -80,21 +113,41 @@ export default class PaymentDialog extends Mixins(
   PaymentSessionMixin,
   DisplayedComponentMixin
 ) {
+  // the tab indices
+  // NB: these are reversed to reverse the built-in slide transition
+  readonly TAB_STAFF_PAYMENT = 0
+  readonly TAB_CONFIRM_NAME_REQUEST = 1
+
+  @Prop({ default: async () => {} })
+  readonly onCancel: Function
+
   // Global getters
   @Getter getName!: string
   @Getter getNrId!: number
   @Getter getApplicant!: ApplicantI
   @Getter getNameChoices!: NameChoicesIF
   @Getter getPriorityRequest!: boolean
+  @Getter isRoleStaff!: boolean
 
   // Global actions
   @Action togglePaymentModal!: ActionBindingIF
 
-  private isLoadingPayment: boolean = false
+  /** Whether to validate the staff payment component. */
+  private validateStaffPayment = false
 
-  /** The model value for the dialog component. */
+  /** Whether staff payment is valid. */
+  private isStaffPaymentValid = false
+
+  /** The current tab to display. */
+  private paymentTab = this.TAB_CONFIRM_NAME_REQUEST
+
+  /** Whether payment redirection is in progress. */
+  private isLoadingPayment = false
+
+  /** Whether this dialog is visible. */
   private isVisible = false
 
+  /** Whether to show Cancel button. */
   private get allowCancel (): boolean {
     return (typeof this.$props.onCancel === 'function')
   }
@@ -106,6 +159,12 @@ export default class PaymentDialog extends Mixins(
 
   /** Clears store property to hide this modal. */
   async hideModal () {
+    // go to previous page
+    if (this.paymentTab === this.TAB_STAFF_PAYMENT) {
+      this.paymentTab = this.TAB_CONFIRM_NAME_REQUEST
+      return
+    }
+
     this.isLoadingPayment = false
     await this.togglePaymentModal(false)
   }
@@ -114,15 +173,13 @@ export default class PaymentDialog extends Mixins(
   @Watch('showModal')
   async onShowModal (val: boolean): Promise<void> {
     if (val) {
+      // reset card id
+      this.paymentTab = this.TAB_CONFIRM_NAME_REQUEST
+
       const paymentConfig = {
         filingType: FilingTypes.NM620,
         jurisdiction: Jurisdictions.BC,
         priorityRequest: this.getPriorityRequest || false
-      }
-
-      const { onActivate } = this.$props
-      if (typeof onActivate === 'function') {
-        onActivate(paymentConfig)
       }
 
       // only make visible on success, otherwise hide it
@@ -138,6 +195,22 @@ export default class PaymentDialog extends Mixins(
 
   /** Called when user clicks "Continue to Payment" button. */
   private async confirmPayment () {
+    if (this.isRoleStaff && getFeatureFlag('staff-payment-enabled')) {
+      if (this.paymentTab === this.TAB_CONFIRM_NAME_REQUEST) {
+        // reset validation
+        this.validateStaffPayment = false
+        // go to next page
+        this.paymentTab = this.TAB_STAFF_PAYMENT
+        return
+      }
+      if (this.paymentTab === this.TAB_STAFF_PAYMENT) {
+        // enable validation
+        this.validateStaffPayment = true
+        // if invalid then stop, else continue
+        if (!this.isStaffPaymentValid) return
+      }
+    }
+
     this.isLoadingPayment = true
     const { getNrId, getPriorityRequest } = this
 
@@ -146,8 +219,8 @@ export default class PaymentDialog extends Mixins(
 
       // Save response to session
       this.savePaymentResponseToSession(PaymentAction.CREATE, paymentResponse)
-      // see if redirect is needed else go to existing NR screen
 
+      // See if redirect is needed else go to existing NR screen
       const baseUrl = getBaseUrl()
       const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${getNrId}/?paymentId=${paymentId}`)
       if (paymentResponse.sbcPayment.isPaymentActionRequired) {
@@ -196,3 +269,16 @@ export default class PaymentDialog extends Mixins(
   }
 }
 </script>
+
+<style lang="scss" scoped>
+// hide tabs bar
+::v-deep .v-tabs > .v-tabs-bar {
+  display: none;
+}
+
+// top whitespace so 'X' button is not cropped
+.v-tabs-items {
+  padding-top: 0.5rem;
+  margin-top: -0.5rem;
+}
+</style>
