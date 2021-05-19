@@ -21,7 +21,7 @@
         </span>
         </td>
         <td>
-          <v-btn class="button-text retrieve-nr-btn mt-n2 pr-0 float-right">
+          <v-btn class="button-text retrieve-nr-btn my-n3 pr-0">
             Retrieve
             <v-icon class="retrieve-nr-icon ml-3">mdi-chevron-right</v-icon>
           </v-btn>
@@ -151,13 +151,15 @@ export default class AdvancedSearchTable extends Mixins(DateMixin) {
       }
 
       td {
-        padding-top: 10px;
+        padding: 10px 16px;
+        line-height: 1.125rem;
       }
     }
   }
 
   .retrieve-nr-btn {
     text-decoration: none;
+    float: right;
 
     &:before {
       background-color: transparent !important;
@@ -176,5 +178,29 @@ export default class AdvancedSearchTable extends Mixins(DateMixin) {
   font-size: 1rem;
   color: $text;
   line-height: 1.375rem;
+}
+
+// Override the default scroll bar to meet design requirements
+/* width */
+::v-deep ::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::v-deep ::-webkit-scrollbar-track {
+  margin-top: 47px;
+  background: rgb(250,250,250);
+}
+
+/* Handle */
+::v-deep ::-webkit-scrollbar-thumb {
+  background: rgb(193,193,193);
+  border-radius: 10px;
+  height: 2rem;
+}
+
+/* Handle on hover */
+::v-deep ::-webkit-scrollbar-thumb:hover {
+  background: $gray6;
 }
 </style>

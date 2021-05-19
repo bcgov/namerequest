@@ -20,7 +20,7 @@
       </v-col>
     </v-row>
 
-    <v-row no-gutters class="mt-n4">
+    <v-row no-gutters class="mt-n2">
       <v-col>
         <span class="title-bold-16">Applicant Name</span>
         <v-row>
@@ -126,6 +126,11 @@ export default class AdvancedSearchForm extends Vue {
     return !!this.startDate && !!this.endDate
   }
 
+  /** True when the form is validating Names. */
+  private get hasAppliedNameRules (): boolean {
+    return this.applicantLastNameRules.length > 0
+  }
+
   /** Is true when the minimum search criteria is met. */
   private get hasMinimumSearchCriteria (): boolean {
     return !!this.compName || !!this.applicantLastName || (!!this.startDate && !!this.endDate)
@@ -146,6 +151,7 @@ export default class AdvancedSearchForm extends Vue {
     }
     await this.$refs.advancedSearchForm.validate()
 
+    this.emitInvalid()
     return this.hasMinimumSearchCriteria && this.isValid
   }
 
@@ -169,12 +175,16 @@ export default class AdvancedSearchForm extends Vue {
     this.clearDates()
   }
 
+  /** Emit form validity when the form is submitted or minimum requirements change thereafter. */
   @Watch('hasMinimumSearchCriteria')
   @Emit('isInvalid')
   private emitInvalid (): boolean {
+    if (this.hasAppliedNameRules) return false
+
     return !this.hasMinimumSearchCriteria
   }
 
+  /** Emit submission data to parent if form passes validation. */
   @Watch('promptSubmit')
   @Emit('submitForm')
   private async emitSubmit () : Promise<AdvancedSearchI> {
