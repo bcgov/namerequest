@@ -12,6 +12,7 @@
     </ul>
 
     <RequestDetails
+      class="mt-4"
       :applicant="applicant"
       :nameChoices="nameChoices"
       :name="name"

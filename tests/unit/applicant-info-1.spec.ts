@@ -31,6 +31,6 @@ describe('applicant-info-1', () => {
   //   expect(wrapper.find('#applicant-info-1-form').element).toBeTruthy()
   // })
   // it('Initially renders the enabled continue button', () => {
-  //   expect(wrapper.find('#submit-continue-btn').classes().includes('v-btn')).toBeTruthy()
+  //   expect(wrapper.find('.submit-continue-btn').classes().includes('v-btn')).toBeTruthy()
   // })
 })

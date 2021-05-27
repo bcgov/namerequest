@@ -1,8 +1,8 @@
 <template>
-  <div id="staff-payment" class="pt-6">
-    <staff-payment-component
+  <div id="staff-payment" :class="{'invalid-section': showStaffPaymentInvalidSection}">
+    <StaffPaymentShared
       :staffPaymentData="getStaffPayment"
-      :validate="doValidate"
+      :validate="validate"
       :displaySideLabel="false"
       :displayPriorityCheckbox="false"
       @update:staffPaymentData="onStaffPaymentDataUpdate($event)"
@@ -12,11 +12,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from 'vue-property-decorator'
+import { Component, Emit, Vue } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 // Components
-import { StaffPayment as StaffPaymentComponent } from '@bcrs-shared-components/staff-payment'
+import { StaffPayment as StaffPaymentShared } from '@bcrs-shared-components/staff-payment'
 
 // Interfaces and Enums
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
@@ -25,7 +25,7 @@ import { StaffPaymentOptions } from '@/enums'
 
 @Component({
   components: {
-    StaffPaymentComponent
+    StaffPaymentShared
   }
 })
 export default class StaffPayment extends Vue {
@@ -36,11 +36,26 @@ export default class StaffPayment extends Vue {
   @Action setStaffPayment!: ActionBindingIF
 
   /** Whether to validate the data. */
-  @Prop({ default: false }) readonly doValidate: boolean
+  private validate = false
+
+  /** Whether to show the staff payment invalid section styling. */
+  private get showStaffPaymentInvalidSection (): boolean {
+    const option = this.getStaffPayment.option ?? StaffPaymentOptions.NONE
+    // True if no option is selected
+    return this.validate && (option === StaffPaymentOptions.NONE)
+  }
+
+  /** Called externally to set validation state. */
+  public setValidation (val: boolean) {
+    this.validate = val
+  }
 
   /** Called when component's staff payment data has been updated. */
   private onStaffPaymentDataUpdate (val: StaffPaymentIF) {
     let staffPaymentData: StaffPaymentIF = { ...this.getStaffPayment, ...val }
+
+    // disable validation
+    this.validate = false
 
     switch (staffPaymentData.option) {
       case StaffPaymentOptions.FAS:
@@ -90,7 +105,14 @@ export default class StaffPayment extends Vue {
 </script>
 
 <style lang="scss" scoped>
-// override internal whitespace so we can specify it above
+@import "@/assets/scss/theme";
+
+// error border
+.invalid-section {
+  border-left: 3px solid $app-red !important;
+}
+
+// override internal whitespace
 ::v-deep #staff-payment-container {
   padding: 0 !important;
   margin: 0 !important;
@@ -99,5 +121,15 @@ export default class StaffPayment extends Vue {
 // override default radio input background colour
 ::v-deep .v-input--radio-group__input {
   background-color: white;
+}
+
+// remove margin below radio group
+::v-deep .v-input--radio-group > .v-input__control > .v-input__slot {
+  margin-bottom: 0 !important;
+}
+
+// hide messages below radio group
+::v-deep .v-input--radio-group > .v-input__control > .v-messages {
+  display: none;
 }
 </style>
