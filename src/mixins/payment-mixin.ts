@@ -4,12 +4,13 @@ import { AxiosRequestConfig } from 'axios'
 import { ACCEPTED, CREATED, NO_CONTENT, OK } from 'http-status-codes'
 
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
-import { PaymentStatus } from '@/enums'
+import { PaymentStatus, StaffPaymentOptions } from '@/enums'
 import { ActionMixin } from '@/mixins'
 import * as paymentTypes from '@/modules/payment/store/types'
 import { CreatePaymentParams, NameRequestPaymentResponse } from '@/modules/payment/models'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
+import { StaffPaymentIF } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from '@/services/namex.services'
 
@@ -25,6 +26,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
 
   // Global getter
   @Getter getCurrentJsDate!: Date
+  @Getter getStaffPayment!: StaffPaymentIF
 
   get sbcPayment () {
     return this.$store.getters[paymentTypes.GET_SBC_PAYMENT]
@@ -148,14 +150,14 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
     const token = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
     const accountInfo = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
-    let headers = {}
-    if (token && accountInfo) {
+    let headers = this.buildStaffPayment()
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+      headers['Content-Type'] = 'application/json'
+    }
+    if (accountInfo) {
       const parsedAccountInfo = JSON.parse(accountInfo)
-      headers = {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        'Account-Id': parsedAccountInfo.id
-      }
+      headers['Account-Id'] = parsedAccountInfo.id
     }
     req.headers = headers
     try {
@@ -187,6 +189,31 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       )
       return false
     }
+  }
+
+  /** Build Staff Payment data. **/
+  buildStaffPayment () {
+    // Populate Staff Payment according to payment option
+    let headers = {}
+    switch (this.getStaffPayment.option) {
+      case StaffPaymentOptions.FAS:
+        headers['routingSlipNumber'] = this.getStaffPayment.routingSlipNumber
+        break
+
+      case StaffPaymentOptions.BCOL:
+        headers['bcolAccountNumber'] = this.getStaffPayment.bcolAccountNumber
+        headers['datNumber'] = this.getStaffPayment.datNumber
+        headers['folioNumber'] = this.getStaffPayment.folioNumber // this overrides original folio number
+        break
+
+      case StaffPaymentOptions.NO_FEE:
+        headers['waiveFees'] = true
+        break
+
+      case StaffPaymentOptions.NONE: // should never happen
+        break
+    }
+    return headers
   }
 
   /**
