@@ -38,14 +38,14 @@ describe('names-capture', () => {
   //   })
   //   it('Initially renders the enabled continue button', () => {
   //     expect(wrapper.vm.isValid).toBe(false)
-  //     expect(wrapper.find('#submit-continue-btn').classes().includes('v-btn')).toBeTruthy()
+  //     expect(wrapper.find('.submit-continue-btn').classes().includes('v-btn')).toBeTruthy()
   //   })
   //   it('demonstrates correct validation logic when designation-1 is entered', async () => {
   //     store.mutateNameChoices({ key: 'name1', value: 'A Really Nice Name' })
   //     store.mutateNameChoices({ key: 'designation1', value: 'INC.' })
   //     await wrapper.vm.$nextTick()
   //     expect(wrapper.vm.isValid).toBe(true)
-  //     expect(wrapper.find('#submit-continue-btn').element).toBeTruthy()
+  //     expect(wrapper.find('.submit-continue-btn').element).toBeTruthy()
   //   })
   //   it('calls showNextComponent() when continue button is clicked and form is valid', async () => {
   //     store.mutateNameChoicesToInitialState()
@@ -53,7 +53,7 @@ describe('names-capture', () => {
   //     store.mutateNameChoices({ key: 'name1', value: 'LALA NAME' })
   //     store.mutateNameChoices({ key: 'designation1', value: 'INC.' })
   //     await wrapper.vm.$nextTick()
-  //     let btn = wrapper.find('#submit-continue-btn')
+  //     let btn = wrapper.find('.submit-continue-btn')
   //     btn.trigger('click')
   //     await wrapper.vm.$nextTick()
   //     expect(wrapper.vm.isValid).toBeTruthy()

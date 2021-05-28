@@ -9,7 +9,7 @@
       </v-card-title>
 
       <v-card-text class="copy-normal pt-4">
-        <payment-confirm
+        <PaymentConfirm
           :nrNum="getNrNum"
           :applicant="getApplicant"
           :nameChoices="getNameChoices"
@@ -35,7 +35,6 @@
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import PaymentConfirm from '@/components/payment/payment-confirm.vue'
-import RequestDetails from '@/components/common/request-details.vue'
 import { NameRequestPayment } from '@/modules/payment/models'
 import errorModule from '@/modules/error'
 import { PaymentStatus, SbcPaymentStatus } from '@/enums'
@@ -58,7 +57,6 @@ const DEBUG_RECEIPT = false
 
 @Component({
   components: {
-    RequestDetails,
     PaymentConfirm
   }
 })

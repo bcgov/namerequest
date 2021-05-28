@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="45rem" :value="isVisible" persistent>
+  <v-dialog min-width="32rem" max-width="45rem" :value="isVisible" persistent>
     <v-card>
       <v-tabs id="payment-tabs">
         <v-tabs-items v-model="paymentTab">
@@ -12,25 +12,24 @@
               </v-btn>
             </v-card-title>
 
-            <v-card-text class="copy-normal pt-0">
+            <v-card-text class="copy-normal pt-5">
               <StaffPayment
-                :doValidate="validateStaffPayment"
+                ref="staffPaymentComponent"
                 @isValid="isStaffPaymentValid = $event"
               />
             </v-card-text>
 
-            <v-card-actions class="justify-center pa-0">
+            <v-card-actions class="justify-center pt-6">
+              <v-btn
+                @click="goBack()"
+                id="payment-close-btn"
+                class="button-blue"
+                :disabled="isLoadingPayment">Back</v-btn>
               <v-btn
                 @click="confirmPayment()"
                 id="payment-pay-btn"
                 class="primary px-4"
-                text
                 :loading="isLoadingPayment">Submit Name Request</v-btn>
-              <v-btn
-                @click="hideModal()"
-                id="payment-close-btn"
-                class="button-blue"
-                :disabled="isLoadingPayment">Exit Payment</v-btn>
             </v-card-actions>
           </v-tab-item>
 
@@ -42,7 +41,7 @@
               </v-btn>
             </v-card-title>
 
-            <v-card-text class="copy-normal pt-4">
+            <v-card-text class="copy-normal pt-5">
               <RequestDetails
                 :applicant="getApplicant"
                 :name="getName"
@@ -61,14 +60,12 @@
                 @click="cancelPayment()"
                 id="payment-cancel-btn"
                 class="button-red px-4"
-                text
                 :disabled="isLoadingPayment">Cancel Name Request</v-btn>
               <v-spacer />
               <v-btn
                 @click="confirmPayment()"
                 id="payment-pay-btn"
                 class="primary px-4"
-                text
                 :loading="isLoadingPayment">Continue to Payment</v-btn>
               <v-btn
                 @click="hideModal()"
@@ -118,6 +115,11 @@ export default class PaymentDialog extends Mixins(
   readonly TAB_STAFF_PAYMENT = 0
   readonly TAB_CONFIRM_NAME_REQUEST = 1
 
+  // Refs
+  $refs!: {
+    staffPaymentComponent: StaffPayment
+  }
+
   @Prop({ default: async () => {} })
   readonly onCancel: Function
 
@@ -159,12 +161,6 @@ export default class PaymentDialog extends Mixins(
 
   /** Clears store property to hide this modal. */
   async hideModal () {
-    // go to previous page
-    if (this.paymentTab === this.TAB_STAFF_PAYMENT) {
-      this.paymentTab = this.TAB_CONFIRM_NAME_REQUEST
-      return
-    }
-
     this.isLoadingPayment = false
     await this.togglePaymentModal(false)
   }
@@ -193,19 +189,27 @@ export default class PaymentDialog extends Mixins(
     }
   }
 
+  /** Called when user clicks "Back" button. */
+  goBack () {
+    // disable validation
+    this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(false)
+    // go to previous tab
+    this.paymentTab = this.TAB_CONFIRM_NAME_REQUEST
+  }
+
   /** Called when user clicks "Continue to Payment" button. */
-  private async confirmPayment () {
+  async confirmPayment () {
     if (this.isRoleStaff && getFeatureFlag('staff-payment-enabled')) {
       if (this.paymentTab === this.TAB_CONFIRM_NAME_REQUEST) {
-        // reset validation
-        this.validateStaffPayment = false
-        // go to next page
+        // disable validation
+        this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(false)
+        // go to next tab
         this.paymentTab = this.TAB_STAFF_PAYMENT
         return
       }
       if (this.paymentTab === this.TAB_STAFF_PAYMENT) {
         // enable validation
-        this.validateStaffPayment = true
+        this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(true)
         // if invalid then stop, else continue
         if (!this.isStaffPaymentValid) return
       }
@@ -276,7 +280,7 @@ export default class PaymentDialog extends Mixins(
   display: none;
 }
 
-// top whitespace so 'X' button is not cropped
+// adjust top whitespace so 'X' button is not cropped
 .v-tabs-items {
   padding-top: 0.5rem;
   margin-top: -0.5rem;

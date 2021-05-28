@@ -96,31 +96,31 @@
       </v-tabs>
 
       <v-card-actions id="advanced-search-actions" class="justify-center pa-0">
-          <v-btn
-            id="adv-search-btn-1"
-            class="mr-2"
-            :class="{ 'button-blue': isTabResultsTable || isTabRetrieve }"
-            text
-            outlined
-            @click="advSearchBtn1Actions()"
-          >
-            <span :class="isTabSearchForm ? 'pl-2' : 'pr-2'">
-              <v-icon v-if="!isTabSearchForm">mdi-chevron-left</v-icon>
-              {{ advSearchBtn1Text }}
-              <v-icon v-if="isTabSearchForm">mdi-chevron-right</v-icon>
-            </span>
-          </v-btn>
-          <v-btn
-            id="adv-search-btn-2"
-            :class="{ 'button-blue' : !isTabRetrieve }"
-            text
-            outlined
-            @click="advSearchBtn2Actions()"
-          >
-            <span class="px-3">
-              {{ advSearchBtn2Text }}<v-icon v-if="isTabRetrieve">mdi-chevron-right</v-icon>
-            </span>
-          </v-btn>
+        <v-btn
+          id="adv-search-btn-1"
+          class="mr-2"
+          :class="{ 'button-blue': isTabResultsTable || isTabRetrieve }"
+          text
+          outlined
+          @click="advSearchBtn1Actions()"
+        >
+          <span :class="isTabSearchForm ? 'pl-2' : 'pr-2'">
+            <v-icon v-if="!isTabSearchForm">mdi-chevron-left</v-icon>
+            {{ advSearchBtn1Text }}
+            <v-icon v-if="isTabSearchForm">mdi-chevron-right</v-icon>
+          </span>
+        </v-btn>
+        <v-btn
+          id="adv-search-btn-2"
+          :class="{ 'button-blue' : !isTabRetrieve }"
+          text
+          outlined
+          @click="advSearchBtn2Actions()"
+        >
+          <span class="px-3">
+            {{ advSearchBtn2Text }}<v-icon v-if="isTabRetrieve">mdi-chevron-right</v-icon>
+          </span>
+        </v-btn>
       </v-card-actions>
     </v-card>
 

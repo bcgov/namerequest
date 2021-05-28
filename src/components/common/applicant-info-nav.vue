@@ -1,8 +1,7 @@
 <template>
   <v-col cols="5" class="text-right py-0">
     <v-btn x-large
-           id="submit-back-btn"
-           class="mr-3"
+           class="submit-back-btn mr-3"
            v-if="showBack"
            @click="back()">
       {{ backText }}
@@ -10,7 +9,7 @@
     <v-btn x-large
            @click="nextAction()"
            :loading="getIsLoadingSubmission"
-           id="submit-continue-btn">
+           class="submit-continue-btn">
       {{ nextText }}
     </v-btn>
   </v-col>
@@ -75,3 +74,15 @@ export default class ApplicantInfoNav extends Vue {
   private nextAction () : void {}
 }
 </script>
+
+<style lang="scss" scoped>
+@import "@/assets/scss/theme";
+
+.submit-back-btn {
+  background-color: white !important;
+  color: $app-blue !important;
+  border: 1px solid $app-blue !important;
+  box-shadow: none !important;
+  text-transform: none !important;
+}
+</style>

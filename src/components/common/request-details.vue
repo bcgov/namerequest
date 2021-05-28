@@ -1,6 +1,6 @@
 <template>
   <div id="request-details">
-    <div class="mt-4">
+    <section>
       <h4>Requested Name <span v-if="nameChoices.name2">Choices</span></h4>
       <ul class="pl-0">
         <li v-if="name && !nameChoices.name2">{{name}}</li>
@@ -10,7 +10,7 @@
           <li v-if="nameChoices.name3">3. {{nameChoices.name3}}</li>
         </template>
       </ul>
-    </div>
+    </section>
 
     <v-row>
       <v-col col="6">
