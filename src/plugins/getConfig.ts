@@ -74,23 +74,22 @@ export async function getConfig (): Promise<EnvConfigI> {
   entitySelectorUrl && sessionStorage.setItem('ENTITY_SELECTOR_URL', entitySelectorUrl)
 
   /**
-   * "authConfig" is a workaround to fix the user settings call as it expects a URL with no trailing slash.
-   * This can be removed when a fix is made to sbc-common-components to handle this.
+   * This is a workaround to fix the sbc-common-components that expect their own session keys.
+   * Ref: #6801
    */
-  const nameRequestUrl = response.data['NAME_REQUEST_URL']
-  const nroUrl = response.data['NRO_URL']
-  const authConfig = {
-    'AUTH_URL': businessesUrl,
-    'VUE_APP_PAY_ROOT_API': vueAppPayRootApi,
-    'NAME_REQUEST_URL': nameRequestUrl,
-    'NRO_URL': nroUrl
+  const authApiConfig = {
+    AUTH_URL: response.data['BUSINESSES_URL'],
+    NAME_REQUEST_URL: response.data['NAME_REQUEST_URL'],
+    NRO_URL: response.data['NRO_URL'],
+    VUE_APP_AUTH_ROOT_API: response.data['SBC_CONFIG_AUTH_API_URL'],
+    VUE_APP_PAY_ROOT_API: vueAppPayRootApi,
+    VUE_APP_STATUS_ROOT_API: response.data['VUE_APP_STATUS_ROOT_API']
   }
-  const authConfigString = JSON.stringify(authConfig)
+  const authConfigString = JSON.stringify(authApiConfig)
   sessionStorage.setItem('AUTH_API_CONFIG', authConfigString)
+  // console.log('AUTH_API_CONFIG: ' + authConfigString) // don't display
 
-  const config: EnvConfigI = {
+  return {
     $PAYMENT_PORTAL_URL: paymentPortalUrl
-  }
-
-  return config
+  } as EnvConfigI
 }

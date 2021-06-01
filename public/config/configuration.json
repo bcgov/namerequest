@@ -18,6 +18,7 @@
   "PAYMENT_PORTAL_URL": "https://dev.bcregistry.ca/business/auth/makepayment",
   "QUICK_SEARCH_PUBLIC_ID": "",
   "QUICK_SEARCH_PUBLIC_SECRET": "",
+  "SBC_CONFIG_AUTH_API_URL": "https://auth-api-dev.apps.silver.devops.gov.bc.ca/api/v1",
   "SENTRY_DSN": "",
   "URL": "https://namex-dev.apps.silver.devops.gov.bc.ca",
   "VUE_APP_PAY_ROOT_API": "https://pay-api-dev.apps.silver.devops.gov.bc.ca/api/v1",
