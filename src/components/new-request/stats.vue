@@ -29,7 +29,7 @@
           </div>
         </template>
         <span>
-          If you need your name reviewed as quickly as possible.  Priority requests
+          If you need your name reviewed as quickly as possible, Priority requests
           are available for a fee ($100.00). Priority name requests are usually
           reviewed within 1 to 2 business days.
         </span>
@@ -125,12 +125,11 @@ export default class Stats extends Vue {
   padding-left: 8px;
   font-size: 12px;
   line-height: 18px;
-
 }
 
 .stats-content-outer {
   width: fit-content;
-  margin-left: 10px;
+  margin-left: 20px;
   background: url('~@/assets/images/stats-circle.png');
   background-repeat: no-repeat;
   display: flex;
