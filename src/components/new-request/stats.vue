@@ -12,7 +12,7 @@
 <!--            No Wait Time-->
 <!--          </div>-->
 <!--        </div>-->
-      <v-tooltip bottom nudge-left="50"
+      <v-tooltip bottom nudge-left="45"
         content-class="bottom-tooltip wait-time-tooltip"
         transition="fade-transition"
       >
@@ -23,14 +23,18 @@
               <div class="stats-unit">Hours</div>
             </div>
             <div class="stats-content-inner-2">
-              Priority Request<br>
-              Wait Time
+              <span class="dotted-underline">Priority Request</span><br>
+              <span class="dotted-underline">Wait Time</span>
             </div>
           </div>
         </template>
-        <span>During Business Hours</span>
+        <span>
+          If you need your name reviewed as quickly as possible.  Priority requests
+          are available for a fee ($100.00). Priority name requests are usually
+          reviewed within 1 to 2 business days.
+        </span>
       </v-tooltip>
-      <v-tooltip bottom nudge-left="40"
+      <v-tooltip bottom nudge-left="45"
         content-class="bottom-tooltip new-submission-wait-time-tooltip"
         transition="fade-transition"
       >
@@ -41,16 +45,14 @@
               <div class="stats-unit">Days</div>
             </div>
             <div class="stats-content-inner-2">
-              New Submission<br>
-              Wait Time
+              <span class="dotted-underline">New Submission</span><br>
+              <span class="dotted-underline">Wait Time</span>
             </div>
           </div>
         </template>
         <span>
-          These are estimated wait times only and are based on submitting a name today.
-          It does not reflect the current estimated wait time on your previously submitted
-          Name Request. To calculate your estimated wait time check the last updated time
-          on the existing name request screen.
+          This is the estimated review wait time when submitting a new name request
+          <strong>today</strong>. Wait times are approximate and subject to change.
         </span>
       </v-tooltip>
     </v-row>
@@ -123,6 +125,7 @@ export default class Stats extends Vue {
   padding-left: 8px;
   font-size: 12px;
   line-height: 18px;
+
 }
 
 .stats-content-outer {
@@ -159,11 +162,12 @@ export default class Stats extends Vue {
 }
 
 .wait-time-tooltip {
-  text-align: center;
-  max-width: 175px;
+  text-align: left;
+  width: 270px !important;
 }
 
 .new-submission-wait-time-tooltip {
-  width: 410px !important;
+  text-align: left;
+  width: 270px !important;
 }
 </style>
