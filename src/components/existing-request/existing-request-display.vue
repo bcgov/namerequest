@@ -84,21 +84,6 @@
                   &nbsp;{{ expiryDate }}
                 </v-col>
 
-                <v-col cols="12" v-if="extensionsRemainingText">
-                  <span>Renewals Remaining:</span>&nbsp;
-                  <v-tooltip right transition="fade-transition" content-class="tooltip">
-                    <template v-slot:activator="{ on, attrs }">
-                      <span v-bind="attrs" v-on="on"
-                        class="dotted-underline app-blue font-weight-regular cursor-default"
-                      >{{ extensionsRemainingText }}</span>
-                    </template>
-                    Once approved, you have 56 days to use your Name Request.
-                    Within 5 days of expiry you can renew a Name Request two
-                    times for an additional 56 days each time. <b>A $30.00 fee is applied for
-                    each renewal.</b>
-                  </v-tooltip>
-                </v-col>
-
                 <v-col cols="12" v-if="nr.consentFlag && (nr.consentFlag !== 'N')">
                   <span>Consent Status:</span>
                   &nbsp;{{ consentDate }}
@@ -426,16 +411,6 @@ export default class ExistingRequestDisplay extends Mixins(
       this.isNrApprovedOrConditional &&
       !!this.conditionalName?.decision_text
     )
-  }
-
-  /** The display text for Expiry Extensions Remaining. */
-  private get extensionsRemainingText (): string {
-    // do not display text if NR is consumed/expired/cancelled/rejected
-    if (this.isNrConsumed || this.isNrExpired || this.isNrCancelledOrRejected) return ''
-
-    const extensions = 2
-    // total is # extensions + the original approval
-    return `${extensions + 1 - this.nr.submitCount}/${extensions}`
   }
 
   /** The display text for Request Status. */
