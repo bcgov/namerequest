@@ -1,6 +1,6 @@
 {
   "name": "name-request",
-  "version": "2.2.8",
+  "version": "2.2.9",
   "private": true,
   "appName": "Name Request UI",
   "sbcName": "SBC Common Components",
@@ -16,7 +16,7 @@
     "@babel/compat-data": "^7.12.13",
     "@bcrs-shared-components/enums": "1.0.13",
     "@bcrs-shared-components/interfaces": "1.0.22",
-    "@bcrs-shared-components/staff-payment": "1.0.26",
+    "@bcrs-shared-components/staff-payment": "1.0.29",
     "@mdi/font": "^4.5.95",
     "@sentry/browser": "^6.2.1",
     "@sentry/integrations": "^6.2.1",
