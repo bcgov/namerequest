@@ -27,11 +27,15 @@
         :showActions="true"
       />
 
+      <!-- SBC Common Components pay system alert -->
+      <PaySystemAlert />
+
       <!-- Alert banner -->
       <v-alert
         tile dense
         type="warning"
-        class="mb-0 text-center colour-dk-text"
+        color="orange"
+        class="mb-0 text-center"
         v-if="bannerText"
         v-html="bannerText"
       />
@@ -80,6 +84,7 @@ import {
   PickEntityOrConversionDialog, PickRequestTypeDialog, ReapplyDialog, ReceiptsDialog, RefundDialog, UpgradeDialog
 } from '@/components/dialogs'
 import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
+import PaySystemAlert from 'sbc-common-components/src/components/PaySystemAlert.vue'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 
@@ -108,6 +113,7 @@ import NamexServices from './services/namex.services'
     RefundDialog,
     UpgradeDialog,
     SbcAuthenticationOptionsDialog,
+    PaySystemAlert,
     SbcHeader,
     SbcFooter
   }
