@@ -34,7 +34,6 @@
       <v-alert
         tile dense
         type="warning"
-        color="orange"
         class="mb-0 text-center"
         v-if="bannerText"
         v-html="bannerText"
