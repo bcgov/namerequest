@@ -27,6 +27,9 @@
         :showActions="true"
       />
 
+      <!-- SBC Common Components pay system alert -->
+      <PaySystemAlert />
+
       <!-- Alert banner -->
       <v-alert
         tile dense
@@ -80,6 +83,7 @@ import {
   PickEntityOrConversionDialog, PickRequestTypeDialog, ReapplyDialog, ReceiptsDialog, RefundDialog, UpgradeDialog
 } from '@/components/dialogs'
 import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
+import PaySystemAlert from 'sbc-common-components/src/components/PaySystemAlert.vue'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 
@@ -108,6 +112,7 @@ import NamexServices from './services/namex.services'
     RefundDialog,
     UpgradeDialog,
     SbcAuthenticationOptionsDialog,
+    PaySystemAlert,
     SbcHeader,
     SbcFooter
   }
@@ -212,6 +217,7 @@ export default class App extends Mixins(DateMixin) {
 </script>
 
 <style lang="scss">
+@import '@/assets/scss/theme.scss';
 #main-column {
   display: flex;
   flex-flow: column nowrap;
@@ -241,6 +247,13 @@ export default class App extends Mixins(DateMixin) {
     max-width: 1300px;
     padding-right: 1rem;
     padding-left: 1rem;
+  }
+}
+
+#main-column .v-alert__wrapper {
+  color: $dk-text;
+  i {
+    color: $dk-text;
   }
 }
 </style>
