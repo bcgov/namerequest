@@ -21,7 +21,7 @@ export function getVuetify () {
           error: '#d3272c', // same as $app-red
           info: '#2196F3',
           success: '#1a9031', // same as $app-green
-          warning: '#FF9800'
+          warning: '#FFC107'
         }
       }
     }

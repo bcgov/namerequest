@@ -34,7 +34,7 @@
       <v-alert
         tile dense
         type="warning"
-        class="mb-0 text-center"
+        class="mb-0 text-center colour-dk-text"
         v-if="bannerText"
         v-html="bannerText"
       />
@@ -217,6 +217,7 @@ export default class App extends Mixins(DateMixin) {
 </script>
 
 <style lang="scss">
+@import '@/assets/scss/theme.scss';
 #main-column {
   display: flex;
   flex-flow: column nowrap;
@@ -246,6 +247,13 @@ export default class App extends Mixins(DateMixin) {
     max-width: 1300px;
     padding-right: 1rem;
     padding-left: 1rem;
+  }
+}
+
+#main-column .v-alert__wrapper {
+  color: $dk-text;
+  i {
+    color: $dk-text;
   }
 }
 </style>
