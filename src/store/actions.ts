@@ -437,6 +437,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
   commit('mutateNameOriginal', name) // Set original name for reset baseline
   if (getters.getIsXproMras) {
     commit('mutateNRData', { key: 'xproJurisdiction', value: getters.getJurisdictionText })
+    commit('mutateNRData', { key: 'homeJurisNum', value: getters.getCorpSearch })
     if (!getters.getHasNoCorpNum) {
       const profile: any = await fetchMRASProfile({ commit, getters })
       if (profile) {
@@ -445,7 +446,6 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
           ? sanitizeName(profile?.LegalEntity?.names[0]?.legalName)
           : sanitizeName(profile?.LegalEntity?.names?.legalName)
         commit('mutateName', name)
-        commit('mutateNRData', { key: 'homeJurisNum', value: getters.getCorpSearch })
       } else {
         commit('mutateNoCorpNum', true)
         return

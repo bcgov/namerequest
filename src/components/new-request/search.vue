@@ -197,7 +197,7 @@
     </v-row>
 
     <!-- Corporate number checkbox, only for XPro Canadian Locations -->
-    <v-row v-else-if="!isFederal" no-gutters>
+    <v-row v-else-if="!isFederal && !isInternational" no-gutters>
       <v-col class="d-flex justify-end">
         <v-tooltip top min-width="390" content-class="top-tooltip" transition="fade-transition">
           <template v-slot:activator="{ on }">
@@ -391,6 +391,10 @@ export default class NewSearch extends Vue {
     return this.location === 'CA' && this.jurisdiction === 'FD'
   }
 
+  get isInternational () {
+    return this.location === 'IN'
+  }
+
   get isPersonsName () {
     return this.getIsPersonsName
   }
@@ -480,6 +484,7 @@ export default class NewSearch extends Vue {
   watchLocation () {
     this.setName('')
     this.setCorpSearch('')
+    this.setNoCorpNum(false)
   }
 
   @Watch('request_action_cd')
