@@ -126,7 +126,7 @@
 
       <v-row>
         <v-col cols="2" />
-        <v-col cols="5" v-if="showCorpNum">
+        <v-col cols="5" v-if="getShowCorpNum === 'colin'">
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"

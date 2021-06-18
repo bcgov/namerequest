@@ -679,7 +679,7 @@ export const getNameIsSlashed = (state: StateIF): boolean => {
 
 export const getShowCorpNum = (state: StateIF): 'colin' | 'mras' | false => {
   if ((ColinRequestActions.includes(getRequestActionCd(state)) &&
-    ColinRequestTypes.includes(getEntityTypeCd(state))) || getEntityTypeCd(state) === 'DBA') {
+    ColinRequestTypes.includes(getEntityTypeCd(state)))) {
     return 'colin'
   }
   if (ColinRequestActions.includes(getRequestActionCd(state)) &&
