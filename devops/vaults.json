@@ -8,6 +8,34 @@
         ]
     },
     {
+        "vault": "sentry",
+        "application": [
+            "namerequest"
+        ]
+    },
+    {
+        "vault": "launchdarkly",
+        "application": [
+            "namerequest"
+        ]
+    },
+    {
+        "vault": "API",
+        "application": [
+            "auth-api",
+            "legal-api",
+            "namex-api",
+            "status-api"
+        ]
+    },
+    {
+        "vault": "web-url",
+        "application": [
+            "auth-web",
+            "business"
+        ]
+    },
+    {
         "vault": "name-request",
         "application": [
             "namerequest-ui"

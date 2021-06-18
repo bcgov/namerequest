@@ -59,25 +59,27 @@ async function startVue () {
   Vue.prototype.$colinRequestTypes = ColinRequestTypes
   Vue.prototype.$xproColinRequestTypes = XproColinRequestTypes
 
-  // Initialize Sentry
-  if (window['sentryDsn']) {
-    console.info('Initializing Sentry...') // eslint-disable-line no-console
-    const release = process.env.ABOUT_TEXT.replace(/<br>.*/, '')
-    Sentry.init({
-      dsn: window['sentryDsn'],
-      integrations: [
-        // new Integrations.Vue({ Vue, attachProps: true }), // FUTURE maybe
-        new Integrations.CaptureConsole({ levels: ['error'] })
-      ],
-      ignoreErrors: [
-        // these errors are safe to ignore, ref: https://stackoverflow.com/a/50387233/8679162
-        'ResizeObserver loop limit exceeded',
-        'ResizeObserver loop completed with undelivered notifications',
-        // ignore Launch Darkly errors (partial match)
-        'LD: [error]'
-      ],
-      release
-    })
+  if (window['sentryEnable'] === 'true') {
+    // Initialize Sentry
+    if (window['sentryDsn']) {
+      console.info('Initializing Sentry...') // eslint-disable-line no-console
+      const release = process.env.ABOUT_TEXT.replace(/<br>.*/, '')
+      Sentry.init({
+        dsn: window['sentryDsn'],
+        integrations: [
+          // new Integrations.Vue({ Vue, attachProps: true }), // FUTURE maybe
+          new Integrations.CaptureConsole({ levels: ['error'] })
+        ],
+        ignoreErrors: [
+          // these errors are safe to ignore, ref: https://stackoverflow.com/a/50387233/8679162
+          'ResizeObserver loop limit exceeded',
+          'ResizeObserver loop completed with undelivered notifications',
+          // ignore Launch Darkly errors (partial match)
+          'LD: [error]'
+        ],
+        release
+      })
+    }
   }
 
   // Initialize Keycloak / sync SSO

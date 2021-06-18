@@ -21,7 +21,7 @@ export async function getConfig (): Promise<EnvConfigI> {
     return Promise.reject(new Error('Could not fetch configuration.json'))
   })
 
-  const baseURL = response.data['URL'] + '/api/v1'
+  const baseURL = response.data['NAMEX_API_URL'] + response.data['NAMEX_API_VERSION']
   sessionStorage.setItem('BASE_URL', baseURL)
   axios.defaults.baseURL = baseURL
 
@@ -34,14 +34,22 @@ export async function getConfig (): Promise<EnvConfigI> {
   const keycloakConfigPath = response.data['KEYCLOAK_CONFIG_PATH']
   sessionStorage.setItem('KEYCLOAK_CONFIG_PATH', keycloakConfigPath)
 
-  const authApiUrl = response.data['AUTH_API_URL']
-  sessionStorage.setItem('AUTH_API_URL', authApiUrl)
-
-  const legalApiUrl = response.data['LEGAL_API_URL']
+  const legalApiUrl: string = response.data['LEGAL_API_URL'] + response.data['LEGAL_API_VERSION']
   sessionStorage.setItem('LEGAL_API_URL', legalApiUrl)
 
-  const vueAppPayRootApi = response.data['VUE_APP_PAY_ROOT_API']
-  sessionStorage.setItem('VUE_APP_PAY_ROOT_API', vueAppPayRootApi)
+  const authApiUrl: string = response.data['AUTH_API_URL'] + response.data['AUTH_API_VERSION']
+  sessionStorage.setItem('AUTH_API_URL', authApiUrl)
+
+  // for system alert banner (sbc-common-components)
+  const statusApiUrl: string = response.data['STATUS_API_URL'] + response.data['STATUS_API_VERSION']
+  sessionStorage.setItem('STATUS_API_URL', statusApiUrl)
+
+  // for sbc header (sbc-common-components)
+  const authWebUrl: string = response.data['AUTH_WEB_URL']
+  sessionStorage.setItem('AUTH_WEB_URL', authWebUrl)
+
+  const sentryEnable = response.data['SENTRY_ENABLE'];
+  (<any>window).sentryEnable = sentryEnable
 
   const sentryDsn: string = response.data['SENTRY_DSN'];
   (<any>window).sentryDsn = sentryDsn
@@ -49,7 +57,7 @@ export async function getConfig (): Promise<EnvConfigI> {
   const hotjarId: string = response.data['HOTJAR_ID'];
   (<any>window).hotjarId = hotjarId
 
-  const ldClientId: string = response.data['LD_CLIENT_ID'];
+  const ldClientId: string = response.data['NAMEREQUEST_LD_CLIENT_ID'];
   (<any>window).ldClientId = ldClientId
 
   const authTokenUrl: string = response.data['AUTH_TOKEN_URL'];
@@ -72,22 +80,6 @@ export async function getConfig (): Promise<EnvConfigI> {
 
   const entitySelectorUrl = response.data['ENTITY_SELECTOR_URL']
   entitySelectorUrl && sessionStorage.setItem('ENTITY_SELECTOR_URL', entitySelectorUrl)
-
-  /**
-   * This is a workaround to fix the sbc-common-components that expect their own session keys.
-   * Ref: #6801
-   */
-  const authApiConfig = {
-    AUTH_URL: response.data['BUSINESSES_URL'],
-    NAME_REQUEST_URL: response.data['NAME_REQUEST_URL'],
-    NRO_URL: response.data['NRO_URL'],
-    VUE_APP_AUTH_ROOT_API: response.data['SBC_CONFIG_AUTH_API_URL'],
-    VUE_APP_PAY_ROOT_API: vueAppPayRootApi,
-    VUE_APP_STATUS_ROOT_API: response.data['VUE_APP_STATUS_ROOT_API']
-  }
-  const authConfigString = JSON.stringify(authApiConfig)
-  sessionStorage.setItem('AUTH_API_CONFIG', authConfigString)
-  // console.log('AUTH_API_CONFIG: ' + authConfigString) // don't display
 
   return {
     $PAYMENT_PORTAL_URL: paymentPortalUrl
