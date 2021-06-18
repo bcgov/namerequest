@@ -23,7 +23,7 @@ import {
   StatsI,
   SubmissionTypeT
 } from '@/interfaces'
-import { NrState } from '@/enums'
+import { CorpNumRequests, NrState } from '@/enums'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 // List Data
@@ -677,14 +677,14 @@ export const getNameIsSlashed = (state: StateIF): boolean => {
   return false
 }
 
-export const getShowCorpNum = (state: StateIF): 'colin' | 'mras' | false => {
+export const getShowCorpNum = (state: StateIF): CorpNumRequests.COLIN | CorpNumRequests.MRAS | false => {
   if ((ColinRequestActions.includes(getRequestActionCd(state)) &&
-    ColinRequestTypes.includes(getEntityTypeCd(state))) || getEntityTypeCd(state) === 'DBA') {
-    return 'colin'
+    ColinRequestTypes.includes(getEntityTypeCd(state)))) {
+    return CorpNumRequests.COLIN
   }
   if (ColinRequestActions.includes(getRequestActionCd(state)) &&
     XproColinRequestTypes.includes(getEntityTypeCd(state))) {
-    return 'colin'
+    return CorpNumRequests.COLIN
   }
   let mrasEntities = ['XCR', 'XLP', 'UL', 'CR', 'CP', 'BC', 'CC']
   let { xproJurisdiction } = getNrData(state)
@@ -694,10 +694,10 @@ export const getShowCorpNum = (state: StateIF): 'colin' | 'mras' | false => {
     mrasEntities.includes(getEntityTypeCd(state))
   ) {
     if (getLocation(state) === 'CA' && ['NEW', 'ASSUMED'].includes(getRequestActionCd(state))) {
-      return 'mras'
+      return CorpNumRequests.MRAS
     }
     if (getLocation(state) === 'BC' && ['MVE'].includes(getRequestActionCd(state))) {
-      return 'mras'
+      return CorpNumRequests.MRAS
     }
   }
   return false
@@ -713,7 +713,7 @@ export const getCorpNumForReservation = (state: StateIF): any => {
       homeJurisNum: getNrData(state).homeJurisNum
     }
   }
-  if (getShowCorpNum(state) === 'colin') {
+  if (getShowCorpNum(state) === CorpNumRequests.COLIN) {
     return {
       corpNum: getCorpNum(state),
       homeJurisNum: ''

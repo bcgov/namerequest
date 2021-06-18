@@ -1,6 +1,6 @@
 import querystring from 'qs'
 import axios from 'axios'
-import { NrState } from '@/enums'
+import { CorpNumRequests, NrState } from '@/enums'
 import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
 import { getFeatureFlag, sleep } from '@/plugins'
@@ -509,7 +509,7 @@ export const setAddressSuggestions: ActionIF = ({ commit }, addressSuggestions: 
 // TODO: Not a real action?
 export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> => {
   if (getters.getShowCorpNum) {
-    if (getters.getShowCorpNum === 'mras') {
+    if (getters.getShowCorpNum === CorpNumRequests.MRAS) {
       return checkMRAS({ getters }, corpNum)
     } else {
       return checkCOLIN({ getters }, corpNum)

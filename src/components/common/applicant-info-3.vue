@@ -126,7 +126,7 @@
 
       <v-row>
         <v-col cols="2" />
-        <v-col cols="5" v-if="showCorpNum">
+        <v-col cols="5" v-if="getShowCorpNum === CorpNumRequests.COLIN">
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
@@ -220,6 +220,7 @@ import { Action, Getter } from 'vuex-class'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { ApplicantI, SubmissionTypeT } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { CorpNumRequests } from '@/enums'
 
 @Component({
   components: {
@@ -249,6 +250,9 @@ export default class ApplicantInfo3 extends Vue {
   @Action setPriorityRequest!: ActionBindingIF
   @Action fetchCorpNum!: ActionBindingIF
   @Action submit!: ActionBindingIF
+
+  // Enum declaration
+  readonly CorpNumRequests = CorpNumRequests
 
   corpNumDirty: boolean = false
   corpNumError: string = ''
