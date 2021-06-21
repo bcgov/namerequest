@@ -465,3 +465,7 @@ export const mutateKeycloakRoles = (state: StateIF, keyCloakRoles: Array<string>
 export const mutateStaffPayment = (state: StateIF, staffPayment: StaffPaymentIF) => {
   state.stateModel.staffPayment = staffPayment
 }
+
+export const mutateFolioNumber = (state: StateIF, folioNumber: string) => {
+  state.stateModel.newRequestModel.folioNumber = folioNumber
+}

@@ -32,6 +32,7 @@ export const stateModel: StateModelIF = {
       postalCd: '',
       stateProvinceCd: ''
     },
+    folioNumber: '',
     assumedNameOriginal: '',
     conditionsModalVisible: false,
     exitModalVisible: false,

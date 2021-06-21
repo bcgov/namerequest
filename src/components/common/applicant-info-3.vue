@@ -68,6 +68,15 @@
                         hide-details="auto"
                         label="Last Name" />
         </v-col>
+        <v-col cols="2" v-if="!getEditMode"></v-col>
+        <v-col cols="5" v-if="!getEditMode">
+          <FolioNumberInput
+              ref="folioNumberInputRef"
+              :folioNumber="getFolioNumber"
+              @emitFolioNumber="setFolioNumber($event)"
+              validate="true"
+          />
+        </v-col>
       </v-row>
 
       <v-row v-if="showAllFields">
@@ -218,13 +227,14 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
+import { FolioNumberInput } from '@bcrs-shared-components/folio-number-input'
 import { ApplicantI, SubmissionTypeT } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { CorpNumRequests } from '@/enums'
 
 @Component({
   components: {
-    ApplicantInfoNav
+    ApplicantInfoNav, FolioNumberInput
   }
 })
 export default class ApplicantInfo3 extends Vue {
@@ -241,6 +251,7 @@ export default class ApplicantInfo3 extends Vue {
   @Getter getShowPriorityRequest!: boolean
   @Getter getShowCorpNum!: string
   @Getter getSubmissionType!: SubmissionTypeT
+  @Getter getFolioNumber!: string
 
   // Global actions
   @Action setApplicantDetails!: ActionBindingIF
@@ -250,6 +261,7 @@ export default class ApplicantInfo3 extends Vue {
   @Action setPriorityRequest!: ActionBindingIF
   @Action fetchCorpNum!: ActionBindingIF
   @Action submit!: ActionBindingIF
+  @Action setFolioNumber!: ActionBindingIF
 
   // Enum declaration
   readonly CorpNumRequests = CorpNumRequests

@@ -415,6 +415,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   @Action setCorpNum!: ActionBindingIF
   @Action setNRData!: ActionBindingIF
   @Action setSubmissionTabNumber!: ActionBindingIF
+  @Action setFolioNumber!: ActionBindingIF
 
   highlightedSuggestion: string = null
   isValid: boolean = false
@@ -461,6 +462,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   }
 
   set actingOnOwnBehalf (value) {
+    if (value) this.setFolioNumber('') // no folio number in case it is on own behalf
     this.setActingOnOwnBehalf(value)
   }
 

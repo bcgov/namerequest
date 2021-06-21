@@ -1085,3 +1085,8 @@ export const isRoleStaff = (state: StateIF): boolean => {
 export const getStaffPayment = (state: StateIF): StaffPaymentIF => {
   return state.stateModel.staffPayment
 }
+
+/** The folio number. */
+export const getFolioNumber = (state: StateIF): string => {
+  return state.stateModel.newRequestModel.folioNumber
+}

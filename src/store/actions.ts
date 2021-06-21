@@ -878,3 +878,7 @@ export const setKeycloakRoles: ActionIF = ({ commit }, keycloakRoles: string[]):
 export const setStaffPayment: ActionIF = ({ commit }, staffPayment: StaffPaymentIF): void => {
   commit('mutateStaffPayment', staffPayment)
 }
+
+export const setFolioNumber: ActionIF = ({ commit }, folioNumber: string): void => {
+  commit('mutateFolioNumber', folioNumber)
+}

@@ -27,6 +27,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
   // Global getter
   @Getter getCurrentJsDate!: Date
   @Getter getStaffPayment!: StaffPaymentIF
+  @Getter getFolioNumber!: string
 
   get sbcPayment () {
     return this.$store.getters[paymentTypes.GET_SBC_PAYMENT]
@@ -158,6 +159,9 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     if (accountInfo) {
       const parsedAccountInfo = JSON.parse(accountInfo)
       headers['Account-Id'] = parsedAccountInfo.id
+    }
+    if (this.getStaffPayment.option === StaffPaymentOptions.NONE) {
+      headers['folioNumber'] = this.getFolioNumber
     }
     req.headers = headers
     try {

@@ -17,6 +17,7 @@ export interface NewRequestIF {
   analysisJSON: AnalysisJSONI | null,
   analyzePending: boolean,
   applicant: ApplicantI,
+  folioNumber?: string
   assumedNameOriginal: string,
   conditionsModalVisible: boolean,
   exitModalVisible: boolean,
