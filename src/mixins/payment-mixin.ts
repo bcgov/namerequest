@@ -27,6 +27,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
   // Global getter
   @Getter getCurrentJsDate!: Date
   @Getter getStaffPayment!: StaffPaymentIF
+  @Getter getFolioNumber!: string
 
   get sbcPayment () {
     return this.$store.getters[paymentTypes.GET_SBC_PAYMENT]
@@ -148,18 +149,8 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       },
       headers: {}
     }
-    const token = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
-    const accountInfo = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
-    let headers = this.buildStaffPayment()
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`
-      headers['Content-Type'] = 'application/json'
-    }
-    if (accountInfo) {
-      const parsedAccountInfo = JSON.parse(accountInfo)
-      headers['Account-Id'] = parsedAccountInfo.id
-    }
-    req.headers = headers
+
+    req.headers = this.buildPaymentHeaders()
     try {
       const paymentResponse = await this.createPaymentRequest(nrId, action, req)
       // set nr in session storage before redirecting to pay (this is how we find our way back afterwards)
@@ -191,8 +182,8 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
   }
 
-  /** Build Staff Payment data. **/
-  buildStaffPayment () {
+  /** Build Payment Headers. **/
+  buildPaymentHeaders () {
     // Populate Staff Payment according to payment option
     let headers = {}
     switch (this.getStaffPayment.option) {
@@ -210,9 +201,21 @@ export class PaymentMixin extends Mixins(ActionMixin) {
         headers['waiveFees'] = true
         break
 
-      case StaffPaymentOptions.NONE: // should never happen
+      case StaffPaymentOptions.NONE: // It is not a StaffPayment
+        headers['folioNumber'] = this.getFolioNumber
         break
     }
+    const token = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
+    const accountInfo = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+      headers['Content-Type'] = 'application/json'
+    }
+    if (accountInfo) {
+      const parsedAccountInfo = JSON.parse(accountInfo)
+      headers['Account-Id'] = parsedAccountInfo.id
+    }
+
     return headers
   }
 
