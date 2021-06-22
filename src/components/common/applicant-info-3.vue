@@ -68,8 +68,10 @@
                         hide-details="auto"
                         label="Last Name" />
         </v-col>
-        <v-col cols="2" v-if="!getEditMode"></v-col>
-        <v-col cols="5" v-if="!getEditMode">
+      </v-row>
+      <v-row v-if="!getEditMode && !isRoleStaff">
+        <v-col cols="2"></v-col>
+        <v-col cols="5">
           <FolioNumberInput
               ref="folioNumberInputRef"
               :folioNumber="getFolioNumber"
@@ -252,6 +254,7 @@ export default class ApplicantInfo3 extends Vue {
   @Getter getShowCorpNum!: string
   @Getter getSubmissionType!: SubmissionTypeT
   @Getter getFolioNumber!: string
+  @Getter isRoleStaff!: boolean
 
   // Global actions
   @Action setApplicantDetails!: ActionBindingIF

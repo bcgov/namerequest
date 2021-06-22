@@ -45,7 +45,7 @@
               <li>{{`${contactPerson}`}}</li>
               <li>{{applicant.emailAddress}}</li>
               <li>{{applicant.phoneNumber}}</li>
-              <li><span class="label" v-if="!!getFolioNumber">Folio: </span>{{getFolioNumber}}</li>
+              <li><span class="title-bold-16" v-if="getFolioNumber">Folio: </span>{{getFolioNumber}}</li>
             </ul>
           </li>
           <li v-if="!contactPerson">
@@ -55,7 +55,7 @@
               <li>{{`${applicantName}`}}</li>
               <li>{{applicant.emailAddress}}</li>
               <li>{{applicant.phoneNumber}}</li>
-              <li><span class="label" v-if="!!getFolioNumber">Folio: </span>{{getFolioNumber}}</li>
+              <li><span class="title-bold-16" v-if="getFolioNumber">Folio: </span>{{getFolioNumber}}</li>
             </ul>
           </li>
         </ul>
@@ -107,15 +107,10 @@ export default class RequestDetails extends Vue {
 
 <style lang="scss" scoped>
 @import "@/assets/scss/theme";
-
-.label {
-  font-weight: bold !important;
-  font-size: 1rem;
-  color: $dk-text;
-}
+@import "@/assets/scss/base";
 
 h4 {
-  @extend .label
+  @extend .title-bold-16
 }
 
 ul {
