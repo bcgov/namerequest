@@ -226,7 +226,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
    */
   redirectToPaymentPortal (paymentId, paymentToken, redirectUrl) {
     const paymentPortalUrl = sessionStorage.getItem('PAYMENT_PORTAL_URL')
-    const url = `${paymentPortalUrl}/${paymentToken}/${redirectUrl}`
+    const url = `${paymentPortalUrl}${paymentToken}/${redirectUrl}`
     // eslint-disable-next-line no-console
     // console.log(`Forwarding to SBC Payment Portal -> Payment redirect URL: ${redirectUrl}`)
     window.location.href = url
