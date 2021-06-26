@@ -108,13 +108,11 @@ export default class MrasSearchInfoDialog extends Vue {
   async handleSubmit (): Promise<void> {
     this.showModal = false
     if (this.name) await this.startAnalyzeName(null)
-    this.setCorpSearch('')
     this.setNoCorpNum(false)
   }
   private clearAndClose (): void {
     this.showModal = false
     this.setName('')
-    this.setCorpSearch('')
     this.setNoCorpNum(false)
   }
 }
