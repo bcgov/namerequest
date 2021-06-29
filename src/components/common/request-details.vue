@@ -3,7 +3,7 @@
     <section>
       <h4>Requested Name <span v-if="nameChoices.name2">Choices</span></h4>
       <ul class="pl-0">
-        <li v-if="name && !nameChoices.name2">{{name}} {{nameChoices.designation1}}</li>
+        <li v-if="name && !nameChoices.name2">{{nameChoices.name1}} {{nameChoices.designation1}}</li>
         <template v-else>
           <li v-if="nameChoices.name1">1. {{nameChoices.name1}} {{nameChoices.designation1}}</li>
           <li v-if="nameChoices.name2">2. {{nameChoices.name2}} {{nameChoices.designation2}}</li>
