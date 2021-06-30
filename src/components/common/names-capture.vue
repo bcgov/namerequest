@@ -319,6 +319,8 @@ export default class NamesCapture extends Vue {
   @Action setSubmissionTabComponent!: ActionBindingIF
   @Action setSubmissionType!: ActionBindingIF
 
+  readonly buildNameURL = 'https://www2.gov.bc.ca/gov/content?id=4A6A55FAD204494D9AF0B53BDC13A24F'
+
   hideDetails: boolean | 'auto' = true
   messages = {
     des1: '',
@@ -707,11 +709,6 @@ export default class NamesCapture extends Vue {
       name = `${name} ${this.nameChoices.designation1}`
     }
     return name
-  }
-
-  get buildNameURL () {
-    return 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business/' +
-    'permits-licences/businesses-incorporated-companies/approval-business-name/how-to-name-business'
   }
 
   set entity_type_cd (type: string) {

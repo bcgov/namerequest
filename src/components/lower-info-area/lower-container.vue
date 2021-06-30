@@ -20,7 +20,7 @@
                   <v-img src="@/assets/images/lc-tm-search-icon.png"
                          height="60"
                          width="60"
-                         comstrain />
+                         contain/>
                 </v-col>
               </v-row>
               <v-row justify="end">
@@ -34,6 +34,7 @@
               </v-row>
             </v-container>
           </v-col>
+
           <v-col cols="auto" class="mx-7 my-4">
             <v-container class="square-card">
               <v-row justify="center">
@@ -44,7 +45,7 @@
                   <v-img src="@/assets/images/domainicon_x1.png"
                          height="60"
                          width="60"
-                         comstrain />
+                         contain />
                 </v-col>
               </v-row>
               <v-row>
@@ -56,6 +57,7 @@
               </v-row>
             </v-container>
           </v-col>
+
           <v-col cols="auto" class="my-4">
             <v-container class="square-card">
               <v-row justify="center">
@@ -66,7 +68,7 @@
                   <v-img src="@/assets/images/socialicon_x1.png"
                          height="60"
                          width="60"
-                         comstrain />
+                         contain />
                 </v-col>
               </v-row>
               <v-row>
@@ -135,10 +137,6 @@ export default class LowerContainer extends Vue {
 <style lang="scss" scoped>
 @import "@/assets/scss/theme.scss";
 
-li {
-  font-size: 1rem;
-}
-
 #lower-container {
   padding: 0;
   margin: 0;
@@ -169,7 +167,7 @@ li {
     padding: 15px;
     border-radius: 4px;
     background-color: white;
-    box-shadow: 2px 2px 4px 0 darkgray; // FUTURE: should be $border?
+    box-shadow: 2px 2px 4px 0 darkgray; /* FUTURE: should be $border? */
 
     .launch-icon {
       display: inline-block;

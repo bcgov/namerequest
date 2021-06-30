@@ -137,7 +137,7 @@
                 <v-col cols="4" class="text-right align-self-center">
                   <v-btn @click="issueIndex--"
                          class="rnd-wht-btn mr-0"
-                         color="#1669bb"
+                         color="primary"
                          id="previous-issue-btn"
                          large
                          outlined
