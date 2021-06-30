@@ -140,10 +140,11 @@ export default class QuickSearchResults extends Vue {
 
 <style scoped lang="scss">
 @import '@/assets/scss/theme.scss';
+
 #search-again-button.v-btn[disabled] {
   opacity: 0.4 !important;
   color: white !important;
-  background-color: #1669bb !important;
+  background-color: $app-blue !important;
 }
 .quick-search-title {
   font-size: 1rem;
@@ -164,6 +165,6 @@ export default class QuickSearchResults extends Vue {
   padding-top: 0.625rem;
 }
 #continue-search-button {
-  background-color: #fff !important;
+  background-color: white !important;
 }
 </style>

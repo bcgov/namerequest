@@ -27,9 +27,19 @@
               </v-list-item>
             </v-list-item-group>
           </v-list>
+
+          <div class="bg-light-gray pl-4">
+            <p class="copy-small pt-7 mb-2">If you require consent from an existing business to use a name:</p>
+            <a :href="consentLetterSampleUrl" target="_blank" class="link-std-sans-ul">
+              <v-icon color="primary">mdi-file-pdf-outline</v-icon>
+              Download Sample Consent Letter
+            </a>
+          </div>
         </v-card>
       </v-col>
-      <v-divider class="mt-9 divider" vertical></v-divider>
+
+      <v-divider class="mt-9 mb-16 divider" vertical></v-divider>
+
       <v-col cols="12" sm="6" class="my-9 pl-75">
         <component :is="getDisplayedComponent(itemIndex)" :key="itemIndex" />
       </v-col>
@@ -56,7 +66,7 @@ import { BusinessDesignation, ConsentWords, ExampleName, UnavailableWords, Uniqu
 })
 export default class NameBuildInfo extends Vue {
   private itemIndex = 0
-  private items = [
+  readonly items = [
     {
       title: 'Check the name has the correct components',
       component: ExampleName
@@ -83,6 +93,9 @@ export default class NameBuildInfo extends Vue {
     }
   ]
 
+  readonly consentLetterSampleUrl = 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-development/' +
+    'business-management/permits-licences-and-registration/registries-other-assets/consent_letter_sample.pdf'
+
   /** Get the corresponding component for display */
   private getDisplayedComponent (index: number) {
     return this.items[index].component
@@ -103,7 +116,6 @@ export default class NameBuildInfo extends Vue {
   padding-top: 92px;
 
   .divider {
-    max-height: 24rem;
     border-color: $border;
     margin-left: -1px;
     z-index: 1;
