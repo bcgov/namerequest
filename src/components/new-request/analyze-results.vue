@@ -82,12 +82,13 @@
                 <v-col cols="auto">
                   <div v-for="(corp, n) in conflicts" :key="'conflict-' + n">
                     <b>{{ corp.name }}</b><br>
-                    <span v-if="conflictDate && conflictId.startsWith('NR ')">
-                      <b>Submitted Date:</b> {{ conflictDate + ', ' }}</span>
-                    <span v-if="conflictDate && !conflictId.startsWith('NR ')">
-                      <b>Incorporation Date:</b> {{ conflictDate + ', ' }}</span>
-                    <span v-if="conflictId && !conflictId.startsWith('NR ')">
-                      <b>Corporation No.:</b> {{ conflictId }}</span>
+                    <template v-if="conflictId.startsWith('NR ')">
+                      <span><b>Submitted Date:</b> {{ conflictDate }}</span>
+                    </template>
+                    <template v-if="!conflictId.startsWith('NR ')">
+                      <span><b>Incorporation Date:</b> {{ conflictDate + ', ' }}</span>
+                      <span><b>Corporation No.:</b> {{ conflictId }}</span>
+                    </template>
                   </div>
                 </v-col>
               </v-row>
@@ -367,14 +368,14 @@ export default class AnalyzeResults extends Mixins(DateMixin) {
         console.error('start date is invalid, conflict = ', this.issue.conflicts[0])
       }
     }
-    return null
+    return 'Unknown'
   }
 
   get conflictId () {
     if (Array.isArray(this.issue.conflicts) && this.issue.conflicts.length >= 1) {
       return this.issue.conflicts[0].id
     }
-    return null
+    return 'Unknown'
   }
 
   get conflicts () {
