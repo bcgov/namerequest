@@ -96,7 +96,7 @@ export default class Landing extends Vue {
 }
 
 #upper-row {
-  background: url('../assets/images/analyze-name-bg.jpg') no-repeat bottom;
+  background: url('~@/assets/images/analyze-name-bg.jpg') no-repeat bottom;
   background-size: cover;
   color: white;
   min-height: 700px;

@@ -44,7 +44,7 @@
           <!-- THIRD LINE -->
           <v-row class="mt-4" no-gutters align="center">
             <v-col cols="1" class="max-width">
-              <v-img src="../../assets/images/number1.svg" contain width="34" height="34" />
+              <v-img src="@/assets/images/number1.svg" contain width="34" height="34" />
             </v-col>
             <v-col class="max-height">
               <v-text-field :rules="nrRules"
@@ -64,7 +64,7 @@
           <!-- FOURTH LINE -->
           <v-row class="mt-6" no-gutters align="center">
             <v-col cols="1" class="max-width">
-              <v-img src="../../assets/images/number2.svg" contain width="34" height="34" />
+              <v-img src="@/assets/images/number2.svg" contain width="34" height="34" />
             </v-col>
             <v-col class="max-height">
               <v-text-field :rules="phoneRules"
