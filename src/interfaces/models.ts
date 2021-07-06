@@ -1,6 +1,5 @@
-import { NrState } from '@/enums'
+import { EntityType, Location, NrState, RequestCode } from '@/enums'
 
-export type LocationT = 'BC' | 'CA' | 'FD' | 'IN' | 'INFO'
 export type NameReqT = DraftReqI | ConditionalReqI | ReservedReqI
 export type NrDataResponseT = NameRequestI | null
 export type NrDataT = string | null
@@ -46,7 +45,7 @@ export interface ConditionalReqI {
   natureBusinessInfo: string
   previousRequestId?: string
   priorityCd: string
-  request_action_cd: string
+  request_action_cd: RequestCode
   request_type_cd?: string
   stateCd: NrState.COND_RESERVED
   submit_count: number
@@ -59,10 +58,11 @@ export interface ConsentConflictI {
   [propName: string]: any // excess properties
 }
 
+// NB: this is similar to EntityI
 export interface ConversionTypesI {
   blurbs?: string[]
   desc?: string
-  entity_type_cd?: string
+  entity_type_cd?: EntityType
   rank?: number
   short?: string
   shortlist?: boolean
@@ -83,7 +83,7 @@ export interface DraftReqI {
   natureBusinessInfo?: string
   previousRequestId?: string
   priorityCd: string
-  request_action_cd: string
+  request_action_cd: RequestCode
   stateCd: NrState.DRAFT
   submit_count: number
   tradeMark?: string
@@ -92,7 +92,7 @@ export interface DraftReqI {
 }
 
 export interface EntityI {
-  blurbs?: string | string[] | string[][] // TODO: fix wtf here
+  blurbs?: string | string[] | string[][] // FUTURE: clean up return type; also below
   intBlurbs?: string[]
   mveBlurbs?: string[]
   rehBlurbs?: string[]
@@ -102,7 +102,7 @@ export interface EntityI {
   rank?: number
   shortlist?: boolean
   text: string
-  value: string
+  value: EntityType
 }
 
 export interface ExistingRequestSearchI {
@@ -149,9 +149,9 @@ export interface NameRequestI {
 
 export interface NewRequestNameSearchI {
   entity_type_cd: string
-  location: LocationT
+  location: Location
   name: string
-  request_action_cd: string
+  request_action_cd: RequestCode
   request_type_cd?: string
 }
 
@@ -181,7 +181,7 @@ export interface RequestActionMappingI {
 
 export interface RequestActionsI {
   text: string
-  value: string
+  value: RequestCode
   blurbs?: string
   rank?: number
   shortDesc?: string
@@ -212,7 +212,7 @@ export interface ReservedReqI {
   natureBusinessInfo: string
   previousRequestId?: string
   priorityCd: string
-  request_action_cd: string
+  request_action_cd: RequestCode
   stateCd: NrState.RESERVED
   submit_count: number
   tradeMark: string

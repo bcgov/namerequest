@@ -25,7 +25,7 @@
             {{`${applicant.city ? applicant.city : ''}, ${applicant.stateProvinceCd ? applicant.stateProvinceCd : ''}`}}
           </li>
           <li>
-            {{`${applicant.countryTypeCd === 'CA' ? 'Canada' : applicant.countryTypeCd},
+            {{`${applicant.countryTypeCd === Location.CA ? 'Canada' : applicant.countryTypeCd},
              ${applicant.postalCd ? applicant.postalCd : ''}`}}
           </li>
         </ul>
@@ -68,9 +68,13 @@
 import { ApplicantI, NameChoicesIF } from '@/interfaces'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
+import { Location } from '@/enums'
 
 @Component({})
 export default class RequestDetails extends Vue {
+  // enum for template
+  readonly Location = Location
+
   @Prop(Object)
   readonly applicant: ApplicantI
 

@@ -229,7 +229,7 @@
               />
             </v-col>
 
-            <v-col cols="6" class="py-0 my-0" v-if="applicant.countryTypeCd === 'CA'">
+            <v-col cols="6" class="py-0 my-0" v-if="applicant.countryTypeCd === Location.CA">
               <label for="province" class="hidden">Province</label>
               <v-select
                 :items="provinceOptions"
@@ -251,7 +251,7 @@
               />
             </v-col>
 
-            <v-col cols="6" class="py-0 my-0" v-else-if="applicant.countryTypeCd === 'US'">
+            <v-col cols="6" class="py-0 my-0" v-else-if="applicant.countryTypeCd === Location.US">
               <label for="state" class="hidden">State</label>
               <v-select
                 :items="$usaStateCodes"
@@ -385,10 +385,10 @@ import { Component, Vue, Watch, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
-import { Location } from '@/enums'
+import { Location, NrState } from '@/enums'
 import { ActionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { ApplicantI, NameRequestI } from '@/interfaces'
+import { NameRequestI } from '@/interfaces'
 
 @Component({
   components: {
@@ -396,13 +396,15 @@ import { ApplicantI, NameRequestI } from '@/interfaces'
   }
 })
 export default class ApplicantInfo1 extends Mixins(ActionMixin) {
+  // enum for template
+  readonly Location = Location
+
   // Global getters
   @Getter getActingOnOwnBehalf!: boolean
   @Getter getAddressSuggestions!: any[]
-  @Getter getApplicant!: ApplicantI
   @Getter getDisplayedComponent!: string
   @Getter getEditMode!: boolean
-  @Getter getLocation!: string
+  @Getter getLocation!: Location
   @Getter getNr!: Partial<NameRequestI>
   @Getter getNrData!: any
   @Getter getNrState!: string
@@ -411,7 +413,6 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
 
   // Global actions
   @Action setActingOnOwnBehalf!: ActionBindingIF
-  @Action setApplicantDetails!: ActionBindingIF
   @Action setCorpNum!: ActionBindingIF
   @Action setNRData!: ActionBindingIF
   @Action setSubmissionTabNumber!: ActionBindingIF
@@ -471,17 +472,20 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
     // to prevent dereference errors (ie, cannot read property X of undefined)
     return this.getApplicant || {}
   }
+
   get countryOptions () {
     return this.$intlJurisdictions
   }
+
   get countryTypeCd () {
     return this.getApplicant?.countryTypeCd || ''
   }
+
   get jurisdictionOptions () {
-    return this.getLocation === Location.Canadian
+    return (this.getLocation === Location.CA)
       ? this.$canJurisdictions.filter(jur => jur.value !== Location.BC)
         .map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
-      : this.$intlJurisdictions.filter(jur => jur.value !== Location.Canadian)
+      : this.$intlJurisdictions.filter(jur => jur.value !== Location.CA)
         .map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
   }
 
@@ -489,8 +493,8 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
     return this.$canJurisdictions.map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
   }
 
-  get showAllFields () {
-    return (!this.getEditMode || this.getNrState === 'DRAFT')
+  get showAllFields (): boolean {
+    return (!this.getEditMode || this.getNrState === NrState.DRAFT)
   }
 
   get state () {

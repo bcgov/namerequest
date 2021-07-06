@@ -2,7 +2,6 @@ import Vue from 'vue'
 import {
   AnalysisJSONI,
   ConversionTypesI,
-  LocationT,
   NameRequestI,
   SelectOptionsI,
   StaffPaymentIF,
@@ -11,6 +10,7 @@ import {
   SubmissionTypeT,
   WaitingAddressSearchI
 } from '@/interfaces'
+import { EntityType, Location, RequestCode } from '@/enums'
 
 export const clearErrors = (state: StateIF) => {
   state.stateModel.newRequestModel.errors = []
@@ -50,7 +50,7 @@ export const mutateConflictId = (state: StateIF, conflictId: string) => {
   state.stateModel.newRequestModel.conflictId = conflictId
 }
 
-export const mutateConversionType = (state: StateIF, conversionType: string) => {
+export const mutateConversionType = (state: StateIF, conversionType: EntityType) => {
   state.stateModel.newRequestModel.conversionType = conversionType
 }
 
@@ -74,7 +74,7 @@ export const mutateEditMode = (state: StateIF, editMode: boolean) => {
   state.stateModel.newRequestModel.editMode = editMode
 }
 
-export const mutateEntityType = (state: StateIF, entity_type_cd: string) => {
+export const mutateEntityType = (state: StateIF, entity_type_cd: EntityType) => {
   state.stateModel.newRequestModel.entity_type_cd = entity_type_cd
 }
 
@@ -122,18 +122,22 @@ export const mutateIsPersonsName = (state: StateIF, isPersonsName: boolean) => {
   state.stateModel.newRequestModel.isPersonsName = isPersonsName
 }
 
-export const mutateLocation = (state: StateIF, location: LocationT) => {
+export const mutateLocation = (state: StateIF, location: Location) => {
   if (location === state.stateModel.newRequestModel.location) {
     return
   }
   // entity type needs to be reset when the location changes (options depend on location)
-  state.stateModel.newRequestModel.entity_type_cd = ''
-  if (location === 'INFO') {
+  state.stateModel.newRequestModel.entity_type_cd = null
+  // special case for sub-menu
+  if (location === Location.INFO) {
     state.stateModel.newRequestModel.location = location
     return
   }
-  if (state.stateModel.newRequestModel.location === 'CA' || state.stateModel.newRequestModel.location === 'IN') {
-    if (location === 'CA' || location === 'IN') {
+  if (
+    state.stateModel.newRequestModel.location === Location.CA ||
+    state.stateModel.newRequestModel.location === Location.IN
+  ) {
+    if (location === Location.CA || location === Location.IN) {
       state.stateModel.newRequestModel.location = location
       return
     }
@@ -255,12 +259,12 @@ export const mutatePriorityRequest = (state: StateIF, priorityRequest: boolean) 
   state.stateModel.newRequestModel.priorityRequest = priorityRequest
 }
 
-export const mutateRequestAction = (state: StateIF, action: string) => {
-  state.stateModel.newRequestModel.conversionType = ''
-  state.stateModel.newRequestModel.request_action_cd = action
-  if (action === 'MVE' && state.stateModel.newRequestModel.location === 'BC') {
-    state.stateModel.newRequestModel.location = 'CA'
-    state.stateModel.newRequestModel.entity_type_cd = 'XCR'
+export const mutateRequestAction = (state: StateIF, requestCd: RequestCode) => {
+  state.stateModel.newRequestModel.conversionType = null
+  state.stateModel.newRequestModel.request_action_cd = requestCd
+  if (requestCd === RequestCode.MVE && state.stateModel.newRequestModel.location === Location.BC) {
+    state.stateModel.newRequestModel.location = Location.CA
+    state.stateModel.newRequestModel.entity_type_cd = EntityType.XCR
   }
 }
 
@@ -336,7 +340,7 @@ export const resetEditFormValues = (state: StateIF) => {
 export const resetApplicantDetails = (state: StateIF) => {
   for (let key in state.stateModel.newRequestModel.applicant) {
     if (key === 'countryTypeCd') {
-      state.stateModel.newRequestModel.applicant[key] = 'CA'
+      state.stateModel.newRequestModel.applicant[key] = Location.CA
       continue
     }
     state.stateModel.newRequestModel.applicant[key] = ''
@@ -412,10 +416,6 @@ export const mutateAssumedNameOriginal = (state: StateIF) => {
   state.stateModel.newRequestModel.assumedNameOriginal = state.stateModel.newRequestModel.name
 }
 
-export const mutateRequestActionOriginal = (state: StateIF, requestActionOriginal: string) => {
-  state.stateModel.newRequestModel.requestActionOriginal = requestActionOriginal
-}
-
 export const resetNameChoices = (state: StateIF) => {
   for (let key in state.stateModel.newRequestModel.nameChoices) {
     Vue.set(
@@ -450,7 +450,7 @@ export const mutateQuickSearch = (state: StateIF, quickSearch: boolean) => {
   state.stateModel.newRequestModel.quickSearch = quickSearch
 }
 
-export const mutateQuickSearchNames = (state: StateIF, quickSearchNames: object[]) => {
+export const mutateQuickSearchNames = (state: StateIF, quickSearchNames: any[]) => {
   state.stateModel.newRequestModel.quickSearchNames = quickSearchNames
 }
 

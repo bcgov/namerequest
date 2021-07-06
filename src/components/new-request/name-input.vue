@@ -48,9 +48,9 @@ export default class NameInput extends Vue {
   // Global getters
   @Getter getCorpSearch!: string
   @Getter getErrors!: string[]
-  @Getter getLocation!: string
+  @Getter getLocation!: Location
   @Getter getName!: string
-  @Getter getRequestActionCd!: string
+  @Getter getRequestActionCd!: RequestCode
   @Getter getIsXproMras!: boolean
 
   // Global actions
@@ -83,7 +83,7 @@ export default class NameInput extends Vue {
     return this.isMrasSearch ? this.$refs['nameInput']?.valid : true
   }
 
-  get message () {
+  get message (): string | string[] {
     if (this.isMrasSearch && this.getErrors.includes('name')) {
       return ['Please enter a corporation number to search for']
     }
@@ -96,7 +96,7 @@ export default class NameInput extends Vue {
     return ''
   }
 
-  get searchValue () {
+  get searchValue (): string {
     return this.isMrasSearch ? this.getCorpSearch : this.getName
   }
 
@@ -104,12 +104,18 @@ export default class NameInput extends Vue {
     this.isMrasSearch ? this.setCorpSearch(value) : this.setName(value)
   }
 
-  get nameLabel () {
+  get nameLabel (): string {
     if (this.isMrasSearch) return 'Enter the corporate number assigned by the home jurisdiction'
-    return this.getLocation && this.getLocation !== Location.BC &&
-      this.getRequestActionCd !== RequestCode.MOVE
-      ? 'Business\'s full legal name in home jurisdiction'
-      : 'Enter a Name'
+
+    if (
+      this.getLocation &&
+      (this.getLocation !== Location.BC) &&
+      (this.getRequestActionCd !== RequestCode.MVE)
+    ) {
+      return 'Business\'s full legal name in home jurisdiction'
+    }
+
+    return 'Enter a Name'
   }
 
   clearErrors () {

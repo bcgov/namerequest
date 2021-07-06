@@ -50,7 +50,6 @@ import { REFUND_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import { NrAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin } from '@/mixins'
 import { sleep } from '@/plugins'
-import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from '@/services/namex.services'
 
@@ -62,7 +61,6 @@ import NamexServices from '@/services/namex.services'
 export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMixin) {
   // Global getters
   @Getter getNrId!: number
-  @Getter getApplicant!: ApplicantI
 
   // Global actions
   @Action loadExistingNameRequest!: ActionBindingIF
@@ -110,7 +108,7 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
   /** Called when user clicks "Cancel this NR" button. */
   private async confirmRefund (): Promise<void> {
     this.loading = true
-    const data = await NamexServices.patchNameRequestsByAction(this.getNrId, NrAction.REFUND)
+    const data = await NamexServices.patchNameRequestsByAction(this.getNrId, NrAction.REQUEST_REFUND)
     if (data) {
       this.loading = false
       await this.hideModal()

@@ -207,7 +207,7 @@ import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { Action, Getter } from 'vuex-class'
 import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { CorpNumRequests } from '@/enums'
+import { CorpNumRequests, NrState } from '@/enums'
 
 @Component({
   components: {
@@ -309,8 +309,8 @@ export default class ApplicantInfo2 extends Vue {
     this.setPriorityRequest(value)
   }
 
-  get showAllFields () {
-    return (!this.getEditMode || this.getNrState === 'DRAFT')
+  get showAllFields (): boolean {
+    return (!this.getEditMode || this.getNrState === NrState.DRAFT)
   }
 
   get xproJurisdiction () {

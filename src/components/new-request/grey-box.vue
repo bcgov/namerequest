@@ -144,6 +144,7 @@ import ReserveSubmit from '@/components/new-request/submit-request/reserve-submi
 import { AnalysisJSONI, OptionI } from '@/interfaces'
 import { replaceWord } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { EntityType } from '@/enums'
 
 @Component({
   components: { ReserveSubmit }
@@ -173,7 +174,7 @@ export default class GreyBox extends Vue {
   // Global getters
   @Getter getAnalysisJSON!: AnalysisJSONI
   @Getter getDesignationIssueTypes!: string[]
-  @Getter getEntityTypeCd!: string
+  @Getter getEntityTypeCd!: EntityType
   @Getter getName!: string
   @Getter getRequestExaminationOrProvideConsent!: boolean
 
@@ -219,8 +220,8 @@ export default class GreyBox extends Vue {
   }
 
   get isAssumedNameEntityType () {
-    return this.entity_type_cd !== 'XLP' && this.entity_type_cd !== 'XLL' &&
-    this.entity_type_cd !== 'XCP' && this.entity_type_cd !== 'XSO'
+    return this.entity_type_cd !== EntityType.XLP && this.entity_type_cd !== EntityType.XLL &&
+    this.entity_type_cd !== EntityType.XCP && this.entity_type_cd !== EntityType.XSO
   }
 
   get allDesignationsStripped () {
@@ -274,7 +275,7 @@ export default class GreyBox extends Vue {
     return null
   }
 
-  get entity_type_cd () {
+  get entity_type_cd (): EntityType {
     return this.getEntityTypeCd
   }
 
@@ -501,7 +502,6 @@ export default class GreyBox extends Vue {
 
   extractInnerDesignation (name, designation = null) {
     let { words } = this.$designations[this.entity_type_cd]
-    let index, length
     if (!designation) {
       for (let word of words) {
         name = replaceWord(name, word)

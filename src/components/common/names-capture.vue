@@ -278,9 +278,10 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
-import { EntityI, LocationT, NameChoicesIF, NameRequestI, RequestActionsI } from '@/interfaces'
+import { EntityI, NameChoicesIF, NameRequestI, RequestActionsI } from '@/interfaces'
 import { sanitizeName } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { EntityType, Location, RequestCode } from '@/enums'
 
 @Component({
   components: {
@@ -292,15 +293,15 @@ export default class NamesCapture extends Vue {
   @Getter getDisplayedComponent!: string
   @Getter getEditMode!: boolean
   @Getter getErrors!: string[]
-  @Getter getEntityTypeCd!: string
+  @Getter getEntityTypeCd!: EntityType
   @Getter getEntityTypeOptions!: Array<EntityI>
   @Getter getIsAssumedName!: boolean
-  @Getter getLocation!: LocationT
+  @Getter getLocation!: Location
   @Getter getLocationOptions!: any[]
   @Getter getName!: string
   @Getter getNameChoices!: NameChoicesIF
   @Getter getNr!: Partial<NameRequestI>
-  @Getter getRequestActionCd!: string
+  @Getter getRequestActionCd!: RequestCode
   @Getter getRequestTypeOptions!: RequestActionsI[]
   @Getter getSubmissionTabNumber!: number
 
@@ -393,9 +394,11 @@ export default class NamesCapture extends Vue {
   }
 
   get showSecondAndThirdNameChoices () {
-    if (this.location !== 'BC') {
-      if (this.entity_type_cd === 'XLP' || this.entity_type_cd === 'XLL' ||
-      this.entity_type_cd === 'XCP' || this.entity_type_cd === 'XSO') {
+    if (this.location !== Location.BC) {
+      if (this.entity_type_cd === EntityType.XLP ||
+        this.entity_type_cd === EntityType.XLL ||
+        this.entity_type_cd === EntityType.XCP ||
+        this.entity_type_cd === EntityType.XSO) {
         return false
       }
     }
@@ -469,38 +472,36 @@ export default class NamesCapture extends Vue {
           'hint': 'Third Name Choice (Optional)'
         }
       ]
+    } else if (this.getIsAssumedName) {
+      return [
+        {
+          'label': 'Assumed Name First Choice',
+          'hint': 'Enter your first choice for an assumed name'
+        },
+        {
+          'label': 'Assumed Name Second Choice',
+          'hint': 'Enter your second choice for an assumed name (Optional)'
+        },
+        {
+          'label': 'Assumed Name Third Choice',
+          'hint': 'Enter your third choice for an assumed name (Optional)'
+        }
+      ]
     } else {
-      if (this.getIsAssumedName) {
-        return [
-          {
-            'label': 'Assumed Name First Choice',
-            'hint': 'Enter your first choice for an assumed name'
-          },
-          {
-            'label': 'Assumed Name Second Choice',
-            'hint': 'Enter your second choice for an assumed name (Optional)'
-          },
-          {
-            'label': 'Assumed Name Third Choice',
-            'hint': 'Enter your third choice for an assumed name (Optional)'
-          }
-        ]
-      } else {
-        return [
-          {
-            'label': 'Name in Home Jurisdiction',
-            'hint': ''
-          },
-          {
-            'label': 'Assumed Name First Choice',
-            'hint': 'Enter your first choice for an assumed name (Optional)'
-          },
-          {
-            'label': 'Assumed Name Second Choice',
-            'hint': 'Enter your second choice for an assumed name (Optional)'
-          }
-        ]
-      }
+      return [
+        {
+          'label': 'Name in Home Jurisdiction',
+          'hint': ''
+        },
+        {
+          'label': 'Assumed Name First Choice',
+          'hint': 'Enter your first choice for an assumed name (Optional)'
+        },
+        {
+          'label': 'Assumed Name Second Choice',
+          'hint': 'Enter your second choice for an assumed name (Optional)'
+        }
+      ]
     }
   }
 
@@ -515,24 +516,28 @@ export default class NamesCapture extends Vue {
     return basePhrases.filter(phrase => !this.$designations['CR'].words.includes(phrase))
   }
 
-  get entityPhraseRequired () {
+  get entityPhraseRequired (): boolean {
     if (!this.entity_type_cd) return false
-    return ['CC', 'CP'].includes(this.entity_type_cd)
+    return [EntityType.CC, EntityType.CP].includes(this.entity_type_cd)
   }
 
-  get entityPhraseText () {
+  get entityPhraseText (): string {
     return this.entityPhraseChoices.join(', ')
   }
 
-  get entity_type_cd () {
+  get entity_type_cd (): EntityType {
     return this.getEntityTypeCd
   }
 
-  get entityTypeText () {
-    return (this.entity_type_cd === 'CC') ? 'Community Contribution Company' : 'Cooperative'
+  set entity_type_cd (type: EntityType) {
+    this.setEntityTypeCd(type)
   }
 
-  get isValid () {
+  get entityTypeText (): string {
+    return (this.entity_type_cd === EntityType.CC) ? 'Community Contribution Company' : 'Cooperative'
+  }
+
+  get isValid (): boolean {
     let { nameChoices, messages, designationAtEnd, validatePhrases, location } = this
     if (this.getIsAssumedName && this.getEditMode) {
       if (!nameChoices['name1']) {
@@ -672,33 +677,33 @@ export default class NamesCapture extends Vue {
     return (step1 && step2 && step3)
   }
 
-  get items () {
+  get items (): string[] {
     let output: string[] = this.$designations[this.entity_type_cd].words
-    if (this.entity_type_cd === 'CC') {
+    if (this.entity_type_cd === EntityType.CC) {
       output = this.$designations['CR'].words
     }
     return output
   }
 
-  get location () {
+  get location (): Location {
     return this.getLocation
   }
 
-  set location (location: LocationT) {
+  set location (location: Location) {
     this.setLocation(location)
   }
 
-  get nameChoices () {
+  get nameChoices (): NameChoicesIF {
     return this.getNameChoices
   }
 
-  get request_action_cd () {
+  get request_action_cd (): RequestCode {
     return this.getRequestActionCd
   }
 
-  set request_action_cd (value: string) {
+  set request_action_cd (value: RequestCode) {
     this.setRequestAction(value)
-    if (value === 'INFO') {
+    if (value === RequestCode.INFO) {
       this.setPickRequestTypeModalVisible(true)
     }
   }
@@ -709,10 +714,6 @@ export default class NamesCapture extends Vue {
       name = `${name} ${this.nameChoices.designation1}`
     }
     return name
-  }
-
-  set entity_type_cd (type: string) {
-    this.setEntityTypeCd(type)
   }
 
   clearErrors () {
@@ -874,26 +875,28 @@ export default class NamesCapture extends Vue {
   }
 
   @Watch('request_action_cd')
-  updateLocationOnAssumedName (newVal, oldVal) {
-    if (newVal === 'ASSUMED') {
-      if (this.location === 'BC') this.location = 'CA'
+  updateLocationOnAssumedName (newVal: RequestCode, oldVal: RequestCode) {
+    if (newVal === RequestCode.ASSUMED && this.location === Location.BC) {
+      this.location = Location.CA
     }
   }
 
   @Watch('entity_type_cd')
-  handleEntityType (newVal, oldVal) {
-    if (newVal === 'INFO') {
+  handleEntityType (newVal: EntityType, oldVal: EntityType) {
+    // special case for sub-menu
+    if (newVal === EntityType.INFO) {
       this.setPickEntityModalVisible(true)
       this.entity_type_cd = oldVal
     }
   }
 
   @Watch('location')
-  handleLocation (newVal, oldVal) {
+  handleLocation (newVal: Location, oldVal: Location) {
     if (newVal !== oldVal) {
       this.setNRData({ key: 'xproJurisdiction', value: '' })
     }
-    if (newVal === 'INFO') {
+    // special case for sub-menu
+    if (newVal === Location.INFO) {
       let type = this.entity_type_cd
       this.setLocationInfoModalVisible(true)
       this.$nextTick(function () {

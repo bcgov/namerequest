@@ -41,51 +41,37 @@ import { Action, Getter } from 'vuex-class'
 
 import MainContainer from '@/components/new-request/main-container.vue'
 import NameInput from '@/components/new-request/name-input.vue'
-import { EntityI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { Location } from '@/enums'
 
 @Component({
   components: { MainContainer, NameInput }
 })
 export default class QuickSearchPending extends Vue {
   // Global getter
-  @Getter getQuickSearchNames!: object[]
-  @Getter getEntityTypeOptions!: Array<EntityI>
-  @Getter getEntityTypeCd!: string
   @Getter getEntityTextFromValue!: string
-  @Getter getLocation!: string
+  @Getter getLocation!: Location
   @Getter getLocationOptions!: any[]
-  @Getter getRequestActionCd!: string
 
   // Global actions
   @Action setQuickSearch!: ActionBindingIF
   @Action startAnalyzeName!: ActionBindingIF
 
-  get entityText () {
+  get entityText (): string {
     return this.getEntityTextFromValue
   }
 
-  get location () {
-    return this.getLocationOptions.find((opt: any) => opt.value === this.getLocation)
+  get location (): any {
+    return this.getLocationOptions.find(opt => opt.value === this.getLocation)
   }
 
-  get request_action_cd () {
-    switch (this.getRequestActionCd) {
-      case 'new':
-        return 'a new'
-      case 'existing':
-        return 'an existing'
-      default:
-        return 'a new'
-    }
-  }
-  async skip () {
+  async skip (): Promise<void> {
     this.setQuickSearch(false)
     await this.startAnalyzeName(null)
   }
 }
-
 </script>
+
 <style scoped lang="scss">
 @import '@/assets/scss/theme.scss';
 .quick-search-title {

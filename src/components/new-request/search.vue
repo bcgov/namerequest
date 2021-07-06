@@ -11,7 +11,7 @@
                    id="search-type-options-select"
                    content-class="top-tooltip"
                    transition="fade-transition"
-                   :disabled="request_action_cd !== 'CNV'">
+                   :disabled="request_action_cd !== RequestCode.CNV">
           <template v-slot:activator="scope">
             <div v-on="scope.on">
               <v-select :error-messages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
@@ -78,7 +78,7 @@
         <v-tooltip id="entity-type-options-select"
                    top
                    content-class="top-tooltip"
-                   :disabled="request_action_cd !== 'CNV' || !entityConversionText"
+                   :disabled="request_action_cd !== RequestCode.CNV || !entityConversionText"
                    transition="fade-transition">
           <template v-slot:activator="scope">
             <div v-on="scope.on">
@@ -129,7 +129,7 @@
                   filled
                   v-model="jurisdiction">
           <template slot="item" slot-scope="data">
-            <span class="list-item" :class="{ 'last-select-item': data.item.value === 'FD' }">
+            <span class="list-item" :class="{ 'last-select-item': data.item.value === Location.FD }">
               {{ data.item.text }}
             </span>
           </template>
@@ -196,7 +196,7 @@
       </v-tooltip>
     </v-row>
 
-    <!-- Corporate number checkbox, only for XPro Canadian Locations -->
+    <!-- Corporate number checkbox, only for XPro Canadian locations -->
     <v-row v-else-if="!isFederal && !isInternational" no-gutters>
       <v-col class="d-flex justify-end">
         <v-tooltip top min-width="390" content-class="top-tooltip" transition="fade-transition">
@@ -267,16 +267,21 @@ import NameInput from './name-input.vue'
 // Interfaces / Enums / List Data
 import { ConversionTypesI, EntityI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { EntityType, Location, RequestCode } from '@/enums'
 
 @Component({
   components: { NameInput }
 })
 export default class NewSearch extends Vue {
+  // enums for template
+  readonly Location = Location
+  readonly RequestCode = RequestCode
+
   // Global getters
-  @Getter getConversionType!: string
+  @Getter getConversionType!: EntityType
   @Getter getConversionTypeOptions!: ConversionTypesI[]
   @Getter getEntityBlurbs!: Array<EntityI>
-  @Getter getEntityTypeCd!: string
+  @Getter getEntityTypeCd!: EntityType
   @Getter getEntityTypeOptions!: Array<EntityI>
   @Getter getEntityTextFromValue!: string
   @Getter getErrors!: string[]
@@ -285,12 +290,12 @@ export default class NewSearch extends Vue {
   @Getter getIsPersonsName!: boolean
   @Getter getIsXproMras!: boolean
   @Getter getJurisdictionCd!: string
-  @Getter getLocation!: string
-  @Getter getLocationOptions!: object[]
+  @Getter getLocation!: Location
+  @Getter getLocationOptions!: any[]
   @Getter getLocationText!: string
   @Getter getNameIsEnglish!: boolean
   @Getter getNoCorpDesignation!: boolean
-  @Getter getRequestActionCd!: string
+  @Getter getRequestActionCd!: RequestCode
   @Getter getRequestText!: string
   @Getter getShowNoCorpDesignation!: boolean
 
@@ -318,11 +323,12 @@ export default class NewSearch extends Vue {
 
   // Local enum
   private request_action_enum = [
-    'NEW',
-    'MVE',
-    'REH',
-    'AML',
-    'CHG'
+    RequestCode.NEW,
+    RequestCode.MVE,
+    RequestCode.REH,
+    RequestCode.AML,
+    RequestCode.CHG,
+    RequestCode.CNV
   ]
 
   private mounted () {
@@ -340,19 +346,21 @@ export default class NewSearch extends Vue {
     return this.$vuetify.breakpoint.lgAndUp
   }
 
+  // FUTURE: clean up return type
   entityBlurbs (entity_type_cd: string): string | string[] | string[][] {
     return this.getEntityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs
   }
 
-  get entity_type_cd () {
+  get entity_type_cd (): EntityType {
     if (this.getIsConversion) {
       return this.getConversionType
     }
     return this.getEntityTypeCd
   }
 
-  set entity_type_cd (type: string) {
-    if (type === 'INFO') {
+  set entity_type_cd (type: EntityType) {
+    // special case for sub-menu
+    if (type === EntityType.INFO) {
       // clear current value until user chooses a new one
       this.setEntityTypeCd(null)
       // show the "View all business types" modal
@@ -388,11 +396,11 @@ export default class NewSearch extends Vue {
   }
 
   get isFederal () {
-    return this.location === 'CA' && this.jurisdiction === 'FD'
+    return (this.location === Location.CA && this.jurisdiction === Location.FD)
   }
 
   get isInternational () {
-    return this.location === 'IN'
+    return (this.location === Location.IN)
   }
 
   get isPersonsName () {
@@ -403,15 +411,15 @@ export default class NewSearch extends Vue {
     this.setIsPersonsName(value)
   }
 
-  get location () {
+  get location (): Location {
     return this.getLocation
   }
 
-  set location (location: string) {
+  set location (location: Location) {
     this.setLocation(location)
   }
 
-  get jurisdiction () {
+  get jurisdiction (): string {
     return this.getJurisdictionCd
   }
 
@@ -443,26 +451,26 @@ export default class NewSearch extends Vue {
     this.setNoCorpDesignation(value)
   }
 
-  get request_action_cd () {
+  get request_action_cd (): RequestCode {
     return this.getRequestActionCd
   }
 
-  set request_action_cd (value: string) {
+  set request_action_cd (value: RequestCode) {
     const request = this.$requestActions.find(request => request.value === value)
     this.location = null
     if (this.entity_type_cd) {
-      this.entity_type_cd = ''
+      this.entity_type_cd = null
     }
-    if (request?.value !== 'NEW') {
+    if (request?.value !== RequestCode.NEW) {
       this.setExtendedRequestType(request)
     }
     this.setRequestAction(value)
   }
 
   get jurisdictionOptions () {
-    return this.location === 'CA'
-      ? this.$canJurisdictions.filter(jur => jur.value !== 'BC')
-      : this.$intlJurisdictions.filter(jur => jur.value !== 'CA')
+    return this.location === Location.CA
+      ? this.$canJurisdictions.filter(jur => jur.value !== Location.BC)
+      : this.$intlJurisdictions.filter(jur => jur.value !== Location.CA)
   }
 
   get entityTextFromValue (): string {
@@ -488,17 +496,17 @@ export default class NewSearch extends Vue {
   }
 
   @Watch('request_action_cd')
-  watchRequestActionCd (newVal) {
+  watchRequestActionCd (newVal: RequestCode) {
     // Set default location to BC for the requests where BC is the only location option
-    if (['CNV', 'MVE'].includes(newVal)) {
-      this.setLocation('BC')
+    if ([RequestCode.CNV, RequestCode.MVE].includes(newVal)) {
+      this.setLocation(Location.BC)
       this.locationDisabled = true
       return
     }
     this.locationDisabled = false
-    if (['ASSUMED'].includes(newVal)) {
-      if (this.location === 'BC') {
-        this.setLocation('CA')
+    if ([RequestCode.ASSUMED].includes(newVal)) {
+      if (this.location === Location.BC) {
+        this.setLocation(Location.CA)
       }
     }
   }

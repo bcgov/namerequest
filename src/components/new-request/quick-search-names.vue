@@ -17,7 +17,7 @@ import MainContainer from '@/components/new-request/main-container.vue'
 })
 export default class QuickSearchNames extends Vue {
   // Global getter
-  @Getter getQuickSearchNames!: object[]
+  @Getter getQuickSearchNames!: any[]
 }
 
 </script>

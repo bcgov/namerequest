@@ -180,13 +180,11 @@ import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
 import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction } from '@/enums'
 import { sleep } from '@/plugins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
-import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import NamexServices from '@/services/namex.services'
 
 // Interfaces
 import { NameRequestI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import error from '@/modules/error'
 
 @Component({
   components: {
@@ -209,7 +207,6 @@ export default class ExistingRequestDisplay extends Mixins(
   @Getter getNr!: Partial<NameRequestI>
   @Getter getNrId!: number
   @Getter getNrState!: NrState
-  @Getter getCurrentJsDate!: Date
 
   // Global actions
   @Action editExistingRequest!: ActionBindingIF
@@ -240,11 +237,11 @@ export default class ExistingRequestDisplay extends Mixins(
   /** The actions list, with some buttons forced to the bottom. */
   private get actions (): NrAction[] {
     const actions = (this.nr.actions || []) as NrAction[]
-    // move 'REFUND' or 'CANCEL' action (if present) to bottom of list
-    // eg ['EDIT', 'REFUND', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'REFUND']
+    // move 'REQUEST_REFUND' or 'CANCEL' action (if present) to bottom of list
+    // eg ['EDIT', 'REQUEST_REFUND', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'REQUEST_REFUND']
     // or ['EDIT', 'CANCEL', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'CANCEL']
     return actions.sort((a: any, b: any) => {
-      if ([NrAction.REFUND, NrAction.CANCEL].includes(b)) return -1
+      if ([NrAction.REQUEST_REFUND, NrAction.CANCEL].includes(b)) return -1
       return 0
     })
   }
@@ -372,7 +369,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** True if the Check Status gray box should be shown. */
   private get showCheckStatusGrayBox (): boolean {
-    return [NrState.DRAFT, NrState.IN_PROGRESS, NrState.ON_HOLD].includes(this.nr.state)
+    return [NrState.DRAFT, NrState.INPROGRESS, NrState.HOLD].includes(this.nr.state)
   }
 
   /** True if the NR Approved gray box should be shown. */
@@ -431,8 +428,8 @@ export default class ExistingRequestDisplay extends Mixins(
           if (this.isNrExpired) return 'Expired'
           return 'Conditional Approval'
         case NrState.DRAFT: return 'Pending Staff Review'
-        case NrState.ON_HOLD: return 'In Progress' // show ON HOLD as "In Progress"
-        case NrState.IN_PROGRESS: return 'In Progress'
+        case NrState.HOLD: return 'In Progress' // show HOLD as "In Progress"
+        case NrState.INPROGRESS: return 'In Progress'
         case NrState.REFUND_REQUESTED: return 'Cancelled, Refund Requested'
         case NrState.REJECTED: return 'Rejected'
         default: return '-' // should never happen
@@ -519,7 +516,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** Returns True if the specified action should display a red button. */
   private isRedButton (action: NrAction): boolean {
-    return [NrAction.REFUND, NrAction.CANCEL].includes(action)
+    return [NrAction.REQUEST_REFUND, NrAction.CANCEL].includes(action)
   }
 
   /** Returns display text for the specified action code. */
@@ -528,9 +525,9 @@ export default class ExistingRequestDisplay extends Mixins(
       case NrAction.CANCEL: return 'Cancel Name Request'
       case NrAction.REAPPLY: return 'Renew Name Request ($30)'
       case NrAction.RECEIPTS: return 'Download Receipts'
-      case NrAction.REFUND: return 'Cancel and Refund'
+      case NrAction.REQUEST_REFUND: return 'Cancel and Refund'
       case NrAction.RESEND: return 'Resend Email' // FUTURE: will be removed
-      case NrAction.RESULTS: return 'Download Results' // FUTURE: will be implemented
+      case NrAction.RESULT: return 'Download Results' // FUTURE: will be implemented
       case NrAction.RETRY_PAYMENT: return 'Retry Payment'
       case NrAction.UPGRADE: return 'Upgrade Priority ($100)'
       default: return this.toTitleCase(action)
@@ -544,7 +541,7 @@ export default class ExistingRequestDisplay extends Mixins(
       switch (action) {
         case NrAction.EDIT:
           // eslint-disable-next-line no-case-declarations
-          const doCheckout = ([NrState.DRAFT, NrState.IN_PROGRESS].indexOf(this.getNrState) > -1)
+          const doCheckout = ([NrState.DRAFT, NrState.INPROGRESS].indexOf(this.getNrState) > -1)
           // eslint-disable-next-line no-case-declarations
           let success: boolean | undefined
           if (doCheckout) {
@@ -570,7 +567,7 @@ export default class ExistingRequestDisplay extends Mixins(
         case NrAction.RECEIPTS:
           await this.togglePaymentHistoryModal(true)
           break
-        case NrAction.REFUND:
+        case NrAction.REQUEST_REFUND:
           await this.toggleRefundModal(true)
           break
         case NrAction.CANCEL:
@@ -582,7 +579,7 @@ export default class ExistingRequestDisplay extends Mixins(
         case NrAction.RETRY_PAYMENT:
           this.navigateToPaymentPortal()
           break
-        case NrAction.RESULTS:
+        case NrAction.RESULT:
           // show spinner since the network calls below can take a few seconds
           this.$root.$emit('showSpinner', true)
           // download the outputs

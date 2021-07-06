@@ -54,7 +54,7 @@
       <v-row justify="center">
         <v-col cols="auto" class="pb-0 pr-1">
           <v-btn id="search-again-button"
-                 :disabled="nameChanged"
+                 :disabled="nameUnchanged"
                  @click="searchAgain()">Search Again</v-btn>
         </v-col>
         <v-col cols="auto" class="pb-0 pr-1">
@@ -76,21 +76,19 @@ import { Action, Getter } from 'vuex-class'
 import MainContainer from '@/components/new-request/main-container.vue'
 import NameInput from '@/components/new-request/name-input.vue'
 import QuickSearchNames from '@/components/new-request/quick-search-names.vue'
-import { EntityI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { Location } from '@/enums'
 
 @Component({
   components: { MainContainer, NameInput, QuickSearchNames }
 })
 export default class QuickSearchResults extends Vue {
   // Global getter
-  @Getter getQuickSearchNames!: object[]
-  // @Getter getEntityTypeOptions!: Array<EntityI>
+  @Getter getQuickSearchNames!: any[]
   @Getter getEntityTextFromValue!: string
-  @Getter getLocation!: string
+  @Getter getLocation!: Location
   @Getter getLocationOptions!: any[]
   @Getter getName!: string
-  // @Getter getRequestActionCd!: string
 
   // Global actions
   @Action setQuickSearch!: ActionBindingIF
@@ -100,16 +98,17 @@ export default class QuickSearchResults extends Vue {
   originalName: string = ''
   private isLoadingAnalysis: boolean = false
 
-  get entityText () {
+  get entityText (): string {
     return this.getEntityTextFromValue
   }
 
-  get location () {
-    return this.getLocationOptions.find((opt: any) => opt.value === this.getLocation)
+  get location (): any {
+    return this.getLocationOptions.find(opt => opt.value === this.getLocation)
   }
 
-  get nameChanged () {
-    return this.originalName === this.getName
+  /** True if current name is same as original name. */
+  get nameUnchanged (): boolean {
+    return (this.originalName === this.getName)
   }
 
   mounted () {
@@ -124,11 +123,13 @@ export default class QuickSearchResults extends Vue {
       }
     })
   }
-  async searchAgain () {
+
+  async searchAgain (): Promise<void> {
     this.setQuickSearch(true)
     await this.startAnalyzeName(null)
   }
-  async detailedSearch () {
+
+  async detailedSearch (): Promise<void> {
     this.isLoadingAnalysis = true
     this.setNoCorpNum(true)
     this.setQuickSearch(false)

@@ -33,11 +33,9 @@ import FeeSummary from '@/components/payment/fee-summary.vue'
 import { CreatePaymentParams } from '@/modules/payment/models'
 import { UPGRADE_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import * as FilingTypes from '@/modules/payment/filing-types'
-import * as Jurisdictions from '@/modules/payment/jurisdictions'
-import { PaymentAction } from '@/enums'
+import { Jurisdictions, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
-import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
@@ -51,8 +49,6 @@ export default class UpgradeDialog extends Mixins(
   DisplayedComponentMixin
 ) {
   // Global getters
-  @Getter getNrId!: number
-  @Getter getApplicant!: ApplicantI
   @Getter getPriorityRequest!: boolean
 
   @Action toggleUpgradeModal!: ActionBindingIF

@@ -1,6 +1,6 @@
 import querystring from 'qs'
 import axios from 'axios'
-import { CorpNumRequests, NrState } from '@/enums'
+import { CorpNumRequests, EntityType, Location, NrState, RequestCode } from '@/enums'
 import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
 import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
 import { getFeatureFlag, sleep } from '@/plugins'
@@ -12,7 +12,7 @@ import { CanJurisdictions, IntlJurisdictions, RequestActions } from '@/list-data
 // Interfaces
 import {
   ConversionTypesI,
-  LocationT, NameRequestI,
+  NameRequestI,
   NewRequestNameSearchI,
   SelectOptionsI,
   StatsI,
@@ -32,7 +32,6 @@ export const setActiveComponent: any = ({ commit }, component): void => {
   if (typeof Tabs[component] === 'number') {
     commit('mutateTabNumber', Tabs[component])
     commit('mutateDisplayedComponent', 'Tabs')
-
     return
   }
 
@@ -48,7 +47,6 @@ export const setActiveComponent: any = ({ commit }, component): void => {
   if (typeof SubmissionTabs[component] === 'number') {
     commit('mutateSubmissionTabNumber', SubmissionTabs[component])
     commit('mutateDisplayedComponent', 'SubmissionTabs')
-
     return
   }
 
@@ -197,7 +195,6 @@ export const resetAnalyzeName = ({ commit, getters }) => {
   }
   commit('mutateCorpNum', '')
   commit('mutateEditMode', false)
-  commit('mutateRequestActionOriginal', '')
   commit('mutateSubmissionType', 'normal')
   commit('mutateShowActualInput', false)
   commit('resetApplicantDetails')
@@ -244,17 +241,17 @@ export const editExistingRequest: ActionIF = ({ commit, getters }) => {
   }
   let { entity_type_cd } = getters.getNr
   if (getters.getEntityTypesBC.some(type => type.value === entity_type_cd)) {
-    commit('mutateLocation', 'BC')
+    commit('mutateLocation', Location.BC)
   } else if (getters.getNr.xproJurisdiction) {
     let { xproJurisdiction } = getters.getNr
-    let location: LocationT
+    let location: Location
     for (let key of ['value', 'text']) {
       if (CanJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
-        location = 'CA'
+        location = Location.CA
         break
       }
       if (IntlJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
-        location = 'IN'
+        location = Location.IN
         break
       }
     }
@@ -268,19 +265,18 @@ export const editExistingRequest: ActionIF = ({ commit, getters }) => {
     commit('mutateEntityTypeAddToSelect', obj)
   }
   let { requestTypeCd, request_action_cd } = getters.getNr
-
   if (['AS', 'AL', 'XASO', 'XCASO', 'UA'].includes(requestTypeCd)) {
-    request_action_cd = 'ASSUMED'
+    request_action_cd = RequestCode.ASSUMED
   }
   commit('mutateRequestAction', request_action_cd)
-  if (request_action_cd !== 'NEW') {
+  if (request_action_cd !== RequestCode.NEW) {
     let reqObj = RequestActions.find(type => type.value === request_action_cd)
     commit('mutateExtendedRequestType', reqObj)
   }
   if (getters.getNr.corpNum) {
     commit('mutateCorpNum', getters.getNr.corpNum)
   }
-  if (getters.getNrState === 'DRAFT') {
+  if (getters.getNrState === NrState.DRAFT) {
     commit('mutateSubmissionTabComponent', 'NamesCapture')
   } else {
     commit('mutateSubmissionTabComponent', 'ApplicantInfo1')
@@ -416,8 +412,11 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
   if (getters.getShowNoCorpDesignation && !getters.getNoCorpDesignation) {
     commit('setErrors', 'no_corp_designation')
   }
-  if (['CA', 'IN'].includes(getters.getLocation) &&
-    !['MVE'].includes(getters.getRequestActionCd) && !getters.getRequestJurisdictionCd) {
+  if (
+    [Location.CA, Location.IN].includes(getters.getLocation) &&
+    ![RequestCode.MVE].includes(getters.getRequestActionCd) &&
+    !getters.getRequestJurisdictionCd
+  ) {
     commit('setErrors', 'jurisdiction')
     return
   }
@@ -471,10 +470,11 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
     return
   }
   commit('mutateName', name)
-  if (getters.getLocation === 'BC' || getters.getRequestActionCd === 'MVE') {
+  if (getters.getLocation === Location.BC || getters.getRequestActionCd === RequestCode.MVE) {
     if (getters.getNameIsEnglish && !getters.getIsPersonsName &&
       !getters.getDoNotAnalyzeEntities.includes(getters.getEntityTypeCd)) {
-      if (['NEW', 'MVE', 'DBA', 'CHG'].includes(getters.getRequestActionCd)) {
+      const requestActions = [RequestCode.NEW, RequestCode.MVE, RequestCode.DBA, RequestCode.CHG]
+      if (requestActions.includes(getters.getRequestActionCd)) {
         getFeatureFlag('disable-analysis')
           ? commit('mutateDisplayedComponent', 'SendToExamination')
           : getNameAnalysis({ commit, getters }, false)
@@ -483,7 +483,9 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
     }
     commit('mutateDisplayedComponent', 'SendToExamination')
   } else {
-    if (['AML', 'CHG', 'DBA', 'MVE', 'NEW', 'REH', 'REN', 'REST'].includes(getters.getRequestActionCd)) {
+    const requestActions = [RequestCode.AML, RequestCode.CHG, RequestCode.DBA, RequestCode.MVE,
+      RequestCode.NEW, RequestCode.REH, RequestCode.REN, RequestCode.REST]
+    if (requestActions.includes(getters.getRequestActionCd)) {
       if (getters.getDoNotAnalyzeEntities.includes(getters.getEntityTypeCd)) {
         commit('mutateDisplayedComponent', 'SendToExamination')
         return
@@ -561,7 +563,7 @@ export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
 // TODO: not a real action
 export const getNrStateData = ({ getters }) => {
   let nrState = getters.getNrState
-  if (getters.getAssumedName) nrState = 'ASSUMED'
+  if (getters.getAssumedName) nrState = NrState.ASSUMED
   let data: any
   switch (nrState) {
     case NrState.DRAFT:
@@ -574,7 +576,7 @@ export const getNrStateData = ({ getters }) => {
     case NrState.RESERVED:
       data = getters.reservedNameReservation
       break
-    case 'ASSUMED':
+    case NrState.ASSUMED:
       data = getters.editNameReservation
       break
     case NrState.PENDING_PAYMENT:
@@ -617,8 +619,8 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
   if (getters.getEditMode) {
     // TODO-CAM: Refactor the way these async requests are used to provide conditional booleans
     // @ts-ignore
-    const requestAction = getters.getRequestActionOriginal || getters.getRequestActionCd
-    const data = await NamexServices.patchNameRequests(getters.getNrId, requestAction, getters.getEditNameReservation)
+    const data = await NamexServices.patchNameRequests(getters.getNrId, getters.getRequestActionCd,
+      getters.getEditNameReservation)
     if (data) {
       // TODO: change this flow to use the patch response instead of getting the request again and remove code below
       // TODO: cases where applicants can be a list or object -> make this consistent (api) + update UI accordingly
@@ -643,10 +645,9 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
     }
   } else {
     let request
-    const requestAction = getters.getRequestActionOriginal || getters.getRequestActionCd
     if (!getters.getNrId) {
       const data = getNrTypeData({ getters }, 'draft')
-      request = await NamexServices.postNameRequests(requestAction, data)
+      request = await NamexServices.postNameRequests(getters.getRequestActionCd, data)
       if (request) commit('setNrResponse', request)
     } else {
       const data = getNrStateData({ getters })
@@ -657,7 +658,7 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
           return
         }
       }
-      request = await NamexServices.putNameReservation(getters.getNrId, requestAction, data)
+      request = await NamexServices.putNameReservation(getters.getNrId, getters.getRequestActionCd, data)
       if (request) commit('setNrResponse', request)
     }
     if (request) await dispatch('togglePaymentModal', true)
@@ -672,7 +673,7 @@ export const setName: ActionIF = ({ commit }, name: string): void => {
   commit('mutateName', name)
 }
 
-export const setLocation: ActionIF = ({ commit }, location: LocationT): void => {
+export const setLocation: ActionIF = ({ commit }, location: Location): void => {
   commit('mutateLocation', location)
 }
 
@@ -688,7 +689,7 @@ export const setCorpSearch: ActionIF = ({ commit }, corpSearch: string): void =>
   commit('mutateCorpSearch', corpSearch)
 }
 
-export const setEntityTypeCd: ActionIF = ({ commit }, entityTypeCd: string): void => {
+export const setEntityTypeCd: ActionIF = ({ commit }, entityTypeCd: EntityType): void => {
   commit('mutateEntityType', entityTypeCd)
 }
 
@@ -720,7 +721,7 @@ export const setExtendedRequestType: ActionIF = ({ commit }, extendedRequestType
   commit('mutateExtendedRequestType', extendedRequestType)
 }
 
-export const setRequestAction: ActionIF = ({ commit }, requestAction: string): void => {
+export const setRequestAction: ActionIF = ({ commit }, requestAction: RequestCode): void => {
   commit('mutateRequestAction', requestAction)
 }
 

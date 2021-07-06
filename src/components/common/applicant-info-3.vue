@@ -232,7 +232,7 @@ import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { FolioNumberInput } from '@bcrs-shared-components/folio-number-input'
 import { ApplicantI, SubmissionTypeT } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { CorpNumRequests } from '@/enums'
+import { CorpNumRequests, Location, NrState } from '@/enums'
 
 @Component({
   components: {
@@ -246,10 +246,9 @@ export default class ApplicantInfo3 extends Vue {
   @Getter getApplicant!: ApplicantI
   @Getter getIsPriorityRequest!: boolean
   @Getter getEditMode!: boolean
-  @Getter getLocation!: string
+  @Getter getLocation!: Location
   @Getter getNrData!: any
   @Getter getNrState!: string
-  @Getter getRequestActionCd!: string
   @Getter getShowPriorityRequest!: boolean
   @Getter getShowCorpNum!: string
   @Getter getSubmissionType!: SubmissionTypeT
@@ -324,17 +323,14 @@ export default class ApplicantInfo3 extends Vue {
   get isPersonsName () {
     return this.getIsPersonsName
   }
-  get location () {
+  get location (): Location {
     return this.getLocation
   }
   get priorityRequest () {
     return this.getIsPriorityRequest
   }
-  get request_action_cd () {
-    return this.getRequestActionCd
-  }
-  get showAllFields () {
-    return (!this.getEditMode || this.getNrState === 'DRAFT')
+  get showAllFields (): boolean {
+    return (!this.getEditMode || this.getNrState === NrState.DRAFT)
   }
   get showCorpNum () {
     return this.getShowCorpNum
@@ -386,6 +382,7 @@ export default class ApplicantInfo3 extends Vue {
       return false
     }
   }
+
   mutateApplicant (key, value) {
     this.setApplicantDetails({ key, value })
   }
@@ -431,6 +428,7 @@ export default class ApplicantInfo3 extends Vue {
   }
 }
 </script>
+
 <style lang="scss" scoped>
 ::v-deep .v-textarea textarea {
   line-height: 1.375rem !important;
