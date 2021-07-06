@@ -18,7 +18,7 @@
   "NAMEX_API_VERSION": "/api/v1",
   "NR_COMPLETION_TIMEOUT_MS": "0",
   "NR_COMPLETION_TIMER_NAME": "nrCompletionTimer",
-  "PAYMENT_PORTAL_URL": "https://dev.bcregistry.ca/business/auth/makepayment",
+  "PAYMENT_PORTAL_URL": "https://dev.bcregistry.ca/business/auth/makepayment/",
   "QUICK_SEARCH_PUBLIC_ID": "",
   "QUICK_SEARCH_PUBLIC_SECRET": "",
   "SENTRY_ENABLE": "false",
