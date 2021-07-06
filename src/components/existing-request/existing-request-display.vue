@@ -31,14 +31,20 @@
             <!-- labels and values -->
             <v-col cols="9" class="py-0">
               <v-row dense>
-                <v-col cols="12">
+                <v-col cols="12" class="submitted-date">
                   <span>Submitted Date:</span>
                   &nbsp;{{ submittedDate  }}
                 </v-col>
 
-                <v-col cols="12">
+                <v-col cols="12" class="request-type">
+                  <span>Request Type:</span>
+                  &nbsp;{{ requestType  }}
+                </v-col>
+
+                <v-col cols="12" class="request-status">
                   <span>Request Status:</span>
-                  &nbsp;<span :class="isNotPaid ? 'app-red' : isPaymentProcessing ? 'app-green' : ''">
+                  &nbsp;
+                  <span :class="isNotPaid ? 'app-red' : isPaymentProcessing ? 'app-green' : ''">
                     {{ requestStatusText }}</span>
                   <v-icon v-if="isAlertState" color="error" size="20" class="mt-n1 ml-1">
                     mdi-alert
@@ -50,12 +56,12 @@
                   >Conditions</a>
                 </v-col>
 
-                <v-col cols="12">
+                <v-col cols="12" class="priority-request">
                   <span>Priority Request:</span>
                   &nbsp;{{ isPriorityReq(nr) ? 'Yes' : 'No' }}
                 </v-col>
 
-                <v-col cols="12" v-if="showEstimatedDateNotPriority">
+                <v-col cols="12" v-if="showEstimatedDateNotPriority" class="estimated-review-date">
                   <span>Estimated Review Date:</span>
                   &nbsp;
                   <v-tooltip
@@ -75,27 +81,27 @@
                   </v-tooltip>
                 </v-col>
 
-                <v-col cols="12" v-if="showEstimatedDatePriority" class="font-italic">
+                <v-col cols="12" v-if="showEstimatedDatePriority" class="font-italic priority-requests-blurb">
                   Priority Requests are usually reviewed within 1 to 2 business days
                 </v-col>
 
-                <v-col cols="12" v-if="expiryDate">
+                <v-col cols="12" v-if="expiryDate" class="expiry-date">
                   <span>Expiry Date:</span>
                   &nbsp;{{ expiryDate }}
                 </v-col>
 
-                <v-col cols="12" v-if="nr.consentFlag && (nr.consentFlag !== 'N')">
+                <v-col cols="12" v-if="nr.consentFlag && (nr.consentFlag !== 'N')" class="consent-status">
                   <span>Consent Status:</span>
                   &nbsp;{{ consentDate }}
                 </v-col>
 
-                <v-col cols="12">
+                <v-col cols="12" class="applicant-name">
                   <span>Applicant Name:</span>
                   &nbsp;{{ nr && nr.applicants && nr.applicants.lastName }},
                   &nbsp;{{ nr && nr.applicants && nr.applicants.firstName }}
                 </v-col>
 
-                <v-col cols="12">
+                <v-col cols="12" class="applicant-address">
                   <span>Address:</span>
                   &nbsp;{{ address }}
                 </v-col>
@@ -329,6 +335,10 @@ export default class ExistingRequestDisplay extends Mixins(
       ret = this.dateToPacificDateTime(date)
     }
     return ret || 'Unknown'
+  }
+
+  private get requestType (): string {
+    return this.requestActionCdToText(this.nr.request_action_cd) || 'Unknown'
   }
 
   private get disableUnfurnished (): boolean {
