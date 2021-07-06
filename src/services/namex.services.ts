@@ -12,7 +12,7 @@ import {
   StatsI
 } from '@/interfaces'
 import { RequestActions } from '@/list-data'
-import { NrAction, NrState, RollbackActions } from '@/enums'
+import { NrAction, NrState, RequestCode, RollbackActions } from '@/enums'
 import { NameRequestPayment } from '@/modules/payment/models'
 
 const ANALYSIS_TIMEOUT_MS = 3 * 60 * 1000 // 3 minutes
@@ -36,14 +36,19 @@ axiosNamex.interceptors.request.use(
 
 export default class NamexServices {
   static axios = axiosNamex
+
   static namexUrl () {
     return sessionStorage.getItem('BASE_URL')
   }
-  static async addRequestActionComment (requestAction: NrAction, data: NameRequestI): Promise<NameRequestI> {
+
+  static async addRequestActionComment (
+    requestActionCd: RequestCode,
+    data: NameRequestI
+  ): Promise<NameRequestI> {
     try {
-      // const requestAction = getters.getRequestActionOriginal || getters.getRequestActionCd
-      const action = RequestActions.find(request => request.value === requestAction)
-      const { shortDesc } = action || { shortDesc: 'action not found' }
+      // const requestAction = getters.getRequestActionCd
+      const requestAction = RequestActions.find(request => request.value === requestActionCd)
+      const { shortDesc } = requestAction || { shortDesc: 'action not found' }
       const msg = `*** ${shortDesc} ***`
 
       if (!data['additionalInfo']) {
@@ -79,13 +84,16 @@ export default class NamexServices {
       return null
     }
   }
+
   static async cancelPayment (nrId: number, paymentId: string): Promise<NameRequestPayment> {
     const paymentResponse: NameRequestPayment = {
       paymentSuccess: false
     }
 
     try {
-      console.log('delete ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
+      // eslint-disable-next-line no-console
+      console.log('delete ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+        sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
       const response = await this.axios.delete(`${this.namexUrl()}/payments/${nrId}/payment/${paymentId}`, {
         headers: { 'Content-Type': 'application/json' }
       })
@@ -109,6 +117,7 @@ export default class NamexServices {
       return null
     }
   }
+
   static async checkinNameRequest (nrId: number, nrState: NrState): Promise<boolean> {
     try {
       // Approved or Rejected Name Requests are not checked out due to limited data that is editable.
@@ -119,7 +128,9 @@ export default class NamexServices {
       const checkedOutDt = sessionStorage.getItem('checkedOutDt')
 
       if (checkedOutBy) {
-        console.log('checkin ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
+        // eslint-disable-next-line no-console
+        console.log('checkin ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+          sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
         await this.axios.patch(`${this.namexUrl()}/namerequests/${nrId}/checkin`, {
           checkedOutBy: checkedOutBy,
           checkedOutDt: checkedOutDt
@@ -138,6 +149,7 @@ export default class NamexServices {
       return false
     }
   }
+
   static async checkoutNameRequest (nrId: number): Promise<boolean> {
     try {
       const checkedOutBy = sessionStorage.getItem('checkedOutBy')
@@ -145,7 +157,9 @@ export default class NamexServices {
 
       let response: any
       if (checkedOutBy) {
-        console.log('checkOut ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
+        // eslint-disable-next-line no-console
+        console.log('checkOut ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+          sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
         response = await this.axios.patch(`${this.namexUrl()}/namerequests/${nrId}/checkout`, {
           checkedOutBy: checkedOutBy,
           checkedOutDt: checkedOutDt
@@ -170,13 +184,16 @@ export default class NamexServices {
       return false
     }
   }
+
   static async completePayment (nrId: number, paymentId: number, action: string): Promise<NameRequestPayment> {
     const paymentResponse: NameRequestPayment = {
       paymentSuccess: false
     }
 
     try {
-      console.log('completePayment ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
+      // eslint-disable-next-line no-console
+      console.log('completePayment ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+        sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
       const response = await this.axios.patch(
         `${this.namexUrl()}/payments/${nrId}/payment/${paymentId}/${action}`,
         {},
@@ -202,6 +219,7 @@ export default class NamexServices {
       return null
     }
   }
+
   static async downloadOutputs (nrId: number): Promise<void> {
     try {
       const url = `${this.namexUrl()}/namerequests/${nrId}/result`
@@ -236,6 +254,7 @@ export default class NamexServices {
       )
     }
   }
+
   static async fetchStats (): Promise<StatsI> {
     try {
       let response = await this.axios.get(`${this.namexUrl()}/statistics`)
@@ -247,11 +266,14 @@ export default class NamexServices {
       return null
     }
   }
+
   static async getNameRequest (handleError: boolean): Promise<NameRequestI> {
     try {
       const { CancelToken } = Axios
       const source = CancelToken.source()
-      console.log('get ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
+      // eslint-disable-next-line no-console
+      console.log('get ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+        sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
       const response = await this.axios.get(`${this.namexUrl()}/namerequests`, {
         cancelToken: source.token
       })
@@ -266,6 +288,7 @@ export default class NamexServices {
       return null
     }
   }
+
   static async searchNameRequests (
     params: AdvancedSearchI,
     handleError: boolean,
@@ -298,6 +321,7 @@ export default class NamexServices {
       return null
     }
   }
+
   static async handleApiError (err: any, defaultMessage = ''): Promise<string> {
     if ((err as AxiosError).isAxiosError !== undefined) {
       let message = ''
@@ -332,6 +356,7 @@ export default class NamexServices {
       return (err?.toString() || defaultMessage)
     }
   }
+
   static async nameAnalysis (params: NewRequestNameSearchI, xpro: boolean): Promise<AnalysisJSONI> {
     const { CancelToken } = Axios
     const source = CancelToken.source()
@@ -345,11 +370,14 @@ export default class NamexServices {
     // TODO: change how this is handled
     throw new Error(`Invalid response = ${response}`)
   }
-  static async patchNameRequests (nrId: number, action: NrAction, nr: NameRequestI): Promise<any> {
+
+  static async patchNameRequests (nrId: number, requestActionCd: RequestCode, nr: NameRequestI): Promise<any> {
     try {
       // const nr = getters.getEditNameReservation
-      const requestData: any = nr && await this.addRequestActionComment(action, nr)
-      console.log('patch ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
+      const requestData: any = nr && await this.addRequestActionComment(requestActionCd, nr)
+      // eslint-disable-next-line no-console
+      console.log('patch ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+        sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
       const response: any = requestData &&
         await this.axios.patch(`${this.namexUrl()}/namerequests/${nrId}/edit`, requestData, {
           headers: { 'Content-Type': 'application/json' }
@@ -366,10 +394,13 @@ export default class NamexServices {
       return null
     }
   }
-  static async patchNameRequestsByAction (nrId: number, action: NrAction): Promise<any> {
+
+  static async patchNameRequestsByAction (nrId: number, nrAction: NrAction): Promise<any> {
     try {
-      console.log('patch by action ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
-      const response: any = await this.axios.patch(`${this.namexUrl()}/namerequests/${nrId}/${action}`, {}, {
+      // eslint-disable-next-line no-console
+      console.log('patch by action ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+        sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
+      const response: any = await this.axios.patch(`${this.namexUrl()}/namerequests/${nrId}/${nrAction}`, {}, {
         headers: { 'Content-Type': 'application/json' }
       })
 
@@ -385,7 +416,8 @@ export default class NamexServices {
       return null
     }
   }
-  static async postNameRequests (action: NrAction, data: NameRequestI): Promise<NameRequestI> {
+
+  static async postNameRequests (requestActionCd: RequestCode, data: NameRequestI): Promise<NameRequestI> {
     try {
       if (!data) throw new Error('postNameRequests() - invalid data') // safety check
 
@@ -395,10 +427,12 @@ export default class NamexServices {
       sessionStorage.setItem('BCREG-emailAddress', null)
       sessionStorage.setItem('BCREG-phoneNumber', null)
 
-      const requestData: any = data && await this.addRequestActionComment(action, data)
+      const requestData: any = data && await this.addRequestActionComment(requestActionCd, data)
       if (!requestData) throw new Error('postNameRequests() - invalid request data') // safety check
 
-      console.log('post ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
+      // eslint-disable-next-line no-console
+      console.log('post ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+        sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
       const response: any = requestData && await this.axios.post(`${this.namexUrl()}/namerequests`, requestData, {
         headers: { 'Content-Type': 'application/json' }
       })
@@ -417,14 +451,17 @@ export default class NamexServices {
       return null
     }
   }
+
   static async putNameReservation (
     nrId: number,
-    action: NrAction,
+    requestActionCd: RequestCode,
     data: NameRequestI
   ): Promise<NameRequestI> {
     try {
-      const requestData: any = data && await this.addRequestActionComment(action, data)
-      console.log('put ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
+      const requestData: any = data && await this.addRequestActionComment(requestActionCd, data)
+      // eslint-disable-next-line no-console
+      console.log('put ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+        sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
       const response: any = requestData && await this.axios.put(
         `${this.namexUrl()}/namerequests/${nrId}`,
         requestData,
@@ -441,6 +478,7 @@ export default class NamexServices {
       return null
     }
   }
+
   static async rollbackNameRequest (nrId: number): Promise<boolean> {
     try {
       // safety checks
@@ -450,7 +488,9 @@ export default class NamexServices {
         console.error('rollbackNameRequest(), invalid NR id') // eslint-disable-line no-console
         return false
       }
-      console.log('rollback ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'), sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress')) // eslint-disable-line
+      // eslint-disable-next-line no-console
+      console.log('rollback ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+        sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
       const response = await this.axios.patch(
         `${this.namexUrl()}/namerequests/${nrId}/rollback/${RollbackActions.CANCEL}`,
         {},

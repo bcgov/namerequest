@@ -48,6 +48,7 @@ import MainContainer from '@/components/new-request/main-container.vue'
 import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
 import NameInput from '@/components/new-request/name-input.vue'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { Location } from '@/enums'
 
 @Component({
   components: { ReserveSubmit, MainContainer, NameInput }
@@ -55,15 +56,14 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 export default class AnalyzePending extends Vue {
   // Global getters
   @Getter getEntityTextFromValue!: string
-  @Getter getLocation!: string
+  @Getter getLocation!: Location
   @Getter getLocationOptions!: any[]
-  @Getter getRequestActionCd!: string
 
   // Global actions
   @Action cancelAnalyzeName!: ActionBindingIF
 
   get location () {
-    return this.getLocationOptions.find((opt: any) => opt.value === this.getLocation)
+    return this.getLocationOptions.find(opt => opt.value === this.getLocation)
   }
 
   startOver () {

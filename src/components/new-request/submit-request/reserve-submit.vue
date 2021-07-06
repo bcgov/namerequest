@@ -20,7 +20,7 @@ import { Action, Getter } from 'vuex-class'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { ConditionalReqI, DraftReqI, IssueI, NameRequestI, ReservedReqI } from '@/interfaces'
 import NamexServices from '@/services/namex.services'
-import { NrAction } from '@/enums'
+import { Location, RequestCode } from '@/enums'
 
 @Component({})
 export default class ReserveSubmitButton extends Vue {
@@ -29,10 +29,9 @@ export default class ReserveSubmitButton extends Vue {
   @Getter getConditionalNameReservation!: ConditionalReqI
   @Getter getCurrentIssue!: IssueI
   @Getter getDraftNameReservation!: DraftReqI
-  @Getter getLocation!: string
+  @Getter getLocation!: Location
   @Getter getReservedNameReservation!: ReservedReqI
-  @Getter getRequestActionCd!: NrAction
-  @Getter getRequestActionOriginal!: NrAction
+  @Getter getRequestActionCd!: RequestCode
   @Getter getShowActualInput!: boolean
 
   // Global actions
@@ -112,7 +111,7 @@ export default class ReserveSubmitButton extends Vue {
     }
     this.setDisplayedComponent('SubmissionTabs')
 
-    if (this.getLocation !== 'BC' && setup !== 'assumed') {
+    if (this.getLocation !== Location.BC && setup !== 'assumed') {
       goToNames()
       return
     }
@@ -128,30 +127,32 @@ export default class ReserveSubmitButton extends Vue {
 
     let data: any
     let request: NameRequestI
-    const requestAction = this.getRequestActionOriginal || this.getRequestActionCd
     switch (setup) {
       case 'assumed':
         this.setAssumedNameOriginal(null)
         goToNames()
         return
+
       // @ts-ignore - typescript knows setup can only === 'assumed' at this point and gives error
       case 'examine':
         goToNames()
         return
+
       // @ts-ignore - typescript knows setup can only === 'assumed' at this point and gives error
       case 'consent':
         data = this.getData('conditional')
-        request = await NamexServices.postNameRequests(requestAction, data)
+        request = await NamexServices.postNameRequests(this.getRequestActionCd, data)
         if (request) {
           this.setNrResponse(request)
           this.setSubmissionType('consent')
           this.setSubmissionTabComponent('ApplicantInfo1')
         }
         return
+
       default:
         this.setSubmissionType('normal')
         data = this.getData('reserved')
-        request = await NamexServices.postNameRequests(requestAction, data)
+        request = await NamexServices.postNameRequests(this.getRequestActionCd, data)
         if (request) {
           this.setNrResponse(request)
           this.setSubmissionTabComponent('ApplicantInfo1')
@@ -160,6 +161,7 @@ export default class ReserveSubmitButton extends Vue {
   }
 }
 </script>
+
 <style lang="scss" scoped>
 #reserve-submit-btn {
   min-width: 140px !important;

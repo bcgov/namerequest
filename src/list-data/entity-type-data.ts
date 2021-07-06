@@ -1,9 +1,10 @@
+import { EntityType } from '@/enums'
 import { EntityI } from '@/interfaces/models'
 
 export const EntityTypesBcData: EntityI[] = [
   {
     text: 'Sole proprietorship',
-    value: 'FR',
+    value: EntityType.FR,
     cat: 'Proprietorships',
     blurbs: [
       'A company owned and operated by one person who is personally responsible for all debts and liabilities.',
@@ -17,7 +18,7 @@ export const EntityTypesBcData: EntityI[] = [
   },
   {
     text: '"Doing Business As" name (DBA)',
-    value: 'DBA',
+    value: EntityType.DBA,
     cat: 'Proprietorships',
     blurbs: [
       `An existing legal BC entity that would like to be known as another name. Referred to as a "Doing Business As",
@@ -55,7 +56,7 @@ export const EntityTypesBcData: EntityI[] = [
     chgBlurbs: [
       'Change/Correct the name of an existing limited company.'
     ],
-    value: 'CR',
+    value: EntityType.CR,
     shortlist: true,
     rank: 1
   },
@@ -85,7 +86,7 @@ export const EntityTypesBcData: EntityI[] = [
     chgBlurbs: [
       'Change/Correct the name of an existing unlimited liability company.'
     ],
-    value: 'UL'
+    value: EntityType.UL
   },
   {
     text: 'General partnership',
@@ -101,7 +102,7 @@ export const EntityTypesBcData: EntityI[] = [
     chgBlurbs: [
       'Change the name of an existing general partnership.'
     ],
-    value: 'GP'
+    value: EntityType.GP
   },
   {
     text: 'Limited partnership',
@@ -116,7 +117,7 @@ export const EntityTypesBcData: EntityI[] = [
     chgBlurbs: [
       'Change the name of an existing limited partnership.'
     ],
-    value: 'LP'
+    value: EntityType.LP
   },
   {
     text: 'Limited liability partnership',
@@ -131,7 +132,7 @@ export const EntityTypesBcData: EntityI[] = [
     chgBlurbs: [
       'Change the name of an existing limited liability partnership.'
     ],
-    value: 'LL'
+    value: EntityType.LL
   },
   {
     text: 'Cooperative association',
@@ -160,7 +161,7 @@ export const EntityTypesBcData: EntityI[] = [
     chgBlurbs: [
       'Change/correct the name of an existing cooperative association.'
     ],
-    value: 'CP'
+    value: EntityType.CP
   },
   {
     text: 'Benefit company',
@@ -186,7 +187,7 @@ export const EntityTypesBcData: EntityI[] = [
     chgBlurbs: [
       'Change/Correct the name of an existing benefit company.'
     ],
-    value: 'BC'
+    value: EntityType.BC
   },
   {
     text: 'Community contribution company',
@@ -213,7 +214,7 @@ export const EntityTypesBcData: EntityI[] = [
     chgBlurbs: [
       'Change/correct the name of an existing community contribution company.'
     ],
-    value: 'CC'
+    value: EntityType.CC
   },
   {
     text: 'Society',
@@ -237,7 +238,7 @@ export const EntityTypesBcData: EntityI[] = [
     chgBlurbs: [
       'Societies must use Societies Online to get their name.'
     ],
-    value: 'SO'
+    value: EntityType.SO
   },
   {
     text: 'Private act',
@@ -248,7 +249,7 @@ export const EntityTypesBcData: EntityI[] = [
       'Examples include resorts and ski areas',
       'Has name protection in BC'
     ],
-    value: 'PA'
+    value: EntityType.PA
   },
   {
     text: 'Credit union',
@@ -264,7 +265,7 @@ export const EntityTypesBcData: EntityI[] = [
     chgBlurbs: [
       'Correct/change the name of an existing credit union.'
     ],
-    value: 'FI'
+    value: EntityType.FI
   },
   {
     text: 'Parish',
@@ -274,7 +275,7 @@ export const EntityTypesBcData: EntityI[] = [
       'Call BC Registries and Online Services at 1-877-526-162 for more information',
       'Has name protection in BC'
     ],
-    value: 'PAR'
+    value: EntityType.PAR
   }
 ]
 
@@ -313,7 +314,7 @@ export const EntityTypesXproData: EntityI[] = [
         'Update the name of an extraprovincial company to reflect a change of name in the home jurisdiction.'
       ]
     ],
-    value: 'XCR',
+    value: EntityType.XCR,
     shortlist: true,
     rank: 1
   },
@@ -342,7 +343,7 @@ export const EntityTypesXproData: EntityI[] = [
         'Unlimited liability company'
       ]
     ],
-    value: 'XUL'
+    value: EntityType.XUL
   },
   {
     text: 'Limited liability company',
@@ -376,7 +377,7 @@ export const EntityTypesXproData: EntityI[] = [
           name in the home jurisdiction.`
       ]
     ],
-    value: 'RLC'
+    value: EntityType.RLC
   },
   {
     text: 'Limited partnership',
@@ -404,7 +405,7 @@ export const EntityTypesXproData: EntityI[] = [
           jurisdiction.`
       ]
     ],
-    value: 'XLP'
+    value: EntityType.XLP
   },
   {
     text: 'Limited liability partnership',
@@ -433,7 +434,7 @@ export const EntityTypesXproData: EntityI[] = [
           jurisdiction.`
       ]
     ],
-    value: 'XLL'
+    value: EntityType.XLL
   },
   {
     text: 'Cooperative association',
@@ -462,7 +463,7 @@ export const EntityTypesXproData: EntityI[] = [
           jurisdiction.`
       ]
     ],
-    value: 'XCP'
+    value: EntityType.XCP
   },
   {
     text: 'Society',
@@ -492,6 +493,6 @@ export const EntityTypesXproData: EntityI[] = [
         'Societies must use Societies Online to get their name.'
       ]
     ],
-    value: 'XSO'
+    value: EntityType.XSO
   }
 ]

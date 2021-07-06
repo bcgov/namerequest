@@ -43,7 +43,6 @@ import { PaymentMixin } from '@/mixins'
 import { sleep } from '@/plugins'
 
 import { NrAction } from '@/enums'
-import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { CANCEL_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import NamexServices from '@/services/namex.services'
@@ -51,7 +50,6 @@ import NamexServices from '@/services/namex.services'
 @Component({})
 export default class CancelDialog extends Mixins(PaymentMixin) {
   // Global Getters
-  @Getter getApplicant!: ApplicantI
   @Getter getNrId!: number
 
   @Action setDisplayedComponent!: ActionBindingIF

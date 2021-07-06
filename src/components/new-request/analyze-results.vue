@@ -195,6 +195,7 @@ import ReserveSubmit from '@/components/new-request/submit-request/reserve-submi
 
 import { AnalysisJSONI, IssueI, QuillOpsI, SelectionI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { EntityType, Location } from '@/enums'
 
 @Component({
   components: { GreyBox, MainContainer, quillEditor, ReserveSubmit }
@@ -203,10 +204,10 @@ export default class AnalyzeResults extends Mixins(DateMixin) {
   // Global getters
   @Getter getAnalysisJSON!: AnalysisJSONI
   @Getter getDesignationIssueTypes!: string[]
-  @Getter getEntityTypeCd!: string
+  @Getter getEntityTypeCd!: EntityType
   @Getter getEntityTextFromValue!: string
   @Getter getName!: string
-  @Getter getLocation!: string
+  @Getter getLocation!: Location
   @Getter getLocationOptions!: any[]
   @Getter getUserCancelledAnalysis!: boolean
   @Getter getRequestExaminationOrProvideConsent!: boolean
@@ -624,8 +625,8 @@ export default class AnalyzeResults extends Mixins(DateMixin) {
     return this.getAnalysisJSON
   }
 
-  get location () {
-    return this.getLocationOptions.find((opt: any) => opt.value === this.getLocation)
+  get location (): any {
+    return this.getLocationOptions.find(opt => opt.value === this.getLocation)
   }
 
   get name () {

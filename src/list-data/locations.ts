@@ -1,7 +1,9 @@
+import { Location } from '@/enums'
+
 export const Locations: any[] = [
   {
     text: 'BC',
-    value: 'BC',
+    value: Location.BC,
     blurbs: [
       `Your business does not currently exist anywhere (i.e., it is a new business).`,
       ``,
@@ -13,7 +15,7 @@ export const Locations: any[] = [
   {
     text: 'Extraprovincial (Canada based)',
     altText: 'Canadian',
-    value: 'CA',
+    value: Location.CA,
     blurbs: [
       `Your existing business is currently located in any Province or Territory other than BC.`,
       `Your existing business is currently located in any Province or Territory other than BC.`,
@@ -28,7 +30,7 @@ export const Locations: any[] = [
   {
     text: 'Extraprovincial (Internationally based)',
     altText: 'International',
-    value: 'IN',
+    value: Location.IN,
     blurbs: [
       `Your existing business is currently located outside of Canada.`,
       `Your existing business is currently located outside of Canada.`,

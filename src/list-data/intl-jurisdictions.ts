@@ -1,13 +1,14 @@
+import { Location } from '@/enums'
 import { JurisdictionI } from '@/interfaces'
 
 const CanUsa: JurisdictionI[] = [
   {
-    value: 'CA',
+    value: Location.CA,
     SHORT_DESC: 'Canada',
     text: 'Canada'
   },
   {
-    value: 'US',
+    value: Location.US,
     SHORT_DESC: 'United States',
     text: 'United States'
   }

@@ -42,6 +42,7 @@ import { Action, Getter } from 'vuex-class'
 import { RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NameInput from '@/components/new-request/name-input.vue'
+import { EntityType, RequestCode } from '@/enums'
 
 @Component({
   components: { NameInput }
@@ -53,12 +54,12 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   @Getter getNameAnalysisTimeout!: boolean
   @Getter getDoNotAnalyzeEntities!: string[]
   @Getter getEntityTextFromValue!: string
-  @Getter getEntityTypeCd!: string
+  @Getter getEntityTypeCd!: EntityType
   @Getter getIsPersonsName!: boolean
   @Getter getName!: string
   @Getter getNameIsEnglish!: boolean
   @Getter getNameIsSlashed!: boolean
-  @Getter getRequestActionCd!: string
+  @Getter getRequestActionCd!: RequestCode
   @Getter getRequestTypeOptions!: RequestActionsI[]
 
   // Global actions
@@ -155,9 +156,12 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   get nameIsSlashed () {
     return this.getNameIsSlashed
   }
-  get requestActionNotSupported () {
-    return !(['NEW', 'DBA', 'CHG'].includes(this.getRequestActionCd))
+
+  get requestActionNotSupported (): boolean {
+    const requests = [RequestCode.NEW, RequestCode.DBA, RequestCode.CHG]
+    return !(requests.includes(this.getRequestActionCd))
   }
+
   get requestActionText (): string {
     if (this.getRequestActionCd && this.getRequestTypeOptions.find(req => req.value === this.getRequestActionCd)) {
       return this.getRequestTypeOptions.find(req => req.value === this.getRequestActionCd)?.text
@@ -185,8 +189,7 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
       output = '<p class="ma-0 pa-0">Name Requests that are personal name(s) cannot be reserved immediately.</p>'
     }
     if (!this.nameIsEnglish) {
-      output = output +
-        '<p>Name Requests that contain words that are not English cannot be reserved immediately.<p>'
+      output += '<p>Name Requests that contain words that are not English cannot be reserved immediately.<p>'
     }
     return output
   }

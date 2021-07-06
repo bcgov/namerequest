@@ -39,6 +39,7 @@ import ReserveSubmit from '@/components/new-request/submit-request/reserve-submi
 import NameInput from '@/components/new-request/name-input.vue'
 
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { Location } from '@/enums'
 
 @Component({
   components: {
@@ -50,8 +51,8 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 export default class SendToExamination extends Vue {
   // Global getters
   @Getter getEntityTextFromValue!: string
-  @Getter getLocation!: string
-  @Getter getLocationOptions!: string[]
+  @Getter getLocation!: Location
+  @Getter getLocationOptions!: any[]
 
   // Global actions
   @Action setDisplayedComponent!: ActionBindingIF
@@ -65,10 +66,8 @@ export default class SendToExamination extends Vue {
     showNextLines: true
   }
 
-  get location () {
-    let value = this.getLocation
-    let options = this.getLocationOptions
-    return options.find((opt: any) => opt.value === value)
+  get location (): any {
+    return this.getLocationOptions.find(opt => opt.value === this.getLocation)
   }
 
   sendToExamination () {

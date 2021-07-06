@@ -45,6 +45,7 @@ import MainContainer from '@/components/new-request/main-container.vue'
 import NameInput from '@/components/new-request/name-input.vue'
 
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { Location } from '@/enums'
 
 @Component({
   components: { MainContainer, NameInput }
@@ -52,14 +53,14 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 export default class AnalyzeCharacters extends Vue {
   // Global getters
   @Getter getEntityTextFromValue!: string
-  @Getter getLocation!: string
+  @Getter getLocation!: Location
   @Getter getLocationOptions!: any[]
 
   // Global actions
   @Action cancelAnalyzeName!: ActionBindingIF
 
-  get location () {
-    return this.getLocationOptions.find((opt: any) => opt.value === this.getLocation)
+  get location (): any {
+    return this.getLocationOptions.find(opt => opt.value === this.getLocation)
   }
 
   startOver () {

@@ -20,6 +20,7 @@ import { Component, Emit, Vue } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { SubmissionTypeT } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { NrState } from '@/enums'
 
 @Component({})
 export default class ApplicantInfoNav extends Vue {
@@ -53,12 +54,12 @@ export default class ApplicantInfoNav extends Vue {
     return 'Continue'
   }
 
-  get showBack () {
+  get showBack (): boolean {
     if (this.getSubmissionTabNumber < 2) {
       return false
     }
     if (this.getSubmissionTabNumber === 2) {
-      return (this.getSubmissionType === 'examination' || this.getNrState === 'DRAFT')
+      return (this.getSubmissionType === 'examination' || this.getNrState === NrState.DRAFT)
     }
     if (this.getSubmissionTabNumber === 3) {
       return true

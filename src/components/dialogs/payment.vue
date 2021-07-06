@@ -91,11 +91,10 @@ import StaffPayment from '@/components/payment/staff-payment.vue'
 import { CreatePaymentParams } from '@/modules/payment/models'
 import { PAYMENT_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import * as FilingTypes from '@/modules/payment/filing-types'
-import * as Jurisdictions from '@/modules/payment/jurisdictions'
-import { PaymentAction } from '@/enums'
+import { Jurisdictions, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
-import { ApplicantI, NameChoicesIF } from '@/interfaces'
+import { NameChoicesIF } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
@@ -125,8 +124,6 @@ export default class PaymentDialog extends Mixins(
 
   // Global getters
   @Getter getName!: string
-  @Getter getNrId!: number
-  @Getter getApplicant!: ApplicantI
   @Getter getNameChoices!: NameChoicesIF
   @Getter getPriorityRequest!: boolean
   @Getter isRoleStaff!: boolean

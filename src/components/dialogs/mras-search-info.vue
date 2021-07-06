@@ -47,10 +47,8 @@ export default class MrasSearchInfoDialog extends Vue {
   @Getter getHasNoCorpNum!: boolean
   @Getter getIsXproMras!: boolean
   @Getter getJurisdictionText!: string
-  @Getter getLocation!: string
   @Getter getMrasSearchResultCode!: number
   @Getter getName!: string
-  @Getter getRequestActionCd!: string
   @Getter getMrasSearchInfoModalVisible!: boolean
 
   // Global actions
@@ -78,38 +76,49 @@ export default class MrasSearchInfoDialog extends Vue {
       action: 'Please enter the name of your business below:'
     }
   }
-  get showModal () {
+
+  get showModal (): boolean {
     return this.getMrasSearchInfoModalVisible
   }
+
   set showModal (value: boolean) {
     this.setMrasSearchInfoModalVisible(value)
   }
-  get name () {
+
+  get name (): string {
     return this.getName
   }
-  get corpSearch () {
+
+  get corpSearch (): string {
     return this.getCorpSearch
   }
-  get jurisdictionText () {
+
+  get jurisdictionText (): string {
     return this.getJurisdictionText
   }
+
   get resultDesc () {
     return this.resultConfig[this.getMrasSearchResultCode]?.desc || this.resultConfig.default.desc
   }
+
   get resultAct () {
     return this.resultConfig[this.getMrasSearchResultCode]?.action || this.resultConfig.default.action
   }
+
   get isNameSearch (): boolean {
     return (this.getHasNoCorpNum || this.getMrasSearchResultCode !== NOT_FOUND)
   }
-  get errors () {
+
+  get errors (): string[] {
     return this.getErrors
   }
+
   async handleSubmit (): Promise<void> {
     this.showModal = false
     if (this.name) await this.startAnalyzeName(null)
     this.setNoCorpNum(false)
   }
+
   private clearAndClose (): void {
     this.showModal = false
     this.setName('')

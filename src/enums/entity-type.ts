@@ -1,4 +1,4 @@
-/** Enum for Entity Code. */
+/** Enum for Entity Type codes. */
 export enum EntityType {
   // BC Entity Types:
   FR = 'FR',
@@ -24,4 +24,6 @@ export enum EntityType {
   XLL = 'XLL',
   XCP = 'XCP',
   XSO = 'XSO',
+
+  INFO = 'INFO', // special value for sub-menu
 }

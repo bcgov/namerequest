@@ -1,3 +1,4 @@
+import { Location } from '@/enums'
 import { JurisdictionI } from '@/interfaces'
 
 export const CanJurisdictions: JurisdictionI[] = [
@@ -7,7 +8,7 @@ export const CanJurisdictions: JurisdictionI[] = [
     text: 'Alberta'
   },
   {
-    value: 'BC',
+    value: Location.BC,
     SHORT_DESC: 'BC',
     text: 'British Columbia'
   },
@@ -67,7 +68,7 @@ export const CanJurisdictions: JurisdictionI[] = [
     text: 'Yukon'
   },
   {
-    value: 'FD',
+    value: Location.FD,
     SHORT_DESC: 'FED',
     text: 'Federal'
   }

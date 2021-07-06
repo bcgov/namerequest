@@ -86,18 +86,19 @@ import { Action, Getter } from 'vuex-class'
 
 import { ConversionTypesI, EntityI, SelectOptionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { EntityType, Location } from '@/enums'
 
 @Component({})
 export default class PickEntityOrConversionDialog extends Vue {
   // Global getters
   @Getter getConversionTypeOptions!: ConversionTypesI[]
   @Getter getEntityBlurbs!: Array<EntityI>
-  @Getter getEntityTypeCd!: string
+  @Getter getEntityTypeCd!: EntityType
   @Getter getEntityTypeOptions!: Array<EntityI>
   @Getter getEntityTypesBC!: Array<EntityI>
   @Getter getEntityTypesXPRO!: Array<EntityI>
   @Getter getIsConversion!: boolean
-  @Getter getLocation!: string
+  @Getter getLocation!: Location
   @Getter getLocationText!: string
   @Getter getPickEntityModalVisible!: boolean
 
@@ -117,19 +118,19 @@ export default class PickEntityOrConversionDialog extends Vue {
     }
   }
 
-  get entity_type_cd () {
+  get entity_type_cd (): EntityType {
     return this.getEntityTypeCd
   }
 
-  set entity_type_cd (value) {
+  set entity_type_cd (value: EntityType) {
     this.setEntityTypeCd(value)
   }
 
-  get locationText () {
-    return this.getLocationText === 'BC' ? 'British Columbia' : this.getLocationText
+  get locationText (): string {
+    return (this.getLocationText === 'BC') ? 'British Columbia' : this.getLocationText
   }
 
-  get showModal () {
+  get showModal (): boolean {
     return this.getPickEntityModalVisible
   }
 
@@ -137,15 +138,15 @@ export default class PickEntityOrConversionDialog extends Vue {
     this.setPickEntityModalVisible(value)
   }
 
-  get tableData () {
-    if (this.getLocation === 'BC') {
+  get tableData (): any[] {
+    if (this.getLocation === Location.BC) {
       return this.tableDataBC
     } else {
       return this.tableDataXPRO
     }
   }
 
-  get tableDataBC () {
+  get tableDataBC (): any[] {
     let categories = []
     for (let type of this.getEntityTypesBC) {
       let i = categories.indexOf(type.cat)
@@ -165,7 +166,7 @@ export default class PickEntityOrConversionDialog extends Vue {
     return output
   }
 
-  get tableDataXPRO () {
+  get tableDataXPRO (): any[] {
     let categories = []
     for (let type of this.getEntityTypesXPRO) {
       let i = categories.indexOf(type.cat)
@@ -185,7 +186,7 @@ export default class PickEntityOrConversionDialog extends Vue {
     return output
   }
 
-  get width () {
+  get width (): string {
     if (this.showSocietiesInfo || this.getIsConversion) {
       return '550px'
     }
@@ -196,12 +197,13 @@ export default class PickEntityOrConversionDialog extends Vue {
     return `${210 * cols > maxThreshold ? maxThreshold : 210 * cols}px`
   }
 
+  // FUTURE: clean up return type
   entityBlurbs (entity_type_cd: string): string[][] | string[] | string {
     return this.getEntityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs || []
   }
 
-  clearEntitySelection () {
-    this.entity_type_cd = 'INFO'
+  clearEntitySelection (): void {
+    this.entity_type_cd = EntityType.INFO
   }
 
   chooseConversion (conversion) {
@@ -209,6 +211,7 @@ export default class PickEntityOrConversionDialog extends Vue {
     if (index === -1) {
       this.setConversionTypeAddToSelect(conversion)
     }
+    // special case for sub-menu
     if (conversion.value !== 'INFO') {
       this.setEntityTypeCd(conversion.entity_type_cd)
     }
@@ -217,7 +220,7 @@ export default class PickEntityOrConversionDialog extends Vue {
   }
 
   chooseType (entity: SelectOptionsI) {
-    if (entity.value === 'SO' || entity.value === 'XSO') {
+    if (entity.value === EntityType.SO || entity.value === EntityType.XSO) {
       this.showSocietiesInfo = true
       this.clearEntitySelection()
       return

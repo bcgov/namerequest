@@ -1,77 +1,73 @@
 import {
-  AnalysisJSONI,
-  ApplicantI,
-  ConversionTypesI,
-  ExistingRequestSearchI,
-  LocationT, NameRequestI, RequestNameI,
-  SelectOptionsI, StatsI, SubmissionTypeT, WaitingAddressSearchI
+  AnalysisJSONI, ApplicantI, ConversionTypesI, ExistingRequestSearchI, NameRequestI,
+  RequestNameI, SelectOptionsI, StatsI, SubmissionTypeT, WaitingAddressSearchI
 } from '@/interfaces/models'
 import { NameChoicesIF, NrDataIF, RequestOrConsentIF } from '@/interfaces'
+import { EntityType, Location, RequestCode } from '@/enums'
 
 interface RequestNameMapI extends RequestNameI {}
 
 export interface NewRequestIF {
-  actingOnOwnBehalf: boolean,
-  addressSuggestions: any[],
-  allowAutoApprove: boolean,
-  analysisJSON: AnalysisJSONI | null,
-  analyzePending: boolean,
-  applicant: ApplicantI,
+  actingOnOwnBehalf: boolean
+  addressSuggestions: any[]
+  allowAutoApprove: boolean
+  analysisJSON: AnalysisJSONI
+  analyzePending: boolean
+  applicant: ApplicantI
   folioNumber?: string
-  assumedNameOriginal: string,
-  conditionsModalVisible: boolean,
-  exitModalVisible: boolean,
-  conflictId: string | null,
-  conversionType: string,
-  conversionTypeAddToSelect: ConversionTypesI | null,
-  corpNum: string,
-  corpSearch: string,
-  designationIssueTypes: string[],
-  displayedComponent: string,
-  doNotAnalyzeEntities: string[],
-  editMode: boolean,
-  entity_type_cd: string,
-  entityTypeAddToSelect: SelectOptionsI | null,
-  errors: string[],
-  existingRequestSearch: ExistingRequestSearchI,
-  extendedRequestType: SelectOptionsI | null,
-  getNameReservationFailed: boolean,
-  helpMeChooseModalVisible: boolean,
-  incorporateLoginModalVisible: boolean,
-  affiliationErrorModalVisible: boolean,
-  isPersonsName: boolean,
-  issueIndex: number,
-  location: LocationT,
-  locationInfoModalVisible: boolean,
-  mrasSearchInfoModalVisible: boolean,
-  mrasSearchResultCode: number,
-  name: string,
-  nameOriginal: string,
+  assumedNameOriginal: string
+  conditionsModalVisible: boolean
+  exitModalVisible: boolean
+  conflictId: string
+  conversionType: EntityType
+  conversionTypeAddToSelect: ConversionTypesI
+  corpNum: string
+  corpSearch: string
+  designationIssueTypes: string[]
+  displayedComponent: string
+  doNotAnalyzeEntities: string[]
+  editMode: boolean
+  entity_type_cd: EntityType
+  entityTypeAddToSelect: SelectOptionsI
+  errors: string[]
+  existingRequestSearch: ExistingRequestSearchI
+  extendedRequestType: SelectOptionsI
+  getNameReservationFailed: boolean
+  helpMeChooseModalVisible: boolean
+  incorporateLoginModalVisible: boolean
+  affiliationErrorModalVisible: boolean
+  isPersonsName: boolean
+  issueIndex: number
+  location: Location
+  locationInfoModalVisible: boolean
+  mrasSearchInfoModalVisible: boolean
+  mrasSearchResultCode: number
+  name: string
+  nameOriginal: string
   nameChoices: NameChoicesIF
-  nameIsEnglish: boolean,
-  nameAnalysisTimedOut: boolean,
-  noCorpNum: boolean,
-  noCorpDesignation: boolean,
-  nr: Partial<NameRequestI>,
-  nrData: NrDataIF,
-  nrOriginal: Partial<NameRequestI>,
-  nrRequestNameMap: RequestNameMapI[],
-  nrRequiredModalVisible: boolean,
-  pickEntityModalVisible: boolean,
-  pickRequestTypeModalVisible: boolean,
-  priorityRequest: boolean,
-  quickSearch: boolean,
-  quickSearchNames: object[],
-  request_action_cd: string,
-  request_jurisdiction_cd: string,
-  requestExaminationOrProvideConsent: RequestOrConsentIF,
-  requestActionOriginal: string,
-  showActualInput: boolean,
-  stats: StatsI | null,
-  submissionTabNumber: number,
-  submissionType: SubmissionTypeT | null,
-  tabNumber: number,
-  userCancelledAnalysis: boolean,
+  nameIsEnglish: boolean
+  nameAnalysisTimedOut: boolean
+  noCorpNum: boolean
+  noCorpDesignation: boolean
+  nr: Partial<NameRequestI>
+  nrData: NrDataIF
+  nrOriginal: Partial<NameRequestI>
+  nrRequestNameMap: RequestNameMapI[]
+  nrRequiredModalVisible: boolean
+  pickEntityModalVisible: boolean
+  pickRequestTypeModalVisible: boolean
+  priorityRequest: boolean
+  quickSearch: boolean
+  quickSearchNames: any[]
+  request_action_cd: RequestCode
+  request_jurisdiction_cd: string
+  requestExaminationOrProvideConsent: RequestOrConsentIF
+  showActualInput: boolean
+  stats: StatsI
+  submissionTabNumber: number
+  submissionType: SubmissionTypeT
+  tabNumber: number
+  userCancelledAnalysis: boolean
   isLoadingSubmission: boolean
-  waitingAddressSearch: WaitingAddressSearchI | null
+  waitingAddressSearch: WaitingAddressSearchI
 }

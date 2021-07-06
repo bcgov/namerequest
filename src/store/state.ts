@@ -1,5 +1,5 @@
 import { NameRequestI, StateModelIF } from '@/interfaces'
-import { StaffPaymentOptions } from '@/enums'
+import { EntityType, Location, StaffPaymentOptions } from '@/enums'
 
 export const stateModel: StateModelIF = {
   common: {
@@ -20,7 +20,7 @@ export const stateModel: StateModelIF = {
       clientFirstName: '',
       clientLastName: '',
       contact: '',
-      countryTypeCd: 'CA',
+      countryTypeCd: Location.CA,
       declineNotificationInd: null,
       emailAddress: '',
       faxNumber: '',
@@ -37,7 +37,7 @@ export const stateModel: StateModelIF = {
     conditionsModalVisible: false,
     exitModalVisible: false,
     conflictId: null,
-    conversionType: '',
+    conversionType: null,
     conversionTypeAddToSelect: null,
     corpNum: '',
     corpSearch: '',
@@ -48,9 +48,17 @@ export const stateModel: StateModelIF = {
       'end_designation_more_than_once'
     ],
     displayedComponent: 'Tabs',
-    doNotAnalyzeEntities: ['PAR', 'CC', 'CP', 'PA', 'FI', 'XCP', 'SO'],
+    doNotAnalyzeEntities: [
+      EntityType.PAR,
+      EntityType.CC,
+      EntityType.CP,
+      EntityType.PA,
+      EntityType.FI,
+      EntityType.XCP,
+      EntityType.SO
+    ],
     editMode: false,
-    entity_type_cd: '',
+    entity_type_cd: null,
     entityTypeAddToSelect: null,
     errors: [],
     existingRequestSearch: {
@@ -101,7 +109,7 @@ export const stateModel: StateModelIF = {
     priorityRequest: false,
     quickSearch: true,
     quickSearchNames: [],
-    request_action_cd: '',
+    request_action_cd: null,
     request_jurisdiction_cd: '',
     requestExaminationOrProvideConsent: {
       0: {
@@ -129,7 +137,6 @@ export const stateModel: StateModelIF = {
         assumed_name: false
       }
     },
-    requestActionOriginal: '',
     showActualInput: false,
     stats: null,
     submissionTabNumber: 0,
