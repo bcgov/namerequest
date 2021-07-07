@@ -57,7 +57,7 @@
                         @input="mutateApplicant('clientFirstName', $event)"
                         filled
                         hide-details="auto"
-                        label="First Name" />
+                        label="First Name (Optional)" />
         </v-col>
         <v-col cols="5">
           <v-text-field :messages="messages['clientLast']"
@@ -66,7 +66,7 @@
                         @input="mutateApplicant('clientLastName', $event)"
                         filled
                         hide-details="auto"
-                        label="Last Name" />
+                        label="Last Name (Optional)" />
         </v-col>
       </v-row>
       <v-row v-if="!getEditMode && !isRoleStaff">
