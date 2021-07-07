@@ -7,7 +7,7 @@ export const stateModel: StateModelIF = {
     keycloakRoles: []
   },
   newRequestModel: {
-    actingOnOwnBehalf: true,
+    actingOnOwnBehalf: false,
     addressSuggestions: null,
     allowAutoApprove: false,
     analysisJSON: null,
