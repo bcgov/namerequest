@@ -61,10 +61,11 @@ export class CommonMixin extends Vue {
       case RequestCode.AML: return 'Amalgamation'
       case RequestCode.CHG: return 'Name Change'
       case RequestCode.CNV: return 'Alteration'
-      // case RequestCode.DBA:
-      // case RequestCode.ASSUMED:
-      // case RequestCode.REN:
-      // case RequestCode.REST:
+      case RequestCode.DBA: return 'Doing Business As'
+      case RequestCode.ASSUMED: return 'Assumed Named'
+      case RequestCode.REN: return 'Restoration or Reinstatement'
+      case RequestCode.REST: return 'Restoration or Reinstatement'
+      // the following may be returned by the namex API:
       case 'NRO-NEWAML' as any: return 'Amalgamation'
       case 'NRO-REST' as any: return 'Restoration or Reinstatement'
 
