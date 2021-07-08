@@ -111,19 +111,7 @@
             <!-- action buttons -->
             <v-col cols="3" class="py-0">
               <v-row dense>
-                <template v-if="pendingPayment">
-                  <v-col cols="12" v-if="isNotPaid">
-                    <v-btn block
-                           class="button button-blue"
-                           @click="handleButtonClick(NrAction.RETRY_PAYMENT)"
-                    >{{ actionText(NrAction.RETRY_PAYMENT) }}</v-btn>
-                    <v-btn block
-                           class="button button-red mt-8"
-                           @click="handleButtonClick(NrAction.CANCEL)"
-                    >{{ actionText(NrAction.CANCEL) }}</v-btn>
-                  </v-col>
-                </template>
-                <template v-for="action of actions" v-else>
+                <template v-for="action of actions">
                   <!-- incorporate action is a distinct button below -->
                   <template v-if="action !== NrAction.INCORPORATE">
                     <v-col cols="12" :key="action+'-button'">
@@ -558,8 +546,7 @@ export default class ExistingRequestDisplay extends Mixins(
             const { dispatch } = this.$store
             // Check out the NR - this sets the INPROGRESS lock on the NR
             // and needs to be done before you can edit the Name Request
-            // *** TODO: declare checkoutNameRequest differently so it's not void
-            success = await NamexServices.checkoutNameRequest(this.getNrId) as unknown as boolean
+            success = await NamexServices.checkoutNameRequest(this.getNrId)
           }
 
           // Only proceed with editing if the checkout was successful,
@@ -598,8 +585,7 @@ export default class ExistingRequestDisplay extends Mixins(
           this.$root.$emit('showSpinner', false)
           break
         default:
-          // *** TODO: declare patchNameRequestsByAction differently so it's not void
-          if (await NamexServices.patchNameRequestsByAction(this.getNrId, action) as unknown as boolean) {
+          if (await NamexServices.patchNameRequestsByAction(this.getNrId, action)) {
             this.setDisplayedComponent('Success')
             await sleep(1000)
             this.setDisplayedComponent('ExistingRequestDisplay')
@@ -626,7 +612,7 @@ export default class ExistingRequestDisplay extends Mixins(
     this.$root.$emit('showSpinner', true)
     this.refreshCount += 1
     try {
-      const resp = await NamexServices.getNameRequest(true) as any // *** TODO use a real type here
+      const resp = await NamexServices.getNameRequest(true)
       this.$root.$emit('showSpinner', false)
       if (resp?.furnished === 'Y') {
         this.furnished = 'furnished'

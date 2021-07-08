@@ -139,9 +139,8 @@ export default class NamexServices {
         })
         sessionStorage.removeItem('checkedOutBy')
         sessionStorage.removeItem('checkedOutDt')
-
-        return true
       }
+      return true
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not checkin name request')
       console.error('checkinNameRequest() =', msg) // eslint-disable-line no-console
