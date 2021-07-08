@@ -728,7 +728,8 @@ export default class ExistingRequestDisplay extends Mixins(
       }
       this.pendingPayment = this.payments.find(
         payment => (
-          ![PaymentStatus.APPROVED, PaymentStatus.COMPLETED, PaymentStatus.CANCELLED].includes(payment.statusCode)
+          ![PaymentStatus.APPROVED, PaymentStatus.COMPLETED, PaymentStatus.CANCELLED, PaymentStatus.REFUND_REQUESTED]
+            .includes(payment.statusCode)
         )
       )
 
