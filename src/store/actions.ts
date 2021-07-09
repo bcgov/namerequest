@@ -868,8 +868,8 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
   if (!getters.getIsXproMras && Designations[getters.getEntityTypeCd]?.end) {
     if (!getters.getDesignation) commit('setErrors', 'designation')
   }
-  if (['CA', 'IN'].includes(getters.getLocation) &&
-    !['MVE'].includes(getters.getRequestActionCd) && !getters.getRequestJurisdictionCd) {
+  if ([Location.CA, Location.IN].includes(getters.getLocation) &&
+    ![RequestCode.MVE].includes(getters.getRequestActionCd) && !getters.getRequestJurisdictionCd) {
     commit('setErrors', 'jurisdiction')
     return
   }

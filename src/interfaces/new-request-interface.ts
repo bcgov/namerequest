@@ -12,7 +12,6 @@ export interface NewRequestIF {
   addressSuggestions: any[]
   allowAutoApprove: boolean
   analysisJSON: AnalysisJSONI
-  analyzePending: boolean
   applicant: ApplicantI
   folioNumber?: string
   assumedNameOriginal: string
@@ -48,7 +47,6 @@ export interface NewRequestIF {
   nameIsEnglish: boolean
   nameAnalysisTimedOut: boolean
   noCorpNum: boolean
-  noCorpDesignation: boolean
   nr: Partial<NameRequestI>
   nrData: NrDataIF
   nrOriginal: Partial<NameRequestI>

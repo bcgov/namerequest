@@ -1,6 +1,5 @@
 import Vue from 'vue'
 
-import { NameCheckErrorType } from '@/enums'
 import {
   AnalysisJSONI,
   ConversionTypesI,
@@ -12,7 +11,7 @@ import {
   SubmissionTypeT,
   WaitingAddressSearchI
 } from '@/interfaces'
-import { EntityType, Location, RequestCode } from '@/enums'
+import { EntityType, Location, NameCheckErrorType, RequestCode } from '@/enums'
 
 export const clearErrors = (state: StateIF) => {
   state.stateModel.newRequestModel.errors = []
