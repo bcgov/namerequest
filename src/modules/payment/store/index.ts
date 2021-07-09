@@ -21,7 +21,7 @@ const state = {
     isRefundVisible: false,
     isCancelVisible: false,
     isUpgradeVisible: false,
-    isReapplyVisible: false,
+    isRenewVisible: false,
     isPaymentCompleteVisible: false,
     isProcessing: false,
     filingTypeCode: filingTypes.NM606,

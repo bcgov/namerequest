@@ -209,7 +209,7 @@ export default class ExistingRequestDisplay extends Mixins(
   @Action setIncorporateLoginModalVisible!: ActionBindingIF
   @Action setNrResponse!: ActionBindingIF
   @Action toggleUpgradeModal!: ActionBindingIF
-  @Action toggleReapplyModal!: ActionBindingIF
+  @Action toggleRenewModal!: ActionBindingIF
   @Action togglePaymentHistoryModal!: ActionBindingIF
   @Action toggleRefundModal!: ActionBindingIF
   @Action toggleCancelModal!: ActionBindingIF
@@ -231,6 +231,9 @@ export default class ExistingRequestDisplay extends Mixins(
   /** The actions list, with some buttons forced to the bottom. */
   private get actions (): NrAction[] {
     const actions = (this.nr.actions || []) as NrAction[]
+    // FOR TESTING ONLY - DO NOT COMMIT
+    actions.push(NrAction.UPGRADE)
+    actions.push(NrAction.REAPPLY)
     // move 'REQUEST_REFUND' or 'CANCEL' action (if present) to bottom of list
     // eg ['EDIT', 'REQUEST_REFUND', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'REQUEST_REFUND']
     // or ['EDIT', 'CANCEL', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'CANCEL']
@@ -533,15 +536,15 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   private async handleButtonClick (action: NrAction) {
+    // FUTURE: reinstate this check?
     // const confirmed = await newReqModule.confirmAction(action)
     const confirmed = true
+
     if (confirmed) {
       switch (action) {
-        case NrAction.EDIT:
-          // eslint-disable-next-line no-case-declarations
+        case NrAction.EDIT: {
           const doCheckout = ([NrState.DRAFT, NrState.INPROGRESS].indexOf(this.getNrState) > -1)
-          // eslint-disable-next-line no-case-declarations
-          let success: boolean | undefined
+          let success = false
           if (doCheckout) {
             const { dispatch } = this.$store
             // Check out the NR - this sets the INPROGRESS lock on the NR
@@ -551,31 +554,40 @@ export default class ExistingRequestDisplay extends Mixins(
 
           // Only proceed with editing if the checkout was successful,
           // as the Name Request could be locked by another user session!
-          if (!doCheckout || (doCheckout && success)) {
+          if (!doCheckout || success) {
             await this.editExistingRequest(null)
           }
           break
+        }
+
         case NrAction.UPGRADE:
           await this.toggleUpgradeModal(true)
           break
+
         case NrAction.REAPPLY:
-          await this.toggleReapplyModal(true)
+          await this.toggleRenewModal(true)
           break
+
         case NrAction.RECEIPTS:
           await this.togglePaymentHistoryModal(true)
           break
+
         case NrAction.REQUEST_REFUND:
           await this.toggleRefundModal(true)
           break
+
         case NrAction.CANCEL:
           await this.toggleCancelModal(true)
           break
+
         case NrAction.INCORPORATE:
           await this.affiliateOrLogin()
           break
+
         case NrAction.RETRY_PAYMENT:
           this.navigateToPaymentPortal()
           break
+
         case NrAction.RESULT:
           // show spinner since the network calls below can take a few seconds
           this.$root.$emit('showSpinner', true)
@@ -584,6 +596,7 @@ export default class ExistingRequestDisplay extends Mixins(
           // hide spinner
           this.$root.$emit('showSpinner', false)
           break
+
         default:
           if (await NamexServices.patchNameRequestsByAction(this.getNrId, action)) {
             this.setDisplayedComponent('Success')

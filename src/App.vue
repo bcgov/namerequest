@@ -61,7 +61,7 @@
     <PaymentCompleteDialog />
     <PickEntityOrConversionDialog />
     <PickRequestTypeDialog />
-    <ReapplyDialog />
+    <RenewDialog />
     <ReceiptsDialog />
     <RefundDialog />
     <UpgradeDialog />
@@ -80,7 +80,7 @@ import ChatPopup from '@/components/common/chat-popup.vue'
 import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
   LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, PaymentDialog, PaymentCompleteDialog,
-  PickEntityOrConversionDialog, PickRequestTypeDialog, ReapplyDialog, ReceiptsDialog, RefundDialog, UpgradeDialog
+  PickEntityOrConversionDialog, PickRequestTypeDialog, RenewDialog, ReceiptsDialog, RefundDialog, UpgradeDialog
 } from '@/components/dialogs'
 import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
 import PaySystemAlert from 'sbc-common-components/src/components/PaySystemAlert.vue'
@@ -107,9 +107,9 @@ import NamexServices from './services/namex.services'
     PaymentCompleteDialog,
     PickEntityOrConversionDialog,
     PickRequestTypeDialog,
-    ReapplyDialog,
     ReceiptsDialog,
     RefundDialog,
+    RenewDialog,
     UpgradeDialog,
     SbcAuthenticationOptionsDialog,
     PaySystemAlert,

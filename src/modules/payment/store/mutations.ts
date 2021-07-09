@@ -18,8 +18,8 @@ export default {
   [types.TOGGLE_UPGRADE_MODAL]: (state, isVisible: boolean) => {
     state[STATE_KEY].isUpgradeVisible = isVisible || false
   },
-  [types.TOGGLE_REAPPLY_MODAL]: (state, isVisible: boolean) => {
-    state[STATE_KEY].isReapplyVisible = isVisible || false
+  [types.TOGGLE_RENEW_MODAL]: (state, isVisible: boolean) => {
+    state[STATE_KEY].isRenewVisible = isVisible || false
   },
   [types.SET_PAYMENT_FEES]: (state, fees: any) => {
     if (fees) {

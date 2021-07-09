@@ -8,7 +8,7 @@ export default {
   [types.REFUND_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isRefundVisible,
   [types.CANCEL_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isCancelVisible,
   [types.UPGRADE_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isUpgradeVisible,
-  [types.REAPPLY_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isReapplyVisible,
+  [types.RENEW_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isRenewVisible,
   [types.PAYMENT_COMPLETE_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isPaymentCompleteVisible,
   [types.PAYMENT_IS_IN_PROGRESS]: state => state[STATE_KEY].isProcessing,
   [types.GET_SBC_PAYMENT]: state => state[STATE_KEY].sbcPayment,
