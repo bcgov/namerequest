@@ -931,7 +931,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
         { commit, getters },
         { xpro: false, designationOnly: true })
       // descriptive/distinctive check (takes the longest)
-      if (!getFeatureFlag('disable-analysis')) {
+      if (getFeatureFlag('disable-analysis')) {
         commit('mutateAnalyzeStructurePending', false)
       } else {
         getNameAnalysis(
