@@ -57,7 +57,6 @@ export interface NewRequestIF {
   pickEntityModalVisible: boolean
   pickRequestTypeModalVisible: boolean
   priorityRequest: boolean
-  quickSearch: boolean
   quickSearchNames: any[]
   request_action_cd: RequestCode
   request_jurisdiction_cd: string

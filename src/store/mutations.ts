@@ -1,4 +1,6 @@
 import Vue from 'vue'
+
+import { NameCheckErrorType } from '@/enums'
 import {
   AnalysisJSONI,
   ConversionTypesI,
@@ -176,10 +178,6 @@ export const mutateNameOriginal = (state: StateIF, nameOriginal: string) => {
 
 export const mutateNoCorpNum = (state: StateIF, noCorpNum: boolean) => {
   state.stateModel.newRequestModel.noCorpNum = noCorpNum
-}
-
-export const mutateNoCorpDesignation = (state: StateIF, noCorpDesignation: boolean) => {
-  state.stateModel.newRequestModel.noCorpDesignation = noCorpDesignation
 }
 
 export const mutateNROriginal = (state: StateIF, nrOriginal: NameRequestI) => {
@@ -426,10 +424,6 @@ export const resetNameChoices = (state: StateIF) => {
   }
 }
 
-export const mutateNameAnalysisTimedOut = (state: StateIF, nameAnalysisTimedOut: boolean) => {
-  state.stateModel.newRequestModel.nameAnalysisTimedOut = nameAnalysisTimedOut
-}
-
 export const mutateConditionsModalVisible = (state: StateIF, conditionsModalVisible: boolean) => {
   state.stateModel.newRequestModel.conditionsModalVisible = conditionsModalVisible
 }
@@ -446,24 +440,99 @@ export const mutateUserCancelledAnalysis = (state: StateIF, userCancelledAnalysi
   state.stateModel.newRequestModel.userCancelledAnalysis = userCancelledAnalysis
 }
 
-export const mutateQuickSearch = (state: StateIF, quickSearch: boolean) => {
-  state.stateModel.newRequestModel.quickSearch = quickSearch
-}
-
-export const mutateQuickSearchNames = (state: StateIF, quickSearchNames: any[]) => {
-  state.stateModel.newRequestModel.quickSearchNames = quickSearchNames
-}
-
-export const mutateAnalyzePending = (state: StateIF, analyzePending: boolean) => {
-  state.stateModel.newRequestModel.analyzePending = analyzePending
-}
-
 export const mutateKeycloakRoles = (state: StateIF, keyCloakRoles: Array<string>) => {
   state.stateModel.common.keycloakRoles = keyCloakRoles
 }
 
 export const mutateStaffPayment = (state: StateIF, staffPayment: StaffPaymentIF) => {
   state.stateModel.staffPayment = staffPayment
+}
+
+/** Mutations for Name Check */
+
+export const mutateAnalyzeDesignationPending = (state: StateIF, pending: boolean) => {
+  state.stateModel.nameCheckModel.analyzeDesignationPending = pending
+}
+
+export const mutateAnalyzeStructurePending = (state: StateIF, pending: boolean) => {
+  state.stateModel.nameCheckModel.analyzeStructurePending = pending
+}
+
+export const mutateAnalyzeConflictsPending = (state: StateIF, pending: boolean) => {
+  state.stateModel.nameCheckModel.analyzeConflictsPending = pending
+}
+
+export const mutateConflictsConditional = (state: StateIF, value: Array<string>) => {
+  state.stateModel.nameCheckModel.conflictsConditional = value
+}
+
+export const mutateConflictsExact = (state: StateIF, value: Array<string>) => {
+  state.stateModel.nameCheckModel.conflictsExact = value
+}
+
+export const mutateConflictsRestricted = (state: StateIF, value: Array<string>) => {
+  state.stateModel.nameCheckModel.conflictsRestricted = value
+}
+
+export const mutateConflictsSimilar = (state: StateIF, value: Array<string>) => {
+  state.stateModel.nameCheckModel.conflictsSimilar = value
+}
+
+export const mutateDesignation = (state: StateIF, value: string) => {
+  state.stateModel.nameCheckModel.designation = value
+}
+
+export const mutateDesignationsCheckUse = (state: StateIF, value: Array<string>) => {
+  state.stateModel.nameCheckModel.designationsCheckUse = value
+}
+
+export const mutateDesignationsMismatched = (state: StateIF, value: Array<string>) => {
+  state.stateModel.nameCheckModel.designationsMismatched = value
+}
+
+export const mutateDesignationsMisplaced = (state: StateIF, value: Array<string>) => {
+  state.stateModel.nameCheckModel.designationsMisplaced = value
+}
+
+export const mutateDoNameCheck = (state: StateIF, doNameCheck: boolean) => {
+  state.stateModel.nameCheckModel.doNameCheck = doNameCheck
+}
+
+export const mutateFullName = (state: StateIF, value: string) => {
+  state.stateModel.nameCheckModel.fullName = value
+}
+
+export const mutateMissingDescriptive = (state: StateIF, value: boolean) => {
+  state.stateModel.nameCheckModel.missingDescriptive = value
+}
+
+export const mutateMissingDesignation = (state: StateIF, value: boolean) => {
+  state.stateModel.nameCheckModel.missingDesignation = value
+}
+
+export const mutateMissingDistinctive = (state: StateIF, value: boolean) => {
+  state.stateModel.nameCheckModel.missingDistinctive = value
+}
+
+export const mutateNameAnalysisTimedOut = (state: StateIF, nameAnalysisTimedOut: boolean) => {
+  state.stateModel.newRequestModel.nameAnalysisTimedOut = nameAnalysisTimedOut
+}
+
+export const mutateQuickSearchNames = (state: StateIF, quickSearchNames: any[]) => {
+  state.stateModel.newRequestModel.quickSearchNames = quickSearchNames
+}
+
+export const mutateSpecialCharacters = (state: StateIF, value: Array<string>) => {
+  state.stateModel.nameCheckModel.specialCharacters = value
+}
+
+export const mutateNameCheckErrorAdd = (state: StateIF, key: string) => {
+  state.stateModel.nameCheckModel.errors[key] = true
+}
+
+export const mutateNameCheckErrorClear = (state: StateIF, key: NameCheckErrorType) => {
+  state.stateModel.nameCheckModel.errors[key] = false
+  console.log(state.stateModel.nameCheckModel.errors)
 }
 
 export const mutateFolioNumber = (state: StateIF, folioNumber: string) => {

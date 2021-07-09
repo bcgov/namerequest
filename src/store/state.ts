@@ -1,5 +1,5 @@
 import { NameRequestI, StateModelIF } from '@/interfaces'
-import { EntityType, Location, StaffPaymentOptions } from '@/enums'
+import { EntityType, Location, NameCheckErrorType, StaffPaymentOptions } from '@/enums'
 
 export const stateModel: StateModelIF = {
   common: {
@@ -11,7 +11,6 @@ export const stateModel: StateModelIF = {
     addressSuggestions: null,
     allowAutoApprove: false,
     analysisJSON: null,
-    analyzePending: false,
     applicant: {
       addrLine1: '',
       addrLine2: '',
@@ -90,7 +89,6 @@ export const stateModel: StateModelIF = {
     nameIsEnglish: true,
     nameAnalysisTimedOut: false,
     noCorpNum: false,
-    noCorpDesignation: false,
     nr: {} as NameRequestI,
     nrData: {
       additionalInfo: '',
@@ -107,7 +105,6 @@ export const stateModel: StateModelIF = {
     pickEntityModalVisible: false,
     pickRequestTypeModalVisible: false,
     priorityRequest: false,
-    quickSearch: true,
     quickSearchNames: [],
     request_action_cd: null,
     request_jurisdiction_cd: '',
@@ -155,5 +152,32 @@ export const stateModel: StateModelIF = {
     isPriority: false // not used in this UI
   },
   errorModel: {},
-  paymentModel: {}
+  paymentModel: {},
+  nameCheckModel: {
+    analyzeConflictsPending: false,
+    analyzeDesignationPending: false,
+    analyzeStructurePending: false,
+    conflictsConditional: [],
+    conflictsExact: [],
+    conflictsRestricted: [],
+    conflictsSimilar: [],
+    designation: '',
+    designationsCheckUse: [],
+    designationsMismatched: [],
+    designationsMisplaced: [],
+    doNameCheck: true,
+    errors: {
+      [NameCheckErrorType.errorDesignation]: false,
+      [NameCheckErrorType.errorExact]: false,
+      [NameCheckErrorType.errorRestricted]: false,
+      [NameCheckErrorType.errorSimilar]: false,
+      [NameCheckErrorType.errorStructure]: false
+    },
+    fullName: '',
+    missingDescriptive: false,
+    missingDesignation: false,
+    missingDistinctive: false,
+    specialCharacters: []
+  }
+
 }

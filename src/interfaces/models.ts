@@ -1,5 +1,7 @@
 import { EntityType, Location, NrState, RequestCode } from '@/enums'
 
+export type AnalysisJurisdictionT = 'BC' | 'XPRO'
+export type AnalysisTypeT = 'designation' | 'structure'
 export type NameReqT = DraftReqI | ConditionalReqI | ReservedReqI
 export type NrDataResponseT = NameRequestI | null
 export type NrDataT = string | null
@@ -148,6 +150,8 @@ export interface NameRequestI {
 }
 
 export interface NewRequestNameSearchI {
+  analysis_type: AnalysisTypeT
+  jurisdiction: AnalysisJurisdictionT
   entity_type_cd: string
   location: Location
   name: string
