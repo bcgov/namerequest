@@ -2,7 +2,7 @@
   <v-dialog min-width="32rem" max-width="45rem" :value="isVisible" persistent>
     <v-card>
       <v-tabs id="confirm-nr-tabs">
-        <v-tabs-items v-model="paymentTab">
+        <v-tabs-items v-model="currentTab">
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
@@ -135,7 +135,7 @@ export default class ConfirmNrDialog extends Mixins(
   private isStaffPaymentValid = false
 
   /** The current tab to display. */
-  private paymentTab = this.TAB_CONFIRM_NAME_REQUEST
+  private currentTab = this.TAB_CONFIRM_NAME_REQUEST
 
   /** Whether payment redirection is in progress. */
   private isLoadingPayment = false
@@ -164,7 +164,7 @@ export default class ConfirmNrDialog extends Mixins(
   async onShowModal (val: boolean): Promise<void> {
     if (val) {
       // reset tab id
-      this.paymentTab = this.TAB_CONFIRM_NAME_REQUEST
+      this.currentTab = this.TAB_CONFIRM_NAME_REQUEST
 
       const paymentConfig = {
         filingType: FilingTypes.NM620,
@@ -188,20 +188,20 @@ export default class ConfirmNrDialog extends Mixins(
     // disable validation
     this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(false)
     // go to previous tab
-    this.paymentTab = this.TAB_CONFIRM_NAME_REQUEST
+    this.currentTab = this.TAB_CONFIRM_NAME_REQUEST
   }
 
-  /** Called when user clicks "Continue to Payment" button. */
+  /** Called when user clicks Continue/Submit button. */
   async confirmPayment () {
     if (this.isRoleStaff && getFeatureFlag('staff-payment-enabled')) {
-      if (this.paymentTab === this.TAB_CONFIRM_NAME_REQUEST) {
+      if (this.currentTab === this.TAB_CONFIRM_NAME_REQUEST) {
         // disable validation
         this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(false)
         // go to next tab
-        this.paymentTab = this.TAB_STAFF_PAYMENT
+        this.currentTab = this.TAB_STAFF_PAYMENT
         return
       }
-      if (this.paymentTab === this.TAB_STAFF_PAYMENT) {
+      if (this.currentTab === this.TAB_STAFF_PAYMENT) {
         // enable validation
         this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(true)
         // if invalid then stop, else continue
@@ -232,7 +232,7 @@ export default class ConfirmNrDialog extends Mixins(
       action: PaymentAction.CREATE,
       nrId: getNrId,
       filingType: FilingTypes.NM620,
-      priorityRequest: getPriorityRequest
+      priorityRequest: this.getPriorityRequest || false
     } as CreatePaymentParams, onSuccess)
 
     // on error, close this modal so error modal is visible

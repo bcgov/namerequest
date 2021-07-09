@@ -16,6 +16,9 @@ export const UPGRADE_MODAL_IS_VISIBLE = 'upgradeModalIsVisible'
 export const TOGGLE_RESUBMIT_MODAL = 'toggleResubmitModal'
 export const RESUBMIT_MODAL_IS_VISIBLE = 'resubmitModalIsVisible'
 
+export const TOGGLE_RETRY_MODAL = 'toggleRetryModal'
+export const RETRY_MODAL_IS_VISIBLE = 'retryModalIsVisible'
+
 export const TOGGLE_RENEW_MODAL = 'toggleRenewModal'
 export const RENEW_MODAL_IS_VISIBLE = 'renewModalIsVisible'
 

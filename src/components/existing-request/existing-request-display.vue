@@ -164,7 +164,6 @@
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-
 import MainContainer from '@/components/new-request/main-container.vue'
 import { NrAffiliationMixin, CommonMixin, DateMixin, PaymentMixin } from '@/mixins'
 import NamesGrayBox from './names-gray-box.vue'
@@ -173,7 +172,6 @@ import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
 import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction } from '@/enums'
 import { sleep } from '@/plugins'
-import { getBaseUrl } from '@/components/payment/payment-utils'
 import NamexServices from '@/services/namex.services'
 
 // Interfaces
@@ -210,6 +208,7 @@ export default class ExistingRequestDisplay extends Mixins(
   @Action setNrResponse!: ActionBindingIF
   @Action toggleUpgradeModal!: ActionBindingIF
   @Action toggleResubmitModal!: ActionBindingIF
+  @Action toggleRetryModal!: ActionBindingIF
   @Action toggleRenewModal!: ActionBindingIF
   @Action togglePaymentHistoryModal!: ActionBindingIF
   @Action toggleRefundModal!: ActionBindingIF
@@ -232,9 +231,11 @@ export default class ExistingRequestDisplay extends Mixins(
   /** The actions list, with some buttons forced to the bottom. */
   private get actions (): NrAction[] {
     const actions = (this.nr.actions || []) as NrAction[]
-    // FOR TESTING ONLY - DO NOT COMMIT
+    // TODO: for testing only - do not commit!
+    actions.push(NrAction.RENEW)
+    actions.push(NrAction.RESUBMIT)
+    // actions.push(NrAction.RETRY_PAYMENT)
     actions.push(NrAction.UPGRADE)
-    actions.push(NrAction.REAPPLY)
     // move 'REQUEST_REFUND' or 'CANCEL' action (if present) to bottom of list
     // eg ['EDIT', 'REQUEST_REFUND', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'REQUEST_REFUND']
     // or ['EDIT', 'CANCEL', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'CANCEL']
@@ -525,7 +526,7 @@ export default class ExistingRequestDisplay extends Mixins(
   private actionText (action: NrAction): string {
     switch (action) {
       case NrAction.CANCEL: return 'Cancel Name Request'
-      case NrAction.REAPPLY: return 'Renew Name Request ($30)'
+      case NrAction.RENEW: return 'Renew Name Request ($30)'
       case NrAction.RECEIPTS: return 'Download Receipts'
       case NrAction.REQUEST_REFUND: return 'Cancel and Refund'
       case NrAction.RESEND: return 'Resend Email' // FUTURE: will be removed
@@ -570,7 +571,7 @@ export default class ExistingRequestDisplay extends Mixins(
           await this.toggleResubmitModal(true)
           break
 
-        case NrAction.REAPPLY:
+        case NrAction.RENEW:
           await this.toggleRenewModal(true)
           break
 
@@ -591,7 +592,7 @@ export default class ExistingRequestDisplay extends Mixins(
           break
 
         case NrAction.RETRY_PAYMENT:
-          this.navigateToPaymentPortal()
+          await this.toggleRetryModal(true)
           break
 
         case NrAction.RESULT:
@@ -613,18 +614,6 @@ export default class ExistingRequestDisplay extends Mixins(
       }
     }
     // else do nothing -- errors are handled by newReqModule
-  }
-
-  private navigateToPaymentPortal () {
-    const { id, token, nrId, action } = this.pendingPayment
-    sessionStorage.setItem('paymentInProgress', 'true')
-    sessionStorage.setItem('paymentId', id)
-    sessionStorage.setItem('paymentToken', token)
-    sessionStorage.setItem('nrId', nrId)
-    sessionStorage.setItem('paymentAction', action)
-    const baseUrl = getBaseUrl()
-    const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${id}`)
-    this.redirectToPaymentPortal(id, token, redirectUrl)
   }
 
   private async refresh (event) {
@@ -689,18 +678,22 @@ export default class ExistingRequestDisplay extends Mixins(
           if (existingNrCancelBtn) existingNrCancelBtn.classList.add('existing-nr-cancel-btn')
           const exitingNrEditBtn = this.$el.querySelector('#EDIT-btn > span')
           if (exitingNrEditBtn) exitingNrEditBtn.classList.add('existing-nr-edit-btn')
-          const existingNrReapplyBtn = this.$el.querySelector('#REAPPLY-btn > span')
-          if (existingNrReapplyBtn) existingNrReapplyBtn.classList.add('existing-nr-reapply-btn')
+          const existingNrRenewBtn = this.$el.querySelector('#RENEW-btn > span')
+          if (existingNrRenewBtn) existingNrRenewBtn.classList.add('existing-nr-renew-btn')
           const existingNrReceiptBtn = this.$el.querySelector('#RECEIPT-btn > span')
           if (existingNrReceiptBtn) existingNrReceiptBtn.classList.add('existing-nr-receipt-btn')
           const existingNrRefundBtn = this.$el.querySelector('#REQUEST_REFUND-btn > span')
           if (existingNrRefundBtn) existingNrRefundBtn.classList.add('existing-nr-refund-btn')
           const existingNrResendBtn = this.$el.querySelector('#RESEND-btn > span')
           if (existingNrResendBtn) existingNrResendBtn.classList.add('existing-nr-resend-btn')
+          const existingNrResubmitBtn = this.$el.querySelector('#RESUBMIT-btn > span')
+          if (existingNrResubmitBtn) existingNrResubmitBtn.classList.add('existing-nr-resubmit-btn')
           const existingNrResultBtn = this.$el.querySelector('#RESULT-btn > span')
           if (existingNrResultBtn) existingNrResultBtn.classList.add('existing-nr-result-btn')
           const existingNrUpgradeBtn = this.$el.querySelector('#UPGRADE-btn > span')
           if (existingNrUpgradeBtn) existingNrUpgradeBtn.classList.add('existing-nr-upgrade-btn')
+          const existingNrRetryPaymentBtn = this.$el.querySelector('#RETRY_PAYMENT-btn > span')
+          if (existingNrRetryPaymentBtn) existingNrRetryPaymentBtn.classList.add('existing-nr-retry-payment-btn')
           const existingNrIncorporateBtn = this.$el.querySelector('#INCORPORATE-btn > span')
           if (existingNrIncorporateBtn) existingNrIncorporateBtn.classList.add('existing-nr-incorporate-btn')
         }

@@ -65,6 +65,7 @@
     <ReceiptsDialog />
     <RefundDialog />
     <ResubmitDialog />
+    <RetryDialog />
     <UpgradeDialog />
   </v-app>
 </template>
@@ -82,7 +83,7 @@ import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
   LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog, PaymentCompleteDialog,
   PickEntityOrConversionDialog, PickRequestTypeDialog, RenewDialog, ReceiptsDialog, RefundDialog, ResubmitDialog,
-  UpgradeDialog
+  RetryDialog, UpgradeDialog
 } from '@/components/dialogs'
 import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
 import PaySystemAlert from 'sbc-common-components/src/components/PaySystemAlert.vue'
@@ -113,6 +114,7 @@ import NamexServices from './services/namex.services'
     RefundDialog,
     RenewDialog,
     ResubmitDialog,
+    RetryDialog,
     UpgradeDialog,
     SbcAuthenticationOptionsDialog,
     PaySystemAlert,

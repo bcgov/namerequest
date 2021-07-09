@@ -24,6 +24,10 @@ export const toggleResubmitModal = ({ commit }, isVisible: boolean) => {
   commit(types.TOGGLE_RESUBMIT_MODAL, isVisible)
 }
 
+export const toggleRetryModal = ({ commit }, isVisible: boolean) => {
+  commit(types.TOGGLE_RETRY_MODAL, isVisible)
+}
+
 export const toggleRenewModal = ({ commit }, isVisible: boolean) => {
   commit(types.TOGGLE_RENEW_MODAL, isVisible)
 }

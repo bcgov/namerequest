@@ -2,7 +2,7 @@
   <v-dialog min-width="32rem" max-width="45rem" :value="isVisible" persistent>
     <v-card>
       <v-tabs id="resubmit-tabs">
-        <v-tabs-items v-model="paymentTab">
+        <v-tabs-items v-model="currentTab">
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
@@ -42,10 +42,10 @@
             </v-card-title>
 
             <v-card-text class="copy-normal">
-              <!-- TODO: for debugging only - do not commit! -->
+              <!-- TODO: for testing only - do not commit! -->
               <p v-if="true || !isRoleStaff" class="mb-8">
                 If your Name Request has expired, you have 30 days to
-                resubmit the same name request for a fee.<br>
+                resubmit the same name request, for a fee.<br>
                 This will generate a new Name Request Number.
               </p>
 
@@ -121,7 +121,7 @@ export default class ResubmitDialog extends Mixins(
   private isStaffPaymentValid = false
 
   /** The current tab to display. */
-  private paymentTab = this.TAB_RESUBMIT_NAME_REQUEST
+  private currentTab = this.TAB_RESUBMIT_NAME_REQUEST
 
   /** Whether payment redirection is in progress. */
   private isLoadingPayment = false
@@ -145,12 +145,12 @@ export default class ResubmitDialog extends Mixins(
   async onShowModal (val: boolean): Promise<void> {
     if (val) {
       // reset tab id
-      this.paymentTab = this.TAB_RESUBMIT_NAME_REQUEST
+      this.currentTab = this.TAB_RESUBMIT_NAME_REQUEST
 
       const paymentConfig = {
-        filingType: FilingTypes.NM606,
+        filingType: FilingTypes.NM620,
         jurisdiction: Jurisdictions.BC,
-        priorityRequest: this.getPriorityRequest
+        priorityRequest: this.getPriorityRequest || false
       }
 
       // only make visible on success, otherwise hide it
@@ -169,20 +169,20 @@ export default class ResubmitDialog extends Mixins(
     // disable validation
     this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(false)
     // go to previous tab
-    this.paymentTab = this.TAB_RESUBMIT_NAME_REQUEST
+    this.currentTab = this.TAB_RESUBMIT_NAME_REQUEST
   }
 
-  /** Called when user clicks "Accept" button. */
+  /** Called when user clicks Continue/Resubmit button. */
   private async confirmPayment () {
     if (this.isRoleStaff && getFeatureFlag('staff-payment-enabled')) {
-      if (this.paymentTab === this.TAB_RESUBMIT_NAME_REQUEST) {
+      if (this.currentTab === this.TAB_RESUBMIT_NAME_REQUEST) {
         // disable validation
         this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(false)
         // go to next tab
-        this.paymentTab = this.TAB_STAFF_PAYMENT
+        this.currentTab = this.TAB_STAFF_PAYMENT
         return
       }
-      if (this.paymentTab === this.TAB_STAFF_PAYMENT) {
+      if (this.currentTab === this.TAB_STAFF_PAYMENT) {
         // enable validation
         this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(true)
         // if invalid then stop, else continue
@@ -212,8 +212,8 @@ export default class ResubmitDialog extends Mixins(
     const success = await this.createPayment({
       action: PaymentAction.RESUBMIT,
       nrId: getNrId,
-      filingType: FilingTypes.NM606,
-      priorityRequest: getPriorityRequest
+      filingType: FilingTypes.NM620,
+      priorityRequest: this.getPriorityRequest || false
     } as CreatePaymentParams, onSuccess)
 
     // on error, close this modal so error modal is visible
