@@ -18,6 +18,9 @@ export default {
   [types.TOGGLE_UPGRADE_MODAL]: (state, isVisible: boolean) => {
     state[STATE_KEY].isUpgradeVisible = isVisible || false
   },
+  [types.TOGGLE_RESUBMIT_MODAL]: (state, isVisible: boolean) => {
+    state[STATE_KEY].isResubmitVisible = isVisible || false
+  },
   [types.TOGGLE_RENEW_MODAL]: (state, isVisible: boolean) => {
     state[STATE_KEY].isRenewVisible = isVisible || false
   },

@@ -209,6 +209,7 @@ export default class ExistingRequestDisplay extends Mixins(
   @Action setIncorporateLoginModalVisible!: ActionBindingIF
   @Action setNrResponse!: ActionBindingIF
   @Action toggleUpgradeModal!: ActionBindingIF
+  @Action toggleResubmitModal!: ActionBindingIF
   @Action toggleRenewModal!: ActionBindingIF
   @Action togglePaymentHistoryModal!: ActionBindingIF
   @Action toggleRefundModal!: ActionBindingIF
@@ -528,7 +529,8 @@ export default class ExistingRequestDisplay extends Mixins(
       case NrAction.RECEIPTS: return 'Download Receipts'
       case NrAction.REQUEST_REFUND: return 'Cancel and Refund'
       case NrAction.RESEND: return 'Resend Email' // FUTURE: will be removed
-      case NrAction.RESULT: return 'Download Results' // FUTURE: will be implemented
+      case NrAction.RESULT: return 'Download Results'
+      case NrAction.RESUBMIT: return 'Resubmit Name Request ($30)'
       case NrAction.RETRY_PAYMENT: return 'Retry Payment'
       case NrAction.UPGRADE: return 'Upgrade Priority ($100)'
       default: return this.toTitleCase(action)
@@ -562,6 +564,10 @@ export default class ExistingRequestDisplay extends Mixins(
 
         case NrAction.UPGRADE:
           await this.toggleUpgradeModal(true)
+          break
+
+        case NrAction.RESUBMIT:
+          await this.toggleResubmitModal(true)
           break
 
         case NrAction.REAPPLY:

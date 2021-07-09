@@ -20,6 +20,10 @@ export const toggleUpgradeModal = ({ commit }, isVisible: boolean) => {
   commit(types.TOGGLE_UPGRADE_MODAL, isVisible)
 }
 
+export const toggleResubmitModal = ({ commit }, isVisible: boolean) => {
+  commit(types.TOGGLE_RESUBMIT_MODAL, isVisible)
+}
+
 export const toggleRenewModal = ({ commit }, isVisible: boolean) => {
   commit(types.TOGGLE_RENEW_MODAL, isVisible)
 }

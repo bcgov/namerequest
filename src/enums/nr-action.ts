@@ -6,6 +6,7 @@ export enum NrAction {
   RECEIPTS = 'RECEIPT',
   REQUEST_REFUND = 'REQUEST_REFUND',
   RESEND = 'RESEND', // FUTURE: will be removed
+  RESUBMIT = 'RESUBMIT',
   RESULT = 'RESULT', // FUTURE: will be implemented
   UPGRADE = 'UPGRADE',
   INCORPORATE = 'INCORPORATE',

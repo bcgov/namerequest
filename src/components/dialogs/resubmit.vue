@@ -1,7 +1,7 @@
 <template>
   <v-dialog min-width="32rem" max-width="45rem" :value="isVisible" persistent>
     <v-card>
-      <v-tabs id="renew-tabs">
+      <v-tabs id="resubmit-tabs">
         <v-tabs-items v-model="paymentTab">
 
           <v-tab-item>
@@ -22,12 +22,12 @@
             <v-card-actions class="justify-center pt-6">
               <v-btn
                 @click="confirmPayment()"
-                id="renew-nr-button"
+                id="resubmit-nr-btn"
                 class="primary px-5"
-                :loading="isLoadingPayment">Renew Name Request</v-btn>
+                :loading="isLoadingPayment">Resubmit Name Request</v-btn>
               <v-btn
                 @click="goBack()"
-                id="renew-back-btn"
+                id="resubmit-back-btn"
                 class="button-blue px-5"
                 :disabled="isLoadingPayment">Back</v-btn>
             </v-card-actions>
@@ -35,8 +35,8 @@
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
-              <div>Renew Name Request</div>
-              <v-btn icon large class="dialog-close float-right pa-0" @click="hideModal()">
+              <div>Resubmit Name Request</div>
+              <v-btn icon large class="dialog-close float-right" @click="hideModal()">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </v-card-title>
@@ -44,9 +44,9 @@
             <v-card-text class="copy-normal">
               <!-- TODO: for debugging only - do not commit! -->
               <p v-if="true || !isRoleStaff" class="mb-8">
-                If you are within 14 days of expiry, you can renew your Name
-                Request and extend the expiry date for an additional 56
-                days, for a fee.
+                If your Name Request has expired, you have 30 days to
+                resubmit the same name request for a fee.<br>
+                This will generate a new Name Request Number.
               </p>
 
               <FeeSummary
@@ -56,14 +56,15 @@
             </v-card-text>
 
             <v-card-actions class="pt-8 justify-center">
+              <!-- <v-spacer></v-spacer> -->
               <v-btn
                 @click="confirmPayment()"
-                id="renew-continue-btn"
+                id="resubmit-continue-btn"
                 class="primary px-5"
                 :loading="isLoadingPayment">Continue to Payment</v-btn>
               <v-btn
                 @click="hideModal()"
-                id="renew-close-btn"
+                id="resubmit-close-btn"
                 class="button button-blue px-5">Close</v-btn>
             </v-card-actions>
           </v-tab-item>
@@ -74,14 +75,14 @@
   </v-dialog>
 </template>
 
-<script lang='ts'>
+<script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { getFeatureFlag } from '@/plugins'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import StaffPayment from '@/components/payment/staff-payment.vue'
 import { CreatePaymentParams } from '@/modules/payment/models'
-import { RENEW_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
+import { RESUBMIT_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import * as FilingTypes from '@/modules/payment/filing-types'
 import { Jurisdictions, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
@@ -94,7 +95,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
     StaffPayment
   }
 })
-export default class RenewDialog extends Mixins(
+export default class ResubmitDialog extends Mixins(
   PaymentMixin,
   PaymentSessionMixin,
   DisplayedComponentMixin
@@ -102,7 +103,7 @@ export default class RenewDialog extends Mixins(
   // the tab indices
   // NB: these are reversed to reverse the built-in slide transition
   readonly TAB_STAFF_PAYMENT = 0
-  readonly TAB_RENEW_NAME_REQUEST = 1
+  readonly TAB_RESUBMIT_NAME_REQUEST = 1
 
   // Refs
   $refs!: {
@@ -110,18 +111,17 @@ export default class RenewDialog extends Mixins(
   }
 
   // Global getters
-  @Getter getName!: string
   @Getter getPriorityRequest!: boolean
   @Getter isRoleStaff!: boolean
 
   // Global action
-  @Action toggleRenewModal!: ActionBindingIF
+  @Action toggleResubmitModal!: ActionBindingIF
 
   /** Whether staff payment is valid. */
   private isStaffPaymentValid = false
 
   /** The current tab to display. */
-  private paymentTab = this.TAB_RENEW_NAME_REQUEST
+  private paymentTab = this.TAB_RESUBMIT_NAME_REQUEST
 
   /** Whether payment redirection is in progress. */
   private isLoadingPayment = false
@@ -131,13 +131,13 @@ export default class RenewDialog extends Mixins(
 
   /** Whether this modal should be shown (per store property). */
   private get showModal (): boolean {
-    return this.$store.getters[RENEW_MODAL_IS_VISIBLE]
+    return this.$store.getters[RESUBMIT_MODAL_IS_VISIBLE]
   }
 
   /** Clears store property to hide this modal. */
   async hideModal () {
     this.isLoadingPayment = false
-    await this.toggleRenewModal(false)
+    await this.toggleResubmitModal(false)
   }
 
   /** Depending on value, fetches fees and makes this modal visible or hides it. */
@@ -145,10 +145,10 @@ export default class RenewDialog extends Mixins(
   async onShowModal (val: boolean): Promise<void> {
     if (val) {
       // reset tab id
-      this.paymentTab = this.TAB_RENEW_NAME_REQUEST
+      this.paymentTab = this.TAB_RESUBMIT_NAME_REQUEST
 
       const paymentConfig = {
-        filingType: FilingTypes.NM620,
+        filingType: FilingTypes.NM606,
         jurisdiction: Jurisdictions.BC,
         priorityRequest: this.getPriorityRequest
       }
@@ -169,13 +169,13 @@ export default class RenewDialog extends Mixins(
     // disable validation
     this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(false)
     // go to previous tab
-    this.paymentTab = this.TAB_RENEW_NAME_REQUEST
+    this.paymentTab = this.TAB_RESUBMIT_NAME_REQUEST
   }
 
   /** Called when user clicks "Accept" button. */
   private async confirmPayment () {
     if (this.isRoleStaff && getFeatureFlag('staff-payment-enabled')) {
-      if (this.paymentTab === this.TAB_RENEW_NAME_REQUEST) {
+      if (this.paymentTab === this.TAB_RESUBMIT_NAME_REQUEST) {
         // disable validation
         this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(false)
         // go to next tab
@@ -197,7 +197,7 @@ export default class RenewDialog extends Mixins(
       const { paymentId, paymentToken } = this
 
       // Save response to session
-      this.savePaymentResponseToSession(PaymentAction.RENEW, paymentResponse)
+      this.savePaymentResponseToSession(PaymentAction.RESUBMIT, paymentResponse)
 
       // See if redirect is needed else go to existing NR screen
       const baseUrl = getBaseUrl()
@@ -210,9 +210,9 @@ export default class RenewDialog extends Mixins(
     }
 
     const success = await this.createPayment({
-      action: PaymentAction.RENEW,
+      action: PaymentAction.RESUBMIT,
       nrId: getNrId,
-      filingType: FilingTypes.NM620,
+      filingType: FilingTypes.NM606,
       priorityRequest: getPriorityRequest
     } as CreatePaymentParams, onSuccess)
 
@@ -228,14 +228,14 @@ export default class RenewDialog extends Mixins(
       this.$nextTick(() => {
         if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
-          const renewContinueBtn = this.$el.querySelector('#renew-continue-btn > span')
-          if (renewContinueBtn) renewContinueBtn.classList.add('renew-continue-btn')
-          const renewNrBtn = this.$el.querySelector('#renew-nr-button > span')
-          if (renewNrBtn) renewNrBtn.classList.add('renew-nr-button')
-          const renewCloseBtn = this.$el.querySelector('#renew-close-btn > span')
-          if (renewCloseBtn) renewCloseBtn.classList.add('renew-close-btn')
-          const renewBackBtn = this.$el.querySelector('#renew-back-btn > span')
-          if (renewBackBtn) renewBackBtn.classList.add('renew-back-btn')
+          const resubmitContinueBtn = this.$el.querySelector('#resubmit-continue-btn > span')
+          if (resubmitContinueBtn) resubmitContinueBtn.classList.add('resubmit-continue-btn')
+          const resubmitNrBtn = this.$el.querySelector('#resubmit-nr-btn > span')
+          if (resubmitNrBtn) resubmitNrBtn.classList.add('resubmit-nr-btn')
+          const resubmitCloseBtn = this.$el.querySelector('#resubmit-close-btn > span')
+          if (resubmitCloseBtn) resubmitCloseBtn.classList.add('resubmit-close-btn')
+          const resubmitBackBtn = this.$el.querySelector('#resubmit-back-btn > span')
+          if (resubmitBackBtn) resubmitBackBtn.classList.add('resubmit-back-btn')
         }
       })
     }

@@ -21,6 +21,7 @@ const state = {
     isRefundVisible: false,
     isCancelVisible: false,
     isUpgradeVisible: false,
+    isResubmitVisible: false,
     isRenewVisible: false,
     isPaymentCompleteVisible: false,
     isProcessing: false,
