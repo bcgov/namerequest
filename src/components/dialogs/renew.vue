@@ -44,8 +44,9 @@
             <v-card-text class="copy-normal">
               <!-- TODO: for debugging only - do not commit! -->
               <p v-if="true || !isRoleStaff" class="mb-8">
-                Renew your Name Request for an additional 56 days
-                from the current expiry date.
+                If you are within 14 days of expiry, you can renew your Name
+                Request and extend the expiry date for an additional 56
+                days, for a fee.
               </p>
 
               <FeeSummary

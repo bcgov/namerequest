@@ -16,7 +16,7 @@ const state = {
         statusCode: ''
       }
     ],
-    isPaymentVisible: false,
+    isConfirmNrVisible: false,
     isPaymentHistoryVisible: false,
     isRefundVisible: false,
     isCancelVisible: false,

@@ -3,7 +3,7 @@ import * as types from './types'
 import { STATE_KEY } from '@/modules/payment/store'
 
 export default {
-  [types.PAYMENT_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isPaymentVisible,
+  [types.CONFIRM_NR_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isConfirmNrVisible,
   [types.PAYMENT_HISTORY_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isPaymentHistoryVisible,
   [types.REFUND_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isRefundVisible,
   [types.CANCEL_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isCancelVisible,

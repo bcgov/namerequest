@@ -51,13 +51,13 @@
     <AffiliationErrorDialog />
     <CancelDialog />
     <ConditionsDialog />
+    <ConfirmNrDialog :onCancel="onPaymentCancelled" />
     <ErrorDialog />
     <ExitDialog />
     <HelpMeChooseDialog />
     <LocationInfoDialog />
     <MrasSearchInfoDialog />
     <NrNotRequiredDialog />
-    <PaymentDialog :onCancel="onPaymentCancelled" />
     <PaymentCompleteDialog />
     <PickEntityOrConversionDialog />
     <PickRequestTypeDialog />
@@ -79,7 +79,7 @@ import { DateMixin } from '@/mixins'
 import ChatPopup from '@/components/common/chat-popup.vue'
 import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
-  LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, PaymentDialog, PaymentCompleteDialog,
+  LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog, PaymentCompleteDialog,
   PickEntityOrConversionDialog, PickRequestTypeDialog, RenewDialog, ReceiptsDialog, RefundDialog, UpgradeDialog
 } from '@/components/dialogs'
 import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
@@ -97,13 +97,13 @@ import NamexServices from './services/namex.services'
     AffiliationErrorDialog,
     CancelDialog,
     ConditionsDialog,
+    ConfirmNrDialog,
     ErrorDialog,
     ExitDialog,
     HelpMeChooseDialog,
     LocationInfoDialog,
     MrasSearchInfoDialog,
     NrNotRequiredDialog,
-    PaymentDialog,
     PaymentCompleteDialog,
     PickEntityOrConversionDialog,
     PickRequestTypeDialog,
@@ -133,7 +133,7 @@ export default class App extends Mixins(DateMixin) {
   @Action setName!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
   @Action setIncorporateLoginModalVisible!: ActionBindingIF
-  @Action togglePaymentModal!: ActionBindingIF
+  @Action toggleConfirmNrModal!: ActionBindingIF
   @Action setCurrentJsDate!: ActionBindingIF
   @Action setKeycloakRoles!: ActionBindingIF
 
@@ -211,7 +211,7 @@ export default class App extends Mixins(DateMixin) {
       // Direct the user back to the start
       await this.resetAppState()
     }
-    await this.togglePaymentModal(false)
+    await this.toggleConfirmNrModal(false)
   }
 }
 </script>

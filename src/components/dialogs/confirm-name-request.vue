@@ -89,7 +89,7 @@ import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 import StaffPayment from '@/components/payment/staff-payment.vue'
 import { CreatePaymentParams } from '@/modules/payment/models'
-import { PAYMENT_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
+import { CONFIRM_NR_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import * as FilingTypes from '@/modules/payment/filing-types'
 import { Jurisdictions, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
@@ -104,7 +104,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
     StaffPayment
   }
 })
-export default class PaymentDialog extends Mixins(
+export default class ConfirmNrDialog extends Mixins(
   PaymentMixin,
   PaymentSessionMixin,
   DisplayedComponentMixin
@@ -129,7 +129,7 @@ export default class PaymentDialog extends Mixins(
   @Getter isRoleStaff!: boolean
 
   // Global actions
-  @Action togglePaymentModal!: ActionBindingIF
+  @Action toggleConfirmNrModal!: ActionBindingIF
 
   /** Whether staff payment is valid. */
   private isStaffPaymentValid = false
@@ -150,13 +150,13 @@ export default class PaymentDialog extends Mixins(
 
   /** Whether this modal should be shown (per store property). */
   private get showModal (): boolean {
-    return this.$store.getters[PAYMENT_MODAL_IS_VISIBLE]
+    return this.$store.getters[CONFIRM_NR_MODAL_IS_VISIBLE]
   }
 
   /** Clears store property to hide this modal. */
   async hideModal () {
     this.isLoadingPayment = false
-    await this.togglePaymentModal(false)
+    await this.toggleConfirmNrModal(false)
   }
 
   /** Depending on value, fetches fees and makes this modal visible or hides it. */

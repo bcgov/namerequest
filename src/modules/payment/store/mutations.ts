@@ -3,8 +3,8 @@ import * as types from './types'
 import { STATE_KEY } from '@/modules/payment/store'
 
 export default {
-  [types.TOGGLE_PAYMENT_MODAL]: (state, isVisible: boolean) => {
-    state[STATE_KEY].isPaymentVisible = isVisible || false
+  [types.TOGGLE_CONFIRM_NR_MODAL]: (state, isVisible: boolean) => {
+    state[STATE_KEY].isConfirmNrVisible = isVisible || false
   },
   [types.TOGGLE_PAYMENT_HISTORY_MODAL]: (state, isVisible: boolean) => {
     state[STATE_KEY].isPaymentHistoryVisible = isVisible || false

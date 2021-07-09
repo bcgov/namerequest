@@ -1,7 +1,7 @@
 import * as types from './types'
 
-export const togglePaymentModal = ({ commit }, isVisible: boolean) => {
-  commit(types.TOGGLE_PAYMENT_MODAL, isVisible)
+export const toggleConfirmNrModal = ({ commit }, isVisible: boolean) => {
+  commit(types.TOGGLE_CONFIRM_NR_MODAL, isVisible)
 }
 
 export const togglePaymentHistoryModal = ({ commit }, isVisible: boolean) => {

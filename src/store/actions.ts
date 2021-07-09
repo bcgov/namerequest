@@ -434,7 +434,7 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
       request = await NamexServices.putNameReservation(getters.getNrId, getters.getRequestActionCd, data)
       if (request) commit('setNrResponse', request)
     }
-    if (request) await dispatch('togglePaymentModal', true)
+    if (request) await dispatch('toggleConfirmNrModal', true)
   }
 }
 

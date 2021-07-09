@@ -1,5 +1,5 @@
-export const TOGGLE_PAYMENT_MODAL = 'togglePaymentModal'
-export const PAYMENT_MODAL_IS_VISIBLE = 'paymentModalIsVisible'
+export const TOGGLE_CONFIRM_NR_MODAL = 'toggleConfirmNrModal'
+export const CONFIRM_NR_MODAL_IS_VISIBLE = 'confirmNrModalIsVisible'
 
 export const TOGGLE_PAYMENT_HISTORY_MODAL = 'togglePaymentHistoryModal'
 export const PAYMENT_HISTORY_MODAL_IS_VISIBLE = 'paymentHistoryModalIsVisible'
