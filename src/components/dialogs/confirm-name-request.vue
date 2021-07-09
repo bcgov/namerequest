@@ -1,7 +1,7 @@
 <template>
   <v-dialog min-width="32rem" max-width="45rem" :value="isVisible" persistent>
     <v-card>
-      <v-tabs id="payment-tabs">
+      <v-tabs id="confirm-nr-tabs">
         <v-tabs-items v-model="paymentTab">
 
           <v-tab-item>
@@ -21,15 +21,15 @@
 
             <v-card-actions class="justify-center pt-6">
               <v-btn
-                @click="goBack()"
-                id="payment-back-btn"
-                class="button-blue px-5"
-                :disabled="isLoadingPayment">Back</v-btn>
-              <v-btn
                 @click="confirmPayment()"
-                id="payment-submit-btn"
+                id="confirm-nr-submit-btn"
                 class="primary px-5"
                 :loading="isLoadingPayment">Submit Name Request</v-btn>
+              <v-btn
+                @click="goBack()"
+                id="confirm-nr-back-btn"
+                class="button-blue px-5"
+                :disabled="isLoadingPayment">Back</v-btn>
             </v-card-actions>
           </v-tab-item>
 
@@ -58,18 +58,18 @@
               <v-btn
                 v-if="allowCancel"
                 @click="cancelPayment()"
-                id="payment-cancel-btn"
+                id="confirm-nr-cancel-btn"
                 class="button-red px-5"
                 :disabled="isLoadingPayment">Cancel Name Request</v-btn>
               <v-spacer />
               <v-btn
                 @click="confirmPayment()"
-                id="payment-continue-btn"
+                id="confirm-nr-continue-btn"
                 class="primary px-5"
                 :loading="isLoadingPayment">Continue to Payment</v-btn>
               <v-btn
                 @click="hideModal()"
-                id="payment-close-btn"
+                id="confirm-nr-close-btn"
                 class="button-blue px-5"
                 :disabled="isLoadingPayment">Close</v-btn>
             </v-card-actions>
@@ -255,16 +255,16 @@ export default class ConfirmNrDialog extends Mixins(
       this.$nextTick(() => {
         if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
-          const paymentCancelBtn = this.$el.querySelector('#payment-cancel-btn > span')
-          if (paymentCancelBtn) paymentCancelBtn.classList.add('payment-cancel-btn')
-          const paymentContinueBtn = this.$el.querySelector('#payment-continue-btn > span')
-          if (paymentContinueBtn) paymentContinueBtn.classList.add('payment-continue-btn')
-          const paymentSubmitBtn = this.$el.querySelector('#payment-submit-btn > span')
-          if (paymentSubmitBtn) paymentSubmitBtn.classList.add('payment-submit-btn')
-          const paymentCloseBtn = this.$el.querySelector('#payment-close-btn > span')
-          if (paymentCloseBtn) paymentCloseBtn.classList.add('payment-close-btn')
-          const paymentBackBtn = this.$el.querySelector('#payment-back-btn > span')
-          if (paymentBackBtn) paymentBackBtn.classList.add('payment-back-btn')
+          const confirmNrCancelBtn = this.$el.querySelector('#confirm-nr-cancel-btn > span')
+          if (confirmNrCancelBtn) confirmNrCancelBtn.classList.add('confirm-nr-cancel-btn')
+          const confirmNrContinueBtn = this.$el.querySelector('#confirm-nr-continue-btn > span')
+          if (confirmNrContinueBtn) confirmNrContinueBtn.classList.add('confirm-nr-continue-btn')
+          const confirmNrSubmitBtn = this.$el.querySelector('#confirm-nr-submit-btn > span')
+          if (confirmNrSubmitBtn) confirmNrSubmitBtn.classList.add('confirm-nr-submit-btn')
+          const confirmNrCloseBtn = this.$el.querySelector('#confirm-nr-close-btn > span')
+          if (confirmNrCloseBtn) confirmNrCloseBtn.classList.add('confirm-nr-close-btn')
+          const confirmNrBackBtn = this.$el.querySelector('#confirm-nr-back-btn > span')
+          if (confirmNrBackBtn) confirmNrBackBtn.classList.add('confirm-nr-back-btn')
         }
       })
     }

@@ -1,7 +1,7 @@
 <template>
   <v-dialog min-width="32rem" max-width="45rem" :value="isVisible" persistent>
     <v-card>
-      <v-tabs id="payment-tabs">
+      <v-tabs id="upgrade-tabs">
         <v-tabs-items v-model="paymentTab">
 
           <v-tab-item>
@@ -21,15 +21,15 @@
 
             <v-card-actions class="justify-center pt-6">
               <v-btn
-                @click="goBack()"
-                id="upgrade-back-btn"
-                class="button-blue px-5"
-                :disabled="isLoadingPayment">Back</v-btn>
-              <v-btn
                 @click="confirmPayment()"
                 id="upgrade-priority-btn"
                 class="primary px-5"
                 :loading="isLoadingPayment">Upgrade Priority</v-btn>
+              <v-btn
+                @click="goBack()"
+                id="upgrade-back-btn"
+                class="button-blue px-5"
+                :disabled="isLoadingPayment">Back</v-btn>
             </v-card-actions>
           </v-tab-item>
 
