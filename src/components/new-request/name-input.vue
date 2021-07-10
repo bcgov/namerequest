@@ -1,35 +1,23 @@
 <template>
-  <v-col cols="12">
-    <v-text-field :error-messages="message"
-                  @input="clearErrors()"
-                  @keydown.enter="handleSubmit"
-                  autocomplete="chrome-off"
-                  filled
-                  id="name-input-text-field"
-                  ref="nameInput"
-                  :rules="(searchValue && isMrasSearch) ? mrasRules : []"
-                  :label="isReadOnly ? '' : nameLabel"
-                  :class="{ 'read-only-mode': isReadOnly }"
-                  :disabled="isReadOnly"
-                  v-model="searchValue">
-      <template v-slot:append v-if="!isReadOnly">
-        <v-tooltip bottom
-                   content-class="bottom-tooltip search-tooltip"
-                   transition="fade-transition"
-                   :disabled="!isSearchAgain">
-          <template v-slot:activator="scope">
-            <v-icon class="name-search-icon"
-                    id="name-input-icon"
-                    color="primary"
-                    v-on="scope.on"
-                    :disabled="!isCorpNumValid"
-                    @click="startAnalyzeName">mdi-magnify</v-icon>
-          </template>
-          Search Again
-        </v-tooltip>
-      </template>
-    </v-text-field>
-  </v-col>
+  <v-row no-gutters>
+    <v-col cols="12" class="pa-0">
+      <v-text-field :error-messages="message"
+                    @input="clearErrors()"
+                    @keydown.enter="handleSubmit"
+                    autocomplete="chrome-off"
+                    :filled="!isReadOnly"
+                    id="name-input-text-field"
+                    ref="nameInput"
+                    :rules="(searchValue && isMrasSearch) ? mrasRules : []"
+                    :label="label"
+                    :class="{ 'read-only-mode': isReadOnly }"
+                    :disabled="isReadOnly"
+                    :hint="hint"
+                    persistent-hint
+                    v-model="searchValue">
+      </v-text-field>
+    </v-col>
+  </v-row>
 </template>
 
 <script lang="ts">
@@ -70,6 +58,9 @@ export default class NameInput extends Vue {
   @Prop({ default: false })
   readonly isReadOnly: boolean
 
+  @Prop({ default: '' })
+  readonly hint: string
+
   /** The array of validation rules for the MRAS corp num. */
   private get mrasRules (): Function[] {
     return [
@@ -81,6 +72,12 @@ export default class NameInput extends Vue {
   /** Local validator when input is a MRAS corp num. */
   private get isCorpNumValid (): boolean {
     return this.isMrasSearch ? this.$refs['nameInput']?.valid : true
+  }
+
+  get label (): string {
+    if (this.isReadOnly && (this.isMrasSearch || !this.getIsXproMras)) return ''
+    if (this.isReadOnly && this.getIsXproMras) return 'Name in home jurisdiction'
+    return this.nameLabel
   }
 
   get message (): string | string[] {
@@ -148,13 +145,14 @@ export default class NameInput extends Vue {
 
 <style lang="scss" scoped>
 @import '@/assets/scss/theme.scss';
-
 .search-tooltip {
   max-width: 100px;
   text-align: center;
   padding: 10px !important;
 }
-
+::v-deep .read-only-mode .v-input__slot:not(.v-input--checkbox .v-input__slot) {
+  background-color: transparent !important;
+}
 ::v-deep .theme--light.v-input--is-disabled input, .theme--light.v-input--is-disabled textarea {
   color: $gray9 !important;
 }
