@@ -9,14 +9,14 @@
                 no-data-text=""
                 show-expand>
     <template v-slot:item="{ item, headers, expand, isExpanded }">
-      <tr v-if="!item.problem" class="no-hover">
+      <tr v-if="item.info === ITEM_TYPES.NO_ISSUES" class="no-hover">
         <v-row class="mb-5 pl-4 py-5 border-top border-bottom" justify="center" no-gutters>
           <v-col cols="auto">
             <b class="copy-bold">{{ item.info }}</b>
           </v-col>
         </v-row>
       </tr>
-      <tr v-else-if="item.problem === 'loading'" class="no-hover">
+      <tr v-else-if="item.info === ITEM_TYPES.LOADING" class="no-hover">
         <v-row class="pl-4 py-5 border-top" no-gutters>
           <v-col cols="auto">
             <v-skeleton-loader type="button"/>
@@ -95,12 +95,15 @@
           <v-row v-if="item.expandedList" no-gutters class="px-15">
             <QuickSearchNames :namesList="item.expandedList"/>
           </v-row>
-          <v-row v-if="item.expandedInfo1" no-gutters :class="item.expandedList ? 'pt-7' : ''" class="name-check-info-text pb-5 pl-13">
+          <v-row v-if="item.expandedInfo1"
+                 class="name-check-info-text pb-5 pl-13"
+                 :class="item.expandedList ? 'pt-7' : ''"
+                 no-gutters>
             <v-col cols="auto">
               <v-icon>mdi-information-outline</v-icon>
             </v-col>
             <v-col class="pl-2" style="max-width: 50rem">
-              <div v-if="item.info === 'similarMatch'">
+              <div v-if="item.info === ITEM_TYPES.SIMILAR_MATCH">
                 <v-tooltip top content-class="top-tooltip" transition="fade-transition">
                   <template v-slot:activator="{ on, attrs }">
                     <span class="dotted-underline" v-bind="attrs" v-on="on">Similar names</span>
@@ -124,7 +127,7 @@
                 </v-tooltip>
                 to use the name, you can submit your name for review.
               </div>
-              <div v-else-if="item.info === 'exactMatch'">
+              <div v-else-if="item.info === ITEM_TYPES.EXACT_MATCH">
                 <span>{{ item.expandedInfo1 }}</span>
                 <p class="ma-0">
                   Consider revising your name unless you can
@@ -156,8 +159,12 @@
               <v-row v-if="item.expandedInfo4" no-gutters class="pt-7">
                 <span v-html="item.expandedInfo4">{{ item.expandedInfo4 }}</span>
               </v-row>
-              <v-row v-if="['similarMatch', 'exactMatch'].includes(item.info)" no-gutters class="pt-3">
-                <v-btn :ripple="false" class="outlined pa-0 tips-btn" @click="item.expandExtraInfo = !item.expandExtraInfo">
+              <v-row v-if="[ITEM_TYPES.EXACT_MATCH, ITEM_TYPES.SIMILAR_MATCH].includes(item.info)"
+                     class="pt-3"
+                     no-gutters>
+                <v-btn class="outlined pa-0 tips-btn"
+                       :ripple="false"
+                       @click="item.expandExtraInfo = !item.expandExtraInfo">
                   <span>
                     <span v-if="!item.expandExtraInfo" right>View </span>
                     <span v-else right>Hide </span>
@@ -193,6 +200,7 @@ import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator'
 
 import QuickSearchNames from '@/components/new-request/name-check/quick-search-names.vue'
 import { NameCheckItemIF } from '@/interfaces/name-check-interfaces'
+import { NameCheckErrorType, NameCheckItemType } from '@/enums'
 
 @Component({
   components: { QuickSearchNames }
@@ -212,16 +220,34 @@ export default class NameCheckConflicts extends Vue {
     { text: '', value: 'data-table-expand' }
   ]
 
+  get ERROR_TYPES () {
+    return NameCheckErrorType
+  }
+  get ITEM_TYPES () {
+    return NameCheckItemType
+  }
+
   @Watch('expanded')
   private triggerChange () { }
 
   @Watch('items')
   private updateExpanded (value: Array<NameCheckItemIF>) {
     if (value && value.length > 0) {
-      if (['exactMatch', 'similarMatch'].includes(value[0].info)) {
+      const similarNameCheck: Array<NameCheckItemType | NameCheckErrorType> = [
+        this.ITEM_TYPES.EXACT_MATCH,
+        this.ITEM_TYPES.EXACT_MATCH_XPRO,
+        this.ITEM_TYPES.SIMILAR_MATCH,
+        this.ITEM_TYPES.SIMILAR_MATCH_XPRO
+      ]
+      if (similarNameCheck.includes(value[0].info)) {
         this.expanded.push(value[0])
       } else {
-        this.expanded = []
+        // if all items are loading it is a new search so reset expanded
+        let newSearch = true
+        for (let item of value) {
+          if (item.info !== this.ITEM_TYPES.LOADING) newSearch = false
+        }
+        if (newSearch) this.expanded = []
       }
     } else {
       this.expanded = []
@@ -229,11 +255,7 @@ export default class NameCheckConflicts extends Vue {
   }
 
   mounted () {
-    // if (this.items && this.items.length > 0) {
-    //   if (['exactMatch', 'similarMatch'].includes(this.items[0].info)) {
-    //     this.expanded.push(this.items[0])
-    //   }
-    // }
+    this.updateExpanded(this.items)
   }
 }
 </script>

@@ -640,8 +640,13 @@ export const setFolioNumber: ActionIF = ({ commit }, folioNumber: string): void 
   commit('mutateFolioNumber', folioNumber)
 }
 /** Name Check actions
- * TODO: move these into a factory when converting to composition api */
-export const getMatchesExact = async ({ commit }, token: string, cleanedName: string): Promise<Array<ConflictListItemI>> => {
+ * TODO: move these into a factory if converting to composition api
+ */
+export const getMatchesExact = async (
+  { commit },
+  token: string,
+  cleanedName: string
+): Promise<Array<ConflictListItemI>> => {
   const exactResp = await axios.get('/exact-match?query=' + cleanedName, {
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
   }).catch(() => {
@@ -650,7 +655,12 @@ export const getMatchesExact = async ({ commit }, token: string, cleanedName: st
   })
   return exactResp?.data ? parseExactNames(exactResp.data) : []
 }
-export const getMatchesSimilar = async ({ commit }, token: string, cleanedName: string, exactNames: Array<ConflictListItemI>): Promise<Array<ConflictListItemI>> => {
+export const getMatchesSimilar = async (
+  { commit },
+  token: string,
+  cleanedName: string,
+  exactNames: Array<ConflictListItemI>
+): Promise<Array<ConflictListItemI>> => {
   const synonymResp = await axios.get('/requests/synonymbucket/' + cleanedName + '/*', {
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
   }).catch(() => {
@@ -660,7 +670,11 @@ export const getMatchesSimilar = async ({ commit }, token: string, cleanedName: 
   if (synonymResp?.data) synonymResp.data.exactNames = exactNames || []
   return synonymResp?.data ? parseSynonymNames(synonymResp.data) : []
 }
-export const getMatchesRestricted = async ({ commit }, token: string, cleanedName: string): Promise<ParsedRestrictedResponseIF> => {
+export const getMatchesRestricted = async (
+  { commit },
+  token: string,
+  cleanedName: string
+): Promise<ParsedRestrictedResponseIF> => {
   const restrictedResp = await axios.get(`/documents:restricted_words?content=${cleanedName}`, {
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
   }).catch(() => {
@@ -756,7 +770,11 @@ export const getNameAnalysis: ActionIF = async (
   }
 }
 
-export const getQuickSearch = async ({ commit }, cleanedName: CleanedNameIF, checks: QuickSearchParamsI): Promise<QuickSearchParsedRespI> => {
+export const getQuickSearch = async (
+  { commit },
+  cleanedName: CleanedNameIF,
+  checks: QuickSearchParamsI
+): Promise<QuickSearchParsedRespI> => {
   try {
     const quickSearchPublicId = window['quickSearchPublicId']
     const quickSearchPublicSecret = window['quickSearchPublicSecret']
@@ -773,8 +791,16 @@ export const getQuickSearch = async ({ commit }, cleanedName: CleanedNameIF, che
     const token = tokenResp.data.access_token
     const exactNames = checks.exact ? await getMatchesExact({ commit }, token, cleanedName.exactMatch) : []
     // pass in exactNames so that we can check for duplicates
-    const synonymNames = checks.similar ? await getMatchesSimilar({ commit }, token, cleanedName.synonymMatch, exactNames) : []
-    const parsedRestrictedResp = checks.restricted ? await getMatchesRestricted({ commit }, token, cleanedName.restrictedMatch) : { restrictedWords: [], conditionalWords: [] }
+    const synonymNames = (
+      checks.similar
+        ? await getMatchesSimilar({ commit }, token, cleanedName.synonymMatch, exactNames)
+        : []
+    )
+    const parsedRestrictedResp = (
+      checks.restricted
+        ? await getMatchesRestricted({ commit }, token, cleanedName.restrictedMatch)
+        : { restrictedWords: [], conditionalWords: [] }
+    )
 
     return {
       exactNames: exactNames,
@@ -836,7 +862,11 @@ export const parseRestrictedWords = (resp: RestrictedResponseIF): ParsedRestrict
   return parsedResp
 }
 
-export const parseSynonymNames = (json: { names: [string], exactNames: [{ name: string, type: string }] }): Array<{ name: string, type: string }> => {
+export const parseSynonymNames = (
+  json: {
+    names: Array<string>,
+    exactNames: Array<ConflictListItemI>
+  }): Array<ConflictListItemI> => {
   let duplicateNames = []
   for (let i = 0; i < json.exactNames.length; i++) {
     duplicateNames.push(json.exactNames[i].name)
@@ -892,13 +922,26 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
     return
   }
   // prep name for analysis
-  let name
-  if (getters.getName) {
-    name = removeAccents(getters.getName)
-    commit('mutateName', name.toUpperCase())
-    const designation = getters.getDesignation
-    commit('mutateFullName', `${name} ${designation}`)
+  let name = removeAccents(getters.getName)
+  name = name.toUpperCase()
+  // auto fix LTD/INC/CORP designations without a period unless xpro
+  if (!getters.getIsXproMras) {
+    name = name.replace(/^LTD$/g, 'LTD.')
+      .replace(/^LTD\s/g, 'LTD. ')
+      .replace(/\sLTD\s/g, ' LTD. ')
+      .replace(/\sLTD$/g, ' LTD.')
+      .replace(/^INC$/g, 'INC.')
+      .replace(/^INC\s/g, 'INC. ')
+      .replace(/\sINC\s/g, ' INC. ')
+      .replace(/\sINC$/g, ' INC.')
+      .replace(/^CORP$/g, 'CORP.')
+      .replace(/^CORP\s/g, 'CORP. ')
+      .replace(/\sCORP\s/g, ' CORP. ')
+      .replace(/\sCORP$/g, ' CORP.')
   }
+  commit('mutateName', name)
+  const designation = getters.getDesignation
+  commit('mutateFullName', `${name} ${designation}`)
   commit('mutateNameOriginal', name) // Set original name for reset baseline
   /* xpro get name call */
   if (getters.getIsXproMras) {

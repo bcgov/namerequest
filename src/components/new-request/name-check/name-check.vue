@@ -42,7 +42,9 @@
         </v-col>
       </v-row>
       <div id="name-check-verdict" class="white mt-7 pa-2" no-gutters justify="center">
-        <v-progress-circular v-if="isAnalyzeConflictsPending || isAnalyzeDesignationPending || isAnalyzeStructurePending"
+        <v-progress-circular v-if="isAnalyzeConflictsPending ||
+                                   isAnalyzeDesignationPending ||
+                                   isAnalyzeStructurePending"
                              color="primary"
                              indeterminate
                              size="30"
@@ -75,7 +77,9 @@
                  class="upper-border px-0 pt-3"
                  :ripple="false">
             <div style="width: 100%;">
-              <name-check-tab-content :loading="isAnalyzeDesignationPending || isAnalyzeStructurePending || isAnalyzeConflictsPending"
+              <name-check-tab-content :loading="isAnalyzeDesignationPending ||
+                                                isAnalyzeStructurePending ||
+                                                isAnalyzeConflictsPending"
                                       :subtitle="subTitleStructure"
                                       :tabIcon="tabIconStructure.icon"
                                       :title="'Name Structure Check'"/>
@@ -205,7 +209,14 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { baseItemsConflicts, baseItemsStructure } from './resources'
 
 @Component({
-  components: { MainContainer, NameCheckConflicts, NameCheckIssuesDialog, NameCheckTabContent, NameInput, QuickSearchNames }
+  components: {
+    MainContainer,
+    NameCheckConflicts,
+    NameCheckIssuesDialog,
+    NameCheckTabContent,
+    NameInput,
+    QuickSearchNames
+  }
 })
 export default class NameCheck extends Vue {
   @Getter getConflictsConditional!: Array<string>
@@ -499,7 +510,16 @@ export default class NameCheck extends Vue {
     }
     if (this.hasDesignationsCheckUse) {
       let newItem = baseItemsStructure.designationsCheckUse
-      if ([EntityType.FR, EntityType.DBA, EntityType.GP, EntityType.LP, EntityType.LL, EntityType.XLP, EntityType.XLL].includes(this.getEntityTypeCd)) {
+      const propEntities = [
+        EntityType.FR,
+        EntityType.DBA,
+        EntityType.GP,
+        EntityType.LP,
+        EntityType.LL,
+        EntityType.XLP,
+        EntityType.XLL
+      ]
+      if (propEntities.includes(this.getEntityTypeCd)) {
         newItem = baseItemsStructure.designationsCheckUseProp
       } else if ([EntityType.CP, EntityType.XCP].includes(this.getEntityTypeCd)) {
         newItem = baseItemsStructure.designationsCheckUseCP
@@ -648,7 +668,6 @@ export default class NameCheck extends Vue {
     if (proceed) this.submit()
   }
   retry (errorType: NameCheckErrorType) {
-    console.log(errorType)
     if ([NameCheckErrorType.errorDesignation, NameCheckErrorType.errorStructure].includes(errorType)) {
       this.clearError(errorType)
       this.getNameAnalysis({ xpro: false, designationOnly: errorType === NameCheckErrorType.errorDesignation })
