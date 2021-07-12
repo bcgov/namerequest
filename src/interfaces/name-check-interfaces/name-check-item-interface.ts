@@ -1,3 +1,5 @@
+import { ConflictListItemI } from "./conflict-list-item";
+
 export interface NameCheckItemIF {
   count: number,
   expandedInfoBlock1?: Array<string>,
@@ -5,7 +7,7 @@ export interface NameCheckItemIF {
   expandedInfo2: string,
   expandedInfo3?: string,
   expandedInfo4?: string,
-  expandedList: Array<{ name: string, type: string }>,
+  expandedList: Array<ConflictListItemI>,
   expandLabel: {
     open: string,
     closed: string

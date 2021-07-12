@@ -531,7 +531,6 @@ export const mutateNameCheckErrorAdd = (state: StateIF, key: string) => {
 
 export const mutateNameCheckErrorClear = (state: StateIF, key: NameCheckErrorType) => {
   state.stateModel.nameCheckModel.errors[key] = false
-  console.log(state.stateModel.nameCheckModel.errors)
 }
 
 export const mutateFolioNumber = (state: StateIF, folioNumber: string) => {

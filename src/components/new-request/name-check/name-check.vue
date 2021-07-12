@@ -633,13 +633,9 @@ export default class NameCheck extends Vue {
     this.nameCheckClearError(errorType)
   }
   dialogCheck () {
-    const showDialog = (
-      this.hasIssuesConflictAlert ||
-      this.hasIssuesStructureAlert ||
-      this.hasIssuesConflictCaution ||
-      this.hasIssuesStructureCaution)
-
-    if (showDialog) {
+    const hasMajorIssues = this.hasIssuesConflictAlert || this.hasIssuesStructureAlert
+    // only show dialog for non xpro
+    if (hasMajorIssues && !this.getIsXproMras) {
       this.dialogOptions.icon = this.tabIconVerdict.icon
       this.dialogOptions.iconColor = this.tabIconVerdict.color
       this.showNameCheckIssuesDialog = true
