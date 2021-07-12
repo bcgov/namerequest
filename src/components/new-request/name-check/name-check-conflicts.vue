@@ -4,6 +4,7 @@
                 hide-default-header hide-default-footer
                 :items="items"
                 item-key="problem"
+                single-expand
                 :expanded.sync="expanded"
                 no-data-text=""
                 show-expand>
@@ -188,13 +189,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from 'vue-property-decorator'
-import { Action } from 'vuex-class'
+import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator'
 
 import QuickSearchNames from '@/components/new-request/name-check/quick-search-names.vue'
-
 import { NameCheckItemIF } from '@/interfaces/name-check-interfaces'
-import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: { QuickSearchNames }
@@ -206,13 +204,37 @@ export default class NameCheckConflicts extends Vue {
   @Emit() private clearError (value: string) { }
   @Emit() private retry (value: string) { }
 
-  private expanded = []
+  private expanded: Array<NameCheckItemIF> = []
   private headers = [
     { text: 'Icon', value: 'icon' },
     { text: 'Problem', value: 'problem' },
     { text: 'Words', value: 'words' },
     { text: '', value: 'data-table-expand' }
   ]
+
+  @Watch('expanded')
+  private triggerChange () { }
+
+  @Watch('items')
+  private updateExpanded (value: Array<NameCheckItemIF>) {
+    if (value && value.length > 0) {
+      if (['exactMatch', 'similarMatch'].includes(value[0].info)) {
+        this.expanded.push(value[0])
+      } else {
+        this.expanded = []
+      }
+    } else {
+      this.expanded = []
+    }
+  }
+
+  mounted () {
+    // if (this.items && this.items.length > 0) {
+    //   if (['exactMatch', 'similarMatch'].includes(this.items[0].info)) {
+    //     this.expanded.push(this.items[0])
+    //   }
+    // }
+  }
 }
 </script>
 

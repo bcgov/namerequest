@@ -21,7 +21,10 @@ import {
   SelectOptionsI,
   StatsI,
   SubmissionTypeT,
-  StaffPaymentIF
+  StaffPaymentIF,
+  QuickSearchParamsI,
+  QuickSearchParsedRespI,
+  ConflictListItemI
 } from '@/interfaces'
 import { ActionIF } from '@/interfaces/store-interfaces'
 import getters from '@/modules/error/store/getters'
@@ -638,7 +641,7 @@ export const setFolioNumber: ActionIF = ({ commit }, folioNumber: string): void 
 }
 /** Name Check actions
  * TODO: move these into a factory when converting to composition api */
-export const getMatchesExact = async ({ commit }, token: string, cleanedName: string): Promise<Array<{ name: string, type: string }>> => {
+export const getMatchesExact = async ({ commit }, token: string, cleanedName: string): Promise<Array<ConflictListItemI>> => {
   const exactResp = await axios.get('/exact-match?query=' + cleanedName, {
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
   }).catch(() => {
@@ -647,7 +650,7 @@ export const getMatchesExact = async ({ commit }, token: string, cleanedName: st
   })
   return exactResp?.data ? parseExactNames(exactResp.data) : []
 }
-export const getMatchesSimilar = async ({ commit }, token: string, cleanedName: string, exactNames: Array<{ name: string, type: string }>): Promise<Array<{ name: string, type: string }>> => {
+export const getMatchesSimilar = async ({ commit }, token: string, cleanedName: string, exactNames: Array<ConflictListItemI>): Promise<Array<ConflictListItemI>> => {
   const synonymResp = await axios.get('/requests/synonymbucket/' + cleanedName + '/*', {
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
   }).catch(() => {
@@ -753,45 +756,47 @@ export const getNameAnalysis: ActionIF = async (
   }
 }
 
-export const getQuickSearch = async ({ commit }, cleanedName: CleanedNameIF, checks: { exact: boolean, similar: boolean, restricted: boolean }): Promise<{
-  exactNames: Array<{ name: string, type: string }>,
-  synonymNames: Array<{ name: string, type: string }>,
-  restrictedWords: Array<string>,
-  conditionalWords: Array<string>
-}> => {
-  const quickSearchPublicId = window['quickSearchPublicId']
-  const quickSearchPublicSecret = window['quickSearchPublicSecret']
+export const getQuickSearch = async ({ commit }, cleanedName: CleanedNameIF, checks: QuickSearchParamsI): Promise<QuickSearchParsedRespI> => {
+  try {
+    const quickSearchPublicId = window['quickSearchPublicId']
+    const quickSearchPublicSecret = window['quickSearchPublicSecret']
 
-  // only do quick search if we have id and secret
-  if (quickSearchPublicId && quickSearchPublicSecret) {
-    try {
-      const encodedAuth = btoa(`${quickSearchPublicId}:${quickSearchPublicSecret}`)
+    // throw error if no quickSearchPublicId or quickSearchPublicSecret
+    if (!quickSearchPublicId || !quickSearchPublicSecret) {
+      throw new Error('quickSearchPublicId/quickSearchPublicSecret not set in config')
+    }
+    const encodedAuth = btoa(`${quickSearchPublicId}:${quickSearchPublicSecret}`)
 
-      const tokenResp = await axios.post(window['authTokenUrl'], 'grant_type=client_credentials', {
-        headers: { Authorization: `Basic ${encodedAuth}`, 'content-type': 'application/x-www-form-urlencoded' }
-      })
-      const token = tokenResp.data.access_token
+    const tokenResp = await axios.post(window['authTokenUrl'], 'grant_type=client_credentials', {
+      headers: { Authorization: `Basic ${encodedAuth}`, 'content-type': 'application/x-www-form-urlencoded' }
+    })
+    const token = tokenResp.data.access_token
+    const exactNames = checks.exact ? await getMatchesExact({ commit }, token, cleanedName.exactMatch) : []
+    // pass in exactNames so that we can check for duplicates
+    const synonymNames = checks.similar ? await getMatchesSimilar({ commit }, token, cleanedName.synonymMatch, exactNames) : []
+    const parsedRestrictedResp = checks.restricted ? await getMatchesRestricted({ commit }, token, cleanedName.restrictedMatch) : { restrictedWords: [], conditionalWords: [] }
 
-      const exactNames = checks.exact ? await getMatchesExact({ commit }, token, cleanedName.exactMatch) : []
-      // pass in exactNames so that we can check for duplicates
-      const synonymNames = checks.similar ? await getMatchesSimilar({ commit }, token, cleanedName.synonymMatch, exactNames) : []
-      const parsedRestrictedResp = checks.restricted ? await getMatchesRestricted({ commit }, token, cleanedName.restrictedMatch) : { restrictedWords: [], conditionalWords: [] }
+    return {
+      exactNames: exactNames,
+      synonymNames: synonymNames,
+      restrictedWords: parsedRestrictedResp.restrictedWords,
+      conditionalWords: parsedRestrictedResp.conditionalWords
+    }
+  } catch (err) {
+    const msg = await NamexServices.handleApiError(err, 'Could not get quick search')
+    // send error to sentry and move on to detailed search
+    // (do not show error to user)
+    console.error('getQuickSearch() =', msg) // eslint-disable-line no-console
+    // add errors to name check for all quick search checks
+    if (checks.exact) commit('mutateNameCheckErrorAdd', NameCheckErrorType.errorExact)
+    if (checks.similar) commit('mutateNameCheckErrorAdd', NameCheckErrorType.errorSimilar)
+    if (checks.restricted) commit('mutateNameCheckErrorAdd', NameCheckErrorType.errorRestricted)
 
-      return {
-        exactNames: exactNames,
-        synonymNames: synonymNames,
-        restrictedWords: parsedRestrictedResp.restrictedWords,
-        conditionalWords: parsedRestrictedResp.conditionalWords
-      }
-    } catch (err) {
-      const msg = await NamexServices.handleApiError(err, 'Could not get quick search')
-      // send error to sentry and move on to detailed search
-      // (do not show error to user)
-      console.error('getQuickSearch() =', msg) // eslint-disable-line no-console
-      // add errors to name check for all quick search checks
-      if (checks.exact) commit('mutateNameCheckErrorAdd', 'conflictsExact')
-      if (checks.similar) commit('mutateNameCheckErrorAdd', 'conflictsSimilar')
-      if (checks.restricted) commit('mutateNameCheckErrorAdd', 'conflictsRestricted')
+    return {
+      exactNames: [],
+      synonymNames: [],
+      restrictedWords: [],
+      conditionalWords: []
     }
   }
 }
@@ -930,8 +935,8 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
       getNameAnalysis(
         { commit, getters },
         { xpro: false, designationOnly: true })
-      // descriptive/distinctive check (takes the longest)
-      if (!getFeatureFlag('disable-analysis')) {
+      // descriptive/distinctive check - if disabled in LD then ignore
+      if (getFeatureFlag('disable-analysis')) {
         commit('mutateAnalyzeStructurePending', false)
       } else {
         getNameAnalysis(
@@ -970,7 +975,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
     setActiveComponent({ commit }, 'NamesCapture')
   }
 }
-export const startQuickSearch = async ({ commit, getters }, checks: { exact: boolean, similar: boolean, restricted: boolean }) => {
+export const startQuickSearch = async ({ commit, getters }, checks: QuickSearchParamsI) => {
   commit('mutateAnalyzeConflictsPending', true)
   if (getters.getFullName) {
     const name = getters.getFullName
