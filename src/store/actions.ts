@@ -935,11 +935,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
       getNameAnalysis(
         { commit, getters },
         { xpro: false, designationOnly: true })
-<<<<<<< HEAD
-      // descriptive/distinctive check (takes the longest)
-=======
       // descriptive/distinctive check - if disabled in LD then ignore
->>>>>>> cleanup / fixes
       if (getFeatureFlag('disable-analysis')) {
         commit('mutateAnalyzeStructurePending', false)
       } else {
