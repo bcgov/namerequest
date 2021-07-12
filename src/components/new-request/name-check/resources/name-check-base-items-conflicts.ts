@@ -1,3 +1,5 @@
+import { NameCheckErrorType, NameCheckItemType } from '@/enums'
+
 export const baseItemsConflicts = {
   'errorExact': {
     icon: 'mdi-alert-octagon',
@@ -13,7 +15,7 @@ export const baseItemsConflicts = {
       open: 'Hide Details'
     },
     count: 0,
-    info: 'errorExact'
+    info: NameCheckErrorType.errorExact
   },
   'errorSimilar': {
     icon: 'mdi-alert-octagon',
@@ -29,7 +31,7 @@ export const baseItemsConflicts = {
       open: 'Hide Details'
     },
     count: 0,
-    info: 'errorSimilar'
+    info: NameCheckErrorType.errorSimilar
   },
   'exactMatch': {
     icon: 'mdi-alert-octagon',
@@ -37,7 +39,8 @@ export const baseItemsConflicts = {
     problem: 'There is an existing BC Corporation using the <b>exact name</b>',
     words: null,
     expandExtraInfo: false,
-    expandedInfo1: 'Exact name in use. A name will not be approved if there is an existing business using the exact same name.',
+    expandedInfo1: 'Exact name in use. A name will not be approved if there is ' +
+    'an existing business using the exact same name.',
     expandedInfo2: null,
     expandedList: [],
     expandLabel: {
@@ -45,7 +48,7 @@ export const baseItemsConflicts = {
       open: 'Hide Details'
     },
     count: 0,
-    info: 'exactMatch'
+    info: NameCheckItemType.EXACT_MATCH
   },
   'exactMatchXpro': {
     icon: 'mdi-alert-octagon',
@@ -66,7 +69,7 @@ export const baseItemsConflicts = {
       open: 'Hide Details'
     },
     count: 0,
-    info: 'exactMatchXpro'
+    info: NameCheckItemType.EXACT_MATCH_XPRO
   },
   'loading': {
     count: 0,
@@ -79,14 +82,15 @@ export const baseItemsConflicts = {
     },
     icon: null,
     iconColor: null,
-    problem: 'loading',
-    words: null
+    problem: null,
+    words: null,
+    info: NameCheckItemType.LOADING
   },
   'noIssues': {
     icon: null,
     iconColor: null,
-    info: 'No similar names have been found.',
-    problem: '',
+    info: NameCheckItemType.NO_ISSUES,
+    problem: 'No similar names have been found.',
     words: [],
     expandedInfo1: null,
     expandedInfo2: null,
@@ -108,7 +112,7 @@ export const baseItemsConflicts = {
       open: 'Hide Details'
     },
     count: 0,
-    info: 'similarMatch'
+    info: NameCheckItemType.SIMILAR_MATCH
   },
   'similarMatchXpro': {
     icon: 'mdi-alert',
@@ -136,6 +140,6 @@ export const baseItemsConflicts = {
       open: 'Hide Details'
     },
     count: 0,
-    info: 'similarMatchXpro'
+    info: NameCheckItemType.SIMILAR_MATCH_XPRO
   }
 }

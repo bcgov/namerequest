@@ -135,7 +135,8 @@
           </template>
         </v-select>
       </v-col>
-      <v-col :cols="showDesignationSelect || (getIsXproMras) ? '8' : '12'" :class="{ 'pl-3': (getIsXproMras && !isFederal), 'pr-3': !getIsXproMras && showDesignationSelect}">
+      <v-col :class="{ 'pl-3': (getIsXproMras && !isFederal), 'pr-3': !getIsXproMras && showDesignationSelect}"
+             :cols="showDesignationSelect || (getIsXproMras) ? '8' : '12'">
         <NameInput v-if="!isFederal"
                    :class="inputCompClass"
                    :is-mras-search="(getIsXproMras && !noCorpNum)"

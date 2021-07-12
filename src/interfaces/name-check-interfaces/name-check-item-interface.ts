@@ -1,3 +1,4 @@
+import { NameCheckErrorType, NameCheckItemType } from '@/enums'
 import { ConflictListItemI } from "./conflict-list-item";
 
 export interface NameCheckItemIF {
@@ -14,7 +15,7 @@ export interface NameCheckItemIF {
   },
   icon: string,
   iconColor: string,
-  info?: string,
+  info?: NameCheckErrorType | NameCheckItemType,
   problem: string,
   words: Array<string>
 }
