@@ -42,7 +42,7 @@
             </v-card-title>
 
             <v-card-text class="copy-normal">
-              <!-- TODO: for testing only - do not commit! -->
+              <!-- *** for testing only - do not commit! -->
               <p v-if="true || !isRoleStaff" class="mb-8">
                 If you need your name reviewed as quickly as possible,
                 upgrade to a Priority request. Priority name requests are
@@ -150,7 +150,7 @@ export default class UpgradeDialog extends Mixins(
       const paymentConfig = {
         filingType: FilingTypes.NM606,
         jurisdiction: Jurisdictions.BC,
-        priorityRequest: this.getPriorityRequest || false
+        priorityRequest: this.getPriorityRequest
       }
 
       // only make visible on success, otherwise hide it
@@ -213,7 +213,7 @@ export default class UpgradeDialog extends Mixins(
       action: PaymentAction.UPGRADE,
       nrId: getNrId,
       filingType: FilingTypes.NM606,
-      priorityRequest: this.getPriorityRequest || false
+      priorityRequest: this.getPriorityRequest
     } as CreatePaymentParams, onSuccess)
 
     // on error, close this modal so error modal is visible

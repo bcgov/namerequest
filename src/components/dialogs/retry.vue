@@ -42,7 +42,7 @@
             </v-card-title>
 
             <v-card-text class="copy-normal">
-              <!-- TODO: for testing only - do not commit! -->
+              <!-- *** for testing only - do not commit! -->
               <p v-if="true || !isRoleStaff" class="mb-8">
                 If your Name Request payment was previously cancelled or
                 did not go through, you can retry payment.
@@ -132,12 +132,6 @@ export default class RetryDialog extends Mixins(
     return this.$store.getters[RETRY_MODAL_IS_VISIBLE]
   }
 
-  // TODO: for testing only - do not commit!
-  mounted () {
-    console.log('*** payment details =', this.paymentDetails) // eslint-disable-line no-console
-    console.log('*** payment fees =', this.paymentFees) // eslint-disable-line no-console
-  }
-
   /** Clears store property to hide this modal. */
   async hideModal () {
     this.isLoadingPayment = false
@@ -154,7 +148,7 @@ export default class RetryDialog extends Mixins(
       const paymentConfig = {
         filingType: FilingTypes.NM620,
         jurisdiction: Jurisdictions.BC,
-        priorityRequest: this.getPriorityRequest || false
+        priorityRequest: this.getPriorityRequest
       }
 
       // only make visible on success, otherwise hide it
@@ -209,8 +203,6 @@ export default class RetryDialog extends Mixins(
   }
 
   private get pendingPayment (): any {
-    // TODO: for testing only - do not commit!
-    console.log('*** all payments =', this.payments) // eslint-disable-line no-console
     return this.payments.find(
       payment => (
         ![PaymentStatus.APPROVED, PaymentStatus.COMPLETED, PaymentStatus.CANCELLED, PaymentStatus.REFUND_REQUESTED]

@@ -42,7 +42,7 @@
             </v-card-title>
 
             <v-card-text class="copy-normal">
-              <!-- TODO: for testing only - do not commit! -->
+              <!-- *** for testing only - do not commit! -->
               <p v-if="true || !isRoleStaff" class="mb-8">
                 If you are within 14 days of expiry, you can renew your Name
                 Request and extend the expiry date for an additional 56
@@ -150,7 +150,7 @@ export default class RenewDialog extends Mixins(
       const paymentConfig = {
         filingType: FilingTypes.NM620,
         jurisdiction: Jurisdictions.BC,
-        priorityRequest: this.getPriorityRequest || false
+        priorityRequest: this.getPriorityRequest
       }
 
       // only make visible on success, otherwise hide it
@@ -213,7 +213,7 @@ export default class RenewDialog extends Mixins(
       action: PaymentAction.RENEW,
       nrId: getNrId,
       filingType: FilingTypes.NM620,
-      priorityRequest: this.getPriorityRequest || false
+      priorityRequest: this.getPriorityRequest
     } as CreatePaymentParams, onSuccess)
 
     // on error, close this modal so error modal is visible

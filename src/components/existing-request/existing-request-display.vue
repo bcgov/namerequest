@@ -231,11 +231,12 @@ export default class ExistingRequestDisplay extends Mixins(
   /** The actions list, with some buttons forced to the bottom. */
   private get actions (): NrAction[] {
     const actions = (this.nr.actions || []) as NrAction[]
-    // TODO: for testing only - do not commit!
+    // *** for testing only - do not commit!
     actions.push(NrAction.RENEW)
     actions.push(NrAction.RESUBMIT)
-    // actions.push(NrAction.RETRY_PAYMENT)
     actions.push(NrAction.UPGRADE)
+    // actions.push(NrAction.RETRY_PAYMENT)
+
     // move 'REQUEST_REFUND' or 'CANCEL' action (if present) to bottom of list
     // eg ['EDIT', 'REQUEST_REFUND', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'REQUEST_REFUND']
     // or ['EDIT', 'CANCEL', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'CANCEL']

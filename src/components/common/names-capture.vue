@@ -349,12 +349,12 @@ export default class NamesCapture extends Vue {
 
     this.setNameChoicesToInitialState(null)
     if (this.getIsAssumedName && !this.getEditMode) {
-      await this.$nextTick() // *** TODO: this should not be needed
+      await this.$nextTick() // TODO: this should not be needed
       this.hideDetails = true
       return
     }
 
-    await this.$nextTick() // *** TODO: this should not be needed
+    await this.$nextTick() // TODO: this should not be needed
     if (this.getEditMode) {
       this.populateNames()
       return

@@ -169,7 +169,7 @@ export default class ConfirmNrDialog extends Mixins(
       const paymentConfig = {
         filingType: FilingTypes.NM620,
         jurisdiction: Jurisdictions.BC,
-        priorityRequest: this.getPriorityRequest || false
+        priorityRequest: this.getPriorityRequest
       }
 
       // only make visible on success, otherwise hide it
@@ -232,7 +232,7 @@ export default class ConfirmNrDialog extends Mixins(
       action: PaymentAction.CREATE,
       nrId: getNrId,
       filingType: FilingTypes.NM620,
-      priorityRequest: this.getPriorityRequest || false
+      priorityRequest: this.getPriorityRequest
     } as CreatePaymentParams, onSuccess)
 
     // on error, close this modal so error modal is visible

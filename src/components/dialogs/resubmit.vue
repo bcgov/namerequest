@@ -42,7 +42,7 @@
             </v-card-title>
 
             <v-card-text class="copy-normal">
-              <!-- TODO: for testing only - do not commit! -->
+              <!-- *** for testing only - do not commit! -->
               <p v-if="true || !isRoleStaff" class="mb-8">
                 If your Name Request has expired, you have 30 days to
                 resubmit the same name request, for a fee.<br>
@@ -150,7 +150,7 @@ export default class ResubmitDialog extends Mixins(
       const paymentConfig = {
         filingType: FilingTypes.NM620,
         jurisdiction: Jurisdictions.BC,
-        priorityRequest: this.getPriorityRequest || false
+        priorityRequest: this.getPriorityRequest
       }
 
       // only make visible on success, otherwise hide it
@@ -213,7 +213,7 @@ export default class ResubmitDialog extends Mixins(
       action: PaymentAction.RESUBMIT,
       nrId: getNrId,
       filingType: FilingTypes.NM620,
-      priorityRequest: this.getPriorityRequest || false
+      priorityRequest: this.getPriorityRequest
     } as CreatePaymentParams, onSuccess)
 
     // on error, close this modal so error modal is visible

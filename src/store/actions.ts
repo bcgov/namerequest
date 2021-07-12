@@ -141,7 +141,7 @@ export const loadExistingNameRequest:ActionIF = async ({ commit }, nrData: any) 
     commit('resetApplicantDetails')
     commit('setNrResponse', nrData)
     commit('updateReservationNames', names)
-    // *** TODO: instead of "mutating the component", route to "/existing/:id"
+    // FUTURE: instead of "mutating the component", route to "/existing/:id"
     commit('mutateDisplayedComponent', 'ExistingRequestDisplay')
   }
 }
@@ -342,7 +342,6 @@ export const getNrStateData = ({ getters }) => {
     case NrState.DRAFT:
       data = getters.getDraftNameReservation
       break
-    // *** TODO: restore this after fixes
     case NrState.COND_RESERVED:
       data = getters.conditionalNameReservation
       break
@@ -588,7 +587,9 @@ export const setShowActualInput: ActionIF = ({ commit }, showInput: boolean): vo
   commit('mutateShowActualInput', showInput)
 }
 
-// *** Dialog Actions ***
+//
+// Dialog Actions
+//
 export const setIncorporateLoginModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
   commit('mutateIncorporateLoginModalVisible', isVisible)
 }

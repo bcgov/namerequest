@@ -165,7 +165,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       const { payment, sbcPayment = { receipts: [] } } = paymentResponse
 
       await this.setPayment(payment)
-      // await paymentModule.setPaymentReceipt(sbcPayment.receipts[0]) // *** TODO: new code != old code ???
+      // await paymentModule.setPaymentReceipt(sbcPayment.receipts[0]) // TODO: verify that new code === old code
       await this.setPaymentRequest(req)
 
       if (onSuccess) {
