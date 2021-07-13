@@ -364,7 +364,7 @@ export default class NamexServices {
       timeout: ANALYSIS_TIMEOUT_MS
     })
     if (response?.status === OK && response?.data) return response.data
-    // TODO: change how this is handled
+    // FUTURE: change how this is handled
     throw new Error(`Invalid response = ${response}`)
   }
 

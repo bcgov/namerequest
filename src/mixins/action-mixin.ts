@@ -74,7 +74,7 @@ export class ActionMixin extends Vue {
         headers: { 'Content-type': 'application/x-www-form-urlencoded' }
       })
 
-      // TODO: error handling in case post() failed
+      // FUTURE: add error handling in case post() failed
 
       if (resp.data.Items && Array.isArray(resp.data.Items)) {
         const addressData = resp.data.Items.find(item => item.Language === 'ENG')
@@ -144,7 +144,7 @@ export class ActionMixin extends Vue {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       })
 
-      // TODO: error handling in case post() failed
+      // FUTURE: add error handling in case post() failed
 
       if (Array.isArray(resp.data.Items)) {
         let filteredItems = resp.data.Items.filter(item => item.Next === 'Retrieve')

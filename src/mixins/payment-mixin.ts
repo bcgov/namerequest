@@ -160,7 +160,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       const { payment, sbcPayment = { receipts: [] } } = paymentResponse
 
       await this.setPayment(payment)
-      // await paymentModule.setPaymentReceipt(sbcPayment.receipts[0]) // TODO: verify that new code === old code
+      // await paymentModule.setPaymentReceipt(sbcPayment.receipts[0]) // FUTURE: verify that new code === old code
       await this.setPaymentRequest(data)
 
       if (onSuccess) {
@@ -314,7 +314,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
   }
 
-  // TODO: move to NamexServices
+  // FUTURE: move to NamexServices
   async createPaymentRequest (nrId, action, data: any): Promise<NameRequestPaymentResponse> {
     const url = `${NamexServices.namexUrl()}/payments/${nrId}/${action}`
     try {
@@ -331,12 +331,12 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
   }
 
-  // TODO: move to NamexServices
+  // FUTURE: move to NamexServices
   async getNameRequestPayment (nrId, paymentId, data: any): Promise<NameRequestPaymentResponse> {
     const url = `${NamexServices.namexUrl()}/payments/${nrId}/payment/${paymentId}`
     try {
       const response = await NamexServices.axios.get(url, data)
-      // TODO: check response status and data - make sure error handling is not changed
+      // FUTURE: check response status and data - make sure error handling is not changed
       return response.data
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not get name request payment')
@@ -345,12 +345,12 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
   }
 
-  // TODO: move to NamexServices
+  // FUTURE: move to NamexServices
   async getNameRequestPayments (nrId, data: any): Promise<NameRequestPaymentResponse[]> {
     const url = `${NamexServices.namexUrl()}/payments/${nrId}`
     try {
       const response = await NamexServices.axios.get(url, data)
-      // TODO: check response status and data - make sure error handling is not changed
+      // FUTURE: check response status and data - make sure error handling is not changed
       return response.data
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not get name request payments')
@@ -359,11 +359,11 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
   }
 
-  // TODO: move to NamexServices
+  // FUTURE: move to NamexServices
   async getPaymentFees (data: any): Promise<any> {
     const url = `${NamexServices.namexUrl()}/payments/fees`
     try {
-      // TODO: check response status and data - make sure error handling is not changed
+      // FUTURE: check response status and data - make sure error handling is not changed
       const response = await NamexServices.axios.post(url, data)
       return response.data
     } catch (err) {
@@ -373,13 +373,13 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
   }
 
-  // TODO: move to NamexServices
+  // FUTURE: move to NamexServices
   async generateReceiptRequest (paymentId): Promise<any> {
     const params = { responseType: 'arraybuffer' } as AxiosRequestConfig
     const url = `${NamexServices.namexUrl()}/payments/${paymentId}/receipt`
     try {
       const response = await NamexServices.axios.post(url, {}, params)
-      // TODO: check response status and data - make sure error handling is not changed
+      // FUTURE: check response status and data - make sure error handling is not changed
       return response.data
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not generate payment receipt')

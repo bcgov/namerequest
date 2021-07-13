@@ -991,8 +991,7 @@ export const getReservedNameReservation = (state: StateIF): ReservedReqI => {
     names: getNrNames(state),
     ...getNrData(state),
     priorityCd: 'N',
-    // @ts-ignore TODO: This is not typed correctly!
-    entity_type_cd: getEntityTypeCd(state),
+    entity_type_cd: getEntityTypeCd(state), // FUTURE: fix entity_type_cd type
     request_action_cd: getRequestActionCd(state),
     stateCd: NrState.RESERVED,
     english: getNameIsEnglish(state),
@@ -1034,8 +1033,7 @@ export const getConditionalNameReservation = (state: StateIF): ConditionalReqI =
     names: names,
     ...getNrData(state),
     priorityCd: 'N',
-    // @ts-ignore TODO: This is not typed correctly!
-    entity_type_cd: getEntityTypeCd(state),
+    entity_type_cd: getEntityTypeCd(state), // FUTURE: fix entity_type_cd type
     request_action_cd: getRequestActionCd(state),
     request_type_cd: getXproRequestTypeCd(state) ? getXproRequestTypeCd(state) : '',
     stateCd: NrState.COND_RESERVED,

@@ -213,7 +213,7 @@ export const mutateNameRequest = (state: StateIF, nr: NameRequestI) => {
   // store Priority Code
   mutatePriorityRequest(state, (nr?.priorityCd === PriorityCode.Y))
 
-  // TODO: have 1 mutation for nr / applicant info and put these there
+  // FUTURE: have 1 mutation for nr / applicant info and put these there
   const nrNum = state.stateModel.newRequestModel.nr?.nrNum
   if (nrNum?.includes('NR L')) {
     sessionStorage.setItem('BCREG-NRL', nrNum)
@@ -230,7 +230,7 @@ export const mutateNameRequestByKey = (state: StateIF, kv: any) => {
     kv.key,
     kv.value
   )
-  // TODO: have 1 mutation for nr / applicant info and put these there
+  // FUTURE: have 1 mutation for nr / applicant info and put these there
   const nrNum = state.stateModel.newRequestModel.nr?.nrNum
   if (nrNum?.includes('NR L')) {
     sessionStorage.setItem('BCREG-NRL', nrNum)
@@ -317,7 +317,7 @@ export const populateApplicantData = (state: StateIF) => {
       state.stateModel.newRequestModel.nr.applicants[key]
     )
   }
-  // TODO: have 1 mutation for nr / applicant info and put these there
+  // FUTURE: have 1 mutation for nr / applicant info and put these there
   sessionStorage.setItem('BCREG-emailAddress', state.stateModel.newRequestModel.applicant?.emailAddress)
   sessionStorage.setItem('BCREG-phoneNumber', state.stateModel.newRequestModel.applicant?.phoneNumber)
 }

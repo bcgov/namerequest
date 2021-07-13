@@ -226,7 +226,6 @@ export default class RetryDialog extends Mixins(
         }
       })
     }
-    console.log('*** pending payment =', this.pendingPayment) // eslint-disable-line no-console
   }
 }
 </script>

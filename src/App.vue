@@ -47,7 +47,7 @@
     </div>
 
     <!-- All dialogs app-wide -->
-    <!-- TODO: should these be in "main-column" div? -->
+    <!-- FUTURE: should these be in "main-column" div? -->
     <AffiliationErrorDialog />
     <CancelDialog />
     <ConditionsDialog />

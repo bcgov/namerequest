@@ -6,7 +6,7 @@ import ContactInfo from '@/components/common/contact-info.vue'
 import { DateMixin } from '@/mixins'
 
 // the "non-actions" in actions.ts cause "TypeError: Cannot read property 'default' of undefined"
-// so this is commented out for now -- TODO: restore this when actions.ts is cleaned up
+// so this is commented out for now -- FUTURE: restore this when actions.ts is cleaned up
 const store = new Store({ state: {} as any }) // getVuexStore()
 
 describe('Date Mixin', () => {
