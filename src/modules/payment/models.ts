@@ -1,4 +1,6 @@
 import { ErrorI } from '@/modules/error/store/actions'
+import { FilingTypes } from '@/modules/payment/filing-types'
+import { Jurisdictions } from '@/enums'
 
 export interface NameRequestPaymentResponse {
   id: number
@@ -31,5 +33,11 @@ export interface CreatePaymentParams {
   action: string
   nrId: number
   filingType: string
+  priorityRequest: boolean
+}
+
+export interface FetchFeesParams {
+  filingType: FilingTypes
+  jurisdiction: Jurisdictions
   priorityRequest: boolean
 }

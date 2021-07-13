@@ -6,7 +6,7 @@
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
-              <div>Staff Payment</div>
+              <div>Staff Payment for Name Request Resubmission</div>
               <v-btn icon large class="dialog-close float-right" @click="hideModal()">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -22,9 +22,9 @@
             <v-card-actions class="justify-center pt-6">
               <v-btn
                 @click="confirmPayment()"
-                id="resubmit-nr-btn"
+                id="resubmit-submit-btn"
                 class="primary px-5"
-                :loading="isLoadingPayment">Resubmit Name Request</v-btn>
+                :loading="isLoadingPayment">Submit Name Request</v-btn>
               <v-btn
                 @click="goBack()"
                 id="resubmit-back-btn"
@@ -45,12 +45,11 @@
               <!-- *** for testing only - do not commit! -->
               <p v-if="true || !isRoleStaff" class="mb-8">
                 If your Name Request has expired, you have 30 days to
-                resubmit the same name request, for a fee.<br>
-                This will generate a new Name Request Number.
+                resubmit the same name request, for a fee. This will
+                generate a new Name Request Number.
               </p>
 
               <FeeSummary
-                :filingData="[...paymentDetails]"
                 :fees="[...paymentFees]"
               />
             </v-card-text>
@@ -81,9 +80,9 @@ import { Action, Getter } from 'vuex-class'
 import { getFeatureFlag } from '@/plugins'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import StaffPayment from '@/components/payment/staff-payment.vue'
-import { CreatePaymentParams } from '@/modules/payment/models'
+import { CreatePaymentParams, FetchFeesParams } from '@/modules/payment/models'
 import { RESUBMIT_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
-import * as FilingTypes from '@/modules/payment/filing-types'
+import { FilingTypes } from '@/modules/payment/filing-types'
 import { Jurisdictions, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
@@ -147,14 +146,14 @@ export default class ResubmitDialog extends Mixins(
       // reset tab id
       this.currentTab = this.TAB_RESUBMIT_NAME_REQUEST
 
-      const paymentConfig = {
+      const params: FetchFeesParams = {
         filingType: FilingTypes.NM620,
         jurisdiction: Jurisdictions.BC,
-        priorityRequest: this.getPriorityRequest
+        priorityRequest: this.getPriorityRequest // same value as originally
       }
 
       // only make visible on success, otherwise hide it
-      if (await this.fetchFees(paymentConfig)) {
+      if (await this.fetchFees(params)) {
         this.isVisible = true
       } else {
         await this.hideModal()
@@ -191,7 +190,6 @@ export default class ResubmitDialog extends Mixins(
     }
 
     this.isLoadingPayment = true
-    const { getNrId, getPriorityRequest } = this
 
     const onSuccess = (paymentResponse) => {
       const { paymentId, paymentToken } = this
@@ -201,9 +199,9 @@ export default class ResubmitDialog extends Mixins(
 
       // See if redirect is needed else go to existing NR screen
       const baseUrl = getBaseUrl()
-      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${getNrId}/?paymentId=${paymentId}`)
+      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${this.getNrId}/?paymentId=${paymentId}`)
       if (paymentResponse.sbcPayment.isPaymentActionRequired) {
-        this.redirectToPaymentPortal(paymentId, paymentToken, redirectUrl)
+        this.redirectToPaymentPortal(paymentToken, redirectUrl)
       } else {
         window.location.href = redirectUrl
       }
@@ -211,9 +209,9 @@ export default class ResubmitDialog extends Mixins(
 
     const success = await this.createPayment({
       action: PaymentAction.RESUBMIT,
-      nrId: getNrId,
+      nrId: this.getNrId,
       filingType: FilingTypes.NM620,
-      priorityRequest: this.getPriorityRequest
+      priorityRequest: this.getPriorityRequest // same value as originally
     } as CreatePaymentParams, onSuccess)
 
     // on error, close this modal so error modal is visible
@@ -230,8 +228,8 @@ export default class ResubmitDialog extends Mixins(
           // add classname to button text (for more detail in Sentry breadcrumbs)
           const resubmitContinueBtn = this.$el.querySelector('#resubmit-continue-btn > span')
           if (resubmitContinueBtn) resubmitContinueBtn.classList.add('resubmit-continue-btn')
-          const resubmitNrBtn = this.$el.querySelector('#resubmit-nr-btn > span')
-          if (resubmitNrBtn) resubmitNrBtn.classList.add('resubmit-nr-btn')
+          const resubmitSubmitBtn = this.$el.querySelector('#resubmit-submit-btn > span')
+          if (resubmitSubmitBtn) resubmitSubmitBtn.classList.add('resubmit-submit-btn')
           const resubmitCloseBtn = this.$el.querySelector('#resubmit-close-btn > span')
           if (resubmitCloseBtn) resubmitCloseBtn.classList.add('resubmit-close-btn')
           const resubmitBackBtn = this.$el.querySelector('#resubmit-back-btn > span')

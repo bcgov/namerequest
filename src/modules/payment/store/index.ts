@@ -2,7 +2,7 @@ import * as actions from './actions'
 import getters from './getters'
 import mutations from './mutations'
 
-import * as filingTypes from '@/modules/payment/filing-types'
+import { FilingTypes } from '@/modules/payment/filing-types'
 
 export const STATE_KEY = 'payment'
 
@@ -26,7 +26,7 @@ const state = {
     isRenewVisible: false,
     isPaymentCompleteVisible: false,
     isProcessing: false,
-    filingTypeCode: filingTypes.NM606,
+    filingTypeCode: FilingTypes.NM606,
     // entity_type_cd: corpTypes.CR,
     entity_type_cd: null,
     filingDescription: '',

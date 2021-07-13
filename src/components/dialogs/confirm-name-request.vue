@@ -49,7 +49,6 @@
               />
               <FeeSummary
                 class="mt-2"
-                :filingData="[...paymentDetails]"
                 :fees="[...paymentFees]"
               />
             </v-card-text>
@@ -88,9 +87,9 @@ import { getFeatureFlag } from '@/plugins'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 import StaffPayment from '@/components/payment/staff-payment.vue'
-import { CreatePaymentParams } from '@/modules/payment/models'
+import { CreatePaymentParams, FetchFeesParams } from '@/modules/payment/models'
 import { CONFIRM_NR_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
-import * as FilingTypes from '@/modules/payment/filing-types'
+import { FilingTypes } from '@/modules/payment/filing-types'
 import { Jurisdictions, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
@@ -166,14 +165,14 @@ export default class ConfirmNrDialog extends Mixins(
       // reset tab id
       this.currentTab = this.TAB_CONFIRM_NAME_REQUEST
 
-      const paymentConfig = {
+      const params: FetchFeesParams = {
         filingType: FilingTypes.NM620,
         jurisdiction: Jurisdictions.BC,
         priorityRequest: this.getPriorityRequest
       }
 
       // only make visible on success, otherwise hide it
-      if (await this.fetchFees(paymentConfig)) {
+      if (await this.fetchFees(params)) {
         this.isVisible = true
       } else {
         await this.hideModal()
@@ -210,7 +209,6 @@ export default class ConfirmNrDialog extends Mixins(
     }
 
     this.isLoadingPayment = true
-    const { getNrId, getPriorityRequest } = this
 
     const onSuccess = (paymentResponse) => {
       const { paymentId, paymentToken } = this
@@ -220,9 +218,9 @@ export default class ConfirmNrDialog extends Mixins(
 
       // See if redirect is needed else go to existing NR screen
       const baseUrl = getBaseUrl()
-      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${getNrId}/?paymentId=${paymentId}`)
+      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${this.getNrId}/?paymentId=${paymentId}`)
       if (paymentResponse.sbcPayment.isPaymentActionRequired) {
-        this.redirectToPaymentPortal(paymentId, paymentToken, redirectUrl)
+        this.redirectToPaymentPortal(paymentToken, redirectUrl)
       } else {
         window.location.href = redirectUrl
       }
@@ -230,7 +228,7 @@ export default class ConfirmNrDialog extends Mixins(
 
     const success = await this.createPayment({
       action: PaymentAction.CREATE,
-      nrId: getNrId,
+      nrId: this.getNrId,
       filingType: FilingTypes.NM620,
       priorityRequest: this.getPriorityRequest
     } as CreatePaymentParams, onSuccess)

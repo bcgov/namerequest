@@ -6,7 +6,7 @@
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
-              <div>Staff Payment</div>
+              <div>Staff Payment for Priority Upgrade</div>
               <v-btn icon large class="dialog-close float-right" @click="hideModal()">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -22,9 +22,9 @@
             <v-card-actions class="justify-center pt-6">
               <v-btn
                 @click="confirmPayment()"
-                id="upgrade-priority-btn"
+                id="upgrade-submit-btn"
                 class="primary px-5"
-                :loading="isLoadingPayment">Upgrade Priority</v-btn>
+                :loading="isLoadingPayment">Submit Priority Upgrade</v-btn>
               <v-btn
                 @click="goBack()"
                 id="upgrade-back-btn"
@@ -50,7 +50,6 @@
               </p>
 
               <FeeSummary
-                :filingData="[...paymentDetails]"
                 :fees="[...paymentFees]"
               />
             </v-card-text>
@@ -81,9 +80,9 @@ import { Action, Getter } from 'vuex-class'
 import { getFeatureFlag } from '@/plugins'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import StaffPayment from '@/components/payment/staff-payment.vue'
-import { CreatePaymentParams } from '@/modules/payment/models'
+import { CreatePaymentParams, FetchFeesParams } from '@/modules/payment/models'
 import { UPGRADE_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
-import * as FilingTypes from '@/modules/payment/filing-types'
+import { FilingTypes } from '@/modules/payment/filing-types'
 import { Jurisdictions, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
@@ -111,7 +110,6 @@ export default class UpgradeDialog extends Mixins(
   }
 
   // Global getters
-  @Getter getPriorityRequest!: boolean
   @Getter isRoleStaff!: boolean
 
   // Global action
@@ -147,14 +145,14 @@ export default class UpgradeDialog extends Mixins(
       // reset tab id
       this.currentTab = this.TAB_UPGRADE_NAME_REQUEST
 
-      const paymentConfig = {
+      const params: FetchFeesParams = {
         filingType: FilingTypes.NM606,
         jurisdiction: Jurisdictions.BC,
-        priorityRequest: this.getPriorityRequest
+        priorityRequest: false // not needed in NM606
       }
 
       // only make visible on success, otherwise hide it
-      if (await this.fetchFees(paymentConfig)) {
+      if (await this.fetchFees(params)) {
         this.isVisible = true
       } else {
         await this.hideModal()
@@ -191,7 +189,6 @@ export default class UpgradeDialog extends Mixins(
     }
 
     this.isLoadingPayment = true
-    const { getNrId, getPriorityRequest } = this
 
     const onSuccess = (paymentResponse) => {
       const { paymentId, paymentToken } = this
@@ -201,9 +198,9 @@ export default class UpgradeDialog extends Mixins(
 
       // See if redirect is needed else go to existing NR screen
       const baseUrl = getBaseUrl()
-      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${getNrId}/?paymentId=${paymentId}`)
+      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${this.getNrId}/?paymentId=${paymentId}`)
       if (paymentResponse.sbcPayment.isPaymentActionRequired) {
-        this.redirectToPaymentPortal(paymentId, paymentToken, redirectUrl)
+        this.redirectToPaymentPortal(paymentToken, redirectUrl)
       } else {
         window.location.href = redirectUrl
       }
@@ -211,9 +208,9 @@ export default class UpgradeDialog extends Mixins(
 
     const success = await this.createPayment({
       action: PaymentAction.UPGRADE,
-      nrId: getNrId,
+      nrId: this.getNrId,
       filingType: FilingTypes.NM606,
-      priorityRequest: this.getPriorityRequest
+      priorityRequest: false // not needed in NM606
     } as CreatePaymentParams, onSuccess)
 
     // on error, close this modal so error modal is visible
@@ -230,8 +227,8 @@ export default class UpgradeDialog extends Mixins(
           // add classname to button text (for more detail in Sentry breadcrumbs)
           const upgradeContinueBtn = this.$el.querySelector('#upgrade-continue-btn > span')
           if (upgradeContinueBtn) upgradeContinueBtn.classList.add('upgrade-continue-btn')
-          const upgradePriorityBtn = this.$el.querySelector('#upgrade-priority-btn > span')
-          if (upgradePriorityBtn) upgradePriorityBtn.classList.add('upgrade-priority-btn')
+          const upgradeSubmitBtn = this.$el.querySelector('#upgrade-submit-btn > span')
+          if (upgradeSubmitBtn) upgradeSubmitBtn.classList.add('upgrade-submit-btn')
           const upgradeCloseBtn = this.$el.querySelector('#upgrade-close-btn > span')
           if (upgradeCloseBtn) upgradeCloseBtn.classList.add('upgrade-close-btn')
           const upgradeBackBtn = this.$el.querySelector('#upgrade-back-btn > span')

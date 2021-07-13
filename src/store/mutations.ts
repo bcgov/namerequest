@@ -207,7 +207,12 @@ export const mutateIsLoadingSubmission = (state: StateIF, isLoadingSubmission: b
 }
 
 export const mutateNameRequest = (state: StateIF, nr: NameRequestI) => {
+  // store NR data
   state.stateModel.newRequestModel.nr = nr
+
+  // store Priority Code
+  mutatePriorityRequest(state, (nr?.priorityCd === PriorityCode.Y))
+
   // TODO: have 1 mutation for nr / applicant info and put these there
   const nrNum = state.stateModel.newRequestModel.nr?.nrNum
   if (nrNum?.includes('NR L')) {
@@ -372,13 +377,10 @@ export const setErrors = (state: StateIF, errors: string) => {
 
 export const setNrResponse = (state: StateIF, nr: NameRequestI) => {
   try {
-    // restore Priority Code
-    mutatePriorityRequest(state, (nr?.priorityCd === PriorityCode.Y))
-
-    // restore NR data
+    // set NR data
     mutateNameRequest(state, nr)
 
-    // restore Applicants
+    // set Applicants
     const applicants = state.stateModel.newRequestModel.nr?.applicants || []
     if (applicants instanceof Array) {
       state.stateModel.newRequestModel.applicant = { ...applicants[0] }

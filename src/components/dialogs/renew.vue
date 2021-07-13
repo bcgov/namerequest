@@ -6,7 +6,7 @@
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
-              <div>Staff Payment</div>
+              <div>Staff Payment for Request Renewal</div>
               <v-btn icon large class="dialog-close float-right" @click="hideModal()">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -22,9 +22,9 @@
             <v-card-actions class="justify-center pt-6">
               <v-btn
                 @click="confirmPayment()"
-                id="renew-nr-button"
+                id="renew-submit-button"
                 class="primary px-5"
-                :loading="isLoadingPayment">Renew Name Request</v-btn>
+                :loading="isLoadingPayment">Submit Renewal</v-btn>
               <v-btn
                 @click="goBack()"
                 id="renew-back-btn"
@@ -50,7 +50,6 @@
               </p>
 
               <FeeSummary
-                :filingData="[...paymentDetails]"
                 :fees="[...paymentFees]"
               />
             </v-card-text>
@@ -80,9 +79,9 @@ import { Action, Getter } from 'vuex-class'
 import { getFeatureFlag } from '@/plugins'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import StaffPayment from '@/components/payment/staff-payment.vue'
-import { CreatePaymentParams } from '@/modules/payment/models'
+import { CreatePaymentParams, FetchFeesParams } from '@/modules/payment/models'
 import { RENEW_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
-import * as FilingTypes from '@/modules/payment/filing-types'
+import { FilingTypes } from '@/modules/payment/filing-types'
 import { Jurisdictions, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
@@ -111,7 +110,6 @@ export default class RenewDialog extends Mixins(
 
   // Global getters
   @Getter getName!: string
-  @Getter getPriorityRequest!: boolean
   @Getter isRoleStaff!: boolean
 
   // Global action
@@ -147,14 +145,14 @@ export default class RenewDialog extends Mixins(
       // reset tab id
       this.currentTab = this.TAB_RENEW_NAME_REQUEST
 
-      const paymentConfig = {
+      const params: FetchFeesParams = {
         filingType: FilingTypes.NM620,
         jurisdiction: Jurisdictions.BC,
-        priorityRequest: this.getPriorityRequest
+        priorityRequest: false // no priority on renew
       }
 
       // only make visible on success, otherwise hide it
-      if (await this.fetchFees(paymentConfig)) {
+      if (await this.fetchFees(params)) {
         this.isVisible = true
       } else {
         await this.hideModal()
@@ -191,7 +189,6 @@ export default class RenewDialog extends Mixins(
     }
 
     this.isLoadingPayment = true
-    const { getNrId, getPriorityRequest } = this
 
     const onSuccess = (paymentResponse) => {
       const { paymentId, paymentToken } = this
@@ -201,9 +198,9 @@ export default class RenewDialog extends Mixins(
 
       // See if redirect is needed else go to existing NR screen
       const baseUrl = getBaseUrl()
-      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${getNrId}/?paymentId=${paymentId}`)
+      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${this.getNrId}/?paymentId=${paymentId}`)
       if (paymentResponse.sbcPayment.isPaymentActionRequired) {
-        this.redirectToPaymentPortal(paymentId, paymentToken, redirectUrl)
+        this.redirectToPaymentPortal(paymentToken, redirectUrl)
       } else {
         window.location.href = redirectUrl
       }
@@ -211,9 +208,9 @@ export default class RenewDialog extends Mixins(
 
     const success = await this.createPayment({
       action: PaymentAction.RENEW,
-      nrId: getNrId,
+      nrId: this.getNrId,
       filingType: FilingTypes.NM620,
-      priorityRequest: this.getPriorityRequest
+      priorityRequest: false // no priority on renew
     } as CreatePaymentParams, onSuccess)
 
     // on error, close this modal so error modal is visible
@@ -230,8 +227,8 @@ export default class RenewDialog extends Mixins(
           // add classname to button text (for more detail in Sentry breadcrumbs)
           const renewContinueBtn = this.$el.querySelector('#renew-continue-btn > span')
           if (renewContinueBtn) renewContinueBtn.classList.add('renew-continue-btn')
-          const renewNrBtn = this.$el.querySelector('#renew-nr-button > span')
-          if (renewNrBtn) renewNrBtn.classList.add('renew-nr-button')
+          const renewSubmitBtn = this.$el.querySelector('#renew-submit-button > span')
+          if (renewSubmitBtn) renewSubmitBtn.classList.add('renew-submit-button')
           const renewCloseBtn = this.$el.querySelector('#renew-close-btn > span')
           if (renewCloseBtn) renewCloseBtn.classList.add('renew-close-btn')
           const renewBackBtn = this.$el.querySelector('#renew-back-btn > span')

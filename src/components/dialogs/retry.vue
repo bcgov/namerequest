@@ -6,7 +6,7 @@
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
-              <div>Staff Payment</div>
+              <div>Staff Payment for Name Request</div>
               <v-btn icon large class="dialog-close float-right" @click="hideModal()">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -35,7 +35,7 @@
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
-              <div>Retry Payment</div>
+              <div>Retry Payment for Name Request</div>
               <v-btn icon large class="dialog-close float-right" @click="hideModal()">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -49,7 +49,6 @@
               </p>
 
               <FeeSummary
-                :filingData="[...paymentDetails]"
                 :fees="[...paymentFees]"
               />
             </v-card-text>
@@ -81,11 +80,12 @@ import { getFeatureFlag } from '@/plugins'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import StaffPayment from '@/components/payment/staff-payment.vue'
 import { RETRY_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
-import * as FilingTypes from '@/modules/payment/filing-types'
+import { FilingTypes } from '@/modules/payment/filing-types'
 import { Jurisdictions, PaymentStatus } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { FetchFeesParams } from '@/modules/payment/models'
 
 @Component({
   components: {
@@ -145,14 +145,14 @@ export default class RetryDialog extends Mixins(
       // reset tab id
       this.currentTab = this.TAB_RETRY_PAYMENT
 
-      const paymentConfig = {
+      const params: FetchFeesParams = {
         filingType: FilingTypes.NM620,
         jurisdiction: Jurisdictions.BC,
-        priorityRequest: this.getPriorityRequest
+        priorityRequest: this.getPriorityRequest // same value as originally
       }
 
       // only make visible on success, otherwise hide it
-      if (await this.fetchFees(paymentConfig)) {
+      if (await this.fetchFees(params)) {
         this.isVisible = true
       } else {
         await this.hideModal()
@@ -172,43 +172,41 @@ export default class RetryDialog extends Mixins(
 
   /** Called when user clicks Continue/Submit button. */
   private async confirmPayment () {
-    if (this.isRoleStaff && getFeatureFlag('staff-payment-enabled')) {
-      if (this.currentTab === this.TAB_RETRY_PAYMENT) {
-        // disable validation
-        this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(false)
-        // go to next tab
-        this.currentTab = this.TAB_STAFF_PAYMENT
-        return
-      }
-      if (this.currentTab === this.TAB_STAFF_PAYMENT) {
-        // enable validation
-        this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(true)
-        // if invalid then stop, else continue
-        if (!this.isStaffPaymentValid) return
-      }
-    }
+    // FUTURE: enable this when we know whether to reuse the original payment or create a new one (for staff)
+    // if (this.isRoleStaff && getFeatureFlag('staff-payment-enabled')) {
+    //   if (this.currentTab === this.TAB_RETRY_PAYMENT) {
+    //     // disable validation
+    //     this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(false)
+    //     // go to next tab
+    //     this.currentTab = this.TAB_STAFF_PAYMENT
+    //     return
+    //   }
+    //   if (this.currentTab === this.TAB_STAFF_PAYMENT) {
+    //     // enable validation
+    //     this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(true)
+    //     // if invalid then stop, else continue
+    //     if (!this.isStaffPaymentValid) return
+    //   }
+    // }
 
+    // we don't need to create payment -- it already exists
+    // just navigate to the payment portal
     this.isLoadingPayment = true
     const { id, token, nrId, action } = this.pendingPayment
 
-    sessionStorage.setItem('paymentInProgress', 'true')
-    sessionStorage.setItem('paymentId', id)
-    sessionStorage.setItem('paymentToken', token)
-    sessionStorage.setItem('nrId', nrId)
-    sessionStorage.setItem('paymentAction', action)
+    // Save payment to session
+    this.savePendingPaymentToSession(action, this.pendingPayment)
 
     const baseUrl = getBaseUrl()
     const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${id}`)
-    this.redirectToPaymentPortal(id, token, redirectUrl)
+    this.redirectToPaymentPortal(token, redirectUrl)
   }
 
   private get pendingPayment (): any {
-    return this.payments.find(
-      payment => (
-        ![PaymentStatus.APPROVED, PaymentStatus.COMPLETED, PaymentStatus.CANCELLED, PaymentStatus.REFUND_REQUESTED]
-          .includes(payment.statusCode)
-      )
-    )
+    return this.payments.find(payment => (
+      ![PaymentStatus.APPROVED, PaymentStatus.COMPLETED, PaymentStatus.CANCELLED, PaymentStatus.REFUND_REQUESTED]
+        .includes(payment.statusCode)
+    ))
   }
 
   @Watch('isVisible')
@@ -228,6 +226,7 @@ export default class RetryDialog extends Mixins(
         }
       })
     }
+    console.log('*** pending payment =', this.pendingPayment) // eslint-disable-line no-console
   }
 }
 </script>

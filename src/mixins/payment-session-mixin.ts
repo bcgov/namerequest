@@ -39,7 +39,7 @@ export class PaymentSessionMixin extends Vue {
   }
 
   /**
-   * @param paymentAction A PaymentAction - one of [COMPLETE, UPGRADE, REAPPLY, REFUND]
+   * @param paymentAction A PaymentAction - one of [CREATE, REAPPLY, RESUBMIT, UPGRADE]
    * @param paymentResponse
    */
   savePaymentResponseToSession (paymentAction: PaymentAction, paymentResponse: NameRequestPaymentResponse) {
@@ -54,5 +54,21 @@ export class PaymentSessionMixin extends Vue {
     sessionStorage.setItem('paymentId', `${id}`)
     sessionStorage.setItem('paymentToken', `${token}`)
     sessionStorage.setItem('nrId', `${nrId}`)
+  }
+
+  /**
+   * @param paymentAction A PaymentAction - same as in original payment response
+   * @param pendingPayment
+   */
+  savePendingPaymentToSession (paymentAction: PaymentAction, pendingPayment: any) {
+    const { id, token, nrId, action } = pendingPayment
+
+    // TODO: Remove this one, we don't want to set the payment to session once we're done!
+    // TODO: Or... we could add a debug payments mode?
+    sessionStorage.setItem('paymentInProgress', 'true')
+    sessionStorage.setItem('paymentId', id)
+    sessionStorage.setItem('paymentToken', token)
+    sessionStorage.setItem('nrId', nrId)
+    sessionStorage.setItem('paymentAction', paymentAction)
   }
 }

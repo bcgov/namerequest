@@ -25,6 +25,7 @@ export default {
   [types.GET_PAYMENT_DATE]: state => state[STATE_KEY].payment.payment_status_code,
   [types.GET_PAYMENT_FEES]: state => state[STATE_KEY].fees,
   [types.GET_PAYMENT_DETAILS]: state => {
+    // FUTURE: delete these state properties if obsolete
     const {
       filingTypeCode,
       entity_type_cd,
