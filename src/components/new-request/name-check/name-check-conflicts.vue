@@ -12,7 +12,7 @@
       <tr v-if="item.info === ITEM_TYPES.NO_ISSUES" class="no-hover">
         <v-row class="mb-5 pl-4 py-5 border-top border-bottom" justify="center" no-gutters>
           <v-col cols="auto">
-            <b class="copy-bold">{{ item.info }}</b>
+            <b class="copy-bold">{{ item.problem }}</b>
           </v-col>
         </v-row>
       </tr>
