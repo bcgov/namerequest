@@ -62,8 +62,8 @@
                 :loading="isLoadingPayment">Continue to Payment</v-btn>
               <v-btn
                 @click="hideModal()"
-                id="renew-close-btn"
-                class="button button-blue px-5">Close</v-btn>
+                id="renew-cancel-btn"
+                class="button button-blue px-5">Cancel</v-btn>
             </v-card-actions>
           </v-tab-item>
 
@@ -229,8 +229,8 @@ export default class RenewDialog extends Mixins(
           if (renewContinueBtn) renewContinueBtn.classList.add('renew-continue-btn')
           const renewSubmitBtn = this.$el.querySelector('#renew-submit-button > span')
           if (renewSubmitBtn) renewSubmitBtn.classList.add('renew-submit-button')
-          const renewCloseBtn = this.$el.querySelector('#renew-close-btn > span')
-          if (renewCloseBtn) renewCloseBtn.classList.add('renew-close-btn')
+          const renewCancelBtn = this.$el.querySelector('#renew-cancel-btn > span')
+          if (renewCancelBtn) renewCancelBtn.classList.add('renew-cancel-btn')
           const renewBackBtn = this.$el.querySelector('#renew-back-btn > span')
           if (renewBackBtn) renewBackBtn.classList.add('renew-back-btn')
         }

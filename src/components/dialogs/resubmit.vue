@@ -63,8 +63,8 @@
                 :loading="isLoadingPayment">Continue to Payment</v-btn>
               <v-btn
                 @click="hideModal()"
-                id="resubmit-close-btn"
-                class="button button-blue px-5">Close</v-btn>
+                id="resubmit-cancel-btn"
+                class="button button-blue px-5">Cancel</v-btn>
             </v-card-actions>
           </v-tab-item>
 
@@ -230,8 +230,8 @@ export default class ResubmitDialog extends Mixins(
           if (resubmitContinueBtn) resubmitContinueBtn.classList.add('resubmit-continue-btn')
           const resubmitSubmitBtn = this.$el.querySelector('#resubmit-submit-btn > span')
           if (resubmitSubmitBtn) resubmitSubmitBtn.classList.add('resubmit-submit-btn')
-          const resubmitCloseBtn = this.$el.querySelector('#resubmit-close-btn > span')
-          if (resubmitCloseBtn) resubmitCloseBtn.classList.add('resubmit-close-btn')
+          const resubmitCancelBtn = this.$el.querySelector('#resubmit-cancel-btn > span')
+          if (resubmitCancelBtn) resubmitCancelBtn.classList.add('resubmit-cancel-btn')
           const resubmitBackBtn = this.$el.querySelector('#resubmit-back-btn > span')
           if (resubmitBackBtn) resubmitBackBtn.classList.add('resubmit-back-btn')
         }

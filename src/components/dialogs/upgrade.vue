@@ -63,8 +63,8 @@
                 :loading="isLoadingPayment">Continue to Payment</v-btn>
               <v-btn
                 @click="hideModal()"
-                id="upgrade-close-btn"
-                class="button button-blue px-5">Close</v-btn>
+                id="upgrade-cancel-btn"
+                class="button button-blue px-5">Cancel</v-btn>
             </v-card-actions>
           </v-tab-item>
 
@@ -229,8 +229,8 @@ export default class UpgradeDialog extends Mixins(
           if (upgradeContinueBtn) upgradeContinueBtn.classList.add('upgrade-continue-btn')
           const upgradeSubmitBtn = this.$el.querySelector('#upgrade-submit-btn > span')
           if (upgradeSubmitBtn) upgradeSubmitBtn.classList.add('upgrade-submit-btn')
-          const upgradeCloseBtn = this.$el.querySelector('#upgrade-close-btn > span')
-          if (upgradeCloseBtn) upgradeCloseBtn.classList.add('upgrade-close-btn')
+          const upgradeCancelBtn = this.$el.querySelector('#upgrade-cancel-btn > span')
+          if (upgradeCancelBtn) upgradeCancelBtn.classList.add('upgrade-cancel-btn')
           const upgradeBackBtn = this.$el.querySelector('#upgrade-back-btn > span')
           if (upgradeBackBtn) upgradeBackBtn.classList.add('upgrade-back-btn')
         }

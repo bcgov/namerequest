@@ -62,8 +62,8 @@
                 :loading="isLoadingPayment">Continue to Payment</v-btn>
               <v-btn
                 @click="hideModal()"
-                id="retry-close-btn"
-                class="button button-blue px-5">Close</v-btn>
+                id="retry-cancel-btn"
+                class="button button-blue px-5">Cancel</v-btn>
             </v-card-actions>
           </v-tab-item>
 
@@ -172,7 +172,7 @@ export default class RetryDialog extends Mixins(
 
   /** Called when user clicks Continue/Submit button. */
   private async confirmPayment () {
-    // FUTURE: enable this when we know whether to reuse the original payment or create a new one (for staff)
+    // FUTURE: enable this if needed for staff payment, but not needed for now (see #7827)
     // if (this.isRoleStaff && getFeatureFlag('staff-payment-enabled')) {
     //   if (this.currentTab === this.TAB_RETRY_PAYMENT) {
     //     // disable validation
@@ -219,8 +219,8 @@ export default class RetryDialog extends Mixins(
           if (retryContinueBtn) retryContinueBtn.classList.add('retry-continue-btn')
           const retryNrBtn = this.$el.querySelector('#retry-submit-btn > span')
           if (retryNrBtn) retryNrBtn.classList.add('retry-submit-btn')
-          const retryCloseBtn = this.$el.querySelector('#retry-close-btn > span')
-          if (retryCloseBtn) retryCloseBtn.classList.add('retry-close-btn')
+          const retryCancelBtn = this.$el.querySelector('#retry-cancel-btn > span')
+          if (retryCancelBtn) retryCancelBtn.classList.add('retry-cancel-btn')
           const retryBackBtn = this.$el.querySelector('#retry-back-btn > span')
           if (retryBackBtn) retryBackBtn.classList.add('retry-back-btn')
         }
