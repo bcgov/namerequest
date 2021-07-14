@@ -21,15 +21,15 @@
 
             <v-card-actions class="justify-center pt-6">
               <v-btn
+                @click="goBack()"
+                id="renew-back-btn"
+                class="button-blue px-10"
+                :disabled="isLoadingPayment">Back</v-btn>
+              <v-btn
                 @click="confirmPayment()"
                 id="renew-submit-button"
                 class="primary px-5"
                 :loading="isLoadingPayment">Submit Renewal</v-btn>
-              <v-btn
-                @click="goBack()"
-                id="renew-back-btn"
-                class="button-blue px-5"
-                :disabled="isLoadingPayment">Back</v-btn>
             </v-card-actions>
           </v-tab-item>
 
@@ -42,11 +42,9 @@
             </v-card-title>
 
             <v-card-text class="copy-normal">
-              <!-- *** for testing only - do not commit! -->
-              <p v-if="true || !isRoleStaff" class="mb-8">
-                If you are within 14 days of expiry, you can renew your Name
-                Request and extend the expiry date for an additional 56
-                days, for a fee.
+              <p v-if="!isRoleStaff" class="mb-8">
+                If you are within 14 days of expiry, you can renew your Name Request and extend
+                the expiry date for an additional 56 days, for a fee.
               </p>
 
               <FeeSummary
@@ -56,14 +54,14 @@
 
             <v-card-actions class="pt-8 justify-center">
               <v-btn
+                @click="hideModal()"
+                id="renew-cancel-btn"
+                class="button button-blue px-5">Cancel</v-btn>
+              <v-btn
                 @click="confirmPayment()"
                 id="renew-continue-btn"
                 class="primary px-5"
                 :loading="isLoadingPayment">Continue to Payment</v-btn>
-              <v-btn
-                @click="hideModal()"
-                id="renew-cancel-btn"
-                class="button button-blue px-5">Cancel</v-btn>
             </v-card-actions>
           </v-tab-item>
 

@@ -21,15 +21,15 @@
 
             <v-card-actions class="justify-center pt-6">
               <v-btn
+                @click="goBack()"
+                id="resubmit-back-btn"
+                class="button-blue px-10"
+                :disabled="isLoadingPayment">Back</v-btn>
+              <v-btn
                 @click="confirmPayment()"
                 id="resubmit-submit-btn"
                 class="primary px-5"
                 :loading="isLoadingPayment">Submit Name Request</v-btn>
-              <v-btn
-                @click="goBack()"
-                id="resubmit-back-btn"
-                class="button-blue px-5"
-                :disabled="isLoadingPayment">Back</v-btn>
             </v-card-actions>
           </v-tab-item>
 
@@ -42,11 +42,9 @@
             </v-card-title>
 
             <v-card-text class="copy-normal">
-              <!-- *** for testing only - do not commit! -->
-              <p v-if="true || !isRoleStaff" class="mb-8">
-                If your Name Request has expired, you have 30 days to
-                resubmit the same name request, for a fee. This will
-                generate a new Name Request Number.
+              <p v-if="!isRoleStaff" class="mb-8">
+                If your Name Request has expired, you can resubmit the same name request, for a
+                fee. This will generate a new Name Request Number.
               </p>
 
               <FeeSummary
@@ -55,16 +53,15 @@
             </v-card-text>
 
             <v-card-actions class="pt-8 justify-center">
-              <!-- <v-spacer></v-spacer> -->
+              <v-btn
+                @click="hideModal()"
+                id="resubmit-cancel-btn"
+                class="button button-blue px-5">Cancel</v-btn>
               <v-btn
                 @click="confirmPayment()"
                 id="resubmit-continue-btn"
                 class="primary px-5"
                 :loading="isLoadingPayment">Continue to Payment</v-btn>
-              <v-btn
-                @click="hideModal()"
-                id="resubmit-cancel-btn"
-                class="button button-blue px-5">Cancel</v-btn>
             </v-card-actions>
           </v-tab-item>
 

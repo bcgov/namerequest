@@ -21,15 +21,15 @@
 
             <v-card-actions class="justify-center pt-6">
               <v-btn
+                @click="goBack()"
+                id="retry-back-btn"
+                class="button-blue px-10"
+                :disabled="isLoadingPayment">Back</v-btn>
+              <v-btn
                 @click="confirmPayment()"
                 id="retry-submit-btn"
                 class="primary px-5"
                 :loading="isLoadingPayment">Submit Name Request</v-btn>
-              <v-btn
-                @click="goBack()"
-                id="retry-back-btn"
-                class="button-blue px-5"
-                :disabled="isLoadingPayment">Back</v-btn>
             </v-card-actions>
           </v-tab-item>
 
@@ -42,10 +42,9 @@
             </v-card-title>
 
             <v-card-text class="copy-normal">
-              <!-- *** for testing only - do not commit! -->
-              <p v-if="true || !isRoleStaff" class="mb-8">
-                If your Name Request payment was previously cancelled or
-                did not go through, you can retry payment.
+              <p v-if="!isRoleStaff" class="mb-8">
+                If your Name Request payment was previously cancelled or did not go through, you
+                can retry payment.
               </p>
 
               <FeeSummary
@@ -54,16 +53,15 @@
             </v-card-text>
 
             <v-card-actions class="pt-8 justify-center">
-              <!-- <v-spacer></v-spacer> -->
+              <v-btn
+                @click="hideModal()"
+                id="retry-cancel-btn"
+                class="button button-blue px-5">Cancel</v-btn>
               <v-btn
                 @click="confirmPayment()"
                 id="retry-continue-btn"
                 class="primary px-5"
                 :loading="isLoadingPayment">Continue to Payment</v-btn>
-              <v-btn
-                @click="hideModal()"
-                id="retry-cancel-btn"
-                class="button button-blue px-5">Cancel</v-btn>
             </v-card-actions>
           </v-tab-item>
 
@@ -76,7 +74,7 @@
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { getFeatureFlag } from '@/plugins'
+// import { getFeatureFlag } from '@/plugins'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import StaffPayment from '@/components/payment/staff-payment.vue'
 import { RETRY_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
@@ -172,7 +170,7 @@ export default class RetryDialog extends Mixins(
 
   /** Called when user clicks Continue/Submit button. */
   private async confirmPayment () {
-    // FUTURE: enable this if needed for staff payment, but not needed for now (see #7827)
+    // FUTURE: enable this for staff payment if needed
     // if (this.isRoleStaff && getFeatureFlag('staff-payment-enabled')) {
     //   if (this.currentTab === this.TAB_RETRY_PAYMENT) {
     //     // disable validation
@@ -189,8 +187,7 @@ export default class RetryDialog extends Mixins(
     //   }
     // }
 
-    // we don't need to create payment -- it already exists
-    // just navigate to the payment portal
+    // navigate to the payment portal
     this.isLoadingPayment = true
     const { id, token, nrId, action } = this.pendingPayment
 
@@ -202,6 +199,7 @@ export default class RetryDialog extends Mixins(
     this.redirectToPaymentPortal(token, redirectUrl)
   }
 
+  /** The first pending payment. */
   private get pendingPayment (): any {
     return this.payments.find(payment => (
       ![PaymentStatus.APPROVED, PaymentStatus.COMPLETED, PaymentStatus.CANCELLED, PaymentStatus.REFUND_REQUESTED]

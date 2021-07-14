@@ -21,15 +21,15 @@
 
             <v-card-actions class="justify-center pt-6">
               <v-btn
+                @click="goBack()"
+                id="upgrade-back-btn"
+                class="button-blue px-10"
+                :disabled="isLoadingPayment">Back</v-btn>
+              <v-btn
                 @click="confirmPayment()"
                 id="upgrade-submit-btn"
                 class="primary px-5"
                 :loading="isLoadingPayment">Submit Priority Upgrade</v-btn>
-              <v-btn
-                @click="goBack()"
-                id="upgrade-back-btn"
-                class="button-blue px-5"
-                :disabled="isLoadingPayment">Back</v-btn>
             </v-card-actions>
           </v-tab-item>
 
@@ -42,11 +42,9 @@
             </v-card-title>
 
             <v-card-text class="copy-normal">
-              <!-- *** for testing only - do not commit! -->
-              <p v-if="true || !isRoleStaff" class="mb-8">
-                If you need your name reviewed as quickly as possible,
-                upgrade to a Priority request. Priority name requests are
-                usually reviewed within 1 to 2 business days.
+              <p v-if="!isRoleStaff" class="mb-8">
+                If you need your name reviewed as quickly as possible, upgrade to a Priority
+                request. Priority name requests are usually reviewed within 1 to 2 business days.
               </p>
 
               <FeeSummary
@@ -55,16 +53,15 @@
             </v-card-text>
 
             <v-card-actions class="pt-8 justify-center">
-              <!-- <v-spacer></v-spacer> -->
+              <v-btn
+                @click="hideModal()"
+                id="upgrade-cancel-btn"
+                class="button button-blue px-5">Cancel</v-btn>
               <v-btn
                 @click="confirmPayment()"
                 id="upgrade-continue-btn"
                 class="primary px-5"
                 :loading="isLoadingPayment">Continue to Payment</v-btn>
-              <v-btn
-                @click="hideModal()"
-                id="upgrade-cancel-btn"
-                class="button button-blue px-5">Cancel</v-btn>
             </v-card-actions>
           </v-tab-item>
 

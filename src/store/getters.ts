@@ -990,7 +990,7 @@ export const getReservedNameReservation = (state: StateIF): ReservedReqI => {
     applicants: [getApplicant(state)],
     names: getNrNames(state),
     ...getNrData(state),
-    priorityCd: 'N',
+    priorityCd: PriorityCode.N,
     entity_type_cd: getEntityTypeCd(state), // FUTURE: fix entity_type_cd type
     request_action_cd: getRequestActionCd(state),
     stateCd: NrState.RESERVED,
@@ -1032,7 +1032,7 @@ export const getConditionalNameReservation = (state: StateIF): ConditionalReqI =
     applicants: [getApplicant(state)],
     names: names,
     ...getNrData(state),
-    priorityCd: 'N',
+    priorityCd: PriorityCode.N,
     entity_type_cd: getEntityTypeCd(state), // FUTURE: fix entity_type_cd type
     request_action_cd: getRequestActionCd(state),
     request_type_cd: getXproRequestTypeCd(state) ? getXproRequestTypeCd(state) : '',

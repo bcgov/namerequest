@@ -21,15 +21,15 @@
 
             <v-card-actions class="justify-center pt-6">
               <v-btn
+                @click="goBack()"
+                id="confirm-nr-back-btn"
+                class="button-blue px-10"
+                :disabled="isLoadingPayment">Back</v-btn>
+              <v-btn
                 @click="confirmPayment()"
                 id="confirm-nr-submit-btn"
                 class="primary px-5"
                 :loading="isLoadingPayment">Submit Name Request</v-btn>
-              <v-btn
-                @click="goBack()"
-                id="confirm-nr-back-btn"
-                class="button-blue px-5"
-                :disabled="isLoadingPayment">Back</v-btn>
             </v-card-actions>
           </v-tab-item>
 
@@ -62,15 +62,15 @@
                 :disabled="isLoadingPayment">Cancel Name Request</v-btn>
               <v-spacer />
               <v-btn
-                @click="confirmPayment()"
-                id="confirm-nr-continue-btn"
-                class="primary px-5"
-                :loading="isLoadingPayment">Continue to Payment</v-btn>
-              <v-btn
                 @click="hideModal()"
                 id="confirm-nr-close-btn"
                 class="button-blue px-5"
                 :disabled="isLoadingPayment">Close</v-btn>
+              <v-btn
+                @click="confirmPayment()"
+                id="confirm-nr-continue-btn"
+                class="primary px-5"
+                :loading="isLoadingPayment">Continue to Payment</v-btn>
             </v-card-actions>
           </v-tab-item>
 

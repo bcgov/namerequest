@@ -90,7 +90,7 @@
                   &nbsp;{{ expiryDate }}
                 </v-col>
 
-                <v-col cols="12" v-if="nr.consentFlag && (nr.consentFlag !== 'N')" class="consent-status">
+                <v-col cols="12" v-if="consentDate" class="consent-status">
                   <span>Consent Status:</span>
                   &nbsp;{{ consentDate }}
                 </v-col>
@@ -170,7 +170,7 @@ import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
-import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction } from '@/enums'
+import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished } from '@/enums'
 import { sleep } from '@/plugins'
 import NamexServices from '@/services/namex.services'
 
@@ -231,12 +231,6 @@ export default class ExistingRequestDisplay extends Mixins(
   /** The actions list, with some buttons forced to the bottom. */
   private get actions (): NrAction[] {
     const actions = (this.nr.actions || []) as NrAction[]
-    // *** for testing only - do not commit!
-    actions.push(NrAction.RENEW)
-    actions.push(NrAction.RESUBMIT)
-    actions.push(NrAction.UPGRADE)
-    // actions.push(NrAction.RETRY_PAYMENT)
-
     // move 'REQUEST_REFUND' or 'CANCEL' action (if present) to bottom of list
     // eg ['EDIT', 'REQUEST_REFUND', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'REQUEST_REFUND']
     // or ['EDIT', 'CANCEL', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'CANCEL']
@@ -277,6 +271,8 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   private get consentDate (): string {
+    if (!this.nr.consentFlag || (this.nr.consentFlag === 'N')) return ''
+
     let ret: string
     if (this.nr.consent_dt) {
       const date = new Date(this.nr.consent_dt)
@@ -337,7 +333,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   private get disableUnfurnished (): boolean {
     return (
-      this.nr.furnished === 'N' &&
+      (this.nr.furnished === Furnished.N) &&
       [NrState.CONDITIONAL, NrState.REJECTED, NrState.APPROVED].includes(this.nr.stateCd)
     )
   }
@@ -623,7 +619,7 @@ export default class ExistingRequestDisplay extends Mixins(
     try {
       const resp = await NamexServices.getNameRequest(true)
       this.$root.$emit('showSpinner', false)
-      if (resp?.furnished === 'Y') {
+      if (resp?.furnished === Furnished.Y) {
         this.furnished = 'furnished'
         this.setNrResponse(resp)
       }
@@ -725,6 +721,8 @@ export default class ExistingRequestDisplay extends Mixins(
         // fetch updated payments
         await this.fetchNrPayments(nrId)
       }
+
+      // get the first pending payment
       this.pendingPayment = this.payments.find(
         payment => (
           ![PaymentStatus.APPROVED, PaymentStatus.COMPLETED, PaymentStatus.CANCELLED, PaymentStatus.REFUND_REQUESTED]
