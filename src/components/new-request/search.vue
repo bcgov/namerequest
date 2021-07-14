@@ -214,13 +214,16 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
+// bcregistry common
+import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
+
 // Components
 import NameInput from './name-input.vue'
 
 // Interfaces / Enums / List Data
 import { ConversionTypesI, EntityI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { EntityType, Location, RequestCode } from '@/enums'
+import { AccountType, EntityType, Location, RequestCode } from '@/enums'
 
 @Component({
   components: { NameInput }
@@ -295,11 +298,11 @@ export default class NewSearch extends Vue {
   }
 
   // Local Getters
-  get isPremium () {
-    return JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.accountType === 'PREMIUM'
+  get isPremium (): boolean {
+    return JSON.parse(sessionStorage.getItem(SessionStorageKeys.CurrentAccount))?.accountType === AccountType.PREMIUM
   }
 
-  get designation () {
+  get designation (): string {
     return this.getDesignation
   }
   set designation (value: string) {

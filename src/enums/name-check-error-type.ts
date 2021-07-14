@@ -1,7 +1,7 @@
 export enum NameCheckErrorType {
-  errorDesignation = 'errorDesignation',
-  errorExact = 'errorExact',
-  errorRestricted = 'errorRestricted',
-  errorSimilar = 'errorSimilar',
-  errorStructure = 'errorStructure'
+  ERROR_DESIGNATION = 'errorDesignation',
+  ERROR_EXACT = 'errorExact',
+  ERROR_RESTRICTED = 'errorRestricted',
+  ERROR_SIMILAR = 'errorSimilar',
+  ERROR_STRUCTURE = 'errorStructure'
 }

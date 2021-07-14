@@ -1,7 +1,7 @@
 import { NameCheckErrorType, NameCheckItemType } from '@/enums'
 
 export const baseItemsConflicts = {
-  'errorExact': {
+  [NameCheckErrorType.ERROR_EXACT]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'There was an issue checking exact matches against your name',
@@ -15,9 +15,9 @@ export const baseItemsConflicts = {
       open: 'Hide Details'
     },
     count: 0,
-    info: NameCheckErrorType.errorExact
+    info: NameCheckErrorType.ERROR_EXACT
   },
-  'errorSimilar': {
+  [NameCheckErrorType.ERROR_SIMILAR]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'There was an issue checking similar matches against your name',
@@ -31,9 +31,9 @@ export const baseItemsConflicts = {
       open: 'Hide Details'
     },
     count: 0,
-    info: NameCheckErrorType.errorSimilar
+    info: NameCheckErrorType.ERROR_SIMILAR
   },
-  'exactMatch': {
+  [NameCheckItemType.EXACT_MATCH]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'There is an existing BC Corporation using the <b>exact name</b>',
@@ -50,7 +50,7 @@ export const baseItemsConflicts = {
     count: 0,
     info: NameCheckItemType.EXACT_MATCH
   },
-  'exactMatchXpro': {
+  [NameCheckItemType.EXACT_MATCH_XPRO]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'There is an existing BC Corporation using the <b>exact name</b>',
@@ -71,7 +71,7 @@ export const baseItemsConflicts = {
     count: 0,
     info: NameCheckItemType.EXACT_MATCH_XPRO
   },
-  'loading': {
+  [NameCheckItemType.LOADING]: {
     count: 0,
     expandedInfo1: null,
     expandedInfo2: null,
@@ -86,7 +86,7 @@ export const baseItemsConflicts = {
     words: null,
     info: NameCheckItemType.LOADING
   },
-  'noIssues': {
+  [NameCheckItemType.NO_ISSUES]: {
     icon: null,
     iconColor: null,
     info: NameCheckItemType.NO_ISSUES,
@@ -98,7 +98,7 @@ export const baseItemsConflicts = {
     expandLabel: null,
     count: null
   },
-  'similarMatch': {
+  [NameCheckItemType.SIMILAR_MATCH]: {
     icon: 'mdi-alert',
     iconColor: 'orange darken-2',
     problem: 'There are existing BC Corporations using the <b>same or similar words</b>',
@@ -114,7 +114,7 @@ export const baseItemsConflicts = {
     count: 0,
     info: NameCheckItemType.SIMILAR_MATCH
   },
-  'similarMatchXpro': {
+  [NameCheckItemType.SIMILAR_MATCH_XPRO]: {
     icon: 'mdi-alert',
     iconColor: 'orange darken-2',
     problem: 'There are existing BC Corporations using the <b>same or similar words</b>',

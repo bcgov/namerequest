@@ -1,7 +1,7 @@
 import { NameCheckErrorType, NameCheckItemType } from '@/enums'
 
 export const baseItemsStructure = {
-  'conflictsConditional': {
+  [NameCheckItemType.CONFLICTS_CONDITIONAL]: {
     icon: 'mdi-alert',
     iconColor: 'orange darken-2',
     problem: 'You may need consent to use the following words:',
@@ -18,7 +18,7 @@ export const baseItemsStructure = {
     },
     count: null
   },
-  'descriptiveMissing': {
+  [NameCheckItemType.DESCRIPTIVE_MISSING]: {
     icon: 'mdi-alert',
     iconColor: 'orange darken-2',
     problem: 'Ensure there is a <b>descriptive</b> element in your business name',
@@ -41,7 +41,7 @@ export const baseItemsStructure = {
     },
     count: null
   },
-  'designationsCheckUse': {
+  [NameCheckItemType.DESIGNATIONS_CHECK_USE]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'Check corporate designation usage:',
@@ -59,7 +59,7 @@ export const baseItemsStructure = {
     },
     count: null
   },
-  'designationsCheckUseCP': {
+  [NameCheckItemType.DESIGNATIONS_CHECK_USE_CP]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'Check corporate designation usage:',
@@ -75,7 +75,7 @@ export const baseItemsStructure = {
     },
     count: null
   },
-  'designationsCheckUseCCC': {
+  [NameCheckItemType.DESIGNATIONS_CHECK_USE_CCC]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'Check corporate designation usage:',
@@ -91,7 +91,7 @@ export const baseItemsStructure = {
     },
     count: null
   },
-  'designationsCheckUseProp': {
+  [NameCheckItemType.DESIGNATIONS_CHECK_USE_PROP]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'Check corporate designation usage:',
@@ -111,7 +111,7 @@ export const baseItemsStructure = {
     },
     count: null
   },
-  'designationsMismatched': {
+  [NameCheckItemType.DESIGNATIONS_MISMATCHED]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'Check corporate designation usage:',
@@ -127,7 +127,7 @@ export const baseItemsStructure = {
     },
     count: null
   },
-  'designationsMisplaced': {
+  [NameCheckItemType.DESIGNATIONS_MISPLACED]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'Check corporate designation usage:',
@@ -145,7 +145,7 @@ export const baseItemsStructure = {
     },
     count: null
   },
-  'designationsMissing': {
+  [NameCheckItemType.DESIGNATIONS_MISSING]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'Ensure there is a <b>corporate designation</b> in your business name',
@@ -159,7 +159,7 @@ export const baseItemsStructure = {
     },
     count: null
   },
-  'designationsMissingCP': {
+  [NameCheckItemType.DESIGNATIONS_MISSING_CP]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'Ensure there is a <b>corporate designation</b> in your business name',
@@ -175,7 +175,7 @@ export const baseItemsStructure = {
     },
     count: null
   },
-  'designationsMissingCCC': {
+  [NameCheckItemType.DESIGNATIONS_MISSING_CCC]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'Ensure there is a <b>corporate designation</b> in your business name',
@@ -191,7 +191,7 @@ export const baseItemsStructure = {
     },
     count: null
   },
-  'distinctiveMissing': {
+  [NameCheckItemType.DISTINCTIVE_MISSING]: {
     icon: 'mdi-alert',
     iconColor: 'orange darken-2',
     problem: 'Ensure there is a <b>distinctive</b> element in your business name',
@@ -208,7 +208,7 @@ export const baseItemsStructure = {
     },
     count: null
   },
-  'errorDesignation': {
+  [NameCheckErrorType.ERROR_DESIGNATION]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'There was an issue checking designation in your name',
@@ -222,9 +222,9 @@ export const baseItemsStructure = {
       open: 'Hide Details'
     },
     count: 0,
-    info: NameCheckErrorType.errorDesignation
+    info: NameCheckErrorType.ERROR_DESIGNATION
   },
-  'errorRestricted': {
+  [NameCheckErrorType.ERROR_RESTRICTED]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'There was an issue checking restricted words in your name',
@@ -238,9 +238,9 @@ export const baseItemsStructure = {
       open: 'Hide Details'
     },
     count: 0,
-    info: NameCheckErrorType.errorRestricted
+    info: NameCheckErrorType.ERROR_RESTRICTED
   },
-  'errorStructure': {
+  [NameCheckErrorType.ERROR_STRUCTURE]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'There was an issue checking descriptive/distinctive words in your name',
@@ -254,9 +254,9 @@ export const baseItemsStructure = {
       open: 'Hide Details'
     },
     count: 0,
-    info: NameCheckErrorType.errorStructure
+    info: NameCheckErrorType.ERROR_STRUCTURE
   },
-  'loading': {
+  [NameCheckItemType.LOADING]: {
     count: 0,
     expandedInfo1: null,
     expandedInfo2: null,
@@ -271,7 +271,7 @@ export const baseItemsStructure = {
     words: null,
     info: NameCheckItemType.LOADING
   },
-  'noIssues': {
+  [NameCheckItemType.NO_ISSUES]: {
     icon: null,
     iconColor: null,
     info: NameCheckItemType.NO_ISSUES,
@@ -283,7 +283,7 @@ export const baseItemsStructure = {
     expandLabel: null,
     count: null
   },
-  'restricted': {
+  [NameCheckItemType.RESTRICTED]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'Consider removing the following word(s):',
@@ -298,7 +298,7 @@ export const baseItemsStructure = {
     },
     count: null
   },
-  'specialCharacters': {
+  [NameCheckItemType.SPECIAL_CHARACTERS]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'Please remove the following character(s):',

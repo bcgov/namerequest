@@ -1,9 +1,9 @@
 import { NameCheckErrorType } from '@/enums'
 
 export interface NameCheckErrorI {
-  [NameCheckErrorType.errorDesignation]: boolean
-  [NameCheckErrorType.errorExact]: boolean
-  [NameCheckErrorType.errorRestricted]: boolean
-  [NameCheckErrorType.errorSimilar]: boolean
-  [NameCheckErrorType.errorStructure]: boolean
+  [NameCheckErrorType.ERROR_DESIGNATION]: boolean
+  [NameCheckErrorType.ERROR_EXACT]: boolean
+  [NameCheckErrorType.ERROR_RESTRICTED]: boolean
+  [NameCheckErrorType.ERROR_SIMILAR]: boolean
+  [NameCheckErrorType.ERROR_STRUCTURE]: boolean
 }

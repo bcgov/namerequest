@@ -1,9 +1,9 @@
 <template>
   <v-container id="name-check-main-container" class="white pa-0 rounded">
-    <name-check-issues-dialog :attach="'#app'"
+    <name-check-issues-dialog attach="#app"
                               :display="showNameCheckIssuesDialog"
                               :options="dialogOptions"
-                              @proceed="dialogSubmit"/>
+                              @proceed="dialogSubmit($event)"/>
     <v-row class="pl-10 pt-6" no-gutters>
       <v-col cols="auto" class="h6 py-0 mt-1">
         You are searching for a name for a
@@ -182,7 +182,7 @@
           </v-btn>
         </v-col>
         <v-col>
-          <v-btn id="name-check-submit-btn" style="float: right;" @click="dialogCheck()">
+          <v-btn id="name-check-submit-btn" class="float-right" @click="dialogCheck()">
             Submit this Name for Review
             <v-icon>mdi-chevron-right</v-icon>
           </v-btn>
@@ -258,9 +258,6 @@ export default class NameCheck extends Vue {
   }
 
   private checks: string = null
-  private expandHelpTxt: boolean = false
-  private originalName: string = ''
-  private showNameCheckIssuesDialog: boolean = false
   private dialogOptions: DialogOptionsI = {
     acceptText: 'Submit this name for review',
     cancelText: 'Return to Results',
@@ -276,6 +273,10 @@ export default class NameCheck extends Vue {
       'for final review by our staff.'
     ]
   }
+  private expandHelpTxt = false
+  private originalName: string = ''
+  private showNameCheckIssuesDialog: boolean = false
+  private readonly tradeMarkDBLink = 'http://www.strategis.ic.gc.ca'
 
   mounted () {
     this.originalName = this.getFullName?.toUpperCase() || ''
@@ -375,21 +376,21 @@ export default class NameCheck extends Vue {
     return this.designationsMisplaced?.length > 0
   }
   get hasErrorsConflictsExact (): boolean {
-    return this.getNameCheckErrors[NameCheckErrorType.errorExact]
+    return this.getNameCheckErrors[NameCheckErrorType.ERROR_EXACT]
   }
   get hasErrorsConflictsRestricted (): boolean {
     // handles conflictsConditional too (they are from the same api call)
-    return this.getNameCheckErrors[NameCheckErrorType.errorRestricted]
+    return this.getNameCheckErrors[NameCheckErrorType.ERROR_RESTRICTED]
   }
   get hasErrorsConflictsSimilar (): boolean {
-    return this.getNameCheckErrors[NameCheckErrorType.errorSimilar]
+    return this.getNameCheckErrors[NameCheckErrorType.ERROR_SIMILAR]
   }
   get hasErrorsdesignations (): boolean {
-    return this.getNameCheckErrors[NameCheckErrorType.errorDesignation]
+    return this.getNameCheckErrors[NameCheckErrorType.ERROR_DESIGNATION]
   }
   get hasErrorsStructure (): boolean {
     // descriptive/distinctive
-    return this.getNameCheckErrors[NameCheckErrorType.errorStructure]
+    return this.getNameCheckErrors[NameCheckErrorType.ERROR_STRUCTURE]
   }
   get hasIssuesConflictAlert (): boolean {
     return (
@@ -457,7 +458,6 @@ export default class NameCheck extends Vue {
   }
   get itemsConflict (): Array<NameCheckItemIF> {
     let items = []
-    console.log('has exact errors: ', this.hasErrorsConflictsExact)
     if (this.hasErrorsConflictsExact) {
       items.push(baseItemsConflicts.errorExact)
     }
@@ -638,10 +638,6 @@ export default class NameCheck extends Vue {
     }
     return { color: 'green darken-2', icon: 'mdi-check-circle' }
   }
-  get tradeMarkDBLink (): string {
-    // TODO: make it a config var?
-    return 'http://www.strategis.ic.gc.ca'
-  }
   back () {
     this.setActiveComponent('Tabs')
   }
@@ -649,7 +645,6 @@ export default class NameCheck extends Vue {
     this.startAnalyzeName(null)
   }
   clearError (errorType: NameCheckErrorType) {
-    console.log(errorType)
     this.nameCheckClearError(errorType)
   }
   dialogCheck () {
@@ -668,14 +663,14 @@ export default class NameCheck extends Vue {
     if (proceed) this.submit()
   }
   retry (errorType: NameCheckErrorType) {
-    if ([NameCheckErrorType.errorDesignation, NameCheckErrorType.errorStructure].includes(errorType)) {
+    if ([NameCheckErrorType.ERROR_DESIGNATION, NameCheckErrorType.ERROR_STRUCTURE].includes(errorType)) {
       this.clearError(errorType)
-      this.getNameAnalysis({ xpro: false, designationOnly: errorType === NameCheckErrorType.errorDesignation })
+      this.getNameAnalysis({ xpro: false, designationOnly: errorType === NameCheckErrorType.ERROR_DESIGNATION })
     } else {
       const checks = {
-        exact: errorType === NameCheckErrorType.errorExact,
-        restricted: errorType === NameCheckErrorType.errorRestricted,
-        similar: errorType === NameCheckErrorType.errorSimilar
+        exact: errorType === NameCheckErrorType.ERROR_EXACT,
+        restricted: errorType === NameCheckErrorType.ERROR_RESTRICTED,
+        similar: errorType === NameCheckErrorType.ERROR_SIMILAR
       }
       this.clearError(errorType)
       this.startQuickSearch(checks)

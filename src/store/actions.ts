@@ -1,6 +1,16 @@
 import querystring from 'qs'
 import axios from 'axios'
-import { CorpNumRequests, EntityType, Location, NameCheckErrorType, NrState, RequestCode } from '@/enums'
+import {
+  CorpNumRequests,
+  EntityType,
+  Location,
+  NameCheckAnalysisJurisdiction,
+  NameCheckAnalysisType,
+  NameCheckConflictType,
+  NameCheckErrorType,
+  NrState,
+  RequestCode
+} from '@/enums'
 import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
 import { sanitizeName } from '@/plugins/utilities'
 import removeAccents from 'remove-accents'
@@ -27,7 +37,6 @@ import {
   ConflictListItemI
 } from '@/interfaces'
 import { ActionIF } from '@/interfaces/store-interfaces'
-import getters from '@/modules/error/store/getters'
 
 const qs: any = querystring
 let source: any
@@ -174,11 +183,11 @@ export const resetAnalyzeName = ({ commit, getters }) => {
   commit('mutateMissingDescriptive', false)
   commit('mutateMissingDesignation', false)
   commit('mutateMissingDistinctive', false)
-  commit('mutateNameCheckErrorClear', NameCheckErrorType.errorDesignation)
-  commit('mutateNameCheckErrorClear', NameCheckErrorType.errorExact)
-  commit('mutateNameCheckErrorClear', NameCheckErrorType.errorRestricted)
-  commit('mutateNameCheckErrorClear', NameCheckErrorType.errorSimilar)
-  commit('mutateNameCheckErrorClear', NameCheckErrorType.errorStructure)
+  commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_DESIGNATION)
+  commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_EXACT)
+  commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_RESTRICTED)
+  commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_SIMILAR)
+  commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_STRUCTURE)
   commit('mutateSpecialCharacters', [])
 }
 
@@ -640,7 +649,7 @@ export const setFolioNumber: ActionIF = ({ commit }, folioNumber: string): void 
   commit('mutateFolioNumber', folioNumber)
 }
 /** Name Check actions
- * TODO: move these into a factory if converting to composition api
+ * FUTURE: move these into a factory if converting to composition api
  */
 export const getMatchesExact = async (
   { commit },
@@ -650,7 +659,7 @@ export const getMatchesExact = async (
   const exactResp = await axios.get('/exact-match?query=' + cleanedName, {
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
   }).catch(() => {
-    commit('mutateNameCheckErrorAdd', NameCheckErrorType.errorExact)
+    commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_EXACT)
     return null
   })
   return exactResp?.data ? parseExactNames(exactResp.data) : []
@@ -664,7 +673,7 @@ export const getMatchesSimilar = async (
   const synonymResp = await axios.get('/requests/synonymbucket/' + cleanedName + '/*', {
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
   }).catch(() => {
-    commit('mutateNameCheckErrorAdd', NameCheckErrorType.errorSimilar)
+    commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_SIMILAR)
     return null
   })
   if (synonymResp?.data) synonymResp.data.exactNames = exactNames || []
@@ -678,7 +687,7 @@ export const getMatchesRestricted = async (
   const restrictedResp = await axios.get(`/documents:restricted_words?content=${cleanedName}`, {
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
   }).catch(() => {
-    commit('mutateNameCheckErrorAdd', NameCheckErrorType.errorRestricted)
+    commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_RESTRICTED)
     return null
   })
   return restrictedResp?.data
@@ -700,8 +709,8 @@ export const getNameAnalysis: ActionIF = async (
       location: getters.getLocation,
       entity_type_cd: getters.getEntityTypeCd,
       request_action_cd: getters.getRequestActionCd,
-      jurisdiction: options.xpro ? 'XPRO' : 'BC',
-      analysis_type: options.designationOnly ? 'designation' : 'structure'
+      jurisdiction: options.xpro ? NameCheckAnalysisJurisdiction.XPRO : NameCheckAnalysisJurisdiction.BC,
+      analysis_type: options.designationOnly ? NameCheckAnalysisType.DESIGNATION : NameCheckAnalysisType.STRUCTURE
     }
     const analysis = await NamexServices.nameAnalysis(params)
     // verify the user did not start a new search on a different name
@@ -747,7 +756,6 @@ export const getNameAnalysis: ActionIF = async (
                 items = [...new Set(items)]
                 commit('mutateDesignationsCheckUse', items)
               }
-              continue
           }
         }
       }
@@ -760,10 +768,10 @@ export const getNameAnalysis: ActionIF = async (
       const msg = await NamexServices.handleApiError(err, 'Could not get name analysis')
       console.error('getNameAnalysis() =', msg) // eslint-disable-line no-console
       if (options.designationOnly) {
-        commit('mutateNameCheckErrorAdd', NameCheckErrorType.errorDesignation)
+        commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_DESIGNATION)
         commit('mutateAnalyzeDesignationPending', false)
       } else {
-        commit('mutateNameCheckErrorAdd', NameCheckErrorType.errorStructure)
+        commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_STRUCTURE)
         commit('mutateAnalyzeStructurePending', false)
       }
     }
@@ -814,9 +822,9 @@ export const getQuickSearch = async (
     // (do not show error to user)
     console.error('getQuickSearch() =', msg) // eslint-disable-line no-console
     // add errors to name check for all quick search checks
-    if (checks.exact) commit('mutateNameCheckErrorAdd', NameCheckErrorType.errorExact)
-    if (checks.similar) commit('mutateNameCheckErrorAdd', NameCheckErrorType.errorSimilar)
-    if (checks.restricted) commit('mutateNameCheckErrorAdd', NameCheckErrorType.errorRestricted)
+    if (checks.exact) commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_EXACT)
+    if (checks.similar) commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_SIMILAR)
+    if (checks.restricted) commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_RESTRICTED)
 
     return {
       exactNames: [],
@@ -831,11 +839,11 @@ export const nameCheckClearError = ({ commit }, key: NameCheckErrorType): void =
   commit('mutateNameCheckErrorClear', key)
 }
 
-export const parseExactNames = (json: { names: [string] }): Array<{ name: string, type: string }> => {
+export const parseExactNames = (json: { names: [string] }): Array<ConflictListItemI> => {
   let nameObjs = json?.names || []
   let names = []
   for (let i = 0; i < nameObjs.length; i++) {
-    names.push({ name: `${nameObjs[i]['name']}`, type: 'exact' })
+    names.push({ name: `${nameObjs[i]['name']}`, type: NameCheckConflictType.EXACT })
   }
   return names
 }
@@ -877,7 +885,7 @@ export const parseSynonymNames = (
     if (nameObjs[i]['name_info']['id']) {
       let name = nameObjs[i]['name_info']['name']
       if (!duplicateNames.includes(name)) {
-        names.push({ name: name, type: 'synonym' })
+        names.push({ name: name, type: NameCheckConflictType.SIMILAR })
       }
     }
   }

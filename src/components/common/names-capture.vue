@@ -97,7 +97,7 @@
                               @blur="handleBlur()"
                               @input="editChoices('name1', $event, true)"
                               :filled="getIsAssumedName"
-                              :class="!getIsAssumedName ? 'read-only-mode' : ''"
+                              :class="{ 'read-only-mode': !getIsAssumedName }"
                               id="choice-1-text-field"
                               :label="choicesLabelsAndHints[0].hint"
                               :disabled="!getIsAssumedName"

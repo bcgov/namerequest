@@ -2,7 +2,7 @@
   <v-row class="check-tab-content" justify="center" no-gutters>
     <v-col>
       <span class="check-tab-title">{{ title }}</span>
-      <div v-if="loading" class="pt-2" no-gutters>
+      <div v-if="loading" class="pt-2">
         <v-progress-circular class="check-tab-spinner"
                               indeterminate
                               size="25"

@@ -167,11 +167,11 @@ export const stateModel: StateModelIF = {
     designationsMisplaced: [],
     doNameCheck: true,
     errors: {
-      [NameCheckErrorType.errorDesignation]: false,
-      [NameCheckErrorType.errorExact]: false,
-      [NameCheckErrorType.errorRestricted]: false,
-      [NameCheckErrorType.errorSimilar]: false,
-      [NameCheckErrorType.errorStructure]: false
+      [NameCheckErrorType.ERROR_DESIGNATION]: false,
+      [NameCheckErrorType.ERROR_EXACT]: false,
+      [NameCheckErrorType.ERROR_RESTRICTED]: false,
+      [NameCheckErrorType.ERROR_SIMILAR]: false,
+      [NameCheckErrorType.ERROR_STRUCTURE]: false
     },
     fullName: '',
     missingDescriptive: false,
