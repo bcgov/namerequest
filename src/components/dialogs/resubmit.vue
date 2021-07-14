@@ -44,7 +44,8 @@
             <v-card-text class="copy-normal">
               <p v-if="!isRoleStaff" class="mb-8">
                 If your Name Request has expired, you can resubmit the same name request, for a
-                fee. This will generate a new Name Request Number.
+                fee. This will generate a new Name Request Number. Resubmissions follow the same
+                process for new submissions using the email and phone number on the Name Request.
               </p>
 
               <FeeSummary
