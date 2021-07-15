@@ -8,6 +8,7 @@ import {
   EntityI,
   ExistingRequestSearchI,
   IssueI,
+  NameCheckErrorI,
   NameChoicesIF,
   NameDesignationI,
   NameRequestI,
@@ -126,10 +127,6 @@ export const getCorpSearch = (state: StateIF): string => {
   return state.stateModel.newRequestModel.corpSearch
 }
 
-export const getAnalyzePending = (state: StateIF): boolean => {
-  return state.stateModel.newRequestModel.analyzePending
-}
-
 /** True if current request action code is "conversion". */
 export const getIsConversion = (state: StateIF): boolean => {
   return getRequestActionCd(state) === RequestCode.CNV
@@ -139,8 +136,8 @@ export const getExistingRequestSearch = (state: StateIF): ExistingRequestSearchI
   return state.stateModel.newRequestModel.existingRequestSearch
 }
 
-export const getQuickSearch = (state: StateIF): boolean => {
-  return state.stateModel.newRequestModel.quickSearch
+export const getDoNameCheck = (state: StateIF): boolean => {
+  return state.stateModel.nameCheckModel.doNameCheck
 }
 
 export const getErrors = (state: StateIF): string[] => {
@@ -229,10 +226,6 @@ export const getConversionType = (state: StateIF): EntityType => {
   return state.stateModel.newRequestModel.conversionType
 }
 
-export const getNoCorpDesignation = (state: StateIF): boolean => {
-  return state.stateModel.newRequestModel.noCorpDesignation
-}
-
 export const getConversionTypeAddToSelect = (state: StateIF): ConversionTypesI => {
   return state.stateModel.newRequestModel.conversionTypeAddToSelect
 }
@@ -247,10 +240,6 @@ export const getEditMode = (state: StateIF): boolean => {
 
 export const getActingOnOwnBehalf = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.actingOnOwnBehalf
-}
-
-export const getShowNoCorpDesignation = (state: StateIF): boolean => {
-  return [EntityType.DBA, EntityType.FR, EntityType.GP].includes(getEntityTypeCd(state))
 }
 
 export const getSubmissionTabNumber = (state: StateIF): number => {
@@ -1075,4 +1064,75 @@ export const getStaffPayment = (state: StateIF): StaffPaymentIF => {
 /** The folio number. */
 export const getFolioNumber = (state: StateIF): string => {
   return state.stateModel.newRequestModel.folioNumber
+}
+/** Name Check Getters
+ * TODO: move existing getters used only for name check above to here
+ * TODO: eventually move this all out of vuex (if we refactor to composition api)
+ */
+export const getConflictsConditional = (state: StateIF): Array<string> => {
+  return state.stateModel.nameCheckModel.conflictsConditional
+}
+
+export const getConflictsExact = (state: StateIF): Array<string> => {
+  return state.stateModel.nameCheckModel.conflictsExact
+}
+
+export const getConflictsRestricted = (state: StateIF): Array<string> => {
+  return state.stateModel.nameCheckModel.conflictsRestricted
+}
+
+export const getConflictsSimilar = (state: StateIF): Array<string> => {
+  return state.stateModel.nameCheckModel.conflictsSimilar
+}
+
+export const getDesignation = (state: StateIF): string => {
+  return state.stateModel.nameCheckModel.designation
+}
+
+export const getDesignationsCheckUse = (state: StateIF): Array<string> => {
+  return state.stateModel.nameCheckModel.designationsCheckUse
+}
+
+export const getDesignationsMismatched = (state: StateIF): Array<string> => {
+  return state.stateModel.nameCheckModel.designationsMismatched
+}
+
+export const getDesignationsMisplaced = (state: StateIF): Array<string> => {
+  return state.stateModel.nameCheckModel.designationsMisplaced
+}
+
+export const getFullName = (state: StateIF): string => {
+  return state.stateModel.nameCheckModel.fullName
+}
+
+export const getNameCheckErrors = (state: StateIF): NameCheckErrorI => {
+  return state.stateModel.nameCheckModel.errors
+}
+
+export const getSpecialCharacters = (state: StateIF): Array<string> => {
+  return state.stateModel.nameCheckModel.specialCharacters
+}
+
+export const isAnalyzeConflictsPending = (state: StateIF): boolean => {
+  return state.stateModel.nameCheckModel.analyzeConflictsPending
+}
+
+export const isAnalyzeDesignationPending = (state: StateIF): boolean => {
+  return state.stateModel.nameCheckModel.analyzeDesignationPending
+}
+
+export const isAnalyzeStructurePending = (state: StateIF): boolean => {
+  return state.stateModel.nameCheckModel.analyzeStructurePending
+}
+
+export const isMissingDescriptive = (state: StateIF): boolean => {
+  return state.stateModel.nameCheckModel.missingDescriptive
+}
+
+export const isMissingDesignation = (state: StateIF): boolean => {
+  return state.stateModel.nameCheckModel.missingDesignation
+}
+
+export const isMissingDistinctive = (state: StateIF): boolean => {
+  return state.stateModel.nameCheckModel.missingDistinctive
 }

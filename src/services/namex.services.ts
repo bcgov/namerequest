@@ -356,12 +356,10 @@ export default class NamexServices {
       return (err?.toString() || defaultMessage)
     }
   }
-
-  static async nameAnalysis (params: NewRequestNameSearchI, xpro: boolean): Promise<AnalysisJSONI> {
+  static async nameAnalysis (params: NewRequestNameSearchI): Promise<AnalysisJSONI> {
     const { CancelToken } = Axios
     const source = CancelToken.source()
-    const url = xpro ? 'xpro-name-analysis' : 'name-analysis'
-    const response = await this.axios.get(`${this.namexUrl()}/${url}`, {
+    const response = await this.axios.get(`${this.namexUrl()}/name-analysis`, {
       params,
       cancelToken: source.token,
       timeout: ANALYSIS_TIMEOUT_MS

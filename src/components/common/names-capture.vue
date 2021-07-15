@@ -97,6 +97,7 @@
                               @blur="handleBlur()"
                               @input="editChoices('name1', $event, true)"
                               :filled="getIsAssumedName"
+                              :class="{ 'read-only-mode': !getIsAssumedName }"
                               id="choice-1-text-field"
                               :label="choicesLabelsAndHints[0].hint"
                               :disabled="!getIsAssumedName"
@@ -291,6 +292,7 @@ import { EntityType, Location, RequestCode } from '@/enums'
 export default class NamesCapture extends Vue {
   // Global getters
   @Getter getDisplayedComponent!: string
+  @Getter getDesignation!: string
   @Getter getEditMode!: boolean
   @Getter getErrors!: string[]
   @Getter getEntityTypeCd!: EntityType
@@ -358,23 +360,9 @@ export default class NamesCapture extends Vue {
       return
     }
 
+    // if we get here it's a new name
     this.setSubmissionType('examination')
-    if (this.designationAtEnd) {
-      for (let item of this.items) {
-        let name = this.getName
-        if ([' LTD', ' INC', ' CORP'].some(des => name.endsWith(des))) {
-          name = name + '.'
-        }
-        if (item) {
-          if (name.endsWith(item)) {
-            this.setNameChoices({ key: 'designation1', value: item })
-            let value = name.replace(item, '').trim()
-            this.setNameChoices({ key: 'name1', value })
-            return
-          }
-        }
-      }
-    }
+    if (this.getDesignation) this.setNameChoices({ key: 'designation1', value: this.getDesignation })
     this.setNameChoices({ key: 'name1', value: this.getName })
   }
 
@@ -931,6 +919,10 @@ export default class NamesCapture extends Vue {
   display: inline-block;
   font-size: 0.875rem;
   color: $app-blue;
+}
+
+::v-deep .read-only-mode .v-input__slot:not(.v-input--checkbox .v-input__slot) {
+  background-color: transparent !important;
 }
 
 ::v-deep .theme--light.v-input--is-disabled input, .theme--light.v-input--is-disabled textarea {

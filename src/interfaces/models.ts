@@ -1,4 +1,11 @@
-import { EntityType, Location, NrState, RequestCode } from '@/enums'
+import {
+  EntityType,
+  Location,
+  NameCheckAnalysisJurisdiction,
+  NameCheckAnalysisType,
+  NrState,
+  RequestCode
+} from '@/enums'
 
 export type NameReqT = DraftReqI | ConditionalReqI | ReservedReqI
 export type NrDataResponseT = NameRequestI | null
@@ -148,6 +155,8 @@ export interface NameRequestI {
 }
 
 export interface NewRequestNameSearchI {
+  analysis_type: NameCheckAnalysisType
+  jurisdiction: NameCheckAnalysisJurisdiction
   entity_type_cd: string
   location: Location
   name: string
