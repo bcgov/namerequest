@@ -1,4 +1,4 @@
-import { ConflictListItemI } from "./conflict-list-item";
+import { ConflictListItemI } from './conflict-list-item'
 
 export interface QuickSearchParsedRespI {
   exactNames: Array<ConflictListItemI>,
