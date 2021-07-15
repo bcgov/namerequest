@@ -75,7 +75,6 @@ export const mutateEditMode = (state: StateIF, editMode: boolean) => {
 }
 
 export const mutateEntityType = (state: StateIF, entity_type_cd: EntityType) => {
-  console.log(entity_type_cd)
   state.stateModel.newRequestModel.entity_type_cd = entity_type_cd
 }
 
