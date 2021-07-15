@@ -35,12 +35,13 @@ async function startVue () {
   const envConfig = await getConfig()
   const store = await getVuexStore()
 
-  // *** TODO: remove these config assignments if possible
+  // FUTURE: remove these config assignments if possible
   // Load environment config
   Vue.prototype.$PAYMENT_PORTAL_URL = envConfig.$PAYMENT_PORTAL_URL
   // Load Vuex config
   store.state.config = envConfig
 
+  // FUTURE: remove these globally scoped lists and import locally where needed
   // Load global data
   Vue.prototype.$designations = Designations
   Vue.prototype.$canJurisdictions = CanJurisdictions

@@ -1,5 +1,5 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { EntityType, RequestCode } from '@/enums'
+import { EntityType, PriorityCode, RequestCode } from '@/enums'
 
 @Component({})
 export class CommonMixin extends Vue {
@@ -75,7 +75,7 @@ export class CommonMixin extends Vue {
 
   /** Returns true if the specified NR is a priority request. */
   isPriorityReq (nr: any): boolean {
-    return (nr?.priorityCd === 'Y')
+    return (nr?.priorityCd === PriorityCode.YES)
   }
 
   /** Returns true if the specified NR is for a Benefit Company. */

@@ -141,7 +141,7 @@ export const loadExistingNameRequest:ActionIF = async ({ commit }, nrData: any) 
     commit('resetApplicantDetails')
     commit('setNrResponse', nrData)
     commit('updateReservationNames', names)
-    // *** TODO: instead of "mutating the component", route to "/existing/:id"
+    // FUTURE: instead of "mutating the component", route to "/existing/:id"
     commit('mutateDisplayedComponent', 'ExistingRequestDisplay')
   }
 }
@@ -281,7 +281,7 @@ export const setAddressSuggestions: ActionIF = ({ commit }, addressSuggestions: 
   commit('mutateAddressSuggestions', addressSuggestions)
 }
 
-// TODO: Not a real action?
+// FUTURE: not an action - move it to another module?
 export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> => {
   if (getters.getShowCorpNum) {
     if (getters.getShowCorpNum === CorpNumRequests.MRAS) {
@@ -292,7 +292,7 @@ export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> =
   }
 }
 
-// TODO: Not a real action
+// FUTURE: not an action - move it to another module?
 export const checkCOLIN = ({ getters }, corpNum: string) => {
   // Remove BC prefix as Colin only supports base number with no prefix for BC's
   const cleanedCorpNum = corpNum.replace(/^BC+/i, '')
@@ -300,7 +300,7 @@ export const checkCOLIN = ({ getters }, corpNum: string) => {
   return axios.post(url, {})
 }
 
-// TODO: Not a real action
+// FUTURE: not an action - move it to another module?
 export const checkMRAS = ({ getters }, corpNum: string) => {
   let { xproJurisdiction } = getters.getNrData
   let { SHORT_DESC } = CanJurisdictions.find(jur => jur.text === xproJurisdiction)
@@ -333,7 +333,7 @@ export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
   return null
 }
 
-// TODO: not a real action
+// FUTURE: not an action - move it to another module?
 export const getNrStateData = ({ getters }) => {
   let nrState = getters.getNrState
   if (getters.getAssumedName) nrState = NrState.ASSUMED
@@ -342,7 +342,6 @@ export const getNrStateData = ({ getters }) => {
     case NrState.DRAFT:
       data = getters.getDraftNameReservation
       break
-    // *** TODO: restore this after fixes
     case NrState.COND_RESERVED:
       data = getters.conditionalNameReservation
       break
@@ -368,7 +367,7 @@ export const getNrStateData = ({ getters }) => {
   return data
 }
 
-// TODO: not a real action
+// FUTURE: not an action - move it to another module?
 export const getNrTypeData = ({ getters }, type: string) => {
   if (getters.getAssumedName) type = 'assumed'
   let data: any
@@ -391,12 +390,11 @@ export const getNrTypeData = ({ getters }, type: string) => {
 export const submit: any = async ({ commit, getters, dispatch }): Promise<any> => {
   if (getters.getEditMode) {
     // TODO-CAM: Refactor the way these async requests are used to provide conditional booleans
-    // @ts-ignore
     const data = await NamexServices.patchNameRequests(getters.getNrId, getters.getRequestActionCd,
       getters.getEditNameReservation)
     if (data) {
-      // TODO: change this flow to use the patch response instead of getting the request again and remove code below
-      // TODO: cases where applicants can be a list or object -> make this consistent (api) + update UI accordingly
+      // FUTURE: change this flow to use the patch response instead of getting the request again and remove code below
+      // FUTURE: cases where applicants can be a list or object -> make this consistent (api) + update UI accordingly
       // need to set phone/email in case they changed in the patch
       if (data.applicants instanceof Array && data.applicants.length > 0) {
         sessionStorage.setItem('BCREG-emailAddress', data.applicants[0].emailAddress)
@@ -406,8 +404,7 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
         sessionStorage.setItem('BCREG-phoneNumber', data.applicants?.phoneNumber)
       }
       commit('mutateNameRequest', data)
-      // TODO: remove checkin/checkout process (api should handle it whenever a put/patch is attempted)
-      // @ts-ignore
+      // FUTURE: remove checkin/checkout process (api should handle it whenever a put/patch is attempted)
       const checkin = await NamexServices.checkinNameRequest(getters.getNrId, getters.getNrState)
       if (checkin) {
         commit('mutateDisplayedComponent', 'Success')
@@ -434,7 +431,7 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
       request = await NamexServices.putNameReservation(getters.getNrId, getters.getRequestActionCd, data)
       if (request) commit('setNrResponse', request)
     }
-    if (request) await dispatch('togglePaymentModal', true)
+    if (request) await dispatch('toggleConfirmNrModal', true)
   }
 }
 
@@ -588,7 +585,9 @@ export const setShowActualInput: ActionIF = ({ commit }, showInput: boolean): vo
   commit('mutateShowActualInput', showInput)
 }
 
-// *** Dialog Actions ***
+//
+// Dialog Actions
+//
 export const setIncorporateLoginModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
   commit('mutateIncorporateLoginModalVisible', isVisible)
 }

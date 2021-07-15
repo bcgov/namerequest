@@ -139,9 +139,8 @@ export default class NamexServices {
         })
         sessionStorage.removeItem('checkedOutBy')
         sessionStorage.removeItem('checkedOutDt')
-
-        return true
       }
+      return true
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not checkin name request')
       console.error('checkinNameRequest() =', msg) // eslint-disable-line no-console
@@ -365,7 +364,7 @@ export default class NamexServices {
       timeout: ANALYSIS_TIMEOUT_MS
     })
     if (response?.status === OK && response?.data) return response.data
-    // TODO: change how this is handled
+    // FUTURE: change how this is handled
     throw new Error(`Invalid response = ${response}`)
   }
 

@@ -3,8 +3,8 @@ import * as types from './types'
 import { STATE_KEY } from '@/modules/payment/store'
 
 export default {
-  [types.TOGGLE_PAYMENT_MODAL]: (state, isVisible: boolean) => {
-    state[STATE_KEY].isPaymentVisible = isVisible || false
+  [types.TOGGLE_CONFIRM_NR_MODAL]: (state, isVisible: boolean) => {
+    state[STATE_KEY].isConfirmNrVisible = isVisible || false
   },
   [types.TOGGLE_PAYMENT_HISTORY_MODAL]: (state, isVisible: boolean) => {
     state[STATE_KEY].isPaymentHistoryVisible = isVisible || false
@@ -18,8 +18,14 @@ export default {
   [types.TOGGLE_UPGRADE_MODAL]: (state, isVisible: boolean) => {
     state[STATE_KEY].isUpgradeVisible = isVisible || false
   },
-  [types.TOGGLE_REAPPLY_MODAL]: (state, isVisible: boolean) => {
-    state[STATE_KEY].isReapplyVisible = isVisible || false
+  [types.TOGGLE_RESUBMIT_MODAL]: (state, isVisible: boolean) => {
+    state[STATE_KEY].isResubmitVisible = isVisible || false
+  },
+  [types.TOGGLE_RETRY_MODAL]: (state, isVisible: boolean) => {
+    state[STATE_KEY].isRetryVisible = isVisible || false
+  },
+  [types.TOGGLE_RENEW_MODAL]: (state, isVisible: boolean) => {
+    state[STATE_KEY].isRenewVisible = isVisible || false
   },
   [types.SET_PAYMENT_FEES]: (state, fees: any) => {
     if (fees) {

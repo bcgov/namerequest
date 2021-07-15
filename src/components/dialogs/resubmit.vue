@@ -1,12 +1,12 @@
 <template>
   <v-dialog min-width="32rem" max-width="45rem" :value="isVisible" persistent>
     <v-card>
-      <v-tabs id="upgrade-tabs">
+      <v-tabs id="resubmit-tabs">
         <v-tabs-items v-model="currentTab">
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
-              <div>Staff Payment for Priority Upgrade</div>
+              <div>Staff Payment for Name Request Resubmission</div>
               <v-btn icon large class="dialog-close float-right" @click="hideModal()">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -22,20 +22,20 @@
             <v-card-actions class="justify-center pt-6">
               <v-btn
                 @click="goBack()"
-                id="upgrade-back-btn"
+                id="resubmit-back-btn"
                 class="button-blue px-10"
                 :disabled="isLoadingPayment">Back</v-btn>
               <v-btn
                 @click="confirmPayment()"
-                id="upgrade-submit-btn"
+                id="resubmit-submit-btn"
                 class="primary px-5"
-                :loading="isLoadingPayment">Submit Priority Upgrade</v-btn>
+                :loading="isLoadingPayment">Submit Name Request</v-btn>
             </v-card-actions>
           </v-tab-item>
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
-              <div>Upgrade Priority</div>
+              <div>Resubmit Name Request</div>
               <v-btn icon large class="dialog-close float-right" @click="hideModal()">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -43,8 +43,9 @@
 
             <v-card-text class="copy-normal">
               <p v-if="!isRoleStaff" class="mb-8">
-                If you need your name reviewed as quickly as possible, upgrade to a Priority
-                request. Priority name requests are usually reviewed within 1 to 2 business days.
+                If your Name Request has expired, you can resubmit the same name request, for a
+                fee. This will generate a new Name Request Number. Resubmissions follow the same
+                process for new submissions using the email and phone number on the Name Request.
               </p>
 
               <FeeSummary
@@ -55,11 +56,11 @@
             <v-card-actions class="pt-8 justify-center">
               <v-btn
                 @click="hideModal()"
-                id="upgrade-cancel-btn"
+                id="resubmit-cancel-btn"
                 class="button button-blue px-5">Cancel</v-btn>
               <v-btn
                 @click="confirmPayment()"
-                id="upgrade-continue-btn"
+                id="resubmit-continue-btn"
                 class="primary px-5"
                 :loading="isLoadingPayment">Continue to Payment</v-btn>
             </v-card-actions>
@@ -77,7 +78,7 @@ import { Action, Getter } from 'vuex-class'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import StaffPayment from '@/components/payment/staff-payment.vue'
 import { CreatePaymentParams, FetchFeesParams } from '@/modules/payment/models'
-import { UPGRADE_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
+import { RESUBMIT_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import { FilingTypes } from '@/modules/payment/filing-types'
 import { Jurisdictions, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
@@ -90,7 +91,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
     StaffPayment
   }
 })
-export default class UpgradeDialog extends Mixins(
+export default class ResubmitDialog extends Mixins(
   PaymentMixin,
   PaymentSessionMixin,
   DisplayedComponentMixin
@@ -98,7 +99,7 @@ export default class UpgradeDialog extends Mixins(
   // the tab indices
   // NB: these are reversed to reverse the built-in slide transition
   readonly TAB_STAFF_PAYMENT = 0
-  readonly TAB_UPGRADE_NAME_REQUEST = 1
+  readonly TAB_RESUBMIT_NAME_REQUEST = 1
 
   // Refs
   $refs!: {
@@ -106,16 +107,17 @@ export default class UpgradeDialog extends Mixins(
   }
 
   // Global getters
+  @Getter getPriorityRequest!: boolean
   @Getter isRoleStaff!: boolean
 
   // Global action
-  @Action toggleUpgradeModal!: ActionBindingIF
+  @Action toggleResubmitModal!: ActionBindingIF
 
   /** Whether staff payment is valid. */
   private isStaffPaymentValid = false
 
   /** The current tab to display. */
-  private currentTab = this.TAB_UPGRADE_NAME_REQUEST
+  private currentTab = this.TAB_RESUBMIT_NAME_REQUEST
 
   /** Whether payment redirection is in progress. */
   private isLoadingPayment = false
@@ -125,13 +127,13 @@ export default class UpgradeDialog extends Mixins(
 
   /** Whether this modal should be shown (per store property). */
   private get showModal (): boolean {
-    return this.$store.getters[UPGRADE_MODAL_IS_VISIBLE]
+    return this.$store.getters[RESUBMIT_MODAL_IS_VISIBLE]
   }
 
   /** Clears store property to hide this modal. */
   async hideModal () {
     this.isLoadingPayment = false
-    await this.toggleUpgradeModal(false)
+    await this.toggleResubmitModal(false)
   }
 
   /** Depending on value, fetches fees and makes this modal visible or hides it. */
@@ -139,12 +141,12 @@ export default class UpgradeDialog extends Mixins(
   async onShowModal (val: boolean): Promise<void> {
     if (val) {
       // reset tab id
-      this.currentTab = this.TAB_UPGRADE_NAME_REQUEST
+      this.currentTab = this.TAB_RESUBMIT_NAME_REQUEST
 
       const params: FetchFeesParams = {
-        filingType: FilingTypes.NM606,
+        filingType: FilingTypes.NM620,
         jurisdiction: Jurisdictions.BC,
-        priorityRequest: false // not needed in NM606
+        priorityRequest: this.getPriorityRequest // same value as originally
       }
 
       // only make visible on success, otherwise hide it
@@ -163,13 +165,13 @@ export default class UpgradeDialog extends Mixins(
     // disable validation
     this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(false)
     // go to previous tab
-    this.currentTab = this.TAB_UPGRADE_NAME_REQUEST
+    this.currentTab = this.TAB_RESUBMIT_NAME_REQUEST
   }
 
-  /** Called when user clicks Continue/Upgrade button. */
+  /** Called when user clicks Continue/Resubmit button. */
   private async confirmPayment () {
     if (this.isRoleStaff) {
-      if (this.currentTab === this.TAB_UPGRADE_NAME_REQUEST) {
+      if (this.currentTab === this.TAB_RESUBMIT_NAME_REQUEST) {
         // disable validation
         this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(false)
         // go to next tab
@@ -190,7 +192,7 @@ export default class UpgradeDialog extends Mixins(
       const { paymentId, paymentToken } = this
 
       // Save response to session
-      this.savePaymentResponseToSession(PaymentAction.UPGRADE, paymentResponse)
+      this.savePaymentResponseToSession(PaymentAction.RESUBMIT, paymentResponse)
 
       // See if redirect is needed else go to existing NR screen
       const baseUrl = getBaseUrl()
@@ -203,10 +205,10 @@ export default class UpgradeDialog extends Mixins(
     }
 
     const success = await this.createPayment({
-      action: PaymentAction.UPGRADE,
+      action: PaymentAction.RESUBMIT,
       nrId: this.getNrId,
-      filingType: FilingTypes.NM606,
-      priorityRequest: false // not needed in NM606
+      filingType: FilingTypes.NM620,
+      priorityRequest: this.getPriorityRequest // same value as originally
     } as CreatePaymentParams, onSuccess)
 
     // on error, close this modal so error modal is visible
@@ -221,14 +223,14 @@ export default class UpgradeDialog extends Mixins(
       this.$nextTick(() => {
         if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
-          const upgradeContinueBtn = this.$el.querySelector('#upgrade-continue-btn > span')
-          if (upgradeContinueBtn) upgradeContinueBtn.classList.add('upgrade-continue-btn')
-          const upgradeSubmitBtn = this.$el.querySelector('#upgrade-submit-btn > span')
-          if (upgradeSubmitBtn) upgradeSubmitBtn.classList.add('upgrade-submit-btn')
-          const upgradeCancelBtn = this.$el.querySelector('#upgrade-cancel-btn > span')
-          if (upgradeCancelBtn) upgradeCancelBtn.classList.add('upgrade-cancel-btn')
-          const upgradeBackBtn = this.$el.querySelector('#upgrade-back-btn > span')
-          if (upgradeBackBtn) upgradeBackBtn.classList.add('upgrade-back-btn')
+          const resubmitContinueBtn = this.$el.querySelector('#resubmit-continue-btn > span')
+          if (resubmitContinueBtn) resubmitContinueBtn.classList.add('resubmit-continue-btn')
+          const resubmitSubmitBtn = this.$el.querySelector('#resubmit-submit-btn > span')
+          if (resubmitSubmitBtn) resubmitSubmitBtn.classList.add('resubmit-submit-btn')
+          const resubmitCancelBtn = this.$el.querySelector('#resubmit-cancel-btn > span')
+          if (resubmitCancelBtn) resubmitCancelBtn.classList.add('resubmit-cancel-btn')
+          const resubmitBackBtn = this.$el.querySelector('#resubmit-back-btn > span')
+          if (resubmitBackBtn) resubmitBackBtn.classList.add('resubmit-back-btn')
         }
       })
     }

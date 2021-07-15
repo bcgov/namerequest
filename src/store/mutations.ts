@@ -11,7 +11,7 @@ import {
   SubmissionTypeT,
   WaitingAddressSearchI
 } from '@/interfaces'
-import { EntityType, Location, NameCheckErrorType, RequestCode } from '@/enums'
+import { EntityType, Location, NameCheckErrorType, PriorityCode, RequestCode } from '@/enums'
 
 export const clearErrors = (state: StateIF) => {
   state.stateModel.newRequestModel.errors = []
@@ -207,8 +207,13 @@ export const mutateIsLoadingSubmission = (state: StateIF, isLoadingSubmission: b
 }
 
 export const mutateNameRequest = (state: StateIF, nr: NameRequestI) => {
+  // store NR data
   state.stateModel.newRequestModel.nr = nr
-  // TODO: have 1 mutation for nr / applicant info and put these there
+
+  // store Priority Code
+  mutatePriorityRequest(state, (nr?.priorityCd === PriorityCode.YES))
+
+  // FUTURE: have 1 mutation for nr / applicant info and put these there
   const nrNum = state.stateModel.newRequestModel.nr?.nrNum
   if (nrNum?.includes('NR L')) {
     sessionStorage.setItem('BCREG-NRL', nrNum)
@@ -225,7 +230,7 @@ export const mutateNameRequestByKey = (state: StateIF, kv: any) => {
     kv.key,
     kv.value
   )
-  // TODO: have 1 mutation for nr / applicant info and put these there
+  // FUTURE: have 1 mutation for nr / applicant info and put these there
   const nrNum = state.stateModel.newRequestModel.nr?.nrNum
   if (nrNum?.includes('NR L')) {
     sessionStorage.setItem('BCREG-NRL', nrNum)
@@ -312,7 +317,7 @@ export const populateApplicantData = (state: StateIF) => {
       state.stateModel.newRequestModel.nr.applicants[key]
     )
   }
-  // TODO: have 1 mutation for nr / applicant info and put these there
+  // FUTURE: have 1 mutation for nr / applicant info and put these there
   sessionStorage.setItem('BCREG-emailAddress', state.stateModel.newRequestModel.applicant?.emailAddress)
   sessionStorage.setItem('BCREG-phoneNumber', state.stateModel.newRequestModel.applicant?.phoneNumber)
 }
@@ -370,35 +375,25 @@ export const setErrors = (state: StateIF, errors: string) => {
   state.stateModel.newRequestModel.errors = [errors]
 }
 
-export const setNrResponse = (state: StateIF, data: NameRequestI): boolean => {
+export const setNrResponse = (state: StateIF, nr: NameRequestI) => {
   try {
-    state.stateModel.newRequestModel.nr = data
-    const { applicants = [] } = state.stateModel.newRequestModel.nr
+    // set NR data
+    mutateNameRequest(state, nr)
 
+    // set Applicants
+    const applicants = state.stateModel.newRequestModel.nr?.applicants || []
     if (applicants instanceof Array) {
-      // setApplicantDetails(applicants[0]) // OLD CODE
       state.stateModel.newRequestModel.applicant = { ...applicants[0] }
     } else if (applicants) {
-      // setApplicantDetails(applicants) // OLD CODE
       state.stateModel.newRequestModel.applicant = { ...applicants }
     } else {
       // applicants is null/undefined
     }
-    // TODO: have 1 mutation for nr / applicant info and put these there
-    const nrNum = state.stateModel.newRequestModel.nr?.nrNum
-    if (nrNum?.includes('NR L')) {
-      sessionStorage.setItem('BCREG-NRL', nrNum)
-      sessionStorage.setItem('BCREG-nrNum', null)
-    } else if (nrNum) {
-      sessionStorage.setItem('BCREG-NRL', null)
-      sessionStorage.setItem('BCREG-nrNum', nrNum)
-    }
-    sessionStorage.setItem('BCREG-emailAddress', state.stateModel.newRequestModel.applicant?.emailAddress)
-    sessionStorage.setItem('BCREG-phoneNumber', state.stateModel.newRequestModel.applicant?.phoneNumber)
-    return true
+
+    // populate Applicants
+    populateApplicantData(state)
   } catch (err) {
     console.error('setNrResponse() =', err) // eslint-disable-line no-console
-    return false
   }
 }
 

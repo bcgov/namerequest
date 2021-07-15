@@ -1,5 +1,5 @@
 import { NameCheckErrorType, NameCheckItemType } from '@/enums'
-import { ConflictListItemI } from "./conflict-list-item";
+import { ConflictListItemI } from './conflict-list-item'
 
 export interface NameCheckItemIF {
   count: number,

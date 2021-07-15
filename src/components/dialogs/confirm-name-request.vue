@@ -1,12 +1,12 @@
 <template>
   <v-dialog min-width="32rem" max-width="45rem" :value="isVisible" persistent>
     <v-card>
-      <v-tabs id="upgrade-tabs">
+      <v-tabs id="confirm-nr-tabs">
         <v-tabs-items v-model="currentTab">
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
-              <div>Staff Payment for Priority Upgrade</div>
+              <div>Staff Payment</div>
               <v-btn icon large class="dialog-close float-right" @click="hideModal()">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -22,44 +22,53 @@
             <v-card-actions class="justify-center pt-6">
               <v-btn
                 @click="goBack()"
-                id="upgrade-back-btn"
+                id="confirm-nr-back-btn"
                 class="button-blue px-10"
                 :disabled="isLoadingPayment">Back</v-btn>
               <v-btn
                 @click="confirmPayment()"
-                id="upgrade-submit-btn"
+                id="confirm-nr-submit-btn"
                 class="primary px-5"
-                :loading="isLoadingPayment">Submit Priority Upgrade</v-btn>
+                :loading="isLoadingPayment">Submit Name Request</v-btn>
             </v-card-actions>
           </v-tab-item>
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
-              <div>Upgrade Priority</div>
+              <div>Confirm Name Request</div>
               <v-btn icon large class="dialog-close float-right" @click="hideModal()">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </v-card-title>
 
-            <v-card-text class="copy-normal">
-              <p v-if="!isRoleStaff" class="mb-8">
-                If you need your name reviewed as quickly as possible, upgrade to a Priority
-                request. Priority name requests are usually reviewed within 1 to 2 business days.
-              </p>
-
+            <v-card-text class="copy-normal pt-5">
+              <RequestDetails
+                :applicant="getApplicant"
+                :name="getName"
+                :nameChoices="getNameChoices"
+              />
               <FeeSummary
+                class="mt-2"
                 :fees="[...paymentFees]"
               />
             </v-card-text>
 
-            <v-card-actions class="pt-8 justify-center">
+            <v-card-actions class="pt-8">
+              <v-btn
+                v-if="allowCancel"
+                @click="cancelPayment()"
+                id="confirm-nr-cancel-btn"
+                class="button-red px-5"
+                :disabled="isLoadingPayment">Cancel Name Request</v-btn>
+              <v-spacer />
               <v-btn
                 @click="hideModal()"
-                id="upgrade-cancel-btn"
-                class="button button-blue px-5">Cancel</v-btn>
+                id="confirm-nr-close-btn"
+                class="button-blue px-5"
+                :disabled="isLoadingPayment">Close</v-btn>
               <v-btn
                 @click="confirmPayment()"
-                id="upgrade-continue-btn"
+                id="confirm-nr-continue-btn"
                 class="primary px-5"
                 :loading="isLoadingPayment">Continue to Payment</v-btn>
             </v-card-actions>
@@ -71,26 +80,29 @@
   </v-dialog>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Watch } from 'vue-property-decorator'
+<script lang='ts'>
+import { Component, Mixins, Prop, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import FeeSummary from '@/components/payment/fee-summary.vue'
+import RequestDetails from '@/components/common/request-details.vue'
 import StaffPayment from '@/components/payment/staff-payment.vue'
 import { CreatePaymentParams, FetchFeesParams } from '@/modules/payment/models'
-import { UPGRADE_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
+import { CONFIRM_NR_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import { FilingTypes } from '@/modules/payment/filing-types'
 import { Jurisdictions, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
+import { NameChoicesIF } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: {
+    RequestDetails,
     FeeSummary,
     StaffPayment
   }
 })
-export default class UpgradeDialog extends Mixins(
+export default class ConfirmNrDialog extends Mixins(
   PaymentMixin,
   PaymentSessionMixin,
   DisplayedComponentMixin
@@ -98,24 +110,30 @@ export default class UpgradeDialog extends Mixins(
   // the tab indices
   // NB: these are reversed to reverse the built-in slide transition
   readonly TAB_STAFF_PAYMENT = 0
-  readonly TAB_UPGRADE_NAME_REQUEST = 1
+  readonly TAB_CONFIRM_NAME_REQUEST = 1
 
   // Refs
   $refs!: {
     staffPaymentComponent: StaffPayment
   }
 
+  @Prop({ default: async () => {} })
+  readonly onCancel: Function
+
   // Global getters
+  @Getter getName!: string
+  @Getter getNameChoices!: NameChoicesIF
+  @Getter getPriorityRequest!: boolean
   @Getter isRoleStaff!: boolean
 
-  // Global action
-  @Action toggleUpgradeModal!: ActionBindingIF
+  // Global actions
+  @Action toggleConfirmNrModal!: ActionBindingIF
 
   /** Whether staff payment is valid. */
   private isStaffPaymentValid = false
 
   /** The current tab to display. */
-  private currentTab = this.TAB_UPGRADE_NAME_REQUEST
+  private currentTab = this.TAB_CONFIRM_NAME_REQUEST
 
   /** Whether payment redirection is in progress. */
   private isLoadingPayment = false
@@ -123,15 +141,20 @@ export default class UpgradeDialog extends Mixins(
   /** Whether this dialog is visible. */
   private isVisible = false
 
+  /** Whether to show Cancel button. */
+  private get allowCancel (): boolean {
+    return (typeof this.$props.onCancel === 'function')
+  }
+
   /** Whether this modal should be shown (per store property). */
   private get showModal (): boolean {
-    return this.$store.getters[UPGRADE_MODAL_IS_VISIBLE]
+    return this.$store.getters[CONFIRM_NR_MODAL_IS_VISIBLE]
   }
 
   /** Clears store property to hide this modal. */
   async hideModal () {
     this.isLoadingPayment = false
-    await this.toggleUpgradeModal(false)
+    await this.toggleConfirmNrModal(false)
   }
 
   /** Depending on value, fetches fees and makes this modal visible or hides it. */
@@ -139,12 +162,12 @@ export default class UpgradeDialog extends Mixins(
   async onShowModal (val: boolean): Promise<void> {
     if (val) {
       // reset tab id
-      this.currentTab = this.TAB_UPGRADE_NAME_REQUEST
+      this.currentTab = this.TAB_CONFIRM_NAME_REQUEST
 
       const params: FetchFeesParams = {
-        filingType: FilingTypes.NM606,
+        filingType: FilingTypes.NM620,
         jurisdiction: Jurisdictions.BC,
-        priorityRequest: false // not needed in NM606
+        priorityRequest: this.getPriorityRequest
       }
 
       // only make visible on success, otherwise hide it
@@ -163,13 +186,13 @@ export default class UpgradeDialog extends Mixins(
     // disable validation
     this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(false)
     // go to previous tab
-    this.currentTab = this.TAB_UPGRADE_NAME_REQUEST
+    this.currentTab = this.TAB_CONFIRM_NAME_REQUEST
   }
 
-  /** Called when user clicks Continue/Upgrade button. */
-  private async confirmPayment () {
+  /** Called when user clicks Continue/Submit button. */
+  async confirmPayment () {
     if (this.isRoleStaff) {
-      if (this.currentTab === this.TAB_UPGRADE_NAME_REQUEST) {
+      if (this.currentTab === this.TAB_CONFIRM_NAME_REQUEST) {
         // disable validation
         this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(false)
         // go to next tab
@@ -190,7 +213,7 @@ export default class UpgradeDialog extends Mixins(
       const { paymentId, paymentToken } = this
 
       // Save response to session
-      this.savePaymentResponseToSession(PaymentAction.UPGRADE, paymentResponse)
+      this.savePaymentResponseToSession(PaymentAction.CREATE, paymentResponse)
 
       // See if redirect is needed else go to existing NR screen
       const baseUrl = getBaseUrl()
@@ -203,10 +226,10 @@ export default class UpgradeDialog extends Mixins(
     }
 
     const success = await this.createPayment({
-      action: PaymentAction.UPGRADE,
+      action: PaymentAction.CREATE,
       nrId: this.getNrId,
-      filingType: FilingTypes.NM606,
-      priorityRequest: false // not needed in NM606
+      filingType: FilingTypes.NM620,
+      priorityRequest: this.getPriorityRequest
     } as CreatePaymentParams, onSuccess)
 
     // on error, close this modal so error modal is visible
@@ -215,20 +238,30 @@ export default class UpgradeDialog extends Mixins(
     }
   }
 
+  /** Called when user clicks "Cancel Name Request" button. */
+  async cancelPayment () {
+    // rollback the NR
+    this.$props.onCancel()
+    // close this modal
+    await this.hideModal()
+  }
+
   @Watch('isVisible')
   onVisibleChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {
         if (this.$el?.querySelector instanceof Function) {
           // add classname to button text (for more detail in Sentry breadcrumbs)
-          const upgradeContinueBtn = this.$el.querySelector('#upgrade-continue-btn > span')
-          if (upgradeContinueBtn) upgradeContinueBtn.classList.add('upgrade-continue-btn')
-          const upgradeSubmitBtn = this.$el.querySelector('#upgrade-submit-btn > span')
-          if (upgradeSubmitBtn) upgradeSubmitBtn.classList.add('upgrade-submit-btn')
-          const upgradeCancelBtn = this.$el.querySelector('#upgrade-cancel-btn > span')
-          if (upgradeCancelBtn) upgradeCancelBtn.classList.add('upgrade-cancel-btn')
-          const upgradeBackBtn = this.$el.querySelector('#upgrade-back-btn > span')
-          if (upgradeBackBtn) upgradeBackBtn.classList.add('upgrade-back-btn')
+          const confirmNrCancelBtn = this.$el.querySelector('#confirm-nr-cancel-btn > span')
+          if (confirmNrCancelBtn) confirmNrCancelBtn.classList.add('confirm-nr-cancel-btn')
+          const confirmNrContinueBtn = this.$el.querySelector('#confirm-nr-continue-btn > span')
+          if (confirmNrContinueBtn) confirmNrContinueBtn.classList.add('confirm-nr-continue-btn')
+          const confirmNrSubmitBtn = this.$el.querySelector('#confirm-nr-submit-btn > span')
+          if (confirmNrSubmitBtn) confirmNrSubmitBtn.classList.add('confirm-nr-submit-btn')
+          const confirmNrCloseBtn = this.$el.querySelector('#confirm-nr-close-btn > span')
+          if (confirmNrCloseBtn) confirmNrCloseBtn.classList.add('confirm-nr-close-btn')
+          const confirmNrBackBtn = this.$el.querySelector('#confirm-nr-back-btn > span')
+          if (confirmNrBackBtn) confirmNrBackBtn.classList.add('confirm-nr-back-btn')
         }
       })
     }

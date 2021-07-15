@@ -2,7 +2,7 @@
   <div id="fee-summary">
     <v-row no-gutters align="center" justify="center">
       <v-col cols="10">
-        <div class="font-weight-bold header pt-8 pb-4">Payment Details</div>
+        <div class="font-weight-bold header pt-10 pb-4">Payment Details</div>
         <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
         <v-row no-gutters class="fee-list py-4">
           <v-col v-show="!fetchError">
@@ -58,7 +58,7 @@
             </v-slide-y-reverse-transition>
           </div>
         </div> -->
-        <v-row no-gutters class="pt-4 pb-8">
+        <v-row no-gutters class="pt-4 pb-10">
           <v-col cols="8">
             <div class="payment-total" v-show="!fetchError">
               Total Amount (CAD)
@@ -79,13 +79,9 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { FilingData } from 'sbc-common-components/src/models'
 
 @Component({})
 export default class FeeSummary extends Vue {
-  @Prop({ default: () => [] })
-  readonly filingData!: FilingData[]
-
   @Prop({ default: () => [] })
   readonly fees: any[]
 

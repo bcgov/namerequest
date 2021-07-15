@@ -23,7 +23,7 @@ import {
   StatsI,
   SubmissionTypeT
 } from '@/interfaces'
-import { CorpNumRequests, EntityType, Location, NrState, RequestCode } from '@/enums'
+import { CorpNumRequests, EntityType, Location, NrState, PriorityCode, RequestCode } from '@/enums'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 // List Data
@@ -268,10 +268,6 @@ export const getShowActualInput = (state: StateIF): boolean => {
 
 export const getAnalysisJSON = (state: StateIF): AnalysisJSONI => {
   return state.stateModel.newRequestModel.analysisJSON
-}
-
-export const getIsPriorityRequest = (state: StateIF): boolean => {
-  return state.stateModel.newRequestModel.priorityRequest
 }
 
 export const getQuickSearchNames = (state: StateIF): any[] => {
@@ -774,7 +770,7 @@ export const getNameAnalysisTimeout = (state: StateIF): boolean => {
 }
 
 export const getPriorityRequest = (state: StateIF): boolean => {
-  return state.stateModel.newRequestModel.priorityRequest
+  return state.stateModel.newRequestModel.priorityRequest || false
 }
 
 export const getDesignationObject = (state: StateIF): any => {
@@ -937,7 +933,7 @@ export const getDraftNameReservation = (state: StateIF): DraftReqI => {
     applicants: [applicant],
     names: nrRequestNames,
     ...nrData,
-    priorityCd: getIsPriorityRequest(state) ? 'Y' : 'N',
+    priorityCd: getPriorityRequest(state) ? PriorityCode.YES : PriorityCode.NO,
     entity_type_cd: getEntityTypeCd(state),
     request_action_cd: getRequestActionCd(state),
     stateCd: NrState.DRAFT,
@@ -994,9 +990,8 @@ export const getReservedNameReservation = (state: StateIF): ReservedReqI => {
     applicants: [getApplicant(state)],
     names: getNrNames(state),
     ...getNrData(state),
-    priorityCd: 'N',
-    // @ts-ignore TODO: This is not typed correctly!
-    entity_type_cd: getEntityTypeCd(state),
+    priorityCd: PriorityCode.NO,
+    entity_type_cd: getEntityTypeCd(state), // FUTURE: fix entity_type_cd type
     request_action_cd: getRequestActionCd(state),
     stateCd: NrState.RESERVED,
     english: getNameIsEnglish(state),
@@ -1037,9 +1032,8 @@ export const getConditionalNameReservation = (state: StateIF): ConditionalReqI =
     applicants: [getApplicant(state)],
     names: names,
     ...getNrData(state),
-    priorityCd: 'N',
-    // @ts-ignore TODO: This is not typed correctly!
-    entity_type_cd: getEntityTypeCd(state),
+    priorityCd: PriorityCode.NO,
+    entity_type_cd: getEntityTypeCd(state), // FUTURE: fix entity_type_cd type
     request_action_cd: getRequestActionCd(state),
     request_type_cd: getXproRequestTypeCd(state) ? getXproRequestTypeCd(state) : '',
     stateCd: NrState.COND_RESERVED,

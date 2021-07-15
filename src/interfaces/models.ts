@@ -4,6 +4,7 @@ import {
   NameCheckAnalysisJurisdiction,
   NameCheckAnalysisType,
   NrState,
+  PriorityCode,
   RequestCode
 } from '@/enums'
 
@@ -51,7 +52,7 @@ export interface ConditionalReqI {
   names: RequestNameI[]
   natureBusinessInfo: string
   previousRequestId?: string
-  priorityCd: string
+  priorityCd: PriorityCode
   request_action_cd: RequestCode
   request_type_cd?: string
   stateCd: NrState.COND_RESERVED
@@ -89,7 +90,7 @@ export interface DraftReqI {
   names: RequestNameI[]
   natureBusinessInfo?: string
   previousRequestId?: string
-  priorityCd: string
+  priorityCd: PriorityCode
   request_action_cd: RequestCode
   stateCd: NrState.DRAFT
   submit_count: number
@@ -220,7 +221,7 @@ export interface ReservedReqI {
   names: RequestNameI[]
   natureBusinessInfo: string
   previousRequestId?: string
-  priorityCd: string
+  priorityCd: PriorityCode
   request_action_cd: RequestCode
   stateCd: NrState.RESERVED
   submit_count: number

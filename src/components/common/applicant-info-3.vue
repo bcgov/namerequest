@@ -244,7 +244,7 @@ export default class ApplicantInfo3 extends Vue {
   @Getter getCorpNum!: string
   @Getter getIsPersonsName!: boolean
   @Getter getApplicant!: ApplicantI
-  @Getter getIsPriorityRequest!: boolean
+  @Getter getPriorityRequest!: boolean
   @Getter getEditMode!: boolean
   @Getter getLocation!: Location
   @Getter getNrData!: any
@@ -326,8 +326,8 @@ export default class ApplicantInfo3 extends Vue {
   get location (): Location {
     return this.getLocation
   }
-  get priorityRequest () {
-    return this.getIsPriorityRequest
+  get priorityRequest (): boolean {
+    return this.getPriorityRequest
   }
   get showAllFields (): boolean {
     return (!this.getEditMode || this.getNrState === NrState.DRAFT)
@@ -356,7 +356,7 @@ export default class ApplicantInfo3 extends Vue {
     }
     this.setCorpNum(num)
   }
-  set priorityRequest (value) {
+  set priorityRequest (value: boolean) {
     this.setPriorityRequest(value)
   }
 

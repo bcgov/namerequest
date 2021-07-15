@@ -218,7 +218,7 @@ export default class ApplicantInfo2 extends Vue {
   // Global getters
   @Getter getCorpNum!: string
   @Getter getApplicant!: ApplicantI
-  @Getter getIsPriorityRequest!: boolean
+  @Getter getPriorityRequest!: boolean
   @Getter getEditMode!: boolean
   @Getter getNrData!: any
   @Getter getNrState!: string
@@ -301,11 +301,11 @@ export default class ApplicantInfo2 extends Vue {
     this.setCorpNum(num)
   }
 
-  get priorityRequest () {
-    return this.getIsPriorityRequest
+  get priorityRequest (): boolean {
+    return this.getPriorityRequest
   }
 
-  set priorityRequest (value) {
+  set priorityRequest (value: boolean) {
     this.setPriorityRequest(value)
   }
 
