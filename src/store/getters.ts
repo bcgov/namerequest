@@ -505,9 +505,7 @@ export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
 }
 
 export const getShowXproJurisdiction = (state: StateIF): boolean => {
-  if (getLocation(state) !== Location.BC) return true
-  if (getRequestActionCd(state) === RequestCode.MVE) return true
-  return false
+  return getLocation(state) !== Location.BC
 }
 
 export const getXproRequestTypeCd = (state: StateIF): string => {

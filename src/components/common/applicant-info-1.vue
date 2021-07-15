@@ -390,6 +390,9 @@ import { ActionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { NameRequestI } from '@/interfaces'
 
+// List Data
+import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
+
 @Component({
   components: {
     ApplicantInfoNav
@@ -483,10 +486,10 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
 
   get jurisdictionOptions () {
     return (this.getLocation === Location.CA)
-      ? this.$canJurisdictions.filter(jur => jur.value !== Location.BC)
-        .map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
-      : this.$intlJurisdictions.filter(jur => jur.value !== Location.CA)
-        .map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
+      ? CanJurisdictions.filter(jur => jur.value !== Location.BC)
+        .map(jurisdiction => ({ value: jurisdiction.text.toUpperCase(), text: jurisdiction.text }))
+      : IntlJurisdictions.filter(jur => jur.value !== Location.CA)
+        .map(jurisdiction => ({ value: jurisdiction.text.toUpperCase(), text: jurisdiction.text }))
   }
 
   get provinceOptions () {

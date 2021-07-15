@@ -246,11 +246,11 @@ export const editExistingRequest: ActionIF = ({ commit, getters }) => {
     let { xproJurisdiction } = getters.getNr
     let location: Location
     for (let key of ['value', 'text']) {
-      if (CanJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
+      if (CanJurisdictions.some(jurisdiction => jurisdiction[key].toUpperCase() === xproJurisdiction)) {
         location = Location.CA
         break
       }
-      if (IntlJurisdictions.some(jurisdiction => jurisdiction[key] === xproJurisdiction)) {
+      if (IntlJurisdictions.some(jurisdiction => jurisdiction[key].toUpperCase() === xproJurisdiction)) {
         location = Location.IN
         break
       }

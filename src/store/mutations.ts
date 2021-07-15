@@ -75,6 +75,7 @@ export const mutateEditMode = (state: StateIF, editMode: boolean) => {
 }
 
 export const mutateEntityType = (state: StateIF, entity_type_cd: EntityType) => {
+  console.log(entity_type_cd)
   state.stateModel.newRequestModel.entity_type_cd = entity_type_cd
 }
 
@@ -262,10 +263,6 @@ export const mutatePriorityRequest = (state: StateIF, priorityRequest: boolean) 
 export const mutateRequestAction = (state: StateIF, requestCd: RequestCode) => {
   state.stateModel.newRequestModel.conversionType = null
   state.stateModel.newRequestModel.request_action_cd = requestCd
-  if (requestCd === RequestCode.MVE && state.stateModel.newRequestModel.location === Location.BC) {
-    state.stateModel.newRequestModel.location = Location.CA
-    state.stateModel.newRequestModel.entity_type_cd = EntityType.XCR
-  }
 }
 
 export const mutateRequestExaminationOrProvideConsent = (state: StateIF, { index, type, value }) => {
