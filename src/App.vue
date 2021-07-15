@@ -9,7 +9,7 @@
         @close="setIncorporateLoginModalVisible(false)"
       />
 
-      <ChatPopup v-if="getFeatureFlag('chat-popup-enabled')" />
+      <ChatPopup />
 
       <!-- Loading spinner -->
       <v-fade-transition>
@@ -123,9 +123,6 @@ import NamexServices from './services/namex.services'
   }
 })
 export default class App extends Mixins(DateMixin) {
-  // attach method to 'this'
-  readonly getFeatureFlag = getFeatureFlag
-
   showSpinner = false
 
   // Global getters

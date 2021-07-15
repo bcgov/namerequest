@@ -74,7 +74,6 @@
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-// import { getFeatureFlag } from '@/plugins'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import StaffPayment from '@/components/payment/staff-payment.vue'
 import { RETRY_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
@@ -171,7 +170,7 @@ export default class RetryDialog extends Mixins(
   /** Called when user clicks Continue/Submit button. */
   private async confirmPayment () {
     // FUTURE: enable this for staff payment if needed
-    // if (this.isRoleStaff && getFeatureFlag('staff-payment-enabled')) {
+    // if (this.isRoleStaff) {
     //   if (this.currentTab === this.TAB_RETRY_PAYMENT) {
     //     // disable validation
     //     this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(false)

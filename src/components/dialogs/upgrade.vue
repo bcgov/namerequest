@@ -74,7 +74,6 @@
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { getFeatureFlag } from '@/plugins'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import StaffPayment from '@/components/payment/staff-payment.vue'
 import { CreatePaymentParams, FetchFeesParams } from '@/modules/payment/models'
@@ -169,7 +168,7 @@ export default class UpgradeDialog extends Mixins(
 
   /** Called when user clicks Continue/Upgrade button. */
   private async confirmPayment () {
-    if (this.isRoleStaff && getFeatureFlag('staff-payment-enabled')) {
+    if (this.isRoleStaff) {
       if (this.currentTab === this.TAB_UPGRADE_NAME_REQUEST) {
         // disable validation
         this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(false)

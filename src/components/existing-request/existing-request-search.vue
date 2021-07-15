@@ -102,8 +102,8 @@
             </v-col>
           </v-row>
 
-          <!-- SIXTH LINE -->
-          <v-row v-if="isAdvancedSearchEnabled" class="mt-3" no-gutters>
+          <!-- SIXTH LINE - show this only when a user has a token -->
+          <v-row v-if="getIsAuthenticated" class="mt-3" no-gutters>
             <v-col class="text-center">
               <v-btn
                 id="advanced-search-btn"
@@ -126,10 +126,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { getFeatureFlag } from '@/plugins'
-
 import { AdvancedSearch } from '@/components/dialogs'
-
 import { FormType, NameRequestI, ExistingRequestSearchI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
@@ -160,11 +157,6 @@ export default class ExistingRequestSearch extends Vue {
 
   // eslint-disable-next-line no-useless-escape
   private NR_REGEX = /^(NR\ ?L?|L?)?([\d]{6,8})$/
-
-  /** Is true when a user has a token and the advanced search feature flag is true. */
-  private get isAdvancedSearchEnabled (): boolean {
-    return this.getIsAuthenticated && getFeatureFlag('advanced-search-enabled')
-  }
 
   mounted () {
     this.$nextTick(() => {

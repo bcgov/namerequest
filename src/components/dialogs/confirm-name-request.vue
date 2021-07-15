@@ -83,7 +83,6 @@
 <script lang='ts'>
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { getFeatureFlag } from '@/plugins'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 import StaffPayment from '@/components/payment/staff-payment.vue'
@@ -192,7 +191,7 @@ export default class ConfirmNrDialog extends Mixins(
 
   /** Called when user clicks Continue/Submit button. */
   async confirmPayment () {
-    if (this.isRoleStaff && getFeatureFlag('staff-payment-enabled')) {
+    if (this.isRoleStaff) {
       if (this.currentTab === this.TAB_CONFIRM_NAME_REQUEST) {
         // disable validation
         this.$refs.staffPaymentComponent && this.$refs.staffPaymentComponent.setValidation(false)
