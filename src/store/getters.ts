@@ -933,7 +933,7 @@ export const getDraftNameReservation = (state: StateIF): DraftReqI => {
     applicants: [applicant],
     names: nrRequestNames,
     ...nrData,
-    priorityCd: getPriorityRequest(state) ? PriorityCode.Y : PriorityCode.N,
+    priorityCd: getPriorityRequest(state) ? PriorityCode.YES : PriorityCode.NO,
     entity_type_cd: getEntityTypeCd(state),
     request_action_cd: getRequestActionCd(state),
     stateCd: NrState.DRAFT,
@@ -990,7 +990,7 @@ export const getReservedNameReservation = (state: StateIF): ReservedReqI => {
     applicants: [getApplicant(state)],
     names: getNrNames(state),
     ...getNrData(state),
-    priorityCd: PriorityCode.N,
+    priorityCd: PriorityCode.NO,
     entity_type_cd: getEntityTypeCd(state), // FUTURE: fix entity_type_cd type
     request_action_cd: getRequestActionCd(state),
     stateCd: NrState.RESERVED,
@@ -1032,7 +1032,7 @@ export const getConditionalNameReservation = (state: StateIF): ConditionalReqI =
     applicants: [getApplicant(state)],
     names: names,
     ...getNrData(state),
-    priorityCd: PriorityCode.N,
+    priorityCd: PriorityCode.NO,
     entity_type_cd: getEntityTypeCd(state), // FUTURE: fix entity_type_cd type
     request_action_cd: getRequestActionCd(state),
     request_type_cd: getXproRequestTypeCd(state) ? getXproRequestTypeCd(state) : '',

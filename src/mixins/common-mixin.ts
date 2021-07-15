@@ -75,7 +75,7 @@ export class CommonMixin extends Vue {
 
   /** Returns true if the specified NR is a priority request. */
   isPriorityReq (nr: any): boolean {
-    return (nr?.priorityCd === PriorityCode.Y)
+    return (nr?.priorityCd === PriorityCode.YES)
   }
 
   /** Returns true if the specified NR is for a Benefit Company. */

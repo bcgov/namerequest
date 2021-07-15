@@ -211,7 +211,7 @@ export const mutateNameRequest = (state: StateIF, nr: NameRequestI) => {
   state.stateModel.newRequestModel.nr = nr
 
   // store Priority Code
-  mutatePriorityRequest(state, (nr?.priorityCd === PriorityCode.Y))
+  mutatePriorityRequest(state, (nr?.priorityCd === PriorityCode.YES))
 
   // FUTURE: have 1 mutation for nr / applicant info and put these there
   const nrNum = state.stateModel.newRequestModel.nr?.nrNum

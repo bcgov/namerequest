@@ -333,7 +333,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   private get disableUnfurnished (): boolean {
     return (
-      (this.nr.furnished === Furnished.N) &&
+      (this.nr.furnished === Furnished.NO) &&
       [NrState.CONDITIONAL, NrState.REJECTED, NrState.APPROVED].includes(this.nr.stateCd)
     )
   }
@@ -619,7 +619,7 @@ export default class ExistingRequestDisplay extends Mixins(
     try {
       const resp = await NamexServices.getNameRequest(true)
       this.$root.$emit('showSpinner', false)
-      if (resp?.furnished === Furnished.Y) {
+      if (resp?.furnished === Furnished.YES) {
         this.furnished = 'furnished'
         this.setNrResponse(resp)
       }

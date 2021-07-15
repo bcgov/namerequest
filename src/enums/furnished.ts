@@ -1,5 +1,5 @@
-/** Enum for Furnished codes. */
+/** Enum for Furnished codes - whether required outputs have been delivered. */
 export enum Furnished {
-  N = 'N',
-  Y = 'Y'
+  NO = 'N',
+  YES = 'Y'
 }
