@@ -187,6 +187,10 @@
   color: $text !important;
 }
 
+.name-check .v-tab:not(.active-tab):hover {
+  background-color: $BCgovBlue5 !important
+}
+
 .v-tab {
   text-transform: none !important;
   font-size: 18px !important;

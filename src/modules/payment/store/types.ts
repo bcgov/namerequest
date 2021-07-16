@@ -1,5 +1,5 @@
-export const TOGGLE_PAYMENT_MODAL = 'togglePaymentModal'
-export const PAYMENT_MODAL_IS_VISIBLE = 'paymentModalIsVisible'
+export const TOGGLE_CONFIRM_NR_MODAL = 'toggleConfirmNrModal'
+export const CONFIRM_NR_MODAL_IS_VISIBLE = 'confirmNrModalIsVisible'
 
 export const TOGGLE_PAYMENT_HISTORY_MODAL = 'togglePaymentHistoryModal'
 export const PAYMENT_HISTORY_MODAL_IS_VISIBLE = 'paymentHistoryModalIsVisible'
@@ -13,8 +13,14 @@ export const CANCEL_MODAL_IS_VISIBLE = 'cancelModalIsVisible'
 export const TOGGLE_UPGRADE_MODAL = 'toggleUpgradeModal'
 export const UPGRADE_MODAL_IS_VISIBLE = 'upgradeModalIsVisible'
 
-export const TOGGLE_REAPPLY_MODAL = 'toggleReapplyModal'
-export const REAPPLY_MODAL_IS_VISIBLE = 'reapplyModalIsVisible'
+export const TOGGLE_RESUBMIT_MODAL = 'toggleResubmitModal'
+export const RESUBMIT_MODAL_IS_VISIBLE = 'resubmitModalIsVisible'
+
+export const TOGGLE_RETRY_MODAL = 'toggleRetryModal'
+export const RETRY_MODAL_IS_VISIBLE = 'retryModalIsVisible'
+
+export const TOGGLE_RENEW_MODAL = 'toggleRenewModal'
+export const RENEW_MODAL_IS_VISIBLE = 'renewModalIsVisible'
 
 export const PAYMENT_IS_IN_PROGRESS = 'paymentIsInProgress'
 

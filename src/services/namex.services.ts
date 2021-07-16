@@ -139,9 +139,8 @@ export default class NamexServices {
         })
         sessionStorage.removeItem('checkedOutBy')
         sessionStorage.removeItem('checkedOutDt')
-
-        return true
       }
+      return true
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not checkin name request')
       console.error('checkinNameRequest() =', msg) // eslint-disable-line no-console
@@ -356,18 +355,16 @@ export default class NamexServices {
       return (err?.toString() || defaultMessage)
     }
   }
-
-  static async nameAnalysis (params: NewRequestNameSearchI, xpro: boolean): Promise<AnalysisJSONI> {
+  static async nameAnalysis (params: NewRequestNameSearchI): Promise<AnalysisJSONI> {
     const { CancelToken } = Axios
     const source = CancelToken.source()
-    const url = xpro ? 'xpro-name-analysis' : 'name-analysis'
-    const response = await this.axios.get(`${this.namexUrl()}/${url}`, {
+    const response = await this.axios.get(`${this.namexUrl()}/name-analysis`, {
       params,
       cancelToken: source.token,
       timeout: ANALYSIS_TIMEOUT_MS
     })
     if (response?.status === OK && response?.data) return response.data
-    // TODO: change how this is handled
+    // FUTURE: change how this is handled
     throw new Error(`Invalid response = ${response}`)
   }
 

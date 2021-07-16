@@ -1,4 +1,5 @@
 import Vue from 'vue'
+
 import {
   AnalysisJSONI,
   ConversionTypesI,
@@ -10,7 +11,7 @@ import {
   SubmissionTypeT,
   WaitingAddressSearchI
 } from '@/interfaces'
-import { EntityType, Location, RequestCode } from '@/enums'
+import { EntityType, Location, NameCheckErrorType, PriorityCode, RequestCode } from '@/enums'
 
 export const clearErrors = (state: StateIF) => {
   state.stateModel.newRequestModel.errors = []
@@ -178,10 +179,6 @@ export const mutateNoCorpNum = (state: StateIF, noCorpNum: boolean) => {
   state.stateModel.newRequestModel.noCorpNum = noCorpNum
 }
 
-export const mutateNoCorpDesignation = (state: StateIF, noCorpDesignation: boolean) => {
-  state.stateModel.newRequestModel.noCorpDesignation = noCorpDesignation
-}
-
 export const mutateNROriginal = (state: StateIF, nrOriginal: NameRequestI) => {
   state.stateModel.newRequestModel.nrOriginal = nrOriginal
 }
@@ -210,8 +207,13 @@ export const mutateIsLoadingSubmission = (state: StateIF, isLoadingSubmission: b
 }
 
 export const mutateNameRequest = (state: StateIF, nr: NameRequestI) => {
+  // store NR data
   state.stateModel.newRequestModel.nr = nr
-  // TODO: have 1 mutation for nr / applicant info and put these there
+
+  // store Priority Code
+  mutatePriorityRequest(state, (nr?.priorityCd === PriorityCode.YES))
+
+  // FUTURE: have 1 mutation for nr / applicant info and put these there
   const nrNum = state.stateModel.newRequestModel.nr?.nrNum
   if (nrNum?.includes('NR L')) {
     sessionStorage.setItem('BCREG-NRL', nrNum)
@@ -228,7 +230,7 @@ export const mutateNameRequestByKey = (state: StateIF, kv: any) => {
     kv.key,
     kv.value
   )
-  // TODO: have 1 mutation for nr / applicant info and put these there
+  // FUTURE: have 1 mutation for nr / applicant info and put these there
   const nrNum = state.stateModel.newRequestModel.nr?.nrNum
   if (nrNum?.includes('NR L')) {
     sessionStorage.setItem('BCREG-NRL', nrNum)
@@ -311,7 +313,7 @@ export const populateApplicantData = (state: StateIF) => {
       state.stateModel.newRequestModel.nr.applicants[key]
     )
   }
-  // TODO: have 1 mutation for nr / applicant info and put these there
+  // FUTURE: have 1 mutation for nr / applicant info and put these there
   sessionStorage.setItem('BCREG-emailAddress', state.stateModel.newRequestModel.applicant?.emailAddress)
   sessionStorage.setItem('BCREG-phoneNumber', state.stateModel.newRequestModel.applicant?.phoneNumber)
 }
@@ -369,35 +371,25 @@ export const setErrors = (state: StateIF, errors: string) => {
   state.stateModel.newRequestModel.errors = [errors]
 }
 
-export const setNrResponse = (state: StateIF, data: NameRequestI): boolean => {
+export const setNrResponse = (state: StateIF, nr: NameRequestI) => {
   try {
-    state.stateModel.newRequestModel.nr = data
-    const { applicants = [] } = state.stateModel.newRequestModel.nr
+    // set NR data
+    mutateNameRequest(state, nr)
 
+    // set Applicants
+    const applicants = state.stateModel.newRequestModel.nr?.applicants || []
     if (applicants instanceof Array) {
-      // setApplicantDetails(applicants[0]) // OLD CODE
       state.stateModel.newRequestModel.applicant = { ...applicants[0] }
     } else if (applicants) {
-      // setApplicantDetails(applicants) // OLD CODE
       state.stateModel.newRequestModel.applicant = { ...applicants }
     } else {
       // applicants is null/undefined
     }
-    // TODO: have 1 mutation for nr / applicant info and put these there
-    const nrNum = state.stateModel.newRequestModel.nr?.nrNum
-    if (nrNum?.includes('NR L')) {
-      sessionStorage.setItem('BCREG-NRL', nrNum)
-      sessionStorage.setItem('BCREG-nrNum', null)
-    } else if (nrNum) {
-      sessionStorage.setItem('BCREG-NRL', null)
-      sessionStorage.setItem('BCREG-nrNum', nrNum)
-    }
-    sessionStorage.setItem('BCREG-emailAddress', state.stateModel.newRequestModel.applicant?.emailAddress)
-    sessionStorage.setItem('BCREG-phoneNumber', state.stateModel.newRequestModel.applicant?.phoneNumber)
-    return true
+
+    // populate Applicants
+    populateApplicantData(state)
   } catch (err) {
     console.error('setNrResponse() =', err) // eslint-disable-line no-console
-    return false
   }
 }
 
@@ -422,10 +414,6 @@ export const resetNameChoices = (state: StateIF) => {
   }
 }
 
-export const mutateNameAnalysisTimedOut = (state: StateIF, nameAnalysisTimedOut: boolean) => {
-  state.stateModel.newRequestModel.nameAnalysisTimedOut = nameAnalysisTimedOut
-}
-
 export const mutateConditionsModalVisible = (state: StateIF, conditionsModalVisible: boolean) => {
   state.stateModel.newRequestModel.conditionsModalVisible = conditionsModalVisible
 }
@@ -442,24 +430,98 @@ export const mutateUserCancelledAnalysis = (state: StateIF, userCancelledAnalysi
   state.stateModel.newRequestModel.userCancelledAnalysis = userCancelledAnalysis
 }
 
-export const mutateQuickSearch = (state: StateIF, quickSearch: boolean) => {
-  state.stateModel.newRequestModel.quickSearch = quickSearch
-}
-
-export const mutateQuickSearchNames = (state: StateIF, quickSearchNames: any[]) => {
-  state.stateModel.newRequestModel.quickSearchNames = quickSearchNames
-}
-
-export const mutateAnalyzePending = (state: StateIF, analyzePending: boolean) => {
-  state.stateModel.newRequestModel.analyzePending = analyzePending
-}
-
 export const mutateKeycloakRoles = (state: StateIF, keyCloakRoles: Array<string>) => {
   state.stateModel.common.keycloakRoles = keyCloakRoles
 }
 
 export const mutateStaffPayment = (state: StateIF, staffPayment: StaffPaymentIF) => {
   state.stateModel.staffPayment = staffPayment
+}
+
+/** Mutations for Name Check */
+
+export const mutateAnalyzeDesignationPending = (state: StateIF, pending: boolean) => {
+  state.stateModel.nameCheckModel.analyzeDesignationPending = pending
+}
+
+export const mutateAnalyzeStructurePending = (state: StateIF, pending: boolean) => {
+  state.stateModel.nameCheckModel.analyzeStructurePending = pending
+}
+
+export const mutateAnalyzeConflictsPending = (state: StateIF, pending: boolean) => {
+  state.stateModel.nameCheckModel.analyzeConflictsPending = pending
+}
+
+export const mutateConflictsConditional = (state: StateIF, value: Array<string>) => {
+  state.stateModel.nameCheckModel.conflictsConditional = value
+}
+
+export const mutateConflictsExact = (state: StateIF, value: Array<string>) => {
+  state.stateModel.nameCheckModel.conflictsExact = value
+}
+
+export const mutateConflictsRestricted = (state: StateIF, value: Array<string>) => {
+  state.stateModel.nameCheckModel.conflictsRestricted = value
+}
+
+export const mutateConflictsSimilar = (state: StateIF, value: Array<string>) => {
+  state.stateModel.nameCheckModel.conflictsSimilar = value
+}
+
+export const mutateDesignation = (state: StateIF, value: string) => {
+  state.stateModel.nameCheckModel.designation = value
+}
+
+export const mutateDesignationsCheckUse = (state: StateIF, value: Array<string>) => {
+  state.stateModel.nameCheckModel.designationsCheckUse = value
+}
+
+export const mutateDesignationsMismatched = (state: StateIF, value: Array<string>) => {
+  state.stateModel.nameCheckModel.designationsMismatched = value
+}
+
+export const mutateDesignationsMisplaced = (state: StateIF, value: Array<string>) => {
+  state.stateModel.nameCheckModel.designationsMisplaced = value
+}
+
+export const mutateDoNameCheck = (state: StateIF, doNameCheck: boolean) => {
+  state.stateModel.nameCheckModel.doNameCheck = doNameCheck
+}
+
+export const mutateFullName = (state: StateIF, value: string) => {
+  state.stateModel.nameCheckModel.fullName = value
+}
+
+export const mutateMissingDescriptive = (state: StateIF, value: boolean) => {
+  state.stateModel.nameCheckModel.missingDescriptive = value
+}
+
+export const mutateMissingDesignation = (state: StateIF, value: boolean) => {
+  state.stateModel.nameCheckModel.missingDesignation = value
+}
+
+export const mutateMissingDistinctive = (state: StateIF, value: boolean) => {
+  state.stateModel.nameCheckModel.missingDistinctive = value
+}
+
+export const mutateNameAnalysisTimedOut = (state: StateIF, nameAnalysisTimedOut: boolean) => {
+  state.stateModel.newRequestModel.nameAnalysisTimedOut = nameAnalysisTimedOut
+}
+
+export const mutateQuickSearchNames = (state: StateIF, quickSearchNames: any[]) => {
+  state.stateModel.newRequestModel.quickSearchNames = quickSearchNames
+}
+
+export const mutateSpecialCharacters = (state: StateIF, value: Array<string>) => {
+  state.stateModel.nameCheckModel.specialCharacters = value
+}
+
+export const mutateNameCheckErrorAdd = (state: StateIF, key: string) => {
+  state.stateModel.nameCheckModel.errors[key] = true
+}
+
+export const mutateNameCheckErrorClear = (state: StateIF, key: NameCheckErrorType) => {
+  state.stateModel.nameCheckModel.errors[key] = false
 }
 
 export const mutateFolioNumber = (state: StateIF, folioNumber: string) => {

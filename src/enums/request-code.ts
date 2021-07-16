@@ -7,8 +7,8 @@ export enum RequestCode {
   CHG = 'CHG', // change name request
   CNV = 'CNV', // conversion request
   DBA = 'DBA', // doing business as request
-  ASSUMED = 'ASSUMED', // assumed name request
-  REN = 'REN', // restore with new name request
+  ASSUMED = 'ASSUMED', // assumed name request // FUTURE: should be AS?
+  REN = 'REN', // restore with new name request (renew)
   INFO = 'INFO', // special value for sub-menu
-  REST = 'REST', // TODO: possibly typo - same as RESTORE?
+  REST = 'REST', // restore
 }

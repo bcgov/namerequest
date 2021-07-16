@@ -50,9 +50,9 @@
               </v-row>
               <v-row>
                 <v-col class="text-center copy-small">
-                  Before selecting your business
-                  <br/>name, consider checking
-                  <br/>available website domain names.
+                  Before selecting your business<br>
+                  name, consider checking<br>
+                  available website domain names.
                 </v-col>
               </v-row>
             </v-container>
@@ -73,9 +73,9 @@
               </v-row>
               <v-row>
                 <v-col class="text-center copy-small">
-                  Search social media sites to see
-                  <br/>which usernames may be available
-                  <br/>for your business.
+                  Search social media sites to see<br>
+                  which usernames may be available<br>
+                  for your business.
                 </v-col>
               </v-row>
             </v-container>

@@ -3,12 +3,14 @@ import * as types from './types'
 import { STATE_KEY } from '@/modules/payment/store'
 
 export default {
-  [types.PAYMENT_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isPaymentVisible,
+  [types.CONFIRM_NR_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isConfirmNrVisible,
   [types.PAYMENT_HISTORY_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isPaymentHistoryVisible,
   [types.REFUND_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isRefundVisible,
   [types.CANCEL_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isCancelVisible,
   [types.UPGRADE_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isUpgradeVisible,
-  [types.REAPPLY_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isReapplyVisible,
+  [types.RESUBMIT_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isResubmitVisible,
+  [types.RETRY_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isRetryVisible,
+  [types.RENEW_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isRenewVisible,
   [types.PAYMENT_COMPLETE_MODAL_IS_VISIBLE]: state => state[STATE_KEY].isPaymentCompleteVisible,
   [types.PAYMENT_IS_IN_PROGRESS]: state => state[STATE_KEY].isProcessing,
   [types.GET_SBC_PAYMENT]: state => state[STATE_KEY].sbcPayment,
@@ -23,6 +25,7 @@ export default {
   [types.GET_PAYMENT_DATE]: state => state[STATE_KEY].payment.payment_status_code,
   [types.GET_PAYMENT_FEES]: state => state[STATE_KEY].fees,
   [types.GET_PAYMENT_DETAILS]: state => {
+    // FUTURE: delete these state properties if obsolete
     const {
       filingTypeCode,
       entity_type_cd,

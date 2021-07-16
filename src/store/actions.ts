@@ -1,23 +1,40 @@
 import querystring from 'qs'
 import axios from 'axios'
-import { CorpNumRequests, EntityType, Location, NrState, RequestCode } from '@/enums'
+import {
+  CorpNumRequests,
+  EntityType,
+  Location,
+  NameCheckAnalysisJurisdiction,
+  NameCheckAnalysisType,
+  NameCheckConflictType,
+  NameCheckErrorType,
+  NrState,
+  RequestCode
+} from '@/enums'
 import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
-import { removeExcessSpaces, sanitizeName } from '@/plugins/utilities'
+import { sanitizeName } from '@/plugins/utilities'
+import removeAccents from 'remove-accents'
 import { getFeatureFlag, sleep } from '@/plugins'
 import NamexServices from '@/services/namex.services'
 
 // List Data
-import { CanJurisdictions, IntlJurisdictions, RequestActions } from '@/list-data'
+import { CanJurisdictions, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
 
 // Interfaces
 import {
+  CleanedNameIF,
   ConversionTypesI,
   NameRequestI,
   NewRequestNameSearchI,
+  ParsedRestrictedResponseIF,
+  RestrictedResponseIF,
   SelectOptionsI,
   StatsI,
   SubmissionTypeT,
-  StaffPaymentIF
+  StaffPaymentIF,
+  QuickSearchParamsI,
+  QuickSearchParsedRespI,
+  ConflictListItemI
 } from '@/interfaces'
 import { ActionIF } from '@/interfaces/store-interfaces'
 
@@ -53,55 +70,6 @@ export const setActiveComponent: any = ({ commit }, component): void => {
   commit('mutateDisplayedComponent', component)
 }
 
-// for xpro too
-export const getNameAnalysis: ActionIF = async ({ commit, getters }, xpro: boolean) => {
-  try {
-    commit('mutateAnalyzePending', true)
-    commit('mutateDisplayedComponent', 'AnalyzePending')
-    commit('resetRequestExaminationOrProvideConsent')
-
-    const params: NewRequestNameSearchI = {
-      name: getters.getName,
-      location: getters.getLocation,
-      entity_type_cd: getters.getEntityTypeCd,
-      request_action_cd: getters.getRequestActionCd
-    }
-    const analysis = await NamexServices.nameAnalysis(params, xpro)
-
-    if (getters.getAnalyzePending) {
-      const json = analysis
-      commit('mutateAnalysisJSON', json)
-      if (Array.isArray(json.issues) && json.issues.length > 0) {
-        let corpConflict = json.issues.find(issue => issue.issue_type === 'corp_conflict')
-        if (corpConflict && Array.isArray(corpConflict.conflicts) && corpConflict.conflicts.length > 0) {
-          let firstConflict = corpConflict.conflicts[0]
-          if (firstConflict.id) {
-            commit('mutateConflictId', firstConflict.id)
-          }
-        }
-      }
-      commit('mutateAnalyzePending', false)
-      commit('mutateDisplayedComponent', 'AnalyzeResults')
-    }
-  } catch (err) {
-    const msg = await NamexServices.handleApiError(err, 'Could not get name analysis')
-    console.error('getNameAnalysis() =', msg) // eslint-disable-line no-console
-    // FUTURE: fix error handling in case of network error (#5898)
-    // (should not display "send to examination")
-    if (err?.code === 'ECONNABORTED' || err?.message === 'Network Error') {
-      commit('mutateNameAnalysisTimedOut', true)
-      commit('mutateName', getters.getName)
-      commit('mutateDisplayedComponent', 'SendToExamination')
-      return
-    }
-    if (getters.getUserCancelledAnalysis) {
-      commit('setActiveComponent', 'NamesCapture')
-      return
-    }
-    commit('mutateDisplayedComponent', 'Tabs')
-  }
-}
-
 /**
  * Confirms whether the specified action is allowed.
  * @param action the action to confirm
@@ -122,7 +90,6 @@ export const confirmAction: ActionIF = async ({ commit, getters }, action: strin
 export const findNameRequest: ActionIF = async ({ commit, getters }): Promise<void> => {
   try {
     resetAnalyzeName({ commit, getters })
-    commit('mutateQuickSearch', true)
     commit('mutateDisplayedComponent', 'SearchPending')
 
     const request = await NamexServices.getNameRequest(false)
@@ -174,7 +141,7 @@ export const loadExistingNameRequest:ActionIF = async ({ commit }, nrData: any) 
     commit('resetApplicantDetails')
     commit('setNrResponse', nrData)
     commit('updateReservationNames', names)
-    // *** TODO: instead of "mutating the component", route to "/existing/:id"
+    // FUTURE: instead of "mutating the component", route to "/existing/:id"
     commit('mutateDisplayedComponent', 'ExistingRequestDisplay')
   }
 }
@@ -203,11 +170,31 @@ export const resetAnalyzeName = ({ commit, getters }) => {
   commit('resetNameChoices')
   commit('mutateNameRequest', {})
   commit('mutateNameAnalysisTimedOut', false)
-  commit('mutateAnalyzePending', false)
+  commit('mutateAnalyzeDesignationPending', false)
+  commit('mutateAnalyzeStructurePending', false)
+  commit('mutateAnalyzeConflictsPending', false)
+  commit('mutateConflictsConditional', [])
+  commit('mutateConflictsExact', [])
+  commit('mutateConflictsRestricted', [])
+  commit('mutateConflictsSimilar', [])
+  commit('mutateDesignationsCheckUse', [])
+  commit('mutateDesignationsMismatched', [])
+  commit('mutateDesignationsMisplaced', [])
+  commit('mutateMissingDescriptive', false)
+  commit('mutateMissingDesignation', false)
+  commit('mutateMissingDistinctive', false)
+  commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_DESIGNATION)
+  commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_EXACT)
+  commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_RESTRICTED)
+  commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_SIMILAR)
+  commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_STRUCTURE)
+  commit('mutateSpecialCharacters', [])
 }
 
 export const cancelAnalyzeName: ActionIF = ({ commit, getters }, destination: string) => {
-  commit('mutateAnalyzePending', false)
+  commit('mutateAnalyzeDesignationPending', false)
+  commit('mutateAnalyzeStructurePending', false)
+  commit('mutateAnalyzeConflictsPending', false)
   if (source && source.cancel) {
     source.cancel()
     source = null
@@ -219,7 +206,6 @@ export const cancelAnalyzeName: ActionIF = ({ commit, getters }, destination: st
   setActiveComponent({ commit }, destination)
   if (destination !== 'NamesCapture') {
     resetAnalyzeName({ commit, getters })
-    commit('mutateQuickSearch', true)
   }
 }
 
@@ -284,219 +270,6 @@ export const editExistingRequest: ActionIF = ({ commit, getters }) => {
   commit('mutateDisplayedComponent', 'ExistingRequestEdit')
 }
 
-// TODO: Not an action
-export const parseExactNames = (json: { names: [string] }) => {
-  let nameObjs = json.names
-  let names = []
-  for (let i = 0; i < nameObjs.length; i++) {
-    names.push({ name: `${nameObjs[i]['name']}`, type: 'exact' })
-  }
-  return names
-}
-
-// TODO: Not an action
-export const parseSynonymNames = (json: { names: [string], exactNames: [{ name: string, type: string }] }) => {
-  let duplicateNames = []
-  for (let i = 0; i < json.exactNames.length; i++) {
-    duplicateNames.push(json.exactNames[i].name)
-  }
-  let nameObjs = json.names
-  let names = []
-  for (let i = 0; i < nameObjs.length; i++) {
-    if (nameObjs[i]['name_info']['id']) {
-      let name = nameObjs[i]['name_info']['name']
-      if (!duplicateNames.includes(name)) {
-        names.push({ name: name, type: 'synonym' })
-      }
-    }
-  }
-  return names
-}
-
-export const getQuickSearch = async ({ commit, getters }, cleanedName: {exactMatch: string, synonymMatch: string}) => {
-  const quickSearchPublicId = window['quickSearchPublicId']
-  const quickSearchPublicSecret = window['quickSearchPublicSecret']
-
-  // only do quick search if we have id and secret
-  if (quickSearchPublicId && quickSearchPublicSecret) {
-    try {
-      commit('mutateDisplayedComponent', 'QuickSearchPending')
-      let encodedAuth = btoa(`${quickSearchPublicId}:${quickSearchPublicSecret}`)
-
-      const tokenResp = await axios.post(window['authTokenUrl'], 'grant_type=client_credentials', {
-        headers: { Authorization: `Basic ${encodedAuth}`, 'content-type': 'application/x-www-form-urlencoded' }
-      })
-
-      let token = tokenResp.data.access_token
-      const exactResp = await axios.get('/exact-match?query=' + cleanedName.exactMatch, {
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
-      })
-
-      const synonymResp = await axios.get('/requests/synonymbucket/' + cleanedName.synonymMatch + '/*', {
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
-      })
-
-      const exactNames = await parseExactNames(exactResp.data)
-
-      // pass in exactNames so that we can check for duplicates
-      synonymResp.data.exactNames = exactNames
-      const synonymNames = await parseSynonymNames(synonymResp.data)
-      commit('mutateQuickSearchNames', exactNames.concat(synonymNames))
-
-      // check if they skipped
-      if (getters.getQuickSearch) {
-        commit('mutateDisplayedComponent', 'QuickSearchResults')
-      }
-
-      return
-    } catch (err) {
-      const msg = await NamexServices.handleApiError(err, 'Could not get quick search')
-      // send error to sentry and move on to detailed search
-      // (do not show error to user)
-      console.error('getQuickSearch() =', msg) // eslint-disable-line no-console
-    }
-  }
-  commit('mutateQuickSearch', false)
-  await startAnalyzeName({ commit, getters })
-}
-
-// TODO: Not an Action
-export const startQuickSearch = async ({ commit, getters }) => {
-  if (getters.getName) {
-    const name = getters.getName
-    // eslint-disable-next-line no-useless-escape
-    let exactMatchName = name.replace(' \/', '\/')
-      .replace(/(^|\s+)(\$+(\s|$)+)+/g, '$1DOLLAR$3')
-      .replace(/(^|\s+)(¢+(\s|$)+)+/g, '$1CENT$3')
-      .replace(/\$/g, 'S')
-      .replace(/¢/g, 'C')
-      .replace(/\\/g, '')
-      .replace(/\//g, '')
-      .replace(/(`|~|!|\||\(|\)|\[|\]|\{|\}|:|"|\^|#|%|\?)/g, '')
-      // eslint-disable-next-line no-useless-escape
-      .replace(/[\+\-]{2,}/g, '')
-      // eslint-disable-next-line no-useless-escape
-      .replace(/\s[\+\-]$/, '')
-    exactMatchName = exactMatchName.substring(0, 1) === '+' ? exactMatchName.substring(1) : exactMatchName
-    exactMatchName = encodeURIComponent(exactMatchName)
-
-    const synonymsName = name.replace(/\//g, ' ')
-      .replace(/\\/g, ' ')
-      .replace(/&/g, ' ')
-      .replace(/\+/g, ' ')
-      // eslint-disable-next-line no-useless-escape
-      .replace(/\-/g, ' ')
-      .replace(/(^| )(\$+(\s|$)+)+/g, '$1DOLLAR$3')
-      .replace(/(^| )(¢+(\s|$)+)+/g, '$1CENT$3')
-      .replace(/\$/g, 'S')
-      .replace(/¢/g, 'C')
-      .replace(/(`|~|!|\||\(|\)|\[|\]|\{|\}|:|"|\^|#|%|\?|,)/g, '')
-
-    await getQuickSearch({ commit, getters }, { 'exactMatch': exactMatchName, 'synonymMatch': synonymsName })
-  }
-}
-
-export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
-  resetAnalyzeName({ commit, getters })
-  setUserCancelledAnalysis({ commit, getters }, false)
-  let name
-  if (getters.getName) {
-    name = sanitizeName(getters.getName)
-  }
-
-  if (!getters.getRequestActionCd) commit('setErrors', 'request_action_cd')
-  if (!getters.getLocation) commit('setErrors', 'location')
-  if (!getters.getEntityTypeCd) commit('setErrors', 'entity_type_cd')
-
-  // set error if checkbox is shown and user hasn't confirmed it
-  if (getters.getShowNoCorpDesignation && !getters.getNoCorpDesignation) {
-    commit('setErrors', 'no_corp_designation')
-  }
-  if (
-    [Location.CA, Location.IN].includes(getters.getLocation) &&
-    ![RequestCode.MVE].includes(getters.getRequestActionCd) &&
-    !getters.getRequestJurisdictionCd
-  ) {
-    commit('setErrors', 'jurisdiction')
-    return
-  }
-  if (!getters.getCorpSearch) {
-    if (!getters.getName) {
-      commit('setErrors', 'name')
-      return
-    }
-    if (getters.getName.length < 3) {
-      commit('setErrors', 'length')
-      return
-    }
-  }
-  if (getters.getErrors.length > 0) {
-    return
-  }
-  commit('mutateNameOriginal', name) // Set original name for reset baseline
-  if (getters.getIsXproMras) {
-    commit('mutateNRData', { key: 'xproJurisdiction', value: getters.getJurisdictionText })
-    commit('mutateNRData', { key: 'homeJurisNum', value: getters.getCorpSearch })
-    if (!getters.getHasNoCorpNum) {
-      const profile: any = await fetchMRASProfile({ commit, getters })
-      if (profile) {
-        const hasMultipleNames = profile?.LegalEntity?.names && profile?.LegalEntity?.names.constructor === Array
-        name = hasMultipleNames
-          ? sanitizeName(profile?.LegalEntity?.names[0]?.legalName)
-          : sanitizeName(profile?.LegalEntity?.names?.legalName)
-        commit('mutateName', name)
-      } else {
-        commit('mutateNoCorpNum', true)
-        return
-      }
-    }
-  }
-  if (getters.getQuickSearch) {
-    await startQuickSearch({ commit, getters })
-    return
-  }
-  let testName = getters.getName.toUpperCase()
-  testName = removeExcessSpaces(testName)
-  // eslint-disable-next-line no-useless-escape
-  if ((name !== testName) || name.match(/^[\[\]\^*\+-\/\=&\(\)\.,"'#@\!\?;:]/)) {
-    commit('mutateDisplayedComponent', 'AnalyzeCharacters')
-    commit('mutateName', name)
-    return
-  }
-  if (getters.getNameIsSlashed) {
-    commit('mutateName', name)
-    commit('mutateDisplayedComponent', 'SendToExamination')
-
-    return
-  }
-  commit('mutateName', name)
-  if (getters.getLocation === Location.BC || getters.getRequestActionCd === RequestCode.MVE) {
-    if (getters.getNameIsEnglish && !getters.getIsPersonsName &&
-      !getters.getDoNotAnalyzeEntities.includes(getters.getEntityTypeCd)) {
-      const requestActions = [RequestCode.NEW, RequestCode.MVE, RequestCode.DBA, RequestCode.CHG]
-      if (requestActions.includes(getters.getRequestActionCd)) {
-        getFeatureFlag('disable-analysis')
-          ? commit('mutateDisplayedComponent', 'SendToExamination')
-          : getNameAnalysis({ commit, getters }, false)
-        return
-      }
-    }
-    commit('mutateDisplayedComponent', 'SendToExamination')
-  } else {
-    const requestActions = [RequestCode.AML, RequestCode.CHG, RequestCode.DBA, RequestCode.MVE,
-      RequestCode.NEW, RequestCode.REH, RequestCode.REN, RequestCode.REST]
-    if (requestActions.includes(getters.getRequestActionCd)) {
-      if (getters.getDoNotAnalyzeEntities.includes(getters.getEntityTypeCd)) {
-        commit('mutateDisplayedComponent', 'SendToExamination')
-        return
-      }
-      getFeatureFlag('disable-analysis')
-        ? commit('mutateDisplayedComponent', 'SendToExamination')
-        : getNameAnalysis({ commit, getters }, true)
-    }
-  }
-}
-
 export const setApplicantDetails: ActionIF = ({ commit }, appKV) => {
   commit('mutateApplicant', appKV)
   if (!appKV || !appKV.value || appKV.key !== 'addrLine1') {
@@ -508,7 +281,7 @@ export const setAddressSuggestions: ActionIF = ({ commit }, addressSuggestions: 
   commit('mutateAddressSuggestions', addressSuggestions)
 }
 
-// TODO: Not a real action?
+// FUTURE: not an action - move it to another module?
 export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> => {
   if (getters.getShowCorpNum) {
     if (getters.getShowCorpNum === CorpNumRequests.MRAS) {
@@ -519,7 +292,7 @@ export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> =
   }
 }
 
-// TODO: Not a real action
+// FUTURE: not an action - move it to another module?
 export const checkCOLIN = ({ getters }, corpNum: string) => {
   // Remove BC prefix as Colin only supports base number with no prefix for BC's
   const cleanedCorpNum = corpNum.replace(/^BC+/i, '')
@@ -527,7 +300,7 @@ export const checkCOLIN = ({ getters }, corpNum: string) => {
   return axios.post(url, {})
 }
 
-// TODO: Not a real action
+// FUTURE: not an action - move it to another module?
 export const checkMRAS = ({ getters }, corpNum: string) => {
   let { xproJurisdiction } = getters.getNrData
   let { SHORT_DESC } = CanJurisdictions.find(jur => jur.text === xproJurisdiction)
@@ -560,7 +333,7 @@ export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
   return null
 }
 
-// TODO: not a real action
+// FUTURE: not an action - move it to another module?
 export const getNrStateData = ({ getters }) => {
   let nrState = getters.getNrState
   if (getters.getAssumedName) nrState = NrState.ASSUMED
@@ -569,7 +342,6 @@ export const getNrStateData = ({ getters }) => {
     case NrState.DRAFT:
       data = getters.getDraftNameReservation
       break
-    // *** TODO: restore this after fixes
     case NrState.COND_RESERVED:
       data = getters.conditionalNameReservation
       break
@@ -595,7 +367,7 @@ export const getNrStateData = ({ getters }) => {
   return data
 }
 
-// TODO: not a real action
+// FUTURE: not an action - move it to another module?
 export const getNrTypeData = ({ getters }, type: string) => {
   if (getters.getAssumedName) type = 'assumed'
   let data: any
@@ -618,12 +390,11 @@ export const getNrTypeData = ({ getters }, type: string) => {
 export const submit: any = async ({ commit, getters, dispatch }): Promise<any> => {
   if (getters.getEditMode) {
     // TODO-CAM: Refactor the way these async requests are used to provide conditional booleans
-    // @ts-ignore
     const data = await NamexServices.patchNameRequests(getters.getNrId, getters.getRequestActionCd,
       getters.getEditNameReservation)
     if (data) {
-      // TODO: change this flow to use the patch response instead of getting the request again and remove code below
-      // TODO: cases where applicants can be a list or object -> make this consistent (api) + update UI accordingly
+      // FUTURE: change this flow to use the patch response instead of getting the request again and remove code below
+      // FUTURE: cases where applicants can be a list or object -> make this consistent (api) + update UI accordingly
       // need to set phone/email in case they changed in the patch
       if (data.applicants instanceof Array && data.applicants.length > 0) {
         sessionStorage.setItem('BCREG-emailAddress', data.applicants[0].emailAddress)
@@ -633,8 +404,7 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
         sessionStorage.setItem('BCREG-phoneNumber', data.applicants?.phoneNumber)
       }
       commit('mutateNameRequest', data)
-      // TODO: remove checkin/checkout process (api should handle it whenever a put/patch is attempted)
-      // @ts-ignore
+      // FUTURE: remove checkin/checkout process (api should handle it whenever a put/patch is attempted)
       const checkin = await NamexServices.checkinNameRequest(getters.getNrId, getters.getNrState)
       if (checkin) {
         commit('mutateDisplayedComponent', 'Success')
@@ -661,7 +431,7 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
       request = await NamexServices.putNameReservation(getters.getNrId, getters.getRequestActionCd, data)
       if (request) commit('setNrResponse', request)
     }
-    if (request) await dispatch('togglePaymentModal', true)
+    if (request) await dispatch('toggleConfirmNrModal', true)
   }
 }
 
@@ -711,10 +481,6 @@ export const setNameIsEnglish: ActionIF = ({ commit }, isEnglishName: boolean): 
 
 export const setNoCorpNum: ActionIF = ({ commit }, noCorpNum: boolean): void => {
   commit('mutateNoCorpNum', noCorpNum)
-}
-
-export const setNoCorpDesignation: ActionIF = ({ commit }, noCorpDesignation: boolean): void => {
-  commit('mutateNoCorpDesignation', noCorpDesignation)
 }
 
 export const setExtendedRequestType: ActionIF = ({ commit }, extendedRequestType: SelectOptionsI): void => {
@@ -819,11 +585,9 @@ export const setShowActualInput: ActionIF = ({ commit }, showInput: boolean): vo
   commit('mutateShowActualInput', showInput)
 }
 
-export const setQuickSearch: ActionIF = ({ commit }, quickSearch: boolean): void => {
-  commit('mutateQuickSearch', quickSearch)
-}
-
-// *** Dialog Actions ***
+//
+// Dialog Actions
+//
 export const setIncorporateLoginModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
   commit('mutateIncorporateLoginModalVisible', isVisible)
 }
@@ -882,4 +646,433 @@ export const setStaffPayment: ActionIF = ({ commit }, staffPayment: StaffPayment
 
 export const setFolioNumber: ActionIF = ({ commit }, folioNumber: string): void => {
   commit('mutateFolioNumber', folioNumber)
+}
+/** Name Check actions
+ * FUTURE: move these into a factory if converting to composition api
+ */
+export const getMatchesExact = async (
+  { commit },
+  token: string,
+  cleanedName: string
+): Promise<Array<ConflictListItemI>> => {
+  const exactResp = await axios.get('/exact-match?query=' + cleanedName, {
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+  }).catch(() => {
+    commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_EXACT)
+    return null
+  })
+  return exactResp?.data ? parseExactNames(exactResp.data) : []
+}
+export const getMatchesSimilar = async (
+  { commit },
+  token: string,
+  cleanedName: string,
+  exactNames: Array<ConflictListItemI>
+): Promise<Array<ConflictListItemI>> => {
+  const synonymResp = await axios.get('/requests/synonymbucket/' + cleanedName + '/*', {
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+  }).catch(() => {
+    commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_SIMILAR)
+    return null
+  })
+  if (synonymResp?.data) synonymResp.data.exactNames = exactNames || []
+  return synonymResp?.data ? parseSynonymNames(synonymResp.data) : []
+}
+export const getMatchesRestricted = async (
+  { commit },
+  token: string,
+  cleanedName: string
+): Promise<ParsedRestrictedResponseIF> => {
+  const restrictedResp = await axios.get(`/documents:restricted_words?content=${cleanedName}`, {
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+  }).catch(() => {
+    commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_RESTRICTED)
+    return null
+  })
+  return restrictedResp?.data
+    ? parseRestrictedWords(restrictedResp.data)
+    : { restrictedWords: [], conditionalWords: [] }
+}
+
+export const getNameAnalysis: ActionIF = async (
+  { commit, getters },
+  options: { xpro: boolean, designationOnly: boolean }
+) => {
+  const name = getters.getFullName
+  try {
+    if (options.designationOnly) commit('mutateAnalyzeDesignationPending', true)
+    else commit('mutateAnalyzeStructurePending', true)
+    commit('resetRequestExaminationOrProvideConsent')
+    const params: NewRequestNameSearchI = {
+      name: name,
+      location: getters.getLocation,
+      entity_type_cd: getters.getEntityTypeCd,
+      request_action_cd: getters.getRequestActionCd,
+      jurisdiction: options.xpro ? NameCheckAnalysisJurisdiction.XPRO : NameCheckAnalysisJurisdiction.BC,
+      analysis_type: options.designationOnly ? NameCheckAnalysisType.DESIGNATION : NameCheckAnalysisType.STRUCTURE
+    }
+    const analysis = await NamexServices.nameAnalysis(params)
+    // verify the user did not start a new search on a different name
+    if (name === getters.getFullName) {
+      const json = analysis
+      commit('mutateAnalysisJSON', json)
+      if (Array.isArray(json.issues) && json.issues.length > 0) {
+        for (let i = 0; i < json.issues.length; i++) {
+          switch (json.issues[i].issue_type) {
+            case 'add_descriptive':
+              commit('mutateMissingDescriptive', true)
+              continue
+            case 'add_distinctive':
+              commit('mutateMissingDistinctive', true)
+              continue
+            case 'designation_non_existent':
+              commit('mutateMissingDesignation', true)
+              continue
+            case 'designation_mismatch':
+              if (Array.isArray(json.issues[i].name_actions) && json.issues[i].name_actions.length > 0) {
+                let items = json.issues[i].name_actions.map(item => { return item.word })
+                items = [...new Set(items)]
+                commit('mutateDesignationsMismatched', items)
+              }
+              continue
+            case 'designation_misplaced':
+              if (Array.isArray(json.issues[i].name_actions) && json.issues[i].name_actions.length > 0) {
+                let items = json.issues[i].name_actions.map(item => { return item.word })
+                items = [...new Set(items)]
+                commit('mutateDesignationsMisplaced', items)
+              }
+              continue
+            case 'end_designation_more_than_once':
+              if (Array.isArray(json.issues[i].name_actions) && json.issues[i].name_actions.length > 0) {
+                let items = json.issues[i].name_actions.map(item => { return item.word })
+                items = [...new Set(items)]
+                commit('mutateDesignationsMisplaced', items)
+              }
+              continue
+            default:
+              if (Array.isArray(json.issues[i].name_actions) && json.issues[i].name_actions.length > 0) {
+                let items = json.issues[i].name_actions.map(item => { return item.word })
+                items = [...new Set(items)]
+                commit('mutateDesignationsCheckUse', items)
+              }
+          }
+        }
+      }
+      if (options.designationOnly) commit('mutateAnalyzeDesignationPending', false)
+      else commit('mutateAnalyzeStructurePending', false)
+    }
+  } catch (err) {
+    // verify the user did not start a new search on a different name
+    if (name === getters.getFullName) {
+      const msg = await NamexServices.handleApiError(err, 'Could not get name analysis')
+      console.error('getNameAnalysis() =', msg) // eslint-disable-line no-console
+      if (options.designationOnly) {
+        commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_DESIGNATION)
+        commit('mutateAnalyzeDesignationPending', false)
+      } else {
+        commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_STRUCTURE)
+        commit('mutateAnalyzeStructurePending', false)
+      }
+    }
+  }
+}
+
+export const getQuickSearch = async (
+  { commit },
+  cleanedName: CleanedNameIF,
+  checks: QuickSearchParamsI
+): Promise<QuickSearchParsedRespI> => {
+  try {
+    const quickSearchPublicId = window['quickSearchPublicId']
+    const quickSearchPublicSecret = window['quickSearchPublicSecret']
+
+    // throw error if no quickSearchPublicId or quickSearchPublicSecret
+    if (!quickSearchPublicId || !quickSearchPublicSecret) {
+      throw new Error('quickSearchPublicId/quickSearchPublicSecret not set in config')
+    }
+    const encodedAuth = btoa(`${quickSearchPublicId}:${quickSearchPublicSecret}`)
+
+    const tokenResp = await axios.post(window['authTokenUrl'], 'grant_type=client_credentials', {
+      headers: { Authorization: `Basic ${encodedAuth}`, 'content-type': 'application/x-www-form-urlencoded' }
+    })
+    const token = tokenResp.data.access_token
+    const exactNames = checks.exact ? await getMatchesExact({ commit }, token, cleanedName.exactMatch) : []
+    // pass in exactNames so that we can check for duplicates
+    const synonymNames = (
+      checks.similar
+        ? await getMatchesSimilar({ commit }, token, cleanedName.synonymMatch, exactNames)
+        : []
+    )
+    const parsedRestrictedResp = (
+      checks.restricted
+        ? await getMatchesRestricted({ commit }, token, cleanedName.restrictedMatch)
+        : { restrictedWords: [], conditionalWords: [] }
+    )
+
+    return {
+      exactNames: exactNames,
+      synonymNames: synonymNames,
+      restrictedWords: parsedRestrictedResp.restrictedWords,
+      conditionalWords: parsedRestrictedResp.conditionalWords
+    }
+  } catch (err) {
+    const msg = await NamexServices.handleApiError(err, 'Could not get quick search')
+    // send error to sentry and move on to detailed search
+    // (do not show error to user)
+    console.error('getQuickSearch() =', msg) // eslint-disable-line no-console
+    // add errors to name check for all quick search checks
+    if (checks.exact) commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_EXACT)
+    if (checks.similar) commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_SIMILAR)
+    if (checks.restricted) commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_RESTRICTED)
+
+    return {
+      exactNames: [],
+      synonymNames: [],
+      restrictedWords: [],
+      conditionalWords: []
+    }
+  }
+}
+
+export const nameCheckClearError = ({ commit }, key: NameCheckErrorType): void => {
+  commit('mutateNameCheckErrorClear', key)
+}
+
+export const parseExactNames = (json: { names: [string] }): Array<ConflictListItemI> => {
+  let nameObjs = json?.names || []
+  let names = []
+  for (let i = 0; i < nameObjs.length; i++) {
+    names.push({ name: `${nameObjs[i]['name']}`, type: NameCheckConflictType.EXACT })
+  }
+  return names
+}
+
+export const parseRestrictedWords = (resp: RestrictedResponseIF): ParsedRestrictedResponseIF => {
+  const words = resp.restricted_words_conditions
+  let parsedResp: ParsedRestrictedResponseIF = {
+    restrictedWords: [],
+    conditionalWords: []
+  }
+  // restrictedWords: add any word with cnd_info[..].allow_use = N
+  // conditionalWords: all other words in the list
+  for (let i = 0; i < words.length; i++) {
+    let restricted = false
+    for (let k = 0; k < words[i].cnd_info.length; k++) {
+      if (words[i].cnd_info[k].allow_use === 'N') {
+        restricted = true
+        break
+      }
+    }
+    if (restricted) parsedResp.restrictedWords.push(words[i].word_info.phrase)
+    else parsedResp.conditionalWords.push(words[i].word_info.phrase)
+  }
+  return parsedResp
+}
+
+export const parseSynonymNames = (
+  json: {
+    names: Array<string>,
+    exactNames: Array<ConflictListItemI>
+  }): Array<ConflictListItemI> => {
+  let duplicateNames = []
+  for (let i = 0; i < json.exactNames.length; i++) {
+    duplicateNames.push(json.exactNames[i].name)
+  }
+  let nameObjs = json.names
+  let names = []
+  for (let i = 0; i < nameObjs.length; i++) {
+    if (nameObjs[i]['name_info']['id']) {
+      let name = nameObjs[i]['name_info']['name']
+      if (!duplicateNames.includes(name)) {
+        names.push({ name: name, type: NameCheckConflictType.SIMILAR })
+      }
+    }
+  }
+  return names
+}
+
+export const setDesignation: ActionIF = ({ commit }, designation: string): void => {
+  commit('mutateDesignation', designation)
+}
+
+export const setDoNameCheck: ActionIF = ({ commit }, check: boolean): void => {
+  commit('mutateDoNameCheck', check)
+}
+
+export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
+  resetAnalyzeName({ commit, getters })
+  setUserCancelledAnalysis({ commit, getters }, false)
+  /* validation */
+  if (!getters.getRequestActionCd) commit('setErrors', 'request_action_cd')
+  if (!getters.getLocation) commit('setErrors', 'location')
+  if (!getters.getEntityTypeCd) commit('setErrors', 'entity_type_cd')
+  // if designation selection is required
+  if (!getters.getIsXproMras && Designations[getters.getEntityTypeCd]?.end) {
+    if (!getters.getDesignation) commit('setErrors', 'designation')
+  }
+  if ([Location.CA, Location.IN].includes(getters.getLocation) &&
+    ![RequestCode.MVE].includes(getters.getRequestActionCd) && !getters.getRequestJurisdictionCd) {
+    commit('setErrors', 'jurisdiction')
+    return
+  }
+  if (!getters.getCorpSearch) {
+    if (!getters.getName) {
+      commit('setErrors', 'name')
+      return
+    }
+    if (getters.getName.length < 3) {
+      commit('setErrors', 'length')
+      return
+    }
+  }
+  if (getters.getErrors.length > 0) {
+    return
+  }
+  // prep name for analysis
+  let name = removeAccents(getters.getName)
+  name = name.toUpperCase()
+  // auto fix LTD/INC/CORP designations without a period unless xpro
+  if (!getters.getIsXproMras) {
+    name = name.replace(/^LTD$/g, 'LTD.')
+      .replace(/^LTD\s/g, 'LTD. ')
+      .replace(/\sLTD\s/g, ' LTD. ')
+      .replace(/\sLTD$/g, ' LTD.')
+      .replace(/^INC$/g, 'INC.')
+      .replace(/^INC\s/g, 'INC. ')
+      .replace(/\sINC\s/g, ' INC. ')
+      .replace(/\sINC$/g, ' INC.')
+      .replace(/^CORP$/g, 'CORP.')
+      .replace(/^CORP\s/g, 'CORP. ')
+      .replace(/\sCORP\s/g, ' CORP. ')
+      .replace(/\sCORP$/g, ' CORP.')
+  }
+  commit('mutateName', name)
+  const designation = getters.getDesignation
+  commit('mutateFullName', `${name} ${designation}`)
+  commit('mutateNameOriginal', name) // Set original name for reset baseline
+  /* xpro get name call */
+  if (getters.getIsXproMras) {
+    commit('mutateNRData', { key: 'xproJurisdiction', value: getters.getJurisdictionText })
+    commit('mutateNRData', { key: 'homeJurisNum', value: getters.getCorpSearch })
+    if (!getters.getHasNoCorpNum) {
+      const profile: any = await fetchMRASProfile({ commit, getters })
+      if (profile) {
+        const hasMultipleNames = profile?.LegalEntity?.names && profile?.LegalEntity?.names.constructor === Array
+        name = hasMultipleNames
+          ? sanitizeName(profile?.LegalEntity?.names[0]?.legalName)
+          : sanitizeName(profile?.LegalEntity?.names?.legalName)
+        commit('mutateName', name)
+      } else {
+        commit('mutateNoCorpNum', true)
+        return
+      }
+    }
+  }
+  /* name check */
+  if (getters.getDoNameCheck) {
+    commit('mutateAnalyzeDesignationPending', true)
+    commit('mutateAnalyzeStructurePending', true)
+    commit('mutateAnalyzeConflictsPending', true)
+    commit('mutateDisplayedComponent', 'NameCheck')
+    // similar name check / conditional + restricted word check
+    startQuickSearch({ commit, getters }, { exact: true, similar: true, restricted: true })
+    // we don't do a structure name check for xpro names
+    if (getters.getIsXproMras) {
+      commit('mutateAnalyzeDesignationPending', false)
+      commit('mutateAnalyzeStructurePending', false)
+    } else {
+      // designation check
+      getNameAnalysis(
+        { commit, getters },
+        { xpro: false, designationOnly: true })
+      // descriptive/distinctive check - if disabled in LD then ignore
+      if (getFeatureFlag('disable-analysis')) {
+        commit('mutateAnalyzeStructurePending', false)
+      } else {
+        getNameAnalysis(
+          { commit, getters },
+          { xpro: false, designationOnly: false })
+      }
+      // special chars
+      const specialChars = name.match(/[~`$%()_{}|\\<>]/g)
+      if (specialChars) commit('mutateSpecialCharacters', specialChars)
+      else commit('mutateSpecialCharacters', [])
+      // extra designation rules that aren't in the backend for coops/cccs
+      const entity_type_cd = getters.getEntityTypeCd
+      if ([EntityType.CP, EntityType.XCP, EntityType.CC].includes(entity_type_cd)) {
+        let entityPhraseChoices = []
+        let basePhrases = Designations[entity_type_cd].words
+        // these are the inner phrases for the CCC and CP types.  Filtering out CR designations from CPs has no effect
+        // and CCC designations are a mix of CR-type ending designations and CCC specific inner phrases so filter out
+        // the CR designations for the purposes of this getter
+        entityPhraseChoices = basePhrases.filter(phrase => !Designations[EntityType.CR].words.includes(phrase))
+        if (entityPhraseChoices.some(phrase => name.startsWith(phrase))) {
+          let phrase = name.split(' ')[0].replace('COMMUNITY', 'COMMUNITY CONTRIBUTION COMPANY')
+          commit('mutateDesignationsCheckUse', [phrase])
+        } else if (entityPhraseChoices.every(phrase => {
+          phrase = phrase.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')
+          return (name.search(new RegExp('(\\s)' + phrase + '(\\s|$)')) === -1)
+        })) {
+          commit('mutateMissingDesignation', true)
+        }
+      }
+    }
+  } else {
+    // skip name check
+    commit('mutateAnalyzeDesignationPending', false)
+    commit('mutateAnalyzeStructurePending', false)
+    commit('mutateAnalyzeConflictsPending', false)
+    setActiveComponent({ commit }, 'NamesCapture')
+  }
+}
+export const startQuickSearch = async ({ commit, getters }, checks: QuickSearchParamsI) => {
+  commit('mutateAnalyzeConflictsPending', true)
+  if (getters.getFullName) {
+    const name = getters.getFullName
+    // eslint-disable-next-line no-useless-escape
+    let exactMatchName = name.replace(' \/', '\/')
+      .replace(/(^|\s+)(\$+(\s|$)+)+/g, '$1DOLLAR$3')
+      .replace(/(^|\s+)(¢+(\s|$)+)+/g, '$1CENT$3')
+      .replace(/\$/g, 'S')
+      .replace(/¢/g, 'C')
+      .replace(/\\/g, '')
+      .replace(/\//g, '')
+      .replace(/(`|~|!|\||\(|\)|\[|\]|\{|\}|:|"|\^|#|%|\?)/g, '')
+      // eslint-disable-next-line no-useless-escape
+      .replace(/[\+\-]{2,}/g, '')
+      // eslint-disable-next-line no-useless-escape
+      .replace(/\s[\+\-]$/, '')
+    exactMatchName = exactMatchName.substring(0, 1) === '+' ? exactMatchName.substring(1) : exactMatchName
+    exactMatchName = encodeURIComponent(exactMatchName)
+
+    const synonymsName = name.replace(/\//g, ' ')
+      .replace(/\\/g, ' ')
+      .replace(/&/g, ' ')
+      .replace(/\+/g, ' ')
+      // eslint-disable-next-line no-useless-escape
+      .replace(/\-/g, ' ')
+      .replace(/(^| )(\$+(\s|$)+)+/g, '$1DOLLAR$3')
+      .replace(/(^| )(¢+(\s|$)+)+/g, '$1CENT$3')
+      .replace(/\$/g, 'S')
+      .replace(/¢/g, 'C')
+      .replace(/(`|~|!|\||\(|\)|\[|\]|\{|\}|:|"|\^|#|%|\?|,|\*|)/g, '')
+
+    const cleanedName = {
+      'exactMatch': exactMatchName,
+      'synonymMatch': synonymsName,
+      'restrictedMatch': name
+    }
+    const resp = await getQuickSearch({ commit }, cleanedName, checks)
+    // make sure a new search on a different name has not started
+    if (getters.getFullName === name) {
+      if (checks.exact) commit('mutateConflictsExact', resp.exactNames)
+      if (checks.similar) commit('mutateConflictsSimilar', resp.synonymNames)
+      if (checks.restricted) {
+        commit('mutateConflictsRestricted', resp.restrictedWords)
+        commit('mutateConflictsConditional', resp.conditionalWords)
+      }
+
+      commit('mutateAnalyzeConflictsPending', false)
+    }
+  }
 }

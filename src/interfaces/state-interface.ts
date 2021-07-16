@@ -1,5 +1,5 @@
 import { NewRequestIF } from '@/interfaces/new-request-interface'
-import { StaffPaymentIF } from '@/interfaces'
+import { NameCheckModelIF, StaffPaymentIF } from '@/interfaces'
 
 export interface StateIF {
   stateModel: StateModelIF
@@ -14,4 +14,5 @@ export interface StateModelIF {
   staffPayment: StaffPaymentIF
   errorModel?: {}
   paymentModel?: {}
+  nameCheckModel: NameCheckModelIF
 }
