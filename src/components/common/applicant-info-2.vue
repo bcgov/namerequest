@@ -222,7 +222,7 @@ export default class ApplicantInfo2 extends Vue {
   @Getter getEditMode!: boolean
   @Getter getNrData!: any
   @Getter getNrState!: string
-  @Getter getRequestActionCd!: string
+  @Getter getRequestActionCd!: RequestCode
   @Getter getShowPriorityRequest!: boolean
   @Getter getShowCorpNum!: string
 

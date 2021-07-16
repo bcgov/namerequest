@@ -249,7 +249,7 @@ export default class ApplicantInfo3 extends Vue {
   @Getter getLocation!: Location
   @Getter getNrData!: any
   @Getter getNrState!: string
-  @Getter getRequestActionCd!: string
+  @Getter getRequestActionCd!: RequestCode
   @Getter getShowPriorityRequest!: boolean
   @Getter getShowCorpNum!: string
   @Getter getSubmissionType!: SubmissionTypeT
