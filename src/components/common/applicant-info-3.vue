@@ -309,6 +309,7 @@ export default class ApplicantInfo3 extends Vue {
   messages = {}
 
   mounted () {
+    // Apply optional corpNum validations for Amalgamations as they are NOT a required field but require COLIN lookup.
     if (this.getRequestActionCd === RequestCode.AML) {
       this.corpNumFieldLabel += ' (Optional)'
       this.corpNumRules = [
