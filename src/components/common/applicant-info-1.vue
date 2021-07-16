@@ -65,7 +65,7 @@
             </v-col>
           </v-row>
 
-          <!--ADDDRESS !-->
+          <!--ADDDRESS MENU !-->
           <v-row class="mt-n1">
             <v-col cols="12" class="py-0 my-0">
               <v-menu
@@ -383,7 +383,8 @@
 <script lang="ts">
 import { Component, Vue, Watch, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-
+import KeycloakService from 'sbc-common-components/src/services/keycloak.services'
+import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { Location, NrState } from '@/enums'
 import { ActionMixin } from '@/mixins'
@@ -392,6 +393,7 @@ import { NameRequestI } from '@/interfaces'
 
 // List Data
 import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
+import AuthServices from '@/services/auth.services'
 
 @Component({
   components: {
@@ -440,10 +442,46 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   ]
   showAddressMenu: boolean = false
 
-  mounted () {
+  async mounted () {
     // add event listener when this component is mounted
     // eg, when user continues to send for review
     this.$el.addEventListener('keydown', this.handleKeydown)
+
+    // proceed only if we have a login token
+    const keycloakToken = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
+    if (keycloakToken) {
+      // pre-populate submitting party name
+      const userInfo = await AuthServices.fetchUserInfo().catch(e => null)
+      if (userInfo) {
+        this.setApplicantDetails([
+          { name: 'firstName', value: userInfo.firstname || '' },
+          { name: 'lastName', value: userInfo.lastname || '' }
+        ])
+      }
+
+      // pre-populate submitting party address
+      const currentAccount = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
+      if (currentAccount) {
+        const accountId = JSON.parse(currentAccount)?.id
+        if (accountId) {
+          const orgInfo = await AuthServices.fetchOrgInfo(accountId).catch(e => null)
+          if (orgInfo) {
+            const mailingAddress = orgInfo.mailingAddress
+            if (mailingAddress.street) {
+              this.setApplicantDetails([
+                { name: 'addrLine1', value: mailingAddress.street || '' },
+                { name: 'addrLine2', value: mailingAddress.streetAdditional || '' },
+                { name: 'addrLine3', value: '' },
+                { name: 'city', value: mailingAddress.city || '' },
+                { name: 'stateProvinceCd', value: mailingAddress.region || '' },
+                { name: 'countryTypeCd', value: mailingAddress.country || '' },
+                { name: 'postalCd', value: mailingAddress.postalCode || '' }
+              ])
+            }
+          }
+        }
+      }
+    }
   }
 
   destroyed () {

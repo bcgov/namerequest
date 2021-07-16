@@ -7,7 +7,7 @@
           <v-text-field :messages="messages['contact']"
                         :value="applicant.contact"
                         @blur="messages = {}"
-                        @input="mutateApplicant('contact', $event)"
+                        @input="updateApplicant('contact', $event)"
                         filled
                         hide-details="auto"
                         label="Contact Name (Optional)" />
@@ -17,7 +17,7 @@
                         :rules="emailRules"
                         :value="applicant.emailAddress"
                         @blur="messages = {}"
-                        @input="mutateApplicant('emailAddress', $event)"
+                        @input="updateApplicant('emailAddress', $event)"
                         filled
                         hide-details="auto"
                         label="Email Address (for notifications)" />
@@ -31,7 +31,7 @@
                         :value="applicant.phoneNumber"
                         :rules="phoneRules"
                         @blur="messages = {}"
-                        @input="mutateApplicant('phoneNumber', $event)"
+                        @input="updateApplicant('phoneNumber', $event)"
                         filled
                         hide-details="auto"
                         label="Phone Number" />
@@ -41,7 +41,7 @@
                         :value="applicant.faxNumber"
                         :rules="faxRules"
                         @blur="messages = {}"
-                        @input="mutateApplicant('faxNumber', $event)"
+                        @input="updateApplicant('faxNumber', $event)"
                         filled
                         hide-details="auto"
                         label="Fax Number (Optional)" />
@@ -54,7 +54,7 @@
           <v-text-field :messages="messages['clientFirst']"
                         :value="applicant.clientFirstName"
                         @blur="messages = {}"
-                        @input="mutateApplicant('clientFirstName', $event)"
+                        @input="updateApplicant('clientFirstName', $event)"
                         filled
                         hide-details="auto"
                         label="First Name (Optional)" />
@@ -63,7 +63,7 @@
           <v-text-field :messages="messages['clientLast']"
                         :value="applicant.clientLastName"
                         @blur="messages = {}"
-                        @input="mutateApplicant('clientLastName', $event)"
+                        @input="updateApplicant('clientLastName', $event)"
                         filled
                         hide-details="auto"
                         label="Last Name (Optional)" />
@@ -395,15 +395,18 @@ export default class ApplicantInfo3 extends Vue {
     }
   }
 
-  mutateApplicant (key, value) {
+  updateApplicant (key, value) {
     this.setApplicantDetails({ key, value })
   }
+
   mutateNRData (key, value) {
     this.setNRData({ key, value })
   }
+
   setError (error) {
     this.error = error
   }
+
   validate () {
     if (this.hideCorpNum !== 'auto') {
       this.hideCorpNum = 'auto'

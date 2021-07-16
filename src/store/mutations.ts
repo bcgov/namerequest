@@ -35,8 +35,8 @@ export const mutateAnalysisJSON = (state: StateIF, analysisJSON: AnalysisJSONI) 
 
 export const mutateApplicant = (state: StateIF, appKV: any) => {
   if (Array.isArray(appKV)) {
-    for (let address of appKV) {
-      state.stateModel.newRequestModel.applicant[address.name] = address.value
+    for (let element of appKV) {
+      state.stateModel.newRequestModel.applicant[element.name] = element.value
     }
   }
   if (appKV.key === 'postalCd') {

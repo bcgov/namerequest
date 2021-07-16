@@ -549,10 +549,6 @@ export const setActingOnOwnBehalf: ActionIF = ({ commit }, isActingOnOwn: boolea
   commit('mutateActingOnOwnBehalf', isActingOnOwn)
 }
 
-export const setApplicant: ActionIF = ({ commit }, applicant: any): void => {
-  commit('mutateApplicant', applicant)
-}
-
 export const setNRData: ActionIF = ({ commit }, nrData: any): void => {
   commit('mutateNRData', nrData)
 }
