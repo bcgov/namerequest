@@ -148,12 +148,12 @@
                               :rules="corpNumRules"
                               :error-messages="corpNumError"
                               validate-on-blur
-                              @blur="messages = {}"
+                              @blur="corpNumError = ''"
                               :loading="loading"
                               filled
                               v-on:update:error="setError"
                               :hide-details="hideCorpNum"
-                              label="Incorporation or Registration Number"
+                              :label="corpNumFieldLabel"
                               v-model="corpNum">
                   <template v-slot:append>
                     <v-icon :class="corpNumError ? 'red--text' : 'green--text'"
@@ -232,7 +232,7 @@ import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { FolioNumberInput } from '@bcrs-shared-components/folio-number-input'
 import { ApplicantI, SubmissionTypeT } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { CorpNumRequests, Location, NrState } from '@/enums'
+import { CorpNumRequests, Location, NrState, RequestCode } from '@/enums'
 
 @Component({
   components: {
@@ -249,6 +249,7 @@ export default class ApplicantInfo3 extends Vue {
   @Getter getLocation!: Location
   @Getter getNrData!: any
   @Getter getNrState!: string
+  @Getter getRequestActionCd!: RequestCode
   @Getter getShowPriorityRequest!: boolean
   @Getter getShowCorpNum!: string
   @Getter getSubmissionType!: SubmissionTypeT
@@ -270,6 +271,7 @@ export default class ApplicantInfo3 extends Vue {
 
   corpNumDirty: boolean = false
   corpNumError: string = ''
+  corpNumFieldLabel = 'Incorporation or Registration Number'
   additionalInfoRules = [
     v => (!v || v.length <= 120) || 'Cannot exceed 120 characters'
   ]
@@ -305,6 +307,16 @@ export default class ApplicantInfo3 extends Vue {
   hideCorpNum: boolean | 'auto' = true
   loading: boolean = false
   messages = {}
+
+  mounted () {
+    // Apply optional corpNum validations for Amalgamations as they are NOT a required field but require COLIN lookup.
+    if (this.getRequestActionCd === RequestCode.AML) {
+      this.corpNumFieldLabel += ' (Optional)'
+      this.corpNumRules = [
+        v => !!this.validateCorpNum(v) || 'Cannot validate number. Please try again.'
+      ]
+    }
+  }
 
   @Watch('xproJurisdiction')
   async hanldeJurisdiction (newVal, oldVal) {

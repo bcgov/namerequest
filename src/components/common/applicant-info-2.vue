@@ -119,14 +119,14 @@
                               :loading="loading"
                               :messages="messages['corpNum']"
                               :rules="corpNumRules"
-                              @blur="messages = {}; isEditingCorpNum = false"
+                              @blur="corpNumError = ''; isEditingCorpNum = false"
                               @focus="messages['corpNum'] = 'Incorporation or Registration Number';
                                 isEditingCorpNum = true"
                               id="corpNum"
                               :name="Math.random()"
                               autocomplete="chrome-off"
                               filled
-                              label="Incorporation or Registration Number"
+                              :label="corpNumFieldLabel"
                               v-model="corpNum"
                               v-on:update:error="setError">
                   <template v-slot:append>
@@ -207,7 +207,7 @@ import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { Action, Getter } from 'vuex-class'
 import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { CorpNumRequests, NrState } from '@/enums'
+import { CorpNumRequests, NrState, RequestCode } from '@/enums'
 
 @Component({
   components: {
@@ -222,6 +222,7 @@ export default class ApplicantInfo2 extends Vue {
   @Getter getEditMode!: boolean
   @Getter getNrData!: any
   @Getter getNrState!: string
+  @Getter getRequestActionCd!: RequestCode
   @Getter getShowPriorityRequest!: boolean
   @Getter getShowCorpNum!: string
 
@@ -239,6 +240,7 @@ export default class ApplicantInfo2 extends Vue {
 
   corpNumDirty: boolean = false
   corpNumError: string = ''
+  corpNumFieldLabel = 'Incorporation or Registration Number'
   additionalInfoRules = [
     v => (!v || v.length <= 120) || 'Cannot exceed 120 characters'
   ]
@@ -275,6 +277,16 @@ export default class ApplicantInfo2 extends Vue {
   hideCorpNum: boolean | 'auto' = true
   loading: boolean = false
   messages = {}
+
+  mounted () {
+    // Apply optional corpNum validations for Amalgamations as they are NOT a required field but require COLIN lookup.
+    if (this.getRequestActionCd === RequestCode.AML) {
+      this.corpNumFieldLabel += ' (Optional)'
+      this.corpNumRules = [
+        v => !!this.validateCorpNum(v) || 'Cannot validate number. Please try again.'
+      ]
+    }
+  }
 
   @Watch('xproJurisdiction')
   async hanldeJurisdiction (newVal, oldVal) {
