@@ -485,6 +485,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   }
 
   get jurisdictionOptions () {
+    // Jurisdiction conversion to uppercase is required to match the model to the values provided by the api.
     return (this.getLocation === Location.CA)
       ? CanJurisdictions.filter(jur => jur.value !== Location.BC)
         .map(jurisdiction => ({ value: jurisdiction.text.toUpperCase(), text: jurisdiction.text }))
