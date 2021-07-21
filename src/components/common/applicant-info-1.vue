@@ -383,7 +383,6 @@
 <script lang="ts">
 import { Component, Vue, Watch, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import KeycloakService from 'sbc-common-components/src/services/keycloak.services'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { Location, NrState } from '@/enums'
@@ -415,6 +414,8 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   @Getter getNrState!: string
   @Getter getSubmissionTabNumber!: number
   @Getter getShowXproJurisdiction!: boolean
+  @Getter getKeycloakRoles!: string[]
+  @Getter isRoleStaff!: boolean
 
   // Global actions
   @Action setActingOnOwnBehalf!: ActionBindingIF
@@ -447,9 +448,8 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
     // eg, when user continues to send for review
     this.$el.addEventListener('keydown', this.handleKeydown)
 
-    // proceed only if we have a login token
-    const keycloakToken = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
-    if (keycloakToken) {
+    // proceed only if we have any roles (ie, logged in), and not staff
+    if (this.getKeycloakRoles.length > 0 && !this.isRoleStaff) {
       // pre-populate submitting party name
       const userInfo = await AuthServices.fetchUserInfo().catch(e => null)
       if (userInfo) {

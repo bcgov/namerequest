@@ -1043,6 +1043,11 @@ export const getConditionalNameReservation = (state: StateIF): ConditionalReqI =
   return data
 }
 
+/** The user's keycloak roles. */
+export const getKeycloakRoles = (state: StateIF): Array<string> => {
+  return state.stateModel.common.keycloakRoles
+}
+
 /** Whether the user has "staff" keycloak role. */
 export const isRoleStaff = (state: StateIF): boolean => {
   return state.stateModel.common.keycloakRoles.includes('staff')
