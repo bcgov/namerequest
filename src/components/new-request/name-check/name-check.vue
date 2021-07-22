@@ -104,7 +104,7 @@
                 <v-icon>mdi-information-outline</v-icon>
               </v-col>
               <v-col class="pl-2">
-                <span v-html="infoTextTab"/>
+                <span v-html="infoTextTab" />
               </v-col>
             </v-row>
             <NameCheckConflicts :items="itemsStructure" @clear-error="clearError" @retry="retry"/>
@@ -115,7 +115,7 @@
                 <v-icon>mdi-information-outline</v-icon>
               </v-col>
               <v-col class="pl-2">
-                <p class="ma-0" v-html="infoTextTab"/>
+                <p class="ma-0" v-html="infoTextTab" />
                 <div v-if="!getIsXproMras">
                   <p class="ma-0 pt-2">
                     <a class="txt-link" text @click="expandHelpTxt = !expandHelpTxt">
