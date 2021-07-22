@@ -1,3 +1,4 @@
+import { ConditionalInstructionI } from './conditional-instructions'
 import { NameCheckErrorI } from './name-check-error'
 
 export interface NameCheckModelIF {
@@ -6,6 +7,7 @@ export interface NameCheckModelIF {
     analyzeStructurePending: boolean
     conflictsExact: Array<string>
     conflictsConditional: Array<string>
+    conflictsConditionalInstructions: Array<ConditionalInstructionI>
     conflictsRestricted: Array<string>
     conflictsSimilar: Array<string>
     designation: string
@@ -18,5 +20,6 @@ export interface NameCheckModelIF {
     missingDescriptive: boolean
     missingDesignation: boolean
     missingDistinctive: boolean
+    numbersCheckUse: Array<string>
     specialCharacters: Array<string>
 }

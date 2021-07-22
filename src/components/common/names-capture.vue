@@ -275,7 +275,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
@@ -283,13 +283,14 @@ import { EntityI, NameChoicesIF, NameRequestI, RequestActionsI } from '@/interfa
 import { sanitizeName } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { EntityType, Location, RequestCode } from '@/enums'
+import { CommonMixin } from '@/mixins'
 
 @Component({
   components: {
     ApplicantInfoNav
   }
 })
-export default class NamesCapture extends Vue {
+export default class NamesCapture extends Mixins(CommonMixin) {
   // Global getters
   @Getter getDisplayedComponent!: string
   @Getter getDesignation!: string
@@ -364,6 +365,8 @@ export default class NamesCapture extends Vue {
     this.setSubmissionType('examination')
     if (this.getDesignation) this.setNameChoices({ key: 'designation1', value: this.getDesignation })
     this.setNameChoices({ key: 'name1', value: this.getName })
+
+    this.scrollTo('namerequest-sbc-header')
   }
 
   destroyed () {

@@ -22,7 +22,7 @@
 
       <!-- SBC Common Components header -->
       <SbcHeader
-        class="sbc-header"
+        id="namerequest-sbc-header"
         :inAuth="false"
         :showActions="true"
       />
@@ -224,11 +224,16 @@ export default class App extends Mixins(DateMixin) {
   display: flex;
   flex-flow: column nowrap;
   min-height: 100vh;
+}
 
-  .sbc-header {
-    .v-btn {
-      box-shadow: none !important;
-    }
+#namerequest-sbc-header {
+  .v-btn {
+    box-shadow: none !important;
+    background-color: rgba(0, 0, 0, 0) !important;
+    text-transform: none !important;
+    font-weight: normal !important;
+    letter-spacing: normal !important;
+    font-size: .875rem !important;
   }
 }
 

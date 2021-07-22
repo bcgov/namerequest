@@ -188,6 +188,7 @@ export const resetAnalyzeName = ({ commit, getters }) => {
   commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_RESTRICTED)
   commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_SIMILAR)
   commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_STRUCTURE)
+  commit('mutateNumbersCheckUse', [])
   commit('mutateSpecialCharacters', [])
 }
 
@@ -687,7 +688,7 @@ export const getMatchesRestricted = async (
   })
   return restrictedResp?.data
     ? parseRestrictedWords(restrictedResp.data)
-    : { restrictedWords: [], conditionalWords: [] }
+    : { conditionalInstructions: [], conditionalWords: [], restrictedWords: [] }
 }
 
 export const getNameAnalysis: ActionIF = async (
@@ -745,6 +746,13 @@ export const getNameAnalysis: ActionIF = async (
                 commit('mutateDesignationsMisplaced', items)
               }
               continue
+            case 'incorrect_year':
+              if (Array.isArray(json.issues[i].name_actions) && json.issues[i].name_actions.length > 0) {
+                let items = json.issues[i].name_actions.map(item => { return item.word })
+                items = [...new Set(items)]
+                commit('mutateNumbersCheckUse', items)
+              }
+              continue
             default:
               if (Array.isArray(json.issues[i].name_actions) && json.issues[i].name_actions.length > 0) {
                 let items = json.issues[i].name_actions.map(item => { return item.word })
@@ -799,17 +807,18 @@ export const getQuickSearch = async (
         ? await getMatchesSimilar({ commit }, token, cleanedName.synonymMatch, exactNames)
         : []
     )
-    const parsedRestrictedResp = (
+    const parsedRestrictedResp: ParsedRestrictedResponseIF = (
       checks.restricted
         ? await getMatchesRestricted({ commit }, token, cleanedName.restrictedMatch)
-        : { restrictedWords: [], conditionalWords: [] }
+        : { restrictedWords: [], conditionalWords: [], conditionalInstructions: [] }
     )
 
     return {
       exactNames: exactNames,
       synonymNames: synonymNames,
       restrictedWords: parsedRestrictedResp.restrictedWords,
-      conditionalWords: parsedRestrictedResp.conditionalWords
+      conditionalWords: parsedRestrictedResp.conditionalWords,
+      conditionalInstructions: parsedRestrictedResp.conditionalInstructions
     }
   } catch (err) {
     const msg = await NamexServices.handleApiError(err, 'Could not get quick search')
@@ -825,7 +834,8 @@ export const getQuickSearch = async (
       exactNames: [],
       synonymNames: [],
       restrictedWords: [],
-      conditionalWords: []
+      conditionalWords: [],
+      conditionalInstructions: []
     }
   }
 }
@@ -846,21 +856,31 @@ export const parseExactNames = (json: { names: [string] }): Array<ConflictListIt
 export const parseRestrictedWords = (resp: RestrictedResponseIF): ParsedRestrictedResponseIF => {
   const words = resp.restricted_words_conditions
   let parsedResp: ParsedRestrictedResponseIF = {
-    restrictedWords: [],
-    conditionalWords: []
+    conditionalInstructions: [],
+    conditionalWords: [],
+    restrictedWords: []
   }
   // restrictedWords: add any word with cnd_info[..].allow_use = N
   // conditionalWords: all other words in the list
   for (let i = 0; i < words.length; i++) {
     let restricted = false
-    for (let k = 0; k < words[i].cnd_info.length; k++) {
+    // there can be multiple conditions per word / phrase
+    for (let k in words[i].cnd_info) {
       if (words[i].cnd_info[k].allow_use === 'N') {
         restricted = true
         break
       }
     }
     if (restricted) parsedResp.restrictedWords.push(words[i].word_info.phrase)
-    else parsedResp.conditionalWords.push(words[i].word_info.phrase)
+    else {
+      parsedResp.conditionalWords.push(words[i].word_info.phrase)
+      for (let k in words[i].cnd_info) {
+        parsedResp.conditionalInstructions.push({
+          word: words[i].word_info.phrase,
+          instructions: words[i].cnd_info[k].instructions
+        })
+      }
+    }
   }
   return parsedResp
 }
@@ -990,7 +1010,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
           { xpro: false, designationOnly: false })
       }
       // special chars
-      const specialChars = name.match(/[~`$%()_{}|\\<>]/g)
+      const specialChars = name.match(/[~`$%_{}|\\<>]/g)
       if (specialChars) commit('mutateSpecialCharacters', specialChars)
       else commit('mutateSpecialCharacters', [])
       // extra designation rules that aren't in the backend for coops/cccs
@@ -1066,6 +1086,7 @@ export const startQuickSearch = async ({ commit, getters }, checks: QuickSearchP
       if (checks.restricted) {
         commit('mutateConflictsRestricted', resp.restrictedWords)
         commit('mutateConflictsConditional', resp.conditionalWords)
+        commit('mutateConflictsConditionalInstructions', resp.conditionalInstructions)
       }
 
       commit('mutateAnalyzeConflictsPending', false)

@@ -30,7 +30,7 @@ export default class QuickSearchNames extends Vue {
 #quick-search-names {
   background-color: $gray1;
   display: block;
-  max-height: 10rem;
+  max-height: 10.5rem;
   overflow: auto;
 }
 .quickSearchNames {

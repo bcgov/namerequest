@@ -1,6 +1,7 @@
 import {
   AnalysisJSONI,
   ApplicantI,
+  ConditionalInstructionI,
   ConditionalReqI,
   ConsentConflictI,
   ConversionTypesI,
@@ -1070,6 +1071,10 @@ export const getConflictsConditional = (state: StateIF): Array<string> => {
   return state.stateModel.nameCheckModel.conflictsConditional
 }
 
+export const getConflictsConditionalInstructions = (state: StateIF): Array<ConditionalInstructionI> => {
+  return state.stateModel.nameCheckModel.conflictsConditionalInstructions
+}
+
 export const getConflictsExact = (state: StateIF): Array<string> => {
   return state.stateModel.nameCheckModel.conflictsExact
 }
@@ -1104,6 +1109,10 @@ export const getFullName = (state: StateIF): string => {
 
 export const getNameCheckErrors = (state: StateIF): NameCheckErrorI => {
   return state.stateModel.nameCheckModel.errors
+}
+
+export const getNumbersCheckUse = (state: StateIF): Array<string> => {
+  return state.stateModel.nameCheckModel.numbersCheckUse
 }
 
 export const getSpecialCharacters = (state: StateIF): Array<string> => {

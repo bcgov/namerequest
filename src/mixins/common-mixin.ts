@@ -90,7 +90,7 @@ export class CommonMixin extends Vue {
   }
 
   /** Scroll to given element Id */
-  private scrollTo (id): void {
+  scrollTo (id): void {
     return document.getElementById(id)?.scrollIntoView()
   }
 }
