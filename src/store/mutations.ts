@@ -2,6 +2,7 @@ import Vue from 'vue'
 
 import {
   AnalysisJSONI,
+  ConditionalInstructionI,
   ConversionTypesI,
   NameRequestI,
   SelectOptionsI,
@@ -456,10 +457,7 @@ export const mutateConflictsConditional = (state: StateIF, value: Array<string>)
   state.stateModel.nameCheckModel.conflictsConditional = value
 }
 
-export const mutateConflictsConditionalInstructions = (
-  state: StateIF,
-  value: Array<{ word: string, instructions: string }>
-) => {
+export const mutateConflictsConditionalInstructions = (state: StateIF, value: Array<ConditionalInstructionI>) => {
   state.stateModel.nameCheckModel.conflictsConditionalInstructions = value
 }
 

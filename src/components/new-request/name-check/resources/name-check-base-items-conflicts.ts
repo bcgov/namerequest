@@ -100,7 +100,7 @@ export const baseItemsConflicts = {
   },
   [NameCheckItemType.SIMILAR_MATCH]: {
     icon: 'mdi-alert',
-    iconColor: '#F8661A',
+    iconColor: 'caution',
     problem: 'There are existing BC Corporations using the <b>same or similar words</b>',
     words: null,
     expandExtraInfo: false,
@@ -116,7 +116,7 @@ export const baseItemsConflicts = {
   },
   [NameCheckItemType.SIMILAR_MATCH_XPRO]: {
     icon: 'mdi-alert',
-    iconColor: '#F8661A',
+    iconColor: 'caution',
     problem: 'There are existing BC Corporations using the <b>same or similar words</b>',
     words: null,
     expandExtraInfo: false,

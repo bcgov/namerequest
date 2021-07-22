@@ -1,4 +1,5 @@
 export * from './cleaned-name-interface'
+export * from './conditional-instructions'
 export * from './conflict-list-item'
 export * from './name-check-error'
 export * from './name-check-item-interface'

@@ -1,6 +1,7 @@
 import {
   AnalysisJSONI,
   ApplicantI,
+  ConditionalInstructionI,
   ConditionalReqI,
   ConsentConflictI,
   ConversionTypesI,
@@ -1070,7 +1071,7 @@ export const getConflictsConditional = (state: StateIF): Array<string> => {
   return state.stateModel.nameCheckModel.conflictsConditional
 }
 
-export const getConflictsConditionalInstructions = (state: StateIF): Array<{ word: string, instructions: string }> => {
+export const getConflictsConditionalInstructions = (state: StateIF): Array<ConditionalInstructionI> => {
   return state.stateModel.nameCheckModel.conflictsConditionalInstructions
 }
 

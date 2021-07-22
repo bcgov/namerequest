@@ -199,7 +199,7 @@ import NameInput from '@/components/new-request/name-input.vue'
 import QuickSearchNames from '@/components/new-request/name-check/quick-search-names.vue'
 
 import { EntityType, NameCheckErrorType } from '@/enums'
-import { DialogOptionsI, NameCheckErrorI, NameCheckItemIF } from '@/interfaces'
+import { ConditionalInstructionI, DialogOptionsI, NameCheckErrorI, NameCheckItemIF } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { baseItemsConflicts, baseItemsStructure } from './resources'
 
@@ -215,7 +215,7 @@ import { baseItemsConflicts, baseItemsStructure } from './resources'
 })
 export default class NameCheck extends Vue {
   @Getter getConflictsConditional!: Array<string>
-  @Getter getConflictsConditionalInstructions!: Array<{ word: string, instructions: string }>
+  @Getter getConflictsConditionalInstructions!: Array<ConditionalInstructionI>
   @Getter getConflictsExact!: Array<string>
   @Getter getConflictsRestricted!: Array<string>
   @Getter getConflictsSimilar!: Array<string>
@@ -318,7 +318,7 @@ export default class NameCheck extends Vue {
   get conflictsConditional (): Array<string> {
     return this.getConflictsConditional
   }
-  get conflictsConditionalInstructions (): Array<{ word: string, instructions: string }> {
+  get conflictsConditionalInstructions (): Array<ConditionalInstructionI> {
     return this.getConflictsConditionalInstructions
   }
   get conflictsExact (): Array<string> {
@@ -425,7 +425,7 @@ export default class NameCheck extends Vue {
       this.isMissingDescriptive)
   }
   get hasNumbersCheckUse (): boolean {
-    return this.numbersCheckUse?.length > 0
+    return this.getNumbersCheckUse?.length > 0
   }
   get hasSpecialCharacters (): boolean {
     return this.specialCharacters?.length > 0
@@ -551,7 +551,7 @@ export default class NameCheck extends Vue {
     }
     if (this.hasNumbersCheckUse) {
       let newItem = baseItemsStructure.numbersCheckUse
-      newItem.words = this.numbersCheckUse
+      newItem.words = this.getNumbersCheckUse
       items.push(newItem)
     }
     if (this.isMissingDesignation) {
@@ -602,9 +602,6 @@ export default class NameCheck extends Vue {
       return 'Your name in your home jurisdiction cannot be edited'
     }
     return 'You can edit your name here and check it again'
-  }
-  get numbersCheckUse (): Array<string> {
-    return this.getNumbersCheckUse
   }
   get showDesignationSelect (): boolean {
     return (this.$designations[this.getEntityTypeCd]?.end || false) && !this.getIsXproMras
@@ -661,7 +658,7 @@ export default class NameCheck extends Vue {
       return { color: 'red darken-2', icon: 'mdi-alert-octagon' }
     }
     if (this.hasIssuesConflictCaution || this.hasIssuesStructureCaution) {
-      return { color: '#F8661A', icon: 'mdi-alert' }
+      return { color: 'caution', icon: 'mdi-alert' }
     }
     return { color: 'green darken-2', icon: 'mdi-check-circle' }
   }

@@ -1,5 +1,6 @@
+import { ConditionalInstructionI } from './conditional-instructions';
 export interface ParsedRestrictedResponseIF {
-  conditionalInstructions: Array<{ word: string, instructions: string }>
+  conditionalInstructions: Array<ConditionalInstructionI>
   conditionalWords: Array<string>
   restrictedWords: Array<string>
 }

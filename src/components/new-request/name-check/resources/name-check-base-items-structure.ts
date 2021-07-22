@@ -3,7 +3,7 @@ import { NameCheckErrorType, NameCheckItemType } from '@/enums'
 export const baseItemsStructure = {
   [NameCheckItemType.CONFLICTS_CONDITIONAL]: {
     icon: 'mdi-alert',
-    iconColor: '#F8661A',
+    iconColor: 'caution',
     problem: 'You may need consent to use the following words:',
     words: [],
     expandedInfo1: 'Names that include well-known names (trademarks and trade names), ' +
@@ -20,7 +20,7 @@ export const baseItemsStructure = {
   },
   [NameCheckItemType.DESCRIPTIVE_MISSING]: {
     icon: 'mdi-alert',
-    iconColor: '#F8661A',
+    iconColor: 'caution',
     problem: 'Ensure there is a <b>descriptive</b> element in your business name',
     words: [],
     expandedInfo1: 'Names in BC are required to contain a decriptive word ' +
@@ -193,7 +193,7 @@ export const baseItemsStructure = {
   },
   [NameCheckItemType.DISTINCTIVE_MISSING]: {
     icon: 'mdi-alert',
-    iconColor: '#F8661A',
+    iconColor: 'caution',
     problem: 'Ensure there is a <b>distinctive</b> element in your business name',
     words: [],
     expandedInfo1: 'Names in BC are required to contain a distinctive word ' +
@@ -285,7 +285,7 @@ export const baseItemsStructure = {
   },
   [NameCheckItemType.NUMBERS_CHECK_USE]: {
     icon: 'mdi-alert',
-    iconColor: '#F8661A',
+    iconColor: 'caution',
     problem: 'Ensure you are using numbers correctly:',
     words: [],
     expandedInfo1: 'Numerals may be used in company names as the distinctive element. ' +
