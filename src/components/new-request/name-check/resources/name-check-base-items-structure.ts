@@ -3,13 +3,13 @@ import { NameCheckErrorType, NameCheckItemType } from '@/enums'
 export const baseItemsStructure = {
   [NameCheckItemType.CONFLICTS_CONDITIONAL]: {
     icon: 'mdi-alert',
-    iconColor: 'orange darken-2',
+    iconColor: '#F8661A',
     problem: 'You may need consent to use the following words:',
     words: [],
-    expandedInfo1: 'Names that include well-known Names ' +
-    '(trade name and Trademarks), names of public figures, or reference ' +
-    'to the government, BC, or the Crown or Royal Family, will not be ' +
-    'allowed without the advance written consent of the holder.',
+    expandedInfo1: 'Names that include well-known names (trademarks and trade names), ' +
+    'names of public figures, or reference to the government, BC, the Crown or Royal ' +
+    'Family, will not be allowed without the written consent of the holder. ' +
+    'Consider revising your name unless you can obtain consent.',
     expandedInfo2: null,
     expandedList: null,
     expandLabel: {
@@ -20,7 +20,7 @@ export const baseItemsStructure = {
   },
   [NameCheckItemType.DESCRIPTIVE_MISSING]: {
     icon: 'mdi-alert',
-    iconColor: 'orange darken-2',
+    iconColor: '#F8661A',
     problem: 'Ensure there is a <b>descriptive</b> element in your business name',
     words: [],
     expandedInfo1: 'Names in BC are required to contain a decriptive word ' +
@@ -193,7 +193,7 @@ export const baseItemsStructure = {
   },
   [NameCheckItemType.DISTINCTIVE_MISSING]: {
     icon: 'mdi-alert',
-    iconColor: 'orange darken-2',
+    iconColor: '#F8661A',
     problem: 'Ensure there is a <b>distinctive</b> element in your business name',
     words: [],
     expandedInfo1: 'Names in BC are required to contain a distinctive word ' +
@@ -283,13 +283,30 @@ export const baseItemsStructure = {
     expandLabel: null,
     count: null
   },
+  [NameCheckItemType.NUMBERS_CHECK_USE]: {
+    icon: 'mdi-alert',
+    iconColor: '#F8661A',
+    problem: 'Ensure you are using numbers correctly:',
+    words: [],
+    expandedInfo1: 'Numerals may be used in company names as the distinctive element. ' +
+    'A year may be used in a name provided that it is the year of incorporation, ' +
+    'amalgamation, change of name, or registration.',
+    expandedInfo2: null,
+    expandedList: null,
+    expandLabel: {
+      closed: 'Read More',
+      open: 'Read Less'
+    },
+    count: null
+  },
   [NameCheckItemType.RESTRICTED]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
     problem: 'Consider removing the following word(s):',
     words: [],
-    expandedInfo1: 'Names involving a vulgar expression, obscene words or ' +
-    'connotation, racial, physical or sexual slur will be rejected.',
+    expandedInfo1: 'This name appears to contain one or more words that are not ' +
+    'available for use by the public. <br><b>Note:</b> Names involving a vulgar expression, ' +
+    'obscene words or connotation, racial, physical or sexual slur will be rejected.',
     expandedInfo2: null,
     expandedList: null,
     expandLabel: {

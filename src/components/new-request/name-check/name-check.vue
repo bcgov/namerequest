@@ -42,9 +42,7 @@
         </v-col>
       </v-row>
       <div id="name-check-verdict" class="white mt-7 pa-2" no-gutters justify="center">
-        <v-progress-circular v-if="isAnalyzeConflictsPending ||
-                                   isAnalyzeDesignationPending ||
-                                   isAnalyzeStructurePending"
+        <v-progress-circular v-if="loadingStructureCheck"
                              color="primary"
                              indeterminate
                              size="30"
@@ -58,8 +56,7 @@
       </div>
       <v-container v-if="hasIssuesConflictAlert || hasIssuesConflictCaution ||
                          hasIssuesStructureAlert || hasIssuesStructureCaution ||
-                         isAnalyzeConflictsPending || isAnalyzeDesignationPending ||
-                         isAnalyzeStructurePending"
+                         loadingStructureCheck"
                    id="name-check-tabs-container"
                    class="ma-0 pt-7">
         <v-tabs no-gutters
@@ -77,9 +74,7 @@
                  class="upper-border px-0 pt-3"
                  :ripple="false">
             <div style="width: 100%;">
-              <name-check-tab-content :loading="isAnalyzeDesignationPending ||
-                                                isAnalyzeStructurePending ||
-                                                isAnalyzeConflictsPending"
+              <name-check-tab-content :loading="loadingStructureCheck"
                                       :subtitle="subTitleStructure"
                                       :tabIcon="tabIconStructure.icon"
                                       :title="'Name Structure Check'"/>
@@ -100,7 +95,7 @@
           </v-tab>
         </v-tabs>
         <div id="box-shadow-filler-tab-item"/>
-        <v-tabs-items class="rounded-b tab-items pa-5"
+        <v-tabs-items class="rounded-b tab-items pa-5 pt-6"
                       :class="checks === 'structure-check' ? 'rounded-top-right' : 'rounded-top-left'"
                       v-model="checks">
           <v-tab-item value="structure-check">
@@ -109,18 +104,18 @@
                 <v-icon>mdi-information-outline</v-icon>
               </v-col>
               <v-col class="pl-2">
-                <span v-html="infoTextTab">{{ infoTextTab }}</span>
+                <span v-html="infoTextTab"/>
               </v-col>
             </v-row>
             <NameCheckConflicts :items="itemsStructure" @clear-error="clearError" @retry="retry"/>
           </v-tab-item>
           <v-tab-item value="conflicts-check">
-            <v-row no-gutters class="pa-10 pl-12 pb-7 name-check-info-text">
+            <v-row no-gutters class="pl-12 pr-16 pb-7 name-check-info-text">
               <v-col cols="auto">
                 <v-icon>mdi-information-outline</v-icon>
               </v-col>
               <v-col class="pl-2">
-                <p class="ma-0" v-html="infoTextTab">{{ infoTextTab }}</p>
+                <p class="ma-0" v-html="infoTextTab"/>
                 <div v-if="!getIsXproMras">
                   <p class="ma-0 pt-2">
                     <a class="txt-link" text @click="expandHelpTxt = !expandHelpTxt">
@@ -137,7 +132,7 @@
                       outside British Columbia.
                     </p>
                     <p class="ma-0 pt-7">
-                      Do not commit to any name before it is reviewed.
+                      Do not commit to any name before it is reviewed by staff.
                     </p>
                     <p class="ma-0 pt-7">
                       If you want to ensure your name is not used outside of British
@@ -155,9 +150,9 @@
                       be searched for a fee through private search firms.
                     </p>
                     <p class="ma-0 pt-7">
-                      <u>You should also research your desired name by searching the internet,
+                      You should also research your desired name by searching the internet,
                       social media, and relevant internet domain names if these are
-                      considerations for your business.</u>
+                      considerations for your business.
                     </p>
                   </div>
                 </div>
@@ -220,6 +215,7 @@ import { baseItemsConflicts, baseItemsStructure } from './resources'
 })
 export default class NameCheck extends Vue {
   @Getter getConflictsConditional!: Array<string>
+  @Getter getConflictsConditionalInstructions!: Array<{ word: string, instructions: string }>
   @Getter getConflictsExact!: Array<string>
   @Getter getConflictsRestricted!: Array<string>
   @Getter getConflictsSimilar!: Array<string>
@@ -233,6 +229,7 @@ export default class NameCheck extends Vue {
   @Getter getIsXproMras!: boolean
   @Getter getLocationText!: string
   @Getter getNameCheckErrors!: NameCheckErrorI
+  @Getter getNumbersCheckUse!: Array<string>
   @Getter getRequestActionCd!: string
   @Getter getSpecialCharacters!: Array<string>
   @Getter isAnalyzeConflictsPending!: boolean
@@ -289,12 +286,17 @@ export default class NameCheck extends Vue {
 
   get bottomText (): string {
     if (!this.getIsXproMras) {
-      if (this.hasIssuesConflictAlert || this.hasIssuesConflictCaution ||
-          this.hasIssuesStructureAlert || this.hasIssuesStructureCaution) {
+      if (
+        this.hasIssuesConflictAlert ||
+        this.hasIssuesConflictCaution ||
+        this.hasIssuesStructureAlert ||
+        this.hasIssuesStructureCaution ||
+        this.loadingStructureCheck
+      ) {
         return 'If you wish to proceed with your name choice at any ' +
                'point you can submit your name for review. You will be able ' +
                'to enter up to three name choices as part of the name request ' +
-               'submission process'
+               'submission process.'
       }
       return 'Your name has passed initial name structure and similar name checks. ' +
              'Name availability is not guaranteed until it has been reviewed by staff. ' +
@@ -303,7 +305,7 @@ export default class NameCheck extends Vue {
              'of the name request submission process.'
     }
     // xpro
-    if (this.hasIssuesConflictAlert || this.hasIssuesConflictCaution) {
+    if (this.hasIssuesConflictAlert || this.hasIssuesConflictCaution || this.isAnalyzeConflictsPending) {
       return 'You will be able to enter up to two Assumed Name choices as part ' +
              'of the name request submission process.'
     }
@@ -315,6 +317,9 @@ export default class NameCheck extends Vue {
   }
   get conflictsConditional (): Array<string> {
     return this.getConflictsConditional
+  }
+  get conflictsConditionalInstructions (): Array<{ word: string, instructions: string }> {
+    return this.getConflictsConditionalInstructions
   }
   get conflictsExact (): Array<string> {
     return this.getConflictsExact
@@ -419,8 +424,11 @@ export default class NameCheck extends Vue {
       this.isMissingDistinctive ||
       this.isMissingDescriptive)
   }
+  get hasNumbersCheckUse (): boolean {
+    return this.numbersCheckUse?.length > 0
+  }
   get hasSpecialCharacters (): boolean {
-    return this.specialCharacters.length > 0
+    return this.specialCharacters?.length > 0
   }
   get infoTextTab (): string {
     if (this.checks === 'structure-check') {
@@ -448,7 +456,7 @@ export default class NameCheck extends Vue {
     return this.isAnalyzeDesignationPending || this.isAnalyzeStructurePending || this.isAnalyzeConflictsPending
   }
   get nameCheckVerdict (): string {
-    if (this.isAnalyzeConflictsPending || this.isAnalyzeDesignationPending || this.isAnalyzeStructurePending) {
+    if (this.loadingStructureCheck || this.isAnalyzeConflictsPending) {
       return 'Verifying Results ...'
     }
     if (this.tabIconVerdict.icon === 'mdi-check-circle') {
@@ -465,13 +473,15 @@ export default class NameCheck extends Vue {
       items.push(baseItemsConflicts.errorSimilar)
     }
     if (this.conflictsExact?.length > 0) {
-      let newItem = this.getIsXproMras ? baseItemsConflicts.exactMatchXpro : baseItemsConflicts.exactMatch
+      let newItem = this.getIsXproMras ? { ...baseItemsConflicts.exactMatchXpro } : { ...baseItemsConflicts.exactMatch }
       newItem.expandedList = this.conflictsExact
       newItem.count = this.conflictsExactNum
       items.push(newItem)
     }
     if (this.conflictsSimilar?.length > 0) {
-      let newItem = this.getIsXproMras ? baseItemsConflicts.similarMatchXpro : baseItemsConflicts.similarMatch
+      let newItem = (
+        this.getIsXproMras ? { ...baseItemsConflicts.similarMatchXpro } : { ...baseItemsConflicts.similarMatch }
+      )
       newItem.expandedList = this.conflictsSimilar
       newItem.count = this.conflictsSimilarNum
       items.push(newItem)
@@ -539,6 +549,11 @@ export default class NameCheck extends Vue {
       newItem.words = this.designationsMisplaced
       items.push(newItem)
     }
+    if (this.hasNumbersCheckUse) {
+      let newItem = baseItemsStructure.numbersCheckUse
+      newItem.words = this.numbersCheckUse
+      items.push(newItem)
+    }
     if (this.isMissingDesignation) {
       let newItem = baseItemsStructure.designationsMissing
       if ([EntityType.CP, EntityType.XCP].includes(this.getEntityTypeCd)) {
@@ -551,6 +566,15 @@ export default class NameCheck extends Vue {
     if (this.hasConflictsConditional) {
       let newItem = baseItemsStructure.conflictsConditional
       newItem.words = this.conflictsConditional
+      // add condition text
+      let instructions = ''
+      const info = this.conflictsConditionalInstructions
+      for (let i in info) {
+        // add newlines
+        if (instructions) instructions = instructions + '<br><br>'
+        instructions = instructions + `<b>${info[i].word}:</b> ${info[i].instructions}`
+      }
+      newItem.expandedInfo2 = instructions
       items.push(newItem)
     }
     if (this.isMissingDescriptive) {
@@ -578,6 +602,9 @@ export default class NameCheck extends Vue {
       return 'Your name in your home jurisdiction cannot be edited'
     }
     return 'You can edit your name here and check it again'
+  }
+  get numbersCheckUse (): Array<string> {
+    return this.getNumbersCheckUse
   }
   get showDesignationSelect (): boolean {
     return (this.$designations[this.getEntityTypeCd]?.end || false) && !this.getIsXproMras
@@ -634,7 +661,7 @@ export default class NameCheck extends Vue {
       return { color: 'red darken-2', icon: 'mdi-alert-octagon' }
     }
     if (this.hasIssuesConflictCaution || this.hasIssuesStructureCaution) {
-      return { color: 'orange darken-2', icon: 'mdi-alert' }
+      return { color: '#F8661A', icon: 'mdi-alert' }
     }
     return { color: 'green darken-2', icon: 'mdi-check-circle' }
   }
@@ -679,6 +706,21 @@ export default class NameCheck extends Vue {
   submit () {
     this.setActiveComponent('NamesCapture')
   }
+
+  @Watch('isAnalyzeConflictsPending')
+  private closeHelpText (val: boolean) {
+    // if new similar name search starts => close
+    if (val) {
+      this.expandHelpTxt = false
+    }
+  }
+  @Watch('isAnalyzeStructurePending')
+  private setDefaultTab (val: boolean) {
+    // if new structure analysis starts => go to structure tab
+    if (val) {
+      this.checks = 'structure-check'
+    }
+  }
 }
 </script>
 
@@ -710,7 +752,7 @@ export default class NameCheck extends Vue {
 }
 #name-check-main-container {
   max-width: none;
-  min-width: 928px;
+  min-width: 1011px;
 }
 #name-check-name-input {
   padding: 2rem !important;

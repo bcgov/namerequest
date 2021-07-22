@@ -6,6 +6,7 @@ export interface NameCheckModelIF {
     analyzeStructurePending: boolean
     conflictsExact: Array<string>
     conflictsConditional: Array<string>
+    conflictsConditionalInstructions: Array<{ word: string, instructions: string }>
     conflictsRestricted: Array<string>
     conflictsSimilar: Array<string>
     designation: string
@@ -18,5 +19,6 @@ export interface NameCheckModelIF {
     missingDescriptive: boolean
     missingDesignation: boolean
     missingDistinctive: boolean
+    numbersCheckUse: Array<string>
     specialCharacters: Array<string>
 }

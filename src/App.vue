@@ -22,6 +22,7 @@
 
       <!-- SBC Common Components header -->
       <SbcHeader
+        id="namerequest-sbc-header"
         class="sbc-header"
         :inAuth="false"
         :showActions="true"

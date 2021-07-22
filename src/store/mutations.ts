@@ -456,6 +456,13 @@ export const mutateConflictsConditional = (state: StateIF, value: Array<string>)
   state.stateModel.nameCheckModel.conflictsConditional = value
 }
 
+export const mutateConflictsConditionalInstructions = (
+  state: StateIF,
+  value: Array<{ word: string, instructions: string }>
+) => {
+  state.stateModel.nameCheckModel.conflictsConditionalInstructions = value
+}
+
 export const mutateConflictsExact = (state: StateIF, value: Array<string>) => {
   state.stateModel.nameCheckModel.conflictsExact = value
 }
@@ -506,6 +513,10 @@ export const mutateMissingDistinctive = (state: StateIF, value: boolean) => {
 
 export const mutateNameAnalysisTimedOut = (state: StateIF, nameAnalysisTimedOut: boolean) => {
   state.stateModel.newRequestModel.nameAnalysisTimedOut = nameAnalysisTimedOut
+}
+
+export const mutateNumbersCheckUse = (state: StateIF, value: Array<string>) => {
+  state.stateModel.nameCheckModel.numbersCheckUse = value
 }
 
 export const mutateQuickSearchNames = (state: StateIF, quickSearchNames: any[]) => {

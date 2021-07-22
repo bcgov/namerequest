@@ -127,23 +127,6 @@
                 </v-tooltip>
                 to use the name, you can submit your name for review.
               </div>
-              <div v-else-if="item.info === NameCheckItemType.EXACT_MATCH">
-                <span>{{ item.expandedInfo1 }}</span>
-                <p class="ma-0">
-                  Consider revising your name unless you can
-                  <v-tooltip top content-class="top-tooltip" transition="fade-transition">
-                    <template v-slot:activator="{ on, attrs }">
-                      <span class="dotted-underline" v-bind="attrs" v-on="on">obtain consent</span>
-                    </template>
-                    <p class="ma-0">
-                      You may be able to use a similar name if you obtain consent or authorization
-                      from the business using the name. If consent is required you will be asked
-                      to submit signed consent to the Business Registry as part of the review process.
-                    </p>
-                  </v-tooltip>
-                  to use this name.
-                </p>
-              </div>
               <div v-else v-html="item.expandedInfo1">{{ item.expandedInfo1 }}</div>
               <div v-if="item.expandedInfoBlock1" class="pt-7">
                 <p v-for="line, index in item.expandedInfoBlock1"
@@ -180,10 +163,10 @@
                   </v-row>
                   <v-row no-gutters>
                     <ul>
-                      <li>a person's full Name</li>
-                      <li>a geographical location</li>
+                      <li>a person's full name,</li>
+                      <li>a geographical location,</li>
                       <li>a coined, made-up word, or</li>
-                      <li>an acronym</li>
+                      <li>an acronym.</li>
                     </ul>
                   </v-row>
                 </v-col>

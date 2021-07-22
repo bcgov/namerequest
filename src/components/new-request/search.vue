@@ -211,7 +211,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Mixins, Vue, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 // bcregistry common
@@ -224,11 +224,12 @@ import NameInput from './name-input.vue'
 import { ConversionTypesI, EntityI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { AccountType, EntityType, Location, RequestCode } from '@/enums'
+import { CommonMixin } from '@/mixins'
 
 @Component({
   components: { NameInput }
 })
-export default class NewSearch extends Vue {
+export default class NewSearch extends Mixins(CommonMixin) {
   // enums for template
   readonly Location = Location
   readonly RequestCode = RequestCode
@@ -295,6 +296,10 @@ export default class NewSearch extends Vue {
         if (searchNameBtn) searchNameBtn.classList.add('search-name-btn')
       }
     })
+  }
+
+  private activated () {
+    this.scrollTo('namerequest-sbc-header')
   }
 
   // Local Getters
@@ -469,8 +474,11 @@ export default class NewSearch extends Vue {
 
   /** Reset search values when location changes */
   @Watch('location')
-  watchLocation () {
-    this.setName('')
+  watchLocation (newVal: Location) {
+    // if they need to search by corp num first then reset the name
+    if ([Location.CA, Location.FD, Location.IN, Location.US].includes(newVal)) {
+      this.setName('')
+    }
     this.setCorpSearch('')
     this.setNoCorpNum(false)
   }

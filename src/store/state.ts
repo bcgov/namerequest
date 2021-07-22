@@ -158,6 +158,7 @@ export const stateModel: StateModelIF = {
     analyzeDesignationPending: false,
     analyzeStructurePending: false,
     conflictsConditional: [],
+    conflictsConditionalInstructions: [],
     conflictsExact: [],
     conflictsRestricted: [],
     conflictsSimilar: [],
@@ -177,6 +178,7 @@ export const stateModel: StateModelIF = {
     missingDescriptive: false,
     missingDesignation: false,
     missingDistinctive: false,
+    numbersCheckUse: [],
     specialCharacters: []
   }
 

@@ -37,14 +37,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 // Components
 import NewSearch from '@/components/new-request/search.vue'
 import ExistingRequestSearch from './existing-request/existing-request-search.vue'
 import LinkRow from '@/components/common/link-row.vue'
-
+import { CommonMixin } from '@/mixins'
 // Interfaces
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
@@ -55,7 +55,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
     LinkRow
   }
 })
-export default class Tabs extends Vue {
+export default class Tabs extends Mixins(CommonMixin) {
   // Global getter
   @Getter getTabNumber!: number
 
@@ -68,6 +68,11 @@ export default class Tabs extends Vue {
 
   set tabNumber (tab: number) {
     this.setTabNumber(tab)
+  }
+
+  @Watch('tabNumber')
+  private scrollToTop () {
+    this.scrollTo('namerequest-sbc-header')
   }
 }
 </script>
