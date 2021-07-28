@@ -28,7 +28,7 @@
           <v-col class="nudge-down" cols="auto">
             <v-icon :color="item.iconColor">{{ item.icon }}</v-icon>
           </v-col>
-          <v-col class="table-text pl-3 pt-1" cols="8">
+          <v-col class="table-text pl-3 mr-3 pt-1" cols="9">
             <span v-html="item.problem"/>
           </v-col>
           <v-col class="pl-5" cols="auto">
@@ -62,7 +62,7 @@
           <v-col cols="3">
             <v-row justify="end" no-gutters>
               <v-col v-if="item.count" cols="auto" class="pt-1">
-                <v-chip class="chip-count" :color="item.iconColor" dark>{{ item.count }}</v-chip>
+                <v-chip class="chip-count" :color="item.iconColor" dark><strong>{{ item.count }}</strong></v-chip>
               </v-col>
               <v-col v-if="!isExpanded && item.expandLabel" cols="auto">
                 <v-row no-gutters :justify="item.count ? 'center' : 'end'">
@@ -250,9 +250,15 @@ export default class NameCheckConflicts extends Vue {
 .chip-count {
   height: 1.25rem;
 }
-.conflict-row:hover .expand-icon {
-  background-color: rgba(61, 140, 204, 1); /* $app-blue */
-  color: white;
+
+.conflict-row:hover {
+  background-color: $gray1;
+
+  .expand-icon {
+    background-color: $app-blue; /* $app-blue */
+    opacity: 1 !important;
+    color: white;
+  }
 }
 .expand-icon {
   background-color: rgba(33, 150, 243, 0.1); /* $app-blue 0.1 opacity */

@@ -7,7 +7,12 @@
         <div class="main-container-style mt-3">
           <transition name="fade" mode="out-in" :duration="{ enter: 100, leave: 100 }">
             <keep-alive :include="['Tabs']">
-              <component :is="getDisplayedComponent" :key="getDisplayedComponent" transition="fade-transition" />
+              <component
+                class="mb-3"
+                :is="getDisplayedComponent"
+                :key="getDisplayedComponent"
+                transition="fade-transition"
+              />
             </keep-alive>
           </transition>
         </div>

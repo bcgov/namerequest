@@ -30,8 +30,8 @@
         </v-btn>
       </v-col>
     </v-row>
-    <v-container id="name-check-lower-container" class="rounded copy-normal mt-10 pa-0 name-check">
-      <v-row no-gutters justify="center" class="pt-12">
+    <v-container id="name-check-lower-container" class="rounded copy-normal mt-5 pa-0 name-check">
+      <v-row no-gutters justify="center" class="pt-8">
         <v-col cols="auto" id="name-check-header">
           <b>Showing Results for:</b>
         </v-col>
@@ -41,19 +41,19 @@
           <b>{{ originalName }}</b>
         </v-col>
       </v-row>
-      <div id="name-check-verdict" class="white mt-7 pa-2" no-gutters justify="center">
+      <v-row id="name-check-verdict" class="white mt-7 pa-2" no-gutters align="center">
         <v-progress-circular v-if="loadingStructureCheck"
                              color="primary"
                              indeterminate
                              size="30"
                              width="3"/>
-        <v-icon v-else class="check-tab-icon" :color="tabIconVerdict.color" size="2rem">
+        <v-icon v-else class="check-tab-icon pl-2" :color="tabIconVerdict.color" size="2rem">
           {{ tabIconVerdict.icon }}
         </v-icon>
         <span class="pl-2">
           {{ nameCheckVerdict }}
         </span>
-      </div>
+      </v-row>
       <v-container v-if="hasIssuesConflictAlert || hasIssuesConflictCaution ||
                          hasIssuesStructureAlert || hasIssuesStructureCaution ||
                          loadingStructureCheck"
@@ -78,7 +78,7 @@
                                       :subtitle="subTitleStructure"
                                       :tabIcon="tabIconStructure.icon"
                                       :title="'Name Structure Check'"/>
-              <div v-if="checks == 'conflicts-check'" id="box-shadow-filler-unactive-tab"/>
+              <div v-if="checks === 'conflicts-check'" id="box-shadow-filler-unactive-tab"/>
             </div>
           </v-tab>
           <v-tab href="#conflicts-check"
@@ -90,7 +90,7 @@
                                       :subtitle="subTitleConflict"
                                       :tabIcon="tabIconConflict.icon"
                                       :title="'Similar Name Check'"/>
-              <div v-if="checks == 'structure-check'" id="box-shadow-filler-unactive-tab"/>
+              <div v-if="checks === 'structure-check'" id="box-shadow-filler-unactive-tab"/>
             </div>
           </v-tab>
         </v-tabs>
@@ -99,7 +99,7 @@
                       :class="checks === 'structure-check' ? 'rounded-top-right' : 'rounded-top-left'"
                       v-model="checks">
           <v-tab-item value="structure-check">
-            <v-row no-gutters class="pl-12 pr-16 pb-7 name-check-info-text">
+            <v-row no-gutters class="pl-12 pr-16 pb-6 name-check-info-text">
               <v-col cols="auto">
                 <v-icon>mdi-information-outline</v-icon>
               </v-col>
@@ -162,7 +162,7 @@
           </v-tab-item>
         </v-tabs-items>
       </v-container>
-      <v-row no-gutters class="pt-7 name-check-info-text-no-border">
+      <v-row no-gutters class="pt-3 name-check-info-text-no-border">
         <v-col cols="auto">
           <v-icon>mdi-information-outline</v-icon>
         </v-col>
@@ -170,9 +170,9 @@
           <span>{{ bottomText }}</span>
         </v-col>
       </v-row>
-      <v-row no-gutters class="pa-10 pt-7">
+      <v-row no-gutters class="pa-10 pt-5">
         <v-col>
-          <v-btn @click="back()" class="outlined" outlined>
+          <v-btn id="name-check-start-over-btn" @click="back()" class="outlined" outlined>
             Start Over
           </v-btn>
         </v-col>
@@ -729,9 +729,9 @@ export default class NameCheck extends Vue {
   margin-right: 4px;
 }
 #box-shadow-filler-unactive-tab {
-  box-shadow: 0px 3px 6px 2px rgb(172, 171, 171);
-  margin-left: -2px;
-  margin-right: -2px;
+  box-shadow: 0 10px 30px 5px $gray9;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 #conflicts-tab {
   background-color: $app-blue;
@@ -739,12 +739,12 @@ export default class NameCheck extends Vue {
   margin: 13px 15px 0 5px;
 }
 #name-check-header {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: $gray9;
   text-align: center;
 }
 #name-check-lower-container {
-  background-color: $gray2;
+  background-color: $gray1;
   max-width: none;
 }
 #name-check-main-container {
@@ -754,15 +754,18 @@ export default class NameCheck extends Vue {
 #name-check-name-input {
   padding: 2rem !important;
 }
+#name-check-start-over-btn {
+  background-color: $gray1 !important;
+}
 #name-check-submit-btn {
   font-size: 0.875rem !important;
   font-weight: bold;
 }
 #name-check-tabs {
-  background-color: $gray2 !important;
+  background-color: $gray1 !important;
 }
 #name-check-tabs-container {
-  background-color: $gray2;
+  background-color: $gray1;
   max-width: none;
   padding-right: 38px;
   padding-left: 38px;
