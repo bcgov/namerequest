@@ -469,6 +469,7 @@ export default class NewSearch extends Mixins(CommonMixin) {
 
   @Watch('entity_type_cd')
   clearDesignation (newVal) {
+    console.log(newVal)
     this.designation = ''
   }
 

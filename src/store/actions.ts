@@ -676,7 +676,7 @@ export const getMatchesSimilar = async (
   return synonymResp?.data ? parseSynonymNames(synonymResp.data) : []
 }
 export const getMatchesRestricted = async (
-  { commit },
+  { commit, getters },
   token: string,
   cleanedName: string
 ): Promise<ParsedRestrictedResponseIF> => {
@@ -687,7 +687,7 @@ export const getMatchesRestricted = async (
     return null
   })
   return restrictedResp?.data
-    ? parseRestrictedWords(restrictedResp.data)
+    ? parseRestrictedWords({ getters }, restrictedResp.data)
     : { conditionalInstructions: [], conditionalWords: [], restrictedWords: [] }
 }
 
@@ -782,7 +782,7 @@ export const getNameAnalysis: ActionIF = async (
 }
 
 export const getQuickSearch = async (
-  { commit },
+  { commit, getters },
   cleanedName: CleanedNameIF,
   checks: QuickSearchParamsI
 ): Promise<QuickSearchParsedRespI> => {
@@ -809,7 +809,7 @@ export const getQuickSearch = async (
     )
     const parsedRestrictedResp: ParsedRestrictedResponseIF = (
       checks.restricted
-        ? await getMatchesRestricted({ commit }, token, cleanedName.restrictedMatch)
+        ? await getMatchesRestricted({ commit, getters }, token, cleanedName.restrictedMatch)
         : { restrictedWords: [], conditionalWords: [], conditionalInstructions: [] }
     )
 
@@ -853,8 +853,8 @@ export const parseExactNames = (json: { names: [string] }): Array<ConflictListIt
   return names
 }
 
-export const parseRestrictedWords = (resp: RestrictedResponseIF): ParsedRestrictedResponseIF => {
-  const words = resp.restricted_words_conditions
+export const parseRestrictedWords = ({ getters }, resp: RestrictedResponseIF): ParsedRestrictedResponseIF => {
+  const phrases = resp.restricted_words_conditions
   let parsedResp: ParsedRestrictedResponseIF = {
     conditionalInstructions: [],
     conditionalWords: [],
@@ -862,22 +862,37 @@ export const parseRestrictedWords = (resp: RestrictedResponseIF): ParsedRestrict
   }
   // restrictedWords: add any word with cnd_info[..].allow_use = N
   // conditionalWords: all other words in the list
-  for (let i = 0; i < words.length; i++) {
+  for (let i = 0; i < phrases.length; i++) {
+    const phrase = phrases[i].word_info.phrase.toUpperCase()
+
+    // ignore rules
+    const entityCd = getters.getEntityTypeCd
+    if (entityCd === EntityType.CR && Designations[EntityType.CC].words.includes(phrase)) continue
+    if (Designations[entityCd].words.includes(phrase)) continue
+
+    // split into restricted vs conditional
     let restricted = false
     // there can be multiple conditions per word / phrase
-    for (let k in words[i].cnd_info) {
-      if (words[i].cnd_info[k].allow_use === 'N') {
+    for (let k in phrases[i].cnd_info) {
+      if (phrases[i].cnd_info[k].allow_use === 'N') {
         restricted = true
         break
       }
     }
-    if (restricted) parsedResp.restrictedWords.push(words[i].word_info.phrase)
+
+    // add restricted and conditional info to the response
+    if (restricted) parsedResp.restrictedWords.push(phrase)
     else {
-      parsedResp.conditionalWords.push(words[i].word_info.phrase)
-      for (let k in words[i].cnd_info) {
+      parsedResp.conditionalWords.push(phrase)
+      for (let k in phrases[i].cnd_info) {
+        let info = phrases[i].cnd_info[k].text ? phrases[i].cnd_info[k].text?.trim() : ''
+        if (info && !info.endsWith('.')) info = info + '.'
+        const instructions = phrases[i].cnd_info[k].instructions
+          ? `${info} ${phrases[i].cnd_info[k].instructions}`
+          : info
         parsedResp.conditionalInstructions.push({
-          word: words[i].word_info.phrase,
-          instructions: words[i].cnd_info[k].instructions
+          word: phrase,
+          instructions: instructions || 'This word needs to be reviewed by staff.'
         })
       }
     }
@@ -1076,9 +1091,9 @@ export const startQuickSearch = async ({ commit, getters }, checks: QuickSearchP
     const cleanedName = {
       'exactMatch': exactMatchName,
       'synonymMatch': synonymsName,
-      'restrictedMatch': name
+      'restrictedMatch': getters.getName
     }
-    const resp = await getQuickSearch({ commit }, cleanedName, checks)
+    const resp = await getQuickSearch({ commit, getters }, cleanedName, checks)
     // make sure a new search on a different name has not started
     if (getters.getFullName === name) {
       if (checks.exact) commit('mutateConflictsExact', resp.exactNames)
