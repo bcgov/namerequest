@@ -865,7 +865,7 @@ export const parseRestrictedWords = ({ getters }, resp: RestrictedResponseIF): P
   for (let i = 0; i < phrases.length; i++) {
     const phrase = phrases[i].word_info.phrase.toUpperCase()
 
-    // ignore rules
+    // rules for ignoring restricted/conditional phrases
     const entityCd = getters.getEntityTypeCd
     if (entityCd === EntityType.CR && Designations[EntityType.CC].words.includes(phrase)) continue
     if (Designations[entityCd].words.includes(phrase)) continue
