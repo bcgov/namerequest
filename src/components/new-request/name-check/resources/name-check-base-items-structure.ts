@@ -291,7 +291,7 @@ export const baseItemsStructure = {
     expandedInfo1: 'Numerals may be used in company names as the distinctive element. ' +
     'A year may be used in a name provided that it is the year of incorporation, ' +
     'amalgamation, change of name, or registration.',
-    expandedInfo2: null,
+    expandedInfo2: 'For example:<br />Pacific Enterprises (1997) Ltd.',
     expandedList: null,
     expandLabel: {
       closed: 'Read More',
