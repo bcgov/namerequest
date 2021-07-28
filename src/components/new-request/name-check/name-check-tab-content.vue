@@ -81,7 +81,7 @@ export default class NameCheckTabContent extends Vue {
 }
 .check-tab-sub-title {
   color: white;
-  font-size: 0.875rem !important;
+  font-size: 1rem !important;
   font-weight: normal;
   letter-spacing: normal !important;
   margin: 0 !important;
