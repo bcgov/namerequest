@@ -1,4 +1,4 @@
-/** Enum for Request (action) codes. Not to be confused with NR Action codes. */
+/** Enum for Request Code. Not to be confused with NR Action codes. */
 export enum RequestCode {
   NEW = 'NEW', // new request
   MVE = 'MVE', // move request
@@ -11,4 +11,5 @@ export enum RequestCode {
   REN = 'REN', // restore with new name request (renew)
   INFO = 'INFO', // special value for sub-menu
   REST = 'REST', // restore
+  RESUBMIT = 'RESUBMIT', // resubmit
 }

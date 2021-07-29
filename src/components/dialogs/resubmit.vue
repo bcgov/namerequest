@@ -51,6 +51,14 @@
               <FeeSummary
                 :fees="[...paymentFees]"
               />
+
+              <v-checkbox
+                hide-details
+                v-model="isPriorityRequest"
+                class="pre-wrap mt-8 pt-0 pl-2"
+              >
+                <template v-slot:label>Make this a Priority Request <b>($100)</b></template>
+              </v-checkbox>
             </v-card-text>
 
             <v-card-actions class="pt-8 justify-center">
@@ -112,6 +120,7 @@ export default class ResubmitDialog extends Mixins(
 
   // Global action
   @Action toggleResubmitModal!: ActionBindingIF
+  @Action resubmit!: ActionBindingIF
 
   /** Whether staff payment is valid. */
   private isStaffPaymentValid = false
@@ -124,6 +133,9 @@ export default class ResubmitDialog extends Mixins(
 
   /** Whether this dialog is visible. */
   private isVisible = false
+
+  /** Whether this NR is a priority request. */
+  private isPriorityRequest = false
 
   /** Whether this modal should be shown (per store property). */
   private get showModal (): boolean {
@@ -143,14 +155,8 @@ export default class ResubmitDialog extends Mixins(
       // reset tab id
       this.currentTab = this.TAB_RESUBMIT_NAME_REQUEST
 
-      const params: FetchFeesParams = {
-        filingType: FilingTypes.NM620,
-        jurisdiction: Jurisdictions.BC,
-        priorityRequest: this.getPriorityRequest // same value as originally
-      }
-
       // only make visible on success, otherwise hide it
-      if (await this.fetchFees(params)) {
+      if (await this.onPriorityRequestChange()) {
         this.isVisible = true
       } else {
         await this.hideModal()
@@ -158,6 +164,16 @@ export default class ResubmitDialog extends Mixins(
     } else {
       this.isVisible = false
     }
+  }
+
+  @Watch('isPriorityRequest')
+  async onPriorityRequestChange (): Promise<boolean> {
+    const params: FetchFeesParams = {
+      filingType: FilingTypes.NM620,
+      jurisdiction: Jurisdictions.BC,
+      priorityRequest: this.isPriorityRequest
+    }
+    return this.fetchFees(params)
   }
 
   /** Called when staff clicks "Back" button. */
@@ -188,6 +204,9 @@ export default class ResubmitDialog extends Mixins(
 
     this.isLoadingPayment = true
 
+    // first resubmit the NR
+    let success: boolean = await this.resubmit(null)
+
     const onSuccess = (paymentResponse) => {
       const { paymentId, paymentToken } = this
 
@@ -204,11 +223,12 @@ export default class ResubmitDialog extends Mixins(
       }
     }
 
-    const success = await this.createPayment({
+    // if resubmit succeeded then create the payment
+    success = success && await this.createPayment({
       action: PaymentAction.RESUBMIT,
       nrId: this.getNrId,
       filingType: FilingTypes.NM620,
-      priorityRequest: this.getPriorityRequest // same value as originally
+      priorityRequest: this.getPriorityRequest
     } as CreatePaymentParams, onSuccess)
 
     // on error, close this modal so error modal is visible

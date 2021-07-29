@@ -1063,6 +1063,7 @@ export const getStaffPayment = (state: StateIF): StaffPaymentIF => {
 export const getFolioNumber = (state: StateIF): string => {
   return state.stateModel.newRequestModel.folioNumber
 }
+
 /** Name Check Getters
  * TODO: move existing getters used only for name check above to here
  * TODO: eventually move this all out of vuex (if we refactor to composition api)

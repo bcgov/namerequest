@@ -20,22 +20,26 @@
                     <div v-else class="float-right">No Fee</div>
                   </v-col>
                 </v-row>
-                <v-row v-if="lineItem.priorityFees" no-gutters>
-                  <v-col cols="8">
-                    <div>Priority Request fee</div>
-                  </v-col>
-                  <v-col cols="4">
-                    <div class="float-right">${{lineItem.priorityFees.toFixed(2)}}</div>
-                  </v-col>
-                </v-row>
-                <v-row v-if="lineItem.serviceFees" no-gutters>
-                  <v-col cols="8">
-                    <div>Service fee</div>
-                  </v-col>
-                  <v-col cols="4">
-                    <div class="float-right">${{lineItem.serviceFees.toFixed(2)}}</div>
-                  </v-col>
-                </v-row>
+                <v-expand-transition>
+                  <v-row v-if="lineItem.priorityFees" no-gutters>
+                    <v-col cols="8">
+                      <div>Priority Request fee</div>
+                    </v-col>
+                    <v-col cols="4">
+                      <div class="float-right">${{lineItem.priorityFees.toFixed(2)}}</div>
+                    </v-col>
+                  </v-row>
+                </v-expand-transition>
+                <v-expand-transition>
+                  <v-row v-if="lineItem.serviceFees" no-gutters>
+                    <v-col cols="8">
+                      <div>Service fee</div>
+                    </v-col>
+                    <v-col cols="4">
+                      <div class="float-right">${{lineItem.serviceFees.toFixed(2)}}</div>
+                    </v-col>
+                  </v-row>
+                </v-expand-transition>
               </v-col>
             </v-row>
           </v-col>

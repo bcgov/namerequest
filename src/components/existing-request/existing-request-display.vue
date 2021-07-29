@@ -2,7 +2,7 @@
   <MainContainer id="existing-request-display" class="pa-10">
     <template v-slot:container-header>
       <v-col cols="auto" class="py-0">
-        <span class="h3">{{ nr.nrNum }}</span>
+        <span class="h3 user-select-all">{{ nr.nrNum }}</span>
         <span class="h6 ml-4">{{ entityTypeCdToText(nr.entity_type_cd) }}</span>
       </v-col>
     </template>

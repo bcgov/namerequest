@@ -20,7 +20,7 @@ import { Action, Getter } from 'vuex-class'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { ConditionalReqI, DraftReqI, IssueI, NameRequestI, ReservedReqI } from '@/interfaces'
 import NamexServices from '@/services/namex.services'
-import { Location, RequestCode } from '@/enums'
+import { Location, NrType, RequestCode } from '@/enums'
 
 @Component({})
 export default class ReserveSubmitButton extends Vue {
@@ -71,22 +71,18 @@ export default class ReserveSubmitButton extends Vue {
     this.cancelAnalyzeName('NamesCapture')
   }
 
-  getData (type: string): any {
-    if (this.getAssumedName) type = 'assumed'
-    let data: any
+  getData (type: NrType): DraftReqI | ConditionalReqI | ReservedReqI {
+    if (this.getAssumedName) type = NrType.ASSUMED
     switch (type) {
-      case 'assumed':
-      case 'draft':
-        data = this.getDraftNameReservation
-        break
-      case 'conditional':
-        data = this.getConditionalNameReservation
-        break
-      case 'reserved':
-        data = this.getReservedNameReservation
-        break
+      case NrType.ASSUMED:
+      case NrType.DRAFT:
+        return this.getDraftNameReservation
+      case NrType.CONDITIONAL:
+        return this.getConditionalNameReservation
+      case NrType.RESERVED:
+        return this.getReservedNameReservation
     }
-    return data
+    return undefined // should never happen
   }
 
   async handleSubmit () {
@@ -140,7 +136,7 @@ export default class ReserveSubmitButton extends Vue {
 
       // @ts-ignore - typescript knows setup can only === 'assumed' at this point and gives error
       case 'consent':
-        data = this.getData('conditional')
+        data = this.getData(NrType.CONDITIONAL)
         request = await NamexServices.postNameRequests(this.getRequestActionCd, data)
         if (request) {
           this.setNrResponse(request)
@@ -151,7 +147,7 @@ export default class ReserveSubmitButton extends Vue {
 
       default:
         this.setSubmissionType('normal')
-        data = this.getData('reserved')
+        data = this.getData(NrType.RESERVED)
         request = await NamexServices.postNameRequests(this.getRequestActionCd, data)
         if (request) {
           this.setNrResponse(request)

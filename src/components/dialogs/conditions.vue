@@ -38,9 +38,3 @@ export default class ConditionsDialog extends Vue {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.pre-line {
-  white-space: pre-line;
-}
-</style>
