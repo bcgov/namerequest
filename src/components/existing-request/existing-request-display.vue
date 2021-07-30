@@ -428,6 +428,7 @@ export default class ExistingRequestDisplay extends Mixins(
           if (this.isNrExpired) return 'Expired'
           return 'Conditional Approval'
         case NrState.DRAFT: return 'Pending Staff Review'
+        case NrState.EXPIRED: return 'Expired' // legacy state; see also "isNrExpired"
         case NrState.HOLD: return 'In Progress' // show HOLD as "In Progress"
         case NrState.INPROGRESS: return 'In Progress'
         case NrState.REFUND_REQUESTED: return 'Cancelled, Refund Requested'
@@ -449,8 +450,10 @@ export default class ExistingRequestDisplay extends Mixins(
     )
   }
 
-  // FUTURE: remove this when EXPIRED state is implemented (ticket #5669)
-  /** True if the NR is expired. */
+  /**
+   * True if the NR is expired.
+   * Note that some old NRs have state=EXPIRED and don't use this method.
+   */
   private get isNrExpired (): boolean {
     // 1. NR is approved or conditional
     // 2. a Name is approved
@@ -500,10 +503,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** True if the current state should display an alert icon. */
   private get isAlertState (): boolean {
-    return ['Cancelled', 'Cancelled, Refund Requested', 'Expired'].includes(this.requestStatusText) ||
-    this.isNotPaid
-    // FUTURE: use enums when EXPIRED state is implemented (ticket #5669)
-    // return [NrState.CANCELLED, NrState.REFUND_REQUESTED, NrState.EXPIRED].includes(this.nr.state)
+    return ['Cancelled', 'Cancelled, Refund Requested', 'Expired'].includes(this.requestStatusText) || this.isNotPaid
   }
 
   private get isNotPaid () {
