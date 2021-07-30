@@ -9,6 +9,7 @@ import {
   NameCheckConflictType,
   NameCheckErrorType,
   NrState,
+  NrType,
   RequestCode
 } from '@/enums'
 import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
@@ -219,8 +220,8 @@ export const cancelEditExistingRequest: ActionIF = ({ commit }) => {
   commit('mutateEditMode', false)
 }
 
-export const editExistingRequest: ActionIF = ({ commit, getters }) => {
-  commit('mutateEditMode', true)
+// called to commit data into "newRequestModel" object
+const commitExistingData = ({ commit, getters }) => {
   commit('populateApplicantData')
   commit('populateNrData')
   if (['clientFirstName', 'clientLastName', 'contact'].some(field => !!getters.getNr.applicants[field])) {
@@ -263,6 +264,11 @@ export const editExistingRequest: ActionIF = ({ commit, getters }) => {
   if (getters.getNr.corpNum) {
     commit('mutateCorpNum', getters.getNr.corpNum)
   }
+}
+
+export const editExistingRequest: ActionIF = ({ commit, getters }) => {
+  commit('mutateEditMode', true)
+  commitExistingData({ commit, getters })
   if (getters.getNrState === NrState.DRAFT) {
     commit('mutateSubmissionTabComponent', 'NamesCapture')
   } else {
@@ -369,22 +375,18 @@ export const getNrStateData = ({ getters }) => {
 }
 
 // FUTURE: not an action - move it to another module?
-export const getNrTypeData = ({ getters }, type: string) => {
-  if (getters.getAssumedName) type = 'assumed'
-  let data: any
+export const getNrTypeData = ({ getters }, type: NrType): any => {
+  if (getters.getAssumedName) type = NrType.ASSUMED
   switch (type) {
-    case 'assumed':
-    case 'draft':
-      data = getters.getDraftNameReservation
-      break
-    case 'conditional':
-      data = getters.getConditionalNameReservation
-      break
-    case 'reserved':
-      data = getters.getReservedNameReservation
-      break
+    case NrType.ASSUMED:
+    case NrType.DRAFT:
+      return getters.getDraftNameReservation
+    case NrType.CONDITIONAL:
+      return getters.getConditionalNameReservation
+    case NrType.RESERVED:
+      return getters.getReservedNameReservation
   }
-  return data
+  return undefined // should never happen
 }
 
 /** Submits an edited NR or a new name submission. */
@@ -408,8 +410,14 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
       // FUTURE: remove checkin/checkout process (api should handle it whenever a put/patch is attempted)
       const checkin = await NamexServices.checkinNameRequest(getters.getNrId, getters.getNrState)
       if (checkin) {
+        // cancel edit mode
+        commit('mutateEditMode', false)
+
+        // show success page briefly
         commit('mutateDisplayedComponent', 'Success')
-        await sleep(1000) // wait for a second to show the update success
+        await sleep(1000)
+
+        // reload NR and show existing NR component
         const nrData = await NamexServices.getNameRequest(true)
         if (nrData) loadExistingNameRequest({ commit }, nrData)
       }
@@ -417,7 +425,7 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
   } else {
     let request
     if (!getters.getNrId) {
-      const data = getNrTypeData({ getters }, 'draft')
+      const data = getNrTypeData({ getters }, NrType.DRAFT)
       request = await NamexServices.postNameRequests(getters.getRequestActionCd, data)
       if (request) commit('setNrResponse', request)
     } else {
@@ -434,6 +442,69 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
     }
     if (request) await dispatch('toggleConfirmNrModal', true)
   }
+}
+
+/**
+ * Re-submits an expired NR (without changing the current NR data - in case of failure).
+ **/
+export const resubmit: any = async ({ commit, getters }): Promise<boolean> => {
+  // safety check
+  if (getters.getEditMode) {
+    console.error('resubmit() - should not be edit mode') // eslint-disable-line no-console
+    return false
+  }
+
+  const nrData = getters.getNr
+
+  // safety check
+  if (!nrData) {
+    console.error('resubmit() - could not get current NR data') // eslint-disable-line no-console
+    return false
+  }
+
+  // commit the original NR's data
+  commitExistingData({ commit, getters })
+
+  // build the request data
+  const nrTypeData = getNrTypeData({ getters }, NrType.DRAFT)
+
+  // override resubmission message in Additional Info field
+  nrTypeData['additionalInfo'] = '*** Resubmission of ' + nrData['nrNum'] + ' ***'
+
+  // override names data
+  nrTypeData['names'] = nrData.names.map(name => ({
+    choice: name.choice,
+    consent_words: '',
+    conflict1: '',
+    conflict1_num: '',
+    designation: getNameDesignation(name),
+    name: name.name,
+    name_type_cd: name.name_type_cd
+  }))
+
+  // override request action code
+  nrTypeData['request_action_cd'] = RequestCode.RESUBMIT
+
+  // post new NR (without adding comment)
+  const request = await NamexServices.postNameRequests(getters.getRequestActionCd, nrTypeData, false)
+  if (request) {
+    commit('setNrResponse', request)
+    return true
+  }
+
+  return false
+}
+
+/**
+ * Sometimes name objects have a null designation (because the designation is part of the name).
+ * This helper returns the designation, if there is one, or the last word of the name, which is
+ * assumed to be the designation.
+ **/
+const getNameDesignation = (name: any): string => {
+  if (name.designation) return name.designation
+  const words = name.name.split(' ')
+  const len = words.length
+  return words[len - 1]
 }
 
 export const setCurrentJsDate: ActionIF = ({ commit }, date: Date): void => {
@@ -644,10 +715,12 @@ export const setStaffPayment: ActionIF = ({ commit }, staffPayment: StaffPayment
 export const setFolioNumber: ActionIF = ({ commit }, folioNumber: string): void => {
   commit('mutateFolioNumber', folioNumber)
 }
-/** Name Check actions
+
+/**
+ * Name Check actions
  * FUTURE: move these into a factory if converting to composition api
  */
-export const getMatchesExact = async (
+const getMatchesExact = async (
   { commit },
   token: string,
   cleanedName: string
@@ -660,7 +733,8 @@ export const getMatchesExact = async (
   })
   return exactResp?.data ? parseExactNames(exactResp.data) : []
 }
-export const getMatchesSimilar = async (
+
+const getMatchesSimilar = async (
   { commit },
   token: string,
   cleanedName: string,
@@ -675,7 +749,8 @@ export const getMatchesSimilar = async (
   if (synonymResp?.data) synonymResp.data.exactNames = exactNames || []
   return synonymResp?.data ? parseSynonymNames(synonymResp.data) : []
 }
-export const getMatchesRestricted = async (
+
+const getMatchesRestricted = async (
   { commit, getters },
   token: string,
   cleanedName: string
@@ -781,7 +856,7 @@ export const getNameAnalysis: ActionIF = async (
   }
 }
 
-export const getQuickSearch = async (
+const getQuickSearch = async (
   { commit, getters },
   cleanedName: CleanedNameIF,
   checks: QuickSearchParamsI
@@ -844,7 +919,7 @@ export const nameCheckClearError = ({ commit }, key: NameCheckErrorType): void =
   commit('mutateNameCheckErrorClear', key)
 }
 
-export const parseExactNames = (json: { names: [string] }): Array<ConflictListItemI> => {
+const parseExactNames = (json: { names: [string] }): Array<ConflictListItemI> => {
   let nameObjs = json?.names || []
   let names = []
   for (let i = 0; i < nameObjs.length; i++) {
@@ -853,7 +928,7 @@ export const parseExactNames = (json: { names: [string] }): Array<ConflictListIt
   return names
 }
 
-export const parseRestrictedWords = ({ getters }, resp: RestrictedResponseIF): ParsedRestrictedResponseIF => {
+const parseRestrictedWords = ({ getters }, resp: RestrictedResponseIF): ParsedRestrictedResponseIF => {
   const phrases = resp.restricted_words_conditions
   let parsedResp: ParsedRestrictedResponseIF = {
     conditionalInstructions: [],
@@ -900,7 +975,7 @@ export const parseRestrictedWords = ({ getters }, resp: RestrictedResponseIF): P
   return parsedResp
 }
 
-export const parseSynonymNames = (
+const parseSynonymNames = (
   json: {
     names: Array<string>,
     exactNames: Array<ConflictListItemI>
@@ -1056,6 +1131,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
     setActiveComponent({ commit }, 'NamesCapture')
   }
 }
+
 export const startQuickSearch = async ({ commit, getters }, checks: QuickSearchParamsI) => {
   commit('mutateAnalyzeConflictsPending', true)
   if (getters.getFullName) {

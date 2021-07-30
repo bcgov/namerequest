@@ -94,7 +94,7 @@
                             :rules="businessNatureRules"
                             :value="getNrData.natureBusinessInfo"
                             @blur="messages = {}"
-                            @input="mutateNRData('natureBusinessInfo', $event)"
+                            @input="updateNrData('natureBusinessInfo', $event)"
                             filled
                             hide-details="auto"
                             label="Nature of Business"
@@ -119,7 +119,7 @@
                             :value="getNrData.additionalInfo"
                             :rules="additionalInfoRules"
                             @blur="messages = {}"
-                            @input="mutateNRData('additionalInfo', $event)"
+                            @input="updateNrData('additionalInfo', $event)"
                             filled
                             hide-details="auto"
                             label="Additional Information (Optional)"
@@ -179,7 +179,7 @@
                               :value="getNrData.tradeMark"
                               :rules="trademarkRules"
                               @blur="messages = {}"
-                              @input="mutateNRData('tradeMark', $event)"
+                              @input="updateNrData('tradeMark', $event)"
                               filled
                               hide-details="auto"
                               label="Registered Canadian Trademark (Optional)" />
@@ -399,7 +399,7 @@ export default class ApplicantInfo3 extends Vue {
     this.setApplicantDetails({ key, value })
   }
 
-  mutateNRData (key, value) {
+  updateNrData (key, value) {
     this.setNRData({ key, value })
   }
 

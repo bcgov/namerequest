@@ -357,11 +357,11 @@ export default class ApplicantInfo2 extends Vue {
     this.error = error
   }
 
-  async updateApplicant (key, value) {
+  updateApplicant (key, value) {
     this.setApplicantDetails({ key, value })
   }
 
-  async updateNrData (key, value) {
+  updateNrData (key, value) {
     this.setNRData({ key, value })
   }
 

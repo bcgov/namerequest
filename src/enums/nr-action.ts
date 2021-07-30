@@ -1,4 +1,4 @@
-/** Enum for NR Action codes. Not to be confused with Request (action) codes. */
+/** Enum for NR Action codes. Not to be confused with Request Code. */
 export enum NrAction {
   CANCEL = 'CANCEL',
   EDIT = 'EDIT',

@@ -394,8 +394,8 @@ export const setNrResponse = (state: StateIF, nr: NameRequestI) => {
   }
 }
 
-export const updateReservationNames = (state: StateIF, nrName: [] = []) => {
-  nrName.forEach(({ choice, name = '', designation = '' }) => {
+export const updateReservationNames = (state: StateIF, nrNames: [] = []) => {
+  nrNames.forEach(({ choice, name = '', designation = '' }) => {
     state.stateModel.newRequestModel.nameChoices[`name${choice}`] = name
     state.stateModel.newRequestModel.nameChoices[`designation${choice}`] = designation
   })

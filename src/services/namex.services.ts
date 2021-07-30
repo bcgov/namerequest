@@ -75,7 +75,7 @@ export default class NamexServices {
 
       // if there is no previous request_action message then
       // we just preserve whatever text there is and append msg
-      data['additionalInfo'] += ` \n\n ${msg}`
+      data['additionalInfo'] += `\n\n${msg}`
       return data
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not add request action comment')
@@ -414,7 +414,11 @@ export default class NamexServices {
     }
   }
 
-  static async postNameRequests (requestActionCd: RequestCode, data: NameRequestI): Promise<NameRequestI> {
+  static async postNameRequests (
+    requestActionCd: RequestCode,
+    data: NameRequestI,
+    addComment: boolean = true
+  ): Promise<NameRequestI> {
     try {
       if (!data) throw new Error('postNameRequests() - invalid data') // safety check
 
@@ -424,8 +428,8 @@ export default class NamexServices {
       sessionStorage.setItem('BCREG-emailAddress', null)
       sessionStorage.setItem('BCREG-phoneNumber', null)
 
-      const requestData: any = data && await this.addRequestActionComment(requestActionCd, data)
-      if (!requestData) throw new Error('postNameRequests() - invalid request data') // safety check
+      const requestData: any = data && addComment && await this.addRequestActionComment(requestActionCd, data)
+      if (addComment && !requestData) throw new Error('postNameRequests() - invalid request data') // safety check
 
       // eslint-disable-next-line no-console
       console.log('post ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
