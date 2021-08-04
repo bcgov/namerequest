@@ -428,7 +428,7 @@ export default class NamexServices {
       sessionStorage.setItem('BCREG-emailAddress', null)
       sessionStorage.setItem('BCREG-phoneNumber', null)
 
-      const requestData: any = data && addComment && await this.addRequestActionComment(requestActionCd, data)
+      const requestData: any = addComment ? await this.addRequestActionComment(requestActionCd, data) : data
       if (addComment && !requestData) throw new Error('postNameRequests() - invalid request data') // safety check
 
       // eslint-disable-next-line no-console
