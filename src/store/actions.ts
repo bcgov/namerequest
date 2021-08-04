@@ -485,6 +485,11 @@ export const resubmit: any = async ({ commit, getters }): Promise<boolean> => {
   // override request action code
   nrTypeData['request_action_cd'] = RequestCode.RESUBMIT
 
+  // override applicants partyIds
+  for (let [key, value] of Object.entries(nrTypeData['applicants'])) {
+    value['partyId'] = ''
+  }
+
   // post new NR (without adding comment)
   const request = await NamexServices.postNameRequests(getters.getRequestActionCd, nrTypeData, false)
   if (request) {
