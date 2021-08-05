@@ -426,7 +426,7 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
     let request
     if (!getters.getNrId) {
       const data = getNrTypeData({ getters }, NrType.DRAFT)
-      request = await NamexServices.postNameRequests(getters.getRequestActionCd, data)
+      request = await NamexServices.postNameRequest(getters.getRequestActionCd, data)
       if (request) commit('setNrResponse', request)
     } else {
       const data = getNrStateData({ getters })
@@ -445,7 +445,7 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
 }
 
 /**
- * Re-submits an expired NR (without changing the current NR data - in case of failure).
+ * Re-submits an expired NR (without changing the current NR data).
  **/
 export const resubmit: any = async ({ commit, getters }): Promise<boolean> => {
   // safety check
@@ -454,6 +454,7 @@ export const resubmit: any = async ({ commit, getters }): Promise<boolean> => {
     return false
   }
 
+  // get current NR data
   const nrData = getters.getNr
 
   // safety check
@@ -465,13 +466,16 @@ export const resubmit: any = async ({ commit, getters }): Promise<boolean> => {
   // commit the original NR's data
   commitExistingData({ commit, getters })
 
+  // override the request action code
+  commit('mutateRequestAction', RequestCode.RESUBMIT)
+
   // build the request data
   const nrTypeData = getNrTypeData({ getters }, NrType.DRAFT)
 
-  // override resubmission message in Additional Info field
-  nrTypeData['additionalInfo'] = '*** Resubmission of ' + nrData['nrNum'] + ' ***'
+  // add resubmit NR number (for internal use only)
+  nrTypeData['resubmitNrNum'] = nrData['nrNum']
 
-  // override names data
+  // clean names data
   nrTypeData['names'] = nrData.names.map(name => ({
     choice: name.choice,
     consent_words: '',
@@ -482,16 +486,13 @@ export const resubmit: any = async ({ commit, getters }): Promise<boolean> => {
     name_type_cd: name.name_type_cd
   }))
 
-  // override request action code
-  nrTypeData['request_action_cd'] = RequestCode.RESUBMIT
-
-  // override applicants partyIds
+  // clean applicants partyIds
   for (let [key, value] of Object.entries(nrTypeData['applicants'])) {
     value['partyId'] = ''
   }
 
-  // post new NR (without adding comment)
-  const request = await NamexServices.postNameRequests(getters.getRequestActionCd, nrTypeData, false)
+  // post new NR
+  const request = await NamexServices.postNameRequest(getters.getRequestActionCd, nrTypeData)
   if (request) {
     commit('setNrResponse', request)
     return true
