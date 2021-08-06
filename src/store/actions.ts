@@ -446,7 +446,7 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
 
 /**
  * Re-submits an expired NR (without changing the current NR data).
- **/
+ */
 export const resubmit: any = async ({ commit, getters }): Promise<boolean> => {
   // safety check
   if (getters.getEditMode) {
@@ -505,7 +505,7 @@ export const resubmit: any = async ({ commit, getters }): Promise<boolean> => {
  * Sometimes name objects have a null designation (because the designation is part of the name).
  * This helper returns the designation, if there is one, or the last word of the name, which is
  * assumed to be the designation.
- **/
+ */
 const getNameDesignation = (name: any): string => {
   if (name.designation) return name.designation
   const words = name.name.split(' ')

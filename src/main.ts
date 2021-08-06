@@ -29,7 +29,7 @@ Vue.config.devtools = true
  * Our app start code, which is a function so that:
  * 1. we can use await
  * 2. we can catch errors
- **/
+ */
 async function startVue () {
   // Fetch the configuration
   const envConfig = await getConfig()
