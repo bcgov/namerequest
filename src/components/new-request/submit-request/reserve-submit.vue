@@ -137,7 +137,7 @@ export default class ReserveSubmitButton extends Vue {
       // @ts-ignore - typescript knows setup can only === 'assumed' at this point and gives error
       case 'consent':
         data = this.getData(NrType.CONDITIONAL)
-        request = await NamexServices.postNameRequests(this.getRequestActionCd, data)
+        request = await NamexServices.postNameRequest(this.getRequestActionCd, data)
         if (request) {
           this.setNrResponse(request)
           this.setSubmissionType('consent')
@@ -148,7 +148,7 @@ export default class ReserveSubmitButton extends Vue {
       default:
         this.setSubmissionType('normal')
         data = this.getData(NrType.RESERVED)
-        request = await NamexServices.postNameRequests(this.getRequestActionCd, data)
+        request = await NamexServices.postNameRequest(this.getRequestActionCd, data)
         if (request) {
           this.setNrResponse(request)
           this.setSubmissionTabComponent('ApplicantInfo1')
