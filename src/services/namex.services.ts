@@ -46,16 +46,15 @@ export default class NamexServices {
     data: NameRequestI
   ): Promise<NameRequestI> {
     try {
-      // create local Request Actions list with special case Resubmit
-      const RequestActionsResubmit = [
-        ...RequestActions,
-        {
-          value: RequestCode.RESUBMIT,
-          shortDesc: `Resubmission of ${data.resubmitNrNum || 'Unknown'}`
-        }
-      ]
+      let requestAction
 
-      const requestAction = RequestActionsResubmit.find(request => request.value === requestActionCd)
+      // special case for Resubmit action
+      if (data.resubmitNrNum) {
+        requestAction = { shortDesc: `Resubmission of ${data.resubmitNrNum || 'Unknown'}` }
+      } else {
+        requestAction = RequestActions.find(request => request.value === requestActionCd)
+      }
+
       const { shortDesc } = requestAction || { shortDesc: 'action not found' }
       const msg = `*** ${shortDesc} ***`
 
@@ -74,7 +73,7 @@ export default class NamexServices {
       // but it does not contain the exact msg we must add
       // so we check if there is a previous request_action message
       // which no longer matches msg because we are editing
-      let allShortDesc = RequestActionsResubmit.map(request => `*** ${request.shortDesc} ***`)
+      let allShortDesc = RequestActions.map(request => `*** ${request.shortDesc} ***`)
       if (allShortDesc.some(desc => data['additionalInfo'].includes(desc))) {
         let desc = allShortDesc.find(sd => data['additionalInfo'].includes(sd))
         data['additionalInfo'] = data['additionalInfo'].replace(desc, msg)
