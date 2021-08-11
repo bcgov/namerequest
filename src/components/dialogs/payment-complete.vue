@@ -69,7 +69,6 @@ export default class PaymentCompleteDialog extends Mixins(
   @Getter getName!: string
   @Getter getNrId!: number
   @Getter getNrNum!: string
-  @Getter getApplicant!: ApplicantI
   @Getter getNameChoices!: NameChoicesIF
 
   // Global actions

@@ -1,7 +1,7 @@
 import * as types from './types'
 
-export const togglePaymentModal = ({ commit }, isVisible: boolean) => {
-  commit(types.TOGGLE_PAYMENT_MODAL, isVisible)
+export const toggleConfirmNrModal = ({ commit }, isVisible: boolean) => {
+  commit(types.TOGGLE_CONFIRM_NR_MODAL, isVisible)
 }
 
 export const togglePaymentHistoryModal = ({ commit }, isVisible: boolean) => {
@@ -20,8 +20,16 @@ export const toggleUpgradeModal = ({ commit }, isVisible: boolean) => {
   commit(types.TOGGLE_UPGRADE_MODAL, isVisible)
 }
 
-export const toggleReapplyModal = ({ commit }, isVisible: boolean) => {
-  commit(types.TOGGLE_REAPPLY_MODAL, isVisible)
+export const toggleResubmitModal = ({ commit }, isVisible: boolean) => {
+  commit(types.TOGGLE_RESUBMIT_MODAL, isVisible)
+}
+
+export const toggleRetryModal = ({ commit }, isVisible: boolean) => {
+  commit(types.TOGGLE_RETRY_MODAL, isVisible)
+}
+
+export const toggleRenewModal = ({ commit }, isVisible: boolean) => {
+  commit(types.TOGGLE_RENEW_MODAL, isVisible)
 }
 
 export const setPaymentFees = ({ commit }, fees: any) => {

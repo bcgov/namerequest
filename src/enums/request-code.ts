@@ -1,4 +1,4 @@
-/** Enum for Request (action) codes. Not to be confused with NR Action codes. */
+/** Enum for Request Code. Not to be confused with NR Action codes. */
 export enum RequestCode {
   NEW = 'NEW', // new request
   MVE = 'MVE', // move request
@@ -7,8 +7,9 @@ export enum RequestCode {
   CHG = 'CHG', // change name request
   CNV = 'CNV', // conversion request
   DBA = 'DBA', // doing business as request
-  ASSUMED = 'ASSUMED', // assumed name request
-  REN = 'REN', // restore with new name request
+  ASSUMED = 'ASSUMED', // assumed name request // FUTURE: should be AS?
+  REN = 'REN', // restore with new name request (renew)
   INFO = 'INFO', // special value for sub-menu
-  REST = 'REST', // TODO: possibly typo - same as RESTORE?
+  REST = 'REST', // restore
+  RESUBMIT = 'RESUBMIT', // resubmit
 }

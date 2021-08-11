@@ -2,7 +2,7 @@
   <MainContainer id="existing-request-display" class="pa-10">
     <template v-slot:container-header>
       <v-col cols="auto" class="py-0">
-        <span class="h3">{{ nr.nrNum }}</span>
+        <span class="h3 user-select-all">{{ nr.nrNum }}</span>
         <span class="h6 ml-4">{{ entityTypeCdToText(nr.entity_type_cd) }}</span>
       </v-col>
     </template>
@@ -90,7 +90,7 @@
                   &nbsp;{{ expiryDate }}
                 </v-col>
 
-                <v-col cols="12" v-if="nr.consentFlag && (nr.consentFlag !== 'N')" class="consent-status">
+                <v-col cols="12" v-if="consentDate" class="consent-status">
                   <span>Consent Status:</span>
                   &nbsp;{{ consentDate }}
                 </v-col>
@@ -111,19 +111,7 @@
             <!-- action buttons -->
             <v-col cols="3" class="py-0">
               <v-row dense>
-                <template v-if="pendingPayment">
-                  <v-col cols="12" v-if="isNotPaid">
-                    <v-btn block
-                           class="button button-blue"
-                           @click="handleButtonClick(NrAction.RETRY_PAYMENT)"
-                    >{{ actionText(NrAction.RETRY_PAYMENT) }}</v-btn>
-                    <v-btn block
-                           class="button button-red mt-8"
-                           @click="handleButtonClick(NrAction.CANCEL)"
-                    >{{ actionText(NrAction.CANCEL) }}</v-btn>
-                  </v-col>
-                </template>
-                <template v-for="action of actions" v-else>
+                <template v-for="action of actions">
                   <!-- incorporate action is a distinct button below -->
                   <template v-if="action !== NrAction.INCORPORATE">
                     <v-col cols="12" :key="action+'-button'">
@@ -176,16 +164,14 @@
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-
 import MainContainer from '@/components/new-request/main-container.vue'
 import { NrAffiliationMixin, CommonMixin, DateMixin, PaymentMixin } from '@/mixins'
 import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
-import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction } from '@/enums'
+import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished } from '@/enums'
 import { sleep } from '@/plugins'
-import { getBaseUrl } from '@/components/payment/payment-utils'
 import NamexServices from '@/services/namex.services'
 
 // Interfaces
@@ -221,7 +207,9 @@ export default class ExistingRequestDisplay extends Mixins(
   @Action setIncorporateLoginModalVisible!: ActionBindingIF
   @Action setNrResponse!: ActionBindingIF
   @Action toggleUpgradeModal!: ActionBindingIF
-  @Action toggleReapplyModal!: ActionBindingIF
+  @Action toggleResubmitModal!: ActionBindingIF
+  @Action toggleRetryModal!: ActionBindingIF
+  @Action toggleRenewModal!: ActionBindingIF
   @Action togglePaymentHistoryModal!: ActionBindingIF
   @Action toggleRefundModal!: ActionBindingIF
   @Action toggleCancelModal!: ActionBindingIF
@@ -283,6 +271,8 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   private get consentDate (): string {
+    if (!this.nr.consentFlag || (this.nr.consentFlag === 'N')) return ''
+
     let ret: string
     if (this.nr.consent_dt) {
       const date = new Date(this.nr.consent_dt)
@@ -343,7 +333,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   private get disableUnfurnished (): boolean {
     return (
-      this.nr.furnished === 'N' &&
+      (this.nr.furnished === Furnished.NO) &&
       [NrState.CONDITIONAL, NrState.REJECTED, NrState.APPROVED].includes(this.nr.stateCd)
     )
   }
@@ -438,6 +428,7 @@ export default class ExistingRequestDisplay extends Mixins(
           if (this.isNrExpired) return 'Expired'
           return 'Conditional Approval'
         case NrState.DRAFT: return 'Pending Staff Review'
+        case NrState.EXPIRED: return 'Expired' // legacy state; see also "isNrExpired"
         case NrState.HOLD: return 'In Progress' // show HOLD as "In Progress"
         case NrState.INPROGRESS: return 'In Progress'
         case NrState.REFUND_REQUESTED: return 'Cancelled, Refund Requested'
@@ -459,8 +450,10 @@ export default class ExistingRequestDisplay extends Mixins(
     )
   }
 
-  // FUTURE: remove this when EXPIRED state is implemented (ticket #5669)
-  /** True if the NR is expired. */
+  /**
+   * True if the NR is expired.
+   * Note that some old NRs have state=EXPIRED and don't use this method.
+   */
   private get isNrExpired (): boolean {
     // 1. NR is approved or conditional
     // 2. a Name is approved
@@ -510,10 +503,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** True if the current state should display an alert icon. */
   private get isAlertState (): boolean {
-    return ['Cancelled', 'Cancelled, Refund Requested', 'Expired'].includes(this.requestStatusText) ||
-    this.isNotPaid
-    // FUTURE: use enums when EXPIRED state is implemented (ticket #5669)
-    // return [NrState.CANCELLED, NrState.REFUND_REQUESTED, NrState.EXPIRED].includes(this.nr.state)
+    return ['Cancelled', 'Cancelled, Refund Requested', 'Expired'].includes(this.requestStatusText) || this.isNotPaid
   }
 
   private get isNotPaid () {
@@ -533,62 +523,75 @@ export default class ExistingRequestDisplay extends Mixins(
   private actionText (action: NrAction): string {
     switch (action) {
       case NrAction.CANCEL: return 'Cancel Name Request'
-      case NrAction.REAPPLY: return 'Renew Name Request ($30)'
+      case NrAction.RENEW: return 'Renew Name Request ($30)' // FUTURE: fetch this fee
       case NrAction.RECEIPTS: return 'Download Receipts'
       case NrAction.REQUEST_REFUND: return 'Cancel and Refund'
       case NrAction.RESEND: return 'Resend Email' // FUTURE: will be removed
-      case NrAction.RESULT: return 'Download Results' // FUTURE: will be implemented
+      case NrAction.RESULT: return 'Download Results'
+      case NrAction.RESUBMIT: return 'Resubmit Name Request ($30)'
       case NrAction.RETRY_PAYMENT: return 'Retry Payment'
-      case NrAction.UPGRADE: return 'Upgrade Priority ($100)'
+      case NrAction.UPGRADE: return 'Upgrade Priority ($100)' // FUTURE: fetch this fee
       default: return this.toTitleCase(action)
     }
   }
 
   private async handleButtonClick (action: NrAction) {
+    // FUTURE: reinstate this check?
     // const confirmed = await newReqModule.confirmAction(action)
     const confirmed = true
+
     if (confirmed) {
       switch (action) {
-        case NrAction.EDIT:
-          // eslint-disable-next-line no-case-declarations
+        case NrAction.EDIT: {
           const doCheckout = ([NrState.DRAFT, NrState.INPROGRESS].indexOf(this.getNrState) > -1)
-          // eslint-disable-next-line no-case-declarations
-          let success: boolean | undefined
+          let success = false
           if (doCheckout) {
             const { dispatch } = this.$store
             // Check out the NR - this sets the INPROGRESS lock on the NR
             // and needs to be done before you can edit the Name Request
-            // *** TODO: declare checkoutNameRequest differently so it's not void
-            success = await NamexServices.checkoutNameRequest(this.getNrId) as unknown as boolean
+            success = await NamexServices.checkoutNameRequest(this.getNrId)
           }
 
           // Only proceed with editing if the checkout was successful,
           // as the Name Request could be locked by another user session!
-          if (!doCheckout || (doCheckout && success)) {
+          if (!doCheckout || success) {
             await this.editExistingRequest(null)
           }
           break
+        }
+
         case NrAction.UPGRADE:
           await this.toggleUpgradeModal(true)
           break
-        case NrAction.REAPPLY:
-          await this.toggleReapplyModal(true)
+
+        case NrAction.RESUBMIT:
+          await this.toggleResubmitModal(true)
           break
+
+        case NrAction.RENEW:
+          await this.toggleRenewModal(true)
+          break
+
         case NrAction.RECEIPTS:
           await this.togglePaymentHistoryModal(true)
           break
+
         case NrAction.REQUEST_REFUND:
           await this.toggleRefundModal(true)
           break
+
         case NrAction.CANCEL:
           await this.toggleCancelModal(true)
           break
+
         case NrAction.INCORPORATE:
           await this.affiliateOrLogin()
           break
+
         case NrAction.RETRY_PAYMENT:
-          this.navigateToPaymentPortal()
+          await this.toggleRetryModal(true)
           break
+
         case NrAction.RESULT:
           // show spinner since the network calls below can take a few seconds
           this.$root.$emit('showSpinner', true)
@@ -597,9 +600,9 @@ export default class ExistingRequestDisplay extends Mixins(
           // hide spinner
           this.$root.$emit('showSpinner', false)
           break
+
         default:
-          // *** TODO: declare patchNameRequestsByAction differently so it's not void
-          if (await NamexServices.patchNameRequestsByAction(this.getNrId, action) as unknown as boolean) {
+          if (await NamexServices.patchNameRequestsByAction(this.getNrId, action)) {
             this.setDisplayedComponent('Success')
             await sleep(1000)
             this.setDisplayedComponent('ExistingRequestDisplay')
@@ -610,25 +613,13 @@ export default class ExistingRequestDisplay extends Mixins(
     // else do nothing -- errors are handled by newReqModule
   }
 
-  private navigateToPaymentPortal () {
-    const { id, token, nrId, action } = this.pendingPayment
-    sessionStorage.setItem('paymentInProgress', 'true')
-    sessionStorage.setItem('paymentId', id)
-    sessionStorage.setItem('paymentToken', token)
-    sessionStorage.setItem('nrId', nrId)
-    sessionStorage.setItem('paymentAction', action)
-    const baseUrl = getBaseUrl()
-    const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${id}`)
-    this.redirectToPaymentPortal(id, token, redirectUrl)
-  }
-
   private async refresh (event) {
     this.$root.$emit('showSpinner', true)
     this.refreshCount += 1
     try {
-      const resp = await NamexServices.getNameRequest(true) as any // *** TODO use a real type here
+      const resp = await NamexServices.getNameRequest(true)
       this.$root.$emit('showSpinner', false)
-      if (resp?.furnished === 'Y') {
+      if (resp?.furnished === Furnished.YES) {
         this.furnished = 'furnished'
         this.setNrResponse(resp)
       }
@@ -684,18 +675,22 @@ export default class ExistingRequestDisplay extends Mixins(
           if (existingNrCancelBtn) existingNrCancelBtn.classList.add('existing-nr-cancel-btn')
           const exitingNrEditBtn = this.$el.querySelector('#EDIT-btn > span')
           if (exitingNrEditBtn) exitingNrEditBtn.classList.add('existing-nr-edit-btn')
-          const existingNrReapplyBtn = this.$el.querySelector('#REAPPLY-btn > span')
-          if (existingNrReapplyBtn) existingNrReapplyBtn.classList.add('existing-nr-reapply-btn')
+          const existingNrRenewBtn = this.$el.querySelector('#RENEW-btn > span')
+          if (existingNrRenewBtn) existingNrRenewBtn.classList.add('existing-nr-renew-btn')
           const existingNrReceiptBtn = this.$el.querySelector('#RECEIPT-btn > span')
           if (existingNrReceiptBtn) existingNrReceiptBtn.classList.add('existing-nr-receipt-btn')
           const existingNrRefundBtn = this.$el.querySelector('#REQUEST_REFUND-btn > span')
           if (existingNrRefundBtn) existingNrRefundBtn.classList.add('existing-nr-refund-btn')
           const existingNrResendBtn = this.$el.querySelector('#RESEND-btn > span')
           if (existingNrResendBtn) existingNrResendBtn.classList.add('existing-nr-resend-btn')
+          const existingNrResubmitBtn = this.$el.querySelector('#RESUBMIT-btn > span')
+          if (existingNrResubmitBtn) existingNrResubmitBtn.classList.add('existing-nr-resubmit-btn')
           const existingNrResultBtn = this.$el.querySelector('#RESULT-btn > span')
           if (existingNrResultBtn) existingNrResultBtn.classList.add('existing-nr-result-btn')
           const existingNrUpgradeBtn = this.$el.querySelector('#UPGRADE-btn > span')
           if (existingNrUpgradeBtn) existingNrUpgradeBtn.classList.add('existing-nr-upgrade-btn')
+          const existingNrRetryPaymentBtn = this.$el.querySelector('#RETRY_PAYMENT-btn > span')
+          if (existingNrRetryPaymentBtn) existingNrRetryPaymentBtn.classList.add('existing-nr-retry-payment-btn')
           const existingNrIncorporateBtn = this.$el.querySelector('#INCORPORATE-btn > span')
           if (existingNrIncorporateBtn) existingNrIncorporateBtn.classList.add('existing-nr-incorporate-btn')
         }
@@ -726,9 +721,12 @@ export default class ExistingRequestDisplay extends Mixins(
         // fetch updated payments
         await this.fetchNrPayments(nrId)
       }
+
+      // get the first pending payment
       this.pendingPayment = this.payments.find(
         payment => (
-          ![PaymentStatus.APPROVED, PaymentStatus.COMPLETED, PaymentStatus.CANCELLED].includes(payment.statusCode)
+          ![PaymentStatus.APPROVED, PaymentStatus.COMPLETED, PaymentStatus.CANCELLED, PaymentStatus.REFUND_REQUESTED]
+            .includes(payment.statusCode)
         )
       )
 

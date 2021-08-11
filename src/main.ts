@@ -29,18 +29,19 @@ Vue.config.devtools = true
  * Our app start code, which is a function so that:
  * 1. we can use await
  * 2. we can catch errors
- **/
+ */
 async function startVue () {
   // Fetch the configuration
   const envConfig = await getConfig()
   const store = await getVuexStore()
 
-  // *** TODO: remove these config assignments if possible
+  // FUTURE: remove these config assignments if possible
   // Load environment config
   Vue.prototype.$PAYMENT_PORTAL_URL = envConfig.$PAYMENT_PORTAL_URL
   // Load Vuex config
   store.state.config = envConfig
 
+  // FUTURE: remove these globally scoped lists and import locally where needed
   // Load global data
   Vue.prototype.$designations = Designations
   Vue.prototype.$canJurisdictions = CanJurisdictions

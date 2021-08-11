@@ -2,7 +2,7 @@
   <div id="fee-summary">
     <v-row no-gutters align="center" justify="center">
       <v-col cols="10">
-        <div class="font-weight-bold header pt-8 pb-4">Payment Details</div>
+        <div class="font-weight-bold header pt-10 pb-4">Payment Details</div>
         <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
         <v-row no-gutters class="fee-list py-4">
           <v-col v-show="!fetchError">
@@ -20,22 +20,26 @@
                     <div v-else class="float-right">No Fee</div>
                   </v-col>
                 </v-row>
-                <v-row v-if="lineItem.priorityFees" no-gutters>
-                  <v-col cols="8">
-                    <div>Priority Request fee</div>
-                  </v-col>
-                  <v-col cols="4">
-                    <div class="float-right">${{lineItem.priorityFees.toFixed(2)}}</div>
-                  </v-col>
-                </v-row>
-                <v-row v-if="lineItem.serviceFees" no-gutters>
-                  <v-col cols="8">
-                    <div>Service fee</div>
-                  </v-col>
-                  <v-col cols="4">
-                    <div class="float-right">${{lineItem.serviceFees.toFixed(2)}}</div>
-                  </v-col>
-                </v-row>
+                <v-expand-transition>
+                  <v-row v-if="lineItem.priorityFees" no-gutters>
+                    <v-col cols="8">
+                      <div>Priority Request fee</div>
+                    </v-col>
+                    <v-col cols="4">
+                      <div class="float-right">${{lineItem.priorityFees.toFixed(2)}}</div>
+                    </v-col>
+                  </v-row>
+                </v-expand-transition>
+                <v-expand-transition>
+                  <v-row v-if="lineItem.serviceFees" no-gutters>
+                    <v-col cols="8">
+                      <div>Service fee</div>
+                    </v-col>
+                    <v-col cols="4">
+                      <div class="float-right">${{lineItem.serviceFees.toFixed(2)}}</div>
+                    </v-col>
+                  </v-row>
+                </v-expand-transition>
               </v-col>
             </v-row>
           </v-col>
@@ -58,7 +62,7 @@
             </v-slide-y-reverse-transition>
           </div>
         </div> -->
-        <v-row no-gutters class="pt-4 pb-8">
+        <v-row no-gutters class="pt-4 pb-10">
           <v-col cols="8">
             <div class="payment-total" v-show="!fetchError">
               Total Amount (CAD)
@@ -79,13 +83,9 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { FilingData } from 'sbc-common-components/src/models'
 
 @Component({})
 export default class FeeSummary extends Vue {
-  @Prop({ default: () => [] })
-  readonly filingData!: FilingData[]
-
   @Prop({ default: () => [] })
   readonly fees: any[]
 

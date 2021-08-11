@@ -8,13 +8,10 @@ declare const window: any
  * Uses "business-edit" project (per LD client id in config).
  */
 const defaultFlagSet: LDFlagSet = {
-  'chat-popup-enabled': false, // by default, don't show webchat
   'disable-analysis': true, // by default, analysis is disabled
   'hardcoded_regular_wait_time': 0, // by default, use actual wait time
   'hardcoded_priority_wait_time': 0, // by default, use actual wait time
-  'banner-text': '', // by default, there is no banner text
-  'advanced-search-enabled': false, // by default don't show advanced search // TODO: remove when feature is ready
-  'staff-payment-enabled': false // by default don't show staff payment // TODO: remove when feature is ready
+  'banner-text': '' // by default, there is no banner text
 }
 
 /**

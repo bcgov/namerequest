@@ -7,7 +7,12 @@
         <div class="main-container-style mt-3">
           <transition name="fade" mode="out-in" :duration="{ enter: 100, leave: 100 }">
             <keep-alive :include="['Tabs']">
-              <component :is="getDisplayedComponent" :key="getDisplayedComponent" transition="fade-transition" />
+              <component
+                class="mb-3"
+                :is="getDisplayedComponent"
+                :key="getDisplayedComponent"
+                transition="fade-transition"
+              />
             </keep-alive>
           </transition>
         </div>
@@ -28,14 +33,9 @@ import { Action, Getter } from 'vuex-class'
 import { AppTitleCols } from '@/components/common'
 import LowerContainer from '@/components/lower-info-area/lower-container.vue'
 
-import AnalyzeCharacters from '@/components/new-request/analyze-characters.vue'
-import AnalyzePending from '@/components/new-request/analyze-pending.vue'
-import AnalyzeResults from '@/components/new-request/analyze-results.vue'
-import SendToExamination from '@/components/new-request/send-to-examination.vue'
 import ExistingRequestDisplay from '@/components/existing-request/existing-request-display.vue'
 import ExistingRequestEdit from '@/components/existing-request/existing-request-edit.vue'
-import QuickSearchPending from '@/components/new-request/quick-search-pending.vue'
-import QuickSearchResults from '@/components/new-request/quick-search-results.vue'
+import NameCheck from '@/components/new-request/name-check/name-check.vue'
 import SearchPending from '@/components/existing-request/search-pending.vue'
 import Stats from '@/components/new-request/stats.vue'
 import SubmissionTabs from '@/components/new-request/submit-request/submission-tabs.vue'
@@ -48,15 +48,10 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 @Component({
   components: {
     AppTitleCols,
-    AnalyzeCharacters,
-    AnalyzePending,
-    AnalyzeResults,
-    SendToExamination,
     ExistingRequestDisplay,
     ExistingRequestEdit,
     LowerContainer,
-    QuickSearchPending,
-    QuickSearchResults,
+    NameCheck,
     SearchPending,
     Stats,
     SubmissionTabs,
