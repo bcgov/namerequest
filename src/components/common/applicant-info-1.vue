@@ -23,7 +23,6 @@
                 :name="Math.random()"
                 autocomplete="chrome-off"
                 label="First Name"
-                v-model="firstName"
               />
             </v-col>
 
@@ -43,7 +42,6 @@
                 :name="Math.random()"
                 autocomplete="chrome-off"
                 label="Middle Name (Optional)"
-                v-model="middleName"
               />
             </v-col>
 
@@ -63,7 +61,6 @@
                 :name="Math.random()"
                 autocomplete="chrome-off"
                 label="Last Name"
-                v-model="lastName"
               />
             </v-col>
           </v-row>
@@ -422,10 +419,6 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   @Action setSubmissionTabNumber!: ActionBindingIF
   @Action setFolioNumber!: ActionBindingIF
 
-  private lastName = ''
-  private firstName = ''
-  private middleName = ''
-
   highlightedSuggestion: string = null
   isValid: boolean = false
   messages = {}
@@ -519,15 +512,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   handleNameBlur (key, event) {
     this.messages = {}
     let value = removeExcessSpaces(event.target.value)
-    if (key === 'lastName') {
-      this.lastName = value
-    }
-    if (key === 'firstName') {
-      this.firstName = value
-    }
-    if (key === 'middleName') {
-      this.middleName = value
-    }
+    this.setApplicantDetails({ key, value })
   }
 
   blurAddress1 () {
