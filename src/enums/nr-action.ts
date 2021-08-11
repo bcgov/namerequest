@@ -1,13 +1,14 @@
-/** Enum for NR Action codes. Not to be confused with Request (action) codes. */
+/** Enum for NR Action codes. Not to be confused with Request Code. */
 export enum NrAction {
   CANCEL = 'CANCEL',
   EDIT = 'EDIT',
-  REAPPLY = 'REAPPLY',
+  RENEW = 'REAPPLY', // REAPPLY in API is RENEW in UI
   RECEIPTS = 'RECEIPT',
   REQUEST_REFUND = 'REQUEST_REFUND',
   RESEND = 'RESEND', // FUTURE: will be removed
-  RESULT = 'RESULT', // FUTURE: will be implemented
+  RESUBMIT = 'RESUBMIT',
+  RESULT = 'RESULT',
   UPGRADE = 'UPGRADE',
-  INCORPORATE = 'INCORPORATE',
-  RETRY_PAYMENT = 'RETRY_PAYMENT'
+  RETRY_PAYMENT = 'RETRY_PAYMENT',
+  INCORPORATE = 'INCORPORATE'
 }

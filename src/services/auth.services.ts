@@ -20,13 +20,23 @@ export default class AuthServices {
     return axios.delete(url)
   }
 
-  /** Fetches current user info. */
+  /** Fetches current user's info. */
   static async fetchUserInfo (): Promise<any> {
     const url = `${this.authApiUrl}/users/@me`
     return axios.get(url)
       .then(response => {
         if (response?.data) return response.data
-        else throw new Error('Invalid user info')
+        throw new Error('Invalid user info')
+      })
+  }
+
+  /** Fetches specified org's info. */
+  static async fetchOrgInfo (orgId: number): Promise<any> {
+    const url = `${this.authApiUrl}/orgs/${orgId}`
+    return axios.get(url)
+      .then(response => {
+        if (response?.data) return response.data
+        throw new Error('Invalid org info')
       })
   }
 }

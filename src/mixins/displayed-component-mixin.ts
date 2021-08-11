@@ -16,6 +16,7 @@ export class DisplayedComponentMixin extends Vue {
   @Action cancelEditExistingRequest!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
   @Action setSubmissionTabComponent!: ActionBindingIF
+  @Action setEditMode!: ActionBindingIF
 
   componentName: string = ''
 
@@ -41,7 +42,8 @@ export class DisplayedComponentMixin extends Vue {
       await this.cancelAnalyzeName('Tabs')
       this.redirectToStart()
     } else if (['ExistingRequestEdit'].indexOf(componentName) > -1) {
-      // We're editing
+      // Cancel edit mode
+      await this.setEditMode(false)
       // Check in the NR to release the INPROGRESS lock on the NR
       await this.cancelEditExistingRequest(null)
       await NamexServices.checkinNameRequest(this.getNrId, this.getNrState)

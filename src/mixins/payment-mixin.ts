@@ -7,7 +7,7 @@ import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import { PaymentStatus, StaffPaymentOptions } from '@/enums'
 import { ActionMixin } from '@/mixins'
 import * as paymentTypes from '@/modules/payment/store/types'
-import { CreatePaymentParams, NameRequestPaymentResponse } from '@/modules/payment/models'
+import { CreatePaymentParams, FetchFeesParams, NameRequestPaymentResponse } from '@/modules/payment/models'
 import errorModule from '@/modules/error'
 import { ErrorI } from '@/modules/error/store/actions'
 import { StaffPaymentIF } from '@/interfaces'
@@ -61,10 +61,6 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     return this.$store.getters[paymentTypes.GET_PAYMENT_REQUEST]
   }
 
-  get paymentDetails () {
-    return this.$store.getters[paymentTypes.GET_PAYMENT_DETAILS]
-  }
-
   get paymentReceipt () {
     return this.$store.getters[paymentTypes.GET_PAYMENT_RECEIPT]
   }
@@ -97,17 +93,19 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     return summaries
   }
 
-  async fetchFees (paymentConfig): Promise<boolean> {
-    const { corpType, filingType, jurisdiction, priorityRequest } = paymentConfig
+  async fetchFees (params: FetchFeesParams): Promise<boolean> {
+    const { filingType, jurisdiction, priorityRequest } = params
     try {
       // NB: params uses snake_case
-      const response = await this.getPaymentFees({
-        'corp_type': corpType,
+      const data: any = {
         'filing_type_code': filingType,
         'jurisdiction': jurisdiction,
         'date': this.getCurrentJsDate.toISOString(), // "now" in UTC
-        'priority': priorityRequest
-      })
+        'priority': priorityRequest,
+        headers: this.buildHeaders(false)
+      }
+
+      const response = await this.getPaymentFees(data)
       await this.setPaymentFees(response)
       return true
     } catch (err) {
@@ -121,7 +119,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
 
   async createPayment (params: CreatePaymentParams, onSuccess: (paymentResponse) => void): Promise<boolean> {
     const { nrId, filingType, priorityRequest, action } = params
-    // Comment this out to use direct pay
+    // Comment this out to use direct pay:
     // const methodOfPayment = 'CC' // We may need to handle more than one type at some point?
 
     if (!nrId) {
@@ -134,11 +132,11 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     // Any additional data supplied here, eg. supplying
     // a businessInfo object, will override values found
     // in the corresponding Name Request
-    const req = {
-      // Comment this out to use direct pay
-      /* paymentInfo: {
-        methodOfPayment: methodOfPayment
-      }, */
+    const data: any = {
+      // Comment this out to use direct pay:
+      // paymentInfo: {
+      //   methodOfPayment: methodOfPayment
+      // },
       filingInfo: {
         filingTypes: [
           {
@@ -147,12 +145,11 @@ export class PaymentMixin extends Mixins(ActionMixin) {
           }
         ]
       },
-      headers: {}
+      headers: this.buildHeaders()
     }
 
-    req.headers = this.buildPaymentHeaders()
     try {
-      const paymentResponse = await this.createPaymentRequest(nrId, action, req)
+      const paymentResponse = await this.createPaymentRequest(nrId, action, data)
       // set nr in session storage before redirecting to pay (this is how we find our way back afterwards)
       if (paymentResponse.nrNum?.includes('NR L')) {
         sessionStorage.setItem('BCREG-NRL', paymentResponse.nrNum)
@@ -165,8 +162,8 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       const { payment, sbcPayment = { receipts: [] } } = paymentResponse
 
       await this.setPayment(payment)
-      // await paymentModule.setPaymentReceipt(sbcPayment.receipts[0]) // *** TODO: new code != old code ???
-      await this.setPaymentRequest(req)
+      // await paymentModule.setPaymentReceipt(sbcPayment.receipts[0]) // FUTURE: verify that new code === old code
+      await this.setPaymentRequest(data)
 
       if (onSuccess) {
         // Execute callback
@@ -182,37 +179,45 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
   }
 
-  /** Build Payment Headers. **/
-  buildPaymentHeaders () {
-    // Populate Staff Payment according to payment option
+  /**
+   * Returns header object with auth, content and account properties,
+   * and optionally staff payment properties.
+   */
+  private buildHeaders (populateStaffPayment = true) {
     let headers = {}
-    switch (this.getStaffPayment.option) {
-      case StaffPaymentOptions.FAS:
-        headers['routingSlipNumber'] = this.getStaffPayment.routingSlipNumber
-        break
 
-      case StaffPaymentOptions.BCOL:
-        headers['bcolAccountNumber'] = this.getStaffPayment.bcolAccountNumber
-        headers['datNumber'] = this.getStaffPayment.datNumber
-        headers['folioNumber'] = this.getStaffPayment.folioNumber // this overrides original folio number
-        break
+    if (populateStaffPayment) {
+      // Populate Staff Payment according to payment option
+      switch (this.getStaffPayment.option) {
+        case StaffPaymentOptions.FAS:
+          headers['routingSlipNumber'] = this.getStaffPayment.routingSlipNumber
+          break
 
-      case StaffPaymentOptions.NO_FEE:
-        headers['waiveFees'] = true
-        break
+        case StaffPaymentOptions.BCOL:
+          headers['bcolAccountNumber'] = this.getStaffPayment.bcolAccountNumber
+          headers['datNumber'] = this.getStaffPayment.datNumber
+          headers['folioNumber'] = this.getStaffPayment.folioNumber // this overrides original folio number
+          break
 
-      case StaffPaymentOptions.NONE: // It is not a StaffPayment
-        headers['folioNumber'] = this.getFolioNumber
-        break
+        case StaffPaymentOptions.NO_FEE:
+          headers['waiveFees'] = true
+          break
+
+        case StaffPaymentOptions.NONE: // It is not a StaffPayment
+          headers['folioNumber'] = this.getFolioNumber
+          break
+      }
     }
-    const token = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
-    const accountInfo = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`
+
+    const keycloakToken = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
+    if (keycloakToken) {
+      headers['Authorization'] = `Bearer ${keycloakToken}`
       headers['Content-Type'] = 'application/json'
     }
-    if (accountInfo) {
-      const parsedAccountInfo = JSON.parse(accountInfo)
+
+    const currentAccount = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
+    if (currentAccount) {
+      const parsedAccountInfo = JSON.parse(currentAccount)
       headers['Account-Id'] = parsedAccountInfo.id
     }
 
@@ -223,11 +228,10 @@ export class PaymentMixin extends Mixins(ActionMixin) {
    * Redirect user to Service BC Pay Portal.
    * Set the redirect URL to specify OUR payment ID so we can
    * grab the payment when we're directed back to our application!
-   * @param paymentId
    * @param paymentToken
    * @param redirectUrl
    */
-  redirectToPaymentPortal (paymentId, paymentToken, redirectUrl) {
+  redirectToPaymentPortal (paymentToken, redirectUrl) {
     const paymentPortalUrl = sessionStorage.getItem('PAYMENT_PORTAL_URL')
     const url = `${paymentPortalUrl}${paymentToken}/${redirectUrl}`
     // eslint-disable-next-line no-console
@@ -320,8 +324,8 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
   }
 
-  // TODO: move to NamexServices
-  async createPaymentRequest (nrId, action, data): Promise<NameRequestPaymentResponse> {
+  // FUTURE: move to NamexServices
+  async createPaymentRequest (nrId, action, data: any): Promise<NameRequestPaymentResponse> {
     const url = `${NamexServices.namexUrl()}/payments/${nrId}/${action}`
     try {
       const response = await NamexServices.axios.post(url, data)
@@ -337,12 +341,12 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
   }
 
-  // TODO: move to NamexServices
-  async getNameRequestPayment (nrId, paymentId, params): Promise<NameRequestPaymentResponse> {
+  // FUTURE: move to NamexServices
+  async getNameRequestPayment (nrId, paymentId, data: any): Promise<NameRequestPaymentResponse> {
     const url = `${NamexServices.namexUrl()}/payments/${nrId}/payment/${paymentId}`
     try {
-      const response = await NamexServices.axios.get(url, params)
-      // TODO: check response status and data - make sure error handling is not changed
+      const response = await NamexServices.axios.get(url, data)
+      // FUTURE: check response status and data - make sure error handling is not changed
       return response.data
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not get name request payment')
@@ -351,12 +355,12 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
   }
 
-  // TODO: move to NamexServices
-  async getNameRequestPayments (nrId, params): Promise<NameRequestPaymentResponse[]> {
+  // FUTURE: move to NamexServices
+  async getNameRequestPayments (nrId, data: any): Promise<NameRequestPaymentResponse[]> {
     const url = `${NamexServices.namexUrl()}/payments/${nrId}`
     try {
-      const response = await NamexServices.axios.get(url, params)
-      // TODO: check response status and data - make sure error handling is not changed
+      const response = await NamexServices.axios.get(url, data)
+      // FUTURE: check response status and data - make sure error handling is not changed
       return response.data
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not get name request payments')
@@ -365,12 +369,12 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
   }
 
-  // TODO: move to NamexServices
-  async getPaymentFees (params): Promise<any> {
+  // FUTURE: move to NamexServices
+  async getPaymentFees (data: any): Promise<any> {
     const url = `${NamexServices.namexUrl()}/payments/fees`
     try {
-      // TODO: check response status and data - make sure error handling is not changed
-      const response = await NamexServices.axios.post(url, params)
+      // FUTURE: check response status and data - make sure error handling is not changed
+      const response = await NamexServices.axios.post(url, data)
       return response.data
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not get payment fees')
@@ -379,13 +383,13 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
   }
 
-  // TODO: move to NamexServices
+  // FUTURE: move to NamexServices
   async generateReceiptRequest (paymentId): Promise<any> {
     const params = { responseType: 'arraybuffer' } as AxiosRequestConfig
     const url = `${NamexServices.namexUrl()}/payments/${paymentId}/receipt`
     try {
       const response = await NamexServices.axios.post(url, {}, params)
-      // TODO: check response status and data - make sure error handling is not changed
+      // FUTURE: check response status and data - make sure error handling is not changed
       return response.data
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not generate payment receipt')

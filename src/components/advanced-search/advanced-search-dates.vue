@@ -38,7 +38,6 @@
 
 <script lang='ts'>
 import { Component, Emit, Prop, Mixins } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
 
 // Mixins
 import { DateMixin } from '@/mixins'
@@ -50,9 +49,6 @@ import { StartEndDatesI } from '@/interfaces/models'
 export default class AdvancedSearchDates extends Mixins(DateMixin) {
   /** Prop to display the dialog. */
   @Prop() readonly dialog: boolean
-
-  // Global getters
-  @Getter getCurrentJsDate: Date
 
   private startDateText = ''
   private endDateText = ''

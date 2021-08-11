@@ -11,6 +11,8 @@ export * from './env-config'
 export * from './jurisdiction'
 export * from './mapping'
 export * from './models'
+export * from './name-check-interfaces'
+export * from './dialog-options'
 
 // external interfaces
 export { FormIF, StaffPaymentIF } from '@bcrs-shared-components/interfaces'

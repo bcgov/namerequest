@@ -3,7 +3,7 @@ import * as types from './types'
 import { STATE_KEY } from '../store'
 
 export default {
-  // TODO: Remove this doesn't appear to work...
+  // FUTURE: Remove this - doesn't appear to work
   [types.HAS_ERRORS]: (state): boolean => {
     return state[STATE_KEY].length > 0
   },

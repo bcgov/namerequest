@@ -9,7 +9,7 @@
         @close="setIncorporateLoginModalVisible(false)"
       />
 
-      <ChatPopup v-if="getFeatureFlag('chat-popup-enabled')" />
+      <ChatPopup />
 
       <!-- Loading spinner -->
       <v-fade-transition>
@@ -22,7 +22,7 @@
 
       <!-- SBC Common Components header -->
       <SbcHeader
-        class="sbc-header"
+        id="namerequest-sbc-header"
         :inAuth="false"
         :showActions="true"
       />
@@ -47,23 +47,25 @@
     </div>
 
     <!-- All dialogs app-wide -->
-    <!-- *** TODO: should these be in "main-column" div? -->
+    <!-- FUTURE: should these be in "main-column" div? -->
     <AffiliationErrorDialog />
     <CancelDialog />
     <ConditionsDialog />
+    <ConfirmNrDialog :onCancel="onPaymentCancelled" />
     <ErrorDialog />
     <ExitDialog />
     <HelpMeChooseDialog />
     <LocationInfoDialog />
     <MrasSearchInfoDialog />
     <NrNotRequiredDialog />
-    <PaymentDialog :onCancel="onPaymentCancelled" />
     <PaymentCompleteDialog />
     <PickEntityOrConversionDialog />
     <PickRequestTypeDialog />
-    <ReapplyDialog />
+    <RenewDialog />
     <ReceiptsDialog />
     <RefundDialog />
+    <ResubmitDialog />
+    <RetryDialog />
     <UpgradeDialog />
   </v-app>
 </template>
@@ -79,8 +81,9 @@ import { DateMixin } from '@/mixins'
 import ChatPopup from '@/components/common/chat-popup.vue'
 import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
-  LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, PaymentDialog, PaymentCompleteDialog,
-  PickEntityOrConversionDialog, PickRequestTypeDialog, ReapplyDialog, ReceiptsDialog, RefundDialog, UpgradeDialog
+  LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog, PaymentCompleteDialog,
+  PickEntityOrConversionDialog, PickRequestTypeDialog, RenewDialog, ReceiptsDialog, RefundDialog, ResubmitDialog,
+  RetryDialog, UpgradeDialog
 } from '@/components/dialogs'
 import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
 import PaySystemAlert from 'sbc-common-components/src/components/PaySystemAlert.vue'
@@ -97,19 +100,21 @@ import NamexServices from './services/namex.services'
     AffiliationErrorDialog,
     CancelDialog,
     ConditionsDialog,
+    ConfirmNrDialog,
     ErrorDialog,
     ExitDialog,
     HelpMeChooseDialog,
     LocationInfoDialog,
     MrasSearchInfoDialog,
     NrNotRequiredDialog,
-    PaymentDialog,
     PaymentCompleteDialog,
     PickEntityOrConversionDialog,
     PickRequestTypeDialog,
-    ReapplyDialog,
     ReceiptsDialog,
     RefundDialog,
+    RenewDialog,
+    ResubmitDialog,
+    RetryDialog,
     UpgradeDialog,
     SbcAuthenticationOptionsDialog,
     PaySystemAlert,
@@ -118,9 +123,6 @@ import NamexServices from './services/namex.services'
   }
 })
 export default class App extends Mixins(DateMixin) {
-  // attach method to 'this'
-  readonly getFeatureFlag = getFeatureFlag
-
   showSpinner = false
 
   // Global getters
@@ -133,7 +135,7 @@ export default class App extends Mixins(DateMixin) {
   @Action setName!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
   @Action setIncorporateLoginModalVisible!: ActionBindingIF
-  @Action togglePaymentModal!: ActionBindingIF
+  @Action toggleConfirmNrModal!: ActionBindingIF
   @Action setCurrentJsDate!: ActionBindingIF
   @Action setKeycloakRoles!: ActionBindingIF
 
@@ -211,7 +213,7 @@ export default class App extends Mixins(DateMixin) {
       // Direct the user back to the start
       await this.resetAppState()
     }
-    await this.togglePaymentModal(false)
+    await this.toggleConfirmNrModal(false)
   }
 }
 </script>
@@ -222,11 +224,16 @@ export default class App extends Mixins(DateMixin) {
   display: flex;
   flex-flow: column nowrap;
   min-height: 100vh;
+}
 
-  .sbc-header {
-    .v-btn {
-      box-shadow: none !important;
-    }
+#namerequest-sbc-header {
+  .v-btn {
+    box-shadow: none !important;
+    background-color: rgba(0, 0, 0, 0) !important;
+    text-transform: none !important;
+    font-weight: normal !important;
+    letter-spacing: normal !important;
+    font-size: .875rem !important;
   }
 }
 

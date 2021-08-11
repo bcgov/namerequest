@@ -367,7 +367,7 @@ button.reserve-submit-btn {
   display: none !important;
 }
 
-/* TODO: Move this somewhere better! */
+/* FUTURE: Move this somewhere better! */
 .fee-list {
   padding-left: 5px !important;
   list-style: none;
@@ -410,4 +410,16 @@ button.reserve-submit-btn {
   list-style-position: outside;
   margin-left: 1.5em;
   padding-top: 3px;
+}
+
+.user-select-all {
+  user-select: all;
+}
+
+.pre-wrap {
+  white-space: pre-wrap;
+}
+
+.pre-line {
+  white-space: pre-line;
 }

@@ -68,7 +68,7 @@
             </v-col>
           </v-row>
 
-          <!--ADDDRESS !-->
+          <!--ADDDRESS MENU !-->
           <v-row class="mt-n1">
             <v-col cols="12" class="py-0 my-0">
               <v-menu
@@ -386,13 +386,17 @@
 <script lang="ts">
 import { Component, Vue, Watch, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-
+import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { Location, NrState } from '@/enums'
 import { ActionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { NameRequestI } from '@/interfaces'
 import { removeExcessSpaces } from '@/plugins/utilities'
+
+// List Data
+import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
+import AuthServices from '@/services/auth.services'
 
 @Component({
   components: {
@@ -414,6 +418,8 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   @Getter getNrState!: string
   @Getter getSubmissionTabNumber!: number
   @Getter getShowXproJurisdiction!: boolean
+  @Getter getKeycloakRoles!: string[]
+  @Getter isRoleStaff!: boolean
 
   // Global actions
   @Action setActingOnOwnBehalf!: ActionBindingIF
@@ -445,10 +451,45 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   ]
   showAddressMenu: boolean = false
 
-  mounted () {
+  async mounted () {
     // add event listener when this component is mounted
     // eg, when user continues to send for review
     this.$el.addEventListener('keydown', this.handleKeydown)
+
+    // proceed only if we have any roles (ie, logged in), and not staff
+    if (this.getKeycloakRoles.length > 0 && !this.isRoleStaff) {
+      // pre-populate submitting party name
+      const userInfo = await AuthServices.fetchUserInfo().catch(e => null)
+      if (userInfo) {
+        this.setApplicantDetails([
+          { name: 'firstName', value: userInfo.firstname || '' },
+          { name: 'lastName', value: userInfo.lastname || '' }
+        ])
+      }
+
+      // pre-populate submitting party address
+      const currentAccount = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
+      if (currentAccount) {
+        const accountId = JSON.parse(currentAccount)?.id
+        if (accountId) {
+          const orgInfo = await AuthServices.fetchOrgInfo(accountId).catch(e => null)
+          if (orgInfo) {
+            const mailingAddress = orgInfo.mailingAddress
+            if (mailingAddress.street) {
+              this.setApplicantDetails([
+                { name: 'addrLine1', value: mailingAddress.street || '' },
+                { name: 'addrLine2', value: mailingAddress.streetAdditional || '' },
+                { name: 'addrLine3', value: '' },
+                { name: 'city', value: mailingAddress.city || '' },
+                { name: 'stateProvinceCd', value: mailingAddress.region || '' },
+                { name: 'countryTypeCd', value: mailingAddress.country || '' },
+                { name: 'postalCd', value: mailingAddress.postalCode || '' }
+              ])
+            }
+          }
+        }
+      }
+    }
   }
 
   destroyed () {
@@ -490,11 +531,12 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   }
 
   get jurisdictionOptions () {
+    // Jurisdiction conversion to uppercase is required to match the model to the values provided by the api.
     return (this.getLocation === Location.CA)
-      ? this.$canJurisdictions.filter(jur => jur.value !== Location.BC)
-        .map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
-      : this.$intlJurisdictions.filter(jur => jur.value !== Location.CA)
-        .map(jurisdiction => ({ value: jurisdiction.text, text: jurisdiction.text }))
+      ? CanJurisdictions.filter(jur => jur.value !== Location.BC)
+        .map(jurisdiction => ({ value: jurisdiction.text.toUpperCase(), text: jurisdiction.text }))
+      : IntlJurisdictions.filter(jur => jur.value !== Location.CA)
+        .map(jurisdiction => ({ value: jurisdiction.text.toUpperCase(), text: jurisdiction.text }))
   }
 
   get provinceOptions () {

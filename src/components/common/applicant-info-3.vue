@@ -7,7 +7,7 @@
           <v-text-field :messages="messages['contact']"
                         :value="applicant.contact"
                         @blur="messages = {}"
-                        @input="mutateApplicant('contact', $event)"
+                        @input="updateApplicant('contact', $event)"
                         filled
                         hide-details="auto"
                         label="Contact Name (Optional)" />
@@ -17,7 +17,7 @@
                         :rules="emailRules"
                         :value="applicant.emailAddress"
                         @blur="messages = {}"
-                        @input="mutateApplicant('emailAddress', $event)"
+                        @input="updateApplicant('emailAddress', $event)"
                         filled
                         hide-details="auto"
                         label="Email Address (for notifications)" />
@@ -31,7 +31,7 @@
                         :value="applicant.phoneNumber"
                         :rules="phoneRules"
                         @blur="messages = {}"
-                        @input="mutateApplicant('phoneNumber', $event)"
+                        @input="updateApplicant('phoneNumber', $event)"
                         filled
                         hide-details="auto"
                         label="Phone Number" />
@@ -41,7 +41,7 @@
                         :value="applicant.faxNumber"
                         :rules="faxRules"
                         @blur="messages = {}"
-                        @input="mutateApplicant('faxNumber', $event)"
+                        @input="updateApplicant('faxNumber', $event)"
                         filled
                         hide-details="auto"
                         label="Fax Number (Optional)" />
@@ -54,19 +54,19 @@
           <v-text-field :messages="messages['clientFirst']"
                         :value="applicant.clientFirstName"
                         @blur="messages = {}"
-                        @input="mutateApplicant('clientFirstName', $event)"
+                        @input="updateApplicant('clientFirstName', $event)"
                         filled
                         hide-details="auto"
-                        label="First Name" />
+                        label="First Name (Optional)" />
         </v-col>
         <v-col cols="5">
           <v-text-field :messages="messages['clientLast']"
                         :value="applicant.clientLastName"
                         @blur="messages = {}"
-                        @input="mutateApplicant('clientLastName', $event)"
+                        @input="updateApplicant('clientLastName', $event)"
                         filled
                         hide-details="auto"
-                        label="Last Name" />
+                        label="Last Name (Optional)" />
         </v-col>
       </v-row>
       <v-row v-if="!getEditMode && !isRoleStaff">
@@ -94,7 +94,7 @@
                             :rules="businessNatureRules"
                             :value="getNrData.natureBusinessInfo"
                             @blur="messages = {}"
-                            @input="mutateNRData('natureBusinessInfo', $event)"
+                            @input="updateNrData('natureBusinessInfo', $event)"
                             filled
                             hide-details="auto"
                             label="Nature of Business"
@@ -119,7 +119,7 @@
                             :value="getNrData.additionalInfo"
                             :rules="additionalInfoRules"
                             @blur="messages = {}"
-                            @input="mutateNRData('additionalInfo', $event)"
+                            @input="updateNrData('additionalInfo', $event)"
                             filled
                             hide-details="auto"
                             label="Additional Information (Optional)"
@@ -148,12 +148,12 @@
                               :rules="corpNumRules"
                               :error-messages="corpNumError"
                               validate-on-blur
-                              @blur="messages = {}"
+                              @blur="corpNumError = ''"
                               :loading="loading"
                               filled
                               v-on:update:error="setError"
                               :hide-details="hideCorpNum"
-                              label="Incorporation or Registration Number"
+                              :label="corpNumFieldLabel"
                               v-model="corpNum">
                   <template v-slot:append>
                     <v-icon :class="corpNumError ? 'red--text' : 'green--text'"
@@ -179,7 +179,7 @@
                               :value="getNrData.tradeMark"
                               :rules="trademarkRules"
                               @blur="messages = {}"
-                              @input="mutateNRData('tradeMark', $event)"
+                              @input="updateNrData('tradeMark', $event)"
                               filled
                               hide-details="auto"
                               label="Registered Canadian Trademark (Optional)" />
@@ -232,7 +232,7 @@ import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { FolioNumberInput } from '@bcrs-shared-components/folio-number-input'
 import { ApplicantI, SubmissionTypeT } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { CorpNumRequests, Location, NrState } from '@/enums'
+import { CorpNumRequests, Location, NrState, RequestCode } from '@/enums'
 
 @Component({
   components: {
@@ -244,11 +244,12 @@ export default class ApplicantInfo3 extends Vue {
   @Getter getCorpNum!: string
   @Getter getIsPersonsName!: boolean
   @Getter getApplicant!: ApplicantI
-  @Getter getIsPriorityRequest!: boolean
+  @Getter getPriorityRequest!: boolean
   @Getter getEditMode!: boolean
   @Getter getLocation!: Location
   @Getter getNrData!: any
   @Getter getNrState!: string
+  @Getter getRequestActionCd!: RequestCode
   @Getter getShowPriorityRequest!: boolean
   @Getter getShowCorpNum!: string
   @Getter getSubmissionType!: SubmissionTypeT
@@ -270,6 +271,7 @@ export default class ApplicantInfo3 extends Vue {
 
   corpNumDirty: boolean = false
   corpNumError: string = ''
+  corpNumFieldLabel = 'Incorporation or Registration Number'
   additionalInfoRules = [
     v => (!v || v.length <= 120) || 'Cannot exceed 120 characters'
   ]
@@ -306,6 +308,16 @@ export default class ApplicantInfo3 extends Vue {
   loading: boolean = false
   messages = {}
 
+  mounted () {
+    // Apply optional corpNum validations for Amalgamations as they are NOT a required field but require COLIN lookup.
+    if (this.getRequestActionCd === RequestCode.AML) {
+      this.corpNumFieldLabel += ' (Optional)'
+      this.corpNumRules = [
+        v => !!this.validateCorpNum(v) || 'Cannot validate number. Please try again.'
+      ]
+    }
+  }
+
   @Watch('xproJurisdiction')
   async hanldeJurisdiction (newVal, oldVal) {
     if (newVal !== oldVal) {
@@ -326,8 +338,8 @@ export default class ApplicantInfo3 extends Vue {
   get location (): Location {
     return this.getLocation
   }
-  get priorityRequest () {
-    return this.getIsPriorityRequest
+  get priorityRequest (): boolean {
+    return this.getPriorityRequest
   }
   get showAllFields (): boolean {
     return (!this.getEditMode || this.getNrState === NrState.DRAFT)
@@ -356,7 +368,7 @@ export default class ApplicantInfo3 extends Vue {
     }
     this.setCorpNum(num)
   }
-  set priorityRequest (value) {
+  set priorityRequest (value: boolean) {
     this.setPriorityRequest(value)
   }
 
@@ -383,15 +395,18 @@ export default class ApplicantInfo3 extends Vue {
     }
   }
 
-  mutateApplicant (key, value) {
+  updateApplicant (key, value) {
     this.setApplicantDetails({ key, value })
   }
-  mutateNRData (key, value) {
+
+  updateNrData (key, value) {
     this.setNRData({ key, value })
   }
+
   setError (error) {
     this.error = error
   }
+
   validate () {
     if (this.hideCorpNum !== 'auto') {
       this.hideCorpNum = 'auto'

@@ -32,7 +32,7 @@ let sandbox = sinon.createSandbox()
 describe('reserve-submit', () => {
   it('is an empty test', () => {})
   // describe('Case: it handles the NORMAL route (!setup) properly', () => {
-  //   sandbox.spy(newReqModule, 'postNameRequests')
+  //   sandbox.spy(newReqModule, 'postNameRequest')
   //   let wrapper: any
 
   //   beforeEach(async (done) => {
@@ -53,12 +53,12 @@ describe('reserve-submit', () => {
   //     // expect(wrapper.text()).toBe('Reserve and Continue')
   //   })
   //   describe('If location === "BC", it acts as a RESERVED name', () => {
-  //     test('postNameRequests("reserved") is called with correct argument', async () => {
+  //     test('postNameRequest("reserved") is called with correct argument', async () => {
   //       wrapper.vm.handleSubmit()
   //       await wrapper.vm.$nextTick()
-  //       // expect(newReqModule.postNameRequests.calledOnce).toBeTruthy()
-  //       // expect(newReqModule.postNameRequests.getCall(0).args[0] === 'reserved').toBeTruthy()
-  //       expect(newReqModule.postNameRequests.calledOnce).toBeFalsy()
+  //       // expect(newReqModule.postNameRequest.calledOnce).toBeTruthy()
+  //       // expect(newReqModule.postNameRequest.getCall(0).args[0] === 'reserved').toBeTruthy()
+  //       expect(newReqModule.postNameRequest.calledOnce).toBeFalsy()
   //     })
   //     /*
   //     test('submissionType is set to "normal"', async () => {
@@ -73,11 +73,11 @@ describe('reserve-submit', () => {
   //     }) */
   //   })
   //   describe('If location !== "BC", it sends to examination', () => {
-  //     test('postNameRequests is not called', async () => {
+  //     test('postNameRequest is not called', async () => {
   //       newReqModule.mutateLocation('CA')
   //       wrapper.vm.handleSubmit()
   //       await wrapper.vm.$nextTick()
-  //       expect(newReqModule.postNameRequests.calledOnce).toBeFalsy()
+  //       expect(newReqModule.postNameRequest.calledOnce).toBeFalsy()
   //     })
   //     test('submissionType is set to "examination"', async () => {
   //       newReqModule.mutateLocation('CA')
@@ -112,11 +112,11 @@ describe('reserve-submit', () => {
   //   /* Whenever auto-approvals are turned back on again, these tests should pass once again, can remove comments
 
   //   describe('If location === "BC", it acts as a RESERVED-CONDITION name', () => {
-  //     test('postNameRequests("conditional") is called with correct argument', async () => {
+  //     test('postNameRequest("conditional") is called with correct argument', async () => {
   //       wrapper.vm.handleSubmit()
   //       await wrapper.vm.$nextTick()
-  //       expect(newReqModule.postNameRequests.calledOnce).toBeTruthy()
-  //       expect(newReqModule.postNameRequests.getCall(0).args[0] === 'conditional').toBeTruthy()
+  //       expect(newReqModule.postNameRequest.calledOnce).toBeTruthy()
+  //       expect(newReqModule.postNameRequest.getCall(0).args[0] === 'conditional').toBeTruthy()
   //     })
   //     test('submissionType is set to "consent"', async () => {
   //       wrapper.vm.handleSubmit()
@@ -136,11 +136,11 @@ describe('reserve-submit', () => {
   //     expect(newReqModule.submissionTabNumber).toEqual(1)
   //   })
   //   describe('If location !== "BC", it sends to examination', () => {
-  //     test('postNameRequests is not called', async () => {
+  //     test('postNameRequest is not called', async () => {
   //       newReqModule.mutateLocation('CA')
   //       wrapper.vm.handleSubmit()
   //       await wrapper.vm.$nextTick()
-  //       expect(newReqModule.postNameRequests.calledOnce).toBeFalsy()
+  //       expect(newReqModule.postNameRequest.calledOnce).toBeFalsy()
   //     })
   //     test('submissionType is set to "examination"', async () => {
   //       newReqModule.mutateLocation('CA')
@@ -172,10 +172,10 @@ describe('reserve-submit', () => {
   //   })
   //   describe('If location === "BC", it sends to examination', () => {
   //     newReqModule.mutateLocation('BC')
-  //     test('postNameRequests is not called', async () => {
+  //     test('postNameRequest is not called', async () => {
   //       wrapper.vm.handleSubmit()
   //       await wrapper.vm.$nextTick()
-  //       expect(newReqModule.postNameRequests.calledOnce).toBeFalsy()
+  //       expect(newReqModule.postNameRequest.calledOnce).toBeFalsy()
   //     })
   //     test('submissionType is set to "examination"', async () => {
   //       wrapper.vm.handleSubmit()
@@ -189,11 +189,11 @@ describe('reserve-submit', () => {
   //     })
   //   })
   //   describe('If location !== "BC", it sends to examination', () => {
-  //     test('postNameRequests is not called', async () => {
+  //     test('postNameRequest is not called', async () => {
   //       newReqModule.mutateLocation('CA')
   //       wrapper.vm.handleSubmit()
   //       await wrapper.vm.$nextTick()
-  //       expect(newReqModule.postNameRequests.calledOnce).toBeFalsy()
+  //       expect(newReqModule.postNameRequest.calledOnce).toBeFalsy()
   //     })
   //     test('submissionType is set to "examination"', async () => {
   //       newReqModule.mutateLocation('CA')
@@ -234,10 +234,10 @@ describe('reserve-submit', () => {
   //       describe(`If the entity_type_cd is ${code}`, () => {
   //         newReqModule.mutateLocation('CA')
   //         newReqModule.mutateEntityType(`${code}`)
-  //         test('postNameRequests is not called', async () => {
+  //         test('postNameRequest is not called', async () => {
   //           wrapper.vm.handleSubmit()
   //           await wrapper.vm.$nextTick()
-  //           expect(newReqModule.postNameRequests.calledOnce).toBeFalsy()
+  //           expect(newReqModule.postNameRequest.calledOnce).toBeFalsy()
   //           newReqModule.mutateRequestAction('NEW')
   //         })
   //         test(`assumedNameOriginal is set to newReqModule.name`, async () => {

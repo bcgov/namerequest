@@ -46,8 +46,16 @@ export default class NamexServices {
     data: NameRequestI
   ): Promise<NameRequestI> {
     try {
-      // const requestAction = getters.getRequestActionCd
-      const requestAction = RequestActions.find(request => request.value === requestActionCd)
+      // create local Request Actions list with special case Resubmit
+      const RequestActionsResubmit = [
+        ...RequestActions,
+        {
+          value: RequestCode.RESUBMIT,
+          shortDesc: `Resubmission of ${data.resubmitNrNum || 'Unknown'}`
+        }
+      ]
+
+      const requestAction = RequestActionsResubmit.find(request => request.value === requestActionCd)
       const { shortDesc } = requestAction || { shortDesc: 'action not found' }
       const msg = `*** ${shortDesc} ***`
 
@@ -58,7 +66,7 @@ export default class NamexServices {
       }
 
       if (data['additionalInfo'].includes(msg)) {
-        // if message is already part of additionalInfo, do nothing, return
+        // if message is already part of additionalInfo, do nothing
         return data
       }
 
@@ -66,7 +74,7 @@ export default class NamexServices {
       // but it does not contain the exact msg we must add
       // so we check if there is a previous request_action message
       // which no longer matches msg because we are editing
-      let allShortDesc = RequestActions.map(request => `*** ${request.shortDesc} ***`)
+      let allShortDesc = RequestActionsResubmit.map(request => `*** ${request.shortDesc} ***`)
       if (allShortDesc.some(desc => data['additionalInfo'].includes(desc))) {
         let desc = allShortDesc.find(sd => data['additionalInfo'].includes(sd))
         data['additionalInfo'] = data['additionalInfo'].replace(desc, msg)
@@ -74,8 +82,8 @@ export default class NamexServices {
       }
 
       // if there is no previous request_action message then
-      // we just preserve whatever text there is and append msg
-      data['additionalInfo'] += ` \n\n ${msg}`
+      // we just preserve whatever text is there and append the new msg
+      data['additionalInfo'] += `\n\n${msg}`
       return data
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not add request action comment')
@@ -139,9 +147,8 @@ export default class NamexServices {
         })
         sessionStorage.removeItem('checkedOutBy')
         sessionStorage.removeItem('checkedOutDt')
-
-        return true
       }
+      return true
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not checkin name request')
       console.error('checkinNameRequest() =', msg) // eslint-disable-line no-console
@@ -356,18 +363,16 @@ export default class NamexServices {
       return (err?.toString() || defaultMessage)
     }
   }
-
-  static async nameAnalysis (params: NewRequestNameSearchI, xpro: boolean): Promise<AnalysisJSONI> {
+  static async nameAnalysis (params: NewRequestNameSearchI): Promise<AnalysisJSONI> {
     const { CancelToken } = Axios
     const source = CancelToken.source()
-    const url = xpro ? 'xpro-name-analysis' : 'name-analysis'
-    const response = await this.axios.get(`${this.namexUrl()}/${url}`, {
+    const response = await this.axios.get(`${this.namexUrl()}/name-analysis`, {
       params,
       cancelToken: source.token,
       timeout: ANALYSIS_TIMEOUT_MS
     })
     if (response?.status === OK && response?.data) return response.data
-    // TODO: change how this is handled
+    // FUTURE: change how this is handled
     throw new Error(`Invalid response = ${response}`)
   }
 
@@ -417,9 +422,12 @@ export default class NamexServices {
     }
   }
 
-  static async postNameRequests (requestActionCd: RequestCode, data: NameRequestI): Promise<NameRequestI> {
+  static async postNameRequest (
+    requestActionCd: RequestCode,
+    data: NameRequestI
+  ): Promise<NameRequestI> {
     try {
-      if (!data) throw new Error('postNameRequests() - invalid data') // safety check
+      if (!data) throw new Error('postNameRequest() - invalid data') // safety check
 
       // set to null (in case these were set from a previous user action) since this will be a new nr/nrl
       sessionStorage.setItem('BCREG-NRL', null)
@@ -427,13 +435,14 @@ export default class NamexServices {
       sessionStorage.setItem('BCREG-emailAddress', null)
       sessionStorage.setItem('BCREG-phoneNumber', null)
 
-      const requestData: any = data && await this.addRequestActionComment(requestActionCd, data)
-      if (!requestData) throw new Error('postNameRequests() - invalid request data') // safety check
+      const requestData = await this.addRequestActionComment(requestActionCd, data)
+      if (!requestData) throw new Error('postNameRequest() - invalid request data') // safety check
 
       // eslint-disable-next-line no-console
       console.log('post ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
         sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
-      const response: any = requestData && await this.axios.post(`${this.namexUrl()}/namerequests`, requestData, {
+
+      const response = await this.axios.post(`${this.namexUrl()}/namerequests`, requestData, {
         headers: { 'Content-Type': 'application/json' }
       })
       if (response?.data && [OK, CREATED, ACCEPTED, NO_CONTENT].includes(response?.status)) {
@@ -442,11 +451,11 @@ export default class NamexServices {
       throw new Error(`Invalid response = ${response}`)
     } catch (err) {
       // extra logging to help find errors
-      err?.message && console.log('postNameRequests(), message =', err.message) // eslint-disable-line no-console
-      err?.request && console.log('postNameRequests(), request =', err.request) // eslint-disable-line no-console
-      err?.response && console.log('postNameRequests(), response =', err.response) // eslint-disable-line no-console
+      err?.message && console.log('postNameRequest(), message =', err.message) // eslint-disable-line no-console
+      err?.request && console.log('postNameRequest(), request =', err.request) // eslint-disable-line no-console
+      err?.response && console.log('postNameRequest(), response =', err.response) // eslint-disable-line no-console
       const msg = await this.handleApiError(err, 'Could not post name requests')
-      console.error('postNameRequests() =', msg) // eslint-disable-line no-console
+      console.error('postNameRequest() =', msg) // eslint-disable-line no-console
       await errorModule.setAppError({ id: 'post-name-requests-error', error: msg } as ErrorI)
       return null
     }

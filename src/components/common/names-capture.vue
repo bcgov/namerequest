@@ -97,6 +97,7 @@
                               @blur="handleBlur()"
                               @input="editChoices('name1', $event, true)"
                               :filled="getIsAssumedName"
+                              :class="{ 'read-only-mode': !getIsAssumedName }"
                               id="choice-1-text-field"
                               :label="choicesLabelsAndHints[0].hint"
                               :disabled="!getIsAssumedName"
@@ -274,7 +275,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
@@ -282,15 +283,17 @@ import { EntityI, NameChoicesIF, NameRequestI, RequestActionsI } from '@/interfa
 import { sanitizeName } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { EntityType, Location, RequestCode } from '@/enums'
+import { CommonMixin } from '@/mixins'
 
 @Component({
   components: {
     ApplicantInfoNav
   }
 })
-export default class NamesCapture extends Vue {
+export default class NamesCapture extends Mixins(CommonMixin) {
   // Global getters
   @Getter getDisplayedComponent!: string
+  @Getter getDesignation!: string
   @Getter getEditMode!: boolean
   @Getter getErrors!: string[]
   @Getter getEntityTypeCd!: EntityType
@@ -347,35 +350,23 @@ export default class NamesCapture extends Vue {
 
     this.setNameChoicesToInitialState(null)
     if (this.getIsAssumedName && !this.getEditMode) {
-      await this.$nextTick() // *** TODO: this should not be needed
+      await this.$nextTick() // FUTURE: remove if not needed
       this.hideDetails = true
       return
     }
 
-    await this.$nextTick() // *** TODO: this should not be needed
+    await this.$nextTick() // FUTURE: remove if not needed
     if (this.getEditMode) {
       this.populateNames()
       return
     }
 
+    // if we get here it's a new name
     this.setSubmissionType('examination')
-    if (this.designationAtEnd) {
-      for (let item of this.items) {
-        let name = this.getName
-        if ([' LTD', ' INC', ' CORP'].some(des => name.endsWith(des))) {
-          name = name + '.'
-        }
-        if (item) {
-          if (name.endsWith(item)) {
-            this.setNameChoices({ key: 'designation1', value: item })
-            let value = name.replace(item, '').trim()
-            this.setNameChoices({ key: 'name1', value })
-            return
-          }
-        }
-      }
-    }
+    if (this.getDesignation) this.setNameChoices({ key: 'designation1', value: this.getDesignation })
     this.setNameChoices({ key: 'name1', value: this.getName })
+
+    this.scrollTo('namerequest-sbc-header')
   }
 
   destroyed () {
@@ -931,6 +922,10 @@ export default class NamesCapture extends Vue {
   display: inline-block;
   font-size: 0.875rem;
   color: $app-blue;
+}
+
+::v-deep .read-only-mode .v-input__slot:not(.v-input--checkbox .v-input__slot) {
+  background-color: transparent !important;
 }
 
 ::v-deep .theme--light.v-input--is-disabled input, .theme--light.v-input--is-disabled textarea {

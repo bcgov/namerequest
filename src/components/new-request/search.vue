@@ -135,69 +135,32 @@
           </template>
         </v-select>
       </v-col>
-      <v-col :cols="getIsXproMras ? 8 : 12" :class="{ 'pl-3': (getIsXproMras && !isFederal) }">
+      <v-col :class="{ 'pl-3': (getIsXproMras && !isFederal), 'pr-3': !getIsXproMras && showDesignationSelect}"
+             :cols="showDesignationSelect || (getIsXproMras) ? '8' : '12'">
         <NameInput v-if="!isFederal"
                    :class="inputCompClass"
                    :is-mras-search="(getIsXproMras && !noCorpNum)"
                    id="name-input-component"
                    class="pa-0"
                    @emit-corp-num-validity="corpNumValid = $event"/>
-        <p v-else class="pl-3 mt-n2 text-body-2">Federally incorporated businesses do not need a Name Request. You may
+        <p v-else class="pl-3 text-body-2">Federally incorporated businesses do not need a Name Request. You may
           register  your extraprovincial business immediately using its existing name at Corporate Online.</p>
+      </v-col>
+      <v-col v-if="showDesignationSelect" cols="4">
+        <v-select :class="!entity_type_cd ? 'disabled-custom' : ''"
+                  :error-messages="getErrors.includes('designation') ? 'Please select a designation' : ''"
+                  filled
+                  :items="designationOptions"
+                  label="Select a Designation"
+                  :readonly="!entity_type_cd"
+                  v-model="designation"
+                  @change="clearErrors()">
+        </v-select>
       </v-col>
     </v-row>
 
-    <!-- Person name and english checkboxes, render when location is NOT XPro Canada -->
-    <v-row v-if="!getIsXproMras" no-gutters>
-      <v-tooltip top content-class="top-tooltip" transition="fade-transition" open-delay="200">
-        <template v-slot:activator="{ on }">
-          <v-checkbox
-                  v-model="isPersonsName"
-                  id="person-checkbox"
-                  class="copy-small mt-0 pt-0"
-                  hide-details
-                  v-slot:label
-                  v-on="on">
-            <template>
-              <span v-on="on" class="copy-small">Name is a person's name</span>
-            </template>
-          </v-checkbox>
-        </template>
-        <p>Check this box if you are...</p>
-        <ul>
-          <li>Incorporating under your own name (eg. DR. JOE SMITH INC.)</li>
-          <li>The name contains one or more names. (eg. BLAKE, CHAN &amp; DOUGLAS INC.)</li>
-        </ul>
-      </v-tooltip>
-
-      <v-tooltip top content-class="top-tooltip" transition="fade-transition" open-delay="200">
-        <template v-slot:activator="{ on }">
-          <v-checkbox
-                  v-model="nameIsEnglish"
-                  id="name-checkbox"
-                  :false-value="true"
-                  :true-value="false"
-                  class="copy-small mt-0 pt-0 ml-4"
-                  hide-details
-                  v-slot:label
-                  v-on="on">
-            <template>
-              <span v-on="on" class="copy-small">Name contains no English words</span>
-            </template>
-          </v-checkbox>
-        </template>
-        <p>This refers to the language of the words in your name.</p>
-        <ul>
-          <li>Check this box if your name is written <b>entirely</b> in another language and does <b>not</b> contain
-            any English</li>
-          <li>Leave this box unchecked if your name contains <b>only</b> English or a mix of English and another
-            language.</li>
-        </ul>
-      </v-tooltip>
-    </v-row>
-
-    <!-- Corporate number checkbox, only for XPro Canadian locations -->
-    <v-row v-else-if="!isFederal && !isInternational" no-gutters>
+    <!-- Corporate number checkbox, only for XPro Canadian Locations -->
+    <v-row v-if="getIsXproMras && !isFederal && !isInternational" no-gutters>
       <v-col class="d-flex justify-end">
         <v-tooltip top min-width="390" content-class="top-tooltip" transition="fade-transition">
           <template v-slot:activator="{ on }">
@@ -221,35 +184,25 @@
       </v-col>
     </v-row>
 
-    <!-- No Corp Designation blurb and checkbox -->
-    <v-expand-transition>
-      <v-row v-if="getShowNoCorpDesignation" no-gutters class="bg-light-blue mt-6">
-        <v-col class="text-body-4 pa-7">
-          <strong>Important:</strong> A {{entityTextFromValue}} <strong>cannot use a Corporate designation</strong>
-          (Inc., Incorporated, LTD, Limited, etc.) in its name. Although not required, you can use Company or Co. for
-          a {{entityTextFromValue}}.
-
-          <v-checkbox
-            v-model="noCorpDesignation"
-            id="no-corp-designation-checkbox"
-            class="pt-0"
-            :error-messages="getErrors.includes('no_corp_designation') ? 'Confirm designation usage' : ''"
-            @change="clearErrors()"
-          >
-            <template slot="label">
-              <span class="text-body-4">I confirm that I have <strong>not</strong> used a corporate designation.</span>
-            </template>
-          </v-checkbox>
+    <div v-if="!isFederal" class="mt-3 text-center">
+      <v-row justify="center" no-gutters>
+        <v-col cols="auto">
+          <v-btn id="search-name-btn" class="px-9" :disabled="!corpNumValid" @click="handleSubmit(true)">
+            <v-icon left color="white" size="1.5rem">mdi-magnify</v-icon>
+            Check this Name
+          </v-btn>
         </v-col>
       </v-row>
-    </v-expand-transition>
-
-    <div v-if="!isFederal" class="mt-6 text-center">
-      <v-btn id="search-name-btn" :disabled="!corpNumValid" @click="handleSubmit()">
-        {{ getIsXproMras ? 'Search' : 'Search Name'}}
-      </v-btn>
+      <v-row v-if="isPremium" class="pt-7" justify="center" no-gutters>
+        <v-col cols="auto">
+          <v-btn id="name-check-skip-btn" class="outlined pa-0" :ripple="false" text @click="handleSubmit(false)">
+            <span>Submit this Name without checking</span>
+            <v-icon>mdi-chevron-right</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
     </div>
-    <div v-else class="mt-6 text-center">
+    <div v-else class="mt-3 text-center">
       <v-btn id="goto-corporate-btn" :href="corpOnlineLink" target="_blank">
         Go to Corporate Online to Register <v-icon small class="ml-1">mdi-open-in-new</v-icon>
       </v-btn>
@@ -258,8 +211,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Mixins, Vue, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
+
+// bcregistry common
+import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 // Components
 import NameInput from './name-input.vue'
@@ -267,12 +223,13 @@ import NameInput from './name-input.vue'
 // Interfaces / Enums / List Data
 import { ConversionTypesI, EntityI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { EntityType, Location, RequestCode } from '@/enums'
+import { AccountType, EntityType, Location, RequestCode } from '@/enums'
+import { CommonMixin } from '@/mixins'
 
 @Component({
   components: { NameInput }
 })
-export default class NewSearch extends Vue {
+export default class NewSearch extends Mixins(CommonMixin) {
   // enums for template
   readonly Location = Location
   readonly RequestCode = RequestCode
@@ -280,6 +237,7 @@ export default class NewSearch extends Vue {
   // Global getters
   @Getter getConversionType!: EntityType
   @Getter getConversionTypeOptions!: ConversionTypesI[]
+  @Getter getDesignation!: string
   @Getter getEntityBlurbs!: Array<EntityI>
   @Getter getEntityTypeCd!: EntityType
   @Getter getEntityTypeOptions!: Array<EntityI>
@@ -294,15 +252,15 @@ export default class NewSearch extends Vue {
   @Getter getLocationOptions!: any[]
   @Getter getLocationText!: string
   @Getter getNameIsEnglish!: boolean
-  @Getter getNoCorpDesignation!: boolean
   @Getter getRequestActionCd!: RequestCode
   @Getter getRequestText!: string
-  @Getter getShowNoCorpDesignation!: boolean
 
   // Global actions
   @Action setConversionType!: ActionBindingIF
   @Action setCorpSearch!: ActionBindingIF
   @Action setClearErrors!: ActionBindingIF
+  @Action setDesignation!: ActionBindingIF
+  @Action setDoNameCheck!: ActionBindingIF
   @Action setEntityTypeCd!: ActionBindingIF
   @Action setExtendedRequestType!: ActionBindingIF
   @Action setIsPersonsName!: ActionBindingIF
@@ -311,7 +269,6 @@ export default class NewSearch extends Vue {
   @Action setName!: ActionBindingIF
   @Action setNameIsEnglish!: ActionBindingIF
   @Action setNoCorpNum!: ActionBindingIF
-  @Action setNoCorpDesignation!: ActionBindingIF
   @Action setPickEntityModalVisible!: ActionBindingIF
   @Action setRequestAction!: ActionBindingIF
   @Action startAnalyzeName!: ActionBindingIF
@@ -341,7 +298,29 @@ export default class NewSearch extends Vue {
     })
   }
 
+  private activated () {
+    this.scrollTo('namerequest-sbc-header')
+  }
+
   // Local Getters
+  get isPremium (): boolean {
+    return JSON.parse(sessionStorage.getItem(SessionStorageKeys.CurrentAccount))?.accountType === AccountType.PREMIUM
+  }
+
+  get designation (): string {
+    return this.getDesignation
+  }
+  set designation (value: string) {
+    this.setDesignation(value)
+  }
+  get designationOptions (): Array<string> {
+    let output: string[] = this.$designations[this.getEntityTypeCd]?.words
+    if (this.getEntityTypeCd === EntityType.CC) {
+      output = this.$designations[EntityType.CR].words
+    }
+    return output
+  }
+
   get isScreenLg () {
     return this.$vuetify.breakpoint.lgAndUp
   }
@@ -443,14 +422,6 @@ export default class NewSearch extends Vue {
     this.setNoCorpNum(value)
   }
 
-  get noCorpDesignation () {
-    return this.getNoCorpDesignation
-  }
-
-  set noCorpDesignation (value) {
-    this.setNoCorpDesignation(value)
-  }
-
   get request_action_cd (): RequestCode {
     return this.getRequestActionCd
   }
@@ -467,6 +438,14 @@ export default class NewSearch extends Vue {
     this.setRequestAction(value)
   }
 
+  get showDesignationSelect (): boolean {
+    if (this.getEntityTypeCd) {
+      return this.$designations[this.getEntityTypeCd]?.end && !this.getIsXproMras
+    }
+    // hide until entity type is selected and needs it
+    return false
+  }
+
   get jurisdictionOptions () {
     return this.location === Location.CA
       ? this.$canJurisdictions.filter(jur => jur.value !== Location.BC)
@@ -481,16 +460,25 @@ export default class NewSearch extends Vue {
     this.setClearErrors(null)
   }
 
-  async handleSubmit () {
+  async handleSubmit (doNameCheck: boolean = true) {
+    this.setDoNameCheck(doNameCheck)
     if (this.getIsXproMras) this.$root.$emit('showSpinner', true)
     await this.startAnalyzeName(null)
     if (this.getIsXproMras) this.$root.$emit('showSpinner', false)
   }
 
+  @Watch('entity_type_cd')
+  clearDesignation (newVal) {
+    this.designation = ''
+  }
+
   /** Reset search values when location changes */
   @Watch('location')
-  watchLocation () {
-    this.setName('')
+  watchLocation (newVal: Location) {
+    // if they need to search by corp num first then reset the name
+    if ([Location.CA, Location.FD, Location.IN, Location.US].includes(newVal)) {
+      this.setName('')
+    }
     this.setCorpSearch('')
     this.setNoCorpNum(false)
   }
@@ -533,9 +521,21 @@ export default class NewSearch extends Vue {
   opacity: 0.4;
   pointer-events: none;
 }
+#name-check-skip-btn {
+  font-size: 0.875rem !important;
+  box-shadow: none !important;
+  height: 1.5rem !important;
+  min-height: 0;
+}
+#name-check-skip-btn:before {
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
 #search-name-btn {
-  min-height: 45px !important;
-  padding: 0 50px !important;
+  font-size: 0.875rem !important;
+  font-weight: bold;
+  padding-top: 22px;
+  padding-bottom: 22px;
 }
 #goto-corporate-btn {
   min-height: 45px !important;
@@ -553,7 +553,7 @@ export default class NewSearch extends Vue {
     line-height: 2;
   }
   .v-select__selections {
-    line-height: 1.5rem !important;
+    line-height: 20px !important;
   }
   .v-input--is-disabled .v-input__icon {
     display: none !important;
