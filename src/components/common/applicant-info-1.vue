@@ -11,9 +11,9 @@
               <label for="firstname" class="hidden">First Name</label>
               <v-text-field
                 :messages="messages['firstName']"
-                :rules="firstLastNameRules"
+                :rules="firstMiddleNameRules"
                 :value="applicant.firstName"
-                @blur="messages = {}"
+                @blur="handleNameBlur('firstName', $event)"
                 @input="updateApplicant('firstName', $event)"
                 dense
                 filled
@@ -23,6 +23,7 @@
                 :name="Math.random()"
                 autocomplete="chrome-off"
                 label="First Name"
+                v-model="firstName"
               />
             </v-col>
 
@@ -31,8 +32,8 @@
               <v-text-field
                 :messages="messages['middleName']"
                 :value="applicant.middleName"
-                :rules="middleNameRules"
-                @blur="messages = {}"
+                :rules="firstMiddleNameRules"
+                @blur="handleNameBlur('middleName', $event)"
                 @input="updateApplicant('middleName', $event)"
                 dense
                 filled
@@ -42,6 +43,7 @@
                 :name="Math.random()"
                 autocomplete="chrome-off"
                 label="Middle Name (Optional)"
+                v-model="middleName"
               />
             </v-col>
 
@@ -49,9 +51,9 @@
               <label for="lastname" class="hidden">Last Name</label>
               <v-text-field
                 :messages="messages['lastName']"
-                :rules="firstLastNameRules"
+                :rules="lastNameRules"
                 :value="applicant.lastName"
-                @blur="messages = {}"
+                @blur="handleNameBlur('lastName', $event)"
                 @input="updateApplicant('lastName', $event)"
                 dense
                 filled
@@ -61,6 +63,7 @@
                 :name="Math.random()"
                 autocomplete="chrome-off"
                 label="Last Name"
+                v-model="lastName"
               />
             </v-col>
           </v-row>
@@ -389,6 +392,7 @@ import { Location, NrState } from '@/enums'
 import { ActionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { NameRequestI } from '@/interfaces'
+import { removeExcessSpaces } from '@/plugins/utilities'
 
 @Component({
   components: {
@@ -418,6 +422,10 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   @Action setSubmissionTabNumber!: ActionBindingIF
   @Action setFolioNumber!: ActionBindingIF
 
+  private lastName = ''
+  private firstName = ''
+  private middleName = ''
+
   highlightedSuggestion: string = null
   isValid: boolean = false
   messages = {}
@@ -425,11 +433,11 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
     v => (typeof v === 'string') || 'Must be letters only',
     v => (!v || v.length <= 2) || 'Max 2 characters'
   ]
-  firstLastNameRules = [
+  lastNameRules = [
     v => !!v || 'Required field',
     v => (!v || v.length <= 50) || 'Cannot exceed 50 characters'
   ]
-  middleNameRules = [
+  firstMiddleNameRules = [
     v => (!v || v.length <= 50) || 'Cannot exceed 50 characters'
   ]
   requiredRules = [
@@ -506,6 +514,20 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
 
   get xproJurisdiction () {
     return this.getNrData?.xproJurisdiction
+  }
+
+  handleNameBlur (key, event) {
+    this.messages = {}
+    let value = removeExcessSpaces(event.target.value)
+    if (key === 'lastName') {
+      this.lastName = value
+    }
+    if (key === 'firstName') {
+      this.firstName = value
+    }
+    if (key === 'middleName') {
+      this.middleName = value
+    }
   }
 
   blurAddress1 () {
