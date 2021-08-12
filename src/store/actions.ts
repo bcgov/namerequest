@@ -466,13 +466,10 @@ export const resubmit: any = async ({ commit, getters }): Promise<boolean> => {
   // commit the original NR's data
   commitExistingData({ commit, getters })
 
-  // override the request action code
-  commit('mutateRequestAction', RequestCode.RESUBMIT)
-
   // build the request data
   const nrTypeData = getNrTypeData({ getters }, NrType.DRAFT)
 
-  // add resubmit NR number (for internal use only)
+  // add resubmit NR number (for internal use only - API ignores it)
   nrTypeData['resubmitNrNum'] = nrData['nrNum']
 
   // clean names data
