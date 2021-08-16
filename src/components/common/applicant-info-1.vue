@@ -551,7 +551,12 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
     return this.getNrData?.xproJurisdiction
   }
 
-  handleNameBlur (key, event) {
+  /*
+    In order to update the trimmed input value, function setApplicationDetails( {key, value}) is also called in @input,
+    which looks duplicate. However, there is something going on in the store actions/mutate code
+    that requires both the blur and input events to be handled in order for the input component to be reactive.
+  */
+  handleNameBlur (key, event): void {
     this.messages = {}
     let value = removeExcessSpaces(event.target.value)
     this.setApplicantDetails({ key, value })
