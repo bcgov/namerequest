@@ -11,9 +11,9 @@
               <label for="firstname" class="hidden">First Name</label>
               <v-text-field
                 :messages="messages['firstName']"
-                :rules="firstLastNameRules"
+                :rules="firstMiddleNameRules"
                 :value="applicant.firstName"
-                @blur="messages = {}"
+                @blur="handleNameBlur('firstName', $event)"
                 @input="updateApplicant('firstName', $event)"
                 dense
                 filled
@@ -31,8 +31,8 @@
               <v-text-field
                 :messages="messages['middleName']"
                 :value="applicant.middleName"
-                :rules="middleNameRules"
-                @blur="messages = {}"
+                :rules="firstMiddleNameRules"
+                @blur="handleNameBlur('middleName', $event)"
                 @input="updateApplicant('middleName', $event)"
                 dense
                 filled
@@ -49,9 +49,9 @@
               <label for="lastname" class="hidden">Last Name</label>
               <v-text-field
                 :messages="messages['lastName']"
-                :rules="firstLastNameRules"
+                :rules="lastNameRules"
                 :value="applicant.lastName"
-                @blur="messages = {}"
+                @blur="handleNameBlur('lastName', $event)"
                 @input="updateApplicant('lastName', $event)"
                 dense
                 filled
@@ -389,6 +389,7 @@ import { Location, NrState } from '@/enums'
 import { ActionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { NameRequestI } from '@/interfaces'
+import { removeExcessSpaces } from '@/plugins/utilities'
 
 // List Data
 import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
@@ -431,11 +432,11 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
     v => (typeof v === 'string') || 'Must be letters only',
     v => (!v || v.length <= 2) || 'Max 2 characters'
   ]
-  firstLastNameRules = [
+  lastNameRules = [
     v => !!v || 'Required field',
     v => (!v || v.length <= 50) || 'Cannot exceed 50 characters'
   ]
-  middleNameRules = [
+  firstMiddleNameRules = [
     v => (!v || v.length <= 50) || 'Cannot exceed 50 characters'
   ]
   requiredRules = [
@@ -548,6 +549,17 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
 
   get xproJurisdiction () {
     return this.getNrData?.xproJurisdiction
+  }
+
+  /*
+    In order to update the trimmed input value, function setApplicationDetails( {key, value}) is also called in @input,
+    which looks duplicate. However, there is something going on in the store actions/mutate code
+    that requires both the blur and input events to be handled in order for the input component to be reactive.
+  */
+  handleNameBlur (key, event): void {
+    this.messages = {}
+    let value = removeExcessSpaces(event.target.value)
+    this.setApplicantDetails({ key, value })
   }
 
   blurAddress1 () {
