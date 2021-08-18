@@ -453,7 +453,7 @@ export default class ExistingRequestDisplay extends Mixins(
   /** The display text for Request Status. */
   private get requestStatusText (): string {
     if (this.nr.state === NrState.REFUND_REQUESTED) {
-      return 'Cancelled, ' // this label will composed with 'refundParams.refundLabel'
+      return 'Cancelled, ' // this label will be composed with 'refundParams.refundLabel'
     } else if (this.isNotPaid) {
       return 'Payment Incomplete'
     } else if (this.isPaymentProcessing) {
@@ -544,7 +544,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** True if the current state should display an alert icon. */
   private get isAlertState (): boolean {
-    return ['Cancelled', 'Cancelled, Refund Requested', 'Expired'].includes(this.requestStatusText) || this.isNotPaid
+    return ['Cancelled', 'Cancelled, ', 'Expired'].includes(this.requestStatusText) || this.isNotPaid
   }
 
   private get isNotPaid () {
