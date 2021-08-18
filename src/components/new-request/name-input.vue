@@ -3,7 +3,7 @@
     <v-col cols="12" class="pa-0">
       <v-text-field :error-messages="message"
                     @input="clearErrors()"
-                    @blur="handleBlur($event)"
+                    @blur="handleBlur()"
                     @keydown.enter="handleSubmit"
                     autocomplete="chrome-off"
                     :filled="!isReadOnly"
@@ -121,9 +121,8 @@ export default class NameInput extends Vue {
     this.setClearErrors(null)
   }
 
-  handleBlur (event) {
-    let value = sanitizeName(event.target.value)
-    this.setName(value)
+  handleBlur () {
+    this.searchValue = sanitizeName(this.searchValue)
   }
 
   async handleSubmit (event: KeyboardEvent) {
