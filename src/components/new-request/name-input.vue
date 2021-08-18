@@ -121,7 +121,10 @@ export default class NameInput extends Vue {
     this.setClearErrors(null)
   }
 
-  handleBlur () {
+  /* the leading and trailing spaces need to be removed when name input finished
+      Using the sanitizeName, which has been used in name-capture to do the work
+  */
+  handleBlur (): void {
     this.searchValue = sanitizeName(this.searchValue)
   }
 
