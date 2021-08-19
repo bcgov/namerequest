@@ -44,8 +44,7 @@
                 <v-col cols="12" class="request-status">
                   <span>Request Status:</span>
                   &nbsp;
-                  <span
-                    :class="isNotPaid ? 'app-red' : isPaymentProcessing ? 'app-green' : ''">
+                  <span :class="requestStatusTextClass">
                     {{ requestStatusText }}
                     <span v-if="isRefundRequested">
                       <v-tooltip
@@ -264,10 +263,10 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** Params used to format refund message (tooltip and modal). */
   private refundParams: RefundParamsIF = {
-    'refundMessage': '',
-    'refundLabel': '',
-    'showStaffContact': false,
-    'showAlertIcon': false
+    refundMessage: '',
+    refundLabel: '',
+    showStaffContact: false,
+    showAlertIcon: false
   }
 
   /** The actions list, with some buttons forced to the bottom. */
@@ -554,8 +553,15 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   private get isPaymentProcessing () {
-    if (this.isRefundRequested) return false // One NR can have multiple payments and not all may be refunded
     return ([PaymentStatus.APPROVED, PaymentStatus.COMPLETED].includes(this.pendingPayment?.sbcPayment?.statusCode))
+  }
+
+  /** Returns the css class for the requestStatusText. */
+  private get requestStatusTextClass (): string {
+    if (this.isRefundRequested) return ''
+    else if (this.isNotPaid) return 'app-red'
+    else if (this.isPaymentProcessing) return 'app-green'
+    return ''
   }
 
   /** Returns True if the specified action should display a red button. */
