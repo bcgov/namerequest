@@ -45,9 +45,7 @@
                   <span>Request Status:</span>
                   &nbsp;
                   <span
-                    :class="isRefundRequested ? '' :
-                            isNotPaid ? 'app-red' :
-                            isPaymentProcessing ? 'app-green' : ''">
+                    :class="isNotPaid ? 'app-red' : isPaymentProcessing ? 'app-green' : ''">
                     {{ requestStatusText }}
                     <span v-if="isRefundRequested">
                       <v-tooltip top nudge-top>
@@ -206,7 +204,7 @@ import NamexServices from '@/services/namex.services'
 import ContactInfo from '@/components/common/contact-info.vue'
 
 // Interfaces
-import { NameRequestI } from '@/interfaces'
+import { NameRequestI, RefundParamsIF } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
@@ -261,7 +259,7 @@ export default class ExistingRequestDisplay extends Mixins(
   private pendingPayment = null
 
   /** Params used to format refund message (tooltip and modal). */
-  private refundParams = {
+  private refundParams: RefundParamsIF = {
     'refundMessage': '',
     'refundLabel': '',
     'showStaffContact': false,
@@ -544,7 +542,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** True if the current state should display an alert icon. */
   private get isAlertState (): boolean {
-    return ['Cancelled', 'Cancelled, ', 'Expired'].includes(this.requestStatusText) || this.isNotPaid
+    return ['Cancelled', 'Expired'].includes(this.requestStatusText) || this.isNotPaid
   }
 
   private get isNotPaid () {
@@ -552,6 +550,7 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   private get isPaymentProcessing () {
+    if (this.isRefundRequested) return false // One NR can have multiple payments and not all may be refunded
     return ([PaymentStatus.APPROVED, PaymentStatus.COMPLETED].includes(this.pendingPayment?.sbcPayment?.statusCode))
   }
 
@@ -776,12 +775,14 @@ export default class ExistingRequestDisplay extends Mixins(
     }
   }
 
-  private get isThereMoreThanOnePaymentMethod () {
+  /** Check if there is more than one payment method used in the payments. */
+  private get isThereMoreThanOnePaymentMethod (): boolean {
     const paymentMethods = this.payments.map(payment => payment.sbcPayment.paymentMethod)
     return paymentMethods.some(method => method !== paymentMethods[0])
   }
 
-  private get isNoFeePayment () {
+  /** Check if the user has been waived of all fees for the NR. */
+  private get isNoFeePayment (): boolean {
     if (this.payments.length > 1) {
       return this.payments.reduce((paymentA, paymentB) => paymentA.sbcPayment.paid + paymentB.sbcPayment.paid) === 0
     } else if (this.payments.length === 1) {
@@ -790,7 +791,11 @@ export default class ExistingRequestDisplay extends Mixins(
     return true
   }
 
-  private get isNoRefund () {
+  /**
+   * Check if there is any amount that will be refunded.
+   * Some payments are not refundable or some problem may be happened to the refund request.
+   */
+  private get isNoRefund (): boolean {
     if (this.payments.length > 1) {
       return this.payments.reduce(
         (paymentA, paymentB) => paymentA.sbcPayment.refund + paymentB.sbcPayment.refund
@@ -801,7 +806,11 @@ export default class ExistingRequestDisplay extends Mixins(
     return true
   }
 
-  private get isRefundRequested () {
+  /**
+   * Check if NR State is 'REFUND_REQUESTED'
+   * If so, call buildRefundParams method.
+  */
+  private get isRefundRequested (): boolean {
     if (this.nr.state === NrState.REFUND_REQUESTED) {
       this.buildRefundParams()
       return true
@@ -809,6 +818,9 @@ export default class ExistingRequestDisplay extends Mixins(
     return false
   }
 
+  /**
+   * Build refund params to be used to display information about the refund request.
+   */
   private buildRefundParams () {
     if (this.nr.state === NrState.REFUND_REQUESTED) {
       if (!this.isThereMoreThanOnePaymentMethod) {
@@ -822,6 +834,7 @@ export default class ExistingRequestDisplay extends Mixins(
               'A credit will be applied to your BC Registries account.<br/>There may be a one day delay before the ' +
               'credit will show on your transactions / statetements.'
             this.refundParams.showStaffContact = false
+            this.refundParams.showAlertIcon = false
           } else {
             // May happen when a PAD is not processed yet.
             // It usually takes a day to be processed.
@@ -831,6 +844,7 @@ export default class ExistingRequestDisplay extends Mixins(
               'Pre-authorized debit transactions are handled at the end of each day, therefore, your bank will ' +
               'not be charged the initial payment amount.'
             this.refundParams.showStaffContact = false
+            this.refundParams.showAlertIcon = true
           }
         } else if (paymentMethod === PaymentMethod.INTERNAL) {
           // INTERNAL is a Staff payment. It can be 'Routing Slip' or 'No Fee' payments.
@@ -861,11 +875,13 @@ export default class ExistingRequestDisplay extends Mixins(
               'examined for use. An email confirming the cancellation and refund of this Name Request will be ' +
               `sent to ${this.nr.applicants.emailAddress}.`
             this.refundParams.showStaffContact = false
+            this.refundParams.showAlertIcon = false
           } else {
             this.refundParams.refundLabel = 'Refund Not Processed'
             this.refundParams.refundMessage = 'Your Name Request has been cancelled, but we were unable to process ' +
               'your full refund. Please contact BC Registry.'
             this.refundParams.showStaffContact = true
+            this.refundParams.showAlertIcon = true
           }
         }
       } else if (!this.isNoRefund) {
@@ -877,12 +893,14 @@ export default class ExistingRequestDisplay extends Mixins(
           'examined for use. An email confirming the cancellation and refund of this Name Request will be ' +
           `sent to ${this.nr.applicants.emailAddress}.`
         this.refundParams.showStaffContact = false
+        this.refundParams.showAlertIcon = false
       } else {
         // This should not happen
         this.refundParams.refundLabel = 'Refund Not Processed'
         this.refundParams.refundMessage = 'Your Name Request has been cancelled, but we were unable to process ' +
           'your full refund. Please contact BC Registry.'
         this.refundParams.showStaffContact = true
+        this.refundParams.showAlertIcon = true
       }
     }
   }
@@ -908,9 +926,8 @@ export default class ExistingRequestDisplay extends Mixins(
   text-justify: inter-word;
 }
 
+// Sets the arrow down
 .v-tooltip__content:after {
-  content: "" !important;
-  position: absolute !important;
   top: 100% !important;
   right: 50% !important;
   border-right: 10px solid transparent !important;
@@ -922,6 +939,8 @@ export default class ExistingRequestDisplay extends Mixins(
 .refund-label {
   color: $app-blue !important;
   font-weight: normal !important;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
 }
 
 ::v-deep {

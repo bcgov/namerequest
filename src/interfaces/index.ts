@@ -13,6 +13,7 @@ export * from './mapping'
 export * from './models'
 export * from './name-check-interfaces'
 export * from './dialog-options'
+export * from './refund-params-interface'
 
 // external interfaces
 export { FormIF, StaffPaymentIF } from '@bcrs-shared-components/interfaces'
