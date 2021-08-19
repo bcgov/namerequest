@@ -48,12 +48,16 @@
                     :class="isNotPaid ? 'app-red' : isPaymentProcessing ? 'app-green' : ''">
                     {{ requestStatusText }}
                     <span v-if="isRefundRequested">
-                      <v-tooltip top nudge-top>
+                      <v-tooltip
+                        content-class="top-tooltip"
+                        top nudge-top min-width="24rem">
                         <template v-slot:activator="{ on, attrs }">
-                          <span v-bind="attrs" v-on="on" class="refund-label">{{ refundParams.refundLabel }}</span>
-                          <v-icon v-if="refundParams.showAlertIcon" icon v-bind="attrs" v-on="on" color="error">
-                            mdi-alert
-                          </v-icon>
+                          <span v-bind="attrs" v-on="on">
+                            <span  class="refund-label">{{ refundParams.refundLabel }}</span>
+                            <v-icon v-if="refundParams.showAlertIcon" icon color="error">
+                              mdi-alert
+                            </v-icon>
+                          </span>
                         </template>
                         <div v-html="refundParams.refundMessage"></div>
                         <div v-if="refundParams.showStaffContact">
@@ -918,22 +922,6 @@ export default class ExistingRequestDisplay extends Mixins(
     color: $dk-text;
     font-weight: bold;
   }
-}
-
-.v-tooltip__content {
-  width: 24rem !important;
-  text-align: justify;
-  text-justify: inter-word;
-}
-
-// Sets the arrow down
-.v-tooltip__content:after {
-  top: 100% !important;
-  right: 50% !important;
-  border-right: 10px solid transparent !important;
-  border-left: 10px solid transparent !important;
-  border-top: 8px solid RGB(73, 80, 87) !important;
-  transform: translateY(50%);
 }
 
 .refund-label {
