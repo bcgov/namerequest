@@ -1,44 +1,83 @@
 <template>
-  <v-dialog width="40rem" :value="isVisible" persistent v-if="payments">
-    <v-card>
+  <span>
+    <v-dialog width="40rem" :value="isConfirmModalVisible" persistent v-if="payments">
+      <v-card>
 
-      <v-card-title class="d-flex justify-space-between">
-        <div>Cancel and Refund</div>
-        <v-btn icon large class="dialog-close" @click="hideModal()">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </v-card-title>
+        <v-card-title class="d-flex justify-space-between">
+          <div>Cancel and Refund</div>
+          <v-btn icon large class="dialog-close" @click="hideConfirmModal()">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
 
-      <v-card-text class="text-body-1">
-        This will cancel your Name Request and refund the Name Request fee, Priority Request
-        fee (if any), and Service fees.
-      </v-card-text>
+        <v-card-text class="text-body-1">
+          This will cancel your Name Request and refund the Name Request fee, Priority Request
+          fee (if any), and Service fees.
+        </v-card-text>
 
-      <v-card-text>
-        <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
-        <refund-summary v-else :payments="payments" />
-      </v-card-text>
+        <v-card-text>
+          <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
+          <refund-summary v-else :payments="payments" />
+        </v-card-text>
 
-      <v-card-text class="text-body-2">
-        The refund will be applied to your original payment method and the requested name will not be
-        examined for use. <template v-if="emailAddress">An email confirming the cancellation and
-        refund of this Name Request will be sent to <strong>{{emailAddress}}</strong>.</template>
-      </v-card-text>
+        <v-card-text class="text-body-2">
+          The refund will be applied to your original payment method and the requested name will not be
+          examined for use. <template v-if="emailAddress">An email confirming the cancellation and
+          refund of this Name Request will be sent to <strong>{{emailAddress}}</strong>.</template>
+        </v-card-text>
 
-      <v-card-actions class="justify-center">
-        <v-btn
-          class="px-6 button-normal"
-          id="cancel-nr-btn"
-          :loading="loading"
-          @click="confirmRefund()">Cancel this Name Request</v-btn>
-        <v-btn
-          class="px-6 button-blue"
-          id="keep-nr-btn"
-          @click="hideModal()">Keep this Name Request</v-btn>
-      </v-card-actions>
+        <v-card-actions class="justify-center">
+          <v-btn
+            class="px-6 button-normal"
+            id="cancel-nr-btn"
+            :loading="loading"
+            @click="confirmRefund()">Cancel this Name Request</v-btn>
+          <v-btn
+            class="px-6 button-blue"
+            id="keep-nr-btn"
+            @click="hideConfirmModal()">Keep this Name Request</v-btn>
+        </v-card-actions>
 
-    </v-card>
-  </v-dialog>
+      </v-card>
+    </v-dialog>
+    <v-dialog width="40rem" :value="isResponseModalVisible" persistent>
+      <v-card>
+
+        <v-card-title class="d-flex justify-space-between">
+          <div>Cancel and Refund</div>
+          <v-btn icon large class="dialog-close" @click="closeResponseModal()">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+
+        <v-card-text class="text-body-1">
+          <span v-html="refundParams.refundMessageText1"></span>
+        </v-card-text>
+
+        <v-card-text
+          v-if="refundParams.refundMessageText2"
+          class="text-body-1">
+          <span v-html="refundParams.refundMessageText2"></span>
+        </v-card-text>
+
+        <v-card-text
+          v-if="refundParams.showStaffContact"
+          class="text-body-2">
+          <contact-info
+            id="tooltip-contact-info"
+            direction="col" />
+        </v-card-text>
+
+        <v-card-actions class="justify-center">
+          <v-btn
+            class="px-6 button-normal"
+            id="keep-nr-btn"
+            @click="closeResponseModal()">OK</v-btn>
+        </v-card-actions>
+
+      </v-card>
+    </v-dialog>
+  </span>
 </template>
 
 <script lang="ts">
@@ -46,6 +85,7 @@ import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 import RefundSummary from '@/components/payment/refund-summary.vue'
+import ContactInfo from '@/components/common/contact-info.vue'
 import { REFUND_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import { NrAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin } from '@/mixins'
@@ -55,7 +95,8 @@ import NamexServices from '@/services/namex.services'
 
 @Component({
   components: {
-    RefundSummary
+    RefundSummary,
+    ContactInfo
   }
 })
 export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMixin) {
@@ -73,35 +114,38 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
   /** Used to show loading state on button. */
   private loading = false
 
-  /** The model value for the dialog component. */
-  private isVisible = false
+  /** The model value for the confirm dialog component. */
+  private isConfirmModalVisible = false
+
+  /** The model value for the response dialog component. */
+  private isResponseModalVisible = false
 
   private get emailAddress (): string {
     return this.getApplicant?.emailAddress
   }
 
   /** Whether this modal should be shown (per store property). */
-  private get showModal (): boolean {
+  private get showConfirmModal (): boolean {
     return this.$store.getters[REFUND_MODAL_IS_VISIBLE]
   }
 
   /** Clears store property to hide this modal. */
-  private async hideModal (): Promise<void> {
+  private async hideConfirmModal (): Promise<void> {
     await this.toggleRefundModal(false)
   }
 
   /** Depending on value, fetches data and makes this modal visible or hides it. */
-  @Watch('showModal')
-  private async onShowModal (val: boolean) {
+  @Watch('showConfirmModal')
+  private async onShowConfirmModal (val: boolean) {
     if (val) {
       // only make visible on success, otherwise hide it
       if (await this.fetchData()) {
-        this.isVisible = true
+        this.isConfirmModalVisible = true
       } else {
-        await this.hideModal()
+        await this.hideConfirmModal()
       }
     } else {
-      this.isVisible = false
+      this.isConfirmModalVisible = false
     }
   }
 
@@ -110,16 +154,20 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
     this.loading = true
     const data = await NamexServices.patchNameRequestsByAction(this.getNrId, NrAction.REQUEST_REFUND)
     if (data) {
-      this.loading = false
-      await this.hideModal()
-      this.setDisplayedComponent('Success')
       await this.loadExistingNameRequest(data)
-      await sleep(1000)
-      this.setDisplayedComponent('ExistingRequestDisplay')
+      this.buildRefundParams()
+      this.loading = false
+      await this.hideConfirmModal()
+      this.isResponseModalVisible = true
     } else {
       this.loading = false
-      await this.hideModal()
+      await this.hideConfirmModal()
     }
+  }
+
+  /** Closes the response modal */
+  private closeResponseModal (): void {
+    this.isResponseModalVisible = false
   }
 
   /**
@@ -132,7 +180,7 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
     return this.fetchNrPayments(this.getNrId)
   }
 
-  @Watch('isVisible')
+  @Watch('isConfirmModalVisible')
   onVisibleChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {
