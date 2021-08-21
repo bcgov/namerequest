@@ -52,17 +52,17 @@
                         top nudge-top min-width="24rem">
                         <template v-slot:activator="{ on, attrs }">
                           <span v-bind="attrs" v-on="on">
-                            <span  class="refund-label">{{ refundParams.refundLabel }}</span>
-                            <v-icon v-if="refundParams.showAlertIcon" icon color="error">
+                            <span  class="refund-label">{{ getRefundParams.refundLabel }}</span>
+                            <v-icon v-if="getRefundParams.showAlertIcon" icon color="error">
                               mdi-alert
                             </v-icon>
                           </span>
                         </template>
-                        <div v-html="refundParams.refundMessageText1" />
+                        <div v-html="getRefundParams.refundMessageText1" />
                         <br/>
-                        <div v-if="refundParams.refundMessageText2"
-                          v-html="refundParams.refundMessageText2" />
-                        <div v-if="refundParams.showStaffContact">
+                        <div v-if="getRefundParams.refundMessageText2"
+                          v-html="getRefundParams.refundMessageText2" />
+                        <div v-if="getRefundParams.showStaffContact">
                           <br/>
                           <contact-info
                             id="tooltip-contact-info"
@@ -447,7 +447,7 @@ export default class ExistingRequestDisplay extends Mixins(
   /** The display text for Request Status. */
   private get requestStatusText (): string {
     if (this.nr.state === NrState.REFUND_REQUESTED) {
-      return 'Cancelled, ' // this label will be composed with 'refundParams.refundLabel'
+      return 'Cancelled, ' // this label will be composed with 'getRefundParams.refundLabel'
     } else if (this.isNotPaid) {
       return 'Payment Incomplete'
     } else if (this.isPaymentProcessing) {

@@ -45,23 +45,23 @@
 
         <v-card-title class="d-flex justify-space-between">
           <div>Cancel and Refund</div>
-          <v-btn icon large class="dialog-close" @click="closeResponseModal()">
+          <v-btn icon large class="dialog-close" @click="hideResponseModal()">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
 
         <v-card-text class="text-body-1">
-          <span v-html="refundParams.refundMessageText1"></span>
+          <span v-html="getRefundParams.refundMessageText1"></span>
         </v-card-text>
 
         <v-card-text
-          v-if="refundParams.refundMessageText2"
+          v-if="getRefundParams.refundMessageText2"
           class="text-body-1">
-          <span v-html="refundParams.refundMessageText2"></span>
+          <span v-html="getRefundParams.refundMessageText2"></span>
         </v-card-text>
 
         <v-card-text
-          v-if="refundParams.showStaffContact"
+          v-if="getRefundParams.showStaffContact"
           class="text-body-2">
           <contact-info
             id="tooltip-contact-info"
@@ -72,7 +72,7 @@
           <v-btn
             class="px-6 button-normal"
             id="keep-nr-btn"
-            @click="closeResponseModal()">OK</v-btn>
+            @click="hideResponseModal()">OK</v-btn>
         </v-card-actions>
 
       </v-card>
@@ -89,7 +89,6 @@ import ContactInfo from '@/components/common/contact-info.vue'
 import { REFUND_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import { NrAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin } from '@/mixins'
-import { sleep } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from '@/services/namex.services'
 
@@ -165,8 +164,8 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
     }
   }
 
-  /** Closes the response modal */
-  private closeResponseModal (): void {
+  /** Hides the response modal */
+  private hideResponseModal (): void {
     this.isResponseModalVisible = false
   }
 
