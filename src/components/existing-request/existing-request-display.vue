@@ -52,14 +52,17 @@
                         top nudge-top min-width="24rem">
                         <template v-slot:activator="{ on, attrs }">
                           <span v-bind="attrs" v-on="on">
-                            <span  class="refund-label">{{ refundParams.refundLabel }}</span>
-                            <v-icon v-if="refundParams.showAlertIcon" icon color="error">
+                            <span  class="refund-label">{{ getRefundParams.refundLabel }}</span>
+                            <v-icon v-if="getRefundParams.showAlertIcon" icon color="error">
                               mdi-alert
                             </v-icon>
                           </span>
                         </template>
-                        <div v-html="refundParams.refundMessage"></div>
-                        <div v-if="refundParams.showStaffContact">
+                        <div v-html="getRefundParams.refundMessageText1" />
+                        <br v-if="getRefundParams.refundMessageText2" />
+                        <div v-if="getRefundParams.refundMessageText2"
+                          v-html="getRefundParams.refundMessageText2" />
+                        <div v-if="getRefundParams.showStaffContact">
                           <br/>
                           <contact-info
                             id="tooltip-contact-info"
@@ -197,7 +200,6 @@ import {
   NrAction,
   NrState,
   PaymentStatus,
-  PaymentMethod,
   SbcPaymentStatus,
   PaymentAction,
   Furnished
@@ -229,7 +231,6 @@ export default class ExistingRequestDisplay extends Mixins(
   // Global getters
   @Getter getDisplayedComponent!: string
   @Getter getIsAuthenticated!: boolean
-  @Getter getNr!: Partial<NameRequestI>
   @Getter getNrId!: number
   @Getter getNrState!: NrState
 
@@ -260,14 +261,6 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** The pending payment, if any. See mounted(). */
   private pendingPayment = null
-
-  /** Params used to format refund message (tooltip and modal). */
-  private refundParams: RefundParamsIF = {
-    refundMessage: '',
-    refundLabel: '',
-    showStaffContact: false,
-    showAlertIcon: false
-  }
 
   /** The actions list, with some buttons forced to the bottom. */
   private get actions (): NrAction[] {
@@ -454,7 +447,7 @@ export default class ExistingRequestDisplay extends Mixins(
   /** The display text for Request Status. */
   private get requestStatusText (): string {
     if (this.nr.state === NrState.REFUND_REQUESTED) {
-      return 'Cancelled, ' // this label will be composed with 'refundParams.refundLabel'
+      return 'Cancelled, ' // this label will be composed with 'getRefundParams.refundLabel'
     } else if (this.isNotPaid) {
       return 'Payment Incomplete'
     } else if (this.isPaymentProcessing) {
@@ -782,105 +775,6 @@ export default class ExistingRequestDisplay extends Mixins(
 
       // hide spinner
       this.$root.$emit('showSpinner', false)
-    }
-  }
-
-  /**
-   * Check if NR State is 'REFUND_REQUESTED'
-   * If so, call buildRefundParams method.
-  */
-  private get isRefundRequested (): boolean {
-    if (this.nr.state === NrState.REFUND_REQUESTED) {
-      this.buildRefundParams()
-      return true
-    }
-    return false
-  }
-
-  /**
-   * Build refund params to be used to display information about the refund request.
-   */
-  private buildRefundParams () {
-    if (this.nr.state === NrState.REFUND_REQUESTED) {
-      if (!this.isThereMoreThanOnePaymentMethod) {
-        const paymentMethod = this.payments[0]?.sbcPayment?.paymentMethod
-        if (paymentMethod === PaymentMethod.PAD) {
-          // Premium Account
-          if (!this.isNoRefund) {
-            this.refundParams.refundLabel = 'Refund Request Processed'
-            this.refundParams.refundMessage =
-              'Your Name Request has been cancelled and a refund request is being processed.<br/><br/>' +
-              'A credit will be applied to your BC Registries account.<br/>There may be a one day delay before the ' +
-              'credit will show on your transactions / statetements.'
-            this.refundParams.showStaffContact = false
-            this.refundParams.showAlertIcon = false
-          } else {
-            // May happen when a PAD is not processed yet.
-            // It usually takes a day to be processed.
-            this.refundParams.refundLabel = 'Refund Not Processed'
-            this.refundParams.refundMessage =
-              'Your Name Request has been cancelled.<br/><br/>' +
-              'Pre-authorized debit transactions are handled at the end of each day, therefore, your bank will ' +
-              'not be charged the initial payment amount.'
-            this.refundParams.showStaffContact = false
-            this.refundParams.showAlertIcon = true
-          }
-        } else if (paymentMethod === PaymentMethod.INTERNAL) {
-          // INTERNAL is a Staff payment. It can be 'Routing Slip' or 'No Fee' payments.
-          if (this.isNoFeePayment) {
-            // No Fee payment
-            this.refundParams.refundLabel = 'Refund Not Processed'
-            this.refundParams.refundMessage = 'Your Name Request has been cancelled.<br/><br/>' +
-              'Since there was no charge for this transaction, a refund will not be issued. Please contact BC' +
-              'Registry if you require further assistance.'
-            this.refundParams.showStaffContact = true
-            this.refundParams.showAlertIcon = true
-          } else {
-            // Routing Slip
-            this.refundParams.refundLabel = 'Refund Not Processed'
-            this.refundParams.refundMessage =
-              'Your Name Request has been cancelled, but you will not receive an automatic refund. Please contact BC ' +
-              'Registries in order to request a refund.'
-            this.refundParams.showStaffContact = true
-            this.refundParams.showAlertIcon = true
-          }
-        } else if ([PaymentMethod.DIRECT_PAY, PaymentMethod.DRAWDOWN].includes(paymentMethod)) {
-          // Credit Card or BCOL
-          if (!this.isNoFeePayment) {
-            this.refundParams.refundLabel = 'Refund Request Processed'
-            this.refundParams.refundMessage =
-              'Your Name Request has been cancelled and a refund request has been submitted.<br/><br/>' +
-              'The refund will be applied to you original payment method and the request name will not be ' +
-              'examined for use. An email confirming the cancellation and refund of this Name Request will be ' +
-              `sent to ${this.nr.applicants.emailAddress}.`
-            this.refundParams.showStaffContact = false
-            this.refundParams.showAlertIcon = false
-          } else {
-            this.refundParams.refundLabel = 'Refund Not Processed'
-            this.refundParams.refundMessage = 'Your Name Request has been cancelled, but we were unable to process ' +
-              'your full refund. Please contact BC Registry.'
-            this.refundParams.showStaffContact = true
-            this.refundParams.showAlertIcon = true
-          }
-        }
-      } else if (!this.isNoRefund) {
-        // Multi-transaction scenario returns success
-        this.refundParams.refundLabel = 'Refund Request Processed'
-        this.refundParams.refundMessage =
-          'Your Name Request has been cancelled and a refund request has been submitted.<br/><br/>' +
-          'The refund will be applied to you original payment method and the request name will not be ' +
-          'examined for use. An email confirming the cancellation and refund of this Name Request will be ' +
-          `sent to ${this.nr.applicants.emailAddress}.`
-        this.refundParams.showStaffContact = false
-        this.refundParams.showAlertIcon = false
-      } else {
-        // This should not happen
-        this.refundParams.refundLabel = 'Refund Not Processed'
-        this.refundParams.refundMessage = 'Your Name Request has been cancelled, but we were unable to process ' +
-          'your full refund. Please contact BC Registry.'
-        this.refundParams.showStaffContact = true
-        this.refundParams.showAlertIcon = true
-      }
     }
   }
 }

@@ -1,5 +1,6 @@
 export interface RefundParamsIF {
-    refundMessage: string
+    refundMessageText1: string
+    refundMessageText2?: string
     refundLabel: string
     showStaffContact: boolean
     showAlertIcon: boolean
