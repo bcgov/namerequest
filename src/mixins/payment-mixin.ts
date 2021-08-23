@@ -208,8 +208,8 @@ export class PaymentMixin extends Mixins(ActionMixin) {
               refundMessageText1:
               'Your Name Request has been cancelled.',
               refundMessageText2:
-              'Since there was no charge for this transaction, a refund will not be issued. Please contact BC' +
-              'Registry if you require further assistance.',
+              'Since there was no charge for this transaction, a refund will not be issued. Please contact BC ' +
+              'Registries if you require further assistance.',
               showStaffContact: true,
               showAlertIcon: true
             }
@@ -247,7 +247,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
               refundLabel: 'Refund Not Processed',
               refundMessageText1:
               'Your Name Request has been cancelled, but we were unable to process ' +
-              'your full refund. Please contact BC Registry.',
+              'your full refund. Please contact BC Registries.',
               refundMessageText2: '',
               showStaffContact: true,
               showAlertIcon: true
@@ -274,7 +274,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
           refundLabel: 'Refund Not Processed',
           refundMessageText1:
           'Your Name Request has been cancelled, but we were unable to process ' +
-          'your full refund. Please contact BC Registry.',
+          'your full refund. Please contact BC Registries.',
           showStaffContact: true,
           showAlertIcon: true
         }
