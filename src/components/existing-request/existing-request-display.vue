@@ -59,7 +59,7 @@
                           </span>
                         </template>
                         <div v-html="getRefundParams.refundMessageText1" />
-                        <br/>
+                        <br v-if="getRefundParams.refundMessageText2" />
                         <div v-if="getRefundParams.refundMessageText2"
                           v-html="getRefundParams.refundMessageText2" />
                         <div v-if="getRefundParams.showStaffContact">
