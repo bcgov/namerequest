@@ -98,16 +98,21 @@ export class PaymentMixin extends Mixins(ActionMixin) {
 
   /** Check if there is more than one payment method used in the payments. */
   get isThereMoreThanOnePaymentMethod (): boolean {
-    const paymentMethods = this.payments.map(payment => payment.sbcPayment.paymentMethod)
-    return paymentMethods.some(method => method !== paymentMethods[0])
+    if (Array.isArray(this.payments) && this.payments.length > 1) {
+      const paymentMethods = this.payments.map(payment => payment.sbcPayment.paymentMethod)
+      return paymentMethods.some(method => method !== paymentMethods[0])
+    }
+    return false
   }
 
   /** Check if the user has been waived of all fees for the NR. */
   get isNoFeePayment (): boolean {
-    if (this.payments.length > 1) {
-      return this.payments.reduce((paymentA, paymentB) => paymentA.sbcPayment.paid + paymentB.sbcPayment.paid) === 0
-    } else if (this.payments.length === 1) {
-      return this.payments[0].sbcPayment.paid === 0
+    if (Array.isArray(this.payments) && this.payments.length) { // Payments might not have been processed yet, e.g., PAD
+      if (this.payments.length > 1) {
+        return this.payments.reduce((paymentA, paymentB) => paymentA.sbcPayment.paid + paymentB.sbcPayment.paid) === 0
+      } else {
+        return this.payments[0].sbcPayment.paid === 0
+      }
     }
     return true
   }
@@ -117,12 +122,14 @@ export class PaymentMixin extends Mixins(ActionMixin) {
    * Some payments are not refundable or some problem may be happened to the refund request.
    */
   get isNoRefund (): boolean {
-    if (this.payments.length > 1) {
-      return this.payments.reduce(
-        (paymentA, paymentB) => paymentA.sbcPayment.refund + paymentB.sbcPayment.refund
-      ) === 0
-    } else if (this.payments.sbcPayment.length === 1) {
-      return this.payments[0].refund === 0
+    if (Array.isArray(this.payments) && this.payments.length) { // Payments might not have been processed yet, e.g., PAD
+      if (this.payments.length > 1) {
+        return this.payments.reduce(
+          (paymentA, paymentB) => paymentA.sbcPayment.refund + paymentB.sbcPayment.refund
+        ) === 0
+      } else {
+        return this.payments[0].refund === 0
+      }
     }
     return true
   }
