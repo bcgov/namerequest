@@ -115,7 +115,6 @@ export default class ResubmitDialog extends Mixins(
   }
 
   // Global getters
-  @Getter getPriorityRequest!: boolean
   @Getter isRoleStaff!: boolean
 
   // Global action
@@ -228,7 +227,7 @@ export default class ResubmitDialog extends Mixins(
       action: PaymentAction.RESUBMIT,
       nrId: this.getNrId,
       filingType: FilingTypes.NM620,
-      priorityRequest: this.getPriorityRequest
+      priorityRequest: this.isPriorityRequest
     } as CreatePaymentParams, onSuccess)
 
     // on error, close this modal so error modal is visible
