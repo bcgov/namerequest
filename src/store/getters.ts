@@ -13,6 +13,7 @@ import {
   NameChoicesIF,
   NameDesignationI,
   NameRequestI,
+  RefundParamsIF,
   RequestActionMappingI,
   RequestActionsI,
   RequestNameI,
@@ -1142,4 +1143,8 @@ export const isMissingDesignation = (state: StateIF): boolean => {
 
 export const isMissingDistinctive = (state: StateIF): boolean => {
   return state.stateModel.nameCheckModel.missingDistinctive
+}
+
+export const getRefundParams = (state: StateIF): RefundParamsIF => {
+  return state.stateModel.refundParams
 }

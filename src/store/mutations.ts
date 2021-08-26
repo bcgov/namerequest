@@ -5,6 +5,7 @@ import {
   ConditionalInstructionI,
   ConversionTypesI,
   NameRequestI,
+  RefundParamsIF,
   SelectOptionsI,
   StaffPaymentIF,
   StateIF,
@@ -535,4 +536,8 @@ export const mutateNameCheckErrorClear = (state: StateIF, key: NameCheckErrorTyp
 
 export const mutateFolioNumber = (state: StateIF, folioNumber: string) => {
   state.stateModel.newRequestModel.folioNumber = folioNumber
+}
+
+export const mutateRefundParams = (state: StateIF, refundParams: RefundParamsIF) => {
+  state.stateModel.refundParams = refundParams
 }

@@ -35,7 +35,8 @@ import {
   StaffPaymentIF,
   QuickSearchParamsI,
   QuickSearchParsedRespI,
-  ConflictListItemI
+  ConflictListItemI,
+  RefundParamsIF
 } from '@/interfaces'
 import { ActionIF } from '@/interfaces/store-interfaces'
 
@@ -1186,4 +1187,8 @@ export const startQuickSearch = async ({ commit, getters }, checks: QuickSearchP
       commit('mutateAnalyzeConflictsPending', false)
     }
   }
+}
+
+export const setRefundParams: ActionIF = ({ commit }, refundParams: RefundParamsIF): void => {
+  commit('mutateRefundParams', refundParams)
 }
