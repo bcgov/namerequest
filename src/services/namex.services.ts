@@ -127,9 +127,9 @@ export default class NamexServices {
 
   static async checkinNameRequest (nrId: number, nrState: NrState): Promise<boolean> {
     try {
-      // Approved or Rejected Name Requests are not checked out due to limited data that is editable.
+      // Approved or Rejected or Consumed Name Requests are not checked out due to limited data that is editable.
       // Return out of checkIn because the NR was never checked out.
-      if (nrState === NrState.APPROVED || nrState === NrState.REJECTED) return true
+      if (nrState === NrState.APPROVED || nrState === NrState.REJECTED || nrState === NrState.CONSUMED) return true
 
       const checkedOutBy = sessionStorage.getItem('checkedOutBy')
       const checkedOutDt = sessionStorage.getItem('checkedOutDt')

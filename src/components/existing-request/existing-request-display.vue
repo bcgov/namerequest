@@ -454,52 +454,22 @@ export default class ExistingRequestDisplay extends Mixins(
       return 'Processing Payment'
     } else {
       switch (this.nr.state) {
+        case NrState.CONSUMED:
+          return `${this.approvedName.state === NameState.CONDITIONAL ? 'Conditional Approval' : 'Approved'}
+                 / Used For ${this.approvedName.corpNum}`
         case NrState.APPROVED:
-          if (this.isNrConsumed) return `Approved / Used For ${this.approvedName.corpNum}`
-          if (this.isNrExpired) return 'Expired'
           return 'Approved'
         case NrState.CANCELLED: return 'Cancelled'
         case NrState.CONDITIONAL:
-          if (this.isNrConsumed) return `Conditional Approval / Used For ${this.approvedName.corpNum}`
-          if (this.isNrExpired) return 'Expired'
           return 'Conditional Approval'
         case NrState.DRAFT: return 'Pending Staff Review'
-        case NrState.EXPIRED: return 'Expired' // legacy state; see also "isNrExpired"
+        case NrState.EXPIRED: return 'Expired'
         case NrState.HOLD: return 'In Progress' // show HOLD as "In Progress"
         case NrState.INPROGRESS: return 'In Progress'
         case NrState.REJECTED: return 'Rejected'
         default: return '-' // should never happen
       }
     }
-  }
-
-  /** True if the NR is consumed. */
-  private get isNrConsumed (): boolean {
-    // 1. NR is approved or conditional
-    // 2. a Name is approved
-    // 3. Approved Name is consumed
-    return (
-      this.isNrApprovedOrConditional &&
-      !!this.approvedName &&
-      this.isApprovedNameConsumed
-    )
-  }
-
-  /**
-   * True if the NR is expired.
-   * Note that some old NRs have state=EXPIRED and don't use this method.
-   */
-  private get isNrExpired (): boolean {
-    // 1. NR is approved or conditional
-    // 2. a Name is approved
-    // 3. Approved Name is not consumed
-    // 4. Expiration Date has passed
-    return (
-      this.isNrApprovedOrConditional &&
-      !!this.approvedName &&
-      !this.isApprovedNameConsumed &&
-      this.hasExpirationDatePassed
-    )
   }
 
   /** True if NR is in Approved or Conditional state. */
@@ -520,20 +490,6 @@ export default class ExistingRequestDisplay extends Mixins(
   /** The NR's (first) conditional name object, if any. */
   private get conditionalName (): any {
     return this.nr.names.find(name => (name.state === NameState.CONDITIONAL))
-  }
-
-  /** True if the Approved Name is consumed. */
-  private get isApprovedNameConsumed (): boolean {
-    // consumed = name is approved + has a consumption date + has a corp num
-    return (!!this.approvedName?.consumptionDate && !!this.approvedName?.corpNum)
-  }
-
-  /** True if the NR's expiration date has passed. */
-  private get hasExpirationDatePassed (): boolean {
-    if (!this.nr.expirationDate) return false
-    const expireDays = this.daysFromToday(new Date(this.nr.expirationDate))
-    // 0 means today (which means it's expired)
-    return (isNaN(expireDays) || expireDays < 1)
   }
 
   /** True if the current state should display an alert icon. */
