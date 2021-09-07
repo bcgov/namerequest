@@ -209,7 +209,6 @@ import NamexServices from '@/services/namex.services'
 import ContactInfo from '@/components/common/contact-info.vue'
 
 // Interfaces
-import { NameRequestI, RefundParamsIF } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({

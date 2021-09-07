@@ -7,6 +7,7 @@ import { getConfig, getVuetify, initLdClient, isSigningIn, isSigningOut } from '
 import KeycloakService from 'sbc-common-components/src/services/keycloak.services'
 import * as Sentry from '@sentry/browser'
 import * as Integrations from '@sentry/integrations'
+import { AllDesignationsList, ConversionTypes, Designations, RequestActions, UsaStateCodes } from '@/list-data'
 
 // NB: order matters - do not change
 import 'quill/dist/quill.core.css'
@@ -15,12 +16,6 @@ import '@mdi/font/css/materialdesignicons.min.css'
 import '@/assets/scss/base.scss'
 import '@/assets/scss/layout.scss'
 import '@/assets/scss/overrides.scss'
-
-import {
-  Designations, AllDesignationsList, CanJurisdictions, MrasJurisdictions, IntlJurisdictions,
-  ConversionTypes, EntityTypesBcData, EntityTypesXproData, RequestActions, Locations, UsaStateCodes,
-  BcMapping, XproMapping, ColinRequestActions, ColinRequestTypes, XproColinRequestTypes
-} from '@/list-data'
 
 Vue.config.productionTip = true
 Vue.config.devtools = true
@@ -43,22 +38,11 @@ async function startVue () {
 
   // FUTURE: remove these globally scoped lists and import locally where needed
   // Load global data
-  Vue.prototype.$designations = Designations
-  Vue.prototype.$canJurisdictions = CanJurisdictions
-  Vue.prototype.$mrasJurisdictions = MrasJurisdictions
-  Vue.prototype.$intlJurisdictions = IntlJurisdictions
-  Vue.prototype.$usaStateCodes = UsaStateCodes
-  Vue.prototype.$bcMapping = BcMapping
-  Vue.prototype.$xproMapping = XproMapping
-  Vue.prototype.$conversionTypes = ConversionTypes
   Vue.prototype.$allDesignationsList = AllDesignationsList
-  Vue.prototype.$entityTypesBcData = EntityTypesBcData
-  Vue.prototype.$entityTypesXproData = EntityTypesXproData
+  Vue.prototype.$conversionTypes = ConversionTypes
+  Vue.prototype.$designations = Designations
   Vue.prototype.$requestActions = RequestActions
-  Vue.prototype.$locations = Locations
-  Vue.prototype.$colinRequestActions = ColinRequestActions
-  Vue.prototype.$colinRequestTypes = ColinRequestTypes
-  Vue.prototype.$xproColinRequestTypes = XproColinRequestTypes
+  Vue.prototype.$usaStateCodes = UsaStateCodes
 
   if (window['sentryEnable'] === 'true') {
     // Initialize Sentry
