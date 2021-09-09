@@ -120,6 +120,7 @@ export default class ResubmitDialog extends Mixins(
   // Global action
   @Action toggleResubmitModal!: ActionBindingIF
   @Action resubmit!: ActionBindingIF
+  @Action setPriorityRequest!: ActionBindingIF
 
   /** Whether staff payment is valid. */
   private isStaffPaymentValid = false
@@ -133,7 +134,10 @@ export default class ResubmitDialog extends Mixins(
   /** Whether this dialog is visible. */
   private isVisible = false
 
-  /** Whether this NR is a priority request. */
+  /**
+   * Whether this NR is a priority request.
+   * Initially false for resubmission.
+   */
   private isPriorityRequest = false
 
   /** Whether this modal should be shown (per store property). */
@@ -167,6 +171,10 @@ export default class ResubmitDialog extends Mixins(
 
   @Watch('isPriorityRequest')
   async onPriorityRequestChange (): Promise<boolean> {
+    // update new request model
+    this.setPriorityRequest(this.isPriorityRequest)
+
+    // fetch fees
     const params: FetchFeesParams = {
       filingType: FilingTypes.NM620,
       jurisdiction: Jurisdictions.BC,
