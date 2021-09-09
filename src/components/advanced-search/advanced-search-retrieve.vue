@@ -74,7 +74,6 @@ export default class AdvancedSearchRetrieve extends Vue {
   @Getter getNr!: Partial<NameRequestI>
 
   // Global setters
-  @Action findNameRequest!: ActionBindingIF
   @Action setExistingRequestSearch!: ActionBindingIF
   @Action setNameRequest!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
