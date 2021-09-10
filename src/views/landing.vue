@@ -75,11 +75,13 @@ export default class Landing extends Vue {
     const { id } = this
     // if an id was specified then get and load the subject NR
     if (id) {
-      this.$root.$emit('showSpinner', true)
       const nrData = await NamexServices.getNameRequest(true)
-      this.$root.$emit('showSpinner', false)
       if (nrData) await this.loadExistingNameRequest(nrData)
     }
+
+    // everything is rendered/loaded - hide spinner
+    // (spinner was shown in App.vue)
+    this.$root.$emit('showSpinner', false)
   }
 }
 </script>
