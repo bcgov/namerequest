@@ -235,11 +235,11 @@ const commitExistingData = ({ commit, getters }) => {
     let { xproJurisdiction } = getters.getNr
     let location: Location
     for (let key of ['value', 'text']) {
-      if (CanJurisdictions.some(jurisdiction => jurisdiction[key].toUpperCase() === xproJurisdiction)) {
+      if (CanJurisdictions.some(j => j[key].toUpperCase() === xproJurisdiction.toUpperCase())) {
         location = Location.CA
         break
       }
-      if (IntlJurisdictions.some(jurisdiction => jurisdiction[key].toUpperCase() === xproJurisdiction)) {
+      if (IntlJurisdictions.some(j => j[key].toUpperCase() === xproJurisdiction.toUpperCase())) {
         location = Location.IN
         break
       }
