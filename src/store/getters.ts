@@ -95,8 +95,8 @@ export const getJurisdictionCd = (state: StateIF): string => {
 
 export const getJurisdictionText = (state: StateIF): string => {
   return (getLocation(state) === Location.CA)
-    ? CanJurisdictions.find(jur => jur.value === getRequestJurisdictionCd(state))?.text
-    : IntlJurisdictions.find(jur => jur.value === getRequestJurisdictionCd(state))?.text
+    ? CanJurisdictions.find(jur => jur.value === getJurisdictionCd(state))?.text
+    : IntlJurisdictions.find(jur => jur.value === getJurisdictionCd(state))?.text
 }
 
 export const getMrasSearchResultCode = (state: StateIF): number => {
@@ -115,10 +115,6 @@ export const getRequestActionCd = (state: StateIF): RequestCode => {
 /** The request text for the current request action code. */
 export const getRequestText = (state: StateIF): string => {
   return RequestActions.find(options => options.value === getRequestActionCd(state))?.text
-}
-
-export const getRequestJurisdictionCd = (state: StateIF): string => {
-  return state.stateModel.newRequestModel.request_jurisdiction_cd
 }
 
 export const getApplicant = (state: StateIF): ApplicantI => {
@@ -448,7 +444,7 @@ export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
     let generateEntities = (entities) => {
       let output = []
       for (let entity of entities) {
-      // using this.$entityTypesXproData instead of scoped _entityTypesXproData here so that RLC can be included
+        // use EntityTypesXproData instead of scoped _entityTypesXproData here so that RLC can be included
         let obj = EntityTypesXproData.find(ent => ent.value === entity)
         // "CR" type is shortlisted. if XCR exists in filtered entity_types, preserve its rank and shortlist keys
         if (entity === EntityType.XCR) {
@@ -623,7 +619,7 @@ export const getLocationOptions = (state: StateIF): Array<any> => {
   if (getRequestActionCd(state) === RequestCode.MVE) {
     return Locations.filter(location => location.value === Location.BC)
   }
-  return Locations // return all locations
+  return Locations.filter(() => true) // copy of Locations
 }
 
 /** Return true if the name is Slashed */
@@ -675,40 +671,40 @@ export const getShowCorpNum = (state: StateIF): CorpNumRequests.COLIN | CorpNumR
 }
 
 export const getCorpNumForReservation = (state: StateIF): any => {
-  // this differs from getCorpNumForEdit by not supplying the empty keys for corpNum and homeJurisNum
-  // which are necessary to denote deletion during the PATCH operation that is for editing but which
-  // are not supported in the POST/PUT operation
+  // this function may supply empty keys for various properties
+  // which is necessary to effect their deletion during the PATCH operation
+  const ret = {
+    corpNum: getCorpNum(state),
+    homeJurisNum: getNrData(state).homeJurisNum,
+    tradeMark: getNrData(state).tradeMark, // may be empty
+    xproJurisdiction: getNrData(state).xproJurisdiction // may be empty
+  }
   if (!getShowCorpNum(state)) {
-    return {
-      corpNum: '',
-      homeJurisNum: getNrData(state).homeJurisNum
-    }
+    ret.corpNum = ''
+    ret.homeJurisNum = getNrData(state).homeJurisNum
   }
   if (getShowCorpNum(state) === CorpNumRequests.COLIN) {
-    return {
-      corpNum: getCorpNum(state),
-      homeJurisNum: ''
-    }
+    ret.corpNum = getCorpNum(state)
+    ret.homeJurisNum = ''
   }
-  return {
-    corpNum: getCorpNum(state),
-    homeJurisNum: getNrData(state).homeJurisNum
-  }
+  return ret
 }
 
 export const getEditNameReservation = (state: StateIF): NameRequestI => {
   let nrData = {}
   for (let key in getNrData(state)) {
+    // only set truthy keys
     if (getNrData(state)[key]) {
       nrData[key] = getNrData(state)[key]
     }
   }
-  let data = {
+
+  let data: NameRequestI = {
     applicants: [getApplicant(state)],
     request_action_cd: getRequestActionCd(state),
     entity_type_cd: getEntityTypeCd(state),
     ...nrData,
-    ...getCorpNumForReservation(state)
+    ...getCorpNumForReservation(state) // must be last
   }
   if (getXproRequestTypeCd(state)) {
     data['request_type_cd'] = getXproRequestTypeCd(state)

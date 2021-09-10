@@ -52,7 +52,6 @@ export default class MrasSearchInfoDialog extends Vue {
   @Getter getMrasSearchInfoModalVisible!: boolean
 
   // Global actions
-  @Action setCorpSearch!: ActionBindingIF
   @Action setMrasSearchInfoModalVisible!: ActionBindingIF
   @Action setName!: ActionBindingIF
   @Action setNoCorpNum!: ActionBindingIF

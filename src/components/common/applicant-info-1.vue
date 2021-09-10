@@ -390,8 +390,6 @@ import { ActionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { NameRequestI } from '@/interfaces'
 import { removeExcessSpaces } from '@/plugins/utilities'
-
-// List Data
 import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
 import AuthServices from '@/services/auth.services'
 
@@ -516,7 +514,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   }
 
   get countryOptions () {
-    return this.$intlJurisdictions
+    return IntlJurisdictions
   }
 
   get countryTypeCd () {
@@ -533,7 +531,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   }
 
   get provinceOptions () {
-    return this.$canJurisdictions.map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
+    return CanJurisdictions.map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
   }
 
   get showAllFields (): boolean {

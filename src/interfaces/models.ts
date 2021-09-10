@@ -8,14 +8,11 @@ import {
   RequestCode
 } from '@/enums'
 
-export type NameReqT = DraftReqI | ConditionalReqI | ReservedReqI
-export type NrDataResponseT = NameRequestI | null
-export type NrDataT = string | null
 export type SubmissionTypeT = 'examination' | 'consent' | 'normal'
 
 export interface AnalysisJSONI {
   header?: string
-  issues: IssueI[] | null
+  issues: IssueI[]
   status: 'fa' | 'rc' | 'ar'
 }
 
@@ -28,7 +25,7 @@ export interface ApplicantI {
   clientLastName?: string
   contact: string
   countryTypeCd: string
-  declineNotificationInd?: null | string
+  declineNotificationInd?: string
   emailAddress: string
   faxNumber?: string
   firstName: string

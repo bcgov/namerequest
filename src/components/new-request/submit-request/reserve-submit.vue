@@ -23,7 +23,7 @@ import NamexServices from '@/services/namex.services'
 import { Location, NrType, RequestCode } from '@/enums'
 
 @Component({})
-export default class ReserveSubmitButton extends Vue {
+export default class ReserveSubmit extends Vue {
   // Global getters
   @Getter getAssumedName!: string
   @Getter getConditionalNameReservation!: ConditionalReqI
@@ -43,10 +43,9 @@ export default class ReserveSubmitButton extends Vue {
   @Action setSubmissionType!: ActionBindingIF
   @Action setSubmissionTabComponent!: ActionBindingIF
 
-  @Prop(String)
-  readonly setup: string
+  @Prop(String) readonly setup: string
 
-  private isContinue: boolean = true
+  private isContinue = true
 
   private mounted () {
     this.$nextTick(() => {
@@ -66,6 +65,7 @@ export default class ReserveSubmitButton extends Vue {
     this.isContinue = true
     return 'Continue'
   }
+
   async sendToExamination () {
     await this.userClickedStopAnalysis(null)
     this.cancelAnalyzeName('NamesCapture')

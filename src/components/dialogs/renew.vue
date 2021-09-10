@@ -108,9 +108,11 @@ export default class RenewDialog extends Mixins(
   // Global getters
   @Getter getName!: string
   @Getter isRoleStaff!: boolean
+  @Getter getPriorityRequest!: boolean
 
   // Global action
   @Action toggleRenewModal!: ActionBindingIF
+  @Action setPriorityRequest!: ActionBindingIF
 
   /** Whether staff payment is valid. */
   private isStaffPaymentValid = false
@@ -142,10 +144,14 @@ export default class RenewDialog extends Mixins(
       // reset tab id
       this.currentTab = this.TAB_RENEW_NAME_REQUEST
 
+      // update new request model
+      this.setPriorityRequest(false) // no priority on renew
+
+      // fetch fees
       const params: FetchFeesParams = {
         filingType: FilingTypes.NM620,
         jurisdiction: Jurisdictions.BC,
-        priorityRequest: false // no priority on renew
+        priorityRequest: this.getPriorityRequest
       }
 
       // only make visible on success, otherwise hide it
@@ -207,7 +213,7 @@ export default class RenewDialog extends Mixins(
       action: PaymentAction.RENEW,
       nrId: this.getNrId,
       filingType: FilingTypes.NM620,
-      priorityRequest: false // no priority on renew
+      priorityRequest: this.getPriorityRequest
     } as CreatePaymentParams, onSuccess)
 
     // on error, close this modal so error modal is visible

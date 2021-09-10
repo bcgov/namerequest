@@ -88,10 +88,11 @@ import StaffPayment from '@/components/payment/staff-payment.vue'
 import { CreatePaymentParams, FetchFeesParams } from '@/modules/payment/models'
 import { RESUBMIT_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import { FilingTypes } from '@/modules/payment/filing-types'
-import { Jurisdictions, PaymentAction } from '@/enums'
+import { Jurisdictions, NrAction, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import NamexServices from '@/services/namex.services'
 
 @Component({
   components: {
@@ -116,10 +117,13 @@ export default class ResubmitDialog extends Mixins(
 
   // Global getters
   @Getter isRoleStaff!: boolean
+  @Getter getNrNum!: string
 
   // Global action
   @Action toggleResubmitModal!: ActionBindingIF
   @Action resubmit!: ActionBindingIF
+  @Action setPriorityRequest!: ActionBindingIF
+  @Action loadExistingNameRequest!: ActionBindingIF
 
   /** Whether staff payment is valid. */
   private isStaffPaymentValid = false
@@ -133,7 +137,10 @@ export default class ResubmitDialog extends Mixins(
   /** Whether this dialog is visible. */
   private isVisible = false
 
-  /** Whether this NR is a priority request. */
+  /**
+   * Whether this NR is a priority request.
+   * Initially false for resubmission.
+   */
   private isPriorityRequest = false
 
   /** Whether this modal should be shown (per store property). */
@@ -167,6 +174,10 @@ export default class ResubmitDialog extends Mixins(
 
   @Watch('isPriorityRequest')
   async onPriorityRequestChange (): Promise<boolean> {
+    // update new request model
+    this.setPriorityRequest(this.isPriorityRequest)
+
+    // fetch fees
     const params: FetchFeesParams = {
       filingType: FilingTypes.NM620,
       jurisdiction: Jurisdictions.BC,
@@ -203,6 +214,9 @@ export default class ResubmitDialog extends Mixins(
 
     this.isLoadingPayment = true
 
+    // save original NR number
+    const nrNum = this.getNrNum
+
     // first resubmit the NR
     let success: boolean = await this.resubmit(null)
 
@@ -230,9 +244,20 @@ export default class ResubmitDialog extends Mixins(
       priorityRequest: this.isPriorityRequest
     } as CreatePaymentParams, onSuccess)
 
-    // on error, close this modal so error modal is visible
     if (!success) {
+      // close this modal so error modal is visible
       await this.hideModal()
+
+      // reset session data
+      sessionStorage.setItem('BCREG-NRL', null)
+      sessionStorage.setItem('BCREG-nrNum', nrNum)
+
+      // try to delete the new (resubmitted) NR
+      await NamexServices.patchNameRequestsByAction(this.getNrId, NrAction.CANCEL).catch(() => {})
+
+      // try to reload the original NR
+      const nrData = await NamexServices.getNameRequest(false)
+      if (nrData) this.loadExistingNameRequest(nrData)
     }
   }
 
