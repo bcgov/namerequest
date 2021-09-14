@@ -1,4 +1,4 @@
-import { NameRequestI, StateModelIF } from '@/interfaces'
+import { NameRequestI, StateModelIF, RefundParamsIF } from '@/interfaces'
 import { EntityType, Location, NameCheckErrorType, StaffPaymentOptions } from '@/enums'
 
 export const stateModel: StateModelIF = {
@@ -180,6 +180,12 @@ export const stateModel: StateModelIF = {
     missingDistinctive: false,
     numbersCheckUse: [],
     specialCharacters: []
+  },
+  refundParams: {
+    refundMessageText1: '',
+    refundMessageText2: '',
+    refundLabel: '',
+    showStaffContact: false,
+    showAlertIcon: false
   }
-
 }

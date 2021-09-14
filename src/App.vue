@@ -158,12 +158,16 @@ export default class App extends Mixins(DateMixin) {
   }
 
   async created (): Promise<void> {
-    // update Current Js Date now and every 1 minute thereafter
-    await this.updateCurrentJsDate()
-    this.updateCurrentJsDateId = window.setInterval(this.updateCurrentJsDate, 60000)
+    // start with "page not ready" - show spinner
+    // (spinner will be hidden in landing.vue)
+    this.showSpinner = true
 
     // listen for spinner show/hide events
     this.$root.$on('showSpinner', (flag = false) => { this.showSpinner = flag })
+
+    // update Current Js Date now and every 1 minute thereafter
+    await this.updateCurrentJsDate()
+    this.updateCurrentJsDateId = window.setInterval(this.updateCurrentJsDate, 60000)
 
     // in case user is already logged in,
     // get and store keycloak roles

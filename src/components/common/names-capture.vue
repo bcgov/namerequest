@@ -8,8 +8,8 @@
         </v-row>
 
         <v-row class="mt-3">
-          <v-col cols="4" class="py-0">
-            <v-select :error-messages="getErrors.includes('request_action_cd') ? 'Please select a type' : ''"
+        <v-col cols="5" class="py-0">
+            <v-select :error-messages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
                       :hide-details="!getErrors.includes('request_action_cd')"
                       :items="getRequestTypeOptions"
                       @change="clearErrors()"
@@ -17,16 +17,17 @@
                       id="search-type-options-select"
                       v-model="request_action_cd" />
           </v-col>
-          <v-col cols="4" class="py-0">
-            <v-select :error-messages="getErrors.includes('location') ? 'Please select a location' : ''"
+          <v-col cols="2" class="py-0">
+            <v-select :error-messages="getErrors.includes('location') ? 'Please select a jurisdiction' : ''"
                       :hide-details="!getErrors.includes('location')"
                       :items="getLocationOptions"
+                      @change="clearErrors()"
                       filled
                       id="location-options-select"
                       v-model="location" />
           </v-col>
-          <v-col cols="4" class="py-0">
-            <v-select :error-messages="getErrors.includes('entity_type_cd') ? 'Please select a type' : ''"
+          <v-col cols="5" class="py-0">
+            <v-select :error-messages="getErrors.includes('entity_type_cd') ? 'Please select a business type' : ''"
                       :hide-details="!getErrors.includes('entity_type_cd')"
                       :items="getEntityTypeOptions"
                       @change="clearErrors()"
@@ -322,6 +323,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   @Action setRequestAction!: ActionBindingIF
   @Action setSubmissionTabComponent!: ActionBindingIF
   @Action setSubmissionType!: ActionBindingIF
+  @Action startEditName!: ActionBindingIF
 
   readonly buildNameURL = 'https://www2.gov.bc.ca/gov/content?id=4A6A55FAD204494D9AF0B53BDC13A24F'
 
@@ -529,7 +531,11 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   }
 
   get isValid (): boolean {
+    // invalid if there are any errors
+    if (this.getErrors.length > 0) return false
+
     let { nameChoices, messages, designationAtEnd, validatePhrases, location } = this
+
     if (this.getIsAssumedName && this.getEditMode) {
       if (!nameChoices['name1']) {
         messages['name1'] = 'Please enter at least one name'
@@ -538,6 +544,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
       messages['name1'] = ''
       return true
     }
+
     if (this.getIsAssumedName) {
       if (!nameChoices['name1']) {
         if (!nameChoices['name2'] && !nameChoices['name3']) {
@@ -819,6 +826,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
     for (let key in this.showDesignationErrors) {
       this.showDesignationErrors[key] = true
     }
+    this.startEditName(null)
     this.validate(true)
   }
 
@@ -883,9 +891,14 @@ export default class NamesCapture extends Mixins(CommonMixin) {
 
   @Watch('location')
   handleLocation (newVal: Location, oldVal: Location) {
+    // reset search values when location has changed
     if (newVal !== oldVal) {
       this.setNRData({ key: 'xproJurisdiction', value: '' })
+      this.setNRData({ key: 'name', value: '' })
+      this.setNRData({ key: 'corpSearch', value: '' })
+      this.setNRData({ key: 'homeJurisNum', value: '' })
     }
+
     // special case for sub-menu
     if (newVal === Location.INFO) {
       let type = this.entity_type_cd
