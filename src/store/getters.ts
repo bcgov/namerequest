@@ -36,6 +36,10 @@ import {
   Designations, EntityTypesBcData, EntityTypesXproData, Locations, RequestActions
 } from '@/list-data'
 
+export const isMobile = (): boolean => {
+  return window.innerWidth < 600
+}
+
 /** True if user is authenticated, else False. */
 export const getIsAuthenticated = (): boolean => {
   return Boolean(sessionStorage.getItem(SessionStorageKeys.KeyCloakToken))
