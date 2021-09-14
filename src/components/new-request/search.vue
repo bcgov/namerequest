@@ -16,6 +16,7 @@
             <div v-on="scope.on">
               <v-select :error-messages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
                         :items="$requestActions"
+                        :menu-props="{ bottom: true, offsetY: true}"
                         @change="clearErrors()"
                         label="Select an Action"
                         filled
@@ -50,7 +51,8 @@
                         :disabled="locationDisabled"
                         :readonly="!request_action_cd"
                         :class="!request_action_cd ? 'disabled-custom' : ''"
-                        @change="clearErrors()"
+                        :menu-props="{ bottom: true, offsetY: true}"
+                       @change="clearErrors()"
                         filled
                         label="Select a Jurisdiction"
                         v-model="location">
@@ -87,6 +89,7 @@
                         :label="getIsConversion ? 'Select an Alteration Type' : 'Select a Business Type'"
                         :readonly="!request_action_cd || !location"
                         :class="!location ? 'disabled-custom' : ''"
+                        :menu-props="{ bottom: true, offsetY: true}"
                         @change="clearErrors()"
                         filled
                         v-model="entity_type_cd">
@@ -124,6 +127,7 @@
       <v-col cols="4" v-if="getIsXproMras">
         <v-select :error-messages="getErrors.includes('jurisdiction') ? 'Please select a jurisdiction' : ''"
                   :items="jurisdictionOptions"
+                  :menu-props="{ bottom: true, offsetY: true}"
                   label="Select business's home jurisdiction"
                   @change="clearErrors()"
                   filled
@@ -140,6 +144,7 @@
         <NameInput v-if="!isFederal"
                    :class="inputCompClass"
                    :is-mras-search="(getIsXproMras && !noCorpNum)"
+                   :menu-props="{ bottom: true, offsetY: true}"
                    id="name-input-component"
                    class="pa-0"
                    @emit-corp-num-validity="corpNumValid = $event"/>
@@ -153,6 +158,7 @@
                   :items="designationOptions"
                   label="Select a Designation"
                   :readonly="!entity_type_cd"
+                  :menu-props="{ bottom: true, offsetY: true}"
                   v-model="designation"
                   @change="clearErrors()">
         </v-select>
@@ -564,6 +570,9 @@ export default class NewSearch extends Mixins(CommonMixin) {
   /* reduce checkbox height when there are no error messages */
   .v-messages:not(.error--text) {
     margin-bottom: -22px;
+  }
+  .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
+    color: #495057 !important;
   }
 }
 </style>
