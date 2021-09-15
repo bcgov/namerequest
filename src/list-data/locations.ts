@@ -2,7 +2,7 @@ import { Location } from '@/enums'
 
 export const Locations: any[] = [
   {
-    text: 'BC',
+    text: 'British Columbia',
     value: Location.BC,
     blurbs: [
       `Your business does not currently exist anywhere (i.e., it is a new business).`,
