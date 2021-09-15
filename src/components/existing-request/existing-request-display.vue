@@ -44,8 +44,33 @@
                 <v-col cols="12" class="request-status">
                   <span>Request Status:</span>
                   &nbsp;
-                  <span :class="isNotPaid ? 'app-red' : isPaymentProcessing ? 'app-green' : ''">
-                    {{ requestStatusText }}</span>
+                  <span :class="requestStatusTextClass">
+                    {{ requestStatusText }}
+                    <span v-if="isRefundRequested">
+                      <v-tooltip
+                        content-class="top-tooltip"
+                        top nudge-top min-width="24rem">
+                        <template v-slot:activator="{ on, attrs }">
+                          <span v-bind="attrs" v-on="on">
+                            <span  class="refund-label">{{ getRefundParams.refundLabel }}</span>
+                            <v-icon v-if="getRefundParams.showAlertIcon" icon color="error">
+                              mdi-alert
+                            </v-icon>
+                          </span>
+                        </template>
+                        <div v-html="getRefundParams.refundMessageText1" />
+                        <br v-if="getRefundParams.refundMessageText2" />
+                        <div v-if="getRefundParams.refundMessageText2"
+                          v-html="getRefundParams.refundMessageText2" />
+                        <div v-if="getRefundParams.showStaffContact">
+                          <br/>
+                          <contact-info
+                            id="tooltip-contact-info"
+                            direction="col" />
+                        </div>
+                      </v-tooltip>
+                    </span>
+                  </span>
                   <v-icon v-if="isAlertState" color="error" size="20" class="mt-n1 ml-1">
                     mdi-alert
                   </v-icon>
@@ -170,12 +195,20 @@ import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
-import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished } from '@/enums'
+import {
+  NameState,
+  NrAction,
+  NrState,
+  PaymentStatus,
+  SbcPaymentStatus,
+  PaymentAction,
+  Furnished
+} from '@/enums'
 import { sleep } from '@/plugins'
 import NamexServices from '@/services/namex.services'
+import ContactInfo from '@/components/common/contact-info.vue'
 
 // Interfaces
-import { NameRequestI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
@@ -184,7 +217,8 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
     NamesGrayBox,
     CheckStatusGrayBox,
     NrApprovedGrayBox,
-    NrNotApprovedGrayBox
+    NrNotApprovedGrayBox,
+    ContactInfo
   }
 })
 export default class ExistingRequestDisplay extends Mixins(
@@ -196,7 +230,6 @@ export default class ExistingRequestDisplay extends Mixins(
   // Global getters
   @Getter getDisplayedComponent!: string
   @Getter getIsAuthenticated!: boolean
-  @Getter getNr!: Partial<NameRequestI>
   @Getter getNrId!: number
   @Getter getNrState!: NrState
 
@@ -412,59 +445,30 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** The display text for Request Status. */
   private get requestStatusText (): string {
-    if (this.isNotPaid) {
+    if (this.nr.state === NrState.REFUND_REQUESTED) {
+      return 'Cancelled, ' // this label will be composed with 'getRefundParams.refundLabel'
+    } else if (this.isNotPaid) {
       return 'Payment Incomplete'
     } else if (this.isPaymentProcessing) {
       return 'Processing Payment'
     } else {
       switch (this.nr.state) {
+        case NrState.CONSUMED:
+          return `${this.approvedName.state === NameState.CONDITIONAL ? 'Conditional Approval' : 'Approved'}
+                 / Used For ${this.approvedName.corpNum}`
         case NrState.APPROVED:
-          if (this.isNrConsumed) return `Approved / Used For ${this.approvedName.corpNum}`
-          if (this.isNrExpired) return 'Expired'
           return 'Approved'
         case NrState.CANCELLED: return 'Cancelled'
         case NrState.CONDITIONAL:
-          if (this.isNrConsumed) return `Conditional Approval / Used For ${this.approvedName.corpNum}`
-          if (this.isNrExpired) return 'Expired'
           return 'Conditional Approval'
         case NrState.DRAFT: return 'Pending Staff Review'
-        case NrState.EXPIRED: return 'Expired' // legacy state; see also "isNrExpired"
+        case NrState.EXPIRED: return 'Expired'
         case NrState.HOLD: return 'In Progress' // show HOLD as "In Progress"
         case NrState.INPROGRESS: return 'In Progress'
-        case NrState.REFUND_REQUESTED: return 'Cancelled, Refund Requested'
         case NrState.REJECTED: return 'Rejected'
         default: return '-' // should never happen
       }
     }
-  }
-
-  /** True if the NR is consumed. */
-  private get isNrConsumed (): boolean {
-    // 1. NR is approved or conditional
-    // 2. a Name is approved
-    // 3. Approved Name is consumed
-    return (
-      this.isNrApprovedOrConditional &&
-      !!this.approvedName &&
-      this.isApprovedNameConsumed
-    )
-  }
-
-  /**
-   * True if the NR is expired.
-   * Note that some old NRs have state=EXPIRED and don't use this method.
-   */
-  private get isNrExpired (): boolean {
-    // 1. NR is approved or conditional
-    // 2. a Name is approved
-    // 3. Approved Name is not consumed
-    // 4. Expiration Date has passed
-    return (
-      this.isNrApprovedOrConditional &&
-      !!this.approvedName &&
-      !this.isApprovedNameConsumed &&
-      this.hasExpirationDatePassed
-    )
   }
 
   /** True if NR is in Approved or Conditional state. */
@@ -487,23 +491,9 @@ export default class ExistingRequestDisplay extends Mixins(
     return this.nr.names.find(name => (name.state === NameState.CONDITIONAL))
   }
 
-  /** True if the Approved Name is consumed. */
-  private get isApprovedNameConsumed (): boolean {
-    // consumed = name is approved + has a consumption date + has a corp num
-    return (!!this.approvedName?.consumptionDate && !!this.approvedName?.corpNum)
-  }
-
-  /** True if the NR's expiration date has passed. */
-  private get hasExpirationDatePassed (): boolean {
-    if (!this.nr.expirationDate) return false
-    const expireDays = this.daysFromToday(new Date(this.nr.expirationDate))
-    // 0 means today (which means it's expired)
-    return (isNaN(expireDays) || expireDays < 1)
-  }
-
   /** True if the current state should display an alert icon. */
   private get isAlertState (): boolean {
-    return ['Cancelled', 'Cancelled, Refund Requested', 'Expired'].includes(this.requestStatusText) || this.isNotPaid
+    return ['Cancelled', 'Expired'].includes(this.requestStatusText) || this.isNotPaid
   }
 
   private get isNotPaid () {
@@ -512,6 +502,14 @@ export default class ExistingRequestDisplay extends Mixins(
 
   private get isPaymentProcessing () {
     return ([PaymentStatus.APPROVED, PaymentStatus.COMPLETED].includes(this.pendingPayment?.sbcPayment?.statusCode))
+  }
+
+  /** Returns the css class for the requestStatusText. */
+  private get requestStatusTextClass (): string {
+    if (this.isRefundRequested) return ''
+    else if (this.isNotPaid) return 'app-red'
+    else if (this.isPaymentProcessing) return 'app-green'
+    return ''
   }
 
   /** Returns True if the specified action should display a red button. */
@@ -747,6 +745,25 @@ export default class ExistingRequestDisplay extends Mixins(
   span {
     color: $dk-text;
     font-weight: bold;
+  }
+}
+
+.refund-label {
+  color: $app-blue !important;
+  font-weight: normal !important;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 0.1rem
+}
+
+::v-deep {
+  .contact-icon {
+    color: white;
+  }
+  .contact-value {
+    color: white;
+    text-decoration: none;
   }
 }
 </style>

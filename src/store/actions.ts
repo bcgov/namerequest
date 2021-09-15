@@ -35,7 +35,8 @@ import {
   StaffPaymentIF,
   QuickSearchParamsI,
   QuickSearchParsedRespI,
-  ConflictListItemI
+  ConflictListItemI,
+  RefundParamsIF
 } from '@/interfaces'
 import { ActionIF } from '@/interfaces/store-interfaces'
 
@@ -234,11 +235,11 @@ const commitExistingData = ({ commit, getters }) => {
     let { xproJurisdiction } = getters.getNr
     let location: Location
     for (let key of ['value', 'text']) {
-      if (CanJurisdictions.some(jurisdiction => jurisdiction[key].toUpperCase() === xproJurisdiction)) {
+      if (CanJurisdictions.some(j => j[key].toUpperCase() === xproJurisdiction.toUpperCase())) {
         location = Location.CA
         break
       }
-      if (IntlJurisdictions.some(jurisdiction => jurisdiction[key].toUpperCase() === xproJurisdiction)) {
+      if (IntlJurisdictions.some(j => j[key].toUpperCase() === xproJurisdiction.toUpperCase())) {
         location = Location.IN
         break
       }
@@ -318,7 +319,7 @@ export const checkMRAS = ({ getters }, corpNum: string) => {
 export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
   if (getters.getCorpSearch) {
     try {
-      let url = `mras-profile/${getters.getRequestJurisdictionCd}/${getters.getCorpSearch}`
+      let url = `mras-profile/${getters.getJurisdictionCd}/${getters.getCorpSearch}`
       const response = await axios.get(url)
       if (response?.status === OK) {
         return response.data
@@ -332,7 +333,7 @@ export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
         const msg = await NamexServices.handleApiError(err, 'Could not fetch mras profile')
         console.error('fetchMRASProfile() =', msg) // eslint-disable-line no-console
       }
-      commit('mutateName')
+      commit('mutateName', '')
       commit('mutateMrasSearchResult', status)
       commit('mutateMrasSearchInfoModalVisible', true)
     }
@@ -1008,6 +1009,10 @@ export const setDoNameCheck: ActionIF = ({ commit }, check: boolean): void => {
   commit('mutateDoNameCheck', check)
 }
 
+export const startEditName: ActionIF = ({ commit, getters }) => {
+  if (!getters.getEntityTypeCd) commit('setErrors', 'entity_type_cd')
+}
+
 export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
   resetAnalyzeName({ commit, getters })
   setUserCancelledAnalysis({ commit, getters }, false)
@@ -1020,7 +1025,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
     if (!getters.getDesignation) commit('setErrors', 'designation')
   }
   if ([Location.CA, Location.IN].includes(getters.getLocation) &&
-    ![RequestCode.MVE].includes(getters.getRequestActionCd) && !getters.getRequestJurisdictionCd) {
+    ![RequestCode.MVE].includes(getters.getRequestActionCd) && !getters.getJurisdictionCd) {
     commit('setErrors', 'jurisdiction')
     return
   }
@@ -1186,4 +1191,8 @@ export const startQuickSearch = async ({ commit, getters }, checks: QuickSearchP
       commit('mutateAnalyzeConflictsPending', false)
     }
   }
+}
+
+export const setRefundParams: ActionIF = ({ commit }, refundParams: RefundParamsIF): void => {
+  commit('mutateRefundParams', refundParams)
 }

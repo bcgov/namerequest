@@ -3,6 +3,7 @@
     <v-col cols="12" class="pa-0">
       <v-text-field :error-messages="message"
                     @input="clearErrors()"
+                    @blur="handleBlur()"
                     @keydown.enter="handleSubmit"
                     autocomplete="chrome-off"
                     :filled="!isReadOnly"
@@ -25,6 +26,7 @@ import { Component, Prop, Vue, Watch, Emit } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
 import { Location, RequestCode } from '@/enums'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { sanitizeName } from '@/plugins'
 
 @Component({})
 export default class NameInput extends Vue {
@@ -64,7 +66,7 @@ export default class NameInput extends Vue {
   /** The array of validation rules for the MRAS corp num. */
   private get mrasRules (): Function[] {
     return [
-      v => (/^\d+$/.test(v) || 'A corporate number is required'),
+      v => (/^[0-9a-zA-Z-]+$/.test(v) || 'A corporate number is required'),
       v => (!v || v.length <= 40) || 'Cannot exceed 40 characters' // maximum character count
     ]
   }
@@ -117,6 +119,13 @@ export default class NameInput extends Vue {
 
   clearErrors () {
     this.setClearErrors(null)
+  }
+
+  /* the leading and trailing spaces need to be removed when name input finished
+      Using the sanitizeName, which has been used in name-capture to do the work
+  */
+  handleBlur (): void {
+    this.searchValue = sanitizeName(this.searchValue)
   }
 
   async handleSubmit (event: KeyboardEvent) {

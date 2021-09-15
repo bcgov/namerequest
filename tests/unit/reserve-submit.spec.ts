@@ -2,7 +2,6 @@ import ReserveSubmit from '@/components/new-request/submit-request/reserve-submi
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuetify from 'vuetify'
 import sinon from 'sinon'
-import { XproMapping } from '@/list-data'
 
 const localVue = createLocalVue()
 const vuetify = new Vuetify()
@@ -16,9 +15,6 @@ async function provideWrapper (setup) {
   let wrapper = mount(ReserveSubmit, {
     localVue,
     vuetify,
-    mocks: {
-      $xproMapping: XproMapping
-    },
     propsData: {
       setup
     }

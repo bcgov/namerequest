@@ -5,8 +5,8 @@
     </v-row>
 
     <v-row class="mt-4" no-gutters>
+      <!--request_action_cd-->
       <v-col cols="4">
-        <!--request_action_cd-->
         <v-tooltip top
                    id="search-type-options-select"
                    content-class="top-tooltip"
@@ -37,8 +37,8 @@
           <span>{{ getRequestText }}</span>
         </v-tooltip>
       </v-col>
+      <!--location (aka jurisdiction)-->
       <v-col cols="4" class="px-3">
-        <!--location-->
         <v-tooltip id="location-options-select"
                    top
                    content-class="top-tooltip"
@@ -75,8 +75,8 @@
           <span>{{ getLocationText }}</span>
         </v-tooltip>
       </v-col>
+      <!--entity_type_cd-->
       <v-col cols="4">
-        <!--entityConversionType-->
         <v-tooltip id="entity-type-options-select"
                    top
                    content-class="top-tooltip"
@@ -128,7 +128,7 @@
         <v-select :error-messages="getErrors.includes('jurisdiction') ? 'Please select a jurisdiction' : ''"
                   :items="jurisdictionOptions"
                   :menu-props="{ bottom: true, offsetY: true}"
-                  label="Select business's home jurisdiction"
+                  label="Select business' home jurisdiction"
                   @change="clearErrors()"
                   filled
                   v-model="jurisdiction">
@@ -231,6 +231,7 @@ import { ConversionTypesI, EntityI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { AccountType, EntityType, Location, RequestCode } from '@/enums'
 import { CommonMixin } from '@/mixins'
+import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
 
 @Component({
   components: { NameInput }
@@ -453,9 +454,9 @@ export default class NewSearch extends Mixins(CommonMixin) {
   }
 
   get jurisdictionOptions () {
-    return this.location === Location.CA
-      ? this.$canJurisdictions.filter(jur => jur.value !== Location.BC)
-      : this.$intlJurisdictions.filter(jur => jur.value !== Location.CA)
+    return (this.location === Location.CA)
+      ? CanJurisdictions.filter(jur => jur.value !== Location.BC)
+      : IntlJurisdictions.filter(jur => jur.value !== Location.CA)
   }
 
   get entityTextFromValue (): string {
