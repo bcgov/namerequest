@@ -52,7 +52,7 @@
                         :readonly="!request_action_cd"
                         :class="!request_action_cd ? 'disabled-custom' : ''"
                         :menu-props="{ bottom: true, offsetY: true}"
-                       @change="clearErrors()"
+                        @change="clearErrors()"
                         filled
                         label="Select a Jurisdiction"
                         v-model="location">
@@ -572,7 +572,7 @@ export default class NewSearch extends Mixins(CommonMixin) {
     margin-bottom: -22px;
   }
   .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
-    color: #495057 !important;
+    color: $grey7 !important;
   }
 }
 </style>
