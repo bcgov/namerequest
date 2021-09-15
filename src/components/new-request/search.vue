@@ -573,7 +573,7 @@ export default class NewSearch extends Mixins(CommonMixin) {
     margin-bottom: -22px;
   }
   .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
-    color: $grey7 !important;
+    color: $gray7 !important;
   }
 }
 </style>
