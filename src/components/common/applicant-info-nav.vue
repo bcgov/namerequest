@@ -1,12 +1,14 @@
 <template>
-  <v-col cols="5" class="text-right py-0">
+  <v-col cols="12" md="5" lg="5" class="py-0" :class="isMobile ? 'text-center' : 'text-right'">
     <v-btn x-large
-           class="submit-back-btn mr-3"
+           id="submit-back-btn"
+           :class="isMobile ? 'mobile-btn' : 'mr-3'"
            v-if="showBack"
            @click="back()">
       {{ backText }}
     </v-btn>
     <v-btn x-large
+           :class="{ 'mobile-btn' : isMobile }"
            @click="nextAction()"
            :loading="getIsLoadingSubmission"
            class="submit-continue-btn">
@@ -30,6 +32,7 @@ export default class ApplicantInfoNav extends Vue {
   @Getter getNrState!: string
   @Getter getSubmissionTabNumber!: number
   @Getter getSubmissionType!: SubmissionTypeT
+  @Getter isMobile!: boolean
 
   // Global actions
   @Action setSubmissionTabNumber!: ActionBindingIF
@@ -85,5 +88,11 @@ export default class ApplicantInfoNav extends Vue {
   border: 1px solid $app-blue !important;
   box-shadow: none !important;
   text-transform: none !important;
+}
+
+.submit-continue-btn {
+  @media only screen and (max-width: 600px) {
+    width: 100%;
+  }
 }
 </style>

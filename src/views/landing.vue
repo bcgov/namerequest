@@ -1,6 +1,6 @@
 <template>
   <v-container id="landing-container" class="ma-0 pa-0" fluid>
-    <v-row id="upper-row" no-gutters align-content="start" :class="{ 'wide-screen': false }">
+    <v-row id="upper-row" no-gutters align-content="start">
       <v-container class="landing-content-container">
         <AppTitleCols />
 
@@ -62,7 +62,6 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 export default class Landing extends Vue {
   // Global getter
   @Getter getDisplayedComponent!: string
-  @Getter isMobile!: boolean
 
   // Global actions
   @Action loadExistingNameRequest!: ActionBindingIF
@@ -90,10 +89,6 @@ export default class Landing extends Vue {
 <style lang="scss" scoped>
 .landing-content-container {
   max-width: 1140px;
-
-  .wide-screen {
-    min-width: 940px;
-  }
 }
 
 #upper-row {

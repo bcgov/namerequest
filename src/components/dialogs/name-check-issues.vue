@@ -25,12 +25,12 @@
       </v-card-text>
       <v-card-actions class="pt-7">
         <v-row justify="center" no-gutters>
-          <v-col v-if="options.cancelText" cols="auto">
+          <v-col v-if="options.cancelText" cols="12" md="auto" lg="auto">
             <v-btn class="cancel-btn outlined" outlined @click="proceed(false)">
               {{ options.cancelText }}
             </v-btn>
           </v-col>
-          <v-col v-if="options.acceptText" class="pl-3" cols="auto">
+          <v-col v-if="options.acceptText" :class="{'pl-3': !isMobile}" cols="12" md="auto" lg="auto">
             <v-btn class="accept-btn" @click="proceed(true)">
               {{ options.acceptText }}
               <v-icon>mdi-chevron-right</v-icon>
@@ -45,7 +45,7 @@
 <script lang="ts">
 // external
 import { Component, Vue, Prop, Emit } from 'vue-property-decorator'
-
+import { Getter } from 'vuex-class'
 import { DialogOptionsI } from '@/interfaces'
 
 @Component({})
@@ -54,15 +54,28 @@ export default class NameCheckIssuesDialog extends Vue {
   @Prop() private readonly display: boolean
   @Prop() private readonly options: DialogOptionsI
 
+  // Global getter
+  @Getter isMobile!: boolean
+
   @Emit() private proceed (val: boolean) { }
 }
 </script>
 
 <style lang="scss" scoped>
 @import '@/assets/scss/theme.scss';
+.cancel-btn {
+  @media only screen and (max-width: 600px) {
+    width: 100%;
+  }
+}
 .accept-btn {
   font-size: 0.875rem !important;
   font-weight: bold;
+
+  @media only screen and (max-width: 600px) {
+    margin-top: 10px;
+    width: 100%;
+  }
 }
 .close-btn {
   float: right;

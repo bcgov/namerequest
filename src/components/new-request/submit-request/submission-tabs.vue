@@ -6,7 +6,7 @@
       </v-col>
     </template>
     <template v-slot:content>
-      <v-tabs v-model="submissionTabNumber" id="applicant-info-slider">
+      <v-tabs v-model="submissionTabNumber" id="applicant-info-slider" class="mt-2">
         <v-tabs-items v-model="submissionTabNumber">
           <v-tab-item>
             <keep-alive>
