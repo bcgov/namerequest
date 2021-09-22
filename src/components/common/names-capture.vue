@@ -270,7 +270,7 @@
         </transition>
       </v-row>
 
-      <v-row class="mt-7">
+      <v-row class="mt-7 mb-0">
         <v-col cols="7" class="py-0" />
         <ApplicantInfoNav @nextAction="validateButton()" />
       </v-row>

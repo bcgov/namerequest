@@ -23,15 +23,15 @@
     <v-row no-gutters class="mt-n2">
       <v-col>
         <span class="title-bold-16">Applicant Name</span>
-        <v-row>
-          <v-col>
+        <v-row class="my-1">
+          <v-col cols="12" md="6" lg="6">
             <v-text-field
               filled
               label="First Name"
               v-model="applicantFirstName"
             />
           </v-col>
-          <v-col>
+          <v-col cols="12" md="6" lg="6">
             <v-text-field
               filled
               label="Last Name"
@@ -49,8 +49,8 @@
         <span v-if="hasAppliedDates" id="clear-date-btn" class="text-body-3 app-blue" @click="clearDates()">
           Clear <v-icon small>mdi-close</v-icon>
         </span>
-        <v-row>
-          <v-col>
+        <v-row class="my-1">
+          <v-col cols="12" md="6" lg="6">
             <v-text-field
               filled
               label="Start Date"
@@ -63,7 +63,7 @@
               v-on:keydown="$event.preventDefault()"
             />
           </v-col>
-          <v-col>
+          <v-col cols="12" md="6" lg="6">
             <v-text-field
               filled
               label="End Date"

@@ -94,7 +94,7 @@ export default class LinkRow extends Mixins(CommonMixin) {
 @import '@/assets/scss/theme.scss';
 
 .links-row {
-  min-height: 60px;
+  min-height: 70px;
   background-color: $gray1;
   text-align: center;
 

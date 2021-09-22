@@ -274,7 +274,7 @@ export default class AdvancedSearch extends Vue {
 @import '@/assets/scss/theme.scss';
 
 .tab-card-height {
-  height: 36rem;
+  min-height: 36rem;
 }
 
 .retrieve-card-height {
