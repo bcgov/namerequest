@@ -48,13 +48,13 @@
       </v-row>
 
       <v-row class="mt-5">
-        <v-col cols="2" class="label-style align-self-start pt-0" key="static-1">
+        <v-col cols="12" md="2" lg="2" class="label-style align-self-start pt-0" key="static-1">
           {{choicesLabelsAndHints[0].label}}
         </v-col>
         <transition name="fade" mode="out-in">
-          <v-col :key="transitionKey(1)" class="ma-0 pa-0" cols="10">
+          <v-col :key="transitionKey(1)" class="ma-0 pa-0" :cols="isMobile ? 12 : 10">
             <v-row class="ma-0 pa-0" v-if="location === 'BC'">
-              <v-col :cols="designationAtEnd ? 8 : 12" class="py-0" >
+              <v-col :cols="(designationAtEnd && !isMobile) ? 8 : 12" :class="{ 'py-0' : !isMobile }" >
                 <v-text-field :error-messages="messages.name1"
                               :hide-details="hideDetails"
                               :value="nameChoices.name1"
@@ -65,7 +65,7 @@
                               :label="choicesLabelsAndHints[0].hint"
                               :name="Math.random()"/>
               </v-col>
-              <v-col cols="4" class="py-0" v-if="designationAtEnd">
+              <v-col cols="12" md="4" lg="4" v-if="designationAtEnd" :class="{ 'py-0' : !isMobile }">
                 <v-tooltip top
                   transition="fade-transition"
                   content-class="top-tooltip"
@@ -134,8 +134,8 @@
       </v-row>
 
       <v-row v-if="!getEditMode" class="my-1 py-0 colour-text mt-5">
-        <v-col cols="2" class="py-0"></v-col>
-        <v-col cols="10" class="py-0 text-body-3">
+        <v-col :cols="isMobile ? 0 : 2" class="py-0"></v-col>
+        <v-col :cols="isMobile ? 12 : 10" class="py-0 text-body-3">
           <span v-if="location!=='BC'">
             <span v-if="getIsAssumedName">
               You may provide up to two additional assumed names which will be considered at no further
@@ -175,13 +175,13 @@
       </v-row>
 
       <v-row class="mt-5" v-if="showSecondAndThirdNameChoices">
-        <v-col cols="2" class="label-style align-self-start pt-0" key="static-2">
+        <v-col cols="12" md="2" lg="2" class="label-style align-self-start pt-0" key="static-2">
           {{choicesLabelsAndHints[1].label}}
         </v-col>
         <transition name="fade" mode="out-in">
-          <v-col :key="transitionKey(2)" class="ma-0 pa-0" cols="10">
+          <v-col :key="transitionKey(2)" class="ma-0 pa-0" :cols="isMobile ? 12 : 10">
             <v-row class="ma-0 pa-0">
-              <v-col :cols="designationAtEnd ? 8: 12" class="py-0">
+              <v-col :cols="(designationAtEnd && !isMobile) ? 8: 12" :class="{'py-0' : !isMobile }">
                 <v-text-field :error-messages="messages.name2"
                               :hide-details="hideDetails"
                               :value="nameChoices.name2"
@@ -192,7 +192,7 @@
                               :label="choicesLabelsAndHints[1].hint"
                               :name="Math.random()" />
               </v-col>
-              <v-col cols="4" class="py-0" v-if="designationAtEnd">
+              <v-col cols="12" md="4" lg="4" class="py-0" v-if="designationAtEnd">
                 <v-tooltip top
                   transition="fade-transition"
                   content-class="top-tooltip"
@@ -222,13 +222,13 @@
       </v-row>
 
       <v-row no gutters class="mt-5" key="static-3" v-if="showSecondAndThirdNameChoices">
-        <v-col cols="2" class="label-style align-self-start pt-0">
+        <v-col cols="12" md="2" lg="2" class="label-style align-self-start pt-0">
           {{choicesLabelsAndHints[2].label}}
         </v-col>
         <transition name="fade" mode="out-in">
-          <v-col :key="transitionKey(3)" class="ma-0 pa-0" cols="10">
+          <v-col :key="transitionKey(3)" class="ma-0 pa-0" :cols="isMobile ? 12 : 10">
             <v-row class="ma-0 pa-0">
-              <v-col :cols="designationAtEnd? 8: 12" class="py-0" style="height:60px">
+              <v-col :cols="(designationAtEnd && !isMobile) ? 8: 12" :class="{'py-0' : !isMobile }" style="height:60px">
                 <v-text-field :error-messages="messages.name3"
                               :hide-details="hideDetails"
                               :value="nameChoices.name3"
@@ -239,7 +239,10 @@
                               :label="choicesLabelsAndHints[2].hint"
                               :name="Math.random()" />
               </v-col>
-              <v-col cols="4" class="py-0" style="height: 60px" v-if="designationAtEnd">
+              <v-col v-if="designationAtEnd"
+                     cols="12" md="4" lg="4"
+                     :class="{'py-0' : !isMobile }"
+              >
                 <v-tooltip top
                   transition="fade-transition"
                   content-class="top-tooltip"
@@ -267,7 +270,7 @@
         </transition>
       </v-row>
 
-      <v-row class="mt-7">
+      <v-row class="mt-7 mb-0">
         <v-col cols="7" class="py-0" />
         <ApplicantInfoNav @nextAction="validateButton()" />
       </v-row>
@@ -308,6 +311,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   @Getter getRequestActionCd!: RequestCode
   @Getter getRequestTypeOptions!: RequestActionsI[]
   @Getter getSubmissionTabNumber!: number
+  @Getter isMobile!: boolean
 
   // Global actions
   @Action setClearErrors!: ActionBindingIF
