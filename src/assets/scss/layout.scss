@@ -11,10 +11,23 @@
 }
 
 .content-container {
-  min-width: 960px !important;
+  min-width: 960px;
   max-width: 1300px !important;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 0;
-  padding-right: 0;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
+
+@media only screen and (max-width: 600px) {
+  .container {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .content-container {
+    min-width: 0;
+  }
+}
+
+

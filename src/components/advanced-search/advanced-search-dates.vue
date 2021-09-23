@@ -1,6 +1,6 @@
 <template>
   <v-dialog id="advanced-search-dates" v-model="dialog" persistent max-width="44rem">
-    <v-card height="32rem" class="py-6">
+    <v-card class="advanced-search-dates-card py-6">
       <v-row>
         <v-col>
           <span class="title-bold-16" :class="{ 'error-message': validate && !hasStartDate }">Select Start Date:</span>
@@ -28,7 +28,7 @@
           </v-date-picker>
         </v-col>
       </v-row>
-      <v-card-actions class="my-0 py-0 float-right">
+      <v-card-actions class="my-0 pt-2 float-right">
           <v-btn id="btn-done" text color="primary" @click="submitDates()"><strong>OK</strong></v-btn>
           <v-btn id="btn-cancel" text color="primary" @click="emitClose()">Cancel</v-btn>
       </v-card-actions>
@@ -104,6 +104,10 @@ export default class AdvancedSearchDates extends Mixins(DateMixin) {
 </script>
 <style lang="scss" scoped>
 @import '@/assets/scss/theme.scss';
+
+.advanced-search-dates-card {
+  min-height: 32rem;
+}
 
 #btn-done, #btn-cancel {
   background-color: white !important;
