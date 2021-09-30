@@ -32,9 +32,6 @@
                         :rules="phoneRules"
                         @blur="messages = {}"
                         @input="updateApplicant('phoneNumber', $event)"
-                        :error-messages="corpNumError"
-                        @focus="corpNumError = ''"
-                        :loading="loading"
                         filled
                         hide-details="auto"
                         label="Phone Number" />
