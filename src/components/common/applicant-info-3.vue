@@ -32,6 +32,9 @@
                         :rules="phoneRules"
                         @blur="messages = {}"
                         @input="updateApplicant('phoneNumber', $event)"
+                        :error-messages="corpNumError"
+                        @focus="corpNumError = ''"
+                        :loading="loading"
                         filled
                         hide-details="auto"
                         label="Phone Number" />
@@ -147,19 +150,11 @@
                 <v-text-field :messages="messages['corpNum']"
                               :rules="corpNumRules"
                               :error-messages="corpNumError"
-                              validate-on-blur
-                              @blur="corpNumError = ''"
+                              @focus="corpNumError = ''"
                               :loading="loading"
                               filled
-                              v-on:update:error="setError"
-                              :hide-details="hideCorpNum"
                               :label="corpNumFieldLabel"
                               v-model="corpNum">
-                  <template v-slot:append>
-                    <v-icon :class="corpNumError ? 'red--text' : 'green--text'"
-                            v-if="hideCorpNum === 'auto'">
-                      {{ error || loading || corpNumDirty ? 'mdi-close' : 'mdi-check' }}</v-icon>
-                  </template>
                 </v-text-field>
               </div>
             </template>
@@ -269,7 +264,6 @@ export default class ApplicantInfo3 extends Vue {
   // Enum declaration
   readonly CorpNumRequests = CorpNumRequests
 
-  corpNumDirty: boolean = false
   corpNumError: string = ''
   corpNumFieldLabel = 'Incorporation or Registration Number'
   additionalInfoRules = [
@@ -281,7 +275,7 @@ export default class ApplicantInfo3 extends Vue {
   ]
   corpNumRules = [
     v => !!v || 'Required field',
-    v => !!this.validateCorpNum(v) || 'Cannot validate number. Please try again.'
+    v => (!v || v.length > 3) || 'Must be at least 4 characters'
   ]
   emailRules = [
     (v: string) => !!v || 'Required field',
@@ -304,7 +298,6 @@ export default class ApplicantInfo3 extends Vue {
   ]
   error: boolean = false
   isValid: boolean = false
-  hideCorpNum: boolean | 'auto' = true
   loading: boolean = false
   messages = {}
 
@@ -313,7 +306,7 @@ export default class ApplicantInfo3 extends Vue {
     if (this.getRequestActionCd === RequestCode.AML) {
       this.corpNumFieldLabel += ' (Optional)'
       this.corpNumRules = [
-        v => !!this.validateCorpNum(v) || 'Cannot validate number. Please try again.'
+        v => (!v || v.length > 3) || 'Must be at least 4 characters'
       ]
     }
   }
@@ -357,14 +350,8 @@ export default class ApplicantInfo3 extends Vue {
     return (this.getNrData || {}).xproJurisdiction
   }
   set corpNum (num) {
-    if (!this.corpNumDirty) {
-      this.corpNumDirty = true
-    }
     if (this.isValid) {
       this.isValid = false
-    }
-    if (this.hideCorpNum !== 'auto') {
-      this.hideCorpNum = 'auto'
     }
     this.setCorpNum(num)
   }
@@ -373,24 +360,19 @@ export default class ApplicantInfo3 extends Vue {
   }
 
   async validateCorpNum (num): Promise<boolean> {
-    if (!num) {
+    if (!num || num.length < 4) {
       return
     }
-    if (num.length < 4) {
-      this.corpNumError = 'Too short. Please confirm number.'
-      return
-    }
+
     this.loading = true
     try {
       await this.fetchCorpNum(num)
       this.corpNumError = ''
       this.loading = false
-      this.corpNumDirty = false
       return true
     } catch (error) {
       this.corpNumError = 'Error validating number. Please try again.'
       this.loading = false
-      this.corpNumDirty = false
       return false
     }
   }
@@ -408,9 +390,6 @@ export default class ApplicantInfo3 extends Vue {
   }
 
   validate () {
-    if (this.hideCorpNum !== 'auto') {
-      this.hideCorpNum = 'auto'
-    }
     if (this.$refs.step3 as any) {
       (this.$refs.step3 as any).validate()
     }
@@ -434,6 +413,9 @@ export default class ApplicantInfo3 extends Vue {
   async nextAction () {
     this.setIsLoadingSubmission(true)
     this.validate()
+    if (this.getShowCorpNum === CorpNumRequests.COLIN) {
+      await this.validateCorpNum(this.getCorpNum)
+    }
     if (this.isValid) {
       await this.submit(null)
     }
