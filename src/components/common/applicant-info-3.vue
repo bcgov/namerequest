@@ -358,7 +358,7 @@ export default class ApplicantInfo3 extends Vue {
 
   async validateCorpNum (num): Promise<boolean> {
     if (!num || num.length < 4) {
-      return
+      return false
     }
 
     this.loading = true
@@ -411,7 +411,9 @@ export default class ApplicantInfo3 extends Vue {
     this.setIsLoadingSubmission(true)
     this.validate()
     if (this.getShowCorpNum === CorpNumRequests.COLIN) {
+      this.$root.$emit('showSpinner', true)
       await this.validateCorpNum(this.getCorpNum)
+      this.$root.$emit('showSpinner', false)
     }
     if (this.isValid) {
       await this.submit(null)
