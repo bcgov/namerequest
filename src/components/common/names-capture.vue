@@ -69,6 +69,7 @@
                 <v-tooltip top
                   transition="fade-transition"
                   content-class="top-tooltip"
+                  :disabled="isMobile"
                 >
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
@@ -108,6 +109,7 @@
                 <v-tooltip top
                   transition="fade-transition"
                   content-class="top-tooltip"
+                  :disabled="isMobile"
                 >
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
@@ -196,6 +198,7 @@
                 <v-tooltip top
                   transition="fade-transition"
                   content-class="top-tooltip"
+                  :disabled="isMobile"
                 >
                   <template v-slot:activator="{ on }">
                     <div v-on="on">
@@ -246,6 +249,7 @@
                 <v-tooltip top
                   transition="fade-transition"
                   content-class="top-tooltip"
+                  :disabled="isMobile"
                 >
                   <template v-slot:activator="{ on }">
                     <div v-on="on">

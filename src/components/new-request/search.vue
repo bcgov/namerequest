@@ -60,7 +60,11 @@
                         label="Select a Jurisdiction"
                         v-model="location">
                 <template slot="item" slot-scope="data">
-                  <v-tooltip :disabled="!request_action_cd || !data.item.blurbs" right transition="fade-transition">
+                  <v-tooltip
+                    right
+                    transition="fade-transition"
+                    :disabled="!request_action_cd || !data.item.blurbs || isMobile"
+                  >
                     <template v-slot:activator="scope">
                       <span v-on="scope.on" class="list-item">{{ data.item.text }}</span>
                     </template>

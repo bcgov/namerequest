@@ -49,7 +49,10 @@
                     <span v-if="isRefundRequested">
                       <v-tooltip
                         content-class="top-tooltip"
-                        top nudge-top min-width="24rem">
+                        top nudge-top
+                        min-width="24rem"
+                        :disabled="isMobile"
+                      >
                         <template v-slot:activator="{ on, attrs }">
                           <span v-bind="attrs" v-on="on">
                             <span  class="refund-label">{{ getRefundParams.refundLabel }}</span>
@@ -93,6 +96,7 @@
                     right
                     transition="fade-transition"
                     content-class="tooltip"
+                    :disabled="isMobile"
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <span
@@ -232,6 +236,7 @@ export default class ExistingRequestDisplay extends Mixins(
   @Getter getIsAuthenticated!: boolean
   @Getter getNrId!: number
   @Getter getNrState!: NrState
+  @Getter isMobile!: boolean
 
   // Global actions
   @Action editExistingRequest!: ActionBindingIF

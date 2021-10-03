@@ -11,7 +11,7 @@
             <v-simple-table class="text-left">
               <tr v-for="type in tableData.col1" :key="type.value+'-tr'">
                 <td class="clickable-cell" :id="type.value" @click="chooseType(type)">
-                  <v-tooltip bottom max-width="500">
+                  <v-tooltip bottom max-width="500" :disabled="isMobile">
                     <template v-slot:activator="scope">
                       <button class="link-sm-sans-ul" v-on="scope.on">{{ type.text }}</button>
                     </template>
@@ -25,7 +25,7 @@
             <v-simple-table class="text-left">
               <tr v-for="type in tableData.col2" :key="type.value+'-tr'">
                 <td class="clickable-cell" :id="type.value" @click="chooseType(type)">
-                  <v-tooltip bottom max-width="500">
+                  <v-tooltip bottom max-width="500" :disabled="isMobile">
                     <template v-slot:activator="scope">
                       <button class="link-sm-sans-ul" v-on="scope.on">{{ type.text }}</button>
                     </template>
@@ -58,6 +58,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 export default class PickRequestTypeDialog extends Vue {
   // Global getter
   @Getter getPickRequestTypeModalVisible!: boolean
+  @Getter isMobile!: boolean
 
   // Global actions
   @Action setClearErrors!: ActionBindingIF

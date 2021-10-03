@@ -56,6 +56,7 @@
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
+            :disabled="isMobile"
           >
             <template v-slot:activator="{ on }">
               <div v-on="on">
@@ -83,6 +84,7 @@
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
+            :disabled="isMobile"
           >
             <template v-slot:activator="{ on }">
               <div v-on="on">
@@ -111,6 +113,7 @@
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
+            :disabled="isMobile"
           >
             <template v-slot:activator="{ on }">
               <div v-on="on">
@@ -146,6 +149,7 @@
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
+            :disabled="isMobile"
           >
             <template v-slot:activator="{ on }">
               <div v-on="on">
@@ -175,6 +179,7 @@
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
+            :disabled="isMobile"
           >
             <template v-slot:activator="{ on }">
               <div v-on="on">
@@ -225,6 +230,7 @@ export default class ApplicantInfo2 extends Vue {
   @Getter getRequestActionCd!: RequestCode
   @Getter getShowPriorityRequest!: boolean
   @Getter getShowCorpNum!: string
+  @Getter isMobile!: boolean
 
   // Global actions
   @Action setCorpNum!: ActionBindingIF
