@@ -114,26 +114,14 @@
           >
             <template v-slot:activator="{ on }">
               <div v-on="on">
-                <v-text-field :error-messages="corpNumError"
-                              :hide-details="hideCorpNum"
-                              :loading="loading"
-                              :messages="messages['corpNum']"
+                <v-text-field :messages="messages['corpNum']"
                               :rules="corpNumRules"
-                              @blur="corpNumError = ''; isEditingCorpNum = false"
-                              @focus="messages['corpNum'] = 'Incorporation or Registration Number';
-                                isEditingCorpNum = true"
-                              id="corpNum"
-                              :name="Math.random()"
-                              autocomplete="chrome-off"
+                              :error-messages="corpNumError"
+                              @focus="corpNumError = ''"
+                              :loading="loading"
                               filled
                               :label="corpNumFieldLabel"
-                              v-model="corpNum"
-                              v-on:update:error="setError">
-                  <template v-slot:append>
-                    <v-icon :class="error || corpNumError || corpNumDirty ? 'red--text' : 'green--text'"
-                            v-if="hideCorpNum === 'auto' && !isEditingCorpNum && !loading">
-                      {{ error || corpNumError || corpNumDirty ? 'mdi-close' : 'mdi-check' }}</v-icon>
-                  </template>
+                              v-model="corpNum">
                 </v-text-field>
               </div>
             </template>
@@ -238,7 +226,6 @@ export default class ApplicantInfo2 extends Vue {
   // Enum declaration
   readonly CorpNumRequests = CorpNumRequests
 
-  corpNumDirty: boolean = false
   corpNumError: string = ''
   corpNumFieldLabel = 'Incorporation or Registration Number'
   additionalInfoRules = [
@@ -250,7 +237,7 @@ export default class ApplicantInfo2 extends Vue {
   ]
   corpNumRules = [
     v => !!v || 'Required field',
-    v => !!this.validateCorpNum(v) || 'Cannot validate number. Please try again.'
+    v => (!v || v.length > 3) || 'Must be at least 4 characters'
   ]
   emailRules = [
     (v: string) => !!v || 'Required field',
@@ -283,7 +270,7 @@ export default class ApplicantInfo2 extends Vue {
     if (this.getRequestActionCd === RequestCode.AML) {
       this.corpNumFieldLabel += ' (Optional)'
       this.corpNumRules = [
-        v => !!this.validateCorpNum(v) || 'Cannot validate number. Please try again.'
+        v => (!v || v.length > 3) || 'Must be at least 4 characters'
       ]
     }
   }
@@ -301,14 +288,8 @@ export default class ApplicantInfo2 extends Vue {
   }
 
   set corpNum (num) {
-    if (!this.corpNumDirty) {
-      this.corpNumDirty = true
-    }
     if (this.isValid) {
       this.isValid = false
-    }
-    if (this.hideCorpNum !== 'auto') {
-      this.hideCorpNum = 'auto'
     }
     this.setCorpNum(num)
   }
@@ -331,24 +312,18 @@ export default class ApplicantInfo2 extends Vue {
 
   async validateCorpNum (num) {
     this.isEditingCorpNum = false
-    if (!num) {
-      return
-    }
-    if (num.length < 4) {
-      this.corpNumError = 'Too short. Please confirm number.'
-      return
+    if (!num || num.length < 4) {
+      return false
     }
     this.loading = true
     try {
       await this.fetchCorpNum(num)
       this.corpNumError = ''
       this.loading = false
-      this.corpNumDirty = false
       return true
     } catch (error) {
       this.corpNumError = 'Error validating number. Please try again.'
       this.loading = false
-      this.corpNumDirty = false
       return false
     }
   }
@@ -392,6 +367,11 @@ export default class ApplicantInfo2 extends Vue {
   async nextAction () {
     this.setIsLoadingSubmission(true)
     this.validate()
+    if (this.getShowCorpNum === CorpNumRequests.COLIN) {
+      this.$root.$emit('showSpinner', true)
+      await this.validateCorpNum(this.getCorpNum)
+      this.$root.$emit('showSpinner', false)
+    }
     if (this.isValid) {
       await this.submit(null)
     }
