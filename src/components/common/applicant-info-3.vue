@@ -2,8 +2,8 @@
   <v-form v-model="isValid" ref="step3" id="applicant-info-3-form">
     <v-container fluid class="pa-0 mt-5" id="applicant-info-3">
       <v-row>
-        <v-col cols="2" class="h6 align-self-start pt-0">Contact Info</v-col>
-        <v-col cols="5" class="py-0">
+        <v-col cols="12" md="2" lg="2" class="h6 align-self-start pt-0">Contact Info</v-col>
+        <v-col cols="12" md="5" lg="5" class="py-0">
           <v-text-field :messages="messages['contact']"
                         :value="applicant.contact"
                         @blur="messages = {}"
@@ -12,7 +12,7 @@
                         hide-details="auto"
                         label="Contact Name (Optional)" />
         </v-col>
-        <v-col cols="5" class="py-0">
+        <v-col cols="12" md="5" lg="5" class="py-0" :class="{ 'pt-6': isMobile }">
           <v-text-field :messages="messages['email']"
                         :rules="emailRules"
                         :value="applicant.emailAddress"
@@ -25,8 +25,8 @@
       </v-row>
 
       <v-row>
-        <v-col cols="2" />
-        <v-col cols="5">
+        <v-col cols="12" md="2" lg="2" />
+        <v-col cols="12" md="5" lg="5">
           <v-text-field :messages="messages['phone']"
                         :value="applicant.phoneNumber"
                         :rules="phoneRules"
@@ -36,7 +36,7 @@
                         hide-details="auto"
                         label="Phone Number" />
         </v-col>
-        <v-col cols="5">
+        <v-col cols="12" md="5" lg="5">
           <v-text-field :messages="messages['fax']"
                         :value="applicant.faxNumber"
                         :rules="faxRules"
@@ -49,8 +49,8 @@
       </v-row>
 
       <v-row>
-        <v-col cols="2" class="h6">Client</v-col>
-        <v-col cols="5">
+        <v-col cols="12" md="2" lg="2" class="h6">Client</v-col>
+        <v-col cols="12" md="5" lg="5">
           <v-text-field :messages="messages['clientFirst']"
                         :value="applicant.clientFirstName"
                         @blur="messages = {}"
@@ -59,7 +59,7 @@
                         hide-details="auto"
                         label="First Name (Optional)" />
         </v-col>
-        <v-col cols="5">
+        <v-col cols="12" md="5" lg="5">
           <v-text-field :messages="messages['clientLast']"
                         :value="applicant.clientLastName"
                         @blur="messages = {}"
@@ -70,8 +70,8 @@
         </v-col>
       </v-row>
       <v-row v-if="!getEditMode && !isRoleStaff">
-        <v-col cols="2"></v-col>
-        <v-col cols="5">
+        <v-col cols="12" md="2" lg="2"></v-col>
+        <v-col cols="12" md="5" lg="5">
           <FolioNumberInput
               ref="folioNumberInputRef"
               :folioNumber="getFolioNumber"
@@ -82,8 +82,8 @@
       </v-row>
 
       <v-row v-if="showAllFields">
-        <v-col cols="2" class="h6">About The Business</v-col>
-        <v-col cols="5" align-self="start">
+        <v-col cols="12" md="2" lg="2" class="h6">About The Business</v-col>
+        <v-col cols="12" md="5" lg="5" align-self="start">
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
@@ -109,7 +109,7 @@
             </span>
           </v-tooltip>
         </v-col>
-        <v-col cols="5" align-self="start">
+        <v-col cols="12" md="5" lg="5" align-self="start">
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
@@ -138,8 +138,8 @@
       </v-row>
 
       <v-row>
-        <v-col cols="2" />
-        <v-col cols="5" v-if="getShowCorpNum === CorpNumRequests.COLIN">
+        <v-col cols="12" md="2" lg="2" />
+        <v-col cols="12" md="5" lg="5" v-if="getShowCorpNum === CorpNumRequests.COLIN">
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
@@ -171,7 +171,7 @@
             </span>
           </v-tooltip>
         </v-col>
-        <v-col cols="5">
+        <v-col cols="12" md="5" lg="5">
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
@@ -197,8 +197,8 @@
       </v-row>
 
       <v-row class="mt-2">
-        <v-col cols="2" />
-        <v-col cols="5" align-self="center" class="py-0" v-if="showPriorityRequest">
+        <v-col cols="12" md="2" lg="2" />
+        <v-col align-self="center" class="py-0" v-if="showPriorityRequest">
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
