@@ -29,7 +29,7 @@
         <div class="nr-data">
           <v-row class="mt-5" :key="refreshCount">
             <!-- labels and values -->
-            <v-col cols="9" class="py-0">
+            <v-col cols="12" md="9" lg="9" class="py-0">
               <v-row dense>
                 <v-col cols="12" class="submitted-date">
                   <span>Submitted Date:</span>
@@ -138,7 +138,7 @@
             </v-col>
 
             <!-- action buttons -->
-            <v-col cols="3" class="py-0">
+            <v-col cols="12" md="3" lg="3" class="py-0">
               <v-row dense>
                 <template v-for="action of actions">
                   <!-- incorporate action is a distinct button below -->

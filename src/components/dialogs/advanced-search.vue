@@ -285,14 +285,6 @@ export default class AdvancedSearch extends Vue {
   min-height: 29rem;
 }
 
-.dialog-close {
-  position: absolute;
-  top: 30px;
-  right: 0;
-  margin-right: 30px;
-  z-index: 2;
-}
-
 #advanced-search-actions {
   .v-btn {
     min-width: 100px !important;
