@@ -2,7 +2,7 @@
   <div id="names-container" class="bg-light-gray">
     <div class="px-5 py-4 text-name">
       <v-tooltip v-for="name of names" :key="name.choice"
-        transition="fade-transition" right content-class="tooltip"
+        transition="fade-transition" right content-class="tooltip" :disabled="isMobile"
       >
         <template v-slot:activator="{ on, attrs }">
           <div v-bind="attrs" v-on="on" :class="getClass(name)" class="cursor-default">
@@ -21,10 +21,14 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
 import { NameState } from '@/enums'
 
 @Component({})
 export default class NamesGrayBox extends Vue {
+  // Global getter
+  @Getter isMobile!: boolean
+
   // enum used in the template
   NameState = NameState
 

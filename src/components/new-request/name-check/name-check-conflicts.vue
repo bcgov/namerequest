@@ -104,7 +104,7 @@
             </v-col>
             <v-col class="pl-2" style="max-width: 50rem" >
               <div v-if="item.info === NameCheckItemType.SIMILAR_MATCH">
-                <v-tooltip top content-class="top-tooltip" transition="fade-transition">
+                <v-tooltip top content-class="top-tooltip" transition="fade-transition" :disabled="isMobile">
                   <template v-slot:activator="{ on, attrs }">
                     <span class="dotted-underline" v-bind="attrs" v-on="on">Similar names</span>
                   </template>
@@ -115,7 +115,7 @@
                 in different business categories may be approved at the discretion of the
                 Business Registry. If you feel your name is unique within your business category,
                 or you can
-                <v-tooltip top content-class="top-tooltip" transition="fade-transition">
+                <v-tooltip top content-class="top-tooltip" transition="fade-transition" :disabled="isMobile">
                   <template v-slot:activator="{ on, attrs }">
                     <span class="dotted-underline" v-bind="attrs" v-on="on">obtain consent</span>
                   </template>

@@ -20,7 +20,7 @@
               <v-col cols="12" class="clickable-cell"
                      :id="conversion.value"
                      @click="chooseConversion(conversion)">
-                <v-tooltip bottom content-class="bottom-tooltip" transition="fade-transition">
+                <v-tooltip bottom content-class="bottom-tooltip" transition="fade-transition" :disabled="isMobile">
                   <template v-slot:activator="scope">
                     <button v-on="scope.on" class="link-sm-sans-ul entity-link">{{ conversion.desc }}</button>
                   </template>
@@ -44,7 +44,7 @@
             </tr>
             <tr v-for="(entity, n) in category.entities" :key="'ent' + n">
               <td class="clickable-cell" :id="entity.value" @click="chooseType(entity)">
-                <v-tooltip bottom content-class="bottom-tooltip" transition="fade-transition">
+                <v-tooltip bottom content-class="bottom-tooltip" transition="fade-transition" :disabled="isMobile">
                   <template v-slot:activator="scope">
                     <button v-on="scope.on" class="link-sm-sans-ul entity-link">{{ entity.text }}</button>
                   </template>
@@ -101,6 +101,7 @@ export default class PickEntityOrConversionDialog extends Vue {
   @Getter getLocation!: Location
   @Getter getLocationText!: string
   @Getter getPickEntityModalVisible!: boolean
+  @Getter isMobile!: boolean
 
   // Global actions
   @Action setConversionType!: ActionBindingIF

@@ -2,8 +2,8 @@
   <v-form v-model="isValid" ref="step2" id="applicant-info-2-form">
     <v-container fluid class="pa-0 mt-5" id="applicant-info-2">
       <v-row>
-        <v-col cols="2" class="h6 align-self-start pt-0">Contact Info</v-col>
-        <v-col cols="5" class="py-0">
+        <v-col cols="12" md="2" lg="2" class="h6 align-self-start pt-0">Contact Info</v-col>
+        <v-col cols="12" md="5" lg="5" class="py-0">
           <v-text-field :messages="messages['email']"
                         :rules="emailRules"
                         :value="getApplicant.emailAddress"
@@ -20,8 +20,8 @@
       </v-row>
 
       <v-row>
-        <v-col cols="2" />
-        <v-col cols="5">
+        <v-col cols="12" md="2" lg="2" />
+        <v-col cols="12" md="5" lg="5">
           <v-text-field :messages="messages['phone']"
                         :value="getApplicant.phoneNumber"
                         type="tel"
@@ -35,7 +35,7 @@
                         hide-details="auto"
                         label="Phone Number" />
         </v-col>
-        <v-col cols="5">
+        <v-col cols="12" md="5" lg="5">
           <v-text-field :messages="messages['fax']"
                         :value="getApplicant.faxNumber"
                         :rules="faxRules"
@@ -51,11 +51,12 @@
       </v-row>
 
       <v-row v-if="showAllFields">
-        <v-col cols="2" class="h6">About Your Business</v-col>
-        <v-col cols="5" align-self="start">
+        <v-col cols="12" md="2" lg="2" class="h6">About Your Business</v-col>
+        <v-col cols="12" md="5" lg="5" align-self="start">
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
+            :disabled="isMobile"
           >
             <template v-slot:activator="{ on }">
               <div v-on="on">
@@ -79,10 +80,11 @@
             </span>
           </v-tooltip>
         </v-col>
-        <v-col cols="5" align-self="start">
+        <v-col cols="12" md="5" lg="5" align-self="start">
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
+            :disabled="isMobile"
           >
             <template v-slot:activator="{ on }">
               <div v-on="on">
@@ -106,11 +108,12 @@
             </span>
           </v-tooltip>
         </v-col>
-        <v-col cols="2" />
-        <v-col cols="5" v-if="getShowCorpNum === CorpNumRequests.COLIN">
+        <v-col cols="12" md="2" lg="2" />
+        <v-col cols="12" md="5" lg="5" v-if="getShowCorpNum === CorpNumRequests.COLIN">
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
+            :disabled="isMobile"
           >
             <template v-slot:activator="{ on }">
               <div v-on="on">
@@ -142,10 +145,11 @@
             </span>
           </v-tooltip>
         </v-col>
-        <v-col cols="5">
+        <v-col cols="12" md="5" lg="5">
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
+            :disabled="isMobile"
           >
             <template v-slot:activator="{ on }">
               <div v-on="on">
@@ -170,11 +174,12 @@
       </v-row>
 
       <v-row class="mt-2">
-        <v-col cols="2" />
-        <v-col cols="5">
+        <v-col cols="12" md="2" lg="2" />
+        <v-col cols="12" md="5" lg="5">
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
+            :disabled="isMobile"
           >
             <template v-slot:activator="{ on }">
               <div v-on="on">
@@ -225,6 +230,7 @@ export default class ApplicantInfo2 extends Vue {
   @Getter getRequestActionCd!: RequestCode
   @Getter getShowPriorityRequest!: boolean
   @Getter getShowCorpNum!: string
+  @Getter isMobile!: boolean
 
   // Global actions
   @Action setCorpNum!: ActionBindingIF
