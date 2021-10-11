@@ -23,7 +23,7 @@
         :value="timeZoneOffset"
       />
 
-      <v-tooltip top content-class="top-tooltip" nudge-top="5">
+      <v-tooltip top content-class="top-tooltip" nudge-top="5" :disabled="isMobile">
         <template v-slot:activator="{ on, attrs }">
           <div id="chat-button-wrapper" v-on="on" v-bind="attrs">
             <v-btn
@@ -58,9 +58,13 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import axios from 'axios'
+import { Getter } from 'vuex-class'
 
 @Component({})
 export default class ChatPopup extends Vue {
+  // Global getter
+  @Getter isMobile!: boolean
+
   readonly webChatReason: string = window['webChatReason']
   readonly webChatStatusUrl: string = window['webChatStatusUrl']
   readonly webChatUrl: string = window['webChatUrl']

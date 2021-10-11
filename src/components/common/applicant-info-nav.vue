@@ -95,4 +95,9 @@ export default class ApplicantInfoNav extends Vue {
     width: 100%;
   }
 }
+
+.mobile-btn {
+  width: 60vw !important;
+  margin: .5rem 0;
+}
 </style>

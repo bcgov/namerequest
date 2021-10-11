@@ -2,7 +2,7 @@
   <v-tooltip bottom
              content-class="bottom-tooltip"
              transition="fade-transition"
-             :disabled="isContinue">
+             :disabled="isContinue || isMobile">
     <template v-slot:activator="scope">
       <v-btn @click="handleSubmit()"
              :class="isContinue ? 'button-normal' : 'button-blue'"
@@ -33,6 +33,7 @@ export default class ReserveSubmit extends Vue {
   @Getter getReservedNameReservation!: ReservedReqI
   @Getter getRequestActionCd!: RequestCode
   @Getter getShowActualInput!: boolean
+  @Getter isMobile!: boolean
 
   // Global actions
   @Action cancelAnalyzeName!: ActionBindingIF
