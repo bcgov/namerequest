@@ -412,7 +412,6 @@ export default class ApplicantInfo3 extends Vue {
       await this.validateCorpNum(this.getCorpNum)
       this.$root.$emit('showSpinner', false)
     }
-    debugger
     if (this.isValid && !this.corpNumError) {
       await this.submit(null)
     }
