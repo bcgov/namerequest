@@ -288,9 +288,6 @@ export default class ApplicantInfo2 extends Vue {
   }
 
   set corpNum (num) {
-    if (this.isValid) {
-      this.isValid = false
-    }
     this.setCorpNum(num)
   }
 
@@ -372,7 +369,7 @@ export default class ApplicantInfo2 extends Vue {
       await this.validateCorpNum(this.getCorpNum)
       this.$root.$emit('showSpinner', false)
     }
-    if (this.isValid) {
+    if (this.isValid && !this.corpNumError) {
       await this.submit(null)
     }
     // hang on to the loading state for a bit
