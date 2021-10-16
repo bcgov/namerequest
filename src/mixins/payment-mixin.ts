@@ -1,7 +1,7 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { AxiosRequestConfig } from 'axios'
-import { ACCEPTED, CREATED, NO_CONTENT, OK } from 'http-status-codes'
+import { ACCEPTED, CREATED, NO_CONTENT, OK, PAYMENT_REQUIRED } from 'http-status-codes'
 
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import { PaymentStatus, StaffPaymentOptions, NrState, PaymentMethod } from '@/enums'
@@ -13,6 +13,7 @@ import { ErrorI } from '@/modules/error/store/actions'
 import { StaffPaymentIF, RefundParamsIF, NameRequestI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from '@/services/namex.services'
+import { PaymentRequiredError } from '@/errors'
 
 @Component({})
 export class PaymentMixin extends Mixins(ActionMixin) {
@@ -298,7 +299,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     if (!nrId) {
       // eslint-disable-next-line no-console
       console.warn('NR ID is not present in params, cannot continue!')
-      return false
+      throw new Error('NR ID is not present in params, cannot continue!')
     }
 
     // This is the minimum required to make a payment!
@@ -344,11 +345,18 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       }
       return true
     } catch (err) {
+      if (err instanceof PaymentRequiredError) {
+        this.$root.$emit('save-error-event', err.errorResponse)
+        if (err.errorResponse.response.data.businessInfo?.businessIdentifier) {
+          sessionStorage.setItem('BCREG-nrNum', err.errorResponse.response.data.businessInfo.businessIdentifier)
+        }
+        throw err
+      }
       // don't console.error - createPaymentRequest() already did that
       await errorModule.setAppError(
         { id: 'create-payment-error', error: 'Could not create payment' } as ErrorI
       )
-      return false
+      throw err
     }
   }
 
@@ -507,6 +515,9 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       }
       throw new Error(`Invalid response = ${response}`)
     } catch (err) {
+      if (err?.response?.status === PAYMENT_REQUIRED) {
+        throw new PaymentRequiredError(err)
+      }
       console.error('createPaymentRequest() =', err) // eslint-disable-line no-console
       const msg = await this.handleApiError(err, 'Could not create payment request')
       // console.error('createPaymentRequest() =', msg) // eslint-disable-line no-console

@@ -66,6 +66,13 @@
     <RefundDialog />
     <ResubmitDialog />
     <RetryDialog />
+    <StaffPaymentErrorDialog
+      attach="#app"
+      :dialog="staffPaymentErrorDialog"
+      :errors="saveErrors"
+      :warnings="saveWarnings"
+      @close="staffPaymentErrorDialog = false"
+    />
     <UpgradeDialog />
   </v-app>
 </template>
@@ -76,6 +83,7 @@ import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { getFeatureFlag, getKeycloakRoles } from '@/plugins'
 import { DateMixin } from '@/mixins'
+import errorModule from '@/modules/error'
 
 // dialogs and other components
 import ChatPopup from '@/components/common/chat-popup.vue'
@@ -83,7 +91,7 @@ import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
   LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog, PaymentCompleteDialog,
   PickEntityOrConversionDialog, PickRequestTypeDialog, RenewDialog, ReceiptsDialog, RefundDialog, ResubmitDialog,
-  RetryDialog, UpgradeDialog
+  RetryDialog, StaffPaymentErrorDialog, UpgradeDialog
 } from '@/components/dialogs'
 import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
 import PaySystemAlert from 'sbc-common-components/src/components/PaySystemAlert.vue'
@@ -93,6 +101,7 @@ import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 // Interfaces / Enums
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from './services/namex.services'
+import { PAYMENT_REQUIRED } from 'http-status-codes'
 
 @Component({
   components: {
@@ -115,6 +124,7 @@ import NamexServices from './services/namex.services'
     RenewDialog,
     ResubmitDialog,
     RetryDialog,
+    StaffPaymentErrorDialog,
     UpgradeDialog,
     SbcAuthenticationOptionsDialog,
     PaySystemAlert,
@@ -125,10 +135,20 @@ import NamexServices from './services/namex.services'
 export default class App extends Mixins(DateMixin) {
   showSpinner = false
 
+  /** Whether the StaffPaymentErrorDialog should be displayed */
+  private staffPaymentErrorDialog = false
+
+  /** Errors from the API */
+  private saveErrors: Array<string> = []
+
+  /** Warnings from the API */
+  private saveWarnings: Array<string> = []
+
   // Global getters
   @Getter getIncorporateLoginModalVisible!: boolean
   @Getter getDisplayedComponent!: string
   @Getter getNrId!: number
+  @Getter isRoleStaff: boolean
 
   // Global actions
   @Action resetAnalyzeName!: ActionBindingIF
@@ -179,6 +199,17 @@ export default class App extends Mixins(DateMixin) {
       // just log the error message
       console.log(`Did not get roles (${error.message})`) // eslint-disable-line no-console
     }
+
+    // listen for save error events
+    this.$root.$on('save-error-event', (error: any) => {
+      // save errors/warnings
+      this.saveErrors = error?.response?.data?.errors || []
+      this.saveWarnings = error?.response?.data?.warnings || []
+
+      if (error?.response?.status === PAYMENT_REQUIRED && this.isRoleStaff) {
+        this.staffPaymentErrorDialog = true
+      }
+    })
   }
 
   /** Fetches and stores the current JS date. */
