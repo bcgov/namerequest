@@ -83,6 +83,7 @@ import { Jurisdictions, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { PaymentRequiredError } from '@/errors'
 
 @Component({
   components: {
@@ -209,16 +210,19 @@ export default class RenewDialog extends Mixins(
       }
     }
 
-    const success = await this.createPayment({
-      action: PaymentAction.RENEW,
-      nrId: this.getNrId,
-      filingType: FilingTypes.NM620,
-      priorityRequest: this.getPriorityRequest
-    } as CreatePaymentParams, onSuccess)
-
-    // on error, close this modal so error modal is visible
-    if (!success) {
-      await this.hideModal()
+    try {
+      await this.createPayment({
+        action: PaymentAction.RENEW,
+        nrId: this.getNrId,
+        filingType: FilingTypes.NM620,
+        priorityRequest: this.getPriorityRequest
+      } as CreatePaymentParams, onSuccess)
+    } catch (error) {
+      this.isLoadingPayment = false
+      if (!(error instanceof PaymentRequiredError)) {
+        // on generic error, close this modal so error modal is visible
+        await this.hideModal()
+      }
     }
   }
 

@@ -83,6 +83,7 @@ import { Jurisdictions, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { PaymentRequiredError } from '@/errors'
 
 @Component({
   components: {
@@ -202,16 +203,19 @@ export default class UpgradeDialog extends Mixins(
       }
     }
 
-    const success = await this.createPayment({
-      action: PaymentAction.UPGRADE,
-      nrId: this.getNrId,
-      filingType: FilingTypes.NM606,
-      priorityRequest: false // not needed in NM606
-    } as CreatePaymentParams, onSuccess)
-
-    // on error, close this modal so error modal is visible
-    if (!success) {
-      await this.hideModal()
+    try {
+      await this.createPayment({
+        action: PaymentAction.UPGRADE,
+        nrId: this.getNrId,
+        filingType: FilingTypes.NM606,
+        priorityRequest: false // not needed in NM606
+      } as CreatePaymentParams, onSuccess)
+    } catch (error) {
+      this.isLoadingPayment = false
+      if (!(error instanceof PaymentRequiredError)) {
+        // on generic error, close this modal so error modal is visible
+        await this.hideModal()
+      }
     }
   }
 

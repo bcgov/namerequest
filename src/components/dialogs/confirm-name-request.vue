@@ -94,6 +94,7 @@ import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mi
 import { getBaseUrl } from '@/components/payment/payment-utils'
 import { NameChoicesIF } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { PaymentRequiredError } from '@/errors'
 
 @Component({
   components: {
@@ -225,16 +226,19 @@ export default class ConfirmNrDialog extends Mixins(
       }
     }
 
-    const success = await this.createPayment({
-      action: PaymentAction.CREATE,
-      nrId: this.getNrId,
-      filingType: FilingTypes.NM620,
-      priorityRequest: this.getPriorityRequest
-    } as CreatePaymentParams, onSuccess)
-
-    // on error, close this modal so error modal is visible
-    if (!success) {
-      await this.hideModal()
+    try {
+      await this.createPayment({
+        action: PaymentAction.CREATE,
+        nrId: this.getNrId,
+        filingType: FilingTypes.NM620,
+        priorityRequest: this.getPriorityRequest
+      } as CreatePaymentParams, onSuccess)
+    } catch (error) {
+      this.isLoadingPayment = false
+      if (!(error instanceof PaymentRequiredError)) {
+        // on generic error, close this modal so error modal is visible
+        await this.hideModal()
+      }
     }
   }
 

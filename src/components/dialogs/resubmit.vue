@@ -93,6 +93,7 @@ import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mi
 import { getBaseUrl } from '@/components/payment/payment-utils'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from '@/services/namex.services'
+import { PaymentRequiredError } from '@/errors'
 
 @Component({
   components: {
@@ -236,17 +237,22 @@ export default class ResubmitDialog extends Mixins(
       }
     }
 
-    // if resubmit succeeded then create the payment
-    success = success && await this.createPayment({
-      action: PaymentAction.RESUBMIT,
-      nrId: this.getNrId,
-      filingType: FilingTypes.NM620,
-      priorityRequest: this.isPriorityRequest
-    } as CreatePaymentParams, onSuccess)
-
-    if (!success) {
-      // close this modal so error modal is visible
-      await this.hideModal()
+    try {
+      // if resubmit succeeded then create the payment
+      if (success) {
+        await this.createPayment({
+          action: PaymentAction.RESUBMIT,
+          nrId: this.getNrId,
+          filingType: FilingTypes.NM620,
+          priorityRequest: this.isPriorityRequest
+        } as CreatePaymentParams, onSuccess)
+      }
+    } catch (error) {
+      this.isLoadingPayment = false
+      if (!(error instanceof PaymentRequiredError)) {
+        // close this modal so generic error modal is visible
+        await this.hideModal()
+      }
 
       // reset session data
       sessionStorage.setItem('BCREG-NRL', null)
