@@ -211,9 +211,8 @@ export default class UpgradeDialog extends Mixins(
         priorityRequest: false // not needed in NM606
       } as CreatePaymentParams, onSuccess)
     } catch (error) {
-      if (error instanceof PaymentRequiredError) {
-        this.isLoadingPayment = false
-      } else {
+      this.isLoadingPayment = false
+      if (!(error instanceof PaymentRequiredError)) {
         // on generic error, close this modal so error modal is visible
         await this.hideModal()
       }

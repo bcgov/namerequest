@@ -5,12 +5,12 @@
 
       <v-card-text id="dialog-text">
         <!-- display common message -->
-        <div class="genErr" v-if="numErrors == 0">
+        <div class="general-error" v-if="numErrors == 0">
           <p>We are unable to process your payment at this time.</p>
         </div>
 
         <!-- display errors -->
-        <div class="genErr mb-4" v-else>
+        <div class="general-error mb-4" v-else>
           <p>We were unable to process your payment due to the following errors:</p>
           <ul>
             <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
@@ -18,7 +18,7 @@
         </div>
 
         <!-- display warnings-->
-        <div class="genErr mb-4" v-if="numWarnings > 0">
+        <div class="general-error mb-4" v-if="numWarnings > 0">
           <p>Please note the following warnings:</p>
           <ul>
             <li v-for="(warning, index) in warnings" :key="index">{{ warning }}</li>

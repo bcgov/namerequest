@@ -224,6 +224,7 @@ export default class App extends Mixins(DateMixin) {
 
     // stop listening for spinner show/hide events
     this.$root.$off('showSpinner')
+    this.$root.$off('save-error-event')
   }
 
   async resetAppState () {
