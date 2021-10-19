@@ -7,7 +7,7 @@
       </v-btn>
 
       <v-tabs id="advanced-search-tabs">
-        <v-tabs-items v-model="advSearchTab">
+        <v-tabs-items v-model="advSearchTab" touchless>
 
           <!-- Advanced Search Form -->
           <v-tab-item class="set-height-tab mb-2">
