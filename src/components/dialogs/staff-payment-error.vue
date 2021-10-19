@@ -19,7 +19,7 @@
 
         <!-- display warnings-->
         <div class="general-error mb-4" v-if="numWarnings > 0">
-          <p>Please note the following warnings:</p>
+          <p>Please note the following warning(s):</p>
           <ul>
             <li v-for="(warning, index) in warnings" :key="index">{{ warning }}</li>
           </ul>
