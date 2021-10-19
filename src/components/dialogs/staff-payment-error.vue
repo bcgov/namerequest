@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" width="45rem" persistent :attach="attach" content-class="payment-error-dialog">
     <v-card>
-      <v-card-title id="dialog-title">Unable to process payment</v-card-title>
+      <v-card-title id="dialog-title">Unable to Process Payment</v-card-title>
 
       <v-card-text id="dialog-text">
         <!-- display common message -->
@@ -11,7 +11,7 @@
 
         <!-- display errors -->
         <div class="general-error mb-4" v-else>
-          <p>We were unable to process your payment due to the following errors:</p>
+          <p>We were unable to process your payment due to the following error(s):</p>
           <ul>
             <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
           </ul>
