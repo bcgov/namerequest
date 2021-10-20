@@ -6,12 +6,12 @@
       </v-card-title>
 
       <v-card-text class="copy-normal pt-8">
-        Name Request encountered an error. This error may be temporary. You can close
-        this message and try again.
+        If you have paid for a new NR, please do not try submitting your payment again.
       </v-card-text>
 
       <v-card-text class="copy-normal pt-6">
-        If this issue persists, contact BC Registries staff:
+        If your payment was successful, you should receive a receipt by email within 1 hour.
+        If you do not receive the email, please contact BC Registries staff:
       </v-card-text>
 
       <v-card-text class="copy-normal pt-6">
