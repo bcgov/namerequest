@@ -31,7 +31,7 @@
                         :value="applicant.phoneNumber"
                         :rules="phoneRules"
                         @blur="messages = {}"
-                        @input="updateApplicant('phoneNumber', $event)"
+                        @input="updateApplicant('phoneNumber', $event.trim())"
                         filled
                         hide-details="auto"
                         label="Phone Number" />

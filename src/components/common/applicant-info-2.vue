@@ -27,7 +27,7 @@
                         type="tel"
                         :rules="phoneRules"
                         @blur="messages = {}"
-                        @input="updateApplicant('phoneNumber', $event)"
+                        @input="updateApplicant('phoneNumber', $event.trim())"
                         id="phoneNumber"
                         :name="Math.random()"
                         autocomplete="chrome-off"
