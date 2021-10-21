@@ -8,7 +8,7 @@
         </v-row>
 
         <v-row class="mt-3">
-          <v-col cols="4" class="py-0">
+          <v-col cols="12" md="5" lg="5" :class="{'py-0': !isMobile}">
             <v-select :error-messages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
                       :hide-details="!getErrors.includes('request_action_cd')"
                       :items="getRequestTypeOptions"
@@ -17,7 +17,7 @@
                       id="search-type-options-select"
                       v-model="request_action_cd" />
           </v-col>
-          <v-col cols="4" class="py-0">
+          <v-col cols="12" md="2" lg="2" :class="{'py-0': !isMobile}">
             <v-select :error-messages="getErrors.includes('location') ? 'Please select a jurisdiction' : ''"
                       :hide-details="!getErrors.includes('location')"
                       :items="getLocationOptions"
@@ -26,7 +26,7 @@
                       id="location-options-select"
                       v-model="location" />
           </v-col>
-          <v-col cols="4" class="py-0">
+          <v-col cols="12" md="5" lg="5" :class="{'py-0': !isMobile}">
             <v-select :error-messages="getErrors.includes('entity_type_cd') ? 'Please select a business type' : ''"
                       :hide-details="!getErrors.includes('entity_type_cd')"
                       :items="getEntityTypeOptions"

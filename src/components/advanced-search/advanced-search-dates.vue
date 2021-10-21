@@ -1,6 +1,6 @@
 <template>
   <v-dialog id="advanced-search-dates" v-model="dialog" persistent max-width="44rem">
-    <v-card class="advanced-search-dates-card py-6">
+    <v-card class="advanced-search-dates-card">
       <v-row>
         <v-col>
           <span class="title-bold-16" :class="{ 'error-message': validate && !hasStartDate }">Select Start Date:</span>
@@ -106,7 +106,7 @@ export default class AdvancedSearchDates extends Mixins(DateMixin) {
 @import '@/assets/scss/theme.scss';
 
 .advanced-search-dates-card {
-  min-height: 32rem;
+  min-height: 34rem;
 }
 
 #btn-done, #btn-cancel {

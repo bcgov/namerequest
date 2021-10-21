@@ -23,7 +23,7 @@
         <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
         <span v-if="!isMobile" :class="tabNumber === 1 ? 'h5' : 'h5-lt'">Manage My Name Request</span>
       </v-tab>
-      <v-tabs-items class="rounded-b tab-items" v-model="tabNumber">
+      <v-tabs-items class="rounded-b tab-items" v-model="tabNumber" touchless>
         <v-tab-item>
           <NewSearch />
           <LinkRow />

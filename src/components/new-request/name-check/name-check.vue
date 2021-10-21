@@ -103,7 +103,8 @@
         <div id="box-shadow-filler-tab-item"/>
         <v-tabs-items class="rounded-b tab-items pa-5 pt-6"
                       :class="checks === 'structure-check' ? 'rounded-top-right' : 'rounded-top-left'"
-                      v-model="checks">
+                      v-model="checks"
+                      touchless>
           <v-tab-item value="structure-check">
             <v-row no-gutters class="pr-16 pb-6 name-check-info-text" :class="{'pl-12': !isMobile}">
               <v-col cols="auto">

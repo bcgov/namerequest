@@ -7,7 +7,7 @@
     </template>
     <template v-slot:content>
       <v-tabs v-model="submissionTabNumber" id="applicant-info-slider" class="mt-2">
-        <v-tabs-items v-model="submissionTabNumber">
+        <v-tabs-items v-model="submissionTabNumber" touchless>
           <v-tab-item>
             <keep-alive>
               <EntityCannotBeAutoAnalyzed />

@@ -2,7 +2,7 @@
   <v-dialog min-width="32rem" max-width="45rem" :value="isVisible" persistent>
     <v-card>
       <v-tabs id="confirm-nr-tabs">
-        <v-tabs-items v-model="currentTab">
+        <v-tabs-items v-model="currentTab" touchless>
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
@@ -54,23 +54,33 @@
             </v-card-text>
 
             <v-card-actions class="pt-8">
-              <v-btn
-                v-if="allowCancel"
-                @click="cancelPayment()"
-                id="confirm-nr-cancel-btn"
-                class="button-red px-5"
-                :disabled="isLoadingPayment">Cancel Name Request</v-btn>
-              <v-spacer />
-              <v-btn
-                @click="hideModal()"
-                id="confirm-nr-close-btn"
-                class="button-blue px-5"
-                :disabled="isLoadingPayment">Close</v-btn>
-              <v-btn
-                @click="confirmPayment()"
-                id="confirm-nr-continue-btn"
-                class="primary px-5"
-                :loading="isLoadingPayment">Continue to Payment</v-btn>
+              <v-row no-gutters>
+                <v-col cols="12" md="6" lg="6" :class="{ 'col-align-center': isMobile}">
+                  <v-btn
+                    v-if="allowCancel"
+                    @click="cancelPayment()"
+                    id="confirm-nr-cancel-btn"
+                    class="button-red"
+                    :class="{ 'mobile-btn' : isMobile }"
+                    :disabled="isLoadingPayment">Cancel Name Request</v-btn>
+                </v-col>
+                <v-col cols="12" md="2" lg="2" :class="[isMobile ? 'col-align-center' : 'col-align-end']">
+                  <v-btn
+                    @click="hideModal()"
+                    id="confirm-nr-close-btn"
+                    class="button-blue"
+                    :class="[isMobile ? 'mobile-btn' : 'mr-n6']"
+                    :disabled="isLoadingPayment">Close</v-btn>
+                </v-col>
+                <v-col cols="12" md="4" lg="4" :class="[isMobile ? 'col-align-center' : 'col-align-end']">
+                  <v-btn
+                    @click="confirmPayment()"
+                    id="confirm-nr-continue-btn"
+                    class="primary"
+                    :class="{ 'mobile-btn' : isMobile }"
+                    :loading="isLoadingPayment">Continue to Payment</v-btn>
+                </v-col>
+              </v-row>
             </v-card-actions>
           </v-tab-item>
 
@@ -125,6 +135,7 @@ export default class ConfirmNrDialog extends Mixins(
   @Getter getName!: string
   @Getter getNameChoices!: NameChoicesIF
   @Getter getPriorityRequest!: boolean
+  @Getter isMobile!: boolean
   @Getter isRoleStaff!: boolean
 
   // Global actions
@@ -283,5 +294,18 @@ export default class ConfirmNrDialog extends Mixins(
 .v-tabs-items {
   padding-top: 0.5rem;
   margin-top: -0.5rem;
+}
+
+.col-align-center {
+  text-align: center;
+}
+
+.col-align-end {
+  text-align: end;
+}
+
+.mobile-btn {
+  width: 80vw !important;
+  margin: .5rem 0;
 }
 </style>
