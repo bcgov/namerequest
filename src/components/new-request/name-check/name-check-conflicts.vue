@@ -47,10 +47,10 @@
         <v-row no-gutters class="conflict-row py-5 px-4 border-top">
           <v-col cols="9">
             <v-row no-gutters>
-              <v-col cols="auto" class="nudge-down">
+              <v-col cols="3" md="auto" lg="auto" class="nudge-down">
                 <v-icon :color="item.iconColor">{{ item.icon }}</v-icon>
               </v-col>
-              <v-col cols="auto" class="table-text pl-3 pt-1">
+              <v-col cols="9" md="auto" lg="auto" class="table-text pl-3 pt-1">
                 <span v-html="item.problem"/>
                 <b v-for="word, index in item.words" :key="`problem-word-${index}`">
                   <span v-if="index === 0"> {{ word }}</span>
@@ -96,15 +96,15 @@
             <QuickSearchNames :namesList="item.expandedList"/>
           </v-row>
           <v-row v-if="item.expandedInfo1"
-                 class="name-check-info-text pb-5 pl-13"
-                 :class="item.expandedList ? 'pt-7' : ''"
+                 class="name-check-info-text pb-5"
+                 :class="{'pl-13': !isMobile, 'pt-7': item.expandedList}"
                  no-gutters>
             <v-col cols="auto">
               <v-icon>mdi-information-outline</v-icon>
             </v-col>
-            <v-col class="pl-2" style="max-width: 50rem">
+            <v-col class="pl-2" style="max-width: 50rem" >
               <div v-if="item.info === NameCheckItemType.SIMILAR_MATCH">
-                <v-tooltip top content-class="top-tooltip" transition="fade-transition">
+                <v-tooltip top content-class="top-tooltip" transition="fade-transition" :disabled="isMobile">
                   <template v-slot:activator="{ on, attrs }">
                     <span class="dotted-underline" v-bind="attrs" v-on="on">Similar names</span>
                   </template>
@@ -115,7 +115,7 @@
                 in different business categories may be approved at the discretion of the
                 Business Registry. If you feel your name is unique within your business category,
                 or you can
-                <v-tooltip top content-class="top-tooltip" transition="fade-transition">
+                <v-tooltip top content-class="top-tooltip" transition="fade-transition" :disabled="isMobile">
                   <template v-slot:activator="{ on, attrs }">
                     <span class="dotted-underline" v-bind="attrs" v-on="on">obtain consent</span>
                   </template>
@@ -181,6 +181,7 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
 
 import QuickSearchNames from '@/components/new-request/name-check/quick-search-names.vue'
 import { NameCheckItemIF } from '@/interfaces/name-check-interfaces'
@@ -192,6 +193,9 @@ import { NameCheckErrorType, NameCheckItemType } from '@/enums'
 export default class NameCheckConflicts extends Vue {
   @Prop()
   private readonly items: Array<NameCheckItemIF>
+
+  // Global getter
+  @Getter isMobile!: boolean
 
   @Emit() private clearError (value: string) { }
   @Emit() private retry (value: string) { }
@@ -277,7 +281,6 @@ export default class NameCheckConflicts extends Vue {
   color: $gray7;
   font-size: 0.875rem;
   line-height: 1.375rem;
-  padding-right: 9rem;
 }
 .no-hover:hover {
   background-color: transparent !important;

@@ -7,7 +7,7 @@
       </v-btn>
 
       <v-tabs id="advanced-search-tabs">
-        <v-tabs-items v-model="advSearchTab">
+        <v-tabs-items v-model="advSearchTab" touchless>
 
           <!-- Advanced Search Form -->
           <v-tab-item class="set-height-tab mb-2">
@@ -274,7 +274,7 @@ export default class AdvancedSearch extends Vue {
 @import '@/assets/scss/theme.scss';
 
 .tab-card-height {
-  height: 36rem;
+  min-height: 36rem;
 }
 
 .retrieve-card-height {
@@ -283,14 +283,6 @@ export default class AdvancedSearch extends Vue {
 
 .set-height-tab {
   min-height: 29rem;
-}
-
-.dialog-close {
-  position: absolute;
-  top: 30px;
-  right: 0;
-  margin-right: 30px;
-  z-index: 2;
 }
 
 #advanced-search-actions {

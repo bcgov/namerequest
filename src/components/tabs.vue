@@ -13,7 +13,7 @@
               :class="{ 'mt-1': tabNumber === 1 }"
               tabindex="0">
         <v-icon class="mr-2">mdi-magnify</v-icon>
-        <span :class="tabNumber === 0 ? 'h5' : 'h5-lt'">Request a Business Name</span>
+        <span v-if="!isMobile" :class="tabNumber === 0 ? 'h5' : 'h5-lt'">Request a Business Name</span>
       </v-tab>
       <v-tab :ripple="false"
               id="existing-tab"
@@ -21,9 +21,9 @@
              :class="{ 'mt-1': tabNumber === 0 }"
               tabindex="1">
         <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
-        <span :class="tabNumber === 1 ? 'h5' : 'h5-lt'">Manage My Name Request</span>
+        <span v-if="!isMobile" :class="tabNumber === 1 ? 'h5' : 'h5-lt'">Manage My Name Request</span>
       </v-tab>
-      <v-tabs-items class="rounded-b tab-items" v-model="tabNumber">
+      <v-tabs-items class="rounded-b tab-items" v-model="tabNumber" touchless>
         <v-tab-item>
           <NewSearch />
           <LinkRow />
@@ -58,6 +58,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 export default class Tabs extends Mixins(CommonMixin) {
   // Global getter
   @Getter getTabNumber!: number
+  @Getter isMobile!: boolean
 
   // Global action
   @Action setTabNumber!: ActionBindingIF

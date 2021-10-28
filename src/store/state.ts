@@ -187,5 +187,6 @@ export const stateModel: StateModelIF = {
     refundLabel: '',
     showStaffContact: false,
     showAlertIcon: false
-  }
+  },
+  windowWidth: null
 }

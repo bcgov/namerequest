@@ -1,26 +1,26 @@
 <template>
   <v-container id="name-build-info" class="content-container">
     <v-row no-gutters>
-      <v-col cols="auto" sm="12" class="h3" align="center">How to Build Your Name</v-col>
-      <v-col cols="12" sm="6" class="my-9">
-        <v-card class="my-9 ml-6 mr-0" flat>
+      <v-col cols="12" class="h3" align="center">How to Build Your Name</v-col>
+      <v-col cols="12" md="6" lg="6" class="my-9">
+        <v-card class="my-9 ml-3 mr-0" flat>
           <v-list class="name-build-list">
             <v-list-item-group color="primary">
               <v-list-item
-                      v-for="(item, i) in items"
-                      :key="i"
-                      class="name-build-list-item"
-                      :class="{'name-build-list-item-active': isActiveTab(i)}"
-                      :ripple="false"
-                      @mouseover="itemIndex = i"
+                v-for="(item, i) in items"
+                :key="i"
+                class="name-build-list-item"
+                :class="{'name-build-list-item-active': isActiveTab(i)}"
+                :ripple="false"
+                @mouseover="itemIndex = i"
               >
                 <v-icon v-if="isActiveTab(i)" color="primary" left>mdi-check-circle</v-icon>
                 <v-icon v-else color="primary" left>mdi-check</v-icon>
                 <v-list-item-content>
                   <v-list-item-title
-                          class="name-build-list-item-title"
-                          :class="{'name-build-list-item-active': isActiveTab(i)}"
-                          v-html="item.title"
+                    class="name-build-list-item-title"
+                    :class="{'name-build-list-item-active': isActiveTab(i)}"
+                    v-html="item.title"
                   >
                   </v-list-item-title>
                 </v-list-item-content>
@@ -37,10 +37,8 @@
           </div>
         </v-card>
       </v-col>
-
-      <v-divider class="mt-9 mb-16 divider" vertical></v-divider>
-
-      <v-col cols="12" sm="6" class="my-9 pl-75">
+      <v-divider v-if="!isMobile" class="mt-9 divider" vertical></v-divider>
+      <v-col cols="12" md="6" lg="6" class="my-9 px-6">
         <component :is="getDisplayedComponent(itemIndex)" :key="itemIndex" />
       </v-col>
     </v-row>
@@ -49,6 +47,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
 
 // Components
 import { BusinessDesignation, ConsentWords, ExampleName, UnavailableWords, UniqueNames, UnknownWords }
@@ -65,6 +64,9 @@ import { BusinessDesignation, ConsentWords, ExampleName, UnavailableWords, Uniqu
   }
 })
 export default class NameBuildInfo extends Vue {
+  // Global getter
+  @Getter isMobile!: boolean
+
   private itemIndex = 0
   readonly items = [
     {
@@ -116,6 +118,7 @@ export default class NameBuildInfo extends Vue {
   padding-top: 92px;
 
   .divider {
+    max-height: 24rem;
     border-color: $border;
     margin-left: -1px;
     z-index: 1;
@@ -138,6 +141,7 @@ export default class NameBuildInfo extends Vue {
     }
     .name-build-list-item-title {
       color: $app-blue;
+      white-space: initial;
     }
     .name-build-list-item-active {
       color: $text;

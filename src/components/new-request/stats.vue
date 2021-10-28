@@ -15,6 +15,7 @@
       <v-tooltip bottom nudge-left="45"
         content-class="bottom-tooltip wait-time-tooltip"
         transition="fade-transition"
+        :disabled="isMobile"
       >
         <template v-slot:activator="{ on }">
           <div class="stats-content-outer py-0" v-on="on">
@@ -37,6 +38,7 @@
       <v-tooltip bottom nudge-left="45"
         content-class="bottom-tooltip new-submission-wait-time-tooltip"
         transition="fade-transition"
+        :disabled="isMobile"
       >
         <template v-slot:activator="{ on }">
           <div id="stats-content-outer-3" class="stats-content-outer py-0" v-on="on">
@@ -72,6 +74,7 @@ import NamexServices from '@/services/namex.services'
 export default class Stats extends Vue {
   // Global getter
   @Getter getStats!: StatsI
+  @Getter isMobile!: boolean
 
   // Global action
   @Action setStats!: ActionBindingIF

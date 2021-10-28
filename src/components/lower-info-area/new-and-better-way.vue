@@ -1,12 +1,12 @@
 <template>
   <div id="new-and-better-way" class="pt-16 pb-4">
-    <v-row no-gutters class="py-9 px-15 content-container">
-      <v-col cols="6" class="pl-1 pr-75">
+    <v-row no-gutters class="px-6 content-container">
+      <v-col cols="12" md="6" lg="6" class="pb-4" :class="{'pr-15' : !isMobile }">
         <v-img src="@/assets/images/bcnamerequest-laptop_x2.jpg" />
       </v-col>
-      <v-col cols="6" class="pr-3 pl-75">
+      <v-col cols="12" md="6" lg="6" :class="{'pl-15' : !isMobile }">
         <v-row>
-          <v-col cols="12" class="h3 pb-5 mt-n5">
+          <v-col cols="12" class="h3 pb-5 mt-n5" :class="{'text-center' : isMobile }">
             A new and better way to get a name <br/>for your business in B.C.
           </v-col>
           <v-col cols="12">
@@ -24,12 +24,14 @@
     </v-row>
   </div>
 </template>
-
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
 
-@Component({})
-export default class NewAndBetterWay extends Vue {}
+@Component
+export default class NewAndBetterWay extends Vue {
+  @Getter isMobile!: boolean
+}
 </script>
 
 <style lang="scss" scoped>

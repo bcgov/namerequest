@@ -1,17 +1,22 @@
 <template>
   <v-container fluid id="new-request-container" class="copy-normal pa-10">
+    <v-row no-gutters v-if="isMobile">
+      <v-col cols="12" class="mb-6">
+        <span class="h5">Request a Business Name</span>
+      </v-col>
+    </v-row>
     <v-row no-gutters>
-      <v-col cols="6" class="pt-0 font-weight-bold h6"><span>I need a name to:</span></v-col>
+      <v-col cols="12" class="pt-0 font-weight-bold h6"><span>I need a name to:</span></v-col>
     </v-row>
 
     <v-row class="mt-4" no-gutters>
       <!--request_action_cd-->
-      <v-col cols="4">
+      <v-col cols="12" md="4" lg="4">
         <v-tooltip top
                    id="search-type-options-select"
                    content-class="top-tooltip"
                    transition="fade-transition"
-                   :disabled="request_action_cd !== RequestCode.CNV">
+                   :disabled="request_action_cd !== RequestCode.CNV || isMobile">
           <template v-slot:activator="scope">
             <div v-on="scope.on">
               <v-select :error-messages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
@@ -22,7 +27,7 @@
                         filled
                         v-model="request_action_cd">
                 <template slot="item" slot-scope="data">
-                  <v-tooltip :disabled="!data.item.blurbs" right transition="fade-transition">
+                  <v-tooltip :disabled="!data.item.blurbs || isMobile" right transition="fade-transition">
                     <template v-slot:activator="scope">
                       <span v-on="scope.on" class="list-item">
                         {{ data.item.text }}
@@ -38,12 +43,12 @@
         </v-tooltip>
       </v-col>
       <!--location (aka jurisdiction)-->
-      <v-col cols="4" class="px-3">
+      <v-col cols="12" md="4" lg="4" :class="{'px-3': !isMobile }">
         <v-tooltip id="location-options-select"
                    top
                    content-class="top-tooltip"
                    transition="fade-transition"
-                   :disabled="!location || location === 'BC'">
+                   :disabled="!location || location === 'BC' || isMobile">
           <template v-slot:activator="scope">
             <div v-on="scope.on">
               <v-select :error-messages="getErrors.includes('location') ? 'Please select a jurisdiction' : ''"
@@ -57,7 +62,11 @@
                         label="Select a Jurisdiction"
                         v-model="location">
                 <template slot="item" slot-scope="data">
-                  <v-tooltip :disabled="!request_action_cd || !data.item.blurbs" right transition="fade-transition">
+                  <v-tooltip
+                    right
+                    transition="fade-transition"
+                    :disabled="!request_action_cd || !data.item.blurbs || isMobile"
+                  >
                     <template v-slot:activator="scope">
                       <span v-on="scope.on" class="list-item">{{ data.item.text }}</span>
                     </template>
@@ -76,11 +85,11 @@
         </v-tooltip>
       </v-col>
       <!--entity_type_cd-->
-      <v-col cols="4">
+      <v-col cols="12" md="4" lg="4">
         <v-tooltip id="entity-type-options-select"
                    top
                    content-class="top-tooltip"
-                   :disabled="request_action_cd !== RequestCode.CNV || !entityConversionText"
+                   :disabled="request_action_cd !== RequestCode.CNV || !entityConversionText || isMobile"
                    transition="fade-transition">
           <template v-slot:activator="scope">
             <div v-on="scope.on">
@@ -97,7 +106,7 @@
                   <v-tooltip
                           :right="isScreenLg"
                           :left="!isScreenLg"
-                          :disabled="!data.item.blurbs"
+                          :disabled="!data.item.blurbs || isMobile"
                           :content-class="!isScreenLg ? 'left-tooltip' : ''"
                           transition="fade-transition">
                     <template v-slot:activator="scope">
@@ -124,7 +133,7 @@
     </v-row>
 
     <v-row no-gutters>
-      <v-col cols="4" v-if="getIsXproMras">
+      <v-col cols="12" md="4" lg="4" v-if="getIsXproMras">
         <v-select :error-messages="getErrors.includes('jurisdiction') ? 'Please select a jurisdiction' : ''"
                   :items="jurisdictionOptions"
                   :menu-props="{ bottom: true, offsetY: true}"
@@ -139,8 +148,11 @@
           </template>
         </v-select>
       </v-col>
-      <v-col :class="{ 'pl-3': (getIsXproMras && !isFederal), 'pr-3': !getIsXproMras && showDesignationSelect}"
-             :cols="showDesignationSelect || (getIsXproMras) ? '8' : '12'">
+      <v-col :class="{
+        'pl-3': (getIsXproMras && !isFederal && !isMobile),
+        'pr-3': (!getIsXproMras && showDesignationSelect && !isMobile)
+      }"
+             :cols="(showDesignationSelect || (getIsXproMras)) && !isMobile ? '8' : '12'">
         <NameInput v-if="!isFederal"
                    :class="inputCompClass"
                    :is-mras-search="(getIsXproMras && !noCorpNum)"
@@ -151,7 +163,7 @@
         <p v-else class="pl-3 text-body-2">Federally incorporated businesses do not need a Name Request. You may
           register  your extraprovincial business immediately using its existing name at Corporate Online.</p>
       </v-col>
-      <v-col v-if="showDesignationSelect" cols="4">
+      <v-col v-if="showDesignationSelect" cols="12" md="4" lg="4">
         <v-select :class="!entity_type_cd ? 'disabled-custom' : ''"
                   :error-messages="getErrors.includes('designation') ? 'Please select a designation' : ''"
                   filled
@@ -168,7 +180,12 @@
     <!-- Corporate number checkbox, only for XPro Canadian Locations -->
     <v-row v-if="getIsXproMras && !isFederal && !isInternational" no-gutters>
       <v-col class="d-flex justify-end">
-        <v-tooltip top min-width="390" content-class="top-tooltip" transition="fade-transition">
+        <v-tooltip
+          top min-width="390"
+          content-class="top-tooltip"
+          transition="fade-transition"
+          :disabled="isMobile"
+        >
           <template v-slot:activator="{ on }">
             <v-checkbox
                     v-model="noCorpNum"
@@ -261,6 +278,7 @@ export default class NewSearch extends Mixins(CommonMixin) {
   @Getter getNameIsEnglish!: boolean
   @Getter getRequestActionCd!: RequestCode
   @Getter getRequestText!: string
+  @Getter isMobile!: boolean
 
   // Global actions
   @Action setConversionType!: ActionBindingIF

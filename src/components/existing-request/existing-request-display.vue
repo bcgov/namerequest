@@ -29,7 +29,7 @@
         <div class="nr-data">
           <v-row class="mt-5" :key="refreshCount">
             <!-- labels and values -->
-            <v-col cols="9" class="py-0">
+            <v-col cols="12" md="9" lg="9" class="py-0">
               <v-row dense>
                 <v-col cols="12" class="submitted-date">
                   <span>Submitted Date:</span>
@@ -49,7 +49,10 @@
                     <span v-if="isRefundRequested">
                       <v-tooltip
                         content-class="top-tooltip"
-                        top nudge-top min-width="24rem">
+                        top nudge-top
+                        min-width="24rem"
+                        :disabled="isMobile"
+                      >
                         <template v-slot:activator="{ on, attrs }">
                           <span v-bind="attrs" v-on="on">
                             <span  class="refund-label">{{ getRefundParams.refundLabel }}</span>
@@ -93,6 +96,7 @@
                     right
                     transition="fade-transition"
                     content-class="tooltip"
+                    :disabled="isMobile"
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <span
@@ -134,7 +138,7 @@
             </v-col>
 
             <!-- action buttons -->
-            <v-col cols="3" class="py-0">
+            <v-col cols="12" md="3" lg="3" class="py-0">
               <v-row dense>
                 <template v-for="action of actions">
                   <!-- incorporate action is a distinct button below -->
@@ -232,6 +236,7 @@ export default class ExistingRequestDisplay extends Mixins(
   @Getter getIsAuthenticated!: boolean
   @Getter getNrId!: number
   @Getter getNrState!: NrState
+  @Getter isMobile!: boolean
 
   // Global actions
   @Action editExistingRequest!: ActionBindingIF

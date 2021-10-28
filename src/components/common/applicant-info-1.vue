@@ -4,10 +4,10 @@
       <v-row>
         <v-col cols="2" class="h6 align-self-start pt-0">Applicant</v-col>
 
-        <v-col cols="10" class="py-0">
+        <v-col cols="12" md="10" lg="10" class="py-0">
           <!--FIRST NAME, MIDDLE NAME, LAST NAME-->
           <v-row>
-            <v-col cols="4" class="pt-0">
+            <v-col cols="12" md="4" lg="4" class="pt-0">
               <label for="firstname" class="hidden">First Name</label>
               <v-text-field
                 :messages="messages['firstName']"
@@ -26,7 +26,7 @@
               />
             </v-col>
 
-            <v-col cols="4" class="pt-0">
+            <v-col cols="12" md="4" lg="4" class="pt-0">
               <label for="middlename" class="hidden">Middle Name (Optional)</label>
               <v-text-field
                 :messages="messages['middleName']"
@@ -45,7 +45,7 @@
               />
             </v-col>
 
-            <v-col cols="4" class="pt-0">
+            <v-col cols="12" md="4" lg="4" class="pt-0">
               <label for="lastname" class="hidden">Last Name</label>
               <v-text-field
                 :messages="messages['lastName']"
@@ -208,7 +208,7 @@
           </v-row>
 
           <v-row class="mt-2">
-            <v-col cols="6" class="py-0 my-0">
+            <v-col cols="12" md="6" lg="6" class="py-0 my-0">
               <label for="city" class="hidden">City</label>
               <v-text-field
                 :messages="messages['City']"
@@ -229,7 +229,11 @@
               />
             </v-col>
 
-            <v-col cols="6" class="py-0 my-0" v-if="applicant.countryTypeCd === Location.CA">
+            <v-col
+              v-if="applicant.countryTypeCd === Location.CA"
+              cols="12" md="6" lg="6" class="py-0 my-0"
+              :class="{ 'pt-2': isMobile }"
+            >
               <label for="province" class="hidden">Province</label>
               <v-select
                 :items="provinceOptions"
@@ -251,7 +255,11 @@
               />
             </v-col>
 
-            <v-col cols="6" class="py-0 my-0" v-else-if="applicant.countryTypeCd === Location.US">
+            <v-col
+              v-else-if="applicant.countryTypeCd === Location.US"
+              cols="12" md="6" lg="6" class="py-0 my-0"
+              :class="{ 'pt-2': isMobile }"
+            >
               <label for="state" class="hidden">State</label>
               <v-select
                 :items="$usaStateCodes"
@@ -272,7 +280,7 @@
               />
             </v-col>
 
-            <v-col cols="6" class="py-0 my-0" v-else>
+            <v-col cols="12" md="6" lg="6" class="py-0 my-0" v-else>
               <label for="state" class="hidden">Province/State (Optional, 2 letters max)</label>
               <v-text-field
                 :messages="messages['Province']"
@@ -295,7 +303,7 @@
           </v-row>
 
           <v-row class="mt-2">
-            <v-col cols="6" class="py-0 my-0">
+            <v-col cols="12" md="6" lg="6" class="py-0 my-0">
               <label for="country" class="hidden">Country</label>
               <v-select
                 :items="countryOptions"
@@ -316,7 +324,7 @@
               />
             </v-col>
 
-            <v-col cols="6" class="py-0 my-0">
+            <v-col cols="12" md="6" lg="6" class="py-0 my-0" :class="{ 'pt-2': isMobile }">
               <label for="postalcode" class="hidden">Postal/Zip Code</label>
               <v-text-field
                 :messages="messages['PostalCode']"
@@ -338,7 +346,7 @@
           </v-row>
 
           <v-row class="mt-2" v-if="getShowXproJurisdiction && showAllFields && getEditMode">
-            <v-col cols="6" class="py-0 my-0">
+            <v-col cols="12" md="6" lg="6" class="py-0 my-0">
               <label for="xprojurisdiction" class="hidden">Business Jurisdiction</label>
               <v-select
                 :messages="messages['xproJurisdiction']"
@@ -363,7 +371,7 @@
           </v-row>
 
           <v-row class="mt-5">
-            <v-col cols="7" class="py-0">
+            <v-col cols="12" md="7" lg="7" class="py-0">
               <v-checkbox
                 hide-details
                 label="I am completing this reservation on my own behalf"
@@ -414,6 +422,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   @Getter getSubmissionTabNumber!: number
   @Getter getShowXproJurisdiction!: boolean
   @Getter getKeycloakRoles!: string[]
+  @Getter isMobile!: boolean
   @Getter isRoleStaff!: boolean
 
   // Global actions

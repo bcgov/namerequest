@@ -6,7 +6,7 @@
   "BUSINESSES_URL": "https://dev.bcregistry.ca/business/auth/",
   "DEV_EXISTING_NR_TIMEOUT_MS": "0",
   "DEV_NR_COMPLETION_TIMEOUT_MS": "0",
-  "ENTITY_SELECTOR_URL": "https://entity-selection-dev.pathfinder.gov.bc.ca/",
+  "ENTITY_SELECTOR_URL": "https://entity-selection-dev.apps.silver.devops.gov.bc.ca/",
   "EXISTING_NR_TIMEOUT_MS": "0",
   "EXISTING_NR_TIMER_NAME": "existingNrTimer",
   "HOTJAR_ID": "",

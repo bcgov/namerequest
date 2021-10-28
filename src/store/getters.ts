@@ -1,3 +1,5 @@
+import { getVuetify } from '@/plugins'
+
 import {
   AnalysisJSONI,
   ApplicantI,
@@ -35,6 +37,11 @@ import {
   ColinRequestActions, ColinRequestTypes, XproColinRequestTypes, BcMapping, XproMapping,
   Designations, EntityTypesBcData, EntityTypesXproData, Locations, RequestActions
 } from '@/list-data'
+
+export const isMobile = (state: StateIF): boolean => {
+  // Fallback to base window width if no window size changes have occurred.
+  return (state.stateModel.windowWidth || window.innerWidth) < getVuetify().framework.breakpoint.thresholds.sm
+}
 
 /** True if user is authenticated, else False. */
 export const getIsAuthenticated = (): boolean => {

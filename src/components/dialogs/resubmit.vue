@@ -2,7 +2,7 @@
   <v-dialog min-width="32rem" max-width="45rem" :value="isVisible" persistent>
     <v-card>
       <v-tabs id="resubmit-tabs">
-        <v-tabs-items v-model="currentTab">
+        <v-tabs-items v-model="currentTab" touchless>
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">

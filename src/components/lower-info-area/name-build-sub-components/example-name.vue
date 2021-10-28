@@ -32,7 +32,7 @@
       </v-col>
     </v-row>
 
-    <v-divider class="ml-0 mb-4"></v-divider>
+    <v-divider class="ml-0 my-4"></v-divider>
 
     <v-row class="ml-0">
       <h5>Improper name examples</h5>

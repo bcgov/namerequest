@@ -88,7 +88,6 @@ export default class Landing extends Vue {
 
 <style lang="scss" scoped>
 .landing-content-container {
-  min-width: 940px;
   max-width: 1140px;
 }
 

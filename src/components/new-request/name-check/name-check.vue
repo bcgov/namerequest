@@ -5,17 +5,17 @@
                               :options="dialogOptions"
                               @proceed="dialogSubmit($event)"/>
     <v-row class="pl-10 pt-6" no-gutters>
-      <v-col cols="auto" class="h6 py-0 mt-1">
+      <v-col cols="11" class="h6 py-0 mt-1">
         You are searching for a name for a
         {{ entityText === ' BC Corporation' && location === ' BC' ? '' : ' ' + location }}
         {{ entityText }}
       </v-col>
     </v-row>
     <v-row class="px-10 pt-6" no-gutters>
-      <v-col :class="getIsXproMras ? 'pr-8' : ''">
+      <v-col :class="getIsXproMras ? 'pr-8' : ''" cols="12" lg="7">
         <NameInput :hint="nameInputHint" :isReadOnly="getIsXproMras"/>
       </v-col>
-      <v-col v-if="showDesignationSelect" class="pl-3" cols="3">
+      <v-col v-if="showDesignationSelect" :class="{'pl-3': !isMobile}" cols="12" lg="3">
         <v-select filled
                   :items="designationOptions"
                   label="Select a Designation"
@@ -23,8 +23,14 @@
                   v-model="designation">
         </v-select>
       </v-col>
-      <v-col v-if="!getIsXproMras" class="pl-3 pt-3" cols="auto">
-        <v-btn id="search-name-btn" class="outlined px-5 py-4" outlined @click="checkAgain()">
+      <v-col v-if="!getIsXproMras" class="pl-3 pt-3" cols="1">
+        <v-btn
+          id="search-name-btn"
+          class="outlined px-5 py-4"
+          :class="{'mobile-wide-btn': isMobile}"
+          outlined
+          @click="checkAgain()"
+        >
           <v-icon left size="1.5rem">mdi-magnify</v-icon>
           Check this Name
         </v-btn>
@@ -97,9 +103,10 @@
         <div id="box-shadow-filler-tab-item"/>
         <v-tabs-items class="rounded-b tab-items pa-5 pt-6"
                       :class="checks === 'structure-check' ? 'rounded-top-right' : 'rounded-top-left'"
-                      v-model="checks">
+                      v-model="checks"
+                      touchless>
           <v-tab-item value="structure-check">
-            <v-row no-gutters class="pl-12 pr-16 pb-6 name-check-info-text">
+            <v-row no-gutters class="pr-16 pb-6 name-check-info-text" :class="{'pl-12': !isMobile}">
               <v-col cols="auto">
                 <v-icon>mdi-information-outline</v-icon>
               </v-col>
@@ -110,7 +117,7 @@
             <NameCheckConflicts :items="itemsStructure" @clear-error="clearError" @retry="retry"/>
           </v-tab-item>
           <v-tab-item value="conflicts-check">
-            <v-row no-gutters class="pl-12 pr-16 pb-7 name-check-info-text">
+            <v-row no-gutters class="pr-16 pb-7 name-check-info-text" :class="{'pl-12': !isMobile}">
               <v-col cols="auto">
                 <v-icon>mdi-information-outline</v-icon>
               </v-col>
@@ -238,6 +245,7 @@ export default class NameCheck extends Vue {
   @Getter isMissingDescriptive!: boolean
   @Getter isMissingDesignation!: boolean
   @Getter isMissingDistinctive!: boolean
+  @Getter isMobile!: boolean
 
   @Action getNameAnalysis!: ActionBindingIF
   @Action nameCheckClearError!: ActionBindingIF
@@ -749,18 +757,25 @@ export default class NameCheck extends Vue {
 }
 #name-check-main-container {
   max-width: none;
-  min-width: 1011px;
 }
 #name-check-name-input {
   padding: 2rem !important;
 }
 #name-check-start-over-btn {
   background-color: $gray1 !important;
+
+  @media only screen and (max-width: 600px) {
+    width: 100%;
+  }
 }
 #name-check-submit-btn {
   font-size: 0.875rem !important;
   font-weight: bold;
-}
+
+  @media only screen and (max-width: 600px) {
+    margin-top: 10px !important;
+    width: 100%;
+  }}
 #name-check-tabs {
   background-color: $gray1 !important;
 }
@@ -769,6 +784,11 @@ export default class NameCheck extends Vue {
   max-width: none;
   padding-right: 38px;
   padding-left: 38px;
+
+  @media only screen and (max-width: 600px) {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 #name-check-title {
   font-size: 1.5rem;
@@ -799,6 +819,9 @@ export default class NameCheck extends Vue {
 .active-tab.no-border-top {
   border-top: none;
 }
+.mobile-wide-btn {
+  width: 260px;
+}
 .name-check-info-text {
   color: $gray7;
   font-size: 0.875rem;
@@ -810,6 +833,11 @@ export default class NameCheck extends Vue {
   line-height: 1.375rem;
   padding-left: 118px;
   padding-right: 130px;
+
+  @media only screen and (max-width: 600px) {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 }
 .rounded-top-left {
   border-top-left-radius: 4px;
