@@ -720,6 +720,10 @@ export const setFolioNumber: ActionIF = ({ commit }, folioNumber: string): void 
   commit('mutateFolioNumber', folioNumber)
 }
 
+export const setWindowWidth: ActionIF = ({ commit }, width: number): void => {
+  commit('mutateWindowWidth', width)
+}
+
 /**
  * Name Check actions
  * FUTURE: move these into a factory if converting to composition api

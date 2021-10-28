@@ -541,3 +541,7 @@ export const mutateFolioNumber = (state: StateIF, folioNumber: string) => {
 export const mutateRefundParams = (state: StateIF, refundParams: RefundParamsIF) => {
   state.stateModel.refundParams = refundParams
 }
+
+export const mutateWindowWidth = (state: StateIF, width: number) => {
+  state.stateModel.windowWidth = width
+}

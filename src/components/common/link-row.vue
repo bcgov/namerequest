@@ -1,67 +1,33 @@
 <template>
   <v-row id="link-row" class="links-row text-body-4 px-2" :class="{ 'links-row-mobile' : isMobile }">
-    <template v-if="isMobile">
-      <v-col cols="12">
-        <a class="nr-required-activator pt-2"
-           :class="{ 'no-selector-link' : !entitySelectorUrl }"
-           @click="activateNRRModal()"
-        >
-          <v-col>
-            <v-icon color="primary">mdi-help-circle-outline</v-icon> Check if you need a Name Request
-          </v-col>
-        </a>
-        <a class="name-build-link pt-2"
-           :class="{ 'no-selector-link' : !entitySelectorUrl }"
-           href="#"
-           onclick="return false;"
-           @click="scrollTo('name-build-info')"
-        >
-          <v-col>
-            <v-icon color="primary">mdi-help-circle-outline</v-icon> Learn how to build a name
-          </v-col>
-        </a>
-        <a v-if="entitySelectorUrl"
-           class="entity-selector-link pt-2"
-           :href="entitySelectorUrl"
-           target="_blank"
-        >
-          <v-col>
-            <v-icon color="primary">mdi-help-circle-outline</v-icon> Help me choose a business type
-            <v-icon color="primary" x-small>mdi-open-in-new</v-icon>
-          </v-col>
-        </a>
-      </v-col>
-    </template>
-    <template v-else>
-      <a class="nr-required-activator pt-2"
+    <v-col cols="12" md="4" lg="4">
+      <a class="nr-required-activator"
          :class="{ 'no-selector-link' : !entitySelectorUrl }"
          @click="activateNRRModal()"
       >
-        <v-col>
-          <v-icon color="primary">mdi-help-circle-outline</v-icon> Check if you need a Name Request
-        </v-col>
+        <v-icon color="primary">mdi-help-circle-outline</v-icon>&nbsp;Check if you need a Name Request
       </a>
-      <a class="name-build-link middle-link pt-2"
+    </v-col>
+    <v-col cols="12" md="4" lg="4">
+      <a class="name-build-link"
          :class="{ 'no-selector-link' : !entitySelectorUrl }"
          href="#"
          onclick="return false;"
          @click="scrollTo('name-build-info')"
       >
-        <v-col>
-          <v-icon color="primary">mdi-help-circle-outline</v-icon> Learn how to build a name
-        </v-col>
+        <v-icon color="primary">mdi-help-circle-outline</v-icon>&nbsp;Learn how to build a name
       </a>
+    </v-col>
+    <v-col cols="12" md="4" lg="4">
       <a v-if="entitySelectorUrl"
-         class="entity-selector-link pt-2"
+         class="entity-selector-link"
          :href="entitySelectorUrl"
          target="_blank"
       >
-        <v-col>
-          <v-icon color="primary">mdi-help-circle-outline</v-icon> Help me choose a business type
-          <v-icon color="primary" x-small>mdi-open-in-new</v-icon>
-        </v-col>
+        <v-icon color="primary">mdi-help-circle-outline</v-icon>&nbsp;Help me choose a business type
+        <v-icon color="primary" x-small>mdi-open-in-new</v-icon>
       </a>
-    </template>
+    </v-col>
   </v-row>
 </template>
 
@@ -94,7 +60,6 @@ export default class LinkRow extends Mixins(CommonMixin) {
 @import '@/assets/scss/theme.scss';
 
 .links-row {
-  min-height: 60px;
   background-color: $gray1;
   text-align: center;
 

@@ -214,7 +214,7 @@
             </span>
           </v-tooltip>
         </v-col>
-        <v-col v-else cols="5" class="py-0" />
+        <v-col v-else cols="12" md="5" lg="5" class="py-0" />
         <ApplicantInfoNav @nextAction="nextAction()" />
       </v-row>
     </v-container>

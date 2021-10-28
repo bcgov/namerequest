@@ -37,7 +37,7 @@
           </div>
         </v-card>
       </v-col>
-      <v-divider class="mt-9 divider" vertical></v-divider>
+      <v-divider v-if="!isMobile" class="mt-9 divider" vertical></v-divider>
       <v-col cols="12" md="6" lg="6" class="my-9 px-6">
         <component :is="getDisplayedComponent(itemIndex)" :key="itemIndex" />
       </v-col>
@@ -47,6 +47,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
 
 // Components
 import { BusinessDesignation, ConsentWords, ExampleName, UnavailableWords, UniqueNames, UnknownWords }
@@ -63,6 +64,9 @@ import { BusinessDesignation, ConsentWords, ExampleName, UnavailableWords, Uniqu
   }
 })
 export default class NameBuildInfo extends Vue {
+  // Global getter
+  @Getter isMobile!: boolean
+
   private itemIndex = 0
   readonly items = [
     {
@@ -137,6 +141,7 @@ export default class NameBuildInfo extends Vue {
     }
     .name-build-list-item-title {
       color: $app-blue;
+      white-space: initial;
     }
     .name-build-list-item-active {
       color: $text;

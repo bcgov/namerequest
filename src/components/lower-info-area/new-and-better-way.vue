@@ -26,12 +26,11 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
 
 @Component
 export default class NewAndBetterWay extends Vue {
-  get isMobile (): boolean {
-    return window.innerWidth < this.$vuetify.breakpoint.thresholds.xs
-  }
+  @Getter isMobile!: boolean
 }
 </script>
 

@@ -16,4 +16,5 @@ export interface StateModelIF {
   paymentModel?: {}
   nameCheckModel: NameCheckModelIF
   refundParams: RefundParamsIF
+  windowWidth: number
 }

@@ -158,6 +158,7 @@ export default class App extends Mixins(DateMixin) {
   @Action toggleConfirmNrModal!: ActionBindingIF
   @Action setCurrentJsDate!: ActionBindingIF
   @Action setKeycloakRoles!: ActionBindingIF
+  @Action setWindowWidth!: ActionBindingIF
 
   /** The Update Current JS Date timer id. */
   private updateCurrentJsDateId = 0
@@ -178,6 +179,9 @@ export default class App extends Mixins(DateMixin) {
   }
 
   async created (): Promise<void> {
+    // Listen for changes to the window size to create responsive reactivty
+    window.addEventListener('resize', () => this.setWindowWidth(window.innerWidth))
+
     // start with "page not ready" - show spinner
     // (spinner will be hidden in landing.vue)
     this.showSpinner = true

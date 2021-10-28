@@ -305,7 +305,7 @@ export default class ConfirmNrDialog extends Mixins(
 }
 
 .mobile-btn {
-  width: 80vw !important;
+  width: 20rem !important;
   margin: .5rem 0;
 }
 </style>
