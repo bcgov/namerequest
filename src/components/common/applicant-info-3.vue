@@ -190,7 +190,7 @@
 
       <v-row class="mt-2">
         <v-col cols="12" md="2" lg="2" />
-        <v-col align-self="center" class="py-0" v-if="showPriorityRequest">
+        <v-col cols="12" md="5" lg="5" align-self="center" class="py-0" v-if="showPriorityRequest">
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"

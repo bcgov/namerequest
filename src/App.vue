@@ -179,7 +179,7 @@ export default class App extends Mixins(DateMixin) {
   }
 
   async created (): Promise<void> {
-    // Listen for changes to the window size to create responsive reactivty
+    // Listen for changes to the window size to create responsive reactivity
     window.addEventListener('resize', () => this.setWindowWidth(window.innerWidth))
 
     // start with "page not ready" - show spinner
