@@ -197,11 +197,6 @@ export const UsaStateCodes: JurisdictionI[] = [
     value: 'PA'
   },
   {
-    text: 'Puerto Rico',
-    SHORT_DESC: 'Puerto Rico',
-    value: 'PR'
-  },
-  {
     text: 'Rhode Island',
     SHORT_DESC: 'Rhode Island',
     value: 'RI'
@@ -240,11 +235,6 @@ export const UsaStateCodes: JurisdictionI[] = [
     text: 'Virginia',
     SHORT_DESC: 'Virginia',
     value: 'VA'
-  },
-  {
-    text: 'Virgin Islands',
-    SHORT_DESC: 'Virgin Islands',
-    value: 'VI'
   },
   {
     text: 'Washington',
