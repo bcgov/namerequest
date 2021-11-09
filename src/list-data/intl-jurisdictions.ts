@@ -151,9 +151,14 @@ const Other: JurisdictionI[] = [
     text: 'Viet Nam'
   },
   {
+    value: 'VI',
+    text: 'Virgin Islands, U.S.',
+    SHORT_DESC: 'Virgin Islands, U.S.'
+  },
+  {
     value: 'VG',
-    text: 'Virgin Islands',
-    SHORT_DESC: 'Virgin Islands'
+    text: 'Virgin Islands, British',
+    SHORT_DESC: 'Virgin Islands, British'
   },
   {
     value: 'WF',

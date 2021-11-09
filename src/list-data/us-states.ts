@@ -242,11 +242,6 @@ export const UsaStateCodes: JurisdictionI[] = [
     value: 'VA'
   },
   {
-    text: 'Virgin Islands',
-    SHORT_DESC: 'Virgin Islands',
-    value: 'VI'
-  },
-  {
     text: 'Washington',
     SHORT_DESC: 'Washington',
     value: 'WA'

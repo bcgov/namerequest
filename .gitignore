@@ -6,3 +6,4 @@ node_modules/
 .vscode
 configuration.json.*
 keycloak.json.*
+public/config/configuration.json
