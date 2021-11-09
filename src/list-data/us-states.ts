@@ -197,6 +197,11 @@ export const UsaStateCodes: JurisdictionI[] = [
     value: 'PA'
   },
   {
+    text: 'Puerto Rico',
+    SHORT_DESC: 'Puerto Rico',
+    value: 'PR'
+  },
+  {
     text: 'Rhode Island',
     SHORT_DESC: 'Rhode Island',
     value: 'RI'
