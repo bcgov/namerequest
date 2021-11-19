@@ -1,5 +1,5 @@
 <template>
-  <v-dialog id="advanced-search-dialog" v-model="dialog" width="55rem" persistent :attach="attach">
+  <v-dialog id="advanced-search-dialog" v-model="dialog" min-width="22rem" persistent :attach="attach">
 
     <v-card :class="{'retrieve-card-height': isTabRetrieve, 'tab-card-height': !isTabRetrieve}">
       <v-btn icon large class="dialog-close" @click="emitClose()" >
@@ -96,31 +96,37 @@
       </v-tabs>
 
       <v-card-actions id="advanced-search-actions" class="justify-center pa-0">
-        <v-btn
-          id="adv-search-btn-1"
-          class="mr-2"
-          :class="{ 'button-blue': isTabResultsTable || isTabRetrieve }"
-          text
-          outlined
-          @click="advSearchBtn1Actions()"
-        >
+        <v-row no-gutters>
+          <v-col>
+            <v-btn
+              id="adv-search-btn-1"
+              class="mr-2"
+              :class="[{ 'button-blue': isTabResultsTable || isTabRetrieve }, isMobile ? 'mobile-btn' : 'float-right']"
+              text
+              outlined
+              @click="advSearchBtn1Actions()"
+            >
           <span :class="isTabSearchForm ? 'pl-2' : 'pr-2'">
             <v-icon v-if="!isTabSearchForm">mdi-chevron-left</v-icon>
             {{ advSearchBtn1Text }}
             <v-icon v-if="isTabSearchForm">mdi-chevron-right</v-icon>
           </span>
-        </v-btn>
-        <v-btn
-          id="adv-search-btn-2"
-          :class="{ 'button-blue' : !isTabRetrieve }"
-          text
-          outlined
-          @click="advSearchBtn2Actions()"
-        >
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-btn
+              id="adv-search-btn-2"
+              :class="[{ 'button-blue' : !isTabRetrieve }, { 'mobile-btn' : isMobile }]"
+              text
+              outlined
+              @click="advSearchBtn2Actions()"
+            >
           <span class="px-3">
             {{ advSearchBtn2Text }}<v-icon v-if="isTabRetrieve">mdi-chevron-right</v-icon>
           </span>
-        </v-btn>
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-card-actions>
     </v-card>
 
@@ -130,6 +136,7 @@
 <script lang='ts'>
 import { Component, Emit, Prop, Watch, Vue } from 'vue-property-decorator'
 import NamexServices from '@/services/namex.services'
+import { Getter } from 'vuex-class'
 import { AdvancedSearchForm, AdvancedSearchRetrieve, AdvancedSearchTable } from '@/components/advanced-search'
 
 // Interfaces & Enums
@@ -152,6 +159,9 @@ export default class AdvancedSearch extends Vue {
 
   /** Prop to provide attachment selector. */
   @Prop() readonly attach: string
+
+  // Global getter
+  @Getter isMobile!: boolean
 
   // Local Properties
   private advSearchTab = 0
@@ -272,7 +282,6 @@ export default class AdvancedSearch extends Vue {
 
 <style lang="scss" scoped>
 @import '@/assets/scss/theme.scss';
-
 .tab-card-height {
   min-height: 36rem;
 }
@@ -304,6 +313,11 @@ export default class AdvancedSearch extends Vue {
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
+}
+
+.mobile-btn {
+  width: 16rem;
+  margin-top: 10px
 }
 
 ::v-deep .v-tabs > .v-tabs-bar {

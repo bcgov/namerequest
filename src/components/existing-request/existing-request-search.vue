@@ -11,12 +11,9 @@
     <v-row no-gutters>
 
       <!-- Help Info -->
-      <v-col cols="12" md="3" lg="3" class="existing-request-info copy-small">
+      <v-col  v-if="!isMobile" cols="12" md="3" lg="3" class="existing-request-info copy-small">
         <div class="mx-8 my-10">
           <ul>
-            <div v-if="isMobile" class="pb-8">
-              <span class="h5">Manage My Name Request</span>
-            </div>
             <li>Check review time and approval status</li>
             <li>Upgrade Name Request to Priority ($100.00)</li>
             <li>Renew your Name Request for an additional 56 days before it expires ($30.00)</li>
@@ -34,7 +31,7 @@
           <v-row no-gutters>
             <v-col v-if="!isMobile" cols="1" class="max-width" />
             <v-col cols="11" class="h6">
-              Enter your information to manage an existing Name Request:
+              To manage an existing Name Request, enter your NR Number and either the Applicant’s Phone Number or Email:
             </v-col>
           </v-row>
 
@@ -101,7 +98,9 @@
           <!-- FIFTH LINE -->
           <v-row class="mt-9" no-gutters>
             <v-col class="text-center">
-              <v-btn id="retrieve-name-btn" @click="handleSubmit()">Retrieve Name Request</v-btn>
+              <v-btn id="retrieve-name-btn" :class="{ 'mobile-btn' : isMobile }" @click="handleSubmit()">
+                Retrieve Name Request
+              </v-btn>
             </v-col>
           </v-row>
 
@@ -120,6 +119,19 @@
           </v-row>
 
         </v-form>
+      </v-col>
+
+      <!-- Help Info -->
+      <v-col  v-if="isMobile" cols="12" md="3" lg="3" class="existing-request-info copy-small">
+        <div class="mx-8 my-10">
+          <ul>
+            <li>Check review time and approval status</li>
+            <li>Upgrade Name Request to Priority ($100.00)</li>
+            <li>Renew your Name Request for an additional 56 days before it expires ($30.00)</li>
+            <li>Cancel your Name Request</li>
+            <li>Edit details, download receipts, and more</li>
+          </ul>
+        </div>
       </v-col>
 
     </v-row>
@@ -273,5 +285,9 @@ export default class ExistingRequestSearch extends Vue {
   min-height: 45px !important;
   padding: 0 30px !important;
   font-size: 1rem !important;
+}
+
+.mobile-btn {
+  width: 17rem !important;
 }
 </style>

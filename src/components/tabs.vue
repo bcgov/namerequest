@@ -12,16 +12,16 @@
               class="upper-border"
               :class="{ 'mt-1': tabNumber === 1 }"
               tabindex="0">
-        <v-icon class="mr-2">mdi-magnify</v-icon>
-        <span v-if="!isMobile" :class="tabNumber === 0 ? 'h5' : 'h5-lt'">Request a Business Name</span>
+        <v-icon v-if="!isMobile" class="mr-2">mdi-magnify</v-icon>
+        <span :class="[tabNumber === 0 ? 'h5' : 'h5-lt', { 'mobile-font' : isMobile }]">Request a Business Name</span>
       </v-tab>
       <v-tab :ripple="false"
               id="existing-tab"
               class="upper-border"
              :class="{ 'mt-1': tabNumber === 0 }"
               tabindex="1">
-        <v-icon class="mr-2">mdi-file-document-edit-outline</v-icon>
-        <span v-if="!isMobile" :class="tabNumber === 1 ? 'h5' : 'h5-lt'">Manage My Name Request</span>
+        <v-icon v-if="!isMobile" class="mr-2">mdi-file-document-edit-outline</v-icon>
+        <span :class="[tabNumber === 1 ? 'h5' : 'h5-lt', { 'mobile-font' : isMobile }]">Manage My Name Request</span>
       </v-tab>
       <v-tabs-items class="rounded-b tab-items" v-model="tabNumber" touchless>
         <v-tab-item>
@@ -80,6 +80,10 @@ export default class Tabs extends Mixins(CommonMixin) {
 
 <style lang="scss" scoped>
 @import '@/assets/scss/theme.scss';
+.mobile-font {
+  font-size: .875rem;
+  max-width: 120px;
+}
 #tabs-landing-comp {
   max-width: 1140px !important;
   padding: 0 !important;
