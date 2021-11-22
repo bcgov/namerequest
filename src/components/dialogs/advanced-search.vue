@@ -1,5 +1,5 @@
 <template>
-  <v-dialog id="advanced-search-dialog" v-model="dialog" min-width="22rem" persistent :attach="attach">
+  <v-dialog id="advanced-search-dialog" v-model="dialog" max-width="55rem" persistent :attach="attach">
 
     <v-card :class="{'retrieve-card-height': isTabRetrieve, 'tab-card-height': !isTabRetrieve}">
       <v-btn icon large class="dialog-close" @click="emitClose()" >
