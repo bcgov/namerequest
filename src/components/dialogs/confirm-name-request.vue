@@ -34,11 +34,17 @@
           </v-tab-item>
 
           <v-tab-item>
-            <v-card-title class="d-flex justify-space-between">
-              <div>Confirm Name Request</div>
-              <v-btn icon large class="dialog-close float-right" @click="hideModal()">
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
+            <v-card-title>
+              <v-row no-gutters>
+                <v-col cols="8">
+                  <span>Confirm Name Request</span>
+                </v-col>
+                <v-col>
+                  <v-btn icon large class="dialog-close" @click="hideModal()">
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
+                </v-col>
+              </v-row>
             </v-card-title>
 
             <v-card-text class="copy-normal pt-5">
@@ -305,7 +311,7 @@ export default class ConfirmNrDialog extends Mixins(
 }
 
 .mobile-btn {
-  width: 20rem !important;
+  width: 16rem !important;
   margin: .5rem 0;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <v-row no-gutters>
-    <v-col cols="12" md="6" lg="6" :class="[{'pt-10': !isMobile}, 'pl-2']">
+    <v-col cols="12" md="6" lg="6" class="mt-4" :class="[{'pt-10': !isMobile}, 'pl-2']">
       <span class="h2 colour-white">Name Request
       </span>
     </v-col>

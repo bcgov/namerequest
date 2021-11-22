@@ -2,7 +2,7 @@
   <v-container class="mt-1" fluid>
     <v-row class="stats-v-row" no-gutters>
       <v-col v-if="!isMobile" cols="4"></v-col>
-      <v-col cols="6" md="4" lg="4">
+      <v-col cols="6" md="4" lg="4" class="pr-4">
         <v-tooltip bottom nudge-left="45"
                    content-class="bottom-tooltip wait-time-tooltip"
                    transition="fade-transition"

@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="white rounded copy-normal pa-10">
-    <v-row justify="space-between" class="submission-tabs-top">
+    <v-row justify="space-between" class="submission-tabs-top" no-gutters>
       <slot name="container-header" />
       <v-col cols="auto" class="py-0" v-if="displayedComponent !== 'Success'">
         <button id="back-to-search-btn"
@@ -32,6 +32,7 @@ export default class MainContainer extends Mixins(DisplayedComponentMixin) {
   // Global getters
   @Getter getEditMode!: boolean
   @Getter getSubmissionTabNumber!: number
+  @Getter isMobile!: boolean
 
   // Global action
   @Action setExitModalVisible!: ActionBindingIF
