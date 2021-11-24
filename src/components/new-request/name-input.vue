@@ -9,7 +9,7 @@
                     :filled="!isReadOnly"
                     id="name-input-text-field"
                     ref="nameInput"
-                    :rules="(searchValue && isMrasSearch) ? mrasRules : []"
+                    :rules="(searchValue && isMrasSearch) ? mrasRules : additionalRules"
                     :label="label"
                     :class="{ 'read-only-mode': isReadOnly }"
                     :disabled="isReadOnly"
@@ -63,6 +63,9 @@ export default class NameInput extends Vue {
   @Prop({ default: '' })
   readonly hint: string
 
+  additionalRules = [
+    v => (!v || v.length <= 150) || 'Cannot exceed 150 characters'
+  ]
   /** The array of validation rules for the MRAS corp num. */
   private get mrasRules (): Function[] {
     return [
@@ -91,6 +94,9 @@ export default class NameInput extends Vue {
     }
     if (this.getErrors.includes('name')) {
       return ['Please enter a name to search for']
+    }
+    if (this.getErrors.includes('long')) {
+      return ['Cannot exceed 150 characters']
     }
     return ''
   }

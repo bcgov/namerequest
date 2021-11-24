@@ -1042,6 +1042,10 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
       commit('setErrors', 'length')
       return
     }
+    if (getters.getName.length > 150) {
+      commit('setErrors', 'long')
+      return
+    }
   }
   if (getters.getErrors.length > 0) {
     return
