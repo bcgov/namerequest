@@ -1,6 +1,6 @@
 <template>
   <v-container id="example-name">
-    <v-row >
+    <v-row>
       <v-col cols="12" md="5" lg="5" class="mx-3">
         <v-row justify="center">
           <img src="@/assets/images/Sarahsx1.png" class="name-img" />

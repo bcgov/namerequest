@@ -10,17 +10,9 @@
 
     <v-row no-gutters>
 
-      <!-- Help Info -->
-      <v-col  v-if="!isMobile" cols="12" md="3" lg="3" class="existing-request-info copy-small">
-        <div class="mx-8 my-10">
-          <ul>
-            <li>Check review time and approval status</li>
-            <li>Upgrade Name Request to Priority ($100.00)</li>
-            <li>Renew your Name Request for an additional 56 days before it expires ($30.00)</li>
-            <li>Cancel your Name Request</li>
-            <li>Edit details, download receipts, and more</li>
-          </ul>
-        </div>
+      <!-- Help Content -->
+      <v-col v-if="!isMobile" cols="12" md="3" lg="3" class="existing-request-info copy-small">
+        <SearchHelpContent />
       </v-col>
 
       <!-- Existing Request Search -->
@@ -121,17 +113,9 @@
         </v-form>
       </v-col>
 
-      <!-- Help Info -->
-      <v-col  v-if="isMobile" cols="12" md="3" lg="3" class="existing-request-info copy-small">
-        <div class="mx-8 my-10">
-          <ul>
-            <li>Check review time and approval status</li>
-            <li>Upgrade Name Request to Priority ($100.00)</li>
-            <li>Renew your Name Request for an additional 56 days before it expires ($30.00)</li>
-            <li>Cancel your Name Request</li>
-            <li>Edit details, download receipts, and more</li>
-          </ul>
-        </div>
+      <!-- Help Content -->
+      <v-col v-if="isMobile" cols="12" md="3" lg="3" class="existing-request-info copy-small">
+        <SearchHelpContent />
       </v-col>
 
     </v-row>
@@ -142,12 +126,14 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { AdvancedSearch } from '@/components/dialogs'
+import SearchHelpContent from '@/components/existing-request/search-help-content.vue'
 import { FormType, NameRequestI, ExistingRequestSearchI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: {
-    AdvancedSearch
+    AdvancedSearch,
+    SearchHelpContent
   }
 })
 export default class ExistingRequestSearch extends Vue {
@@ -252,14 +238,6 @@ export default class ExistingRequestSearch extends Vue {
   background-color: $gray1;
   width: 100%;
   position: relative !important;
-
-  ul {
-    display: inline-table;
-
-    li  {
-      padding-bottom: 10px;
-    }
-  }
 }
 
 /* Helper info column pointer */
