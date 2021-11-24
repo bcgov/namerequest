@@ -3,7 +3,7 @@
     <v-row no-gutters>
       <v-col cols="12" class="h3" align="center">How to Build Your Name</v-col>
       <v-col cols="12" md="6" lg="6" class="my-9">
-        <v-card class="my-9 ml-3 mr-0" flat>
+        <v-card class="my-9" flat>
           <v-list class="name-build-list">
             <v-list-item-group color="primary">
               <v-list-item

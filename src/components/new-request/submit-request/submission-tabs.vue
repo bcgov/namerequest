@@ -1,7 +1,7 @@
 <template>
   <MainContainer>
     <template v-slot:container-header>
-      <v-col cols="auto" class="font-weight-bold h5 py-0">
+      <v-col cols="8" class="font-weight-bold h5 py-0">
         {{ submissionModeHeader }}
       </v-col>
     </template>

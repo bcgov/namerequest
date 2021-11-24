@@ -1,10 +1,5 @@
 <template>
   <v-container fluid id="new-request-container" class="copy-normal pa-10">
-    <v-row no-gutters v-if="isMobile">
-      <v-col cols="12" class="mb-6">
-        <span class="h5">Request a Business Name</span>
-      </v-col>
-    </v-row>
     <v-row no-gutters>
       <v-col cols="12" class="pt-0 font-weight-bold h6"><span>I need a name to:</span></v-col>
     </v-row>
@@ -210,7 +205,13 @@
     <div v-if="!isFederal" class="mt-3 text-center">
       <v-row justify="center" no-gutters>
         <v-col cols="auto">
-          <v-btn id="search-name-btn" class="px-9" :disabled="!corpNumValid" @click="handleSubmit(true)">
+          <v-btn
+            id="search-name-btn"
+            class="px-9"
+            :class="{ 'mobile-btn' : isMobile }"
+            :disabled="!corpNumValid"
+            @click="handleSubmit(true)"
+          >
             <v-icon left color="white" size="1.5rem">mdi-magnify</v-icon>
             Check this Name
           </v-btn>
@@ -567,6 +568,9 @@ export default class NewSearch extends Mixins(CommonMixin) {
 }
 #name-input-component {
   margin-top: 0 !important;
+}
+.mobile-btn {
+  width: 17rem !important;
 }
 /* Deep Vuetify overrides */
 ::v-deep {

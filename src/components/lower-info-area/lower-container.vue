@@ -86,7 +86,7 @@
 
     <div class="contact-section">
       <v-row no-gutters class="content-container">
-        <v-col cols="6">
+        <v-col cols="12" md="6" lg="6">
           <v-container class="pa-9">
             <v-row>
               <v-col cols="12" class="h3 info-underline px-0">Need more information?</v-col>
@@ -98,7 +98,7 @@
             </v-row>
           </v-container>
         </v-col>
-        <v-col cols="6">
+        <v-col cols="12" md="6" lg="6">
           <v-container class="pa-9">
             <v-row alinn="start" align-content="start" align-items="start">
               <v-col cols="12" class="h3 info-underline px-0">Contact Us</v-col>

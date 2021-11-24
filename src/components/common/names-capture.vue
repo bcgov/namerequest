@@ -194,7 +194,7 @@
                               :label="choicesLabelsAndHints[1].hint"
                               :name="Math.random()" />
               </v-col>
-              <v-col cols="12" md="4" lg="4" class="py-0" v-if="designationAtEnd">
+              <v-col cols="12" md="4" lg="4" :class="{'py-0' : !isMobile }" v-if="designationAtEnd">
                 <v-tooltip top
                   transition="fade-transition"
                   content-class="top-tooltip"
@@ -231,7 +231,7 @@
         <transition name="fade" mode="out-in">
           <v-col :key="transitionKey(3)" class="ma-0 pa-0" :cols="isMobile ? 12 : 10">
             <v-row class="ma-0 pa-0">
-              <v-col :cols="(designationAtEnd && !isMobile) ? 8: 12" :class="{'py-0' : !isMobile }" style="height:60px">
+              <v-col :cols="(designationAtEnd && !isMobile) ? 8: 12" :class="{'py-0' : !isMobile }">
                 <v-text-field :error-messages="messages.name3"
                               :hide-details="hideDetails"
                               :value="nameChoices.name3"

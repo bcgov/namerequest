@@ -84,5 +84,8 @@ export default class LinkRow extends Mixins(CommonMixin) {
 
 .links-row-mobile {
   text-align: start;
+  a {
+    padding-left: 30px;
+  }
 }
 </style>

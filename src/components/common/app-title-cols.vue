@@ -1,13 +1,13 @@
 <template>
-  <div>
-    <v-col cols="12" class="mb-4">
-      <Stats v-if="!isMobile" class="pr-10"/>
-    </v-col>
-    <v-col cols="12" class="mb-n2">
+  <v-row no-gutters>
+    <v-col cols="12" md="6" lg="6" class="mt-4 pl-2" :class="{'pt-10': !isMobile}">
       <span class="h2 colour-white">Name Request
       </span>
     </v-col>
-  </div>
+    <v-col cols="12" md="6" lg="6">
+      <Stats />
+    </v-col>
+  </v-row>
 </template>
 
 <script lang="ts">

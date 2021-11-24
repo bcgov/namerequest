@@ -2,11 +2,11 @@
   <v-dialog v-model="showModal" :max-width="width" persistent>
     <v-card class="no-border pick-entity-card">
       <v-row>
-        <v-col cols="11">
+        <v-col cols="10">
           <span class="ml-1 copy-small">{{ locationText }}:</span>
         </v-col>
-        <v-col cols="1">
-          <v-icon md color="primary" @click="showModal = false">mdi-close</v-icon>
+        <v-col cols="2">
+          <v-icon class="float-right" md color="primary" @click="showModal = false">mdi-close</v-icon>
         </v-col>
       </v-row>
 
@@ -34,32 +34,37 @@
         </v-card-text>
       </template>
 
+      <!--  List Tables -->
       <template v-else-if="!showSocietiesInfo">
-        <v-card-text class="d-flex">
-          <v-simple-table v-for="(category, i) in tableData" :key="'cat' + i">
-            <tr class="category-bg cell">
-              <th>
-                <span class="font-weight-bold">{{ category.text }}</span>
-              </th>
-            </tr>
-            <tr v-for="(entity, n) in category.entities" :key="'ent' + n">
-              <td class="clickable-cell" :id="entity.value" @click="chooseType(entity)">
-                <v-tooltip bottom content-class="bottom-tooltip" transition="fade-transition" :disabled="isMobile">
-                  <template v-slot:activator="scope">
-                    <button v-on="scope.on" class="link-sm-sans-ul entity-link">{{ entity.text }}</button>
-                  </template>
-                  <template>
-                    <div v-for="(item, index) in entityBlurbs(entity.value)"
-                         :key="`Blurb-${index}`">
+        <v-card-text class="">
+          <v-row no-gutters>
+            <v-col v-for="(category, i) in tableData" :key="'cat' + i">
+              <v-simple-table>
+                <tr class="category-bg cell">
+                  <th>
+                    <span class="font-weight-bold">{{ category.text }}</span>
+                  </th>
+                </tr>
+                <tr v-for="(entity, n) in category.entities" :key="'ent' + n">
+                  <td class="clickable-cell" :id="entity.value" @click="chooseType(entity)">
+                    <v-tooltip bottom content-class="bottom-tooltip" transition="fade-transition" :disabled="isMobile">
+                      <template v-slot:activator="scope">
+                        <button v-on="scope.on" class="link-sm-sans-ul entity-link">{{ entity.text }}</button>
+                      </template>
+                      <template>
+                        <div v-for="(item, index) in entityBlurbs(entity.value)"
+                             :key="`Blurb-${index}`">
                       <span :class="{ 'tooltip-bullet': index !== 0}">
                         {{ item }}
                       </span>
-                    </div>
-                  </template>
-                </v-tooltip>
-              </td>
-            </tr>
-          </v-simple-table>
+                        </div>
+                      </template>
+                    </v-tooltip>
+                  </td>
+                </tr>
+              </v-simple-table>
+            </v-col>
+          </v-row>
         </v-card-text>
       </template>
 

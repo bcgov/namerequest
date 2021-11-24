@@ -1,14 +1,14 @@
 <template>
   <v-container id="example-name">
     <v-row>
-      <v-col cols="5" class="mx-3">
+      <v-col cols="12" md="5" lg="5" class="mx-3">
         <v-row justify="center">
           <img src="@/assets/images/Sarahsx1.png" class="name-img" />
         </v-row>
         <v-row align="center" justify="center">
           <div class="text-divider"></div>
         </v-row>
-        <v-row class="pr-2">
+        <v-row justify="center">
           <p class="text-content">Use unique words that will set you apart such as: <br>
             an individual's name; <br>
             a geographical location; <br>
@@ -17,14 +17,14 @@
           </p>
         </v-row>
       </v-col>
-      <v-col cols="5" class="mx-3">
+      <v-col cols="12" md="5" lg="5" class="mx-3">
         <v-row justify="center">
           <img src="@/assets/images/Constructionx1.png" class="name-img" />
         </v-row>
         <v-row align="center" justify="center">
           <div class="text-divider"></div>
         </v-row>
-        <v-row class="pl-2">
+        <v-row justify="center">
           <p class="text-content">The second part of your name describes the "nature of your business".
             What is the service that your business is offering to the public?
           </p>

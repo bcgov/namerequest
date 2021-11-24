@@ -303,9 +303,13 @@ input#name-generator-1, input#name-generator-2 {
   height: 52px !important;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 925px) {
   .v-dialog {
+    max-width: 90%;
     min-width: 0 !important;
-    margin: 1.5rem 0 !important;
+
+    .v-card {
+      padding: 1rem;
+    }
   }
 }
