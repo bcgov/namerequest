@@ -560,8 +560,7 @@ export default class NewSearch extends Mixins(CommonMixin) {
 #search-name-btn {
   font-size: 0.875rem !important;
   font-weight: bold;
-  padding-top: 22px;
-  padding-bottom: 22px;
+  min-height: 45px;
 }
 #goto-corporate-btn {
   min-height: 45px !important;
