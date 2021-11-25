@@ -15,8 +15,8 @@
                 <div class="stats-unit">Hours</div>
               </div>
               <div class="stats-content-inner-2">
-                <span class="dotted-underline">Priority Request</span><br>
-                <span class="dotted-underline">Wait Time</span>
+                <span :class="{'dotted-underline': !isMobile}">Priority Request</span><br>
+                <span :class="{'dotted-underline': !isMobile}">Wait Time</span>
               </div>
             </div>
           </template>
@@ -40,8 +40,8 @@
                 <div class="stats-unit">Days</div>
               </div>
               <div class="stats-content-inner-2">
-                <span class="dotted-underline">New Submission</span><br>
-                <span class="dotted-underline">Wait Time</span>
+                <span :class="{'dotted-underline': !isMobile}">New Submission</span><br>
+                <span :class="{'dotted-underline': !isMobile}">Wait Time</span>
               </div>
             </div>
           </template>
