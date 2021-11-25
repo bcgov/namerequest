@@ -17,6 +17,7 @@ import { sanitizeName } from '@/plugins/utilities'
 import removeAccents from 'remove-accents'
 import { getFeatureFlag, sleep } from '@/plugins'
 import NamexServices from '@/services/namex.services'
+import { MRAS_MIN_LENGTH, MRAS_MAX_LENGTH } from '@/components/new-request/constants'
 
 // List Data
 import { CanJurisdictions, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
@@ -1038,8 +1039,12 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
       commit('setErrors', 'name')
       return
     }
-    if (getters.getName.length < 3) {
+    if (getters.getName.length < MRAS_MIN_LENGTH) {
       commit('setErrors', 'length')
+      return
+    }
+    if (getters.getName.length > MRAS_MAX_LENGTH) {
+      commit('setErrors', 'mras_length_exceeded')
       return
     }
   }
