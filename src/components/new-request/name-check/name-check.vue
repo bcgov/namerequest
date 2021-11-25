@@ -12,7 +12,7 @@
       </v-col>
     </v-row>
     <v-row class="px-10 pt-6" no-gutters>
-      <v-col :class="getIsXproMras ? 'pr-8' : ''" cols="12" md="10" lg="10">
+      <v-col :class="getIsXproMras ? 'pr-8' : ''" cols="12" lg="7">
         <NameInput :hint="nameInputHint" :isReadOnly="getIsXproMras"/>
       </v-col>
       <v-col v-if="showDesignationSelect" :class="{'pl-3': !isMobile}" cols="12" lg="3">
