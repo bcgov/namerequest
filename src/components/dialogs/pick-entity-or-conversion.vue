@@ -279,4 +279,8 @@ export default class PickEntityOrConversionDialog extends Vue {
   border-radius: 0 !important;
   text-decoration: none !important;
 }
+
+::v-deep .v-data-table__wrapper {
+  overflow-x: hidden;
+}
 </style>
