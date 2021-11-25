@@ -95,7 +95,7 @@ export default class NameInput extends Vue {
       return ['Please enter a name to search for']
     }
     if (this.getErrors.includes('mras_length_exceeded')) {
-      return ['Cannot exceed 150 characters']
+      return [this.err_msg]
     }
     return ''
   }
