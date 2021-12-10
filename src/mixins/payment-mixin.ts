@@ -344,9 +344,9 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       if (allPayments) {
         for (let i = 0; i < allPayments.length; i++) {
           if (
-            allPayments[i].payment.id !== payment.id &&
-            allPayments[i].payment.payment_action === action &&
-            allPayments[i].sbcPayment.statusCode === SbcPaymentStatus.CREATED
+            allPayments[i].payment?.id !== payment.id &&
+            allPayments[i].payment?.payment_action === action &&
+            allPayments[i].sbcPayment?.statusCode === SbcPaymentStatus.CREATED
           ) {
             await NamexServices.cancelPayment(nrId, allPayments[i].sbcPayment.id)
           }
