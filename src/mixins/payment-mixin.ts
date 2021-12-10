@@ -4,7 +4,7 @@ import { AxiosRequestConfig } from 'axios'
 import { ACCEPTED, CREATED, NO_CONTENT, OK, PAYMENT_REQUIRED } from 'http-status-codes'
 
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
-import { PaymentStatus, StaffPaymentOptions, NrState, PaymentMethod } from '@/enums'
+import { PaymentStatus, StaffPaymentOptions, NrState, PaymentMethod, SbcPaymentStatus } from '@/enums'
 import { ActionMixin } from '@/mixins'
 import * as paymentTypes from '@/modules/payment/store/types'
 import { CreatePaymentParams, FetchFeesParams, NameRequestPaymentResponse } from '@/modules/payment/models'
@@ -338,6 +338,20 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       await this.setPayment(payment)
       // await paymentModule.setPaymentReceipt(sbcPayment.receipts[0]) // FUTURE: verify that new code === old code
       await this.setPaymentRequest(data)
+
+      // delete previous incomplete payments after the new payment record created
+      const allPayments = await this.getNameRequestPayments(nrId, {})
+      if (allPayments) {
+        for (let i = 0; i < allPayments.length; i++) {
+          if (
+            allPayments[i].payment?.id !== payment.id &&
+            allPayments[i].payment?.payment_action === action &&
+            allPayments[i].sbcPayment?.statusCode === SbcPaymentStatus.CREATED
+          ) {
+            await NamexServices.cancelPayment(nrId, allPayments[i].sbcPayment.id)
+          }
+        }
+      }
 
       if (onSuccess) {
         // Execute callback
