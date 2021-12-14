@@ -540,7 +540,8 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   }
 
   get provinceOptions () {
-    return CanJurisdictions.map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
+    return CanJurisdictions.filter(jurisdiction => jurisdiction.value !== Location.FD)
+      .map(jurisdiction => ({ value: jurisdiction.value, text: jurisdiction.text }))
   }
 
   get showAllFields (): boolean {
