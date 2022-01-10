@@ -1,6 +1,6 @@
 {
   "name": "name-request",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "private": true,
   "appName": "Name Request UI",
   "sbcName": "SBC Common Components",

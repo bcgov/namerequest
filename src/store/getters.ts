@@ -534,16 +534,19 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
         x.rank = null
       }
     } else {
-      // Shortlist order: Limited Company, Sole proprietorship, General partnership
+      // Shortlist order: Limited Company, Sole proprietorship, DBA, General partnership
       if ([EntityType.UL, EntityType.CP].includes(x.value)) {
         x.shortlist = null
         x.rank = null
       } else if (x.value === EntityType.FR) {
         x.shortlist = true
         x.rank = 2
-      } else if (x.value === EntityType.GP) {
+      } else if (x.value === EntityType.DBA) {
         x.shortlist = true
         x.rank = 3
+      } else if (x.value === EntityType.GP) {
+        x.shortlist = true
+        x.rank = 4
       }
     }
     if (x.shortlist) {
