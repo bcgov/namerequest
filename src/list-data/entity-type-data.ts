@@ -22,9 +22,8 @@ export const EntityTypesBcData: EntityI[] = [
     cat: 'Proprietorships',
     blurbs: [
       `An existing legal BC entity that would like to be known as another name. Referred to as a "Doing Business As",
-        "Operating As" or trade
-        name. `,
-      'Does not have name protection in BC'
+        "DBA", "Operating As" or trade name.`,
+      'Does not have name protection in BC as it is a type of Sole Proprietorship.'
     ],
     chgBlurbs: [
       'Change the business name of a DBA.'
