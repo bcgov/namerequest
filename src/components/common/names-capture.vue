@@ -757,6 +757,8 @@ export default class NamesCapture extends Mixins(CommonMixin) {
       let { choice } = name
       if (name.designation) {
         this.setNameChoices({ key: `designation${choice}`, value: name.designation })
+      } else {
+        this.setNameChoices({ key: `designation${choice}`, value: '' })
       }
       this.setNameChoices({ key: `name${choice}`, value: name.name })
     }
@@ -787,7 +789,8 @@ export default class NamesCapture extends Mixins(CommonMixin) {
               this.setNameChoices({ key: `name${choice}`, value: name })
             }
           } else {
-            this.setNameChoices({ key: `name${choice}`, value: name })
+            let value = nameChoices[`name${choice}`].replace(nameChoices[`designation${choice}`], '').trim()
+            this.setNameChoices({ key: `name${choice}`, value: value })
           }
         }
         if (this.designationAtEnd) {
@@ -796,11 +799,6 @@ export default class NamesCapture extends Mixins(CommonMixin) {
               let newName = nameChoices[`name${choice}`].replace(nameChoices[`designation${choice}`], '').trim()
               this.setNameChoices({ key: `name${choice}`, value: newName })
             }
-          }
-        } else if (this.designationAtEnd && nameChoices[`designation${choice}`]) {
-          if (!nameChoices[`name${choice}`].endsWith(nameChoices[`designation${choice}`])) {
-            let newName = nameChoices[`name${choice}`] + ' ' + nameChoices[`designation${choice}`]
-            this.setNameChoices({ key: `name${choice}`, value: newName })
           }
         }
       }
