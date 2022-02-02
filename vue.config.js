@@ -33,7 +33,7 @@ module.exports = {
       rules: [
         {
           test: /\.scss$/,
-          use: ['postcss-loader']
+          use: ['postcss-loader', 'sass-loader']
         }
       ]
     }
