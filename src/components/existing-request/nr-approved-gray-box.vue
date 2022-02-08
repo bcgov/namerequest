@@ -1,9 +1,18 @@
 <template>
   <v-row no-gutters class="bg-light-gray">
     <v-col class="text-body-4 px-5 py-4">
-      Your Name Request <b>{{nrNum}}</b> for <b>{{approvedName}}</b> has been approved
-      for use. An email has been sent to <b>{{emailAddress}}</b> with instructions
-      for how to use your Name Request.
+       Your Name Request <strong> {{nrNum}} </strong> for <strong> {{approvedName}} </strong> has been approved
+       for use. An email has been sent to <strong> {{emailAddress}} </strong> with instructions for
+       how to user your Name Request.
+      <p></p>
+      <v-row no-gutters>
+        <v-col cols="auto" class="pt-1 mr-2"><v-icon color="caution">mdi-alert</v-icon></v-col>
+        <v-col cols="11" class="pt-1 pb-1" no-gutters>
+        <strong>Important:</strong> Name Requests expire. Your Name Request is <strong>reserved for 56 days</strong>
+        from the date of approval. Be sure to use your Name Request before it expires. If it expires, you will
+        need to submit a new Name Request ($30.00 fee) as the name will once again be available to the public.
+        </v-col>
+      </v-row>
     </v-col>
   </v-row>
 </template>
