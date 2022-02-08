@@ -18,7 +18,7 @@ export default class BusinessServices {
       if (response?.status >= 200 && response?.status < 300) {
         return response
       }
-    } catch (e) {
+    } catch {
       // delete the created affiliation if the update failed for avoiding orphan records
       const orgId = filingBody?.filing?.header?.accountId
       const nrNumber = filingBody?.filing?.incorporationApplication?.nameRequest?.nrNumber

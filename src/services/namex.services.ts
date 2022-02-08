@@ -238,8 +238,8 @@ export default class NamexServices {
       const blob = new Blob([response.data], { type: 'application/pdf' })
 
       // IE doesn't allow using a blob object directly as link href, so use msSaveOrOpenBlob
-      if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-        window.navigator.msSaveOrOpenBlob(blob)
+      if (window.navigator && window.navigator['msSaveOrOpenBlob']) {
+        window.navigator['msSaveOrOpenBlob'](blob, 'Name Request Results')
       } else {
         // for other browsers, create a link pointing to the ObjectURL containing the blob
         const url = window.URL.createObjectURL(blob)

@@ -5,9 +5,16 @@ export async function getConfig (): Promise<EnvConfigI> {
   // get config from environment
   const windowLocationOrigin = window.location.origin
   const processEnvBaseUrl = process.env.BASE_URL
+  const windowLocationSearch = window.location.search // eg, ?accountid=2288
 
   if (!processEnvBaseUrl || !windowLocationOrigin) {
     return Promise.reject(new Error('Missing environment variables'))
+  }
+
+  // get and store account id, if present
+  const accountId = new URLSearchParams(windowLocationSearch).get('accountid')
+  if (accountId) {
+    sessionStorage.setItem('ACCOUNT_ID', accountId)
   }
 
   // fetch config from server
