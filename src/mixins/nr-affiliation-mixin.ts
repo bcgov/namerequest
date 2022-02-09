@@ -4,6 +4,7 @@ import AuthServices from '@/services/auth.services'
 import BusinessServices from '@/services/business.services'
 import { BusinessRequest, CreateNRAffiliationRequestBody, NameRequestI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { navigate } from '@/plugins'
 
 @Component({})
 export class NrAffiliationMixin extends Vue {
@@ -48,9 +49,9 @@ export class NrAffiliationMixin extends Vue {
           }
         }
         const filingResponse = await BusinessServices.createBusiness(filingBody)
-        // navigate to manage business dashboard
+        // navigate to My Business Registry dashboard
         if (filingResponse?.status === 200 || filingResponse?.status === 201) {
-          window.location.assign(
+          navigate(
             `${sessionStorage.getItem('BUSINESSES_URL')}account/${currentOrganizationId}/business`
           )
         } else throw new Error('Business creation error: invalid api response ')

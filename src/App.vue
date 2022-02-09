@@ -83,7 +83,6 @@ import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { getFeatureFlag, getKeycloakRoles } from '@/plugins'
 import { DateMixin } from '@/mixins'
-import errorModule from '@/modules/error'
 
 // dialogs and other components
 import ChatPopup from '@/components/common/chat-popup.vue'

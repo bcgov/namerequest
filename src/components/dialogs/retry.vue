@@ -194,8 +194,8 @@ export default class RetryDialog extends Mixins(
     this.savePendingPaymentToSession(action, this.pendingPayment)
 
     const baseUrl = getBaseUrl()
-    const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${id}`)
-    this.redirectToPaymentPortal(token, redirectUrl)
+    const returnUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${id}`)
+    this.navigateToPaymentPortal(token, returnUrl)
   }
 
   /** The first pending payment. */

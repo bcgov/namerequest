@@ -67,7 +67,7 @@ export default class AdvancedSearchDates extends Mixins(DateMixin) {
 
   /** The current server date in string format. */
   get currentDateString (): string {
-    return this.dateToDateString(this.getCurrentJsDate)
+    return this.dateToYyyyMmDd(this.getCurrentJsDate)
   }
 
   /** Is true when the End Date is less then the selected Start Date. */

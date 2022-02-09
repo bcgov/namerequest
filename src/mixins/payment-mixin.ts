@@ -14,6 +14,7 @@ import { StaffPaymentIF, RefundParamsIF, NameRequestI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from '@/services/namex.services'
 import { PaymentRequiredError } from '@/errors'
+import { navigate } from '@/plugins'
 
 @Component({})
 export class PaymentMixin extends Mixins(ActionMixin) {
@@ -420,18 +421,16 @@ export class PaymentMixin extends Mixins(ActionMixin) {
   }
 
   /**
-   * Redirect user to Service BC Pay Portal.
-   * Set the redirect URL to specify OUR payment ID so we can
-   * grab the payment when we're directed back to our application!
+   * Navigate to the Service BC Payment Portal.
+   * The return URL should specify payment ID so we can
+   * grab the payment when we're directed back to this app!
    * @param paymentToken
-   * @param redirectUrl
+   * @param returnUrl
    */
-  redirectToPaymentPortal (paymentToken, redirectUrl) {
+  navigateToPaymentPortal (paymentToken: string, returnUrl: string) {
     const paymentPortalUrl = sessionStorage.getItem('PAYMENT_PORTAL_URL')
-    const url = `${paymentPortalUrl}${paymentToken}/${redirectUrl}`
-    // eslint-disable-next-line no-console
-    // console.log(`Forwarding to SBC Payment Portal -> Payment redirect URL: ${redirectUrl}`)
-    window.location.href = url
+    const url = `${paymentPortalUrl}${paymentToken}/${returnUrl}`
+    navigate(url)
   }
 
   /**

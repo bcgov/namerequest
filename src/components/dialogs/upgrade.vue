@@ -84,6 +84,7 @@ import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mi
 import { getBaseUrl } from '@/components/payment/payment-utils'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { PaymentRequiredError } from '@/errors'
+import { navigate } from '@/plugins'
 
 @Component({
   components: {
@@ -193,13 +194,13 @@ export default class UpgradeDialog extends Mixins(
       // Save response to session
       this.savePaymentResponseToSession(PaymentAction.UPGRADE, paymentResponse)
 
-      // See if redirect is needed else go to existing NR screen
+      // See if pay is needed else navigate to Existing NR page
       const baseUrl = getBaseUrl()
-      const redirectUrl = encodeURIComponent(`${baseUrl}/nr/${this.getNrId}/?paymentId=${paymentId}`)
+      const returnUrl = encodeURIComponent(`${baseUrl}/nr/${this.getNrId}/?paymentId=${paymentId}`)
       if (paymentResponse.sbcPayment.isPaymentActionRequired) {
-        this.redirectToPaymentPortal(paymentToken, redirectUrl)
+        this.navigateToPaymentPortal(paymentToken, returnUrl)
       } else {
-        window.location.href = redirectUrl
+        navigate(returnUrl)
       }
     }
 

@@ -61,6 +61,9 @@ export default class NameInput extends Vue {
   @Prop({ default: false })
   readonly isReadOnly: boolean
 
+  @Prop({ default: null })
+  readonly hint: string
+
   private err_msg = 'Cannot exceed ' + MRAS_MAX_LENGTH + ' characters'
   additionalRules = [
     v => (!v || v.length <= MRAS_MAX_LENGTH) || this.err_msg
