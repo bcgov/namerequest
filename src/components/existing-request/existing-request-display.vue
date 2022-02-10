@@ -412,10 +412,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** True if the NR Approved gray box should be shown. */
   private get showNrApprovedGrayBox (): boolean {
-    return (
-      !this.isBenefitCompany(this.nr) &&
-      this.isNrApprovedOrConditional
-    )
+    return this.isNrApprovedOrConditional
   }
 
   /** True if the NR Not Approved gray box should be shown. */
