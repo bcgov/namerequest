@@ -545,3 +545,7 @@ export const mutateRefundParams = (state: StateIF, refundParams: RefundParamsIF)
 export const mutateWindowWidth = (state: StateIF, width: number) => {
   state.stateModel.windowWidth = width
 }
+
+export const mutateHotjarUserId = (state: StateIF, hotjarUserId: string) => {
+  state.stateModel.newRequestModel.hotjarUserId = hotjarUserId
+}

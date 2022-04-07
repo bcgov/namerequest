@@ -263,6 +263,7 @@ export default class ApplicantInfo3 extends Vue {
   @Action fetchCorpNum!: ActionBindingIF
   @Action submit!: ActionBindingIF
   @Action setFolioNumber!: ActionBindingIF
+  @Action setHotjarUserId!: ActionBindingIF
 
   // Enum declaration
   readonly CorpNumRequests = CorpNumRequests
@@ -303,6 +304,7 @@ export default class ApplicantInfo3 extends Vue {
   isValid: boolean = false
   loading: boolean = false
   messages = {}
+  $hj: any
 
   mounted () {
     // Apply optional corpNum validations for Amalgamations as they are NOT a required field but require COLIN lookup.
@@ -411,6 +413,10 @@ export default class ApplicantInfo3 extends Vue {
   }
 
   async nextAction () {
+    if (this.$hj) {
+      // Listen for changes to the hotjar user id and store it
+      this.setHotjarUserId(this.$hj.globals.get('userId').split('-').shift())
+    }
     this.setIsLoadingSubmission(true)
     this.validate()
     if (this.getShowCorpNum === CorpNumRequests.COLIN) {

@@ -141,7 +141,8 @@ export const stateModel: StateModelIF = {
     tabNumber: 0,
     userCancelledAnalysis: false,
     waitingAddressSearch: null,
-    isLoadingSubmission: false
+    isLoadingSubmission: false,
+    hotjarUserId: ''
   },
   staffPayment: {
     option: StaffPaymentOptions.NONE,
