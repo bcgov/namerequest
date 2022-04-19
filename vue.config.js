@@ -2,6 +2,7 @@ const path = require('path')
 const webpack = require('webpack')
 const fs = require('fs')
 const packageJson = fs.readFileSync('./package.json')
+const name = JSON.parse(packageJson).name
 const appName = JSON.parse(packageJson).appName
 const appVersion = JSON.parse(packageJson).version
 const sbcName = JSON.parse(packageJson).sbcName
@@ -19,7 +20,8 @@ module.exports = {
             (aboutText1 && aboutText2) ? `"${aboutText1}<br>${aboutText2}"`
               : aboutText1 ? `"${aboutText1}"`
                 : aboutText2 ? `"${aboutText2}"`
-                  : ''
+                  : '',
+          APP_NAME: `"${name}"`
         }
       })
     ],

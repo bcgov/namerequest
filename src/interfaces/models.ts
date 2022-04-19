@@ -56,6 +56,7 @@ export interface ConditionalReqI {
   submit_count: number
   tradeMark: string
   xproJurisdiction?: string
+  hotjarUserId?: string
 }
 
 export interface ConsentConflictI {
@@ -94,6 +95,7 @@ export interface DraftReqI {
   tradeMark?: string
   xproJurisdiction?: string
   request_type_cd?: string
+  hotjarUserId?: string
 }
 
 export interface EntityI {
@@ -224,6 +226,7 @@ export interface ReservedReqI {
   submit_count: number
   tradeMark: string
   xproJurisdiction?: string
+  hotjarUserId?: string
 }
 
 export interface SearchDataI {

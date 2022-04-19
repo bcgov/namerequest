@@ -73,7 +73,7 @@ async function startVue () {
   // Initialize Hotjar
   if (window['hotjarId']) {
     console.info('Initializing Hotjar...') // eslint-disable-line no-console
-    Vue.use(Hotjar, { id: window['hotjarId'] })
+    Vue.use(Hotjar, { id: window['hotjarId'], isProduction: true })
   }
 
   // Initialize Launch Darkly

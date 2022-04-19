@@ -725,6 +725,10 @@ export const setWindowWidth: ActionIF = ({ commit }, width: number): void => {
   commit('mutateWindowWidth', width)
 }
 
+export const setHotjarUserId: ActionIF = ({ commit }, hotjarUserId: string): void => {
+  commit('mutateHotjarUserId', hotjarUserId)
+}
+
 /**
  * Name Check actions
  * FUTURE: move these into a factory if converting to composition api

@@ -283,6 +283,10 @@ export const getIssueIndex = (state: StateIF): number => {
   return state.stateModel.newRequestModel.issueIndex
 }
 
+export const getHotjarUserId = (state: StateIF): string => {
+  return state.stateModel.newRequestModel.hotjarUserId
+}
+
 export const getCurrentIssue = (state: StateIF): IssueI => {
   if (!getAnalysisJSON(state)) return null
 
@@ -945,6 +949,7 @@ export const getDraftNameReservation = (state: StateIF): DraftReqI => {
     stateCd: NrState.DRAFT,
     english: getNameIsEnglish(state),
     nameFlag: getIsPersonsName(state),
+    hotjarUserId: getHotjarUserId(state),
     submit_count: 0,
     ...getCorpNumForReservation(state)
   }
@@ -988,6 +993,7 @@ export const getDraftNameReservation = (state: StateIF): DraftReqI => {
       }
     }
   }
+
   return data
 }
 
@@ -1002,6 +1008,7 @@ export const getReservedNameReservation = (state: StateIF): ReservedReqI => {
     stateCd: NrState.RESERVED,
     english: getNameIsEnglish(state),
     nameFlag: getIsPersonsName(state),
+    hotjarUserId: getHotjarUserId(state),
     submit_count: 0,
     ...getCorpNumForReservation(state)
   }
@@ -1045,6 +1052,7 @@ export const getConditionalNameReservation = (state: StateIF): ConditionalReqI =
     stateCd: NrState.COND_RESERVED,
     english: getNameIsEnglish(state),
     nameFlag: getIsPersonsName(state),
+    hotjarUserId: getHotjarUserId(state),
     submit_count: 0,
     ...getCorpNumForReservation(state)
   }

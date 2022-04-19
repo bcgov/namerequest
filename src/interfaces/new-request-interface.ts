@@ -67,4 +67,5 @@ export interface NewRequestIF {
   userCancelledAnalysis: boolean
   isLoadingSubmission: boolean
   waitingAddressSearch: WaitingAddressSearchI
+  hotjarUserId: string
 }
