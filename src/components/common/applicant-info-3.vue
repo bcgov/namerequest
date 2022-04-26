@@ -415,7 +415,11 @@ export default class ApplicantInfo3 extends Vue {
   async nextAction () {
     if (this.$hj) {
       // Listen for changes to the hotjar user id and store it
-      this.setHotjarUserId(this.$hj.globals.get('userId').split('-').shift())
+      try {
+        this.setHotjarUserId(this.$hj.globals.get('userId').split('-').shift())
+      } catch (error) {
+        // ignore the error
+      }
     }
     this.setIsLoadingSubmission(true)
     this.validate()
