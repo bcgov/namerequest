@@ -172,6 +172,10 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     return false
   }
 
+  get isIncompletePayment (): boolean {
+    return (this.getNr.state === NrState.PENDING_PAYMENT)
+  }
+
   /**
    * Build refund params to be used to display information about the refund request.
   */
