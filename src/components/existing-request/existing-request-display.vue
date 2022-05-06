@@ -8,7 +8,7 @@
     </template>
 
     <template v-slot:content>
-      <div v-if="isIncompletePayment" style="padding: 25px 0px 16px 0px">
+      <div v-if="isIncompletePayment" class="pt-6 pb-4">
         <v-row class="warning-message px-5 py-4 rounded-sm" no-gutters>
           <v-col cols="auto" class="pt-1 mr-2">
             <v-icon color="error" size="20" class="mt-n1 ml-1">mdi-alert</v-icon>
@@ -783,7 +783,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
 .warning-message {
   color: $gray7;
-  background-color: rgba(211, 39, 44, .1);
+  background-color: $app-red-background;
   border: 2px solid $app-red;
 }
 </style>
