@@ -784,6 +784,6 @@ export default class ExistingRequestDisplay extends Mixins(
 .warning-message {
   color: $gray7;
   background-color: $app-red-background;
-  border: 2px solid $app-red;
+  border: 1px solid $app-red;
 }
 </style>
