@@ -2,12 +2,24 @@
   <MainContainer id="existing-request-display" class="pa-10">
     <template v-slot:container-header>
       <v-col cols="auto" class="py-0">
-        <span class="h3 user-select-all">{{ nr.nrNum }}</span>
-        <span class="h6 ml-4">{{ entityTypeCdToText(nr.entity_type_cd) }}</span>
+        <span v-if="!isIncompletePayment" class="h3 user-select-all mr-4">{{ nr.nrNum }}</span>
+        <span class="h6">{{ entityTypeCdToText(nr.entity_type_cd) }}</span>
       </v-col>
     </template>
 
     <template v-slot:content>
+      <div v-if="isIncompletePayment" class="pt-6 pb-4">
+        <v-row class="warning-message px-5 py-4 rounded-sm" no-gutters>
+          <v-col cols="auto" class="pt-1 mr-2">
+            <v-icon color="error" size="20" class="mt-n1 ml-1">mdi-alert</v-icon>
+          </v-col>
+          <v-col cols="11" class="pt-1 pb-1">
+          <strong>Payment Incomplete:</strong> Keep this page open and retry your payment;
+          leaving this page will result in this Name Request being deleted from BC Registries.
+          If your Name Request is deleted you will need to resubmit your name(s) with a new Name Request.
+          </v-col>
+        </v-row>
+      </div>
       <names-gray-box
         v-if="nr.nrNum"
         class="mt-5"
@@ -31,7 +43,7 @@
             <!-- labels and values -->
             <v-col cols="12" md="9" lg="9" class="py-0">
               <v-row dense>
-                <v-col cols="12" class="submitted-date">
+                <v-col  v-if="!isIncompletePayment" cols="12" class="submitted-date">
                   <span>Submitted Date:</span>
                   &nbsp;{{ submittedDate  }}
                 </v-col>
@@ -74,7 +86,7 @@
                       </v-tooltip>
                     </span>
                   </span>
-                  <v-icon v-if="isAlertState" color="error" size="20" class="mt-n1 ml-1">
+                  <v-icon v-if="isAlertState && !isIncompletePayment" color="error" size="20" class="mt-n1 ml-1">
                     mdi-alert
                   </v-icon>
                   <a href="#"
@@ -767,5 +779,11 @@ export default class ExistingRequestDisplay extends Mixins(
     color: white;
     text-decoration: none;
   }
+}
+
+.warning-message {
+  color: $gray7;
+  background-color: $app-red-background;
+  border: 1px solid $app-red;
 }
 </style>
