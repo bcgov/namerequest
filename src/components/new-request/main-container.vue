@@ -63,8 +63,8 @@ export default class MainContainer extends Mixins(DisplayedComponentMixin) {
   }
 
   backToSearch () {
-    if ([2, 3].includes(this.getSubmissionTabNumber) && !this.getEditMode &&
-      this.getDisplayedComponent !== 'ExistingRequestDisplay') {
+    if (([2, 3].includes(this.getSubmissionTabNumber) && !this.getEditMode) ||
+     (this.getDisplayedComponent === 'ExistingRequestDisplay' && this.isIncompletePayment)) {
       this.setExitModalVisible(true)
     } else {
       this.cancelAndResetState()
