@@ -54,6 +54,7 @@
     <ConfirmNrDialog :onCancel="onPaymentCancelled" />
     <ErrorDialog />
     <ExitDialog />
+    <ExitIncompletePaymentDialog />
     <HelpMeChooseDialog />
     <LocationInfoDialog />
     <MrasSearchInfoDialog />
@@ -90,7 +91,7 @@ import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
   LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog, PaymentCompleteDialog,
   PickEntityOrConversionDialog, PickRequestTypeDialog, RenewDialog, ReceiptsDialog, RefundDialog, ResubmitDialog,
-  RetryDialog, StaffPaymentErrorDialog, UpgradeDialog
+  RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
 } from '@/components/dialogs'
 import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
 import PaySystemAlert from 'sbc-common-components/src/components/PaySystemAlert.vue'
@@ -111,6 +112,7 @@ import { PAYMENT_REQUIRED } from 'http-status-codes'
     ConfirmNrDialog,
     ErrorDialog,
     ExitDialog,
+    ExitIncompletePaymentDialog,
     HelpMeChooseDialog,
     LocationInfoDialog,
     MrasSearchInfoDialog,

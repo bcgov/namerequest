@@ -35,6 +35,7 @@ export const stateModel: StateModelIF = {
     assumedNameOriginal: '',
     conditionsModalVisible: false,
     exitModalVisible: false,
+    exitIncompletePaymentVisible: false,
     conflictId: null,
     conversionType: null,
     conversionTypeAddToSelect: null,

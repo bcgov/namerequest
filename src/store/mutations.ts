@@ -424,6 +424,10 @@ export const mutateExitModalVisible = (state: StateIF, exitModalVisible: boolean
   state.stateModel.newRequestModel.exitModalVisible = exitModalVisible
 }
 
+export const mutateExitIncompletePaymentVisible = (state: StateIF, exitIncompletePaymentVisible: boolean) => {
+  state.stateModel.newRequestModel.exitIncompletePaymentVisible = exitIncompletePaymentVisible
+}
+
 export const clearAssumedNameOriginal = (state: StateIF) => {
   state.stateModel.newRequestModel.assumedNameOriginal = ''
 }

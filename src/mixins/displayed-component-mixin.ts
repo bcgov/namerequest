@@ -31,6 +31,10 @@ export class DisplayedComponentMixin extends Vue {
     return componentName
   }
 
+  get isIncompletePayment (): boolean {
+    return (this.getNrState === NrState.PENDING_PAYMENT)
+  }
+
   async cancelAndResetState () {
     const componentName = this.getDisplayedComponent
     this.setSubmissionTabComponent(0)
