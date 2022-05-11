@@ -17,6 +17,7 @@ export interface NewRequestIF {
   assumedNameOriginal: string
   conditionsModalVisible: boolean
   exitModalVisible: boolean
+  exitIncompletePaymentVisible:boolean
   conflictId: string
   conversionType: EntityType
   conversionTypeAddToSelect: ConversionTypesI

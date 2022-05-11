@@ -751,6 +751,10 @@ export const getExitModalVisible = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.exitModalVisible
 }
 
+export const getExitIncompletePaymentVisible = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.exitIncompletePaymentVisible
+}
+
 export const getAffiliationErrorModalVisible = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.affiliationErrorModalVisible
 }

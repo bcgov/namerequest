@@ -681,6 +681,10 @@ export const setExitModalVisible: ActionIF = ({ commit }, isVisible: boolean): v
   commit('mutateExitModalVisible', isVisible)
 }
 
+export const setExitIncompletePaymentVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
+  commit('mutateExitIncompletePaymentVisible', isVisible)
+}
+
 export const setSubmissionTabComponent: ActionIF = ({ commit }, isVisible: boolean): void => {
   commit('mutateSubmissionTabComponent', isVisible)
 }
