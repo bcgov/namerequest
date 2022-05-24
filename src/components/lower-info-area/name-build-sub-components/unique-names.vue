@@ -31,6 +31,9 @@
         <strong>Westcoast Barbers Inc.</strong>
       </p>
     </v-row>
+    <v-row class="ml-1 mb-4">
+      <a href="./pdfs/groupings_of_similar_descriptive_words.pdf"> Groupings of similar descriptive words</a>
+    </v-row>
   </v-container>
 </template>
 
