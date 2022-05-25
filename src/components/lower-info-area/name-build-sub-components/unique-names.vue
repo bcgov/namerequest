@@ -37,7 +37,7 @@
     <v-row class="ml-1 mb-4">
       <a href="./pdfs/groupings_of_similar_descriptive_words.pdf" target="_blank" class="link-std-sans-ul">
         <v-icon color="primary">mdi-file-pdf-outline</v-icon>
-        Groupings of similar descriptive words
+        Download Groupings of Similar Descriptive Words
       </a>
     </v-row>
   </v-container>
