@@ -248,7 +248,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
               refundMessageText1:
               'Your Name Request has been cancelled and a refund request has been submitted.',
               refundMessageText2:
-              'The refund will be applied to you original payment method and the requested name will not be ' +
+              'The refund will be applied to your original payment method and the requested name will not be ' +
               'examined for use. An email confirming the cancellation and refund of this Name Request will be ' +
               `sent to ${this.getNr.applicants.emailAddress}.`,
               showStaffContact: false,
@@ -274,7 +274,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
           refundLabel: 'Refund Request Processed',
           refundMessageText1:
           'Your Name Request has been cancelled and a refund request has been submitted.<br/><br/>' +
-          'The refund will be applied to you original payment method and the requested name will not be ' +
+          'The refund will be applied to your original payment method and the requested name will not be ' +
           'examined for use. An email confirming the cancellation and refund of this Name Request will be ' +
           `sent to ${this.getNr.applicants.emailAddress}.`,
           showStaffContact: false,
