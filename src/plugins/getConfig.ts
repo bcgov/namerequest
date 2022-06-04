@@ -12,7 +12,7 @@ export async function getConfig (): Promise<EnvConfigI> {
   }
 
   // get and store account id, if present
-  const accountId = new URLSearchParams(windowLocationSearch).get('accountid')
+  const accountId = JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id
   if (accountId) {
     sessionStorage.setItem('ACCOUNT_ID', accountId)
   }
