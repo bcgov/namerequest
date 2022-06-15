@@ -11,12 +11,6 @@ export async function getConfig (): Promise<EnvConfigI> {
     return Promise.reject(new Error('Missing environment variables'))
   }
 
-  // get and store account id, if present
-  const accountId = JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id
-  if (accountId) {
-    sessionStorage.setItem('ACCOUNT_ID', accountId)
-  }
-
   // fetch config from server
   const url = `${windowLocationOrigin}${processEnvBaseUrl}config/configuration.json`
   const headers = {
