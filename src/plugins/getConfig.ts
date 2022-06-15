@@ -5,7 +5,6 @@ export async function getConfig (): Promise<EnvConfigI> {
   // get config from environment
   const windowLocationOrigin = window.location.origin
   const processEnvBaseUrl = process.env.BASE_URL
-  const windowLocationSearch = window.location.search // eg, ?accountid=2288
 
   if (!processEnvBaseUrl || !windowLocationOrigin) {
     return Promise.reject(new Error('Missing environment variables'))
