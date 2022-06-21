@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { EnvConfigI } from '@/interfaces'
-import { Debug } from '@sentry/integrations'
 
 export async function getConfig (): Promise<EnvConfigI> {
   // get config from environment
