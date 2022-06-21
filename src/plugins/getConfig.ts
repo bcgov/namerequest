@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { EnvConfigI } from '@/interfaces'
+import { Debug } from '@sentry/integrations'
 
 export async function getConfig (): Promise<EnvConfigI> {
   // get config from environment
@@ -39,6 +40,9 @@ export async function getConfig (): Promise<EnvConfigI> {
 
   const authApiUrl: string = response.data['AUTH_API_URL'] + response.data['AUTH_API_VERSION']
   sessionStorage.setItem('AUTH_API_URL', authApiUrl)
+
+  const siteminderLogoutUrl: string = response.data['SITEMINDER_LOGOUT_URL']
+  sessionStorage.setItem('SITEMINDER_LOGOUT_URL', siteminderLogoutUrl)
 
   // for system alert banner (sbc-common-components)
   const statusApiUrl: string = response.data['STATUS_API_URL'] + response.data['STATUS_API_VERSION']

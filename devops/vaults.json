@@ -34,7 +34,8 @@
             "auth-web",
             "business",
             "pay",
-            "entity-selector"
+            "entity-selector",
+            "siteminder"
         ]
     },
     {

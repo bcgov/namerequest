@@ -27,5 +27,6 @@
   "STATUS_API_VERSION": "/api/v1",
   "WEBCHAT_REASON": "",
   "WEBCHAT_STATUS_URL": "",
-  "WEBCHAT_URL": ""
+  "WEBCHAT_URL": "",
+  "SITEMINDER_LOGOUT_URL": "https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi"
 }
