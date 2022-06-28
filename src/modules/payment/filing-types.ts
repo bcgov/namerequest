@@ -6,5 +6,6 @@ export enum FilingTypes {
   NM521 = 'NM521', // New priority online submission
   NM606 = 'NM606', // Upgrade to priority
   NM620 = 'NM620', // Reg. submission online
-  NM622 = 'NM622' // NWPTA (Sk or AB) each
+  NM622 = 'NM622', // NWPTA (Sk or AB) each
+  NMRNW = 'NMRNW' // Renewal
 }
