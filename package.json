@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@babel/compat-data": "^7.12.13",
-    "@bcrs-shared-components/enums": "1.0.19",
+    "@bcrs-shared-components/enums": "1.0.14",
     "@bcrs-shared-components/interfaces": "1.0.22",
     "@bcrs-shared-components/staff-payment": "1.0.29",
     "@mdi/font": "^4.5.95",
