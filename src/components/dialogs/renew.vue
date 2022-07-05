@@ -151,7 +151,7 @@ export default class RenewDialog extends Mixins(
 
       // fetch fees
       const params: FetchFeesParams = {
-        filingType: FilingTypes.NMRNW,
+        filingType: FilingTypes.NM620,
         jurisdiction: Jurisdictions.BC,
         priorityRequest: this.getPriorityRequest
       }
@@ -215,7 +215,7 @@ export default class RenewDialog extends Mixins(
       await this.createPayment({
         action: PaymentAction.RENEW,
         nrId: this.getNrId,
-        filingType: FilingTypes.NMRNW,
+        filingType: FilingTypes.NM620,
         priorityRequest: this.getPriorityRequest
       } as CreatePaymentParams, onSuccess)
     } catch (error) {
