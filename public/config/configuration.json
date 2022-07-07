@@ -28,5 +28,6 @@
   "WEBCHAT_REASON": "",
   "WEBCHAT_STATUS_URL": "",
   "WEBCHAT_URL": "",
-  "SITEMINDER_LOGOUT_URL": "https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi"
+  "SITEMINDER_LOGOUT_URL": "https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi",
+  "REGISTRY_HOME_URL": "https://yfthig-dev.web.app/"
 }

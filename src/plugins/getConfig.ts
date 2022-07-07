@@ -43,6 +43,9 @@ export async function getConfig (): Promise<EnvConfigI> {
   const siteminderLogoutUrl: string = response.data['SITEMINDER_LOGOUT_URL']
   sessionStorage.setItem('SITEMINDER_LOGOUT_URL', siteminderLogoutUrl)
 
+  const registryHomeUrl: string = response.data['REGISTRY_HOME_URL']
+  sessionStorage.setItem('REGISTRY_HOME_URL', registryHomeUrl)
+
   // for system alert banner (sbc-common-components)
   const statusApiUrl: string = response.data['STATUS_API_URL'] + response.data['STATUS_API_VERSION']
   sessionStorage.setItem('STATUS_API_URL', statusApiUrl)
