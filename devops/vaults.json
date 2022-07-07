@@ -35,7 +35,8 @@
             "business",
             "pay",
             "entity-selector",
-            "siteminder"
+            "siteminder",
+            "registry"
         ]
     },
     {
