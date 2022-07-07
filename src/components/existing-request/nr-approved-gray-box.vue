@@ -3,7 +3,7 @@
     <v-col class="text-body-4 px-5 py-4">
        Your Name Request <strong> {{nrNum}} </strong> for <strong> {{approvedName}} </strong> has been approved
        for use. An email has been sent to <strong> {{emailAddress}} </strong> with instructions for
-       how to user your Name Request.
+       how to use your Name Request.
       <p></p>
       <v-row no-gutters>
         <v-col cols="auto" class="pt-1 mr-2"><v-icon color="caution">mdi-alert</v-icon></v-col>
