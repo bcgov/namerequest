@@ -1,18 +1,21 @@
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 import { Action } from 'vuex-class'
 import AuthServices from '@/services/auth.services'
 import BusinessServices from '@/services/business.services'
-import { BusinessRequest, CreateNRAffiliationRequestBody, NameRequestI } from '@/interfaces'
+import { BusinessRequest, NameRequestI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { navigate } from '@/plugins'
+import { CommonMixin } from '@/mixins'
+import { CREATED, BAD_REQUEST, OK } from 'http-status-codes'
 
 @Component({})
-export class NrAffiliationMixin extends Vue {
+export class NrAffiliationMixin extends Mixins(CommonMixin) {
   // Global action
   @Action setAffiliationErrorModalVisible!: ActionBindingIF
 
   /**
-   * Creates an affiliation between the current authenticated account and the current NR.
+   * Affiliates a NR to the current account, creates a temporary business, and then navigates
+   * to the entity dashboard page.
    * @param nr the NR to affiliate
    */
   async createAffiliation (nr: NameRequestI): Promise<any> {
@@ -20,51 +23,112 @@ export class NrAffiliationMixin extends Vue {
       // show spinner since the network calls below can take a few seconds
       this.$root.$emit('showSpinner', true)
 
-      const currentOrganizationId = JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT')).id
-      const requestBody: CreateNRAffiliationRequestBody = {
-        businessIdentifier: nr.nrNum,
-        phone: nr.applicants?.phoneNumber || '',
-        email: nr.applicants?.emailAddress || ''
+      // NB: fall back is user's default account
+      const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT')).id || 0
+
+      // try to affiliate the NR
+      const createAffiliationResponse = await AuthServices.createNrAffiliation(accountId, nr)
+
+      // check if affiliation succeeded
+      if (createAffiliationResponse.status === CREATED) {
+        // create the business
+        const businessId = await this.createBusiness(accountId, nr)
+
+        // go to entity dashboard
+        this.goToEntityDashboard(businessId)
+        return
       }
 
-      // Request to affiliate NR to current account
-      const nrResponse = await AuthServices.createNRAffiliation(currentOrganizationId, requestBody)
-      if (nrResponse?.status === 200 || nrResponse?.status === 201) {
-        // update the legal api if the status is success
-        const filingBody: BusinessRequest = {
-          filing: {
-            header: {
-              name: 'incorporationApplication',
-              accountId: currentOrganizationId
-            },
-            business: {
-              legalType: (nr.entity_type_cd === 'BC') ? 'BEN' : nr.entity_type_cd
-            },
-            incorporationApplication: {
-              nameRequest: {
-                legalType: (nr.entity_type_cd === 'BC') ? 'BEN' : nr.entity_type_cd,
-                nrNumber: nr.nrNum
-              }
-            }
-          }
+      // check if NR is already affiliated
+      if (
+        createAffiliationResponse.status === BAD_REQUEST &&
+        createAffiliationResponse.data.code === 'NR_CONSUMED'
+      ) {
+        // fetch existing affiliations
+        const fetchAffiliationsResponse = await AuthServices.fetchAffiliations(accountId)
+
+        if (fetchAffiliationsResponse?.status !== OK) {
+          throw new Error('Unable to fetch existing affiliation')
         }
-        const filingResponse = await BusinessServices.createBusiness(filingBody)
-        // navigate to My Business Registry dashboard
-        if (filingResponse?.status === 200 || filingResponse?.status === 201) {
-          navigate(
-            `${sessionStorage.getItem('BUSINESSES_URL')}account/${currentOrganizationId}/business`
-          )
-        } else throw new Error('Business creation error: invalid api response ')
-      } else throw new Error('Affiliation error: invalid api response ')
+
+        // is this a name request affiliation?
+        const entities = fetchAffiliationsResponse.data?.entities || []
+        const nameRequestEntity = entities.find(entity => entity.businessIdentifier === nr.nrNum)
+        if (nameRequestEntity) {
+          // create the business
+          const businessId = await this.createBusiness(accountId, nr)
+
+          // go to entity dashboard
+          this.goToEntityDashboard(businessId)
+          return
+        }
+
+        // is this a temporary business affiliation?
+        const temporaryBusinessEntity = entities.find(entity => entity.nrNumber === nr.nrNum)
+        if (temporaryBusinessEntity) {
+          const businessId = temporaryBusinessEntity.businessIdentifier
+
+          // go to entity dashboard
+          this.goToEntityDashboard(businessId)
+          return
+        }
+
+        throw new Error('Unable to find existing affiliation')
+      }
+
+      throw new Error('Unable to create new affiliation')
     } catch (err) {
-      console.error('createAffiliation() =', err) // eslint-disable-line no-console
+      // eslint-disable-next-line no-console
+      console.error('createAffiliation() =', err)
+
+      // clear NR data
+      sessionStorage.removeItem('NR_DATA')
 
       // hide spinner
       this.$root.$emit('showSpinner', false)
 
-      // clear NR Data and show error dialog
-      sessionStorage.removeItem('NR_DATA')
+      // show error dialog
       this.setAffiliationErrorModalVisible(true)
     }
+  }
+
+  /** Creates temporary business record and returns business identifier. */
+  private async createBusiness (accountId: number, nr: NameRequestI): Promise<string> {
+    const createBusinessResponse =
+      await BusinessServices.createBusiness(this.getBusinessRequest(accountId, nr))
+
+    if (createBusinessResponse.status === CREATED) {
+      return createBusinessResponse.data?.filing?.business?.identifier as string
+    }
+
+    // create failed, so delete the existing affiliation to avoid orphan records
+    await AuthServices.removeNrAffiliation(accountId, nr.nrNum).catch(() => null)
+
+    throw new Error('Unable to create new business')
+  }
+
+  /** Returns business request object. */
+  private getBusinessRequest (accountId: number, nr: NameRequestI): BusinessRequest {
+    const name = this.isBenefitCompany(nr) ? 'incorporationApplication' : 'registration'
+    const legalType = this.isBenefitCompany(nr) ? 'BEN' : nr.entity_type_cd
+    const nrNumber = nr.nrNum
+
+    return {
+      filing: {
+        header: { name, accountId },
+        business: { legalType },
+        registration: this.isFirm(nr) ? { nameRequest: { legalType, nrNumber } } : undefined,
+        incorporationApplication: !this.isFirm(nr) ? { nameRequest: { legalType, nrNumber } } : undefined
+      }
+    } as BusinessRequest
+  }
+
+  /** Navigates to entity dashboard (Filings UI). */
+  private goToEntityDashboard (businessId: string): void {
+    if (!businessId) throw new Error('Invalid business id')
+
+    const dashboardUrl = sessionStorage.getItem('DASHBOARD_URL')
+
+    navigate(`${dashboardUrl}${businessId}`)
   }
 }

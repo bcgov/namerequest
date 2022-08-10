@@ -31,6 +31,9 @@ export async function getConfig (): Promise<EnvConfigI> {
   const businessesUrl = response.data['BUSINESSES_URL']
   sessionStorage.setItem('BUSINESSES_URL', businessesUrl)
 
+  const dashboadUrl = response.data['DASHBOARD_URL']
+  sessionStorage.setItem('DASHBOARD_URL', dashboadUrl)
+
   const keycloakConfigPath = response.data['KEYCLOAK_CONFIG_PATH']
   sessionStorage.setItem('KEYCLOAK_CONFIG_PATH', keycloakConfigPath)
 

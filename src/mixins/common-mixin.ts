@@ -83,6 +83,13 @@ export class CommonMixin extends Vue {
     return (nr?.entity_type_cd === EntityType.BC)
   }
 
+  /** Returns true if the specified NR is for a firm (SP/GP). */
+  isFirm (nr: any): boolean {
+    return (
+      nr?.legalType === EntityType.SP ||
+      nr?.legalType === EntityType.GP)
+  }
+
   /** Returns true if the specified NR is for an Extraprovincial Company. */
   isXProCompany (nr: any): boolean {
     return [EntityType.XCR, EntityType.XUL, EntityType.RLC, EntityType.XLP, EntityType.XLL,
@@ -90,7 +97,7 @@ export class CommonMixin extends Vue {
   }
 
   /** Scroll to given element Id */
-  scrollTo (id): void {
+  scrollTo (id: string): void {
     return document.getElementById(id)?.scrollIntoView()
   }
 }

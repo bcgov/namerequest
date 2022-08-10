@@ -1,19 +1,19 @@
 <template>
-  <v-dialog v-model="showModal" max-width="60%">
+  <v-dialog v-model="getAffiliationErrorModalVisible" max-width="60%" persistent>
     <v-card class="notify-dialog">
-      <v-card-title>
-        <slot name="icon">
-          <v-icon large color="error">mdi-alert</v-icon>
-        </slot>
-        <span>
-          <slot name="title">Error Adding Name Request</slot>
-        </span>
+      <v-card-title class="flex-column">
+        <v-icon large color="error" class="my-4">mdi-alert</v-icon>
+        <span>Error Affiliating Name Request</span>
       </v-card-title>
-      <v-card-text>
-        <slot name="text">The specified name request has already been affiliated.</slot>
+
+      <v-card-text class="text-center">
+        The specified name request may already be affiliated. Go to
+        <a :href="businessRegistryUrl">your Business Registry</a>
+        to use the name request.
       </v-card-text>
-      <v-card-actions>
-        <v-btn large color="error" @click="showModal = false" data-test="dialog-ok-button">OK</v-btn>
+
+      <v-card-actions class="justify-center">
+        <v-btn large color="error" @click="setAffiliationErrorModalVisible(false)">OK</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -29,31 +29,11 @@ export default class AffiliationErrorDialog extends Vue {
   @Getter getAffiliationErrorModalVisible!: boolean
   @Action setAffiliationErrorModalVisible!: ActionBindingIF
 
-  get showModal () {
-    return this.getAffiliationErrorModalVisible
-  }
-  set showModal (value: boolean) {
-    this.setAffiliationErrorModalVisible(value)
+  get businessRegistryUrl (): string {
+    const businessesUrl = sessionStorage.getItem('BUSINESSES_URL')
+    // NB: fall back is user's default account
+    const accountId = JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT')).id || 0
+    return `${businessesUrl}account/${accountId}/business`
   }
 }
 </script>
-
-<style lang="scss" scoped>
-  .notify-dialog .v-card__title {
-    flex-direction: column;
-
-    ::v-deep i {
-      margin-top: 1rem;
-      margin-bottom: 1rem;
-    }
-  }
-
-  .notify-dialog .v-card__text {
-    text-align: center;
-  }
-
-  .notify-dialog .v-card__actions {
-    justify-content: center;
-    padding: 1.5rem;
-  }
-</style>

@@ -20,7 +20,8 @@
           </v-col>
         </v-row>
       </div>
-      <names-gray-box
+
+      <NamesGrayBox
         v-if="nr.nrNum"
         class="mt-5"
         :names="names"
@@ -79,7 +80,7 @@
                           v-html="getRefundParams.refundMessageText2" />
                         <div v-if="getRefundParams.showStaffContact">
                           <br/>
-                          <contact-info
+                          <ContactInfo
                             id="tooltip-contact-info"
                             direction="col" />
                         </div>
@@ -170,21 +171,24 @@
             </v-col>
           </v-row>
 
-          <check-status-gray-box
+          <CheckStatusGrayBox
             class="mt-5"
             v-if="showCheckStatusGrayBox"
             :nrNum="nr.nrNum"
           />
 
-          <nr-approved-gray-box
+          <NrApprovedGrayBox
             class="mt-5"
             v-if="showNrApprovedGrayBox"
-            :nrNum="nr.nrNum"
+            :nrNum="nr && nr.nrNum"
             :approvedName="approvedName && approvedName.name"
             :emailAddress="nr && nr.applicants && nr.applicants.emailAddress"
+            :showRegisterButton="showRegisterButton"
+            :disabled="disableUnfurnished"
+            @registerYourBusiness="registerYourBusiness()"
           />
 
-          <nr-not-approved-gray-box
+          <NrNotApprovedGrayBox
             class="mt-5"
             v-if="showNrNotApprovedGrayBox"
             :nrNum="nr.nrNum"
@@ -211,20 +215,11 @@ import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
-import {
-  NameState,
-  NrAction,
-  NrState,
-  PaymentStatus,
-  SbcPaymentStatus,
-  PaymentAction,
-  Furnished
-} from '@/enums'
-import { sleep } from '@/plugins'
+import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished }
+  from '@/enums'
+import { sleep, getFeatureFlag } from '@/plugins'
 import NamexServices from '@/services/namex.services'
 import ContactInfo from '@/components/common/contact-info.vue'
-
-// Interfaces
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
@@ -270,16 +265,16 @@ export default class ExistingRequestDisplay extends Mixins(
   NrState = NrState
 
   /** This is used in the template as the transition key for the affected template, triggering a fade in/out. */
-  refreshCount = 0
+  protected refreshCount = 0
 
   /** This is used in the template as the transition key for the affected template, triggering a fade in/out. */
-  furnished = 'notfurnished'
+  protected furnished = 'notfurnished'
 
   /** The pending payment, if any. See mounted(). */
   private pendingPayment = null
 
   /** The actions list, with some buttons forced to the bottom. */
-  private get actions (): NrAction[] {
+  get actions (): NrAction[] {
     const actions = (this.nr.actions || []) as NrAction[]
     // move 'REQUEST_REFUND' or 'CANCEL' action (if present) to bottom of list
     // eg ['EDIT', 'REQUEST_REFUND', 'RECEIPT'] -> ['EDIT', 'RECEIPT', 'REQUEST_REFUND']
@@ -290,7 +285,7 @@ export default class ExistingRequestDisplay extends Mixins(
     })
   }
 
-  private get address (): string {
+  get address (): string {
     // FUTURE: delete this check as it hides an error that shouldn't happen
     //         for now, report the error and don't crash
     if (!this.nr.applicants) {
@@ -307,7 +302,7 @@ export default class ExistingRequestDisplay extends Mixins(
     return output
   }
 
-  private get addressLines (): string[] {
+  get addressLines (): string[] {
     const output = [ this.nr.applicants.addrLine1 ]
     if (this.nr.applicants.addrLine2) {
       output.push(this.nr.applicants.addrLine2)
@@ -315,12 +310,12 @@ export default class ExistingRequestDisplay extends Mixins(
     return output
   }
 
-  private get cityProvPostal (): string {
+  get cityProvPostal (): string {
     const { applicants } = this.nr
     return applicants.city + ', ' + applicants.stateProvinceCd + ', ' + applicants.postalCd
   }
 
-  private get consentDate (): string {
+  get consentDate (): string {
     if (!this.nr.consentFlag || (this.nr.consentFlag === 'N')) return ''
 
     let ret: string
@@ -331,7 +326,7 @@ export default class ExistingRequestDisplay extends Mixins(
     return ret || 'Not Yet Received'
   }
 
-  private get expiryDate (): string {
+  get expiryDate (): string {
     let ret: string
     if (this.nr.expirationDate) {
       const date = new Date(this.nr.expirationDate)
@@ -340,7 +335,7 @@ export default class ExistingRequestDisplay extends Mixins(
     return ret || ''
   }
 
-  private get reviewDate (): string {
+  get reviewDate (): string {
     if (this.nr.waiting_time) {
       // get current wait days
       const waitDays: number = this.nr.waiting_time
@@ -359,7 +354,7 @@ export default class ExistingRequestDisplay extends Mixins(
     return 'Unknown'
   }
 
-  private get queueDate (): string {
+  get queueDate (): string {
     let ret: string
     if (this.nr.oldest_draft) {
       const date = new Date(this.nr.oldest_draft)
@@ -368,7 +363,7 @@ export default class ExistingRequestDisplay extends Mixins(
     return ret || 'Unknown'
   }
 
-  private get submittedDate (): string {
+  get submittedDate (): string {
     let ret: string
     if (this.nr.submittedDate) {
       const date = new Date(this.nr.submittedDate)
@@ -377,11 +372,11 @@ export default class ExistingRequestDisplay extends Mixins(
     return ret || 'Unknown'
   }
 
-  private get requestType (): string {
+  get requestType (): string {
     return this.requestActionCdToText(this.nr.request_action_cd) || 'Unknown'
   }
 
-  private get disableUnfurnished (): boolean {
+  get disableUnfurnished (): boolean {
     return (
       (this.nr.furnished === Furnished.NO) &&
       [NrState.CONDITIONAL, NrState.REJECTED, NrState.APPROVED].includes(this.nr.stateCd)
@@ -389,7 +384,7 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   /** The names list, sorted by choice number. Used by names-gray-box. */
-  private get names () {
+  get names () {
     return this.nr.names.sort((a, b) => {
       if (a.choice > b.choice) {
         return 1
@@ -407,28 +402,33 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   /**
-   * True if the incorporate button should be shown.
+   * True if the Incorporate button should be shown.
    * (It is shown as a distinct button instead of an action.)
    */
-  private get showIncorporateButton (): boolean {
+  get showIncorporateButton (): boolean {
     return (
       this.isBenefitCompany(this.nr) &&
       this.actions.includes(NrAction.INCORPORATE)
     )
   }
 
+  /** True if the Register button should be shown. */
+  get showRegisterButton (): boolean {
+    return this.isFirm(this.nr) && !!getFeatureFlag('enable-sp-gp-dba')
+  }
+
   /** True if the Check Status gray box should be shown. */
-  private get showCheckStatusGrayBox (): boolean {
+  get showCheckStatusGrayBox (): boolean {
     return [NrState.DRAFT, NrState.INPROGRESS, NrState.HOLD].includes(this.nr.state)
   }
 
   /** True if the NR Approved gray box should be shown. */
-  private get showNrApprovedGrayBox (): boolean {
+  get showNrApprovedGrayBox (): boolean {
     return this.isNrApprovedOrConditional
   }
 
   /** True if the NR Not Approved gray box should be shown. */
-  private get showNrNotApprovedGrayBox (): boolean {
+  get showNrNotApprovedGrayBox (): boolean {
     return (
       this.isXProCompany(this.nr) &&
       (this.nr.state === NrState.REJECTED)
@@ -436,17 +436,17 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   /** True if the non priority estimated date should be shown. */
-  private get showEstimatedDateNotPriority (): boolean {
+  get showEstimatedDateNotPriority (): boolean {
     return !this.isPriorityReq(this.nr) && (this.nr.state === NrState.DRAFT)
   }
 
   /** True if priority estimated date text should be shown. */
-  private get showEstimatedDatePriority (): boolean {
+  get showEstimatedDatePriority (): boolean {
     return this.isPriorityReq(this.nr) && (this.nr.state === NrState.DRAFT)
   }
 
   /** True if the Conditions link should be shown. */
-  private get showConditionsLink (): boolean {
+  get showConditionsLink (): boolean {
     // 1. NR is approved or conditional
     // 2. there is a conditional name
     // 3. the conditional name has some decision text
@@ -458,7 +458,7 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   /** The display text for Request Status. */
-  private get requestStatusText (): string {
+  get requestStatusText (): string {
     if (this.nr.state === NrState.REFUND_REQUESTED) {
       return 'Cancelled, ' // this label will be composed with 'getRefundParams.refundLabel'
     } else if (this.isNotPaid) {
@@ -486,40 +486,40 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   /** True if NR is in Approved or Conditional state. */
-  private get isNrApprovedOrConditional (): boolean {
+  get isNrApprovedOrConditional (): boolean {
     return [NrState.APPROVED, NrState.CONDITIONAL].includes(this.nr.state)
   }
 
   /** True if NR is in Cancelled or Rejected state. */
-  private get isNrCancelledOrRejected (): boolean {
+  get isNrCancelledOrRejected (): boolean {
     return [NrState.CANCELLED, NrState.REFUNDED, NrState.REJECTED].includes(this.nr.state)
   }
 
   /** The NR's (first) approved name object, if any. */
-  private get approvedName (): any {
+  get approvedName (): any {
     return this.nr.names.find(name => [NameState.APPROVED, NameState.CONDITIONAL].includes(name.state))
   }
 
   /** The NR's (first) conditional name object, if any. */
-  private get conditionalName (): any {
+  get conditionalName (): any {
     return this.nr.names.find(name => (name.state === NameState.CONDITIONAL))
   }
 
   /** True if the current state should display an alert icon. */
-  private get isAlertState (): boolean {
+  get isAlertState (): boolean {
     return ['Cancelled', 'Expired'].includes(this.requestStatusText) || this.isNotPaid
   }
 
-  private get isNotPaid () {
+  get isNotPaid () {
     return (this.pendingPayment?.sbcPayment?.statusCode === PaymentStatus.CREATED)
   }
 
-  private get isPaymentProcessing () {
+  get isPaymentProcessing () {
     return ([PaymentStatus.APPROVED, PaymentStatus.COMPLETED].includes(this.pendingPayment?.sbcPayment?.statusCode))
   }
 
   /** Returns the css class for the requestStatusText. */
-  private get requestStatusTextClass (): string {
+  get requestStatusTextClass (): string {
     if (this.isRefundRequested) return ''
     else if (this.isNotPaid) return 'app-red'
     else if (this.isPaymentProcessing) return 'app-green'
@@ -527,12 +527,12 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   /** Returns True if the specified action should display a red button. */
-  private isRedButton (action: NrAction): boolean {
+  protected isRedButton (action: NrAction): boolean {
     return [NrAction.REQUEST_REFUND, NrAction.CANCEL].includes(action)
   }
 
   /** Returns display text for the specified action code. */
-  private actionText (action: NrAction): string {
+  protected actionText (action: NrAction): string {
     switch (action) {
       case NrAction.CANCEL: return 'Cancel Name Request'
       case NrAction.RENEW: return 'Renew Name Request ($30)' // FUTURE: fetch this fee
@@ -547,7 +547,7 @@ export default class ExistingRequestDisplay extends Mixins(
     }
   }
 
-  private async handleButtonClick (action: NrAction) {
+  protected async handleButtonClick (action: NrAction) {
     // FUTURE: reinstate this check?
     // const confirmed = await newReqModule.confirmAction(action)
     const confirmed = true
@@ -625,7 +625,7 @@ export default class ExistingRequestDisplay extends Mixins(
     // else do nothing -- errors are handled by newReqModule
   }
 
-  private async refresh (event) {
+  protected async refresh (): Promise<void> {
     this.$root.$emit('showSpinner', true)
     this.refreshCount += 1
     try {
@@ -641,8 +641,16 @@ export default class ExistingRequestDisplay extends Mixins(
     }
   }
 
-  private showConditionsModal () {
+  protected showConditionsModal () {
     this.setConditionsModalVisible(true)
+  }
+
+  /** Called to register the business. */
+  protected async registerYourBusiness (): Promise<void> {
+    // safety check
+    if (!this.isNrApprovedOrConditional) return
+
+    return this.affiliateOrLogin()
   }
 
   /** Affiliates the current NR if authenticated, or prompts login if unauthenticated. */
@@ -672,7 +680,7 @@ export default class ExistingRequestDisplay extends Mixins(
     return paymentId
   }
 
-  private get isVisible () {
+  get isVisible () {
     const componentName = this.getDisplayedComponent
     return (componentName === 'ExistingRequestDisplay')
   }
@@ -710,15 +718,15 @@ export default class ExistingRequestDisplay extends Mixins(
     }
   }
 
-  created (): void {
+  protected created (): void {
     this.$root.$on('paymentComplete', (flag = false) => { this.pendingPayment = null })
   }
 
-  destroyed (): void {
+  protected destroyed (): void {
     this.$root.$off('paymentComplete')
   }
 
-  async mounted () {
+  protected async mounted () {
     if (this.nr.id && this.nr.state !== NrState.CANCELLED) {
       // show spinner since the network calls below can take a few seconds
       this.$root.$emit('showSpinner', true)

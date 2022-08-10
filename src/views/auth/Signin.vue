@@ -53,11 +53,9 @@ export default class Signin extends Mixins(NrAffiliationMixin, UpdateUserMixin) 
 
     await this.updateUser()
 
-    // If there is stored NR data to process, create the affiliation.
-    // If this succeeds, the user will be redirected to their Manage Businesses page.
-    // If this fails, just fall through...
+    // If there is stored NR data to process then affiliate it.
     const nr = JSON.parse(sessionStorage.getItem('NR_DATA'))
-    if (nr) await this.createAffiliation(nr).catch()
+    if (nr) await this.createAffiliation(nr)
 
     // go to main app page
     await this.$router.push('/')

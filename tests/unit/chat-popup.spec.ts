@@ -1,13 +1,13 @@
-// Libraries
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Vuetify from 'vuetify'
 import sinon from 'sinon'
 import { mount, createLocalVue } from '@vue/test-utils'
 import axios from 'axios'
-
-// Components
 import ChatPopup from '@/components/common/chat-popup.vue'
+
+// Prevent the warning "[Vuetify] Unable to locate target [data-app]"
+document.body.setAttribute('data-app', 'true')
 
 Vue.use(Vuetify)
 const localVue = createLocalVue()

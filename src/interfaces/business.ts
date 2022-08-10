@@ -12,7 +12,10 @@ export interface BusinessRequest {
     business: {
       legalType: string
     },
-    incorporationApplication: {
+    incorporationApplication?: {
+      nameRequest: NameRequest
+    },
+    registration?: {
       nameRequest: NameRequest
     }
   }
