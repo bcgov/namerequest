@@ -4,7 +4,7 @@ import AuthServices from '@/services/auth.services'
 
 @Component({})
 export class UpdateUserMixin extends Vue {
-  /** Fetches the user's info and updates Launch Darkly. */
+  /** Fetches the user's info and updates LaunchDarkly. */
   async updateUser (): Promise<any> {
     try {
       const userInfo = await AuthServices.fetchUserInfo()

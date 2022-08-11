@@ -1,20 +1,21 @@
 /** Enum for Entity Type codes. */
 export enum EntityType {
   // BC Entity Types:
-  FR = 'FR',
-  DBA = 'DBA',
-  CR = 'CR',
-  UL = 'UL',
-  GP = 'GP',
-  LP = 'LP',
-  LL = 'LL',
-  CP = 'CP',
   BC = 'BC',
   CC = 'CC',
-  SO = 'SO',
-  PA = 'PA',
+  CP = 'CP',
+  CR = 'CR',
+  DBA = 'DBA',
   FI = 'FI',
+  FR = 'FR',
+  GP = 'GP',
+  LL = 'LL',
+  LP = 'LP',
+  PA = 'PA',
   PAR = 'PAR',
+  SO = 'SO',
+  SP = 'SP',
+  UL = 'UL',
 
   // XPRO Entity Types:
   XCR = 'XCR',

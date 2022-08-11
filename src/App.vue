@@ -1,14 +1,6 @@
 <template>
   <v-app id="app">
     <div id="main-column">
-      <SbcAuthenticationOptionsDialog
-        attach="#app"
-        :inAuth="false"
-        :showModal="getIncorporateLoginModalVisible"
-        :redirectUrl="nameRequestUrl"
-        @close="setIncorporateLoginModalVisible(false)"
-      />
-
       <ChatPopup />
 
       <!-- Loading spinner -->
@@ -82,18 +74,17 @@
 // libraries, etc
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { getFeatureFlag, getKeycloakRoles } from '@/plugins'
-import { DateMixin } from '@/mixins'
+import { getFeatureFlag } from '@/plugins'
+import { DateMixin, LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin } from '@/mixins'
 
 // dialogs and other components
 import ChatPopup from '@/components/common/chat-popup.vue'
 import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
   LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog, PaymentCompleteDialog,
-  PickEntityOrConversionDialog, PickRequestTypeDialog, RenewDialog, ReceiptsDialog, RefundDialog, ResubmitDialog,
-  RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
+  PickEntityOrConversionDialog, PickRequestTypeDialog, RenewDialog, ReceiptsDialog, RefundDialog,
+  ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
 } from '@/components/dialogs'
-import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
 import PaySystemAlert from 'sbc-common-components/src/components/PaySystemAlert.vue'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
@@ -127,26 +118,15 @@ import { PAYMENT_REQUIRED } from 'http-status-codes'
     RetryDialog,
     StaffPaymentErrorDialog,
     UpgradeDialog,
-    SbcAuthenticationOptionsDialog,
     PaySystemAlert,
     SbcHeader,
     SbcFooter
   }
 })
-export default class App extends Mixins(DateMixin) {
-  showSpinner = false
-
-  /** Whether the StaffPaymentErrorDialog should be displayed */
-  private staffPaymentErrorDialog = false
-
-  /** Errors from the API */
-  private saveErrors: Array<string> = []
-
-  /** Warnings from the API */
-  private saveWarnings: Array<string> = []
-
+export default class App extends Mixins(
+  DateMixin, LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin
+) {
   // Global getters
-  @Getter getIncorporateLoginModalVisible!: boolean
   @Getter getDisplayedComponent!: string
   @Getter getNrId!: number
   @Getter isRoleStaff: boolean
@@ -155,18 +135,24 @@ export default class App extends Mixins(DateMixin) {
   @Action resetAnalyzeName!: ActionBindingIF
   @Action setName!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
-  @Action setIncorporateLoginModalVisible!: ActionBindingIF
   @Action toggleConfirmNrModal!: ActionBindingIF
   @Action setCurrentJsDate!: ActionBindingIF
-  @Action setKeycloakRoles!: ActionBindingIF
   @Action setWindowWidth!: ActionBindingIF
+
+  /** Whether to show the loading spinner. */
+  protected showSpinner = false
+
+  /** Whether the StaffPaymentErrorDialog should be displayed */
+  protected staffPaymentErrorDialog = false
+
+  /** Errors from the API */
+  protected saveErrors: Array<string> = []
+
+  /** Warnings from the API */
+  protected saveWarnings: Array<string> = []
 
   /** The Update Current JS Date timer id. */
   private updateCurrentJsDateId = 0
-
-  get nameRequestUrl (): string {
-    return `${window.location.origin}${process.env.VUE_APP_PATH}`
-  }
 
   get bannerText (): string | null {
     const bannerText: string = getFeatureFlag('banner-text')
@@ -175,7 +161,7 @@ export default class App extends Mixins(DateMixin) {
   }
 
   /** The About text. */
-  private get aboutText (): string {
+  get aboutText (): string {
     return process.env.ABOUT_TEXT
   }
 
@@ -194,15 +180,16 @@ export default class App extends Mixins(DateMixin) {
     await this.updateCurrentJsDate()
     this.updateCurrentJsDateId = window.setInterval(this.updateCurrentJsDate, 60000)
 
-    // in case user is already logged in,
-    // get and store keycloak roles
-    try {
-      const keycloakRoles = getKeycloakRoles()
-      this.setKeycloakRoles(keycloakRoles)
-      console.info('Got roles!') // eslint-disable-line no-console
-    } catch (error) {
-      // just log the error message
-      console.log(`Did not get roles (${error.message})`) // eslint-disable-line no-console
+    // in case user is already logged in, load Keycloak roles and update LaunchDarkly
+    this.loadKeycloakRoles()
+    await this.updateUser()
+
+    // if there is stored NR data to process then affiliate it now
+    const nr = JSON.parse(sessionStorage.getItem('NR_DATA'))
+    if (nr) {
+      await this.createAffiliation(nr)
+      // clear NR data for next time
+      sessionStorage.removeItem('NR_DATA')
     }
 
     // listen for save error events

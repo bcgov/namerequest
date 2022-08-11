@@ -661,10 +661,6 @@ export const setShowActualInput: ActionIF = ({ commit }, showInput: boolean): vo
 //
 // Dialog Actions
 //
-export const setIncorporateLoginModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
-  commit('mutateIncorporateLoginModalVisible', isVisible)
-}
-
 export const setPickEntityModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
   commit('mutatePickEntityModalVisible', isVisible)
 }

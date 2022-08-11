@@ -5,9 +5,10 @@ declare const window: any
 
 /**
  * Default flag values when LD is not available.
- * Uses "business-edit" project (per LD client id in config).
+ * Uses "namerequest" project (per LD client id in config).
  */
 const defaultFlagSet: LDFlagSet = {
+  'enable-sp-gp-dba': false, // by default, don't show firm Register button
   'disable-analysis': true, // by default, analysis is disabled
   'hardcoded_regular_wait_time': 0, // by default, use actual wait time
   'hardcoded_priority_wait_time': 0, // by default, use actual wait time
