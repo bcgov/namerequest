@@ -22,15 +22,7 @@ Vue.use(Vuetify)
 const vuetify = new Vuetify({})
 const store = new Vuex.Store<any>({
   getters: {
-    isMobile (): any {},
-    getIncorporateLoginModalVisible (): any {}
-  },
-  state: {
-    stateModel: {
-      newRequestModel: {
-        incorporateLoginModalVisible: false
-      }
-    }
+    isMobile (): any {}
   }
 })
 

@@ -34,7 +34,6 @@ export interface NewRequestIF {
   extendedRequestType: SelectOptionsI
   getNameReservationFailed: boolean
   helpMeChooseModalVisible: boolean
-  incorporateLoginModalVisible: boolean
   affiliationErrorModalVisible: boolean
   isPersonsName: boolean
   issueIndex: number

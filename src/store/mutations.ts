@@ -113,10 +113,6 @@ export const mutateHelpMeChooseModalVisible = (state: StateIF, helpMeChooseModal
   state.stateModel.newRequestModel.helpMeChooseModalVisible = helpMeChooseModalVisible
 }
 
-export const mutateIncorporateLoginModalVisible = (state: StateIF, incorporateLoginModalVisible: boolean) => {
-  state.stateModel.newRequestModel.incorporateLoginModalVisible = incorporateLoginModalVisible
-}
-
 export const mutateAffiliationErrorModalVisible = (state: StateIF, affiliationErrorModalVisible: boolean) => {
   state.stateModel.newRequestModel.affiliationErrorModalVisible = affiliationErrorModalVisible
 }

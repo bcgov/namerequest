@@ -217,7 +217,7 @@ import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
 import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished }
   from '@/enums'
-import { sleep, getFeatureFlag } from '@/plugins'
+import { sleep, getFeatureFlag, navigate } from '@/plugins'
 import NamexServices from '@/services/namex.services'
 import ContactInfo from '@/components/common/contact-info.vue'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
@@ -249,7 +249,6 @@ export default class ExistingRequestDisplay extends Mixins(
   @Action editExistingRequest!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
   @Action setConditionsModalVisible!: ActionBindingIF
-  @Action setIncorporateLoginModalVisible!: ActionBindingIF
   @Action setNrResponse!: ActionBindingIF
   @Action toggleUpgradeModal!: ActionBindingIF
   @Action toggleResubmitModal!: ActionBindingIF
@@ -658,9 +657,12 @@ export default class ExistingRequestDisplay extends Mixins(
     if (this.getIsAuthenticated) {
       await this.createAffiliation(this.nr)
     } else {
-      // Persist NR in session for use in affiliation upon authentication via Signin component
+      // persist NR in session for affiliation upon authentication via Signin component
       sessionStorage.setItem('NR_DATA', JSON.stringify(this.nr))
-      this.setIncorporateLoginModalVisible(true)
+      // navigate to BC Registry login page with return parameter
+      const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
+      const nameRequestUrl = `${window.location.origin}${process.env.BASE_URL}`
+      navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
     }
   }
 

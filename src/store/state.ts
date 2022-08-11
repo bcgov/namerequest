@@ -69,7 +69,6 @@ export const stateModel: StateModelIF = {
     extendedRequestType: null,
     getNameReservationFailed: false,
     helpMeChooseModalVisible: false,
-    incorporateLoginModalVisible: false,
     affiliationErrorModalVisible: false,
     isPersonsName: false,
     issueIndex: 0,

@@ -1,14 +1,6 @@
 <template>
   <v-app id="app">
     <div id="main-column">
-      <SbcAuthenticationOptionsDialog
-        attach="#app"
-        :inAuth="false"
-        :showModal="getIncorporateLoginModalVisible"
-        :redirectUrl="nameRequestUrl"
-        @close="setIncorporateLoginModalVisible(false)"
-      />
-
       <ChatPopup />
 
       <!-- Loading spinner -->
@@ -93,7 +85,6 @@ import {
   PickEntityOrConversionDialog, PickRequestTypeDialog, RenewDialog, ReceiptsDialog, RefundDialog, ResubmitDialog,
   RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
 } from '@/components/dialogs'
-import SbcAuthenticationOptionsDialog from 'sbc-common-components/src/components/SbcAuthenticationOptionsDialog.vue'
 import PaySystemAlert from 'sbc-common-components/src/components/PaySystemAlert.vue'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
@@ -127,7 +118,6 @@ import { PAYMENT_REQUIRED } from 'http-status-codes'
     RetryDialog,
     StaffPaymentErrorDialog,
     UpgradeDialog,
-    SbcAuthenticationOptionsDialog,
     PaySystemAlert,
     SbcHeader,
     SbcFooter
@@ -146,7 +136,6 @@ export default class App extends Mixins(DateMixin) {
   private saveWarnings: Array<string> = []
 
   // Global getters
-  @Getter getIncorporateLoginModalVisible!: boolean
   @Getter getDisplayedComponent!: string
   @Getter getNrId!: number
   @Getter isRoleStaff: boolean
@@ -155,7 +144,6 @@ export default class App extends Mixins(DateMixin) {
   @Action resetAnalyzeName!: ActionBindingIF
   @Action setName!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
-  @Action setIncorporateLoginModalVisible!: ActionBindingIF
   @Action toggleConfirmNrModal!: ActionBindingIF
   @Action setCurrentJsDate!: ActionBindingIF
   @Action setKeycloakRoles!: ActionBindingIF
@@ -163,10 +151,6 @@ export default class App extends Mixins(DateMixin) {
 
   /** The Update Current JS Date timer id. */
   private updateCurrentJsDateId = 0
-
-  get nameRequestUrl (): string {
-    return `${window.location.origin}${process.env.VUE_APP_PATH}`
-  }
 
   get bannerText (): string | null {
     const bannerText: string = getFeatureFlag('banner-text')

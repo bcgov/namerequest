@@ -28,9 +28,6 @@ export async function getConfig (): Promise<EnvConfigI> {
   const paymentPortalUrl = response.data['PAYMENT_PORTAL_URL']
   sessionStorage.setItem('PAYMENT_PORTAL_URL', paymentPortalUrl)
 
-  const businessesUrl = response.data['BUSINESSES_URL']
-  sessionStorage.setItem('BUSINESSES_URL', businessesUrl)
-
   const dashboadUrl = response.data['DASHBOARD_URL']
   sessionStorage.setItem('DASHBOARD_URL', dashboadUrl)
 

@@ -735,10 +735,6 @@ export const getShowPriorityRequest = (state: StateIF): boolean => {
 }
 
 // MODAL GETTERS
-export const getIncorporateLoginModalVisible = (state: StateIF): boolean => {
-  return state.stateModel.newRequestModel.incorporateLoginModalVisible
-}
-
 export const getPickEntityModalVisible = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.pickEntityModalVisible
 }
