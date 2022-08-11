@@ -66,6 +66,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
         // is this a temporary business affiliation?
         const temporaryBusinessEntity = entities.find(entity => entity.nrNumber === nr.nrNum)
         if (temporaryBusinessEntity) {
+          // use existing business id
           const businessId = temporaryBusinessEntity.businessIdentifier
 
           // go to entity dashboard
@@ -80,9 +81,6 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('createAffiliation() =', err)
-
-      // clear NR data
-      sessionStorage.removeItem('NR_DATA')
 
       // hide spinner
       this.$root.$emit('showSpinner', false)

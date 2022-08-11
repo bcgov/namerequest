@@ -9,11 +9,8 @@
 
 <script lang="ts">
 import { Component, Prop, Mixins } from 'vue-property-decorator'
-import { Action } from 'vuex-class'
-import { getKeycloakRoles } from '@/plugins'
 import SbcSignin from 'sbc-common-components/src/components/SbcSignin.vue'
-import { NrAffiliationMixin, UpdateUserMixin } from '@/mixins'
-import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin } from '@/mixins'
 
 /**
  * When the user clicks "Log in", they are are redirected to THIS page, which
@@ -24,9 +21,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 @Component({
   components: { SbcSignin }
 })
-export default class Signin extends Mixins(NrAffiliationMixin, UpdateUserMixin) {
-  @Action setKeycloakRoles!: ActionBindingIF
-
+export default class Signin extends Mixins(LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin) {
   /** The login method, which is passed in the signin route by the SBC Header. */
   @Prop({ default: 'bcsc' })
   readonly idpHint: string
@@ -40,22 +35,17 @@ export default class Signin extends Mixins(NrAffiliationMixin, UpdateUserMixin) 
   async onReady () {
     console.info('Keycloak session is ready') // eslint-disable-line no-console
 
-    // now that user is logged in,
-    // get and store keycloak roles
-    try {
-      const keycloakRoles = getKeycloakRoles()
-      this.setKeycloakRoles(keycloakRoles)
-      console.info('Got roles!') // eslint-disable-line no-console
-    } catch (error) {
-      // just log the error message
-      console.log(`Did not get roles (${error.message})`) // eslint-disable-line no-console
-    }
-
+    // now that the user is logged in, load Keycloak roles and update LaunchDarkly
+    this.loadKeycloakRoles()
     await this.updateUser()
 
-    // If there is stored NR data to process then affiliate it.
+    // if there is stored NR data to process then affiliate it now
     const nr = JSON.parse(sessionStorage.getItem('NR_DATA'))
-    if (nr) await this.createAffiliation(nr)
+    if (nr) {
+      await this.createAffiliation(nr)
+      // clear NR data for next time
+      sessionStorage.removeItem('NR_DATA')
+    }
 
     // go to main app page
     await this.$router.push('/')
