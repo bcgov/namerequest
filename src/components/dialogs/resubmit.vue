@@ -52,13 +52,28 @@
                 :fees="[...paymentFees]"
               />
 
-              <v-checkbox
-                hide-details
-                v-model="isPriorityRequest"
-                class="pre-wrap mt-8 pt-0 pl-2"
+              <v-tooltip top
+                content-class="top-tooltip"
+                transition="fade-transition"
+                :disabled="isMobile || enablePriorityCheckbox"
               >
-                <template v-slot:label>Make this a Priority Request <b>($100)</b></template>
-              </v-checkbox>
+                <template v-slot:activator="{ on }">
+                  <div v-on="on" style="width:fit-content">
+                    <v-checkbox
+                      hide-details
+                      v-model="isPriorityRequest"
+                      class="pre-wrap mt-8 pt-0 pl-2"
+                      :disabled="!enablePriorityCheckbox"
+                    >
+                      <template v-slot:label>Make this a Priority Request <b>($100)</b></template>
+                    </v-checkbox>
+                  </div>
+                </template>
+                <span>
+                  Due to the on-going labour dispute between the government and its employees,
+                  priority filings are temporarily disabled.
+                </span>
+              </v-tooltip>
             </v-card-text>
 
             <v-card-actions class="pt-8 justify-center">
@@ -94,7 +109,7 @@ import { getBaseUrl } from '@/components/payment/payment-utils'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from '@/services/namex.services'
 import { PaymentRequiredError } from '@/errors'
-import { navigate } from '@/plugins'
+import { getFeatureFlag, navigate } from '@/plugins'
 
 @Component({
   components: {
@@ -120,6 +135,7 @@ export default class ResubmitDialog extends Mixins(
   // Global getters
   @Getter isRoleStaff!: boolean
   @Getter getNrNum!: string
+  @Getter isMobile!: boolean
 
   // Global action
   @Action toggleResubmitModal!: ActionBindingIF
@@ -145,8 +161,13 @@ export default class ResubmitDialog extends Mixins(
    */
   private isPriorityRequest = false
 
+  /** Whether priority checkbox should be enabled. */
+  get enablePriorityCheckbox (): boolean {
+    return getFeatureFlag('enable-priority-checkbox')
+  }
+
   /** Whether this modal should be shown (per store property). */
-  private get showModal (): boolean {
+  get showModal (): boolean {
     return this.$store.getters[RESUBMIT_MODAL_IS_VISIBLE]
   }
 
@@ -299,5 +320,10 @@ export default class ResubmitDialog extends Mixins(
 .v-tabs-items {
   padding-top: 0.5rem;
   margin-top: -0.5rem;
+}
+
+// disabled checkbox label
+::v-deep .v-input--is-disabled label {
+  opacity: 0.4;
 }
 </style>

@@ -161,7 +161,7 @@
         </v-col>
       </v-row>
 
-      <v-row class="mt-2">
+      <v-row class="align-center mt-2">
         <v-col cols="12" md="2" lg="2" />
         <v-col cols="12" md="5" lg="5">
           <v-tooltip top
@@ -176,15 +176,18 @@
                   hide-details
                   v-model="priorityRequest"
                   class="mt-0 pt-0"
+                  :disabled="!enablePriorityCheckbox"
                 >
-                  <template v-slot:label>
-                    <span>Make this a Priority Request <b>($100.00)</b></span>
-                  </template>
+                  <template v-slot:label>Make this a Priority Request <b>($100.00)</b></template>
                 </v-checkbox>
               </div>
             </template>
-            <span>
+            <span v-if="enablePriorityCheckbox">
               Priority name requests are typically reviewed within 1-2 business days.
+            </span>
+            <span v-else>
+              Due to the on-going labour dispute between the government and its employees,
+              priority filings are temporarily disabled.
             </span>
           </v-tooltip>
         </v-col>
@@ -201,6 +204,7 @@ import { Action, Getter } from 'vuex-class'
 import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { CorpNumRequests, NrState, RequestCode } from '@/enums'
+import { getFeatureFlag } from '@/plugins'
 
 @Component({
   components: {
@@ -270,6 +274,11 @@ export default class ApplicantInfo2 extends Vue {
   hideCorpNum: boolean | 'auto' = true
   loading: boolean = false
   messages = {}
+
+  /** Whether priority checkbox should be enabled. */
+  get enablePriorityCheckbox (): boolean {
+    return getFeatureFlag('enable-priority-checkbox')
+  }
 
   mounted () {
     // Apply optional corpNum validations for Amalgamations as they are NOT a required field but require COLIN lookup.
@@ -389,5 +398,10 @@ export default class ApplicantInfo2 extends Vue {
 ::v-deep .v-textarea textarea {
   line-height: 1.375rem !important;
   font-size: 0.875rem !important;
+}
+
+// disabled checkbox label
+::v-deep .v-input--is-disabled label {
+  opacity: 0.4;
 }
 </style>

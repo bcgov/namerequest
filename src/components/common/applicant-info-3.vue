@@ -188,9 +188,9 @@
         </v-col>
       </v-row>
 
-      <v-row class="mt-2">
+      <v-row class="align-center mt-2">
         <v-col cols="12" md="2" lg="2" />
-        <v-col cols="12" md="5" lg="5" align-self="center" class="py-0" v-if="showPriorityRequest">
+        <v-col cols="12" md="5" lg="5">
           <v-tooltip top
             content-class="top-tooltip"
             transition="fade-transition"
@@ -199,22 +199,25 @@
             <template v-slot:activator="{ on }">
               <div v-on="on">
                 <v-checkbox
+                  v-if="showPriorityRequest"
                   hide-details
                   v-model="priorityRequest"
                   class="mt-0 pt-0"
+                  :disabled="!enablePriorityCheckbox"
                 >
-                  <template v-slot:label>
-                    <span>Make this a Priority Request <b>($100)</b></span>
-                  </template>
+                  <template v-slot:label>Make this a Priority Request <b>($100)</b></template>
                 </v-checkbox>
               </div>
             </template>
-            <span>
+            <span v-if="enablePriorityCheckbox">
               Priority name requests are typically reviewed within 1-2 business days.
+            </span>
+            <span v-else>
+              Due to the on-going labour dispute between the government and its employees,
+              priority filings are temporarily disabled.
             </span>
           </v-tooltip>
         </v-col>
-        <v-col v-else cols="12" md="5" lg="5" class="py-0" />
         <ApplicantInfoNav @nextAction="nextAction()" />
       </v-row>
     </v-container>
@@ -230,6 +233,7 @@ import { FolioNumberInput } from '@bcrs-shared-components/folio-number-input'
 import { ApplicantI, SubmissionTypeT } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { CorpNumRequests, Location, NrState, RequestCode } from '@/enums'
+import { getFeatureFlag } from '@/plugins'
 
 @Component({
   components: {
@@ -305,6 +309,11 @@ export default class ApplicantInfo3 extends Vue {
   loading: boolean = false
   messages = {}
   $hj: any
+
+  /** Whether priority checkbox should be enabled. */
+  get enablePriorityCheckbox (): boolean {
+    return getFeatureFlag('enable-priority-checkbox')
+  }
 
   mounted () {
     // Apply optional corpNum validations for Amalgamations as they are NOT a required field but require COLIN lookup.
@@ -442,5 +451,10 @@ export default class ApplicantInfo3 extends Vue {
 ::v-deep .v-textarea textarea {
   line-height: 1.375rem !important;
   font-size: 0.875rem !important;
+}
+
+// disabled checkbox label
+::v-deep .v-input--is-disabled label {
+  opacity: 0.4;
 }
 </style>

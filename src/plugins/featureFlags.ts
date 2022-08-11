@@ -9,6 +9,7 @@ declare const window: any
  */
 const defaultFlagSet: LDFlagSet = {
   'enable-sp-gp-dba': false, // by default, don't show firm Register button
+  'enable-priority-checkbox': false, // by default, priority is disabled
   'disable-analysis': true, // by default, analysis is disabled
   'hardcoded_regular_wait_time': 0, // by default, use actual wait time
   'hardcoded_priority_wait_time': 0, // by default, use actual wait time
