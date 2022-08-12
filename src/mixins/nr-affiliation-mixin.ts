@@ -32,7 +32,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
       // check if affiliation succeeded
       if (createAffiliationResponse.status === CREATED) {
         // create the business
-        const businessId = await this.createBusiness(accountId, nr)
+        const businessId = await this.createBusiness(accountId, nr, true)
 
         // go to entity dashboard
         this.goToEntityDashboard(businessId)
@@ -56,7 +56,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
         const nameRequestEntity = entities.find(entity => entity.businessIdentifier === nr.nrNum)
         if (nameRequestEntity) {
           // create the business
-          const businessId = await this.createBusiness(accountId, nr)
+          const businessId = await this.createBusiness(accountId, nr, false)
 
           // go to entity dashboard
           this.goToEntityDashboard(businessId)
@@ -91,18 +91,22 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
   }
 
   /** Creates temporary business record and returns business identifier. */
-  private async createBusiness (accountId: number, nr: NameRequestI): Promise<string> {
+  private async createBusiness (
+    accountId: number, nr: NameRequestI, isNewAffiliation: boolean
+  ): Promise<string> {
     const createBusinessResponse =
-      await BusinessServices.createBusiness(this.getBusinessRequest(accountId, nr))
+      await BusinessServices.createBusiness(this.getBusinessRequest(accountId, nr)).catch(() => null)
 
-    if (createBusinessResponse.status === CREATED) {
-      return createBusinessResponse.data?.filing?.business?.identifier as string
+    if (createBusinessResponse?.status !== CREATED) {
+      // create failed -- delete new affiliation to avoid orphan records
+      if (isNewAffiliation) {
+        await AuthServices.removeNrAffiliation(accountId, nr.nrNum).catch(() => null)
+      }
+
+      throw new Error('Unable to create new business')
     }
 
-    // create failed, so delete the existing affiliation to avoid orphan records
-    await AuthServices.removeNrAffiliation(accountId, nr.nrNum).catch(() => null)
-
-    throw new Error('Unable to create new business')
+    return createBusinessResponse.data?.filing?.business?.identifier as string
   }
 
   /** Returns business request object. */
@@ -113,10 +117,10 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
 
     return {
       filing: {
-        header: { name, accountId },
         business: { legalType },
-        registration: this.isFirm(nr) ? { nameRequest: { legalType, nrNumber } } : undefined,
-        incorporationApplication: !this.isFirm(nr) ? { nameRequest: { legalType, nrNumber } } : undefined
+        header: { accountId, name },
+        incorporationApplication: !this.isFirm(nr) ? { nameRequest: { legalType, nrNumber } } : undefined,
+        registration: this.isFirm(nr) ? { nameRequest: { legalType, nrNumber } } : undefined
       }
     } as BusinessRequest
   }

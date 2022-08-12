@@ -11,12 +11,10 @@ export default class BusinessServices {
   /** Creates a temporary (draft) business record. */
   static async createBusiness (businessRequest: BusinessRequest): Promise<any> {
     return axios.post(`${BusinessServices.legalApiUrl}/businesses?draft=true`, businessRequest)
-      .catch(error => error?.response)
   }
 
   /** Fetches a business record. */
   static async fetchBusiness (businessId: number): Promise<any> {
     return axios.get(`${BusinessServices.legalApiUrl}/businesses/${businessId}`)
-      .catch(error => error?.response)
   }
 }
