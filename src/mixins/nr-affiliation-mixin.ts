@@ -112,7 +112,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
   /** Returns business request object. */
   private getBusinessRequest (accountId: number, nr: NameRequestI): BusinessRequest {
     const name = this.isBenefitCompany(nr) ? 'incorporationApplication' : 'registration'
-    const legalType = this.isBenefitCompany(nr) ? 'BEN' : nr.entity_type_cd
+    const legalType = this.isBenefitCompany(nr) ? 'BEN' : nr.legalType
     const nrNumber = nr.nrNum
 
     return {
