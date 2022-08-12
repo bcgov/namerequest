@@ -828,4 +828,8 @@ export default class ExistingRequestDisplay extends Mixins(
   background-color: $app-red-background;
   border: 1px solid $app-red;
 }
+
+button.theme--light.v-btn--disabled {
+  color: $disabled-action !important;
+}
 </style>
