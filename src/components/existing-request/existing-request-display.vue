@@ -157,13 +157,24 @@
                   <!-- incorporate action is a distinct button below -->
                   <template v-if="action !== NrAction.INCORPORATE">
                     <v-col cols="12" :key="action+'-button'">
-                      <v-btn block
-                        class="button"
-                        :id="action+'-btn'"
-                        :class="isRedButton(action) ? 'button-red' : 'button-blue'"
-                        :disabled="disableUnfurnished && (action !== NrAction.RECEIPT)"
-                        @click="handleButtonClick(action)"
-                      >{{ actionText(action) }}</v-btn>
+                      <v-tooltip top
+                        content-class="top-tooltip"
+                        transition="fade-transition"
+                        :disabled="isMobile || !actionTooltip(action)"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <div v-on="on" class="width-fit-content">
+                            <v-btn block
+                              class="button"
+                              :id="action+'-btn'"
+                              :class="isRedButton(action) ? 'button-red' : 'button-blue'"
+                              :disabled="isDisabledButton(action)"
+                              @click="handleButtonClick(action)"
+                            >{{ actionText(action) }}</v-btn>
+                          </div>
+                        </template>
+                        <span>{{ actionTooltip(action) }}</span>
+                      </v-tooltip>
                     </v-col>
                   </template>
                 </template>
@@ -525,12 +536,33 @@ export default class ExistingRequestDisplay extends Mixins(
     return ''
   }
 
+  /** Whether Upgrade Priority button should be enabled. */
+  get enableUpgradeButton (): boolean {
+    return getFeatureFlag('enable-priority-checkbox')
+  }
+
+  /** Returns True if the specified action button should be disabled. */
+  protected isDisabledButton (action: NrAction): boolean {
+    if (action === NrAction.UPGRADE && !this.enableUpgradeButton) return true
+    if (this.disableUnfurnished && action !== NrAction.RECEIPTS) return true
+    return false
+  }
+
+  /** Returns tooltip (or '') for the specified action button. */
+  protected actionTooltip (action: NrAction): string {
+    if (action === NrAction.UPGRADE && !this.enableUpgradeButton) {
+      return 'Due to the on-going labour dispute between the government and its employees, ' +
+        'priority filings are temporarily disabled.'
+    }
+    return ''
+  }
+
   /** Returns True if the specified action should display a red button. */
   protected isRedButton (action: NrAction): boolean {
     return [NrAction.REQUEST_REFUND, NrAction.CANCEL].includes(action)
   }
 
-  /** Returns display text for the specified action code. */
+  /** Returns display text for the specified action button. */
   protected actionText (action: NrAction): string {
     switch (action) {
       case NrAction.CANCEL: return 'Cancel Name Request'

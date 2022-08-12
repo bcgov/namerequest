@@ -58,7 +58,7 @@
                 :disabled="isMobile || enablePriorityCheckbox"
               >
                 <template v-slot:activator="{ on }">
-                  <div v-on="on" style="width:fit-content">
+                  <div v-on="on" class="width-fit-content">
                     <v-checkbox
                       hide-details
                       v-model="isPriorityRequest"
@@ -311,6 +311,10 @@ export default class ResubmitDialog extends Mixins(
 </script>
 
 <style lang="scss" scoped>
+.width-fit-content {
+  width: fit-content;
+}
+
 // hide tabs bar
 ::v-deep .v-tabs > .v-tabs-bar {
   display: none;
