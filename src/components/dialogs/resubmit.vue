@@ -311,6 +311,8 @@ export default class ResubmitDialog extends Mixins(
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/theme";
+
 .width-fit-content {
   width: fit-content;
 }
@@ -328,6 +330,6 @@ export default class ResubmitDialog extends Mixins(
 
 // disabled checkbox label
 ::v-deep .v-input--is-disabled label {
-  opacity: 0.4;
+  color: $disabled-action !important;
 }
 </style>

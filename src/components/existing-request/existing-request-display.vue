@@ -810,7 +810,7 @@ export default class ExistingRequestDisplay extends Mixins(
   text-decoration-line: underline;
   text-decoration-style: dotted;
   text-underline-offset: 0.12em;
-  text-decoration-thickness: 0.1rem
+  text-decoration-thickness: 0.1rem;
 }
 
 ::v-deep {
