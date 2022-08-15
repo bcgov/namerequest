@@ -202,7 +202,7 @@
                   v-if="showPriorityRequest"
                   hide-details
                   v-model="priorityRequest"
-                  class="mt-0 pt-0"
+                  class="pre-wrap mt-0 pt-0"
                   :disabled="!enablePriorityCheckbox"
                 >
                   <template v-slot:label>Make this a Priority Request <b>($100)</b></template>
@@ -448,6 +448,8 @@ export default class ApplicantInfo3 extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/theme";
+
 ::v-deep .v-textarea textarea {
   line-height: 1.375rem !important;
   font-size: 0.875rem !important;
@@ -455,6 +457,6 @@ export default class ApplicantInfo3 extends Vue {
 
 // disabled checkbox label
 ::v-deep .v-input--is-disabled label {
-  opacity: 0.4;
+  color: $disabled-action !important;
 }
 </style>
