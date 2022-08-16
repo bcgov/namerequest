@@ -115,14 +115,27 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
     const legalType = this.isBenefitCompany(nr) ? 'BEN' : nr.legalType
     const nrNumber = nr.nrNum
 
-    return {
+    const businessRequest = {
       filing: {
         business: { legalType },
-        header: { accountId, name },
-        incorporationApplication: !this.isFirm(nr) ? { nameRequest: { legalType, nrNumber } } : undefined,
-        registration: this.isFirm(nr) ? { nameRequest: { legalType, nrNumber } } : undefined
+        header: { accountId, name }
       }
     } as BusinessRequest
+
+    if (!this.isFirm(nr)) {
+      businessRequest.filing.incorporationApplication = {
+        nameRequest: { legalType, nrNumber }
+      }
+    }
+
+    if (this.isFirm(nr)) {
+      businessRequest.filing.registration = {
+        business: { natureOfBusiness: nr.natureOfBusiness },
+        nameRequest: { legalType, nrNumber }
+      }
+    }
+
+    return businessRequest
   }
 
   /** Navigates to entity dashboard (Filings UI). */
