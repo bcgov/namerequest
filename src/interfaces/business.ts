@@ -1,3 +1,7 @@
+export interface Business {
+  natureOfBusiness: string
+}
+
 export interface NameRequest {
   legalType: string,
   nrNumber?: string
@@ -16,6 +20,7 @@ export interface BusinessRequest {
       nameRequest: NameRequest
     },
     registration?: {
+      business: Business
       nameRequest: NameRequest
     }
   }
