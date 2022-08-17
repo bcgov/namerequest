@@ -32,7 +32,7 @@ import { Component, Vue } from 'vue-property-decorator'
 
 @Component({})
 export default class ConsentWords extends Vue {
-  private listItems1 = ['Engineering', 'Engineering', 'Doctor, DR , MD', 'Registered Massage Therapist', 'Acupuncture',
+  private listItems1 = ['Engineering', 'Doctor, DR , MD', 'Registered Massage Therapist', 'Acupuncture',
     'Chinese Medicine', 'Lawyer, Law', 'CPA', 'Registered Music Teacher', 'Honeywell', 'Legion',
     'Games (<i>when used for a sport</i>)']
   private listItems2 = ['Well known trademarks', '(<i>ex: Apple, Walmart, Pepsi etc.</i>)',
