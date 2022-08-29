@@ -15,7 +15,7 @@
       </v-card-text>
 
       <v-card-text class="copy-normal pt-6">
-        <contact-info class="mt-2" direction="col" />
+        <ContactInfo direction="col" />
       </v-card-text>
 
       <v-card-actions class="justify-center pt-8">

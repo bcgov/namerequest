@@ -2,7 +2,6 @@
   <span>
     <v-dialog width="40rem" :value="isConfirmModalVisible" persistent v-if="payments">
       <v-card>
-
         <v-card-title class="d-flex justify-space-between">
           <div>Cancel and Refund</div>
           <v-btn icon large class="dialog-close" @click="hideConfirmModal()">
@@ -37,12 +36,11 @@
             id="keep-nr-btn"
             @click="hideConfirmModal()">Keep this Name Request</v-btn>
         </v-card-actions>
-
       </v-card>
     </v-dialog>
+
     <v-dialog width="40rem" :value="isResponseModalVisible" persistent>
       <v-card>
-
         <v-card-title class="d-flex justify-space-between">
           <div>Cancel and Refund</div>
           <v-btn icon large class="dialog-close" @click="hideResponseModal()">
@@ -56,16 +54,19 @@
 
         <v-card-text
           v-if="getRefundParams.refundMessageText2"
-          class="text-body-1">
+          class="text-body-1"
+        >
           <span v-html="getRefundParams.refundMessageText2"></span>
         </v-card-text>
 
         <v-card-text
           v-if="getRefundParams.showStaffContact"
-          class="text-body-2">
-          <contact-info
+          class="text-body-2"
+        >
+          <ContactInfo
             id="tooltip-contact-info"
-            direction="col" />
+            direction="col"
+          />
         </v-card-text>
 
         <v-card-actions class="justify-center">
@@ -74,7 +75,6 @@
             id="keep-nr-btn"
             @click="hideResponseModal()">OK</v-btn>
         </v-card-actions>
-
       </v-card>
     </v-dialog>
   </span>
@@ -111,25 +111,25 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
   protected fetchError = ''
 
   /** Used to show loading state on button. */
-  private loading = false
+  protected loading = false
 
   /** The model value for the confirm dialog component. */
-  private isConfirmModalVisible = false
+  protected isConfirmModalVisible = false
 
   /** The model value for the response dialog component. */
-  private isResponseModalVisible = false
+  protected isResponseModalVisible = false
 
-  private get emailAddress (): string {
+  get emailAddress (): string {
     return this.getApplicant?.emailAddress
   }
 
   /** Whether this modal should be shown (per store property). */
-  private get showConfirmModal (): boolean {
+  get showConfirmModal (): boolean {
     return this.$store.getters[REFUND_MODAL_IS_VISIBLE]
   }
 
   /** Clears store property to hide this modal. */
-  private async hideConfirmModal (): Promise<void> {
+  protected async hideConfirmModal (): Promise<void> {
     await this.toggleRefundModal(false)
   }
 
@@ -149,7 +149,7 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
   }
 
   /** Called when user clicks "Cancel this NR" button. */
-  private async confirmRefund (): Promise<void> {
+  protected async confirmRefund (): Promise<void> {
     this.loading = true
     const data = await NamexServices.patchNameRequestsByAction(this.getNrId, NrAction.REQUEST_REFUND)
     if (data) {
@@ -165,7 +165,7 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
   }
 
   /** Hides the response modal */
-  private hideResponseModal (): void {
+  protected hideResponseModal (): void {
     this.isResponseModalVisible = false
   }
 
@@ -180,7 +180,7 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
   }
 
   @Watch('isConfirmModalVisible')
-  onVisibleChanged (val: boolean) {
+  private onVisibleChanged (val: boolean) {
     if (val) {
       this.$nextTick(() => {
         if (this.$el?.querySelector instanceof Function) {

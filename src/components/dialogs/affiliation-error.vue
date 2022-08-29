@@ -1,19 +1,36 @@
 <template>
-  <v-dialog v-model="getAffiliationErrorModalVisible" max-width="60%" persistent>
-    <v-card class="notify-dialog">
-      <v-card-title class="flex-column">
-        <v-icon large color="error" class="my-4">mdi-alert</v-icon>
-        <span>Error Affiliating Name Request</span>
+  <v-dialog id="affiliation-error-dialog" :value="isShowModal" max-width="45rem" persistent>
+    <v-card>
+      <v-card-title class="d-flex justify-space-between">
+        <div v-if="isUnableToStartRegistration">Unable to start registration</div>
+        <div v-if="isAssociatedOtherAccount">Name Request associated with another account</div>
+        <div class="mt-3">
+          <v-btn icon large class="dialog-close" @click="hideModal()">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </div>
       </v-card-title>
 
-      <v-card-text class="text-center">
-        The specified name request may already be affiliated. Go to
-        <a :href="businessRegistryUrl">your Business Registry</a>
-        to use the name request.
+      <v-card-text class="copy-normal pt-8">
+        <p v-if="isUnableToStartRegistration" class="mb-0">
+          We encountered an error starting your registration. Try again later, or go to
+          <a :href="businessRegistryUrl">My Business Registry</a> and manually add this Name
+          Request to your list to register this business name.
+        </p>
+        <p v-if="isAssociatedOtherAccount" class="mb-0">
+          This Name Request has already been linked to a different BC Registries account. It
+          must be removed from that account before it can be used.
+        </p>
+        <br>
+        <p class="mb-0">
+          If you require assistance, please contact us.
+        </p>
+        <br>
+        <ContactInfo direction="col" />
       </v-card-text>
 
-      <v-card-actions class="justify-center">
-        <v-btn large color="error" @click="setAffiliationErrorModalVisible(false)">OK</v-btn>
+      <v-card-actions class="justify-center pt-8">
+        <v-btn text class="px-12" @click="hideModal()">OK</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -23,17 +40,37 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { NrAffiliationErrors } from '@/enums'
+import ContactInfo from '@/components/common/contact-info.vue'
 
-@Component({})
+@Component({
+  components: { ContactInfo }
+})
 export default class AffiliationErrorDialog extends Vue {
-  @Getter getAffiliationErrorModalVisible!: boolean
-  @Action setAffiliationErrorModalVisible!: ActionBindingIF
+  @Getter getAffiliationErrorModalValue!: number
+  @Action setAffiliationErrorModalValue!: ActionBindingIF
+
+  get isShowModal (): boolean {
+    return (this.getAffiliationErrorModalValue !== NrAffiliationErrors.NONE)
+  }
+
+  get isUnableToStartRegistration (): boolean {
+    return (this.getAffiliationErrorModalValue === NrAffiliationErrors.UNABLE_TO_START_REGISTRATION)
+  }
+
+  get isAssociatedOtherAccount (): boolean {
+    return (this.getAffiliationErrorModalValue === NrAffiliationErrors.ASSOCIATED_OTHER_ACCOUNT)
+  }
 
   get businessRegistryUrl (): string {
     const businessesUrl = sessionStorage.getItem('BUSINESSES_URL')
     // NB: fall back is user's default account
     const accountId = JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT')).id || 0
     return `${businessesUrl}account/${accountId}/business`
+  }
+
+  protected hideModal (): void {
+    this.setAffiliationErrorModalValue(NrAffiliationErrors.NONE)
   }
 }
 </script>

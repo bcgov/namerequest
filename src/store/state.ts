@@ -1,5 +1,5 @@
-import { NameRequestI, StateModelIF, RefundParamsIF } from '@/interfaces'
-import { EntityType, Location, NameCheckErrorType, StaffPaymentOptions } from '@/enums'
+import { NameRequestI, StateModelIF } from '@/interfaces'
+import { EntityType, Location, NameCheckErrorType, NrAffiliationErrors, StaffPaymentOptions } from '@/enums'
 
 export const stateModel: StateModelIF = {
   common: {
@@ -69,7 +69,7 @@ export const stateModel: StateModelIF = {
     extendedRequestType: null,
     getNameReservationFailed: false,
     helpMeChooseModalVisible: false,
-    affiliationErrorModalVisible: false,
+    affiliationErrorModalValue: NrAffiliationErrors.NONE, // initially hidden
     isPersonsName: false,
     issueIndex: 0,
     location: null,

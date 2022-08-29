@@ -20,10 +20,10 @@ export default class ContactInfo extends Vue {
   @Prop({ default: 'row' })
   readonly direction: string
 
-  private readonly contacts = [
+  readonly contacts = [
     {
       icon: 'mdi-phone',
-      key: 'Canada &amp; U.S. Toll Free:',
+      key: 'Canada and U.S. Toll Free:',
       val: '1-877-370-1033',
       href: 'tel:+1-877-370-1033'
     },

@@ -8,6 +8,7 @@ import {
   NameCheckAnalysisType,
   NameCheckConflictType,
   NameCheckErrorType,
+  NrAffiliationErrors,
   NrState,
   NrType,
   RequestCode
@@ -689,8 +690,8 @@ export const setConditionsModalVisible: ActionIF = ({ commit }, isVisible: boole
   commit('mutateConditionsModalVisible', isVisible)
 }
 
-export const setAffiliationErrorModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
-  commit('mutateAffiliationErrorModalVisible', isVisible)
+export const setAffiliationErrorModalValue: ActionIF = ({ commit }, modalValue: NrAffiliationErrors): void => {
+  commit('mutateAffiliationErrorModalValue', modalValue)
 }
 
 export const setHelpMeChooseModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
