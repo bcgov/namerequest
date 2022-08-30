@@ -89,11 +89,11 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
           return
         }
 
-        this.setAffiliationErrorModalValue(NrAffiliationErrors.UNABLE_TO_START_REGISTRATION)
+        this.setAffiliationErrorModalValue(NrAffiliationErrors.ASSOCIATED_OTHER_ACCOUNT)
         throw Error('Unable to find existing affiliation')
       }
 
-      this.setAffiliationErrorModalValue(NrAffiliationErrors.ASSOCIATED_OTHER_ACCOUNT)
+      this.setAffiliationErrorModalValue(NrAffiliationErrors.UNABLE_TO_START_REGISTRATION)
       throw Error('Unable to create new affiliation')
     } catch (err) {
       // eslint-disable-next-line no-console
