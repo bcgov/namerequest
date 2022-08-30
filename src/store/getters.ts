@@ -1,5 +1,4 @@
 import { getVuetify } from '@/plugins'
-
 import {
   AnalysisJSONI,
   ApplicantI,
@@ -27,7 +26,15 @@ import {
   StatsI,
   SubmissionTypeT
 } from '@/interfaces'
-import { CorpNumRequests, EntityType, Location, NrState, PriorityCode, RequestCode } from '@/enums'
+import {
+  CorpNumRequests,
+  EntityType,
+  Location,
+  NrAffiliationErrors,
+  NrState,
+  PriorityCode,
+  RequestCode
+} from '@/enums'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 // List Data
@@ -751,8 +758,8 @@ export const getExitIncompletePaymentVisible = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.exitIncompletePaymentVisible
 }
 
-export const getAffiliationErrorModalVisible = (state: StateIF): boolean => {
-  return state.stateModel.newRequestModel.affiliationErrorModalVisible
+export const getAffiliationErrorModalValue = (state: StateIF): NrAffiliationErrors => {
+  return state.stateModel.newRequestModel.affiliationErrorModalValue
 }
 
 export const getConditionsModalVisible = (state: StateIF): boolean => {

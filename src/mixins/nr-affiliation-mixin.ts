@@ -6,12 +6,13 @@ import { BusinessRequest, NameRequestI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { navigate } from '@/plugins'
 import { CommonMixin } from '@/mixins'
-import { CREATED, BAD_REQUEST, OK } from 'http-status-codes'
+import { NrAffiliationErrors } from '@/enums'
+import { CREATED, BAD_REQUEST } from 'http-status-codes'
 
 @Component({})
 export class NrAffiliationMixin extends Mixins(CommonMixin) {
   // Global action
-  @Action setAffiliationErrorModalVisible!: ActionBindingIF
+  @Action setAffiliationErrorModalValue!: ActionBindingIF
 
   /**
    * Affiliates a NR to the current account, creates a temporary business, and then navigates
@@ -33,6 +34,10 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
       if (createAffiliationResponse.status === CREATED) {
         // create the business
         const businessId = await this.createBusiness(accountId, nr, true)
+          .catch(error => {
+            this.setAffiliationErrorModalValue(NrAffiliationErrors.UNABLE_TO_START_REGISTRATION)
+            throw error
+          })
 
         // go to entity dashboard
         this.goToEntityDashboard(businessId)
@@ -42,21 +47,26 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
       // check if NR is already affiliated
       if (
         createAffiliationResponse.status === BAD_REQUEST &&
-        createAffiliationResponse.data.code === 'NR_CONSUMED'
+        createAffiliationResponse.data?.code === 'NR_CONSUMED'
       ) {
         // fetch existing affiliations
         const fetchAffiliationsResponse = await AuthServices.fetchAffiliations(accountId)
+          .catch(error => {
+            this.setAffiliationErrorModalValue(NrAffiliationErrors.UNABLE_TO_START_REGISTRATION)
+            throw error
+          })
 
-        if (fetchAffiliationsResponse?.status !== OK) {
-          throw new Error('Unable to fetch existing affiliation')
-        }
+        const entities = fetchAffiliationsResponse?.entities || []
 
         // is this a name request affiliation?
-        const entities = fetchAffiliationsResponse.data?.entities || []
         const nameRequestEntity = entities.find(entity => entity.businessIdentifier === nr.nrNum)
         if (nameRequestEntity) {
           // create the business
           const businessId = await this.createBusiness(accountId, nr, false)
+            .catch(error => {
+              this.setAffiliationErrorModalValue(NrAffiliationErrors.UNABLE_TO_START_REGISTRATION)
+              throw error
+            })
 
           // go to entity dashboard
           this.goToEntityDashboard(businessId)
@@ -69,28 +79,35 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
           // use existing business id
           const businessId = temporaryBusinessEntity.businessIdentifier
 
+          if (!businessId) {
+            this.setAffiliationErrorModalValue(NrAffiliationErrors.UNABLE_TO_START_REGISTRATION)
+            throw Error('Invalid existing affiliation business identifier')
+          }
+
           // go to entity dashboard
           this.goToEntityDashboard(businessId)
           return
         }
 
-        throw new Error('Unable to find existing affiliation')
+        this.setAffiliationErrorModalValue(NrAffiliationErrors.UNABLE_TO_START_REGISTRATION)
+        throw Error('Unable to find existing affiliation')
       }
 
-      throw new Error('Unable to create new affiliation')
+      this.setAffiliationErrorModalValue(NrAffiliationErrors.ASSOCIATED_OTHER_ACCOUNT)
+      throw Error('Unable to create new affiliation')
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('createAffiliation() =', err)
 
       // hide spinner
       this.$root.$emit('showSpinner', false)
-
-      // show error dialog
-      this.setAffiliationErrorModalVisible(true)
     }
   }
 
-  /** Creates temporary business record and returns business identifier. */
+  /**
+   * Creates temporary business record and returns business identifier.
+   * Throws on error.
+   */
   private async createBusiness (
     accountId: number, nr: NameRequestI, isNewAffiliation: boolean
   ): Promise<string> {
@@ -103,7 +120,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
         await AuthServices.removeNrAffiliation(accountId, nr.nrNum).catch(() => null)
       }
 
-      throw new Error('Unable to create new business')
+      throw Error('Unable to create new business')
     }
 
     return createBusinessResponse.data?.filing?.business?.identifier as string
@@ -140,10 +157,9 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
 
   /** Navigates to entity dashboard (Filings UI). */
   private goToEntityDashboard (businessId: string): void {
-    if (!businessId) throw new Error('Invalid business id')
-
-    const dashboardUrl = sessionStorage.getItem('DASHBOARD_URL')
-
-    navigate(`${dashboardUrl}${businessId}`)
+    if (businessId) {
+      const dashboardUrl = sessionStorage.getItem('DASHBOARD_URL')
+      navigate(`${dashboardUrl}${businessId}`)
+    }
   }
 }

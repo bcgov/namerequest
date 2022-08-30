@@ -3,7 +3,7 @@
     <v-col class="text-body-4 px-5 py-4">
       Your Name Request <b>{{nrNum}}</b> has not been approved for use. Please contact
       BC Registry staff to obtain an assumed name for an extraprovincial business:
-      <contact-info class="mt-2" />
+      <ContactInfo class="mt-2" />
     </v-col>
   </v-row>
 </template>

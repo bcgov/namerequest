@@ -1,5 +1,4 @@
 import Vue from 'vue'
-
 import {
   AnalysisJSONI,
   ConditionalInstructionI,
@@ -13,7 +12,14 @@ import {
   SubmissionTypeT,
   WaitingAddressSearchI
 } from '@/interfaces'
-import { EntityType, Location, NameCheckErrorType, PriorityCode, RequestCode } from '@/enums'
+import {
+  EntityType,
+  Location,
+  NameCheckErrorType,
+  NrAffiliationErrors,
+  PriorityCode,
+  RequestCode
+} from '@/enums'
 
 export const clearErrors = (state: StateIF) => {
   state.stateModel.newRequestModel.errors = []
@@ -113,8 +119,8 @@ export const mutateHelpMeChooseModalVisible = (state: StateIF, helpMeChooseModal
   state.stateModel.newRequestModel.helpMeChooseModalVisible = helpMeChooseModalVisible
 }
 
-export const mutateAffiliationErrorModalVisible = (state: StateIF, affiliationErrorModalVisible: boolean) => {
-  state.stateModel.newRequestModel.affiliationErrorModalVisible = affiliationErrorModalVisible
+export const mutateAffiliationErrorModalValue = (state: StateIF, affiliationErrorModalValue: NrAffiliationErrors) => {
+  state.stateModel.newRequestModel.affiliationErrorModalValue = affiliationErrorModalValue
 }
 
 export const mutateIsPersonsName = (state: StateIF, isPersonsName: boolean) => {

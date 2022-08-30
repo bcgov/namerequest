@@ -8,7 +8,10 @@ export default class AuthServices {
   /** The Auth API URL. */
   static authApiUrl = sessionStorage.getItem('AUTH_API_URL')
 
-  /** Creates an affiliation for the specified account and NR. */
+  /**
+   * Creates an affiliation for the specified account and NR.
+   * Returns response on error.
+   */
   static async createNrAffiliation (accountId: number, nr: any): Promise<any> {
     const url = `${this.authApiUrl}/orgs/${accountId}/affiliations?newBusiness=true`
     const requestBody: CreateNRAffiliationRequestBody = {
@@ -21,22 +24,34 @@ export default class AuthServices {
       .catch(error => error?.response)
   }
 
-  /** Removes an affiliation for the specified account and NR. */
+  /**
+   * Removes an affiliation for the specified account and NR.
+   * Throws on error.
+   */
   static async removeNrAffiliation (accountId: number, nrNumber: string): Promise<any> {
     const url = `${this.authApiUrl}/orgs/${accountId}/affiliations/${nrNumber}`
 
     return axios.delete(url)
   }
 
-  /** Fetches affiliations for the specified account. */
+  /**
+   * Fetches affiliations for the specified account.
+   * Throws on error.
+   */
   static async fetchAffiliations (accountId: number): Promise<any> {
     const url = `${this.authApiUrl}/orgs/${accountId}/affiliations`
 
     return axios.get(url)
-      .catch(error => error?.response)
+      .then(response => {
+        if (response?.data) return response.data
+        throw new Error('Invalid affiliations')
+      })
   }
 
-  /** Fetches current user's info. */
+  /**
+   * Fetches current user's info.
+   * Throws on error.
+   */
   static async fetchUserInfo (): Promise<any> {
     const url = `${this.authApiUrl}/users/@me`
 
@@ -47,7 +62,10 @@ export default class AuthServices {
       })
   }
 
-  /** Fetches specified org's info. */
+  /**
+   * Fetches specified org's info.
+   * Throws on error.
+   */
   static async fetchOrgInfo (orgId: number): Promise<any> {
     const url = `${this.authApiUrl}/orgs/${orgId}`
 
