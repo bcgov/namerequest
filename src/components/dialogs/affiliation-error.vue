@@ -14,8 +14,8 @@
       <v-card-text class="copy-normal pt-8">
         <p v-if="isUnableToStartRegistration" class="mb-0">
           We encountered an error starting your registration. Try again later, or go to
-          <a :href="businessRegistryUrl">My Business Registry</a> and manually add this Name
-          Request to your list to register this business name.
+          <a :href="businessRegistryUrl" target="_blank">My Business Registry</a> and manually
+          add this Name Request to your list to register this business name.
         </p>
         <p v-if="isAssociatedOtherAccount" class="mb-0">
           This Name Request has already been linked to a different BC Registries account. It
