@@ -13,6 +13,10 @@
             <div class="fee-list__item-name">{{item.description}}</div>
             <div class="fee-list__item-value">${{item.filingFees.toFixed(2)}}</div>
           </li>
+          <li class="fee-list__item text-body-1" v-if="item.priorityFees > 0">
+            <div class="fee-list__item-name">Priority fee</div>
+            <div class="fee-list__item-value">${{item.priorityFees.toFixed(2)}}</div>
+          </li>
           <li class="fee-list__item text-body-1" v-if="item.serviceFees > 0">
             <div class="fee-list__item-name">Service fee</div>
             <div class="fee-list__item-value">${{item.serviceFees.toFixed(2)}}</div>
@@ -39,6 +43,7 @@ export default class RefundSummary extends Vue {
 
   /** The array of line items in all completed SBC payments. */
   private get lineItems (): any[] {
+    debugger
     const arrays = this.payments.map(p => (p.sbcPayment.statusCode === 'COMPLETED') ? p.sbcPayment.lineItems : [])
     const lineItems = [].concat(...arrays)
     return lineItems
