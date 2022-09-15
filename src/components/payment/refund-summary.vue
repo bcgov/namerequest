@@ -43,7 +43,6 @@ export default class RefundSummary extends Vue {
 
   /** The array of line items in all completed SBC payments. */
   private get lineItems (): any[] {
-    debugger
     const arrays = this.payments.map(p => (p.sbcPayment.statusCode === 'COMPLETED') ? p.sbcPayment.lineItems : [])
     const lineItems = [].concat(...arrays)
     return lineItems
