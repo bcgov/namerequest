@@ -44,5 +44,12 @@
         "application": [
             "namerequest-ui"
         ]
+    },
+    {
+        "vault": "webchat",
+        "application": [
+            "base",
+            "name-request"
+        ]
     }
 ]
