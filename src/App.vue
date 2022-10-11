@@ -15,7 +15,7 @@
       <!-- SBC Common Components header -->
       <SbcHeader
         id="namerequest-sbc-header"
-        class="flex-direction-column"
+        class="flex-column"
         :inAuth="false"
         :showActions="true"
       />
@@ -293,8 +293,4 @@ export default class App extends Mixins(
   }
 }
 
-/** We need this until we upgrade Vuetify for NameRequest. */
-.flex-direction-column {
-  flex-direction: column;
-}
 </style>
