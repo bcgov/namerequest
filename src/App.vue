@@ -15,6 +15,7 @@
       <!-- SBC Common Components header -->
       <SbcHeader
         id="namerequest-sbc-header"
+        class="flex-column"
         :inAuth="false"
         :showActions="true"
       />
@@ -291,4 +292,5 @@ export default class App extends Mixins(
     color: $dk-text;
   }
 }
+
 </style>
