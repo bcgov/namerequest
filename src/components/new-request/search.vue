@@ -330,7 +330,8 @@ export default class NewSearch extends Mixins(CommonMixin) {
 
   // Local Getters
   get isPremium (): boolean {
-    return JSON.parse(sessionStorage.getItem(SessionStorageKeys.CurrentAccount))?.accountType === AccountType.PREMIUM
+    return [AccountType.PREMIUM, AccountType.SBC_STAFF, AccountType.STAFF]
+      .includes(JSON.parse(sessionStorage.getItem(SessionStorageKeys.CurrentAccount))?.accountType)
   }
 
   get designation (): string {
