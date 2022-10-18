@@ -25,7 +25,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
       this.$root.$emit('showSpinner', true)
 
       // NB: fall back is user's default account
-      const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT')).id || 0
+      const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || 0
 
       // try to affiliate the NR
       const createAffiliationResponse = await AuthServices.createNrAffiliation(accountId, nr)
