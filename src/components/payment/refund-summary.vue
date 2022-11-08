@@ -59,7 +59,7 @@ export default class RefundSummary extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/theme";
+@import "@/assets/styles/theme";
 
 #refund-summary {
   width: 70%;

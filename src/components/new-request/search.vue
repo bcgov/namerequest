@@ -529,7 +529,7 @@ export default class NewSearch extends Mixins(CommonMixin) {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 .v-list {
   padding: 0;
 }

@@ -29,7 +29,7 @@ export default class AppTitleCols extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 
 .colour-white {
   color: white !important;

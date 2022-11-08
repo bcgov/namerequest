@@ -448,7 +448,7 @@ export default class ApplicantInfo3 extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/theme";
+@import "@/assets/styles/theme";
 
 ::v-deep .v-textarea textarea {
   line-height: 1.375rem !important;

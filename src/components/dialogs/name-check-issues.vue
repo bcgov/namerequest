@@ -62,7 +62,7 @@ export default class NameCheckIssuesDialog extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 .cancel-btn {
   @media only screen and (max-width: 600px) {
     width: 100%;

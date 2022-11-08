@@ -1,7 +1,14 @@
 <template>
   <v-app id="app">
     <div id="main-column">
-      <ChatPopup />
+      <ChatPopup :openTooltipMessage = "openTooltipMessage"
+                 :closedTooltipMessage = "closedTooltipMessage"
+                 :axios = "axios"
+                 :isMobile = "isMobile"
+                 :webChatReason = "webChatReason"
+                 :webChatUrl = "webChatUrl"
+                 :webChatStatusUrl = "webChatStatusUrl"
+      />
 
       <!-- Loading spinner -->
       <v-fade-transition>
@@ -77,9 +84,10 @@ import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { getFeatureFlag } from '@/plugins'
 import { DateMixin, LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin } from '@/mixins'
+import axios from 'axios'
 
 // dialogs and other components
-import ChatPopup from '@/components/common/chat-popup.vue'
+import { WebChat as ChatPopup } from '@bcrs-shared-components/web-chat'
 import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
   LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog, PaymentCompleteDialog,
@@ -131,6 +139,7 @@ export default class App extends Mixins(
   @Getter getDisplayedComponent!: string
   @Getter getNrId!: number
   @Getter isRoleStaff: boolean
+  @Getter isMobile!: boolean
 
   // Global actions
   @Action resetAnalyzeName!: ActionBindingIF
@@ -154,6 +163,31 @@ export default class App extends Mixins(
 
   /** The Update Current JS Date timer id. */
   private updateCurrentJsDateId = 0
+
+  get axios (): any {
+    return axios
+  }
+
+  get webChatReason (): string {
+    return window['webChatReason']
+  }
+
+  get webChatStatusUrl (): string {
+    return window['webChatStatusUrl']
+  }
+
+  get webChatUrl (): string {
+    return window['webChatUrl']
+  }
+
+  get openTooltipMessage (): String {
+    return 'Click here to chat live with Helpdesk staff about Name Requests.'
+  }
+
+  get closedTooltipMessage (): String {
+    return 'We are closed. The Service BC Contact Centre is open Monday through Friday' +
+           '7:30am - 5:00pm Pacific Time excluding BC statutory holidays.'
+  }
 
   get bannerText (): string | null {
     const bannerText: string = getFeatureFlag('banner-text')
@@ -248,7 +282,7 @@ export default class App extends Mixins(
 </script>
 
 <style lang="scss">
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 #main-column {
   display: flex;
   flex-flow: column nowrap;

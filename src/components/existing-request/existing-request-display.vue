@@ -792,7 +792,7 @@ export default class ExistingRequestDisplay extends Mixins(
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/theme";
+@import "@/assets/styles/theme";
 
 .nr-data .col {
   color: $text;

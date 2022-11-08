@@ -41,7 +41,7 @@ export default class ConsentWords extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 
 #consent-words {
   p {

@@ -85,7 +85,7 @@ export default class ReceiptsDialog extends Mixins(PaymentMixin, PaymentSessionM
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/theme";
+@import "@/assets/styles/theme";
 
 ::v-deep .v-dialog {
   width: 50rem;

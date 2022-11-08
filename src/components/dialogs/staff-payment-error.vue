@@ -71,7 +71,7 @@ export default class StaffPaymentErrorDialog extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "../../assets/scss/theme.scss";
+@import "../../assets/styles/theme.scss";
 
 .v-dialog {
   margin: 2rem;

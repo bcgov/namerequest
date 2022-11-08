@@ -281,7 +281,7 @@ export default class AdvancedSearch extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 .tab-card-height {
   min-height: 36rem;
 }

@@ -96,7 +96,7 @@ export default class PickRequestTypeDialog extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 
 .clickable-cell:hover {
   background-color: $app-lt-blue;

@@ -730,7 +730,7 @@ export default class NameCheck extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 #box-shadow-filler-tab-item {
   box-shadow: 0px 3px 6px 2px rgb(172, 171, 171);
   margin-left: 4px;

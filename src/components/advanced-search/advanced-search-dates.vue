@@ -103,7 +103,7 @@ export default class AdvancedSearchDates extends Mixins(DateMixin) {
 }
 </script>
 <style lang="scss" scoped>
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 
 .advanced-search-dates-card {
   min-height: 34rem;

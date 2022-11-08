@@ -79,7 +79,7 @@ export default class Tabs extends Mixins(CommonMixin) {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 .mobile-font {
   font-size: .875rem;
   max-width: 120px;

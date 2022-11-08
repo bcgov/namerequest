@@ -105,7 +105,7 @@ export default class StaffPayment extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/theme";
+@import "@/assets/styles/theme";
 
 // error border
 .invalid-section {

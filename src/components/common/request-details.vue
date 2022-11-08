@@ -107,8 +107,8 @@ export default class RequestDetails extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/theme";
-@import "@/assets/scss/base";
+@import "@/assets/styles/theme";
+@import "@/assets/styles/base";
 
 h4 {
   @extend .title-bold-16

@@ -113,7 +113,7 @@ export default class FeeSummary extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/theme";
+@import "@/assets/styles/theme";
 
 #fee-summary {
   background-color: $gray1;

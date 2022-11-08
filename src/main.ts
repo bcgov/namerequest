@@ -13,9 +13,9 @@ import { AllDesignationsList, ConversionTypes, Designations, RequestActions, Usa
 import 'quill/dist/quill.core.css'
 import '@mdi/font/css/materialdesignicons.min.css'
 
-import '@/assets/scss/base.scss'
-import '@/assets/scss/layout.scss'
-import '@/assets/scss/overrides.scss'
+import '@/assets/styles/base.scss'
+import '@/assets/styles/layout.scss'
+import '@/assets/styles/overrides.scss'
 
 Vue.config.productionTip = true
 Vue.config.devtools = true
