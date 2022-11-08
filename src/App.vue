@@ -2,12 +2,11 @@
   <v-app id="app">
     <div id="main-column">
       <ChatPopup :openTooltipMessage = "openTooltipMessage"
-                 :closedTooltipMessage = "closedTooltipMessage"
                  :axios = "axios"
                  :isMobile = "isMobile"
-                 :webChatReason = "webChatReason"
-                 :webChatUrl = "webChatUrl"
-                 :webChatStatusUrl = "webChatStatusUrl"
+                 :webChatReason = "window['webChatReason']"
+                 :webChatUrl = "window['webChatUrl']"
+                 :webChatStatusUrl = "window['webChatStatusUrl']"
       />
 
       <!-- Loading spinner -->
@@ -149,6 +148,9 @@ export default class App extends Mixins(
   @Action setCurrentJsDate!: ActionBindingIF
   @Action setWindowWidth!: ActionBindingIF
 
+  readonly axios = axios
+  readonly window = window
+
   /** Whether to show the loading spinner. */
   protected showSpinner = false
 
@@ -164,29 +166,8 @@ export default class App extends Mixins(
   /** The Update Current JS Date timer id. */
   private updateCurrentJsDateId = 0
 
-  get axios (): any {
-    return axios
-  }
-
-  get webChatReason (): string {
-    return window['webChatReason']
-  }
-
-  get webChatStatusUrl (): string {
-    return window['webChatStatusUrl']
-  }
-
-  get webChatUrl (): string {
-    return window['webChatUrl']
-  }
-
   get openTooltipMessage (): String {
     return 'Click here to chat live with Helpdesk staff about Name Requests.'
-  }
-
-  get closedTooltipMessage (): String {
-    return 'We are closed. The Service BC Contact Centre is open Monday through Friday' +
-           '7:30am - 5:00pm Pacific Time excluding BC statutory holidays.'
   }
 
   get bannerText (): string | null {
