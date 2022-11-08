@@ -44,7 +44,7 @@ export default class ContactInfo extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/theme";
+@import "@/assets/styles/theme";
 
 .contact-info {
   display: flex;

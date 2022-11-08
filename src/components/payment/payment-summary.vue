@@ -71,7 +71,7 @@ export default class PaymentSummary extends Mixins(PaymentMixin) {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/theme";
+@import "@/assets/styles/theme";
 
 .col1 {
   flex: 0 0 23.75%;

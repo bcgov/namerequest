@@ -204,7 +204,7 @@ export default class AdvancedSearchForm extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 
 #find-nr-btn {
   color: $app-blue;

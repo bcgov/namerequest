@@ -161,7 +161,7 @@ export default class NameInput extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 .search-tooltip {
   max-width: 100px;
   text-align: center;

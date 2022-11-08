@@ -80,7 +80,7 @@ export default class ApplicantInfoNav extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/theme";
+@import "@/assets/styles/theme";
 
 .submit-back-btn {
   background-color: white !important;

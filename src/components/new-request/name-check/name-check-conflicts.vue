@@ -244,7 +244,7 @@ export default class NameCheckConflicts extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 .border-bottom {
   border-bottom: thin solid rgba(0, 0, 0, 0.12) !important;
 }

@@ -5,7 +5,6 @@ import VueRouter from 'vue-router'
 import { getVuexStore } from '@/store'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import App from '@/App.vue'
-import ChatPopup from '@/components/common/chat-popup.vue'
 import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
   LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog, PaymentCompleteDialog,
@@ -93,7 +92,6 @@ describe('App component', () => {
 
   it('renders the sub-components properly', () => {
     expect(wrapper.findComponent(SbcHeader).exists()).toBe(true)
-    expect(wrapper.findComponent(ChatPopup).exists()).toBe(true)
     expect(wrapper.findComponent(SbcHeader).exists()).toBe(true)
     expect(wrapper.findComponent(PaySystemAlert).exists()).toBe(true)
     expect(wrapper.findComponent(SbcFooter).exists()).toBe(true)

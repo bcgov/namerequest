@@ -311,7 +311,7 @@ export default class ResubmitDialog extends Mixins(
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/theme";
+@import "@/assets/styles/theme";
 
 .width-fit-content {
   width: fit-content;

@@ -55,7 +55,7 @@ export default class NameCheckTabContent extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 .active-tab .check-tab-icon {
   color: $app-blue;
 }

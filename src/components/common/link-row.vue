@@ -57,7 +57,7 @@ export default class LinkRow extends Mixins(CommonMixin) {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 
 .links-row {
   background-color: $gray1;

@@ -88,7 +88,7 @@ export default class BusinessDesignation extends Vue {
 </script>
 
 <style scoped lang="scss">
-  @import '@/assets/scss/theme.scss';
+  @import '@/assets/styles/theme.scss';
 
   #business-designation {
     p {

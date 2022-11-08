@@ -122,7 +122,7 @@ export default class AdvancedSearchTable extends Mixins(DateMixin) {
 }
 </script>
 <style lang="scss" scoped>
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 
 #advanced-search-results-table {
   ::v-deep th {

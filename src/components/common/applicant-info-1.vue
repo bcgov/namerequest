@@ -739,7 +739,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
 </script>
 
 <style scoped lang="scss">
-@import "@/assets/scss/theme.scss";
+@import "@/assets/styles/theme.scss";
 
 .highlight-list-item {
   background-color: $gray2;

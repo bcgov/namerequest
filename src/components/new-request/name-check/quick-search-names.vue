@@ -26,7 +26,7 @@ export default class QuickSearchNames extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 #quick-search-names {
   background-color: $gray1;
   display: block;

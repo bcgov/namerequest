@@ -925,7 +925,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/theme.scss";
+@import "@/assets/styles/theme.scss";
 
 ::v-deep .v-messages__message {
   line-height: 14px !important;

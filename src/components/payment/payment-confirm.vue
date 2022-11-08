@@ -83,7 +83,7 @@ export default class PaymentConfirm extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/theme";
+@import "@/assets/styles/theme";
 
 .receipt-summary {
   background-color: $gray1;

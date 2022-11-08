@@ -232,7 +232,7 @@ export default class ExistingRequestSearch extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/scss/theme.scss';
+@import '@/assets/styles/theme.scss';
 
 .existing-request-info {
   background-color: $gray1;

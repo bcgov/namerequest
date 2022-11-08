@@ -111,7 +111,7 @@ export default class NameBuildInfo extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/base.scss";
+@import "@/assets/styles/base.scss";
 
 #name-build-info {
   min-height: 36rem;

@@ -35,7 +35,7 @@ export default class NewAndBetterWay extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/base.scss";
+@import "@/assets/styles/base.scss";
 
 #new-and-better-way {
   background-color: white;
