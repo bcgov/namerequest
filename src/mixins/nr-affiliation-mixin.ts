@@ -29,10 +29,6 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
 
       // try to affiliate the NR
       const createAffiliationResponse = await AuthServices.createNrAffiliation(accountId, nr)
-      if (!createAffiliationResponse || !createAffiliationResponse.status) {
-        this.setAffiliationErrorModalValue(NrAffiliationErrors.UNABLE_TO_START_REGISTRATION)
-        throw Error('Unable to find existing affiliation')
-      }
 
       // check if affiliation succeeded
       if (createAffiliationResponse.status === CREATED) {
