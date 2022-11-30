@@ -424,7 +424,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** True if the Register button should be shown. */
   get showRegisterButton (): boolean {
-    return this.isFirm(this.nr) && !!getFeatureFlag('enable-sp-gp-dba')
+    return this.isFirm(this.nr)
   }
 
   /** True if the Check Status gray box should be shown. */
