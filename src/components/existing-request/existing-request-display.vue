@@ -226,7 +226,7 @@ import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
-import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished }
+import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished, RequestCode }
   from '@/enums'
 import { sleep, getFeatureFlag, navigate } from '@/plugins'
 import NamexServices from '@/services/namex.services'
@@ -424,7 +424,18 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** True if the Register button should be shown. */
   get showRegisterButton (): boolean {
-    return this.isFirm(this.nr)
+    return this.isFirm(this.nr) &&
+           this.nr.request_action_cd &&
+           this.nr.request_action_cd === RequestCode.NEW &&
+           (NrState.APPROVED === this.nr.state ||
+            this.isConsentUnRequired)
+  }
+
+  get isConsentUnRequired (): boolean {
+    return NrState.CONDITIONAL === this.nr.state &&
+            (this.nr.consentFlag === null ||
+              this.nr.consentFlag === 'R' ||
+              this.nr.consentFlag === 'N')
   }
 
   /** True if the Check Status gray box should be shown. */
