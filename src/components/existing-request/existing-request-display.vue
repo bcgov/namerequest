@@ -427,10 +427,10 @@ export default class ExistingRequestDisplay extends Mixins(
     return this.isFirm(this.nr) &&
            this.nr.request_action_cd !== RequestCode.CHG &&
            (NrState.APPROVED === this.nr.state ||
-            !this.isConcentRequired)
+            !this.isConsentRequired)
   }
 
-  get isConcentRequired (): boolean {
+  get isConsentRequired (): boolean {
     return NrState.CONDITIONAL === this.nr.state &&
             this.nr.consentFlag &&
             this.nr.consentFlag === 'Y'
