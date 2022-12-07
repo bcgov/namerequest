@@ -425,15 +425,17 @@ export default class ExistingRequestDisplay extends Mixins(
   /** True if the Register button should be shown. */
   get showRegisterButton (): boolean {
     return this.isFirm(this.nr) &&
-           this.nr.request_action_cd !== RequestCode.CHG &&
+           this.nr.request_action_cd &&
+           this.nr.request_action_cd === RequestCode.NEW &&
            (NrState.APPROVED === this.nr.state ||
-            !this.isConsentRequired)
+            this.isConsentUnRequired)
   }
 
-  get isConsentRequired (): boolean {
+  get isConsentUnRequired (): boolean {
     return NrState.CONDITIONAL === this.nr.state &&
-            this.nr.consentFlag &&
-            this.nr.consentFlag === 'Y'
+            (this.nr.consentFlag === null ||
+              this.nr.consentFlag === 'R' ||
+              this.nr.consentFlag === 'N')
   }
 
   /** True if the Check Status gray box should be shown. */
