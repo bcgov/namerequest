@@ -532,7 +532,8 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   get isNotPaid () {
-    return (this.pendingPayment?.sbcPayment?.statusCode === PaymentStatus.CREATED)
+    return (this.pendingPayment?.sbcPayment?.statusCode === PaymentStatus.CREATED) &&
+            NrState.DRAFT === this.nr.state
   }
 
   get isPaymentProcessing () {
