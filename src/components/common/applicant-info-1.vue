@@ -281,13 +281,13 @@
             </v-col>
 
             <v-col cols="12" md="6" lg="6" class="py-0 my-0" v-else>
-              <label for="state" class="hidden">Province/State (Optional, 2 letters max)</label>
+              <label for="state" class="hidden">Province/State</label>
               <v-text-field
+                disabled
                 :messages="messages['Province']"
                 :rules="provStateRules"
                 :value="applicant.stateProvinceCd"
                 @blur="messages = {}"
-                @focus="handleFocus('Province', 'Province/State (Optional, 2 letters max)')"
                 @input="updateApplicant('stateProvinceCd', $event)"
                 dense
                 filled
@@ -296,7 +296,7 @@
                 id="state"
                 :name="Math.random()"
                 autocomplete="chrome-off"
-                label="Province/State (Optional, 2 letters max)"
+                label="N/A"
                 ref="state"
               />
             </v-col>
