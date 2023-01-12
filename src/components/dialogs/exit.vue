@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showModal" max-width="45rem">
+  <v-dialog v-model="showModal" persistent max-width="45rem">
     <v-card>
       <v-card-title class="d-flex justify-space-between mt-n3">
         <div>Exit</div>
