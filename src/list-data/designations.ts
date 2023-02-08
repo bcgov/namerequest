@@ -58,7 +58,7 @@ export const Designations = {
       'LIMITED LIABILITY PARTNERSHIP',
       'LLP',
       'SENCRL',
-      'SLR',
+      'SRL',
       'SOCIETE A RESPONSABILITE LIMITEE',
       'SOCIETE EN NOM COLLECTIF A RESPONSABILITE LIMITEE'
     ],
