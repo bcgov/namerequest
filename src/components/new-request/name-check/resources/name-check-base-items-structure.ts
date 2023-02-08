@@ -23,7 +23,7 @@ export const baseItemsStructure = {
     iconColor: 'caution',
     problem: 'Ensure there is a <b>descriptive</b> element in your business name',
     words: [],
-    expandedInfo1: 'Names in BC are required to contain a decriptive word ' +
+    expandedInfo1: 'Names in BC are required to contain a descriptive word ' +
     '(or words) that describes the business category or the type of business. ' +
     'For example:',
     expandedInfoBlock1: [
