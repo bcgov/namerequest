@@ -57,7 +57,7 @@
     "cross-env": "^7.0.3",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.2.3",
-    "json-server": "^0.15.1",
+    "json-server": "^0.17.1",
     "sass": "^1.29.0",
     "sass-loader": "^8.0.2",
     "sinon": "^8.1.1",
