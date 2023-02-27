@@ -9,6 +9,13 @@
                  :webChatStatusUrl = "window['webChatStatusUrl']"
       />
 
+      <!-- Display the Genesys WebMessage -->
+      <GenesysWebMessage
+        :genesysURL="window['genesysUrl']"
+        :environmentKey="window['genesysEnv']"
+        :deploymentKey="window['genesysId']"
+      />
+
       <!-- Loading spinner -->
       <v-fade-transition>
         <div class="loading-container grayed-out" v-show="showSpinner">
@@ -86,6 +93,7 @@ import { DateMixin, LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin 
 import axios from 'axios'
 
 // dialogs and other components
+import { GenesysWebMessage } from '@bcrs-shared-components/genesys-web-message'
 import { WebChat as ChatPopup } from '@bcrs-shared-components/web-chat'
 import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
@@ -112,6 +120,7 @@ import { PAYMENT_REQUIRED } from 'http-status-codes'
     ErrorDialog,
     ExitDialog,
     ExitIncompletePaymentDialog,
+    GenesysWebMessage,
     HelpMeChooseDialog,
     LocationInfoDialog,
     MrasSearchInfoDialog,

@@ -78,6 +78,15 @@ export async function getConfig (): Promise<EnvConfigI> {
   const quickSearchPublicSecret: string = response.data['QUICK_SEARCH_PUBLIC_SECRET'];
   (<any>window).quickSearchPublicSecret = quickSearchPublicSecret
 
+  const genesysEnv: string = response.data.GENESYS_ENV;
+  (<any>window).genesysEnv = genesysEnv
+
+  const genesysId: string = response.data.GENESYS_ID;
+  (<any>window).genesysId = genesysId
+
+  const genesysUrl: string = response.data.GENESYS_URL;
+  (<any>window).genesysUrl = genesysUrl
+
   const webChatUrl: string = response.data['WEBCHAT_URL'];
   (<any>window).webChatUrl = webChatUrl
 
