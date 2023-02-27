@@ -11,9 +11,9 @@
 
       <!-- Display the Genesys WebMessage -->
       <GenesysWebMessage
-        genesysURL="https://apps.cac1.pure.cloud/genesys-bootstrap/genesys.min.js"
-        environmentKey="cac1"
-        deploymentKey="5c012aaa-1f17-4d0b-8da2-bea9c1133d5d"
+        :genesysURL="window['genesysUrl']"
+        :environmentKey="window['genesysEnv']"
+        :deploymentKey="window['genesysId']"
       />
 
       <!-- Loading spinner -->
