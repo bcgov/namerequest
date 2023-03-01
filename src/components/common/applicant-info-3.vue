@@ -312,7 +312,7 @@ export default class ApplicantInfo3 extends Vue {
 
   /** Whether priority checkbox should be enabled. */
   get enablePriorityCheckbox (): boolean {
-    return getFeatureFlag('enable-priority-checkbox')
+    return !!getFeatureFlag('enable-priority-checkbox')
   }
 
   mounted () {
