@@ -1,7 +1,8 @@
 <template>
   <v-app id="app">
     <div id="main-column">
-      <ChatPopup :openTooltipMessage = "openTooltipMessage"
+      <ChatPopup v-if="enableOldWebchat"
+                 :openTooltipMessage = "openTooltipMessage"
                  :axios = "axios"
                  :isMobile = "isMobile"
                  :webChatReason = "window['webChatReason']"
@@ -11,6 +12,7 @@
 
       <!-- Display the Genesys WebMessage -->
       <GenesysWebMessage
+        v-if="enableGenesysWebMessage"
         :genesysURL="window['genesysUrl']"
         :environmentKey="window['genesysEnv']"
         :deploymentKey="window['genesysId']"
@@ -267,6 +269,24 @@ export default class App extends Mixins(
       await this.resetAppState()
     }
     await this.toggleConfirmNrModal(false)
+  }
+
+  /** Whether the old webchat should be enabled. */
+  get enableOldWebchat (): boolean {
+    if (getFeatureFlag('enable-web-chat')) {
+      return !!getFeatureFlag('enable-web-chat')
+    } else {
+      return false // Failsafe value
+    }
+  }
+
+  /** Whether the Genesys web message should be enabled. */
+  get enableGenesysWebMessage (): boolean {
+    if (getFeatureFlag('enable-genesys-web-message')) {
+      return !!getFeatureFlag('enable-genesys-web-message')
+    } else {
+      return true // Failsafe value
+    }
   }
 }
 </script>
