@@ -273,12 +273,12 @@ export default class App extends Mixins(
 
   /** Whether the old webchat should be enabled. */
   get enableOldWebchat (): boolean {
-    return getFeatureFlag('enable-web-chat')
+    return !!getFeatureFlag('enable-web-chat')
   }
 
   /** Whether the Genesys web message should be enabled. */
   get enableGenesysWebMessage (): boolean {
-    return getFeatureFlag('enable-genesys-web-message')
+    return !!getFeatureFlag('enable-genesys-web-message')
   }
 }
 </script>
