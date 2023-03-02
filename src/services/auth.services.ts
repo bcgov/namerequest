@@ -54,12 +54,19 @@ export default class AuthServices {
    */
   static async fetchUserInfo (): Promise<any> {
     const url = `${this.authApiUrl}/users/@me`
-
-    return axios.get(url)
-      .then(response => {
-        if (response?.data) return response.data
-        throw new Error('Invalid user info')
-      })
+    if (!sessionStorage.getItem('PREVENT_STORAGE_SYNC')) {
+      const token = sessionStorage.getItem('KEYCLOAK_TOKEN')
+      if (token) {
+        const headers = {
+          Authorization: `Bearer ${token}`
+        }
+        return axios.get(url, { headers: headers })
+          .then(response => {
+            if (response?.data) return response.data
+            throw new Error('Invalid user info')
+          })
+      }
+    }
   }
 
   /**

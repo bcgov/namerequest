@@ -8,7 +8,9 @@ export class UpdateUserMixin extends Vue {
   async updateUser (): Promise<any> {
     try {
       const userInfo = await AuthServices.fetchUserInfo()
-      await this.updateLaunchDarkly(userInfo)
+      if (userInfo !== undefined) {
+        await this.updateLaunchDarkly(userInfo)
+      }
     } catch (err) {
       // just log the error -- no need to halt app
       console.log('Launch Darkly update error =', err) // eslint-disable-line no-console
