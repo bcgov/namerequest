@@ -8,7 +8,7 @@ export class UpdateUserMixin extends Vue {
   async updateUser (): Promise<any> {
     try {
       const userInfo = await AuthServices.fetchUserInfo()
-      if (userInfo !== undefined) {
+      if (userInfo) {
         await this.updateLaunchDarkly(userInfo)
       }
     } catch (err) {
