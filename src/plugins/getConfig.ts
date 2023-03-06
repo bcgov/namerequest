@@ -10,94 +10,88 @@ export async function getConfig (): Promise<EnvConfigI> {
     return Promise.reject(new Error('Missing environment variables'))
   }
 
-  // fetch config from server
-  const url = `${windowLocationOrigin}${processEnvBaseUrl}config/configuration.json`
-  const headers = {
-    'Accept': 'application/json',
-    'ResponseType': 'application/json',
-    'Cache-Control': 'no-cache'
-  }
-  const response = await axios.get(url, { headers }).catch(() => {
-    return Promise.reject(new Error('Could not fetch configuration.json'))
-  })
+  console.info(process.env)
 
-  const baseURL = response.data['NAMEX_API_URL'] + response.data['NAMEX_API_VERSION']
+  const baseURL = process.env.VUE_APP_NAMEX_API_URL + process.env.VUE_APP_NAMEX_API_VERSION
   sessionStorage.setItem('BASE_URL', baseURL)
   axios.defaults.baseURL = baseURL
 
-  const paymentPortalUrl = response.data['PAYMENT_PORTAL_URL']
+  const paymentPortalUrl = process.env.VUE_APP_PAYMENT_PORTAL_URL
   sessionStorage.setItem('PAYMENT_PORTAL_URL', paymentPortalUrl)
 
-  const businessesUrl = response.data['BUSINESSES_URL']
+  const businessesUrl = process.env.VUE_APP_BUSINESSES_URL
   sessionStorage.setItem('BUSINESSES_URL', businessesUrl)
 
-  const dashboardUrl = response.data['DASHBOARD_URL']
+  const dashboardUrl = process.env.VUE_APP_DASHBOARD_URL
   sessionStorage.setItem('DASHBOARD_URL', dashboardUrl)
 
-  const keycloakConfigPath = response.data['KEYCLOAK_CONFIG_PATH']
-  sessionStorage.setItem('KEYCLOAK_CONFIG_PATH', keycloakConfigPath)
-
-  const legalApiUrl: string = response.data['LEGAL_API_URL'] + response.data['LEGAL_API_VERSION']
+  const legalApiUrl: string = process.env.VUE_APP_LEGAL_API_URL + process.env.VUE_APP_LEGAL_API_VERSION
   sessionStorage.setItem('LEGAL_API_URL', legalApiUrl)
 
-  const authApiUrl: string = response.data['AUTH_API_URL'] + response.data['AUTH_API_VERSION']
+  const authApiUrl: string = process.env.VUE_APP_AUTH_API_URL + process.env.VUE_APP_AUTH_API_VERSION
   sessionStorage.setItem('AUTH_API_URL', authApiUrl)
 
-  const siteminderLogoutUrl: string = response.data['SITEMINDER_LOGOUT_URL']
+  const siteminderLogoutUrl: string = process.env.VUE_APP_SITEMINDER_LOGOUT_URL
   sessionStorage.setItem('SITEMINDER_LOGOUT_URL', siteminderLogoutUrl)
 
-  const registryHomeUrl: string = response.data['REGISTRY_HOME_URL']
+  const registryHomeUrl: string = process.env.VUE_APP_REGISTRY_HOME_URL
   sessionStorage.setItem('REGISTRY_HOME_URL', registryHomeUrl)
 
   // for system alert banner (sbc-common-components)
-  const statusApiUrl: string = response.data['STATUS_API_URL'] + response.data['STATUS_API_VERSION']
+  const statusApiUrl: string = process.env.VUE_APP_STATUS_API_URL + process.env.VUE_APP_STATUS_API_VERSION
   sessionStorage.setItem('STATUS_API_URL', statusApiUrl)
 
   // for sbc header (sbc-common-components)
-  const authWebUrl: string = response.data['AUTH_WEB_URL']
+  const authWebUrl: string = process.env.VUE_APP_AUTH_WEB_URL
   sessionStorage.setItem('AUTH_WEB_URL', authWebUrl)
 
-  const sentryEnable = response.data['SENTRY_ENABLE'];
-  (<any>window).sentryEnable = sentryEnable
-
-  const sentryDsn: string = response.data['SENTRY_DSN'];
+  const sentryDsn: string = process.env.VUE_APP_SENTRY_DSN;
   (<any>window).sentryDsn = sentryDsn
 
-  const hotjarId: string = response.data['HOTJAR_ID'];
+  const hotjarId: string = process.env.VUE_APP_HOTJAR_ID;
   (<any>window).hotjarId = hotjarId
 
-  const ldClientId: string = response.data['NAMEREQUEST_LD_CLIENT_ID'];
+  const ldClientId: string = process.env.VUE_APP_NAMEREQUEST_LD_CLIENT_ID;
   (<any>window).ldClientId = ldClientId
 
-  const authTokenUrl: string = response.data['AUTH_TOKEN_URL'];
+  const authTokenUrl: string = process.env.VUE_APP_AUTH_TOKEN_URL;
   (<any>window).authTokenUrl = authTokenUrl
 
-  const quickSearchPublicId: string = response.data['QUICK_SEARCH_PUBLIC_ID'];
+  const quickSearchPublicId: string = process.env.VUE_APP_QUICK_SEARCH_PUBLIC_ID;
   (<any>window).quickSearchPublicId = quickSearchPublicId
 
-  const quickSearchPublicSecret: string = response.data['QUICK_SEARCH_PUBLIC_SECRET'];
+  const quickSearchPublicSecret: string = process.env.VUE_APP_QUICK_SEARCH_PUBLIC_SECRET;
   (<any>window).quickSearchPublicSecret = quickSearchPublicSecret
 
-  const genesysEnv: string = response.data.GENESYS_ENV;
+  const genesysEnv: string = process.env.VUE_APP_GENESYS_ENV;
   (<any>window).genesysEnv = genesysEnv
 
-  const genesysId: string = response.data.GENESYS_ID;
+  const genesysId: string = process.env.VUE_APP_GENESYS_ID;
   (<any>window).genesysId = genesysId
 
-  const genesysUrl: string = response.data.GENESYS_URL;
+  const genesysUrl: string = process.env.VUE_APP_GENESYS_URL;
   (<any>window).genesysUrl = genesysUrl
 
-  const webChatUrl: string = response.data['WEBCHAT_URL'];
+  const webChatUrl: string = process.env.VUE_APP_WEBCHAT_URL;
   (<any>window).webChatUrl = webChatUrl
 
-  const webChatReason: string = response.data['WEBCHAT_REASON'];
+  const webChatReason: string = process.env.VUE_APP_WEBCHAT_REASON;
   (<any>window).webChatReason = webChatReason
 
-  const webChatStatusUrl: string = response.data['WEBCHAT_STATUS_URL'];
+  const webChatStatusUrl: string = process.env.VUE_APP_WEBCHAT_STATUS_URL;
   (<any>window).webChatStatusUrl = webChatStatusUrl
 
-  const entitySelectorUrl = response.data['ENTITY_SELECTOR_URL']
+  const entitySelectorUrl = process.env.VUE_APP_ENTITY_SELECTOR_URL
   entitySelectorUrl && sessionStorage.setItem('ENTITY_SELECTOR_URL', entitySelectorUrl)
+
+  const keyclokAuthUrl: string = process.env.VUE_APP_KEYCLOAK_AUTH_URL;
+  (<any>window).keyclokAuthUrl = keyclokAuthUrl
+
+  const keyclokRealm: string = process.env.VUE_APP_KEYCLOAK_REALM;
+  (<any>window).keyclokRealm = keyclokRealm
+
+  const keyclokClientId: string = process.env.VUE_APP_KEYCLOAK_CLIENTID;
+  (<any>window).keyclokClientId = keyclokClientId
 
   return {
     $PAYMENT_PORTAL_URL: paymentPortalUrl

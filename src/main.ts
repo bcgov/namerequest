@@ -3,7 +3,7 @@ import App from './App.vue'
 import Hotjar from 'vue-hotjar'
 import { getVueRouter } from '@/router'
 import { getVuexStore } from '@/store'
-import { getConfig, getVuetify, initLdClient, isSigningIn, isSigningOut } from '@/plugins'
+import { getConfig, getFeatureFlag, getVuetify, initLdClient, isSigningIn, isSigningOut } from '@/plugins'
 import KeycloakService from 'sbc-common-components/src/services/keycloak.services'
 import * as Sentry from '@sentry/browser'
 import * as Integrations from '@sentry/integrations'
@@ -44,7 +44,7 @@ async function startVue () {
   Vue.prototype.$requestActions = RequestActions
   Vue.prototype.$usaStateCodes = UsaStateCodes
 
-  if (window['sentryEnable'] === 'true') {
+  if (getFeatureFlag('sentry-enable')) {
     // Initialize Sentry
     if (window['sentryDsn']) {
       console.info('Initializing Sentry...') // eslint-disable-line no-console
@@ -94,8 +94,13 @@ async function startVue () {
 
 async function syncSession () {
   console.info('Starting Keycloak service...') // eslint-disable-line no-console
-  await KeycloakService.setKeycloakConfigUrl(sessionStorage.getItem('KEYCLOAK_CONFIG_PATH'))
+  const keycloakConfig: any = {
+    url: `${window['keyclokAuthUrl']}`,
+    realm: `${window['keyclokRealm']}`,
+    clientId: `${window['keyclokClientId']}`
+  }
 
+  await KeycloakService.setKeycloakConfigUrl(keycloakConfig)
   // Auto authenticate user only if they are not trying a login or logout
   if (!isSigningIn() && !isSigningOut()) {
     // Initialize token service which will do a check-sso to initiate session
