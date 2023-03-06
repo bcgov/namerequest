@@ -11,7 +11,6 @@ import {
   PickEntityOrConversionDialog, PickRequestTypeDialog, RenewDialog, ReceiptsDialog, RefundDialog, ResubmitDialog,
   RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
 } from '@/components/dialogs'
-import PaySystemAlert from 'sbc-common-components/src/components/PaySystemAlert.vue'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 // import mockRouter from './MockRouter'
@@ -93,7 +92,6 @@ describe('App component', () => {
   it('renders the sub-components properly', () => {
     expect(wrapper.findComponent(SbcHeader).exists()).toBe(true)
     expect(wrapper.findComponent(SbcHeader).exists()).toBe(true)
-    expect(wrapper.findComponent(PaySystemAlert).exists()).toBe(true)
     expect(wrapper.findComponent(SbcFooter).exists()).toBe(true)
   })
 

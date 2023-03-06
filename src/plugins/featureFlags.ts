@@ -12,6 +12,7 @@ const defaultFlagSet: LDFlagSet = {
   'disable-analysis': true, // by default, analysis is disabled
   'hardcoded_regular_wait_time': 0, // by default, use actual wait time
   'hardcoded_priority_wait_time': 0, // by default, use actual wait time
+  'sentry-enable': false, // by default, no sentry logs
   'banner-text': '', // by default, there is no banner text
   'enable-web-chat': false, // by default, old webchat is disabled
   'enable-genesys-web-message': false // by default, genesys web message is disabled

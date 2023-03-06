@@ -35,9 +35,6 @@
         :showActions="true"
       />
 
-      <!-- SBC Common Components pay system alert -->
-      <PaySystemAlert />
-
       <!-- Alert banner -->
       <v-alert
         tile dense
@@ -103,7 +100,6 @@ import {
   PickEntityOrConversionDialog, PickRequestTypeDialog, RenewDialog, ReceiptsDialog, RefundDialog,
   ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
 } from '@/components/dialogs'
-import PaySystemAlert from 'sbc-common-components/src/components/PaySystemAlert.vue'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 
@@ -137,7 +133,6 @@ import { PAYMENT_REQUIRED } from 'http-status-codes'
     RetryDialog,
     StaffPaymentErrorDialog,
     UpgradeDialog,
-    PaySystemAlert,
     SbcHeader,
     SbcFooter
   }
