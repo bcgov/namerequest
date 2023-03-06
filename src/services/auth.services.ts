@@ -53,13 +53,24 @@ export default class AuthServices {
    * Throws on error.
    */
   static async fetchUserInfo (): Promise<any> {
+    // PREVENT_STORAGE_SYNC flag is set during signout in sbc common components
+    // when session is state cleared, as a mechanism to prevent returning async
+    // functions to set tokens
+    if (sessionStorage.getItem('PREVENT_STORAGE_SYNC')) return null
     const url = `${this.authApiUrl}/users/@me`
-
-    return axios.get(url)
-      .then(response => {
-        if (response?.data) return response.data
-        throw new Error('Invalid user info')
-      })
+    const token = sessionStorage.getItem('KEYCLOAK_TOKEN')
+    if (token) {
+      const headers = {
+        Authorization: `Bearer ${token}`
+      }
+      return axios.get(url, { headers: headers })
+        .then(response => {
+          if (response?.data) return response.data
+          throw new Error('Invalid user info')
+        })
+    } else {
+      return null
+    }
   }
 
   /**
