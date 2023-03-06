@@ -10,8 +10,6 @@ export async function getConfig (): Promise<EnvConfigI> {
     return Promise.reject(new Error('Missing environment variables'))
   }
 
-  console.info(process.env)
-
   const baseURL = process.env.VUE_APP_NAMEX_API_URL + process.env.VUE_APP_NAMEX_API_VERSION
   sessionStorage.setItem('BASE_URL', baseURL)
   axios.defaults.baseURL = baseURL
