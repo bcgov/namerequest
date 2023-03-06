@@ -61,11 +61,11 @@ jobs:
           echo "::add-mask::$FIREBASE_HOST_NAME"
           echo FIREBASE_HOST_NAME=$FIREBASE_HOST_NAME >> $GITHUB_ENV
 
-          WORKLOAD_IDENTIFY_POOLS_PROVIDER=$(op read -n op://CD/${{ env.TAG_NAME }}/namerequest/WORKLOAD_IDENTIFY_POOLS_PROVIDER)
+          WORKLOAD_IDENTIFY_POOLS_PROVIDER=$(op read -n op://CD/${{ env.TAG_NAME }}/base/WORKLOAD_IDENTIFY_POOLS_PROVIDER)
           echo "::add-mask::$WORKLOAD_IDENTIFY_POOLS_PROVIDER"
           echo WORKLOAD_IDENTIFY_POOLS_PROVIDER=$WORKLOAD_IDENTIFY_POOLS_PROVIDER >> $GITHUB_ENV
 
-          GCP_SERVICE_ACCOUNT=$(op read -n op://CD/${{ env.TAG_NAME }}/namerequest/GCP_SERVICE_ACCOUNT)
+          GCP_SERVICE_ACCOUNT=$(op read -n op://CD/${{ env.TAG_NAME }}/base/GCP_SERVICE_ACCOUNT)
           echo "::add-mask::$GCP_SERVICE_ACCOUNT"
           echo GCP_SERVICE_ACCOUNT=$GCP_SERVICE_ACCOUNT >> $GITHUB_ENV
 
@@ -172,11 +172,11 @@ jobs:
           echo "::add-mask::$FIREBASE_HOST_NAME"
           echo FIREBASE_HOST_NAME=$FIREBASE_HOST_NAME >> $GITHUB_ENV
 
-          WORKLOAD_IDENTIFY_POOLS_PROVIDER=$(op read -n op://CD/${{ env.TAG_NAME }}/namerequest/WORKLOAD_IDENTIFY_POOLS_PROVIDER)
+          WORKLOAD_IDENTIFY_POOLS_PROVIDER=$(op read -n op://CD/${{ env.TAG_NAME }}/base/WORKLOAD_IDENTIFY_POOLS_PROVIDER)
           echo "::add-mask::$WORKLOAD_IDENTIFY_POOLS_PROVIDER"
           echo WORKLOAD_IDENTIFY_POOLS_PROVIDER=$WORKLOAD_IDENTIFY_POOLS_PROVIDER >> $GITHUB_ENV
 
-          GCP_SERVICE_ACCOUNT=$(op read -n op://CD/${{ env.TAG_NAME }}/namerequest/GCP_SERVICE_ACCOUNT)
+          GCP_SERVICE_ACCOUNT=$(op read -n op://CD/${{ env.TAG_NAME }}/base/GCP_SERVICE_ACCOUNT)
           echo "::add-mask::$GCP_SERVICE_ACCOUNT"
           echo GCP_SERVICE_ACCOUNT=$GCP_SERVICE_ACCOUNT >> $GITHUB_ENV
 
