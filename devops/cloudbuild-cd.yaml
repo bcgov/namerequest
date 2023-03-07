@@ -9,7 +9,7 @@ steps:
   #
   - name: node:$_DEPLOYMENT_NODE_VERSION
     entrypoint: npm
-    args: ['--openssl-legacy-provider', 'run', 'generate']
+    args: ['--openssl-legacy-provider', 'run', 'build']
 
   #
   # Deploy to firebase channel, using the PR #
