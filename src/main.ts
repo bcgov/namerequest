@@ -95,9 +95,9 @@ async function startVue () {
 async function syncSession () {
   console.info('Starting Keycloak service...') // eslint-disable-line no-console
   const keycloakConfig: any = {
-    url: `${window['keyclokAuthUrl']}`,
-    realm: `${window['keyclokRealm']}`,
-    clientId: `${window['keyclokClientId']}`
+    url: `${window['keycloakAuthUrl']}`,
+    realm: `${window['keycloakRealm']}`,
+    clientId: `${window['keycloakClientId']}`
   }
 
   await KeycloakService.setKeycloakConfigUrl(keycloakConfig)

@@ -82,14 +82,14 @@ export async function getConfig (): Promise<EnvConfigI> {
   const entitySelectorUrl = process.env.VUE_APP_ENTITY_SELECTOR_URL
   entitySelectorUrl && sessionStorage.setItem('ENTITY_SELECTOR_URL', entitySelectorUrl)
 
-  const keyclokAuthUrl: string = process.env.VUE_APP_KEYCLOAK_AUTH_URL;
-  (<any>window).keyclokAuthUrl = keyclokAuthUrl
+  const keycloakAuthUrl: string = process.env.VUE_APP_KEYCLOAK_AUTH_URL;
+  (<any>window).keycloakAuthUrl = keycloakAuthUrl
 
-  const keyclokRealm: string = process.env.VUE_APP_KEYCLOAK_REALM;
-  (<any>window).keyclokRealm = keyclokRealm
+  const keycloakRealm: string = process.env.VUE_APP_KEYCLOAK_REALM;
+  (<any>window).keycloakRealm = keycloakRealm
 
-  const keyclokClientId: string = process.env.VUE_APP_KEYCLOAK_CLIENTID;
-  (<any>window).keyclokClientId = keyclokClientId
+  const keycloakClientId: string = process.env.VUE_APP_KEYCLOAK_CLIENTID;
+  (<any>window).keycloakClientId = keycloakClientId
 
   return {
     $PAYMENT_PORTAL_URL: paymentPortalUrl
