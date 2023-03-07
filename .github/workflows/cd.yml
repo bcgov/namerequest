@@ -48,6 +48,7 @@ jobs:
               && unzip -od /usr/local/bin/ op.zip \
               && rm op.zip ;\
           op inject -i ./devops/vaults.env -o .env -f
+          sed -i~ '/^VUE_APP_PATH=/s/=.*/="\/namerequest"/' .env
 
       - name: CD Flow
         shell: bash
@@ -107,6 +108,7 @@ jobs:
               && unzip -od /usr/local/bin/ op.zip \
               && rm op.zip ;\
           op inject -i ./devops/vaults.env -o .env -f
+          sed -i~ '/^VUE_APP_PATH=/s/=.*/="\/namerequest"/' .env
 
       - name: CD Flow
         shell: bash

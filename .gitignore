@@ -7,5 +7,7 @@ node_modules/
 configuration.json.*
 keycloak.json.*
 public/config/configuration.json
-.env
+*.env
 .firebase
+*.firebaserc
+*.log

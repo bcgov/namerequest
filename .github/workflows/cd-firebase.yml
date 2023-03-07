@@ -117,7 +117,7 @@ jobs:
         run: |
           echo "TAG_NAME=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
 
-      - name: Get git tag preix
+      - name: Get git tag prefix
         if: github.event.inputs.tagname == null
         id: tagprefix
         run: |
@@ -131,7 +131,7 @@ jobs:
             echo "TAG_PREFIX=dev" >> $GITHUB_OUTPUT
           fi
 
-      - name: Get lastest git tag by tag preix
+      - name: Get lastest git tag by tag prefix
         uses: oprypin/find-latest-tag@v1
         if: github.event.inputs.tagname == null
         id: latesttag
