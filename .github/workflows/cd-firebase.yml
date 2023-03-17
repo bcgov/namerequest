@@ -7,205 +7,26 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Environment (dev/test/prod)"
+        description: "Environment"
         required: true
-        default: "dev"
+        type: choice
+        options:
+        - dev
+        - test
+        - sandbox
+        - prod
       tagname:
-        description: "Specify the version (git tag) to deploy"
+        description: "Specify a previous version (git tag) to deploy"
         required: false
         default: ""
 
-defaults:
-  run:
-    shell: bash
-
-env:
-  APP_NAME: "namerequest"
-  TAG_NAME: "dev"
-
 jobs:
-  namerequest-cd-by-push:
-    runs-on: ubuntu-20.04
-
-    if: github.event_name == 'push' && github.repository == 'bcgov/namerequest'
-    environment:
-      name: "dev"
-
-    # Allow add the tag in the repo.
-    # Add "id-token" with the intended permissions.
-    permissions:
-      contents: 'write'
-      id-token: 'write'
-
-    steps:
-      - uses: actions/checkout@v3
-
-      # Get environment variables from 1password
-      - name: Setup .env file
-        env:
-          OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_URL }}
-          OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN }}
-          APP_ENV: ${{ env.TAG_NAME }}
-        run: |
-          curl -sSfo op.zip \
-              https://cache.agilebits.com/dist/1P/op2/pkg/v2.0.0/op_linux_amd64_v2.0.0.zip \
-              && unzip -od /usr/local/bin/ op.zip \
-              && rm op.zip ;\
-          op inject -i ./devops/vaults.env -o .env -f
-
-          NODE_VERSION=$(op read -n op://CD/app-version/NODE_VERSION)
-          echo "::add-mask::$NODE_VERSION"
-          echo NODE_VERSION=$NODE_VERSION >> $GITHUB_ENV
-
-          FIREBASE_HOST_NAME=$(op read -n op://CD/${{ env.TAG_NAME }}/namerequest/FIREBASE_HOST_NAME)
-          echo "::add-mask::$FIREBASE_HOST_NAME"
-          echo FIREBASE_HOST_NAME=$FIREBASE_HOST_NAME >> $GITHUB_ENV
-
-          WORKLOAD_IDENTIFY_POOLS_PROVIDER=$(op read -n op://CD/${{ env.TAG_NAME }}/base/WORKLOAD_IDENTIFY_POOLS_PROVIDER)
-          echo "::add-mask::$WORKLOAD_IDENTIFY_POOLS_PROVIDER"
-          echo WORKLOAD_IDENTIFY_POOLS_PROVIDER=$WORKLOAD_IDENTIFY_POOLS_PROVIDER >> $GITHUB_ENV
-
-          GCP_SERVICE_ACCOUNT=$(op read -n op://CD/${{ env.TAG_NAME }}/base/GCP_SERVICE_ACCOUNT)
-          echo "::add-mask::$GCP_SERVICE_ACCOUNT"
-          echo GCP_SERVICE_ACCOUNT=$GCP_SERVICE_ACCOUNT >> $GITHUB_ENV
-
-      - id: 'auth'
-        name: 'Authenticate to Google Cloud'
-        uses: 'google-github-actions/auth@v1'
-        with:
-          workload_identity_provider: ${{ env.WORKLOAD_IDENTIFY_POOLS_PROVIDER }}
-          service_account: ${{ env.GCP_SERVICE_ACCOUNT }}
-
-      # Setup gcloud CLI
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
-
-      # Build and push image to Google Container Registry
-      - name: Build
-        run: |-
-          gcloud builds submit \
-            --substitutions _DEPLOYMENT_ENVIRONMENT=${{ env.TAG_NAME }},_DEPLOYMENT_NODE_VERSION=${{ env.NODE_VERSION }},_DEPLOYMENT_PROJECT=${{ env.GCP_PROJECT }},_DEPLOYMENT_HOST_NAME=${{ env.FIREBASE_HOST_NAME }} \
-            --config ./devops/cloudbuild-cd.yaml
-
-      # Bump version and push tag
-      - name: Set git tag format - datetime.short-sha
-        id: customtag
-        run: echo "tag=`date +'%Y%m%d%H%M'`.`git rev-parse --short ${{ github.sha }}`" >> $GITHUB_OUTPUT
-
-      - name: Add git tag
-        uses: mathieudutour/github-tag-action@v6.1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          custom_tag: ${{ steps.customtag.outputs.tag }}
-          tag_prefix: ${{ env.TAG_NAME }}.
-
-  namerequest-cd-by-dispatch:
-    runs-on: ubuntu-20.04
-
-    if: github.event_name == 'workflow_dispatch' && github.repository == 'bcgov/namerequest'
-    environment:
-      name: "${{ github.event.inputs.environment }}"
-
-    # Allow add the tag in the repo.
-    # Add "id-token" with the intended permissions.
-    permissions:
-      contents: 'write'
-      id-token: 'write'
-
-    steps:
-      - name: Set env by input
-        run: |
-          echo "TAG_NAME=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
-
-      - name: Get git tag prefix
-        if: github.event.inputs.tagname == null
-        id: tagprefix
-        run: |
-          if [ "${{ env.TAG_NAME }}" = "test" ]
-          then
-            echo "TAG_PREFIX=dev" >> $GITHUB_OUTPUT
-          elif [ "${{ env.TAG_NAME }}" = "prod" ]
-          then
-            echo "TAG_PREFIX=test" >> $GITHUB_OUTPUT
-          else
-            echo "TAG_PREFIX=dev" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Get lastest git tag by tag prefix
-        uses: oprypin/find-latest-tag@v1
-        if: github.event.inputs.tagname == null
-        id: latesttag
-        with:
-          repository: bcgov/namerequest
-          releases-only: false
-          prefix: ${{ steps.tagprefix.outputs.TAG_PREFIX}}
-
-      - name: Checkout out the code by the git tag
-        if: github.event.inputs.tagname == null
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ steps.latesttag.outputs.tag  }}
-
-      - name: Checkout out the code by the input git tag
-        if: github.event.inputs.tagname != null
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.inputs.tagname }}
-
-      # Get environment variables from 1password
-      - name: Setup .env file
-        env:
-          OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_URL }}
-          OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN }}
-          APP_ENV: ${{ env.TAG_NAME }}
-        run: |
-          curl -sSfo op.zip \
-              https://cache.agilebits.com/dist/1P/op2/pkg/v2.0.0/op_linux_amd64_v2.0.0.zip \
-              && unzip -od /usr/local/bin/ op.zip \
-              && rm op.zip ;\
-          op inject -i ./devops/vaults.env -o .env -f
-          NODE_VERSION=$(op read -n op://CD/app-version/NODE_VERSION)
-          echo "::add-mask::$NODE_VERSION"
-          echo NODE_VERSION=$NODE_VERSION >> $GITHUB_ENV
-
-          FIREBASE_HOST_NAME=$(op read -n op://CD/${{ env.TAG_NAME }}/namerequest/FIREBASE_HOST_NAME)
-          echo "::add-mask::$FIREBASE_HOST_NAME"
-          echo FIREBASE_HOST_NAME=$FIREBASE_HOST_NAME >> $GITHUB_ENV
-
-          WORKLOAD_IDENTIFY_POOLS_PROVIDER=$(op read -n op://CD/${{ env.TAG_NAME }}/base/WORKLOAD_IDENTIFY_POOLS_PROVIDER)
-          echo "::add-mask::$WORKLOAD_IDENTIFY_POOLS_PROVIDER"
-          echo WORKLOAD_IDENTIFY_POOLS_PROVIDER=$WORKLOAD_IDENTIFY_POOLS_PROVIDER >> $GITHUB_ENV
-
-          GCP_SERVICE_ACCOUNT=$(op read -n op://CD/${{ env.TAG_NAME }}/base/GCP_SERVICE_ACCOUNT)
-          echo "::add-mask::$GCP_SERVICE_ACCOUNT"
-          echo GCP_SERVICE_ACCOUNT=$GCP_SERVICE_ACCOUNT >> $GITHUB_ENV
-
-      - id: 'auth'
-        name: 'Authenticate to Google Cloud'
-        uses: 'google-github-actions/auth@v1'
-        with:
-          workload_identity_provider: ${{ env.WORKLOAD_IDENTIFY_POOLS_PROVIDER }}
-          service_account: ${{ env.GCP_SERVICE_ACCOUNT }}
-
-      # Setup gcloud CLI
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
-
-      # Build and push image to Google Container Registry
-      - name: Build
-        run: |-
-          gcloud builds submit \
-            --substitutions _DEPLOYMENT_ENVIRONMENT=${{ env.TAG_NAME }},_DEPLOYMENT_NODE_VERSION=${{ env.NODE_VERSION }},_DEPLOYMENT_PROJECT=${{ env.GCP_PROJECT }},_DEPLOYMENT_HOST_NAME=${{ env.FIREBASE_HOST_NAME }} \
-            --config ./devops/cloudbuild-cd.yaml
-
-      # Bump version and push tag
-      - name: Set git tag format - datetime.short-sha
-        id: customtag
-        run: echo "tag=`date +'%Y%m%d%H%M'`.`git log -1 --format='%h'`" >> $GITHUB_OUTPUT
-
-      - name: Add git tag
-        uses: mathieudutour/github-tag-action@v6.1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          custom_tag: ${{ steps.customtag.outputs.tag }}
-          tag_prefix: ${{ env.TAG_NAME }}.
+  bcregistry-ui-cd:
+    uses: bcgov/bcregistry-sre/.github/workflows/ui-cd.yaml@main
+    with:
+      environment: ${{ inputs.environment }}
+      tagname: ${{ inputs.tagname }}
+    secrets:
+      APP_NAME: namerequest
+      OP_CONNECT_URL: ${{ secrets.OP_CONNECT_URL }}
+      OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN }}
