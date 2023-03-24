@@ -21,7 +21,7 @@ on:
         default: ""
 
 jobs:
-  bcregistry-ui-cd:
+  namerequest-ui-cd:
     uses: bcgov/bcregistry-sre/.github/workflows/ui-cd.yaml@main
     with:
       environment: ${{ inputs.environment }}
