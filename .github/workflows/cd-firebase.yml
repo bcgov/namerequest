@@ -22,7 +22,7 @@ on:
 
 jobs:
   namerequest-ui-cd:
-    uses: pwei1018/bcregistry-sre/.github/workflows/ui-cd-gcp.yaml@main
+    uses: bcgov/bcregistry-sre/.github/workflows/ui-cd.yaml@main
     with:
       environment: ${{ inputs.environment }}
       tagname: ${{ inputs.tagname }}
