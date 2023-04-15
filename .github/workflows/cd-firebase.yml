@@ -24,6 +24,7 @@ jobs:
   namerequest-ui-cd:
     uses: bcgov/bcregistry-sre/.github/workflows/ui-cd.yaml@main
     with:
+      app_name:  "namerequest"
       environment: ${{ inputs.environment }}
       tagname: ${{ inputs.tagname }}
     secrets:
