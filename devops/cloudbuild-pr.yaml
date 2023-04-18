@@ -4,6 +4,7 @@ steps:
     entrypoint: npm
     args: ['install']
 
+  # setup .env
   - name: 'bash'
     script: |
       #!/usr/bin/env bash
@@ -43,7 +44,7 @@ steps:
       - |
         # Read from "/workspace"
         cat /workspace/firebase-deploy.txt
-        url=`cat /workspace/firebase-deploy.txt| grep 'Channel URL'| cut -c 54-| cut -d ' ' -f 1`
+        url=`cat /workspace/firebase-deploy.txt| grep 'Channel URL' | grep -Eo "https://[a-zA-Z0-9./?=_%:-]*"`
         echo "this is the body:"
         echo '{"body": "Temporary Url for review:'"$url"'"}'
         curl -X POST \
