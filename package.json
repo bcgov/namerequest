@@ -1,6 +1,6 @@
 {
   "name": "name-request",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "private": true,
   "appName": "Name Request UI",
   "sbcName": "SBC Common Components",
@@ -20,8 +20,8 @@
     "@bcrs-shared-components/staff-payment": "1.0.29",
     "@bcrs-shared-components/web-chat": "2.0.0",
     "@mdi/font": "^4.5.95",
-    "@sentry/browser": "^6.2.1",
-    "@sentry/integrations": "^6.2.1",
+    "@sentry/browser": "^7.49.0",
+    "@sentry/integrations": "^7.49.0",
     "axios": "^0.21.1",
     "babel-plugin-transform-decorators": "^6.24.1",
     "core-js": "^3.8.0",
