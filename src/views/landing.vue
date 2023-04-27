@@ -73,7 +73,7 @@ export default class Landing extends Vue {
 
   async mounted () {
     const { id } = this
-    const accountId = this.$route.query.accountid.toString()
+    const accountId = this.$route.query.accountid?.toString()
 
     // if an id and accountid was specified then get and load the subject NR
     if (id && accountId) {
