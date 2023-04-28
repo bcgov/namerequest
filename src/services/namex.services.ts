@@ -273,6 +273,35 @@ export default class NamexServices {
     }
   }
 
+  static async getNameRequestByToken (handleError: boolean, nrId:string, accountId:string): Promise<NameRequestI> {
+    try {
+      const token = sessionStorage.getItem('KEYCLOAK_TOKEN')
+      if (token) {
+        const headers = {
+          Authorization: `Bearer ${token}`,
+          'Accept': 'application/pdf'
+        }
+
+        // call namerequest get endpoint to retrieve NR detail, also verify affiliation
+        const response = await this.axios.get(`${this.namexUrl()}/namerequests/${nrId}?org_id=${accountId}`, {
+          headers
+        })
+        if (response?.status === OK && response?.data) return response.data
+        throw new Error(`Invalid response = ${response}`)
+      } else {
+        // if without token then check the session storage
+        return await this.getNameRequest(handleError)
+      }
+    } catch (err) {
+      if (handleError) {
+        const msg = await this.handleApiError(err, 'Could not get name request')
+        console.error('getNameRequest() =', msg) // eslint-disable-line no-console
+        await errorModule.setAppError({ id: 'get-name-request-error', error: msg } as ErrorI)
+      }
+      return null
+    }
+  }
+
   static async getNameRequest (handleError: boolean): Promise<NameRequestI> {
     try {
       const { CancelToken } = Axios

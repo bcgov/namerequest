@@ -73,9 +73,11 @@ export default class Landing extends Vue {
 
   async mounted () {
     const { id } = this
-    // if an id was specified then get and load the subject NR
-    if (id) {
-      const nrData = await NamexServices.getNameRequest(true)
+    const accountId = this.$route.query.accountid?.toString()
+
+    // if an id and accountid was specified then get and load the subject NR
+    if (id && accountId) {
+      const nrData = await NamexServices.getNameRequestByToken(true, id, accountId)
       if (nrData) await this.loadExistingNameRequest(nrData)
     }
 
