@@ -6,6 +6,7 @@
         <v-col cols="12" md="5" lg="5" class="py-0">
           <v-text-field :messages="messages['email']"
                         :rules="emailRules"
+                        :validate-on-blur="true"
                         :value="getApplicant.emailAddress"
                         @blur="messages = {}"
                         @input="updateApplicant('emailAddress', $event)"
