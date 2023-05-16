@@ -1223,7 +1223,7 @@ const Other: JurisdictionI[] = [
   {
     value: 'TZ',
     SHORT_DESC: 'Tanzania',
-    text: 'Tanzania'
+    text: 'Tanzania, United Republic Of'
   },
   {
     value: 'TH',
