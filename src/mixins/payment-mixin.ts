@@ -199,7 +199,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       const refundParams = {
         refundLabel: 'Funds have been credited',
         refundMessageText1: 'Your Name Request has been cancelled and ' +
-        'the payment has been credited back your account.',
+        'the payment has been credited back your BC Registries payment account.',
         showStaffContact: false,
         showAlertIcon: false
       }
