@@ -98,18 +98,27 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     return summaries
   }
 
-  /** Check if there is more than one payment method used in the payments. */
-  get isThereMoreThanOnePaymentMethod (): boolean {
+  /** Check if there is more than one payment. */
+  get isThereMoreThanOnePayment (): boolean {
     if (Array.isArray(this.payments) && this.payments.length > 1) {
-      const paymentMethods = this.payments.map(payment => payment.sbcPayment.paymentMethod)
-      return paymentMethods.some(method => method !== paymentMethods[0])
+      return true
+    }
+    return false
+  }
+
+  /** Check if there is more than one payment with different status. */
+  get isDifferentPaymentStatus (): boolean {
+    if (Array.isArray(this.payments) && this.payments.length > 1) {
+      const paymentStatus = this.payments.map(payment => payment.sbcPayment.statusCode)
+      return paymentStatus.some(method => method !== paymentStatus[0])
     }
     return false
   }
 
   /** Check if the user has been waived of all fees for the NR. */
   get isNoFeePayment (): boolean {
-    if (Array.isArray(this.payments) && this.payments.length) { // Payments might not have been processed yet, e.g., PAD
+    if (Array.isArray(this.payments) && this.payments.length) {
+      // Payments might not have been processed yet, e.g., PAD
       if (this.payments.length > 1) {
         return this.payments.reduce((paymentA, paymentB) => paymentA.sbcPayment.paid + paymentB.sbcPayment.paid) === 0
       } else {
@@ -124,7 +133,8 @@ export class PaymentMixin extends Mixins(ActionMixin) {
    * Some payments are not refundable or some problem may be happened to the refund request.
    */
   get isNoRefund (): boolean {
-    if (Array.isArray(this.payments) && this.payments.length) { // Payments might not have been processed yet, e.g., PAD
+    if (Array.isArray(this.payments) && this.payments.length) {
+      // Payments might not have been processed yet, e.g., PAD
       if (this.payments.length > 1) {
         return this.payments.reduce(
           (paymentA, paymentB) => paymentA.sbcPayment.refund + paymentB.sbcPayment.refund
@@ -176,78 +186,144 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     return (this.getNr.state === NrState.PENDING_PAYMENT)
   }
 
+  setRefundParamsByStatus (paymentMethod, paymentStatus) {
+    if (paymentStatus === PaymentStatus.REFUNDED) {
+      const refundParams = {
+        refundLabel: 'Refund process is completed',
+        refundMessageText1: 'Your Name Request has been cancelled and the payment has been refunded.',
+        showStaffContact: false,
+        showAlertIcon: false
+      }
+      this.setRefundParams(refundParams)
+    } else if (paymentStatus === PaymentStatus.CREDITED) {
+      const refundParams = {
+        refundLabel: 'Funds have been credited',
+        refundMessageText1: 'Your Name Request has been cancelled and ' +
+        'the payment has been credited back your BC Registries payment account.',
+        showStaffContact: false,
+        showAlertIcon: false
+      }
+      this.setRefundParams(refundParams)
+    } else if (paymentStatus === PaymentStatus.CANCELLED) {
+      const refundParams = {
+        refundLabel: 'Payment Cancelled',
+        refundMessageText1: 'Your Name Request has been cancelled and your account has not been charged.',
+        showStaffContact: false,
+        showAlertIcon: false
+      }
+      this.setRefundParams(refundParams)
+    } else {
+      // REFUND_REQUESTED or other status
+      if (paymentMethod === PaymentMethod.PAD) {
+        // Premium Account
+        if (!this.isNoRefund) {
+          const refundParams = {
+            refundLabel: 'Refund has been requested',
+            refundMessageText1:
+            'Your Name Request has been cancelled and a refund request is being processed.',
+            refundMessageText2:
+            'A credit will be applied to your BC Registries account.<br/>There may be a one day delay before the ' +
+            'credit will show on your transactions / statetements.',
+            showStaffContact: false,
+            showAlertIcon: false
+          }
+          this.setRefundParams(refundParams)
+        } else {
+          // May happen when a PAD is not processed yet.
+          // It usually takes a day to be processed.
+          const refundParams = {
+            refundLabel: 'Refund Not Processed',
+            refundMessageText1:
+            'Your Name Request has been cancelled.',
+            refundMessageText2:
+            'Pre-authorized debit transactions are handled at the end of each day, therefore, your bank will ' +
+            'not be charged the initial payment amount.',
+            showStaffContact: false,
+            showAlertIcon: true
+          }
+          this.setRefundParams(refundParams)
+        }
+      } else if (paymentMethod === PaymentMethod.INTERNAL) {
+        // INTERNAL is a Staff payment. It can be 'Routing Slip' or 'No Fee' payments.
+        if (this.isNoFeePayment) {
+          // No Fee payment
+          const refundParams = {
+            refundLabel: 'Refund Not Processed',
+            refundMessageText1:
+            'Your Name Request has been cancelled.',
+            refundMessageText2:
+            'Since there was no charge for this transaction, a refund will not be issued. Please contact BC ' +
+            'Registries if you require further assistance.',
+            showStaffContact: true,
+            showAlertIcon: true
+          }
+          this.setRefundParams(refundParams)
+        } else {
+          // Routing Slip
+          const refundParams = {
+            refundLabel: 'Refund Not Processed',
+            refundMessageText1:
+            'Your Name Request has been cancelled, but you will not receive an automatic refund. ' +
+            'Please contact BC Registries in order to request a refund.',
+            refundMessageText2: '',
+            showStaffContact: true,
+            showAlertIcon: true
+          }
+          this.setRefundParams(refundParams)
+        }
+      } else if ([PaymentMethod.DIRECT_PAY, PaymentMethod.DRAWDOWN].includes(paymentMethod)) {
+        // Credit Card or BCOL
+        if (!this.isNoFeePayment) {
+          const refundParams = {
+            refundLabel: 'Refund Request Processed',
+            refundMessageText1:
+            'Your Name Request has been cancelled and a refund request has been submitted.',
+            refundMessageText2:
+            'The refund will be applied to your original payment method and the requested name will not be ' +
+            'examined for use. An email confirming the cancellation and refund of this Name Request will be ' +
+            `sent to ${this.getNr.applicants.emailAddress}.`,
+            showStaffContact: false,
+            showAlertIcon: false
+          }
+          this.setRefundParams(refundParams)
+        } else {
+          const refundParams = {
+            refundLabel: 'Refund process is completed',
+            refundMessageText1: 'Your Name Request has been cancelled and the payment has been refunded.',
+            showStaffContact: false,
+            showAlertIcon: false
+          }
+          this.setRefundParams(refundParams)
+        }
+      }
+    }
+  }
+
   /**
    * Build refund params to be used to display information about the refund request.
   */
   buildRefundParams () {
     if (this.getNr.state === NrState.REFUND_REQUESTED) {
-      if (!this.isThereMoreThanOnePaymentMethod) {
+      if (!this.isThereMoreThanOnePayment) {
+        // Only 1 payment record
         const paymentMethod = this.payments[0]?.sbcPayment?.paymentMethod
-        if (paymentMethod === PaymentMethod.PAD) {
-          // Premium Account
+        const paymentStatus = this.payments[0]?.sbcPayment?.statusCode
+        this.setRefundParamsByStatus(paymentMethod, paymentStatus)
+      } else {
+        // More than 1 payment. (e.g. paid priority service)
+        if (!this.isDifferentPaymentStatus) {
+          // all payments have the same status
+          const paymentMethod = this.payments[0]?.sbcPayment?.paymentMethod
+          const paymentStatus = this.payments[0]?.sbcPayment?.statusCode
+          this.setRefundParamsByStatus(paymentMethod, paymentStatus)
+        } else {
+          // the payments have the different status (.e.g one REFUNDED and another one REFUND_REQUESTED)
           if (!this.isNoRefund) {
+            // Multi-transaction scenario returns success
             const refundParams = {
               refundLabel: 'Refund Request Processed',
               refundMessageText1:
-              'Your Name Request has been cancelled and a refund request is being processed.',
-              refundMessageText2:
-              'A credit will be applied to your BC Registries account.<br/>There may be a one day delay before the ' +
-              'credit will show on your transactions / statetements.',
-              showStaffContact: false,
-              showAlertIcon: false
-            }
-            this.setRefundParams(refundParams)
-          } else {
-            // May happen when a PAD is not processed yet.
-            // It usually takes a day to be processed.
-            const refundParams = {
-              refundLabel: 'Refund Not Processed',
-              refundMessageText1:
-              'Your Name Request has been cancelled.',
-              refundMessageText2:
-              'Pre-authorized debit transactions are handled at the end of each day, therefore, your bank will ' +
-              'not be charged the initial payment amount.',
-              showStaffContact: false,
-              showAlertIcon: true
-            }
-            this.setRefundParams(refundParams)
-          }
-        } else if (paymentMethod === PaymentMethod.INTERNAL) {
-          // INTERNAL is a Staff payment. It can be 'Routing Slip' or 'No Fee' payments.
-          if (this.isNoFeePayment) {
-            // No Fee payment
-            const refundParams = {
-              refundLabel: 'Refund Not Processed',
-              refundMessageText1:
-              'Your Name Request has been cancelled.',
-              refundMessageText2:
-              'Since there was no charge for this transaction, a refund will not be issued. Please contact BC ' +
-              'Registries if you require further assistance.',
-              showStaffContact: true,
-              showAlertIcon: true
-            }
-            this.setRefundParams(refundParams)
-          } else {
-            // Routing Slip
-            const refundParams = {
-              refundLabel: 'Refund Not Processed',
-              refundMessageText1:
-              'Your Name Request has been cancelled, but you will not receive an automatic refund. Please contact BC ' +
-              'Registries in order to request a refund.',
-              refundMessageText2: '',
-              showStaffContact: true,
-              showAlertIcon: true
-            }
-            this.setRefundParams(refundParams)
-          }
-        } else if ([PaymentMethod.DIRECT_PAY, PaymentMethod.DRAWDOWN].includes(paymentMethod)) {
-          // Credit Card or BCOL
-          if (!this.isNoFeePayment) {
-            const refundParams = {
-              refundLabel: 'Refund Request Processed',
-              refundMessageText1:
-              'Your Name Request has been cancelled and a refund request has been submitted.',
-              refundMessageText2:
+              'Your Name Request has been cancelled and the refund request has been submitted.<br/><br/>' +
               'The refund will be applied to your original payment method and the requested name will not be ' +
               'examined for use. An email confirming the cancellation and refund of this Name Request will be ' +
               `sent to ${this.getNr.applicants.emailAddress}.`,
@@ -256,42 +332,18 @@ export class PaymentMixin extends Mixins(ActionMixin) {
             }
             this.setRefundParams(refundParams)
           } else {
+            // This should not happen
             const refundParams = {
               refundLabel: 'Refund Not Processed',
               refundMessageText1:
               'Your Name Request has been cancelled, but we were unable to process ' +
               'your full refund. Please contact BC Registries.',
-              refundMessageText2: '',
               showStaffContact: true,
               showAlertIcon: true
             }
             this.setRefundParams(refundParams)
           }
         }
-      } else if (!this.isNoRefund) {
-        // Multi-transaction scenario returns success
-        const refundParams = {
-          refundLabel: 'Refund Request Processed',
-          refundMessageText1:
-          'Your Name Request has been cancelled and a refund request has been submitted.<br/><br/>' +
-          'The refund will be applied to your original payment method and the requested name will not be ' +
-          'examined for use. An email confirming the cancellation and refund of this Name Request will be ' +
-          `sent to ${this.getNr.applicants.emailAddress}.`,
-          showStaffContact: false,
-          showAlertIcon: false
-        }
-        this.setRefundParams(refundParams)
-      } else {
-        // This should not happen
-        const refundParams = {
-          refundLabel: 'Refund Not Processed',
-          refundMessageText1:
-          'Your Name Request has been cancelled, but we were unable to process ' +
-          'your full refund. Please contact BC Registries.',
-          showStaffContact: true,
-          showAlertIcon: true
-        }
-        this.setRefundParams(refundParams)
       }
     }
   }
