@@ -206,7 +206,7 @@
           />
 
           <!-- incorporate button -->
-          <div class="mt-5 text-center" v-if="showIncorporateButton">
+          <div class="mt-5 text-center" v-if="!showIncorporateButton">
             <v-btn id="INCORPORATE-btn" @click="handleButtonClick(NrAction.INCORPORATE)">
               Incorporate Using This Name Request
             </v-btn>
@@ -706,7 +706,7 @@ export default class ExistingRequestDisplay extends Mixins(
       sessionStorage.setItem('NR_DATA', JSON.stringify(this.nr))
       // navigate to BC Registry login page with return parameter
       const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
-      const nameRequestUrl = `${window.location.origin}${appBaseURL}`
+      const nameRequestUrl = `${window.location.origin}`
       navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
     }
   }
