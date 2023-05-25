@@ -14,6 +14,7 @@ import {
 import { RequestActions } from '@/list-data'
 import { NrAction, NrState, RequestCode, RollbackActions } from '@/enums'
 import { NameRequestPayment } from '@/modules/payment/models'
+import { appBaseURL } from '../router/router'
 
 const ANALYSIS_TIMEOUT_MS = 3 * 60 * 1000 // 3 minutes
 const axiosNamex = Axios.create()
@@ -37,9 +38,9 @@ axiosNamex.interceptors.request.use(
 export default class NamexServices {
   static axios = axiosNamex
 
-  static namexUrl () {
-    return sessionStorage.getItem('BASE_URL')
-  }
+  // static namexUrl () {
+  //   return sessionStorage.getItem('BASE_URL')
+  // }
 
   static async addRequestActionComment (
     requestActionCd: RequestCode,
@@ -101,7 +102,7 @@ export default class NamexServices {
       // eslint-disable-next-line no-console
       console.log('delete ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
         sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
-      const response = await this.axios.delete(`${this.namexUrl()}/payments/${nrId}/payment/${paymentId}`, {
+      const response = await this.axios.delete(`${appBaseURL}/payments/${nrId}/payment/${paymentId}`, {
         headers: { 'Content-Type': 'application/json' }
       })
 
@@ -138,7 +139,7 @@ export default class NamexServices {
         // eslint-disable-next-line no-console
         console.log('checkin ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
           sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
-        await this.axios.patch(`${this.namexUrl()}/namerequests/${nrId}/checkin`, {
+        await this.axios.patch(`${appBaseURL}/namerequests/${nrId}/checkin`, {
           checkedOutBy: checkedOutBy,
           checkedOutDt: checkedOutDt
         }, {
@@ -166,14 +167,14 @@ export default class NamexServices {
         // eslint-disable-next-line no-console
         console.log('checkOut ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
           sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
-        response = await this.axios.patch(`${this.namexUrl()}/namerequests/${nrId}/checkout`, {
+        response = await this.axios.patch(`${appBaseURL}/namerequests/${nrId}/checkout`, {
           checkedOutBy: checkedOutBy,
           checkedOutDt: checkedOutDt
         }, {
           headers: { 'Content-Type': 'application/json' }
         })
       } else {
-        response = await this.axios.patch(`${this.namexUrl()}/namerequests/${nrId}/checkout`, {}, {
+        response = await this.axios.patch(`${appBaseURL}/namerequests/${nrId}/checkout`, {}, {
           headers: { 'Content-Type': 'application/json' }
         })
       }
@@ -201,7 +202,7 @@ export default class NamexServices {
       console.log('completePayment ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
         sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
       const response = await this.axios.patch(
-        `${this.namexUrl()}/payments/${nrId}/payment/${paymentId}/${action}`,
+        `${appBaseURL}/payments/${nrId}/payment/${paymentId}/${action}`,
         {},
         { headers: { 'Content-Type': 'application/json' } }
       )
@@ -228,7 +229,7 @@ export default class NamexServices {
 
   static async downloadOutputs (nrId: number): Promise<void> {
     try {
-      const url = `${this.namexUrl()}/namerequests/${nrId}/result`
+      const url = `${appBaseURL}/namerequests/${nrId}/result`
       const headers = { 'Accept': 'application/pdf' }
 
       // Request PDF for specified id
@@ -263,7 +264,7 @@ export default class NamexServices {
 
   static async fetchStats (): Promise<StatsI> {
     try {
-      let response = await this.axios.get(`${this.namexUrl()}/statistics`)
+      let response = await this.axios.get(`${appBaseURL}/statistics`)
       if (response?.status === OK && response?.data) return response.data
       throw new Error(`Invalid response = ${response}`)
     } catch (err) {
@@ -283,7 +284,7 @@ export default class NamexServices {
         }
 
         // call namerequest get endpoint to retrieve NR detail, also verify affiliation
-        const response = await this.axios.get(`${this.namexUrl()}/namerequests/${nrId}?org_id=${accountId}`, {
+        const response = await this.axios.get(`${appBaseURL}/namerequests/${nrId}?org_id=${accountId}`, {
           headers
         })
         if (response?.status === OK && response?.data) return response.data
@@ -309,7 +310,7 @@ export default class NamexServices {
       // eslint-disable-next-line no-console
       console.log('get ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
         sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
-      const response = await this.axios.get(`${this.namexUrl()}/namerequests`, {
+      const response = await this.axios.get(`${appBaseURL}/namerequests`, {
         cancelToken: source.token
       })
       if (response?.status === OK && response?.data) return response.data
@@ -340,7 +341,7 @@ export default class NamexServices {
       // Is 0 when we only want the NR count.
       let rowCount = isCountCheck ? 0 : 1000
 
-      const response = await this.axios.get(`${this.namexUrl()}/requests?rows=${rowCount}`, {
+      const response = await this.axios.get(`${appBaseURL}/requests?rows=${rowCount}`, {
         params,
         headers
       })
@@ -394,7 +395,7 @@ export default class NamexServices {
   static async nameAnalysis (params: NewRequestNameSearchI): Promise<AnalysisJSONI> {
     const { CancelToken } = Axios
     const source = CancelToken.source()
-    const response = await this.axios.get(`${this.namexUrl()}/name-analysis`, {
+    const response = await this.axios.get(`${appBaseURL}/name-analysis`, {
       params,
       cancelToken: source.token,
       timeout: ANALYSIS_TIMEOUT_MS
@@ -412,7 +413,7 @@ export default class NamexServices {
       console.log('patch ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
         sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
       const response: any = requestData &&
-        await this.axios.patch(`${this.namexUrl()}/namerequests/${nrId}/edit`, requestData, {
+        await this.axios.patch(`${appBaseURL}/namerequests/${nrId}/edit`, requestData, {
           headers: { 'Content-Type': 'application/json' }
         })
 
@@ -433,7 +434,7 @@ export default class NamexServices {
       // eslint-disable-next-line no-console
       console.log('patch by action ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
         sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
-      const response: any = await this.axios.patch(`${this.namexUrl()}/namerequests/${nrId}/${nrAction}`, {}, {
+      const response: any = await this.axios.patch(`${appBaseURL}/namerequests/${nrId}/${nrAction}`, {}, {
         headers: { 'Content-Type': 'application/json' }
       })
 
@@ -470,7 +471,7 @@ export default class NamexServices {
       console.log('post ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
         sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
 
-      const response = await this.axios.post(`${this.namexUrl()}/namerequests`, requestData, {
+      const response = await this.axios.post(`${appBaseURL}/namerequests`, requestData, {
         headers: { 'Content-Type': 'application/json' }
       })
       if (response?.data && [OK, CREATED, ACCEPTED, NO_CONTENT].includes(response?.status)) {
@@ -500,7 +501,7 @@ export default class NamexServices {
       console.log('put ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
         sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
       const response: any = requestData && await this.axios.put(
-        `${this.namexUrl()}/namerequests/${nrId}`,
+        `${appBaseURL}/namerequests/${nrId}`,
         requestData,
         { headers: { 'Content-Type': 'application/json' } }
       )
@@ -529,7 +530,7 @@ export default class NamexServices {
       console.log('rollback ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
         sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
       const response = await this.axios.patch(
-        `${this.namexUrl()}/namerequests/${nrId}/rollback/${RollbackActions.CANCEL}`,
+        `${appBaseURL}/namerequests/${nrId}/rollback/${RollbackActions.CANCEL}`,
         {},
         { headers: { 'Content-Type': 'application/json' } }
       )

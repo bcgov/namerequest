@@ -232,6 +232,7 @@ import { sleep, getFeatureFlag, navigate } from '@/plugins'
 import NamexServices from '@/services/namex.services'
 import ContactInfo from '@/components/common/contact-info.vue'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { appBaseURL } from '../../router/router'
 
 @Component({
   components: {
@@ -705,7 +706,7 @@ export default class ExistingRequestDisplay extends Mixins(
       sessionStorage.setItem('NR_DATA', JSON.stringify(this.nr))
       // navigate to BC Registry login page with return parameter
       const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
-      const nameRequestUrl = `${window.location.origin}${process.env.BASE_URL}`
+      const nameRequestUrl = `${window.location.origin}${appBaseURL}`
       navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
     }
   }
