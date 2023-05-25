@@ -1,12 +1,12 @@
 import axios from 'axios'
 import { EnvConfigI } from '@/interfaces'
+import { appBaseURL } from '../router/router';
 
 export async function getConfig (): Promise<EnvConfigI> {
   // get config from environment
   const windowLocationOrigin = window.location.origin
-  const processEnvBaseUrl = process.env.BASE_URL
 
-  if (!processEnvBaseUrl || !windowLocationOrigin) {
+  if (!{appBaseURL} || !windowLocationOrigin) {
     return Promise.reject(new Error('Missing environment variables'))
   }
 
