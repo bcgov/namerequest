@@ -206,7 +206,7 @@
           />
 
           <!-- incorporate button -->
-          <div class="mt-5 text-center" v-if="!showIncorporateButton">
+          <div class="mt-5 text-center" v-if="showIncorporateButton">
             <v-btn id="INCORPORATE-btn" @click="handleButtonClick(NrAction.INCORPORATE)">
               Incorporate Using This Name Request
             </v-btn>
