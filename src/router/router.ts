@@ -13,8 +13,8 @@ let appBaseURL = '' // Global variable to store the custom base URL
 export function getVueRouter () {
   Vue.use(VueRouter)
 
-  const customBaseURL = 'https://namex-dev.apps.silver.devops.gov.bc.ca/api/v1'
-  appBaseURL = customBaseURL// Assign the custom base URL to the global variable
+  const customBaseURL = process.env.VUE_APP_NAMEX_API_URL + process.env.VUE_APP_NAMEX_API_VERSION
+  appBaseURL = customBaseURL // Assign the custom base URL to the global variable
 
   return new VueRouter({
     mode: 'history',

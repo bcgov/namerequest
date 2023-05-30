@@ -38,10 +38,6 @@ axiosNamex.interceptors.request.use(
 export default class NamexServices {
   static axios = axiosNamex
 
-  // static namexUrl () {
-  //   return sessionStorage.getItem('BASE_URL')
-  // }
-
   static async addRequestActionComment (
     requestActionCd: RequestCode,
     data: NameRequestI

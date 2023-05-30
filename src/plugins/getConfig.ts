@@ -9,10 +9,7 @@ export async function getConfig (): Promise<EnvConfigI> {
   if (!{ appBaseURL } || !windowLocationOrigin) {
     return Promise.reject(new Error('Missing environment variables'))
   }
-
-  // const baseURL = process.env.VUE_APP_NAMEX_API_URL + process.env.VUE_APP_NAMEX_API_VERSION
-  // sessionStorage.setItem('BASE_URL', baseURL)
-  // axios.defaults.baseURL = baseURL
+  axios.defaults.baseURL = appBaseURL
 
   const paymentPortalUrl = process.env.VUE_APP_PAYMENT_PORTAL_URL
   sessionStorage.setItem('PAYMENT_PORTAL_URL', paymentPortalUrl)

@@ -232,7 +232,6 @@ import { sleep, getFeatureFlag, navigate } from '@/plugins'
 import NamexServices from '@/services/namex.services'
 import ContactInfo from '@/components/common/contact-info.vue'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { appBaseURL } from '../../router/router'
 
 @Component({
   components: {
