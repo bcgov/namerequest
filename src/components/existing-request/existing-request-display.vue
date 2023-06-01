@@ -705,7 +705,7 @@ export default class ExistingRequestDisplay extends Mixins(
       sessionStorage.setItem('NR_DATA', JSON.stringify(this.nr))
       // navigate to BC Registry login page with return parameter
       const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
-      const nameRequestUrl = `${window.location.origin}${process.env.BASE_URL}`
+      const nameRequestUrl = `${window.location.origin}`
       navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
     }
   }
