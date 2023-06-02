@@ -314,7 +314,12 @@ export const checkCOLIN = ({ getters }, corpNum: string) => {
       // Remove BC prefix as Colin only supports base number with no prefix for BC's
       const cleanedCorpNum = corpNum.replace(/^BC+/i, '')
       url = `${appBaseURL}/colin/${cleanedCorpNum}`
-      return axios.post(url, {})
+      return axios.post(url, {}).then(response => {
+        if (response.data.directors === 'Not Available' && response.data.incorporated === 'Not Available') {
+          const error = new Error('Not Found')
+          return Promise.reject(error)
+        }
+      })
     } else {
       return Promise.reject(error)
     }
