@@ -22,6 +22,7 @@ import { MRAS_MIN_LENGTH, MRAS_MAX_LENGTH } from '@/components/new-request/const
 
 // List Data
 import { CanJurisdictions, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
+import { appBaseURL } from '../router/router'
 
 // Interfaces
 import {
@@ -304,10 +305,20 @@ export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> =
 
 // FUTURE: not an action - move it to another module?
 export const checkCOLIN = ({ getters }, corpNum: string) => {
-  // Remove BC prefix as Colin only supports base number with no prefix for BC's
-  const cleanedCorpNum = corpNum.replace(/^BC+/i, '')
-  let url = `colin/${cleanedCorpNum}`
-  return axios.post(url, {})
+  const myToken = sessionStorage.getItem('KEYCLOAK_TOKEN')
+
+  // check entity for the corp num first
+  let url = `${appBaseURL}/businesses/${corpNum}`
+  return axios.get(url, {}).catch(error => {
+    if (error.response && error.response.status === 404) {
+      // Remove BC prefix as Colin only supports base number with no prefix for BC's
+      const cleanedCorpNum = corpNum.replace(/^BC+/i, '')
+      url = `${appBaseURL}/colin/${cleanedCorpNum}`
+      return axios.post(url, {})
+    } else {
+      return Promise.reject(error)
+    }
+  })
 }
 
 // FUTURE: not an action - move it to another module?
