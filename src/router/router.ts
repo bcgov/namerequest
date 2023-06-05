@@ -8,7 +8,7 @@ import { routes } from './routes'
  * Configures and returns Vue Router.
  */
 
-let appBaseURL = process.env.VUE_APP_NAMEX_API_URL + process.env.VUE_APP_NAMEX_API_VERSION // Global variable to store the custom base URL
+let appBaseURL = process.env.VUE_APP_NAMEX_API_URL + process.env.VUE_APP_NAMEX_API_VERSION // Global variable to store the app' base URL
 
 export function getVueRouter () {
   Vue.use(VueRouter)
