@@ -319,6 +319,8 @@ export const checkCOLIN = ({ getters }, corpNum: string) => {
           const error = new Error('Not Found')
           return Promise.reject(error)
         }
+      }).catch(error => {
+        return Promise.reject(error)
       })
     } else {
       return Promise.reject(error)
