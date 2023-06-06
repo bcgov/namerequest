@@ -36,10 +36,10 @@ export const baseItemsConflicts = {
   [NameCheckItemType.EXACT_MATCH]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
-    problem: 'There is an existing BC Corporation using the <b>exact name</b>',
+    problem: 'This <b>exact name</b> is currently used by existing BC entity or reserved for use',
     words: null,
     expandExtraInfo: false,
-    expandedInfo1: 'Exact name in use. A name will not be approved if there is ' +
+    expandedInfo1: 'Exact name in use or reserved for use (NR). A name will not be approved if there is ' +
     'an existing business using the exact same name.',
     expandedInfo2: null,
     expandedList: [],
@@ -53,10 +53,10 @@ export const baseItemsConflicts = {
   [NameCheckItemType.EXACT_MATCH_XPRO]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
-    problem: 'There is an existing BC Corporation using the <b>exact name</b>',
+    problem: 'This <b>exact name</b> is currently used by existing BC entity or reserved for use',
     words: null,
     expandExtraInfo: false,
-    expandedInfo1: 'Exact name in use. You must use (assume) a new name unless ' +
+    expandedInfo1: 'Exact name in use or reserved for use (NR). You must use (assume) a new name unless ' +
     'you can obtain consent to use this name. You will need to change ' +
     'your business name in your home jurisdiction to match the assumed name in BC.',
     expandedInfo2: 'You will be able to enter up to two Assumed Name ' +
@@ -101,7 +101,7 @@ export const baseItemsConflicts = {
   [NameCheckItemType.SIMILAR_MATCH]: {
     icon: 'mdi-alert',
     iconColor: 'caution',
-    problem: 'There are existing BC Corporations using the <b>same or similar words</b>',
+    problem: '<b>Same or similar words</b> are used by existing BC entities or reserved for use (NR)',
     words: null,
     expandExtraInfo: false,
     expandedInfo1: 'custom text for similarMatch in component',
@@ -117,14 +117,14 @@ export const baseItemsConflicts = {
   [NameCheckItemType.SIMILAR_MATCH_XPRO]: {
     icon: 'mdi-alert',
     iconColor: 'caution',
-    problem: 'There are existing BC Corporations using the <b>same or similar words</b>',
+    problem: '<b>Same or similar words</b> are used by existing BC entities or reserved for use (NR)',
     words: null,
     expandExtraInfo: false,
     expandedInfo1: 'No exact matches were found for your name, ' +
     'but you should review the above list to help determine if ' +
-    'there is a similar business name already in use in BC that ' +
-    'might prevent your name from being approved.',
-    expandedInfo2: 'If an existing name is too similar to your ' +
+    'there is a similar business name already in use or reserved in' +
+    ' BC that might prevent your name from being approved.',
+    expandedInfo2: 'If an existing or reserved name is too similar to your ' +
     'name you will be required to use (assume) a new name in BC. ' +
     'You will be notified as part of the review process if you ' +
     'need to use an assumed name, or if consent is required to ' +
