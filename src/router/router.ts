@@ -12,7 +12,6 @@ let appBaseURL = process.env.VUE_APP_NAMEX_API_URL + process.env.VUE_APP_NAMEX_A
 
 export function getVueRouter () {
   Vue.use(VueRouter)
-
   return new VueRouter({
     mode: 'history',
     base: '',
