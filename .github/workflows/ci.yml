@@ -1,4 +1,4 @@
-name: Name Request UI CI
+name: NAMEREQUEST UI CI
 
 on:
   pull_request:
