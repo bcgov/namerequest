@@ -36,7 +36,7 @@ export const baseItemsConflicts = {
   [NameCheckItemType.EXACT_MATCH]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
-    problem: 'This <b>exact name</b> is currently used by existing BC entity or reserved for use',
+    problem: 'This <b>exact name</b> is currently used by an existing BC entity or reserved for use',
     words: null,
     expandExtraInfo: false,
     expandedInfo1: 'Exact name in use or reserved for use (NR). A name will not be approved if there is ' +
@@ -53,7 +53,7 @@ export const baseItemsConflicts = {
   [NameCheckItemType.EXACT_MATCH_XPRO]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
-    problem: 'This <b>exact name</b> is currently used by existing BC entity or reserved for use',
+    problem: 'This <b>exact name</b> is currently used by an existing BC entity or reserved for use',
     words: null,
     expandExtraInfo: false,
     expandedInfo1: 'Exact name in use or reserved for use (NR). You must use (assume) a new name unless ' +
