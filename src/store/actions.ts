@@ -345,7 +345,7 @@ export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
         return response.data
       }
       throw new Error(`Status was not 200, response = ${response}`)
-    } catch (err) {
+    } catch (err: any) {
       const status: number = err?.response?.status
       // do not generate console error for the errors codes
       // that mras-search-info page handles

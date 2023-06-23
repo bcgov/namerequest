@@ -198,7 +198,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
-import { NameCheckIssuesDialog } from '@/components/dialogs'
+import NameCheckIssuesDialog from '@/components/dialogs/name-check-issues.vue'
 import MainContainer from '@/components/new-request/main-container.vue'
 import NameCheckConflicts from '@/components/new-request/name-check/name-check-conflicts.vue'
 import NameCheckTabContent from '@/components/new-request/name-check/name-check-tab-content.vue'
@@ -262,8 +262,8 @@ export default class NameCheck extends Vue {
     scrollingContainer: true
   }
 
-  private checks: string = null
-  private dialogOptions: DialogOptionsI = {
+  checks: string = null
+  dialogOptions: DialogOptionsI = {
     acceptText: 'Submit this name for review',
     cancelText: 'Return to Results',
     icon: '',
@@ -278,10 +278,10 @@ export default class NameCheck extends Vue {
       'for final review by our staff.'
     ]
   }
-  private expandHelpTxt = false
-  private originalName: string = ''
-  private showNameCheckIssuesDialog: boolean = false
-  private readonly tradeMarkDBLink = 'http://www.strategis.ic.gc.ca'
+  expandHelpTxt = false
+  originalName = ''
+  showNameCheckIssuesDialog = false
+  readonly tradeMarkDBLink = 'http://www.strategis.ic.gc.ca'
 
   mounted () {
     this.originalName = this.getFullName?.toUpperCase() || ''

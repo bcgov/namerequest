@@ -92,7 +92,7 @@ import { DateMixin, LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin 
 import axios from 'axios'
 
 // dialogs and other components
-import { GenesysWebMessage } from '@bcrs-shared-components/genesys-web-message'
+import GenesysWebMessage from '@bcrs-shared-components/genesys-web-message/GenesysWebMessage.vue'
 import { WebChat as ChatPopup } from '@bcrs-shared-components/web-chat'
 import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
@@ -158,16 +158,16 @@ export default class App extends Mixins(
   readonly window = window
 
   /** Whether to show the loading spinner. */
-  protected showSpinner = false
+  showSpinner = false
 
   /** Whether the StaffPaymentErrorDialog should be displayed */
-  protected staffPaymentErrorDialog = false
+  staffPaymentErrorDialog = false
 
   /** Errors from the API */
-  protected saveErrors: Array<string> = []
+  saveErrors: Array<string> = []
 
   /** Warnings from the API */
-  protected saveWarnings: Array<string> = []
+  saveWarnings: Array<string> = []
 
   /** The Update Current JS Date timer id. */
   private updateCurrentJsDateId = 0
