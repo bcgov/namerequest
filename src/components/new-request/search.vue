@@ -235,7 +235,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Vue, Watch } from 'vue-property-decorator'
+import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 // bcregistry common
@@ -251,6 +251,7 @@ import { AccountType, EntityType, Location, RequestCode } from '@/enums'
 import { CommonMixin } from '@/mixins'
 import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
 
+/** This component is used for CREATING a Name Request. */
 @Component({
   components: { NameInput }
 })
@@ -300,12 +301,12 @@ export default class NewSearch extends Mixins(CommonMixin) {
   @Action startAnalyzeName!: ActionBindingIF
 
   // Local properties
-  private corpNumValid = true
-  private corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
-  private locationDisabled = false
+  corpNumValid = true
+  readonly corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
+  locationDisabled = false
 
   // Local enum
-  private request_action_enum = [
+  request_action_enum = [
     RequestCode.NEW,
     RequestCode.MVE,
     RequestCode.REH,
