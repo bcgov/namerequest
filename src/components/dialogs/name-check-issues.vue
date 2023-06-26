@@ -50,14 +50,14 @@ import { DialogOptionsI } from '@/interfaces'
 
 @Component({})
 export default class NameCheckIssuesDialog extends Vue {
-  @Prop() private readonly attach: string
-  @Prop() private readonly display: boolean
-  @Prop() private readonly options: DialogOptionsI
+  @Prop() readonly attach: string
+  @Prop() readonly display: boolean
+  @Prop() readonly options: DialogOptionsI
 
   // Global getter
   @Getter isMobile!: boolean
 
-  @Emit() private proceed (val: boolean) { }
+  @Emit() proceed (val: boolean) { }
 }
 </script>
 

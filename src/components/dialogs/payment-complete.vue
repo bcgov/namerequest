@@ -40,7 +40,7 @@ import errorModule from '@/modules/error'
 import { PaymentStatus, SbcPaymentStatus } from '@/enums'
 import { CommonMixin, PaymentMixin, PaymentSessionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { ApplicantI, NameChoicesIF } from '@/interfaces'
+import { NameChoicesIF } from '@/interfaces'
 import { PAYMENT_COMPLETE_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import NamexServices from '@/services/namex.services'
 
@@ -77,10 +77,10 @@ export default class PaymentCompleteDialog extends Mixins(
   @Action toggleReceiptModal!: ActionBindingIF
 
   /** Used to show loading state on button. */
-  private loading = false
+  loading = false
 
   /** Whether this modal should be shown (per store property). */
-  private get showModal (): boolean {
+  get showModal (): boolean {
     return this.$store.getters[PAYMENT_COMPLETE_MODAL_IS_VISIBLE]
   }
 
@@ -152,7 +152,7 @@ export default class PaymentCompleteDialog extends Mixins(
     }
   }
 
-  private async downloadReceipt () {
+  async downloadReceipt () {
     const { paymentId } = this
     this.loading = true
     await this.downloadReceiptPdf(paymentId)

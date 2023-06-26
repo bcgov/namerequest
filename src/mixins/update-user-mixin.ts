@@ -1,5 +1,5 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { updateLdUser } from '@/plugins'
+import { UpdateLdUser } from '@/plugins'
 import AuthServices from '@/services/auth.services'
 
 @Component({})
@@ -20,13 +20,13 @@ export class UpdateUserMixin extends Vue {
   /** Updates Launch Darkly with current user info. */
   private async updateLaunchDarkly (userInfo: any): Promise<void> {
     // since username is unique, use it as the user key
-    const key: string = userInfo.username
-    const email: string = userInfo.contacts[0]?.email || userInfo.email
-    const firstName: string = userInfo?.firstname
-    const lastName: string = userInfo?.lastname
+    const key = userInfo.username as string
+    const email = userInfo.contacts[0]?.email || userInfo.email as string
+    const firstName = userInfo?.firstname as string
+    const lastName = userInfo?.lastname as string
     // remove leading { and trailing } and tokenize string
     const custom: any = { roles: userInfo.roles?.slice(1, -1).split(',') }
 
-    return updateLdUser(key, email, firstName, lastName, custom)
+    return UpdateLdUser(key, email, firstName, lastName, custom)
   }
 }

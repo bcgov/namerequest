@@ -46,7 +46,8 @@ export default class ReserveSubmit extends Vue {
 
   @Prop(String) readonly setup: string
 
-  private isContinue = true
+  // Local variable
+  isContinue = true
 
   private mounted () {
     this.$nextTick(() => {

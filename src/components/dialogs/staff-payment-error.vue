@@ -39,32 +39,31 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Emit } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
 
 @Component({})
 export default class StaffPaymentErrorDialog extends Vue {
   /** Prop to display the dialog. */
-  @Prop() private dialog: boolean
+  @Prop() readonly dialog: boolean
 
   /** Prop to provide attachment selector. */
-  @Prop() private attach: string
+  @Prop() readonly attach: string
 
   /** Prop containing error messages. */
-  @Prop({ default: () => [] }) private errors: string[]
+  @Prop({ default: () => [] }) readonly errors: string[]
 
   /** Prop containing warning messages. */
-  @Prop({ default: () => [] }) private warnings: string[]
+  @Prop({ default: () => [] }) readonly warnings: string[]
 
   /** Pass click event to parent. */
-  @Emit() private close () { }
+  @Emit() close () { }
 
   /** The number of errors in the passed-in array. */
-  private get numErrors (): number {
+  get numErrors (): number {
     return this.errors?.length || 0
   }
 
   /** The number of warnings in the passed-in array. */
-  private get numWarnings (): number {
+  get numWarnings (): number {
     return this.warnings?.length || 0
   }
 }
