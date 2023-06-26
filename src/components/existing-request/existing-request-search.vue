@@ -125,7 +125,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AdvancedSearch } from '@/components/dialogs'
+import AdvancedSearch from '@/components/dialogs/advanced-search.vue'
 import SearchHelpContent from '@/components/existing-request/search-help-content.vue'
 import { FormType, NameRequestI, ExistingRequestSearchI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
@@ -153,9 +153,9 @@ export default class ExistingRequestSearch extends Vue {
   @Action setExistingRequestSearch!: ActionBindingIF
   @Action setNameRequest!: ActionBindingIF
 
-  private errorMessage = ''
-  private isValid = false
-  private advancedSearchDialog = false
+  errorMessage = ''
+  isValid = false
+  advancedSearchDialog = false
 
   // eslint-disable-next-line no-useless-escape
   private NR_REGEX = /^(NR\ ?L?|L?)?([\d]{6,8})$/
@@ -180,13 +180,13 @@ export default class ExistingRequestSearch extends Vue {
     }
   }
 
-  private nrRules = [
+  nrRules = [
     v => this.NR_REGEX.test(v) || 'Please enter a valid NR number'
   ]
-  private emailRules = []
-  private phoneRules = []
+  emailRules = []
+  phoneRules = []
 
-  private async handleSubmit (): Promise<void> {
+  async handleSubmit (): Promise<void> {
     this.applyRules()
     this.$refs.existingNrForm.validate()
     await this.$nextTick()
@@ -220,7 +220,7 @@ export default class ExistingRequestSearch extends Vue {
       : []
   }
 
-  private handleExistingRequestSearch (key: string, value: string) {
+  handleExistingRequestSearch (key: string, value: string) {
     // uppercase the NR number
     if (key === 'nrNum') value = value.toUpperCase()
 

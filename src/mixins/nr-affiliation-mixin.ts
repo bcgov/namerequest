@@ -4,7 +4,7 @@ import AuthServices from '@/services/auth.services'
 import BusinessServices from '@/services/business.services'
 import { BusinessRequest, NameRequestI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { navigate } from '@/plugins'
+import { Navigate } from '@/plugins'
 import { CommonMixin } from '@/mixins'
 import { NrAffiliationErrors } from '@/enums'
 import { CREATED, BAD_REQUEST } from 'http-status-codes'
@@ -163,7 +163,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
   private goToEntityDashboard (businessId: string): void {
     if (businessId) {
       const dashboardUrl = sessionStorage.getItem('DASHBOARD_URL')
-      navigate(`${dashboardUrl}${businessId}`)
+      Navigate(`${dashboardUrl}${businessId}`)
     }
   }
 }

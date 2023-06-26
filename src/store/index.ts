@@ -10,8 +10,6 @@ import * as Mutations from './mutations'
 import * as Actions from './actions'
 import PaymentModule from '@/modules/payment'
 
-Vue.use(Vuex)
-
 export interface RootStateI {
   config?: EnvConfigI
 }

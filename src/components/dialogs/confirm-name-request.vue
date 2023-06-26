@@ -111,7 +111,7 @@ import { getBaseUrl } from '@/components/payment/payment-utils'
 import { NameChoicesIF } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { PaymentRequiredError } from '@/errors'
-import { navigate } from '@/plugins'
+import { Navigate } from '@/plugins'
 
 @Component({
   components: {
@@ -240,7 +240,7 @@ export default class ConfirmNrDialog extends Mixins(
       if (paymentResponse.sbcPayment.isPaymentActionRequired) {
         this.navigateToPaymentPortal(paymentToken, returnUrl)
       } else {
-        navigate(returnUrl)
+        Navigate(returnUrl)
       }
     }
 
