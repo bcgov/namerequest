@@ -37,6 +37,18 @@ export interface ApplicantI {
   stateProvinceCd: string
 }
 
+export const EmptyApplicant: ApplicantI = {
+  addrLine1: null,
+  city: null,
+  contact: null,
+  countryTypeCd: null,
+  emailAddress: null,
+  firstName: null,
+  lastName: null,
+  postalCd: null,
+  stateProvinceCd: null
+}
+
 export interface ConditionalReqI {
   additionalInfo: string
   applicants: [ ApplicantI ]

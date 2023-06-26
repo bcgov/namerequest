@@ -60,7 +60,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 import { StatsI } from '@/interfaces'
-import { getFeatureFlag } from '@/plugins'
+import { GetFeatureFlag } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from '@/services/namex.services'
 
@@ -75,8 +75,8 @@ export default class Stats extends Vue {
 
   async created (): Promise<void> {
     if (
-      getFeatureFlag('hardcoded_regular_wait_time') === 0 ||
-      getFeatureFlag('hardcoded_priority_wait_time') === 0
+      GetFeatureFlag('hardcoded_regular_wait_time') === 0 ||
+      GetFeatureFlag('hardcoded_priority_wait_time') === 0
     ) {
       const stats = await NamexServices.fetchStats()
       if (stats) this.setStats(stats)
@@ -89,7 +89,7 @@ export default class Stats extends Vue {
 
   /** The regular wait time, in days. */
   get regularWaitTime (): string | number {
-    const regularWaitTime = getFeatureFlag('hardcoded_regular_wait_time')
+    const regularWaitTime = GetFeatureFlag('hardcoded_regular_wait_time')
     if (regularWaitTime > 0) {
       return regularWaitTime
     } else {
@@ -99,7 +99,7 @@ export default class Stats extends Vue {
 
   /** The priority wait time, in hours. */
   get priorityWaitTime (): string | number {
-    const priorityWaitTime = getFeatureFlag('hardcoded_priority_wait_time')
+    const priorityWaitTime = GetFeatureFlag('hardcoded_priority_wait_time')
     if (priorityWaitTime > 0) {
       return priorityWaitTime
     } else {

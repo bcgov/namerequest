@@ -1,9 +1,7 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 import { shallowMount, mount } from '@vue/test-utils'
-import { StaffPaymentErrorDialog } from '@/components/dialogs'
-
-Vue.use(Vuetify)
+import StaffPaymentErrorDialog from '@/components/dialogs/staff-payment-error.vue'
 
 const vuetify = new Vuetify({})
 

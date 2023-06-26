@@ -1,5 +1,5 @@
 <template>
-  <v-row id="link-row" class="links-row text-body-4 px-2" :class="{ 'links-row-mobile' : isMobile }">
+  <v-row id="link-row" class="links-row text-body-4 px-2 my-0" :class="{ 'links-row-mobile' : isMobile }">
     <v-col cols="12" md="4" lg="4">
       <a class="nr-required-activator"
          :class="{ 'no-selector-link' : !entitySelectorUrl }"
@@ -46,7 +46,7 @@ export default class LinkRow extends Mixins(CommonMixin) {
   @Getter isMobile!: boolean
 
   /** Entity Selector Tool */
-  private get entitySelectorUrl (): string {
+  get entitySelectorUrl (): string {
     return sessionStorage.getItem('ENTITY_SELECTOR_URL')
   }
 

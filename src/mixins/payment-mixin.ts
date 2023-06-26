@@ -14,7 +14,7 @@ import { StaffPaymentIF, RefundParamsIF, NameRequestI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from '@/services/namex.services'
 import { PaymentRequiredError } from '@/errors'
-import { navigate } from '@/plugins'
+import { Navigate } from '@/plugins'
 import { appBaseURL } from '../router/router'
 
 @Component({})
@@ -487,7 +487,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
   navigateToPaymentPortal (paymentToken: string, returnUrl: string) {
     const paymentPortalUrl = sessionStorage.getItem('PAYMENT_PORTAL_URL')
     const url = `${paymentPortalUrl}${paymentToken}/${returnUrl}`
-    navigate(url)
+    Navigate(url)
   }
 
   /**
@@ -584,7 +584,8 @@ export class PaymentMixin extends Mixins(ActionMixin) {
         return response.data
       }
       throw new Error(`Invalid response = ${response}`)
-    } catch (err) {
+    } catch (error) {
+      const err = error as any
       if (err?.response?.status === PAYMENT_REQUIRED) {
         throw new PaymentRequiredError(err)
       }

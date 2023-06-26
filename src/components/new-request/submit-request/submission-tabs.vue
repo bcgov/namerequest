@@ -80,7 +80,7 @@ export default class SubmissionTabs extends Vue {
     document.head.appendChild(link)
   }
 
-  private get submissionModeHeader (): string {
+  get submissionModeHeader (): string {
     // safety check
     if (this.getEditMode) return ''
 
@@ -91,11 +91,11 @@ export default class SubmissionTabs extends Vue {
     }
   }
 
-  private get submissionTabNumber (): number {
+  get submissionTabNumber (): number {
     return this.getSubmissionTabNumber
   }
 
-  private set submissionTabNumber (value: number) {
+  set submissionTabNumber (value: number) {
     this.setSubmissionTabNumber(value)
   }
 }

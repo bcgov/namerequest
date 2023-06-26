@@ -2,12 +2,12 @@
   <v-form @keydown="validate" id="send-to-examination-form">
     <v-container fluid class="pa-0" id="send-to-examination-container">
       <template v-if="getEditMode">
-        <v-row class="mt-5">
+        <v-row class="mt-5 mb-0">
           <v-col cols="6" class="font-weight-bold py-0">I need a name to:</v-col>
           <v-col cols="6" class="d-flex justify-end py-0"></v-col>
         </v-row>
 
-        <v-row class="mt-3">
+        <v-row class="mt-3 mb-0">
           <v-col cols="12" md="5" lg="5" :class="{'py-0': !isMobile}">
             <v-select :error-messages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
                       :hide-details="!getErrors.includes('request_action_cd')"
@@ -38,7 +38,7 @@
         </v-row>
       </template>
 
-      <v-row class="mt-5" v-if="getEditMode || getIsAssumedName">
+      <v-row class="mt-5 mb-0" v-if="getEditMode || getIsAssumedName">
         <v-col cols="auto" class="font-weight-bold h5 py-0" v-if="getEditMode">
           Name Choices
         </v-col>
@@ -47,7 +47,7 @@
         </v-col>
       </v-row>
 
-      <v-row class="mt-5">
+      <v-row class="mt-5 mb-0">
         <v-col cols="12" md="2" lg="2" class="label-style align-self-start pt-0" key="static-1">
           {{choicesLabelsAndHints[0].label}}
         </v-col>
@@ -135,7 +135,7 @@
         </transition>
       </v-row>
 
-      <v-row v-if="!getEditMode" class="my-1 py-0 colour-text mt-5">
+      <v-row v-if="!getEditMode" class="my-1 py-0 colour-text mt-5 mb-0">
         <v-col :cols="isMobile ? 0 : 2" class="py-0"></v-col>
         <v-col :cols="isMobile ? 12 : 10" class="py-0 text-body-3">
           <span v-if="location!=='BC'">
@@ -176,7 +176,7 @@
         </v-col>
       </v-row>
 
-      <v-row class="mt-5" v-if="showSecondAndThirdNameChoices">
+      <v-row v-if="showSecondAndThirdNameChoices" class="mt-5 mb-0">
         <v-col cols="12" md="2" lg="2" class="label-style align-self-start pt-0" key="static-2">
           {{choicesLabelsAndHints[1].label}}
         </v-col>
@@ -224,7 +224,7 @@
         </transition>
       </v-row>
 
-      <v-row no gutters class="mt-5" key="static-3" v-if="showSecondAndThirdNameChoices">
+      <v-row v-if="showSecondAndThirdNameChoices" class="mt-5 mb-0" key="static-3">
         <v-col cols="12" md="2" lg="2" class="label-style align-self-start pt-0">
           {{choicesLabelsAndHints[2].label}}
         </v-col>
@@ -293,6 +293,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { EntityType, Location, RequestCode } from '@/enums'
 import { CommonMixin } from '@/mixins'
 
+/** This component is used for EDITING a Name Request. */
 @Component({
   components: {
     ApplicantInfoNav
