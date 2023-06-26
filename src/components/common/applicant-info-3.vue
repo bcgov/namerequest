@@ -234,7 +234,7 @@ import { FolioNumberInput } from '@bcrs-shared-components/folio-number-input'
 import { ApplicantI, SubmissionTypeT } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { CorpNumRequests, Location, NrState, RequestCode } from '@/enums'
-import { getFeatureFlag } from '@/plugins'
+import { GetFeatureFlag } from '@/plugins'
 
 @Component({
   components: {
@@ -313,7 +313,7 @@ export default class ApplicantInfo3 extends Vue {
 
   /** Whether priority checkbox should be enabled. */
   get enablePriorityCheckbox (): boolean {
-    return !!getFeatureFlag('enable-priority-checkbox')
+    return !!GetFeatureFlag('enable-priority-checkbox')
   }
 
   mounted () {

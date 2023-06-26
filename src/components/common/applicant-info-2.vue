@@ -205,7 +205,7 @@ import { Action, Getter } from 'vuex-class'
 import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { CorpNumRequests, NrState, RequestCode } from '@/enums'
-import { getFeatureFlag } from '@/plugins'
+import { GetFeatureFlag } from '@/plugins'
 
 @Component({
   components: {
@@ -278,7 +278,7 @@ export default class ApplicantInfo2 extends Vue {
 
   /** Whether priority checkbox should be enabled. */
   get enablePriorityCheckbox (): boolean {
-    return !!getFeatureFlag('enable-priority-checkbox')
+    return !!GetFeatureFlag('enable-priority-checkbox')
   }
 
   mounted () {

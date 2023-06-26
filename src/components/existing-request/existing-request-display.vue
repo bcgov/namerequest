@@ -228,7 +228,7 @@ import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
 import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished, RequestCode }
   from '@/enums'
-import { sleep, getFeatureFlag, navigate } from '@/plugins'
+import { Sleep, GetFeatureFlag, Navigate } from '@/plugins'
 import NamexServices from '@/services/namex.services'
 import ContactInfo from '@/components/common/contact-info.vue'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
@@ -550,7 +550,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** Whether Upgrade Priority button should be enabled. */
   get enableUpgradeButton (): boolean {
-    return getFeatureFlag('enable-priority-checkbox')
+    return GetFeatureFlag('enable-priority-checkbox')
   }
 
   /** Returns True if the specified action button should be disabled. */
@@ -659,7 +659,7 @@ export default class ExistingRequestDisplay extends Mixins(
         default:
           if (await NamexServices.patchNameRequestsByAction(this.getNrId, action)) {
             this.setDisplayedComponent('Success')
-            await sleep(1000)
+            await Sleep(1000)
             this.setDisplayedComponent('ExistingRequestDisplay')
           }
           break
@@ -706,7 +706,7 @@ export default class ExistingRequestDisplay extends Mixins(
       // navigate to BC Registry login page with return parameter
       const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
       const nameRequestUrl = `${window.location.origin}`
-      navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
+      Navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
     }
   }
 
