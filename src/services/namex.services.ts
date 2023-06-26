@@ -474,7 +474,8 @@ export default class NamexServices {
         return response.data
       }
       throw new Error(`Invalid response = ${response}`)
-    } catch (err) {
+    } catch (error) {
+      const err = error as any
       // extra logging to help find errors
       err?.message && console.log('postNameRequest(), message =', err.message) // eslint-disable-line no-console
       err?.request && console.log('postNameRequest(), request =', err.request) // eslint-disable-line no-console

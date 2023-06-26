@@ -1,12 +1,12 @@
 <template>
   <v-form v-model="isValid" ref="step1" id="applicant-info-1-form">
-    <v-container fluid class="pa-0 mt-5" id="applicant-info-1">
+    <v-container fluid class="pa-0 mt-6" id="applicant-info-1">
       <v-row>
-        <v-col cols="2" class="h6 align-self-start pt-0">Applicant</v-col>
+        <v-col cols="2" class="h6 align-self-start">Applicant</v-col>
 
-        <v-col cols="12" md="10" lg="10" class="py-0">
+        <v-col cols="12" md="10" lg="10">
           <!--FIRST NAME, MIDDLE NAME, LAST NAME-->
-          <v-row>
+          <v-row class="mt-0 mb-n3">
             <v-col cols="12" md="4" lg="4" class="pt-0">
               <label for="firstname" class="hidden">First Name</label>
               <v-text-field
@@ -65,8 +65,8 @@
             </v-col>
           </v-row>
 
-          <!--ADDDRESS MENU !-->
-          <v-row class="mt-n1">
+          <!--ADDDRESS MENU / STREET ADDRESS-->
+          <v-row class="mt-2 mb-0">
             <v-col cols="12" class="py-0 my-0">
               <v-menu
                 bottom
@@ -163,7 +163,8 @@
             </v-col>
           </v-row>
 
-          <v-row class="mt-2">
+          <!--ADDDRESS LINE 2-->
+          <v-row class="mt-2 mb-0">
             <v-col cols="12" class="py-0 my-0">
               <label for="line2" class="hidden">Additional Street Address (Optional)</label>
               <v-text-field
@@ -185,7 +186,8 @@
             </v-col>
           </v-row>
 
-          <v-row class="mt-2" v-if="(applicant.addrLine2 || applicant.addrLine3) && !showAddressMenu">
+          <!--ADDDRESS LINE 3-->
+          <v-row v-if="(applicant.addrLine2 || applicant.addrLine3) && !showAddressMenu" class="mt-2 mb-0">
             <v-col cols="12" class="py-0 my-0">
               <label for="line3" class="hidden">Additional Street Address (Optional)</label>
               <v-text-field
@@ -207,7 +209,8 @@
             </v-col>
           </v-row>
 
-          <v-row class="mt-2">
+          <!--CITY, PROVINCE/STATE-->
+          <v-row class="mt-2 mb-0">
             <v-col cols="12" md="6" lg="6" class="py-0 my-0">
               <label for="city" class="hidden">City</label>
               <v-text-field
@@ -302,7 +305,8 @@
             </v-col>
           </v-row>
 
-          <v-row class="mt-2">
+          <!--COUNTRY, POSTAL/ZIP CODE-->
+          <v-row class="mt-2 mb-0">
             <v-col cols="12" md="6" lg="6" class="py-0 my-0">
               <label for="country" class="hidden">Country</label>
               <v-select
@@ -345,7 +349,8 @@
             </v-col>
           </v-row>
 
-          <v-row class="mt-2" v-if="getShowXproJurisdiction && showAllFields && getEditMode">
+          <!--BUSINESS JURISDICTION-->
+          <v-row v-if="getShowXproJurisdiction && showAllFields && getEditMode" class="mt-2 mb-0">
             <v-col cols="12" md="6" lg="6" class="py-0 my-0">
               <label for="xprojurisdiction" class="hidden">Business Jurisdiction</label>
               <v-select
@@ -370,7 +375,8 @@
             <v-col cols="6" class="py-0 my-0" />
           </v-row>
 
-          <v-row class="mt-5">
+          <!--ACTING ON OWN BEHALF-->
+          <v-row class="mt-5 mb-0">
             <v-col cols="12" md="7" lg="7" class="py-0">
               <v-checkbox
                 hide-details
@@ -396,7 +402,7 @@ import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { Location, NrState } from '@/enums'
 import { ActionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { NameRequestI } from '@/interfaces'
+import { EmptyApplicant, NameRequestI } from '@/interfaces'
 import { removeExcessSpaces } from '@/plugins/utilities'
 import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
 import AuthServices from '@/services/auth.services'
@@ -517,9 +523,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   }
 
   get applicant () {
-    // if applicant is null/undefined then return an object
-    // to prevent dereference errors (ie, cannot read property X of undefined)
-    return this.getApplicant || {}
+    return this.getApplicant || EmptyApplicant
   }
 
   get countryOptions () {

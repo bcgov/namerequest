@@ -1,8 +1,8 @@
 import Axios from 'axios'
-import { addAxiosInterceptors } from 'sbc-common-components/src/util/interceptors'
+import { AddAxiosInterceptors } from '@/plugins'
 import { BusinessRequest } from '@/interfaces'
 
-const axios = addAxiosInterceptors(Axios.create())
+const axios = AddAxiosInterceptors(Axios.create())
 
 export default class BusinessServices {
   /** Legal API URL. */

@@ -87,12 +87,12 @@
 // libraries, etc
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { getFeatureFlag } from '@/plugins'
+import { GetFeatureFlag } from '@/plugins'
 import { DateMixin, LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin } from '@/mixins'
 import axios from 'axios'
 
 // dialogs and other components
-import { GenesysWebMessage } from '@bcrs-shared-components/genesys-web-message'
+import GenesysWebMessage from '@bcrs-shared-components/genesys-web-message/GenesysWebMessage.vue'
 import { WebChat as ChatPopup } from '@bcrs-shared-components/web-chat'
 import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
@@ -158,16 +158,16 @@ export default class App extends Mixins(
   readonly window = window
 
   /** Whether to show the loading spinner. */
-  protected showSpinner = false
+  showSpinner = false
 
   /** Whether the StaffPaymentErrorDialog should be displayed */
-  protected staffPaymentErrorDialog = false
+  staffPaymentErrorDialog = false
 
   /** Errors from the API */
-  protected saveErrors: Array<string> = []
+  saveErrors: Array<string> = []
 
   /** Warnings from the API */
-  protected saveWarnings: Array<string> = []
+  saveWarnings: Array<string> = []
 
   /** The Update Current JS Date timer id. */
   private updateCurrentJsDateId = 0
@@ -177,7 +177,7 @@ export default class App extends Mixins(
   }
 
   get bannerText (): string | null {
-    const bannerText: string = getFeatureFlag('banner-text')
+    const bannerText: string = GetFeatureFlag('banner-text')
     // remove spaces so that " " becomes falsy
     return bannerText?.trim()
   }
@@ -268,12 +268,12 @@ export default class App extends Mixins(
 
   /** Whether the old webchat should be enabled. */
   get enableOldWebchat (): boolean {
-    return !!getFeatureFlag('enable-web-chat')
+    return !!GetFeatureFlag('enable-web-chat')
   }
 
   /** Whether the Genesys web message should be enabled. */
   get enableGenesysWebMessage (): boolean {
-    return !!getFeatureFlag('enable-genesys-web-message')
+    return !!GetFeatureFlag('enable-genesys-web-message')
   }
 }
 </script>

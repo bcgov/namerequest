@@ -15,9 +15,8 @@ import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 // import mockRouter from './MockRouter'
 
-Vue.use(Vuetify)
-
 const vuetify = new Vuetify({})
+
 const store = new Vuex.Store<any>({
   getters: {
     isMobile (): any {}

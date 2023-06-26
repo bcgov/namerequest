@@ -109,7 +109,7 @@ import { getBaseUrl } from '@/components/payment/payment-utils'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from '@/services/namex.services'
 import { PaymentRequiredError } from '@/errors'
-import { getFeatureFlag, navigate } from '@/plugins'
+import { GetFeatureFlag, Navigate } from '@/plugins'
 
 @Component({
   components: {
@@ -163,7 +163,7 @@ export default class ResubmitDialog extends Mixins(
 
   /** Whether priority checkbox should be enabled. */
   get enablePriorityCheckbox (): boolean {
-    return getFeatureFlag('enable-priority-checkbox')
+    return GetFeatureFlag('enable-priority-checkbox')
   }
 
   /** Whether this modal should be shown (per store property). */
@@ -255,7 +255,7 @@ export default class ResubmitDialog extends Mixins(
       if (paymentResponse.sbcPayment.isPaymentActionRequired) {
         this.navigateToPaymentPortal(paymentToken, returnUrl)
       } else {
-        navigate(returnUrl)
+        Navigate(returnUrl)
       }
     }
 

@@ -26,7 +26,7 @@ let ldClient: LDClient = null
 /**
  * An async method that initializes the Launch Darkly client.
  */
-export async function initLdClient (): Promise<void> {
+export async function InitLdClient (): Promise<void> {
   const envKey: string = window['ldClientId']
 
   if (envKey) {
@@ -63,7 +63,7 @@ export async function initLdClient (): Promise<void> {
  * @param lastName the user's last name
  * @param custom optional object of additional attributes associated with the user
  */
-export async function updateLdUser (
+export async function UpdateLdUser (
   key: string, email: string, firstName: string, lastName: string, custom: any = null
 ): Promise<void> {
   if (ldClient) {
@@ -81,6 +81,6 @@ export async function updateLdUser (
  * @param name the name of the feature flag
  * @returns the flag value/variation, or undefined if the flag is not found
  */
-export function getFeatureFlag (name: string): any {
+export function GetFeatureFlag (name: string): any {
   return ldClient ? ldClient.variation(name) : defaultFlagSet[name]
 }
