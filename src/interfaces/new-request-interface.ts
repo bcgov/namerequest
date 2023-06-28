@@ -3,7 +3,7 @@ import {
   RequestNameI, SelectOptionsI, StatsI, SubmissionTypeT, WaitingAddressSearchI
 } from '@/interfaces/models'
 import { NameChoicesIF, NrDataIF, RequestOrConsentIF } from '@/interfaces'
-import { EntityType, Location, NrAffiliationErrors, RequestCode } from '@/enums'
+import { EntityType, Location, NrAffiliationErrors, NrRequestActionCodes } from '@/enums'
 
 interface RequestNameMapI extends RequestNameI {}
 
@@ -56,7 +56,7 @@ export interface NewRequestIF {
   pickRequestTypeModalVisible: boolean
   priorityRequest: boolean
   quickSearchNames: any[]
-  request_action_cd: RequestCode
+  request_action_cd: NrRequestActionCodes
   request_jurisdiction_cd: string
   requestExaminationOrProvideConsent: RequestOrConsentIF
   showActualInput: boolean

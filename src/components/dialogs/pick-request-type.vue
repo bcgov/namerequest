@@ -1,47 +1,34 @@
 <template>
   <v-dialog v-model="showModal"
             id="pick-request-type-modal"
-            max-width="600px"
+            max-width="45rem"
             hide-overlay>
-    <v-card class="pa-0" id="pick-request-type-modal-card">
-      <v-card-text class="h4 pa-3 px-5">What would you like to do?</v-card-text>
-      <v-container class="my-n4 pt-0">
-        <v-row>
-          <v-col cols="6">
-            <v-simple-table class="text-left">
-              <tr v-for="type in tableData.col1" :key="type.value+'-tr'">
-                <td class="clickable-cell" :id="type.value" @click="chooseType(type)">
-                  <v-tooltip bottom max-width="500" :disabled="isMobile">
-                    <template v-slot:activator="scope">
-                      <button class="link-sm-sans-ul" v-on="scope.on">{{ type.text }}</button>
-                    </template>
-                    <span>{{ type.blurb }}</span>
-                  </v-tooltip>
-                </td>
-              </tr>
-            </v-simple-table>
+    <v-card>
+      <v-card-title class="d-flex justify-space-between">
+        <h4>What would you like to do?</h4>
+        <v-btn icon large class="dialog-close" @click="showModal = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-card-title>
+
+      <v-card-text>
+        <v-row no-gutters>
+          <v-col cols="6" class="d-block">
+            <ul v-for="(item, i) in tableData.col1" :key="`col1-${i}`">
+              <li class="clickable-cell" :id="item.value" @click="chooseType(item)">
+                <button class="link-sm-sans-ul">{{ item.text }}</button>
+              </li>
+            </ul>
           </v-col>
           <v-col cols="6">
-            <v-simple-table class="text-left">
-              <tr v-for="type in tableData.col2" :key="type.value+'-tr'">
-                <td class="clickable-cell" :id="type.value" @click="chooseType(type)">
-                  <v-tooltip bottom max-width="500" :disabled="isMobile">
-                    <template v-slot:activator="scope">
-                      <button class="link-sm-sans-ul" v-on="scope.on">{{ type.text }}</button>
-                    </template>
-                    <span>{{ type.blurb }}</span>
-                  </v-tooltip>
-                </td>
-              </tr>
-            </v-simple-table>
+            <ul v-for="(item, i) in tableData.col2" :key="`col2-${i}`">
+              <li class="clickable-cell" :id="item.value" @click="chooseType(item)">
+                <button class="link-sm-sans-ul">{{ item.text }}</button>
+              </li>
+            </ul>
           </v-col>
         </v-row>
-      </v-container>
-      <v-card-actions class="bg-grey-1 text-center">
-        <div style="display: block; width: 100%;">
-          <button @click="showModal = false"><v-icon>mdi-close</v-icon> Close</button>
-        </div>
-      </v-card-actions>
+      </v-card-text>
     </v-card>
   </v-dialog>
 </template>
@@ -75,12 +62,15 @@ export default class PickRequestTypeDialog extends Vue {
   }
 
   get tableData () {
-    const length = this.$requestActions.length
+    // get just the selectable items
+    const items = this.$requestActions.filter(item => !item.isHeader)
+
+    const length = items.length
     const midIndex = length % 2 ? (length + 1) / 2 : (length / 2)
 
     return {
-      col1: this.$requestActions.slice(0, midIndex),
-      col2: this.$requestActions.slice(midIndex, length)
+      col1: items.slice(0, midIndex),
+      col2: items.slice(midIndex, length)
     }
   }
 
@@ -100,6 +90,10 @@ export default class PickRequestTypeDialog extends Vue {
 
 .clickable-cell:hover {
   background-color: $app-lt-blue;
-  cursor: pointer;
+}
+
+// override button text centering
+.clickable-cell button {
+  text-align: unset;
 }
 </style>

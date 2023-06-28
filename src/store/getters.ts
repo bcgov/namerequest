@@ -30,10 +30,11 @@ import {
   CorpNumRequests,
   EntityType,
   Location,
+  NameType,
   NrAffiliationErrors,
   NrState,
   PriorityCode,
-  RequestCode
+  NrRequestActionCodes
 } from '@/enums'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
@@ -122,7 +123,7 @@ export const getEntityTypeCd = (state: StateIF): EntityType => {
 }
 
 /** The Request Code. */
-export const getRequestActionCd = (state: StateIF): RequestCode => {
+export const getRequestActionCd = (state: StateIF): NrRequestActionCodes => {
   return state.stateModel.newRequestModel.request_action_cd
 }
 
@@ -141,7 +142,7 @@ export const getCorpSearch = (state: StateIF): string => {
 
 /** True if current request action code is "conversion". */
 export const getIsConversion = (state: StateIF): boolean => {
-  return getRequestActionCd(state) === RequestCode.CNV
+  return getRequestActionCd(state) === NrRequestActionCodes.CONVERSION
 }
 
 export const getExistingRequestSearch = (state: StateIF): ExistingRequestSearchI => {
@@ -158,7 +159,10 @@ export const getErrors = (state: StateIF): string[] => {
 
 /** True if XproMras. */
 export const getIsXproMras = (state: StateIF): boolean => {
-  return ([Location.CA, Location.IN].includes(getLocation(state)) && (getRequestActionCd(state) !== RequestCode.MVE))
+  return (
+    [Location.CA, Location.IN].includes(getLocation(state)) &&
+    (getRequestActionCd(state) !== NrRequestActionCodes.MOVE)
+  )
 }
 
 export const getHasNoCorpNum = (state: StateIF): boolean => {
@@ -178,7 +182,7 @@ export const getExtendedRequestType = (state: StateIF): SelectOptionsI => {
 }
 
 export const getRequestTypeOptions = (state: StateIF): RequestActionsI[] => {
-  let option = RequestActions.find(type => type.value === RequestCode.NEW)
+  let option = RequestActions.find(type => type.value === NrRequestActionCodes.NEW_BUSINESS)
   option.rank = 1
   let options = [option]
   let n = 2
@@ -188,11 +192,14 @@ export const getRequestTypeOptions = (state: StateIF): RequestActionsI[] => {
     n = 3
   }
   let { requestTypeCd } = getNr(state)
-  if (getEditMode(state) && ['AS', 'AL', 'XASO', 'XCASO', 'UA'].includes(requestTypeCd)) {
-    options.push({ text: 'Assume an', value: RequestCode.ASSUMED, rank: n })
+  if (
+    getEditMode(state) &&
+    [NameType.AS, NameType.AL, NameType.XASO, NameType.XCASO, NameType.UA].includes(requestTypeCd)
+  ) {
+    options.push({ text: 'Assume an', value: NrRequestActionCodes.ASSUMED, rank: n })
     n++
   }
-  options.push({ text: 'View All Request Actions', value: RequestCode.INFO, rank: n })
+  options.push({ text: 'View All Request Actions', value: NrRequestActionCodes.INFO, rank: n })
 
   return options.sort((a, b) => {
     if (a.rank < b.rank) {
@@ -345,7 +352,7 @@ export const getConversionTypeOptions = (state: StateIF): ConversionTypesI[] => 
 /** Map the appropriate Blurb based on the request action and location */
 export const getEntityBlurbs = (state: StateIF): Array<EntityI | ConversionTypesI> => {
   switch (getRequestActionCd(state)) {
-    case RequestCode.NEW:
+    case NrRequestActionCodes.NEW_BUSINESS:
       if (getLocation(state) === Location.BC) {
         return EntityTypesBcData
       }
@@ -357,13 +364,13 @@ export const getEntityBlurbs = (state: StateIF): Array<EntityI | ConversionTypes
       }
       break
 
-    case RequestCode.MVE:
+    case NrRequestActionCodes.MOVE:
       if (getLocation(state) === Location.BC) {
         return EntityTypesBcData.map(x => ({ ...x, blurbs: x.mveBlurbs }))
       }
       break
 
-    case RequestCode.REH:
+    case NrRequestActionCodes.RESTORE:
       if (getLocation(state) === Location.BC) {
         return EntityTypesBcData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
       }
@@ -372,7 +379,7 @@ export const getEntityBlurbs = (state: StateIF): Array<EntityI | ConversionTypes
       }
       break
 
-    case RequestCode.AML:
+    case NrRequestActionCodes.AMALGAMATE:
       if (getLocation(state) === Location.BC) {
         return EntityTypesBcData.map(x => ({ ...x, blurbs: x.amlBlurbs }))
       }
@@ -385,7 +392,7 @@ export const getEntityBlurbs = (state: StateIF): Array<EntityI | ConversionTypes
       }
       break
 
-    case RequestCode.CHG:
+    case NrRequestActionCodes.CHANGE_NAME:
       if (getLocation(state) === Location.BC) {
         return EntityTypesBcData.map(x => ({ ...x, blurbs: x.chgBlurbs }))
       }
@@ -398,7 +405,7 @@ export const getEntityBlurbs = (state: StateIF): Array<EntityI | ConversionTypes
       }
       break
 
-    case RequestCode.CNV:
+    case NrRequestActionCodes.CONVERSION:
       if (getLocation(state) === Location.BC) {
         return ConversionTypes
       }
@@ -509,14 +516,17 @@ export const getShowXproJurisdiction = (state: StateIF): boolean => {
   return getLocation(state) !== Location.BC
 }
 
-export const getXproRequestTypeCd = (state: StateIF): string => {
+// For reference, see request_type_mapping in Namex constants file.
+export const getXproRequestTypeCd = (state: StateIF): NameType => {
   if (getIsAssumedName(state)) {
     switch (getEntityTypeCd(state)) {
-      case EntityType.RLC: return 'AL'
-      case EntityType.XCR: return 'AS'
+      // Xpro Limited Liability Company REST/REN/REH/RESUBMIT -> Xpro Limited Liability Company AS/RESUBMIT
+      case EntityType.RLC: return NameType.AL
+      // Xpro Corporation NEW_AML/NEW/AML/RESUBMIT -> Xpro Corporation AS/RESUBMIT
+      case EntityType.XCR: return NameType.AS
     }
   }
-  return ''
+  return null
 }
 
 /** Get entity type options. */
@@ -524,7 +534,7 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
   let bcOptions: SelectOptionsI[] = getEntityTypesBC(state)?.filter(x => {
     // Set shortlisted entity types for BC Move and Restoration requests.
     if (
-      [RequestCode.MVE, RequestCode.REH].includes(getRequestActionCd(state)) &&
+      [NrRequestActionCodes.MOVE, NrRequestActionCodes.RESTORE].includes(getRequestActionCd(state)) &&
       getLocation(state) === Location.BC
     ) {
       // Shortlist order: Limited company, Cooperative association
@@ -535,7 +545,7 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
         x.shortlist = null
         x.rank = null
       }
-    } else if (getRequestActionCd(state) === RequestCode.AML && getLocation(state) === Location.BC) {
+    } else if (getRequestActionCd(state) === NrRequestActionCodes.AMALGAMATE && getLocation(state) === Location.BC) {
       // Shortlist order: Limited company, Unlimited liability company
       if (x.value === EntityType.UL) {
         x.shortlist = true
@@ -566,7 +576,7 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
   })
   let xproOptions: SelectOptionsI[] = getEntityTypesXPRO(state).filter(x => {
     if (
-      getRequestActionCd(state) === RequestCode.NEW &&
+      getRequestActionCd(state) === NrRequestActionCodes.NEW_BUSINESS &&
       [Location.CA, Location.IN].includes(getLocation(state))
     ) {
       // Shortlist order: Limited company, Limited partnership
@@ -578,7 +588,7 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
         x.rank = null
       }
     } else if (
-      getRequestActionCd(state) === RequestCode.MVE &&
+      getRequestActionCd(state) === NrRequestActionCodes.MOVE &&
       [Location.CA, Location.IN].includes(getLocation(state))
     ) {
       // Shortlist order: Limited company, Cooperative association
@@ -590,7 +600,7 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
         x.rank = 2
       }
     } else if (
-      getRequestActionCd(state) === RequestCode.CHG &&
+      getRequestActionCd(state) === NrRequestActionCodes.CHANGE_NAME &&
       [Location.CA, Location.IN].includes(getLocation(state))
     ) {
       // Shortlist order: Limited company, Limited partnership, Limited liability partnership
@@ -631,13 +641,13 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
 
 /** Returned the filtered location options. */
 export const getLocationOptions = (state: StateIF): Array<any> => {
-  if (getRequestActionCd(state) === RequestCode.CNV) {
+  if (getRequestActionCd(state) === NrRequestActionCodes.CONVERSION) {
     return Locations.filter(location => location.value === Location.BC)
   }
-  if (getRequestActionCd(state) === RequestCode.ASSUMED) {
+  if (getRequestActionCd(state) === NrRequestActionCodes.ASSUMED) {
     return Locations.filter(location => location.value !== Location.BC)
   }
-  if (getRequestActionCd(state) === RequestCode.MVE) {
+  if (getRequestActionCd(state) === NrRequestActionCodes.MOVE) {
     return Locations.filter(location => location.value === Location.BC)
   }
   return Locations.filter(() => true) // copy of Locations
@@ -678,12 +688,12 @@ export const getShowCorpNum = (state: StateIF): CorpNumRequests.COLIN | CorpNumR
   ) {
     if (
       getLocation(state) === Location.CA &&
-      [RequestCode.NEW, RequestCode.ASSUMED].includes(getRequestActionCd(state))
+      [NrRequestActionCodes.NEW_BUSINESS, NrRequestActionCodes.ASSUMED].includes(getRequestActionCd(state))
     ) {
       return CorpNumRequests.MRAS
     }
     if (getLocation(state) === Location.BC &&
-      [RequestCode.MVE].includes(getRequestActionCd(state))
+      [NrRequestActionCodes.MOVE].includes(getRequestActionCd(state))
     ) {
       return CorpNumRequests.MRAS
     }
@@ -853,7 +863,7 @@ export const getNrRequestNames = (state: StateIF): RequestNameI[] => {
   const nrNames = getNrNames(state)
 
   const defaultValues = {
-    name_type_cd: getAssumedName(state) ? 'AS' : 'CO',
+    name_type_cd: getAssumedName(state) ? NameType.AS : NameType.CO,
     consent_words: '',
     conflict1: '',
     conflict1_num: ''
@@ -1039,7 +1049,7 @@ export const getConditionalNameReservation = (state: StateIF): ConditionalReqI =
       name: getName(state),
       choice: 1,
       designation: getSplitNameDesignation(state).designation,
-      name_type_cd: getIsAssumedName(state) ? 'AS' : 'CO',
+      name_type_cd: getIsAssumedName(state) ? NameType.AS : NameType.CO,
       consent_words: getConsentWords(state).length > 0 ? getConsentWords(state) : '',
       conflict1: getConsentConflicts(state).name,
       conflict1_num: getConsentConflicts(state).corpNum ? getConsentConflicts(state).corpNum : ''
@@ -1055,7 +1065,7 @@ export const getConditionalNameReservation = (state: StateIF): ConditionalReqI =
     priorityCd: PriorityCode.NO,
     entity_type_cd: getEntityTypeCd(state), // FUTURE: fix entity_type_cd type
     request_action_cd: getRequestActionCd(state),
-    request_type_cd: getXproRequestTypeCd(state) ? getXproRequestTypeCd(state) : '',
+    request_type_cd: getXproRequestTypeCd(state) || '',
     stateCd: NrState.COND_RESERVED,
     english: getNameIsEnglish(state),
     nameFlag: getIsPersonsName(state),

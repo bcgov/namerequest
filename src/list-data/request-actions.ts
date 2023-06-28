@@ -1,63 +1,78 @@
-import { RequestCode } from '@/enums'
+import { NrRequestActionCodes } from '@/enums'
 import { RequestActionsI } from '@/interfaces/models'
 
+/** All the request actions - some are gruop headers and others are nested selectable items. */
 export const RequestActions: RequestActionsI[] = [
   {
-    text: 'Register or Incorporate a',
+    isHeader: true,
+    group: 0,
+    text: 'For businesses that do not exist yet:'
+  },
+  {
+    group: 0,
+    text: 'Start a new BC-based business',
+    subtext: 'Incorporation or Registration',
     shortDesc: 'New Request',
-    value: RequestCode.NEW,
-    blurbs: `Create a new business in British Columbia or register a business you formed in another province or
-              territory, country or federal jurisdiction so that you may also conduct business here in BC.`
+    value: NrRequestActionCodes.NEW_BUSINESS
   },
   {
-    text: 'Relocate into',
+    isHeader: true,
+    group: 1,
+    text: 'For businesses that already exist outside BC:'
+  },
+  {
+    group: 1,
+    text: 'Register a business in BC that is incorporated in another jurisdiction',
+    subtext: 'Extraprovincial Registration',
+    shortDesc: 'New Request',
+    value: NrRequestActionCodes.NEW_BUSINESS
+  },
+  {
+    group: 1,
+    text: 'End business registration in another jurisdiction and transfer to BC',
+    subtext: 'Continuation In',
     shortDesc: 'Move Request',
-    value: RequestCode.MVE,
-    blurbs: `Transfer a corporation you formed in another jurisdiction so that it becomes a BC company.`
-  },
-  // COMMENTED OUT FOR FUTURE IMPLEMENTATION
-  // {
-  //   text: 'Assume a New Name in BC',
-  //   shortDesc: 'Assumed Name Request',
-  //   value: RequestCode.ASSUMED,
-  //   blurb: `You have an existing business in another province. You are closing your business there and moving your
-  //           business to BC, however, the name of your business is already in use in BC`
-  // },
-  {
-    text: 'Restore or Reinstate a',
-    shortDesc: 'Restore-Historical Request',
-    value: RequestCode.REH,
-    blurbs: `You have a corporation, cooperative association, society or financial institution that has been dissolved
-              or cancelled.  You want to start up again and use the same name or a new name.  You will need the
-              incorporation number assigned to you by BC Registries and Online Services.`
+    value: NrRequestActionCodes.MOVE
   },
   {
-    text: 'Amalgamate two or more',
-    shortDesc: 'Amalgamation Request',
-    value: RequestCode.AML,
-    blurbs: 'You have two or more businesses that you want to combine to create a new business.'
+    isHeader: true,
+    group: 2,
+    text: 'For businesses that are already incorporated or registered in BC:'
   },
   {
-    text: 'Change the name of an existing',
+    group: 2,
+    text: 'Change the name of an existing BC business',
+    subtext: 'Name Change',
     shortDesc: 'Change of Name Request',
-    value: RequestCode.CHG,
-    blurbs: `You have an existing business that is registered or incorporated in BC and you want to change your name.
-              You will need the incorporation or firm number assigned to you by BC Registries and Online Services.`
+    value: NrRequestActionCodes.CHANGE_NAME
   },
   {
-    text: 'Change (alter) the business type of a',
+    group: 2,
+    text: 'Combine two or more businesses in BC',
+    subtext: 'Amalgamation',
+    shortDesc: 'Amalgamation Request',
+    value: NrRequestActionCodes.AMALGAMATE
+  },
+  {
+    group: 2,
+    text: 'Alter from one BC business type to another',
+    subtext: 'Alteration',
     shortDesc: 'Conversion Request',
-    value: RequestCode.CNV,
-    blurbs: `You want to alter from one type of corporation to another.  For example you are a limited company and
-              want to become an unlimited liability company.   You will need the incorporation number assigned to you
-              by BC Registries and Online Services.`
+    value: NrRequestActionCodes.CONVERSION
+  },
+  {
+    group: 2,
+    text: 'Reactivate a BC or Extraprovincial company',
+    subtext: 'Restoration or Reinstatement',
+    shortDesc: 'Restore-Historical Request',
+    value: NrRequestActionCodes.RESTORE
   }
   // COMMENTED OUT FOR FUTURE IMPLEMENTATION
   // {
-  //   text: 'Restore with a New Name',
+  //   group: 2,
+  //   text: 'Restore a business that has been dissolved or cancelled',
+  //   subtext: 'Restoration or Reinstatement',
   //   shortDesc: 'Restore-New Request',
-  //   value: RequestCode.REN,
-  //   blurb: `You have a business that has been dissolved or cancelled. You want to start up again with a new name.
-  //           You will need your incorporation or firm number assigned to you by Registries.`
+  //   value: NrRequestActionCodes.RENEW
   // }
 ]

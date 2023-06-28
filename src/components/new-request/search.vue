@@ -1,43 +1,46 @@
 <template>
   <v-container fluid id="new-request-container" class="copy-normal pa-10">
     <v-row no-gutters>
-      <v-col cols="12" class="pt-0 font-weight-bold h6"><span>I need a name to:</span></v-col>
+      <v-col cols="12" class="pt-0 font-weight-bold h6">
+        I need a name to: {{ request_action_cd }} / {{ location }} / {{ entity_type_cd }}
+      </v-col>
     </v-row>
 
     <v-row class="mt-4" no-gutters>
-      <!--request_action_cd-->
+      <!-- request_action_cd -->
       <v-col cols="12" md="4" lg="4">
-        <v-tooltip top
-                   id="search-type-options-select"
-                   content-class="top-tooltip"
-                   transition="fade-transition"
-                   :disabled="request_action_cd !== RequestCode.CNV || isMobile">
-          <template v-slot:activator="scope">
-            <div v-on="scope.on">
-              <v-select :error-messages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
-                        :items="$requestActions"
-                        :menu-props="{ bottom: true, offsetY: true}"
-                        @change="clearErrors()"
-                        label="Select an Action"
-                        filled
-                        v-model="request_action_cd">
-                <template slot="item" slot-scope="data">
-                  <v-tooltip :disabled="!data.item.blurbs || isMobile" right transition="fade-transition">
-                    <template v-slot:activator="scope">
-                      <span v-on="scope.on" class="list-item">
-                        {{ data.item.text }}
-                      </span>
-                    </template>
-                    <span>{{ data.item.blurbs }}</span>
-                  </v-tooltip>
-                </template>
-              </v-select>
-            </div>
+        <v-select
+          filled
+          label="Select an Action"
+          :error-messages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
+          :items="requestActions"
+          :menu-props="{ bottom: true, offsetY: true, maxHeight: 423 }"
+          @change="clearErrors()"
+        >
+          <template v-slot:item="{ item }">
+            <v-list-item-title
+              v-if="item.isHeader"
+              class="group-header d-flex justify-space-between align-center"
+              @click.stop="toggleActionGroup(item.group)"
+            >
+              <div class="app-blue mr-4">{{ item.text }}</div>
+              <v-icon color="primary">
+                {{ item.group === activeActionGroup ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+              </v-icon>
+            </v-list-item-title>
+            <v-list-item-title
+              v-else
+              class="group-item ml-2 colour-text"
+              @click="request_action_cd = item.value"
+            >
+              <div class="font-weight-bold">{{ item.text }}</div>
+              <div>{{ item.subtext }}</div>
+            </v-list-item-title>
           </template>
-          <span>{{ getRequestText }}</span>
-        </v-tooltip>
+        </v-select>
       </v-col>
-      <!--location (aka jurisdiction)-->
+
+      <!-- location (aka jurisdiction) -->
       <v-col cols="12" md="4" lg="4" :class="{'px-3': !isMobile }">
         <v-tooltip id="location-options-select"
                    top
@@ -79,13 +82,16 @@
           <span>{{ getLocationText }}</span>
         </v-tooltip>
       </v-col>
-      <!--entity_type_cd-->
+
+      <!-- entity_type_cd -->
       <v-col cols="12" md="4" lg="4">
-        <v-tooltip id="entity-type-options-select"
-                   top
-                   content-class="top-tooltip"
-                   :disabled="request_action_cd !== RequestCode.CNV || !entityConversionText || isMobile"
-                   transition="fade-transition">
+        <v-tooltip
+          id="entity-type-options-select"
+          top
+          content-class="top-tooltip"
+          :disabled="request_action_cd !== NrRequestActionCodes.CONVERSION || !entityConversionText || isMobile"
+          transition="fade-transition"
+        >
           <template v-slot:activator="scope">
             <div v-on="scope.on">
               <v-select :error-messages="getErrors.includes('entity_type_cd') ? 'Please select a business type' : ''"
@@ -128,6 +134,7 @@
     </v-row>
 
     <v-row no-gutters>
+      <!-- jurisdiction for xpro/mras -->
       <v-col cols="12" md="4" lg="4" v-if="getIsXproMras">
         <v-select :error-messages="getErrors.includes('jurisdiction') ? 'Please select a jurisdiction' : ''"
                   :items="jurisdictionOptions"
@@ -143,21 +150,24 @@
           </template>
         </v-select>
       </v-col>
+
+      <!-- name -->
       <v-col :class="{
         'pl-3': (getIsXproMras && !isFederal && !isMobile),
         'pr-3': (!getIsXproMras && showDesignationSelect && !isMobile)
       }"
              :cols="(showDesignationSelect || (getIsXproMras)) && !isMobile ? '8' : '12'">
         <NameInput v-if="!isFederal"
-                   :class="inputCompClass"
                    :is-mras-search="(getIsXproMras && !noCorpNum)"
                    :menu-props="{ bottom: true, offsetY: true}"
                    id="name-input-component"
-                   class="pa-0"
+                   class="mt-0 pa-0"
                    @emit-corp-num-validity="corpNumValid = $event"/>
         <p v-else class="pl-3 text-body-2">Federally incorporated businesses do not need a Name Request. You may
-          register  your extraprovincial business immediately using its existing name at Corporate Online.</p>
+          register your extraprovincial business immediately using its existing name at Corporate Online.</p>
       </v-col>
+
+      <!-- designation -->
       <v-col v-if="showDesignationSelect" cols="12" md="4" lg="4">
         <v-select :class="!entity_type_cd ? 'disabled-custom' : ''"
                   :error-messages="getErrors.includes('designation') ? 'Please select a designation' : ''"
@@ -217,7 +227,7 @@
           </v-btn>
         </v-col>
       </v-row>
-      <v-row v-if="isPremium" class="pt-7" justify="center" no-gutters>
+      <v-row v-if="isPremiumOrStaff" class="pt-7" justify="center" no-gutters>
         <v-col cols="auto">
           <v-btn id="name-check-skip-btn" class="outlined pa-0" :ripple="false" text @click="handleSubmit(false)">
             <span>Submit this Name without checking</span>
@@ -247,7 +257,7 @@ import NameInput from './name-input.vue'
 // Interfaces / Enums / List Data
 import { ConversionTypesI, EntityI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { AccountType, EntityType, Location, RequestCode } from '@/enums'
+import { AccountType, EntityType, Location, NrRequestActionCodes } from '@/enums'
 import { CommonMixin } from '@/mixins'
 import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
 
@@ -258,7 +268,7 @@ import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
 export default class NewSearch extends Mixins(CommonMixin) {
   // enums for template
   readonly Location = Location
-  readonly RequestCode = RequestCode
+  readonly NrRequestActionCodes = NrRequestActionCodes
 
   // Global getters
   @Getter getConversionType!: EntityType
@@ -278,8 +288,7 @@ export default class NewSearch extends Mixins(CommonMixin) {
   @Getter getLocationOptions!: any[]
   @Getter getLocationText!: string
   @Getter getNameIsEnglish!: boolean
-  @Getter getRequestActionCd!: RequestCode
-  @Getter getRequestText!: string
+  @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter isMobile!: boolean
 
   // Global actions
@@ -304,16 +313,15 @@ export default class NewSearch extends Mixins(CommonMixin) {
   corpNumValid = true
   readonly corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
   locationDisabled = false
-
-  // Local enum
   request_action_enum = [
-    RequestCode.NEW,
-    RequestCode.MVE,
-    RequestCode.REH,
-    RequestCode.AML,
-    RequestCode.CHG,
-    RequestCode.CNV
+    NrRequestActionCodes.NEW_BUSINESS,
+    NrRequestActionCodes.MOVE,
+    NrRequestActionCodes.RESTORE,
+    NrRequestActionCodes.AMALGAMATE,
+    NrRequestActionCodes.CHANGE_NAME,
+    NrRequestActionCodes.CONVERSION
   ]
+  activeActionGroup = NaN
 
   private mounted () {
     this.$nextTick(() => {
@@ -330,9 +338,26 @@ export default class NewSearch extends Mixins(CommonMixin) {
   }
 
   // Local Getters
-  get isPremium (): boolean {
+  get isPremiumOrStaff (): boolean {
     return [AccountType.PREMIUM, AccountType.SBC_STAFF, AccountType.STAFF]
       .includes(JSON.parse(sessionStorage.getItem(SessionStorageKeys.CurrentAccount))?.accountType)
+  }
+
+  /** The request action items to display. */
+  get requestActions () {
+    return this.$requestActions.filter(action => {
+      // always show header action
+      if (action.isHeader) return true
+      // show item action if group is open
+      if (action.group === this.activeActionGroup) return true
+      // don't show this action
+      return false
+    })
+  }
+
+  /** If current group is active, deactivate it, otherwise activate group. */
+  toggleActionGroup (group: number) {
+    this.activeActionGroup = (this.activeActionGroup === group) ? NaN : group
   }
 
   get designation (): string {
@@ -394,14 +419,6 @@ export default class NewSearch extends Mixins(CommonMixin) {
     return this.$conversionTypes.find(conversion => conversion.value === this.getConversionType)?.text
   }
 
-  get inputCompClass () {
-    let errorTypes = ['entity_type_cd', 'request_action_cd', 'location']
-    if (errorTypes.some(type => this.getErrors.includes(type))) {
-      return 'mt-n5'
-    }
-    return 'mt-n2'
-  }
-
   get isFederal () {
     return (this.location === Location.CA && this.jurisdiction === Location.FD)
   }
@@ -450,17 +467,17 @@ export default class NewSearch extends Mixins(CommonMixin) {
     this.setNoCorpNum(value)
   }
 
-  get request_action_cd (): RequestCode {
+  get request_action_cd (): NrRequestActionCodes {
     return this.getRequestActionCd
   }
 
-  set request_action_cd (value: RequestCode) {
+  set request_action_cd (value: NrRequestActionCodes) {
     const request = this.$requestActions.find(request => request.value === value)
     this.location = null
     if (this.entity_type_cd) {
       this.entity_type_cd = null
     }
-    if (request?.value !== RequestCode.NEW) {
+    if (request?.value !== NrRequestActionCodes.NEW_BUSINESS) {
       this.setExtendedRequestType(request)
     }
     this.setRequestAction(value)
@@ -512,15 +529,15 @@ export default class NewSearch extends Mixins(CommonMixin) {
   }
 
   @Watch('request_action_cd')
-  watchRequestActionCd (newVal: RequestCode) {
+  watchRequestActionCd (newVal: NrRequestActionCodes) {
     // Set default location to BC for the requests where BC is the only location option
-    if ([RequestCode.CNV, RequestCode.MVE].includes(newVal)) {
+    if ([NrRequestActionCodes.CONVERSION, NrRequestActionCodes.MOVE].includes(newVal)) {
       this.setLocation(Location.BC)
       this.locationDisabled = true
       return
     }
     this.locationDisabled = false
-    if ([RequestCode.ASSUMED].includes(newVal)) {
+    if ([NrRequestActionCodes.ASSUMED].includes(newVal)) {
       if (this.location === Location.BC) {
         this.setLocation(Location.CA)
       }
@@ -531,6 +548,18 @@ export default class NewSearch extends Mixins(CommonMixin) {
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
+
+// set min height of request action groups and items only
+::v-deep .v-list-item:has(.group-header),
+::v-deep .v-list-item:has(.group-item) {
+  min-height: 60px;
+}
+
+// set border at top of group headers only
+::v-deep .v-list-item:has(.group-header) {
+  border-top: 1px solid $gray3;
+}
+
 .v-list {
   padding: 0;
 }
@@ -566,9 +595,6 @@ export default class NewSearch extends Mixins(CommonMixin) {
 }
 #goto-corporate-btn {
   min-height: 45px !important;
-}
-#name-input-component {
-  margin-top: 0 !important;
 }
 .mobile-btn {
   width: 17rem !important;

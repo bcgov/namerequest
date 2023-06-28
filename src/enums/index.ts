@@ -11,6 +11,7 @@ export * from './name-check-conflict-type'
 export * from './name-check-error-type'
 export * from './name-check-item-type'
 export * from './name-state'
+export * from './name-type'
 export * from './nr-action'
 export * from './nr-affiliation-errors'
 export * from './nr-state'
@@ -19,10 +20,13 @@ export * from './payment-action'
 export * from './payment-method'
 export * from './payment-status'
 export * from './priority-code'
-export * from './request-code'
 export * from './routes'
 export * from './rollback-actions'
 export * from './sbc-payment-status'
 
 // external enums
-export { StaffPaymentOptions } from '@bcrs-shared-components/enums'
+export {
+  NrRequestActionCodes,
+  NrRequestTypeCodes,
+  StaffPaymentOptions
+} from '@bcrs-shared-components/enums'

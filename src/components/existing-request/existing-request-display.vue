@@ -40,7 +40,7 @@
 
       <transition mode="out-in" name="fade">
         <div class="nr-data">
-          <v-row class="mt-5" :key="refreshCount">
+          <v-row class="mt-6 mb-0" :key="refreshCount">
             <!-- labels and values -->
             <v-col cols="12" md="9" lg="9" class="py-0">
               <v-row dense>
@@ -151,7 +151,7 @@
             </v-col>
 
             <!-- action buttons -->
-            <v-col cols="12" md="3" lg="3" class="py-0">
+            <v-col cols="12" md="3" lg="3" class="py-0" :class="{ 'mt-6': isMobile }">
               <v-row dense>
                 <template v-for="action of actions">
                   <!-- incorporate action is a distinct button below -->
@@ -226,8 +226,8 @@ import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
-import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished, RequestCode }
-  from '@/enums'
+import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished,
+  NrRequestActionCodes } from '@/enums'
 import { Sleep, GetFeatureFlag, Navigate } from '@/plugins'
 import NamexServices from '@/services/namex.services'
 import ContactInfo from '@/components/common/contact-info.vue'
@@ -275,10 +275,10 @@ export default class ExistingRequestDisplay extends Mixins(
   NrState = NrState
 
   /** This is used in the template as the transition key for the affected template, triggering a fade in/out. */
-  protected refreshCount = 0
+  refreshCount = 0
 
   /** This is used in the template as the transition key for the affected template, triggering a fade in/out. */
-  protected furnished = 'notfurnished'
+  furnished = 'notfurnished'
 
   /** The pending payment, if any. See mounted(). */
   private pendingPayment = null
@@ -407,7 +407,7 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   /** The current NR object. */
-  private get nr () {
+  get nr () {
     return this.getNr
   }
 
@@ -426,7 +426,7 @@ export default class ExistingRequestDisplay extends Mixins(
   get showRegisterButton (): boolean {
     return this.isFirm(this.nr) &&
            this.nr.request_action_cd &&
-           this.nr.request_action_cd === RequestCode.NEW &&
+           this.nr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS &&
            (NrState.APPROVED === this.nr.state ||
             this.isConsentUnRequired)
   }
@@ -554,14 +554,14 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   /** Returns True if the specified action button should be disabled. */
-  protected isDisabledButton (action: NrAction): boolean {
+  isDisabledButton (action: NrAction): boolean {
     if (action === NrAction.UPGRADE && !this.enableUpgradeButton) return true
     if (this.disableUnfurnished && action !== NrAction.RECEIPTS) return true
     return false
   }
 
   /** Returns tooltip (or '') for the specified action button. */
-  protected actionTooltip (action: NrAction): string {
+  actionTooltip (action: NrAction): string {
     if (action === NrAction.UPGRADE && !this.enableUpgradeButton) {
       return 'Due to the on-going labour dispute between the government and its employees, ' +
         'priority filings are temporarily disabled.'
@@ -570,12 +570,12 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   /** Returns True if the specified action should display a red button. */
-  protected isRedButton (action: NrAction): boolean {
+  isRedButton (action: NrAction): boolean {
     return [NrAction.REQUEST_REFUND, NrAction.CANCEL].includes(action)
   }
 
   /** Returns display text for the specified action button. */
-  protected actionText (action: NrAction): string {
+  actionText (action: NrAction): string {
     switch (action) {
       case NrAction.CANCEL: return 'Cancel Name Request'
       case NrAction.RENEW: return 'Renew Name Request ($30)' // FUTURE: fetch this fee
@@ -590,7 +590,7 @@ export default class ExistingRequestDisplay extends Mixins(
     }
   }
 
-  protected async handleButtonClick (action: NrAction) {
+  async handleButtonClick (action: NrAction) {
     // FUTURE: reinstate this check?
     // const confirmed = await newReqModule.confirmAction(action)
     const confirmed = true
@@ -668,7 +668,7 @@ export default class ExistingRequestDisplay extends Mixins(
     // else do nothing -- errors are handled by newReqModule
   }
 
-  protected async refresh (): Promise<void> {
+  async refresh (): Promise<void> {
     this.$root.$emit('showSpinner', true)
     this.refreshCount += 1
     try {
@@ -684,12 +684,12 @@ export default class ExistingRequestDisplay extends Mixins(
     }
   }
 
-  protected showConditionsModal () {
+  showConditionsModal () {
     this.setConditionsModalVisible(true)
   }
 
   /** Called to register the business. */
-  protected async registerYourBusiness (): Promise<void> {
+  async registerYourBusiness (): Promise<void> {
     // safety check
     if (!this.isNrApprovedOrConditional) return
 

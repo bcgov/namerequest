@@ -237,7 +237,6 @@ export default class NameCheck extends Vue {
   @Getter getLocationText!: string
   @Getter getNameCheckErrors!: NameCheckErrorI
   @Getter getNumbersCheckUse!: Array<string>
-  @Getter getRequestActionCd!: string
   @Getter getSpecialCharacters!: Array<string>
   @Getter isAnalyzeConflictsPending!: boolean
   @Getter isAnalyzeDesignationPending!: boolean
