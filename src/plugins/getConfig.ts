@@ -17,6 +17,9 @@ export async function getConfig (): Promise<EnvConfigI> {
   const businessesUrl = process.env.VUE_APP_BUSINESSES_URL
   sessionStorage.setItem('BUSINESSES_URL', businessesUrl)
 
+  const corporateOnlineUrl = process.env.VUE_APP_CORPORATE_ONLINE_URL
+  sessionStorage.setItem('CORPORATE_ONLINE_URL', corporateOnlineUrl)
+
   const dashboardUrl = process.env.VUE_APP_DASHBOARD_URL
   sessionStorage.setItem('DASHBOARD_URL', dashboardUrl)
 
