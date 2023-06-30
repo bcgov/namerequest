@@ -1,4 +1,4 @@
-import { EntityType, RequestCode } from '@/enums'
+import { EntityType, NrRequestActionCodes } from '@/enums'
 import { RequestActionMappingI, MappingI } from '@/interfaces'
 
 const entityTypesBC = [
@@ -77,10 +77,10 @@ export const XproMapping: MappingI = {
 }
 
 export const ColinRequestActions = [
-  RequestCode.AML,
-  RequestCode.CHG,
-  RequestCode.CNV,
-  RequestCode.REH
+  NrRequestActionCodes.AMALGAMATE,
+  NrRequestActionCodes.CHANGE_NAME,
+  NrRequestActionCodes.CONVERSION,
+  NrRequestActionCodes.RESTORE
 ]
 
 export const ColinRequestTypes = [

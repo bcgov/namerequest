@@ -8,7 +8,7 @@ const vuetify = new Vuetify({})
 // Prevent the warning "[Vuetify] Unable to locate target [data-app]"
 document.body.setAttribute('data-app', 'true')
 
-describe('Staff Payment Error Dialog', () => {
+describe('StaffPaymentErrorDialog', () => {
   const notEnoughBalance = [{
     message: `There is not enough balance in this Routing slip. The current balance is: $30.00`,
     payment_error_type: 'INSUFFICIENT_BALANCE_IN_ROUTING_SLIP'

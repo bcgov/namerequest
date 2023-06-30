@@ -7,7 +7,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('nr-required-modal', () => {
+describe('NrNotRequiredDialog', () => {
   it('is an empty test', () => {})
   // let wrapper: any
 

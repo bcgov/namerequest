@@ -8,7 +8,7 @@ const localVue = createLocalVue()
 const vuetify = new Vuetify()
 localVue.use(Vuetify)
 
-describe('applicant-info-2', () => {
+describe('ApplicantInfo2 component', () => {
   it('is an empty test', () => {})
   // let wrapper: any
 

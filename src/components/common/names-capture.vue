@@ -290,7 +290,7 @@ import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { EntityI, NameChoicesIF, NameRequestI, RequestActionsI } from '@/interfaces'
 import { sanitizeName } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { EntityType, Location, RequestCode } from '@/enums'
+import { EntityType, Location, NrRequestActionCodes } from '@/enums'
 import { CommonMixin } from '@/mixins'
 
 /** This component is used for EDITING a Name Request. */
@@ -313,7 +313,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   @Getter getName!: string
   @Getter getNameChoices!: NameChoicesIF
   @Getter getNr!: Partial<NameRequestI>
-  @Getter getRequestActionCd!: RequestCode
+  @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter getRequestTypeOptions!: RequestActionsI[]
   @Getter getSubmissionTabNumber!: number
   @Getter isMobile!: boolean
@@ -704,13 +704,13 @@ export default class NamesCapture extends Mixins(CommonMixin) {
     return this.getNameChoices
   }
 
-  get request_action_cd (): RequestCode {
+  get request_action_cd (): NrRequestActionCodes {
     return this.getRequestActionCd
   }
 
-  set request_action_cd (value: RequestCode) {
+  set request_action_cd (value: NrRequestActionCodes) {
     this.setRequestAction(value)
-    if (value === RequestCode.INFO) {
+    if (value === NrRequestActionCodes.INFO) {
       this.setPickRequestTypeModalVisible(true)
     }
   }
@@ -881,8 +881,8 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   }
 
   @Watch('request_action_cd')
-  updateLocationOnAssumedName (newVal: RequestCode, oldVal: RequestCode) {
-    if (newVal === RequestCode.ASSUMED && this.location === Location.BC) {
+  updateLocationOnAssumedName (val: NrRequestActionCodes) {
+    if (val === NrRequestActionCodes.ASSUMED && this.location === Location.BC) {
       this.location = Location.CA
     }
   }
