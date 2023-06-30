@@ -59,16 +59,16 @@
                         filled
                         label="Select a Jurisdiction"
                         v-model="location">
-                <template slot="item" slot-scope="data">
+                <template v-slot:item="{ item }">
                   <v-tooltip
                     right
                     transition="fade-transition"
-                    :disabled="!request_action_cd || !data.item.blurbs || isMobile"
+                    :disabled="!request_action_cd || !item.blurbs || isMobile"
                   >
                     <template v-slot:activator="scope">
-                      <span v-on="scope.on" class="list-item">{{ data.item.text }}</span>
+                      <span v-on="scope.on" class="list-item">{{ item.text }}</span>
                     </template>
-                      <div v-for="(item, index) in data.item.blurbs "
+                      <div v-for="(blurb, index) in item.blurbs "
                            :key="`Location-Blurb-${index}`">
                         <span v-if="request_action_cd === request_action_enum[index]">
                           {{ item }}
@@ -103,21 +103,21 @@
                         @change="clearErrors()"
                         filled
                         v-model="entity_type_cd">
-                <template slot="item" slot-scope="data">
+                <template v-slot:item="{ item }">
                   <v-tooltip
                           :right="isScreenLg"
                           :left="!isScreenLg"
-                          :disabled="!data.item.blurbs || isMobile"
+                          :disabled="!item.blurbs || isMobile"
                           :content-class="!isScreenLg ? 'left-tooltip' : ''"
                           transition="fade-transition">
                     <template v-slot:activator="scope">
                       <span v-on="scope.on"
                             class="list-item"
-                            :class="{ 'last-select-item': data.item.value === 'INFO' }">
-                        {{ data.item.text }}
+                            :class="{ 'last-select-item': item.value === 'INFO' }">
+                        {{ item.text }}
                       </span>
                     </template>
-                    <div v-for="(item, index) in entityBlurbs(data.item.value)"
+                    <div v-for="(blurb, index) in entityBlurbs(item.value)"
                          :key="`Blurb-${index}`">
                       <span :class="{ 'tooltip-bullet': index !== 0}">
                         {{ item }}
@@ -143,9 +143,9 @@
                   @change="clearErrors()"
                   filled
                   v-model="jurisdiction">
-          <template slot="item" slot-scope="data">
-            <span class="list-item" :class="{ 'last-select-item': data.item.value === Location.FD }">
-              {{ data.item.text }}
+          <template v-slot:item="{ item }">
+            <span class="list-item" :class="{ 'last-select-item': item.value === Location.FD }">
+              {{ item.text }}
             </span>
           </template>
         </v-select>
