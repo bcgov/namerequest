@@ -3,9 +3,9 @@ import {
   Location,
   NameCheckAnalysisJurisdiction,
   NameCheckAnalysisType,
+  NrRequestActionCodes,
   NrState,
-  PriorityCode,
-  RequestCode
+  PriorityCode
 } from '@/enums'
 
 export type SubmissionTypeT = 'examination' | 'consent' | 'normal'
@@ -62,7 +62,7 @@ export interface ConditionalReqI {
   natureBusinessInfo: string
   previousRequestId?: string
   priorityCd: PriorityCode
-  request_action_cd: RequestCode
+  request_action_cd: NrRequestActionCodes
   request_type_cd?: string
   stateCd: NrState.COND_RESERVED
   submit_count: number
@@ -101,7 +101,7 @@ export interface DraftReqI {
   natureBusinessInfo?: string
   previousRequestId?: string
   priorityCd: PriorityCode
-  request_action_cd: RequestCode
+  request_action_cd: NrRequestActionCodes
   stateCd: NrState.DRAFT
   submit_count: number
   tradeMark?: string
@@ -173,7 +173,7 @@ export interface NewRequestNameSearchI {
   entity_type_cd: string
   location: Location
   name: string
-  request_action_cd: RequestCode
+  request_action_cd: NrRequestActionCodes
   request_type_cd?: string
 }
 
@@ -202,11 +202,13 @@ export interface RequestActionMappingI {
 }
 
 export interface RequestActionsI {
-  text: string
-  value: RequestCode
-  blurbs?: string
+  group?: number
+  isHeader?: boolean
   rank?: number
   shortDesc?: string
+  subtext?: string
+  text: string
+  value?: NrRequestActionCodes // items only (not headers)
 }
 
 export interface RequestNameI {
@@ -234,7 +236,7 @@ export interface ReservedReqI {
   natureBusinessInfo: string
   previousRequestId?: string
   priorityCd: PriorityCode
-  request_action_cd: RequestCode
+  request_action_cd: NrRequestActionCodes
   stateCd: NrState.RESERVED
   submit_count: number
   tradeMark: string
@@ -256,7 +258,7 @@ export interface SelectionI {
 
 export interface SelectOptionsI {
   text: string
-  value: any
+  value: any // depends on menu
   [propName: string]: any // excess properties
 }
 

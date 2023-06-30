@@ -9,7 +9,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('link-row', () => {
+describe('LinkRow component', () => {
   it('is an empty test', () => {})
   // let wrapper: any
 

@@ -26,7 +26,7 @@ async function provideWrapper (setup) {
 
 const sandbox = sinon.createSandbox()
 
-describe('reserve-submit', () => {
+describe('ReserveSubmit component', () => {
   it('is an empty test', () => {})
   // describe('Case: it handles the NORMAL route (!setup) properly', () => {
   //   sandbox.spy(newReqModule, 'postNameRequest')

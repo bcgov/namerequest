@@ -115,7 +115,7 @@ export default class PickEntityOrConversionDialog extends Vue {
   @Action setEntityTypeAddToSelect!: ActionBindingIF
   @Action setPickEntityModalVisible!: ActionBindingIF
 
-  private showSocietiesInfo = false
+  showSocietiesInfo = false
 
   @Watch('showModal')
   handleModalClose (newVal) {

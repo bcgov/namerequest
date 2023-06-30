@@ -23,7 +23,7 @@ const vuetify = new Vuetify()
 //   })
 // }
 
-describe('analyze-results', () => {
+describe('AnalyzeResults component', () => {
   it('is an empty test', () => {})
   // let lengthTestData = testData.length
   // let wrapper: any

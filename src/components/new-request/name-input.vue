@@ -24,7 +24,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch, Emit } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
-import { Location, RequestCode } from '@/enums'
+import { Location, NrRequestActionCodes } from '@/enums'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { sanitizeName } from '@/plugins'
 import { MRAS_MAX_LENGTH } from '@/components/new-request/constants'
@@ -41,7 +41,7 @@ export default class NameInput extends Vue {
   @Getter getErrors!: string[]
   @Getter getLocation!: Location
   @Getter getName!: string
-  @Getter getRequestActionCd!: RequestCode
+  @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter getIsXproMras!: boolean
 
   // Global actions
@@ -69,7 +69,7 @@ export default class NameInput extends Vue {
     v => (!v || v.length <= MRAS_MAX_LENGTH) || this.err_msg
   ]
   /** The array of validation rules for the MRAS corp num. */
-  private get mrasRules (): Function[] {
+  get mrasRules (): Function[] {
     return [
       v => (/^[0-9a-zA-Z-]+$/.test(v) || 'A corporate number is required'),
       v => (!v || v.length <= 40) || 'Cannot exceed 40 characters' // maximum character count
@@ -117,7 +117,7 @@ export default class NameInput extends Vue {
     if (
       this.getLocation &&
       (this.getLocation !== Location.BC) &&
-      (this.getRequestActionCd !== RequestCode.MVE)
+      (this.getRequestActionCd !== NrRequestActionCodes.MOVE)
     ) {
       return 'Business\'s full legal name in home jurisdiction'
     }
