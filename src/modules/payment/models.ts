@@ -29,7 +29,7 @@ export interface NameRequestReceipt {
 }
 
 export interface CreatePaymentParams {
-  action: string // FUTURE: use type 'NrAction' or 'RequestCode' ?
+  action: string // FUTURE: use type 'NrAction' or 'NrRequestActionCodes' ?
   nrId: number
   filingType: string // FUTURE: use type 'FilingTypes' ?
   priorityRequest: boolean

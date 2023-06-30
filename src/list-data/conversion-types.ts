@@ -1,4 +1,4 @@
-import { EntityType } from '@/enums'
+import { EntityType, NrRequestTypeCodes } from '@/enums'
 import { ConversionTypesI } from '@/interfaces/models'
 
 export const ConversionTypes: ConversionTypesI[] = [
@@ -9,7 +9,7 @@ export const ConversionTypes: ConversionTypesI[] = [
     blurbs: [
       'Alter business type from a limited company to an unlimited liability company.'
     ],
-    value: 'UC',
+    value: NrRequestTypeCodes.CONVERT_ULC,
     rank: 1,
     shortlist: true
   },
@@ -20,7 +20,7 @@ export const ConversionTypes: ConversionTypesI[] = [
     blurbs: [
       'Alter business type from a limited company to a community contribution company.'
     ],
-    value: 'CCV',
+    value: NrRequestTypeCodes.CONVERT_CCC,
     rank: 2,
     shortlist: true
   },
@@ -31,7 +31,7 @@ export const ConversionTypes: ConversionTypesI[] = [
     blurbs: [
       'Alter business type from a limited company to a benefit company.'
     ],
-    value: 'BECV',
+    value: NrRequestTypeCodes.CONVERT_BEN,
     shortlist: false
   },
   {
@@ -41,7 +41,7 @@ export const ConversionTypes: ConversionTypesI[] = [
     blurbs: [
       'Alter business type from a benefit company to a limited company.'
     ],
-    value: 'BECR',
+    value: NrRequestTypeCodes.CONVERT_CORP,
     shortlist: false
   }
 ]

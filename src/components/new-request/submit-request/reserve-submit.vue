@@ -20,7 +20,7 @@ import { Action, Getter } from 'vuex-class'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { ConditionalReqI, DraftReqI, IssueI, NameRequestI, ReservedReqI } from '@/interfaces'
 import NamexServices from '@/services/namex.services'
-import { Location, NrType, RequestCode } from '@/enums'
+import { Location, NrRequestActionCodes, NrType } from '@/enums'
 
 @Component({})
 export default class ReserveSubmit extends Vue {
@@ -31,7 +31,7 @@ export default class ReserveSubmit extends Vue {
   @Getter getDraftNameReservation!: DraftReqI
   @Getter getLocation!: Location
   @Getter getReservedNameReservation!: ReservedReqI
-  @Getter getRequestActionCd!: RequestCode
+  @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter getShowActualInput!: boolean
   @Getter isMobile!: boolean
 

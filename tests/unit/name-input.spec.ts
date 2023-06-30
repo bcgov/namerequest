@@ -8,7 +8,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('name-input', () => {
+describe('NameInput component', () => {
   it('is an empty test', () => {})
   // let wrapper: any
 

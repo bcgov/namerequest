@@ -28,7 +28,7 @@ Vue.config.devtools = true
 async function startVue () {
   // Fetch the configuration
   const envConfig = await getConfig()
-  const store = await getVuexStore()
+  const store = getVuexStore()
 
   // FUTURE: remove these config assignments if possible
   // Load environment config

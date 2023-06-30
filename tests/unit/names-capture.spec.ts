@@ -9,7 +9,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('names-capture', () => {
+describe('NamesCapture component', () => {
   it('is an empty test', () => {})
   // describe('It initially renders correctly', () => {
   //   let wrapper

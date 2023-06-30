@@ -10,7 +10,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('name-build-info', () => {
+describe('NameBuildInfo component', () => {
   it('is an empty test', () => {})
   // let wrapper: any
 

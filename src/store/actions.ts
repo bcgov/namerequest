@@ -8,10 +8,11 @@ import {
   NameCheckAnalysisType,
   NameCheckConflictType,
   NameCheckErrorType,
+  XproNameType,
   NrAffiliationErrors,
+  NrRequestActionCodes,
   NrState,
-  NrType,
-  RequestCode
+  NrType
 } from '@/enums'
 import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
 import removeAccents from 'remove-accents'
@@ -256,11 +257,13 @@ const commitExistingData = ({ commit, getters }) => {
     commit('mutateEntityTypeAddToSelect', obj)
   }
   let { requestTypeCd, request_action_cd } = getters.getNr
-  if (['AS', 'AL', 'XASO', 'XCASO', 'UA'].includes(requestTypeCd)) {
-    request_action_cd = RequestCode.ASSUMED
+  if (
+    [XproNameType.AS, XproNameType.AL, XproNameType.XASO, XproNameType.XCASO, XproNameType.UA].includes(requestTypeCd)
+  ) {
+    request_action_cd = NrRequestActionCodes.ASSUMED
   }
   commit('mutateRequestAction', request_action_cd)
-  if (request_action_cd !== RequestCode.NEW) {
+  if (request_action_cd !== NrRequestActionCodes.NEW_BUSINESS) {
     let reqObj = RequestActions.find(type => type.value === request_action_cd)
     commit('mutateExtendedRequestType', reqObj)
   }
@@ -583,7 +586,7 @@ export const setExtendedRequestType: ActionIF = ({ commit }, extendedRequestType
   commit('mutateExtendedRequestType', extendedRequestType)
 }
 
-export const setRequestAction: ActionIF = ({ commit }, requestAction: RequestCode): void => {
+export const setRequestAction: ActionIF = ({ commit }, requestAction: NrRequestActionCodes): void => {
   commit('mutateRequestAction', requestAction)
 }
 
@@ -1053,7 +1056,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
     if (!getters.getDesignation) commit('setErrors', 'designation')
   }
   if ([Location.CA, Location.IN].includes(getters.getLocation) &&
-    ![RequestCode.MVE].includes(getters.getRequestActionCd) && !getters.getJurisdictionCd) {
+    ![NrRequestActionCodes.MOVE].includes(getters.getRequestActionCd) && !getters.getJurisdictionCd) {
     commit('setErrors', 'jurisdiction')
     return
   }
