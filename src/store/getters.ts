@@ -30,7 +30,7 @@ import {
   CorpNumRequests,
   EntityType,
   Location,
-  NameType,
+  XproNameType,
   NrAffiliationErrors,
   NrState,
   PriorityCode,
@@ -194,7 +194,7 @@ export const getRequestTypeOptions = (state: StateIF): RequestActionsI[] => {
   let { requestTypeCd } = getNr(state)
   if (
     getEditMode(state) &&
-    [NameType.AS, NameType.AL, NameType.XASO, NameType.XCASO, NameType.UA].includes(requestTypeCd)
+    [XproNameType.AS, XproNameType.AL, XproNameType.XASO, XproNameType.XCASO, XproNameType.UA].includes(requestTypeCd)
   ) {
     options.push({ text: 'Assume an', value: NrRequestActionCodes.ASSUMED, rank: n })
     n++
@@ -517,13 +517,13 @@ export const getShowXproJurisdiction = (state: StateIF): boolean => {
 }
 
 // For reference, see request_type_mapping in Namex constants file.
-export const getXproRequestTypeCd = (state: StateIF): NameType => {
+export const getXproRequestTypeCd = (state: StateIF): XproNameType => {
   if (getIsAssumedName(state)) {
     switch (getEntityTypeCd(state)) {
       // Xpro Limited Liability Company REST/REN/REH/RESUBMIT -> Xpro Limited Liability Company AS/RESUBMIT
-      case EntityType.RLC: return NameType.AL
+      case EntityType.RLC: return XproNameType.AL
       // Xpro Corporation NEW_AML/NEW/AML/RESUBMIT -> Xpro Corporation AS/RESUBMIT
-      case EntityType.XCR: return NameType.AS
+      case EntityType.XCR: return XproNameType.AS
     }
   }
   return null
@@ -863,7 +863,7 @@ export const getNrRequestNames = (state: StateIF): RequestNameI[] => {
   const nrNames = getNrNames(state)
 
   const defaultValues = {
-    name_type_cd: getAssumedName(state) ? NameType.AS : NameType.CO,
+    name_type_cd: getAssumedName(state) ? XproNameType.AS : XproNameType.CO,
     consent_words: '',
     conflict1: '',
     conflict1_num: ''
@@ -1049,7 +1049,7 @@ export const getConditionalNameReservation = (state: StateIF): ConditionalReqI =
       name: getName(state),
       choice: 1,
       designation: getSplitNameDesignation(state).designation,
-      name_type_cd: getIsAssumedName(state) ? NameType.AS : NameType.CO,
+      name_type_cd: getIsAssumedName(state) ? XproNameType.AS : XproNameType.CO,
       consent_words: getConsentWords(state).length > 0 ? getConsentWords(state) : '',
       conflict1: getConsentConflicts(state).name,
       conflict1_num: getConsentConflicts(state).corpNum ? getConsentConflicts(state).corpNum : ''

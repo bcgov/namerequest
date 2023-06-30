@@ -11,7 +11,6 @@ export * from './name-check-conflict-type'
 export * from './name-check-error-type'
 export * from './name-check-item-type'
 export * from './name-state'
-export * from './name-type'
 export * from './nr-action'
 export * from './nr-affiliation-errors'
 export * from './nr-state'
@@ -23,6 +22,7 @@ export * from './priority-code'
 export * from './routes'
 export * from './rollback-actions'
 export * from './sbc-payment-status'
+export * from './xpro-name-type'
 
 // external enums
 export {

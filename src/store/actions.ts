@@ -8,7 +8,7 @@ import {
   NameCheckAnalysisType,
   NameCheckConflictType,
   NameCheckErrorType,
-  NameType,
+  XproNameType,
   NrAffiliationErrors,
   NrRequestActionCodes,
   NrState,
@@ -257,7 +257,9 @@ const commitExistingData = ({ commit, getters }) => {
     commit('mutateEntityTypeAddToSelect', obj)
   }
   let { requestTypeCd, request_action_cd } = getters.getNr
-  if ([NameType.AS, NameType.AL, NameType.XASO, NameType.XCASO, NameType.UA].includes(requestTypeCd)) {
+  if (
+    [XproNameType.AS, XproNameType.AL, XproNameType.XASO, XproNameType.XCASO, XproNameType.UA].includes(requestTypeCd)
+  ) {
     request_action_cd = NrRequestActionCodes.ASSUMED
   }
   commit('mutateRequestAction', request_action_cd)

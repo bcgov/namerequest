@@ -3,7 +3,6 @@ import {
   Location,
   NameCheckAnalysisJurisdiction,
   NameCheckAnalysisType,
-  NameType,
   NrRequestActionCodes,
   NrState,
   PriorityCode
@@ -64,7 +63,7 @@ export interface ConditionalReqI {
   previousRequestId?: string
   priorityCd: PriorityCode
   request_action_cd: NrRequestActionCodes
-  request_type_cd?: NameType
+  request_type_cd?: string
   stateCd: NrState.COND_RESERVED
   submit_count: number
   tradeMark: string
@@ -107,7 +106,7 @@ export interface DraftReqI {
   submit_count: number
   tradeMark?: string
   xproJurisdiction?: string
-  request_type_cd?: NameType
+  request_type_cd?: string
   hotjarUserId?: string
 }
 
@@ -174,7 +173,7 @@ export interface NewRequestNameSearchI {
   location: Location
   name: string
   request_action_cd: NrRequestActionCodes
-  request_type_cd?: NameType
+  request_type_cd?: string
 }
 
 export interface OptionI {
@@ -220,7 +219,7 @@ export interface RequestNameI {
   consent_words: '' | string[]
   conflict1: string
   conflict1_num: string
-  request_type_cd?: NameType
+  request_type_cd?: string
 }
 
 export interface ReservedReqI {

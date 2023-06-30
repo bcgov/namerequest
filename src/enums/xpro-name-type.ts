@@ -1,5 +1,5 @@
 /** These are request type codes for extraprovincial/assumed name companies. */
-export enum NameType {
+export enum XproNameType {
   /** Extraprovincial Limited Liability Company - Extraprovincial Assumed Name */
   AL = 'AL',
 
