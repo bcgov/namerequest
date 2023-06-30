@@ -201,6 +201,7 @@
             </span>
           </v-tooltip>
         </v-col>
+
         <ApplicantInfoNav @nextAction="nextAction()" />
       </v-row>
     </v-container>
@@ -213,7 +214,7 @@ import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { Action, Getter } from 'vuex-class'
 import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { CorpNumRequests, NrState, RequestCode } from '@/enums'
+import { CorpNumRequests, NrRequestActionCodes, NrState } from '@/enums'
 import { GetFeatureFlag } from '@/plugins'
 
 @Component({
@@ -229,7 +230,7 @@ export default class ApplicantInfo2 extends Vue {
   @Getter getEditMode!: boolean
   @Getter getNrData!: any
   @Getter getNrState!: string
-  @Getter getRequestActionCd!: RequestCode
+  @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter getShowPriorityRequest!: boolean
   @Getter getShowCorpNum!: string
   @Getter isMobile!: boolean
@@ -292,7 +293,7 @@ export default class ApplicantInfo2 extends Vue {
 
   mounted () {
     // Apply optional corpNum validations for Amalgamations as they are NOT a required field but require COLIN lookup.
-    if (this.getRequestActionCd === RequestCode.AML) {
+    if (this.getRequestActionCd === NrRequestActionCodes.AMALGAMATE) {
       this.corpNumFieldLabel += ' (Optional)'
       this.corpNumRules = [
         v => (!v || v.length > 3) || 'Must be at least 4 characters'

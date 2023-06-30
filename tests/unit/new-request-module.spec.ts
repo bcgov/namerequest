@@ -1,7 +1,7 @@
 // import store from '@/store/new-request-module'
 
 // Testing behavior of getters.showCorpNum: (state) => return value
-describe('new-request-module', () => {
+describe('New Request module', () => {
   it('is an empty test', () => {})
   // /* -- SETUP CONSTANTS FOR TESTING -- */
   // function setState ({ entityType, requestAction, location, jurisdiction }) {

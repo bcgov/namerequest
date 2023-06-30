@@ -11,7 +11,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('pick-entity-modal', () => {
+describe('PickEntityOrConversionDialog', () => {
   it('is an empty test', () => {})
   // let wrapper: any
 
