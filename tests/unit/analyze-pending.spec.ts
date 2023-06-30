@@ -8,7 +8,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('analyze-pending', () => {
+describe('AnalyzePending component', () => {
   it('is an empty test', () => {})
   // let wrapper: any
   // beforeAll(async () => {

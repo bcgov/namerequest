@@ -257,7 +257,7 @@ export interface SelectionI {
 
 export interface SelectOptionsI {
   text: string
-  value: any
+  value: any // depends on menu
   [propName: string]: any // excess properties
 }
 

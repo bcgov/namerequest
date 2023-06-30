@@ -7,7 +7,7 @@ module.exports = {
     }
   },
   preset: '@vue/cli-plugin-unit-jest/presets/typescript-and-babel',
-  setupFiles: ['<rootDir>/tests/unit/setup.ts'],
+  setupFiles: ['<rootDir>/tests/setup.ts'],
   // notify: true,
   // notifyMode: 'always',
   transformIgnorePatterns: []

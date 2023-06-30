@@ -1,7 +1,7 @@
 import { NrRequestActionCodes } from '@/enums'
 import { RequestActionsI } from '@/interfaces/models'
 
-/** All the request actions - some are gruop headers and others are nested selectable items. */
+/** All the request actions - some are group headers and others are selectable items. */
 export const RequestActions: RequestActionsI[] = [
   {
     isHeader: true,
