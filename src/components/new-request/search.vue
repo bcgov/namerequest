@@ -216,7 +216,40 @@
       </v-col>
     </v-row>
 
-    <div v-if="!isFederal" class="mt-3 text-center">
+    <BulletsColinLink
+      :businessType="entity_type_cd"
+      :colinButton="showColinButton"
+      :showDesignation="showDesignationSelect"
+      @incorprateNow="incorporateNowClicked = $event"
+      @radioButtonChange="selectedCompanyType = $event"
+    >
+      <template v-slot:name-input-slot>
+        <NameInput
+          v-if="!isFederal"
+          :class="inputCompClass"
+          :is-mras-search="(getIsXproMras && !noCorpNum)"
+          :menu-props="{ bottom: true, offsetY: true}"
+          id="name-input-component"
+          class="pt-3"
+          @emit-corp-num-validity="corpNumValid = $event"/>
+      </template>
+      <template v-slot:designation>
+        <v-col md="4" lg="4">
+          <v-select
+            :error-messages="getErrors.includes('designation') ? 'Please select a designation' : ''"
+            filled
+            :items="designationOptions"
+            label="Select a Designation"
+            :readonly="!entity_type_cd"
+            :menu-props="{ bottom: true, offsetY: true}"
+            v-model="designation"
+            @change="clearErrors()">
+          </v-select>
+        </v-col>
+      </template>
+    </BulletsColinLink>
+
+    <div v-if="!isFederal && isNamedCompany" class="mt-3 text-center">
       <v-row justify="center" no-gutters>
         <v-col cols="auto">
           <v-btn
@@ -240,11 +273,6 @@
         </v-col>
       </v-row>
     </div>
-    <div v-else class="mt-3 text-center">
-      <v-btn id="goto-corporate-btn" :href="corpOnlineLink" target="_blank">
-        Go to Corporate Online to Register <v-icon small class="ml-1">mdi-open-in-new</v-icon>
-      </v-btn>
-    </div>
   </v-container>
 </template>
 
@@ -256,18 +284,20 @@ import { Action, Getter } from 'vuex-class'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 // Components
+import { BulletsColinLink } from '../common'
 import NameInput from './name-input.vue'
 
 // Interfaces / Enums / List Data
 import { ConversionTypesI, EntityI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { AccountType, EntityType, Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
+import { AccountType, CompanyType, EntityType, Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin } from '@/mixins'
 import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
+import { GetFeatureFlag } from '@/plugins'
 
 /** This component is used for CREATING a Name Request. */
 @Component({
-  components: { NameInput }
+  components: { BulletsColinLink, NameInput }
 })
 export default class NewSearch extends Mixins(CommonMixin) {
   // enums for template
@@ -315,8 +345,11 @@ export default class NewSearch extends Mixins(CommonMixin) {
 
   // Local properties
   corpNumValid = true
-  readonly corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
+  incorporateNowClicked = false
   locationDisabled = false
+  selectedCompanyType = ''
+  readonly corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
+  readonly EntityType = EntityType
   request_action_enum = [
     NrRequestActionCodes.NEW_BUSINESS,
     NrRequestActionCodes.MOVE,
@@ -435,6 +468,11 @@ export default class NewSearch extends Mixins(CommonMixin) {
     return (this.location === Location.IN)
   }
 
+  // If selected radio button is Named Company.
+  get isNamedCompany (): boolean {
+    return (this.selectedCompanyType === CompanyType.NAMED_COMPANY)
+  }
+
   get isPersonsName () {
     return this.getIsPersonsName
   }
@@ -489,6 +527,13 @@ export default class NewSearch extends Mixins(CommonMixin) {
       this.setExtendedRequestType(request)
     }
     this.setRequestAction(value)
+  }
+
+  // Whether to show "Colin" or "Incorporate Now" button based on FF.
+  get showColinButton (): boolean {
+    const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
+    const isIncorporateEntity = supportedEntites.includes(this.entity_type_cd)
+    return !isIncorporateEntity
   }
 
   get showDesignationSelect (): boolean {

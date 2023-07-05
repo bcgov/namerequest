@@ -1,5 +1,6 @@
 export * from './account-type'
 export * from './advanced-search-tabs'
+export * from './company-type'
 export * from './corp-num-requests'
 export * from './entity-type'
 export * from './furnished'
