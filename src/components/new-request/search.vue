@@ -191,7 +191,6 @@
       :businessType="entity_type_cd"
       :colinButton="showColinButton"
       :showDesignation="showDesignationSelect"
-      @incorprateNow="incorporateNowClicked = $event"
       @radioButtonChange="selectedCompanyType = $event"
     >
       <template v-slot:name-input-slot>
@@ -318,7 +317,6 @@ export default class NewSearch extends Mixins(CommonMixin) {
 
   // Local properties
   corpNumValid = true
-  incorporateNowClicked = false
   locationDisabled = false
   selectedCompanyType = ''
   readonly corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
