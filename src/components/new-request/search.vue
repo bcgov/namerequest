@@ -186,6 +186,7 @@
       </v-col>
     </v-row>
 
+    <!-- Bullets Colin Link component. Show only if a business type is selected. -->
     <BulletsColinLink
       v-if="entity_type_cd"
       :businessType="entity_type_cd"
