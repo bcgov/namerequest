@@ -1,5 +1,5 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { EntityType, PriorityCode, RequestCode } from '@/enums'
+import { EntityType, PriorityCode, NrRequestActionCodes } from '@/enums'
 
 @Component({})
 export class CommonMixin extends Vue {
@@ -53,18 +53,18 @@ export class CommonMixin extends Vue {
    * Returns request action text for the the specified code.
    * See namex -> api/namex/resources/name_requests/report_resource.py::_get_request_action_cd_description()
    */
-  requestActionCdToText (cd: RequestCode): string {
+  requestActionCdToText (cd: NrRequestActionCodes): string {
     switch (cd) {
-      case RequestCode.NEW: return 'New Business'
-      case RequestCode.MVE: return 'Continuation In'
-      case RequestCode.REH: return 'Restoration or Reinstatement'
-      case RequestCode.AML: return 'Amalgamation'
-      case RequestCode.CHG: return 'Name Change'
-      case RequestCode.CNV: return 'Alteration'
-      case RequestCode.DBA: return 'Doing Business As'
-      case RequestCode.ASSUMED: return 'Assumed Named'
-      case RequestCode.REN: return 'Restoration or Reinstatement'
-      case RequestCode.REST: return 'Restoration or Reinstatement'
+      case NrRequestActionCodes.NEW_BUSINESS: return 'New Business'
+      case NrRequestActionCodes.MOVE: return 'Continuation In'
+      case NrRequestActionCodes.RESTORE: return 'Restoration or Reinstatement'
+      case NrRequestActionCodes.AMALGAMATE: return 'Amalgamation'
+      case NrRequestActionCodes.CHANGE_NAME: return 'Name Change'
+      case NrRequestActionCodes.CONVERSION: return 'Alteration'
+      case NrRequestActionCodes.DBA: return 'Doing Business As'
+      case NrRequestActionCodes.ASSUMED: return 'Assumed Named'
+      case NrRequestActionCodes.RENEW: return 'Restoration or Reinstatement'
+      case NrRequestActionCodes.RESTORATION: return 'Restoration or Reinstatement'
       // the following may be returned by the namex API:
       case 'NRO-NEWAML' as any: return 'Amalgamation'
       case 'NRO-REST' as any: return 'Restoration or Reinstatement'

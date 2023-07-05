@@ -8,15 +8,15 @@ import {
   NameCheckAnalysisType,
   NameCheckConflictType,
   NameCheckErrorType,
+  XproNameType,
   NrAffiliationErrors,
+  NrRequestActionCodes,
   NrState,
-  NrType,
-  RequestCode
+  NrType
 } from '@/enums'
 import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
-import { sanitizeName } from '@/plugins/utilities'
 import removeAccents from 'remove-accents'
-import { getFeatureFlag, sleep } from '@/plugins'
+import { GetFeatureFlag, Sleep, sanitizeName } from '@/plugins'
 import NamexServices from '@/services/namex.services'
 import { MRAS_MIN_LENGTH, MRAS_MAX_LENGTH } from '@/components/new-request/constants'
 
@@ -257,11 +257,13 @@ const commitExistingData = ({ commit, getters }) => {
     commit('mutateEntityTypeAddToSelect', obj)
   }
   let { requestTypeCd, request_action_cd } = getters.getNr
-  if (['AS', 'AL', 'XASO', 'XCASO', 'UA'].includes(requestTypeCd)) {
-    request_action_cd = RequestCode.ASSUMED
+  if (
+    [XproNameType.AS, XproNameType.AL, XproNameType.XASO, XproNameType.XCASO, XproNameType.UA].includes(requestTypeCd)
+  ) {
+    request_action_cd = NrRequestActionCodes.ASSUMED
   }
   commit('mutateRequestAction', request_action_cd)
-  if (request_action_cd !== RequestCode.NEW) {
+  if (request_action_cd !== NrRequestActionCodes.NEW_BUSINESS) {
     let reqObj = RequestActions.find(type => type.value === request_action_cd)
     commit('mutateExtendedRequestType', reqObj)
   }
@@ -345,7 +347,8 @@ export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
         return response.data
       }
       throw new Error(`Status was not 200, response = ${response}`)
-    } catch (err) {
+    } catch (error) {
+      const err = error as any
       const status: number = err?.response?.status
       // do not generate console error for the errors codes
       // that mras-search-info page handles
@@ -436,7 +439,7 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
 
         // show success page briefly
         commit('mutateDisplayedComponent', 'Success')
-        await sleep(1000)
+        await Sleep(1000)
 
         // reload NR and show existing NR component
         const nrData = await NamexServices.getNameRequest(true)
@@ -583,7 +586,7 @@ export const setExtendedRequestType: ActionIF = ({ commit }, extendedRequestType
   commit('mutateExtendedRequestType', extendedRequestType)
 }
 
-export const setRequestAction: ActionIF = ({ commit }, requestAction: RequestCode): void => {
+export const setRequestAction: ActionIF = ({ commit }, requestAction: NrRequestActionCodes): void => {
   commit('mutateRequestAction', requestAction)
 }
 
@@ -1053,7 +1056,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
     if (!getters.getDesignation) commit('setErrors', 'designation')
   }
   if ([Location.CA, Location.IN].includes(getters.getLocation) &&
-    ![RequestCode.MVE].includes(getters.getRequestActionCd) && !getters.getJurisdictionCd) {
+    ![NrRequestActionCodes.MOVE].includes(getters.getRequestActionCd) && !getters.getJurisdictionCd) {
     commit('setErrors', 'jurisdiction')
     return
   }
@@ -1132,7 +1135,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
         { commit, getters },
         { xpro: false, designationOnly: true })
       // descriptive/distinctive check - if disabled in LD then ignore
-      if (getFeatureFlag('disable-analysis')) {
+      if (GetFeatureFlag('disable-analysis')) {
         commit('mutateAnalyzeStructurePending', false)
       } else {
         getNameAnalysis(

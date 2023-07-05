@@ -18,7 +18,7 @@ import {
   NameCheckErrorType,
   NrAffiliationErrors,
   PriorityCode,
-  RequestCode
+  NrRequestActionCodes
 } from '@/enums'
 
 export const clearErrors = (state: StateIF) => {
@@ -265,7 +265,7 @@ export const mutatePriorityRequest = (state: StateIF, priorityRequest: boolean) 
   state.stateModel.newRequestModel.priorityRequest = priorityRequest
 }
 
-export const mutateRequestAction = (state: StateIF, requestCd: RequestCode) => {
+export const mutateRequestAction = (state: StateIF, requestCd: NrRequestActionCodes) => {
   state.stateModel.newRequestModel.conversionType = null
   state.stateModel.newRequestModel.request_action_cd = requestCd
 }
@@ -398,7 +398,7 @@ export const setNrResponse = (state: StateIF, nr: NameRequestI) => {
 }
 
 export const updateReservationNames = (state: StateIF, nrNames: [] = []) => {
-  nrNames.forEach(({ choice, name = '', designation = '' }) => {
+  nrNames.forEach(({ choice = 1, name = '', designation = '' }) => {
     state.stateModel.newRequestModel.nameChoices[`name${choice}`] = name
     state.stateModel.newRequestModel.nameChoices[`designation${choice}`] = designation
   })
