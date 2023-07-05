@@ -207,6 +207,6 @@ export default class BulletsColinLink extends Vue {
 // Button Spacing. This is done to stay consistent with "Check this Name" Button.
 .btn-spacing {
   margin-top: 1rem;
-  padding-left: 9rem;
+  padding-left: 8rem;
 }
 </style>
