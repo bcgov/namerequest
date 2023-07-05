@@ -154,36 +154,6 @@
           </template>
         </v-select>
       </v-col>
-
-      <!-- name -->
-      <v-col :class="{
-        'pl-3': (getIsXproMras && !isFederal && !isMobile),
-        'pr-3': (!getIsXproMras && showDesignationSelect && !isMobile)
-      }"
-             :cols="(showDesignationSelect || (getIsXproMras)) && !isMobile ? '8' : '12'">
-        <NameInput v-if="!isFederal"
-                   :is-mras-search="(getIsXproMras && !noCorpNum)"
-                   :menu-props="{ bottom: true, offsetY: true}"
-                   id="name-input-component"
-                   class="mt-0 pa-0"
-                   @emit-corp-num-validity="corpNumValid = $event"/>
-        <p v-else class="pl-3 text-body-2">Federally incorporated businesses do not need a Name Request. You may
-          register your extraprovincial business immediately using its existing name at Corporate Online.</p>
-      </v-col>
-
-      <!-- designation -->
-      <v-col v-if="showDesignationSelect" cols="12" md="4" lg="4">
-        <v-select :class="!entity_type_cd ? 'disabled-custom' : ''"
-                  :error-messages="getErrors.includes('designation') ? 'Please select a designation' : ''"
-                  filled
-                  :items="designationOptions"
-                  label="Select a Designation"
-                  :readonly="!entity_type_cd"
-                  :menu-props="{ bottom: true, offsetY: true}"
-                  v-model="designation"
-                  @change="clearErrors()">
-        </v-select>
-      </v-col>
     </v-row>
 
     <!-- Corporate number checkbox, only for XPro Canadian Locations -->
@@ -217,6 +187,7 @@
     </v-row>
 
     <BulletsColinLink
+      v-if="entity_type_cd"
       :businessType="entity_type_cd"
       :colinButton="showColinButton"
       :showDesignation="showDesignationSelect"
@@ -226,12 +197,13 @@
       <template v-slot:name-input-slot>
         <NameInput
           v-if="!isFederal"
-          :class="inputCompClass"
           :is-mras-search="(getIsXproMras && !noCorpNum)"
           :menu-props="{ bottom: true, offsetY: true}"
           id="name-input-component"
           class="pt-3"
           @emit-corp-num-validity="corpNumValid = $event"/>
+        <p v-else class="pl-3 text-body-2">Federally incorporated businesses do not need a Name Request. You may
+          register your extraprovincial business immediately using its existing name at Corporate Online.</p>
       </template>
       <template v-slot:designation>
         <v-col md="4" lg="4">
@@ -243,6 +215,7 @@
             :readonly="!entity_type_cd"
             :menu-props="{ bottom: true, offsetY: true}"
             v-model="designation"
+            class="mb-n3"
             @change="clearErrors()">
           </v-select>
         </v-col>

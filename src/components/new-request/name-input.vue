@@ -122,7 +122,7 @@ export default class NameInput extends Vue {
       return 'Business\'s full legal name in home jurisdiction'
     }
 
-    return 'Enter a Name'
+    return 'Enter a Name to request'
   }
 
   clearErrors () {

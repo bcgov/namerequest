@@ -23,25 +23,25 @@
             </template>
           </v-row>
         </div>
-        <div class="ml-14" v-else>
+        <div v-else>
           <ul class="bullet-points">
             <li v-for="bulletPoint in bulletPoints" :key="bulletPoint">
               {{ bulletPoint }}
             </li>
           </ul>
-          <template v-if="colinButton">
-            <v-btn class="mt-4 ml-14" :href="colinLink" target="_blank">
+          <div class="btn-spacing" v-if="colinButton">
+            <v-btn class="px-9" :href="colinLink" target="_blank">
               Go to Corporate Online to Register <v-icon small class="ml-1">mdi-open-in-new</v-icon>
             </v-btn>
-          </template>
-          <template v-else>
+          </div>
+          <div class="btn-spacing" v-else>
             <v-btn
-              class="mt-4 ml-14"
+              class="px-9"
               @click="incorporateNow"
             >
               Incorporate Now
             </v-btn>
-          </template>
+          </div>
         </div>
       </v-col>
     </v-row>
@@ -195,5 +195,18 @@ export default class BulletsColinLink extends Vue {
 // Line spacing between bullet points
 .bullet-points {
   line-height: 2rem;
+}
+
+// Font weight + size of button. This is done to stay consistent with "Check this Name" Button.
+.v-btn {
+  font-weight: bold;
+  min-height: 45px;
+  padding-left: 4rem;
+}
+
+// Button Spacing. This is done to stay consistent with "Check this Name" Button.
+.btn-spacing {
+  margin-top: 1rem;
+  padding-left: 9rem;
 }
 </style>
