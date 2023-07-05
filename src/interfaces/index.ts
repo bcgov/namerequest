@@ -1,4 +1,5 @@
 export * from './app-config'
+export * from './breadcrumb-interface'
 export * from './business'
 export * from './form-type'
 export * from './new-request-interface'

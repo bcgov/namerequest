@@ -44,6 +44,11 @@
         v-html="bannerText"
       />
 
+      <!-- Breadcrumb -->
+      <Breadcrumb
+        :breadcrumbs="breadcrumbs"
+      />
+
       <!-- Components according to route -->
       <router-view />
 
@@ -89,9 +94,16 @@ import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { GetFeatureFlag } from '@/plugins'
 import { DateMixin, LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin } from '@/mixins'
+import { Routes } from '@/enums'
+import { BreadcrumbIF } from '@/interfaces'
+import {
+  getRegistryDashboardBreadcrumb,
+  getStaffDashboardBreadcrumb
+} from '@/resources'
 import axios from 'axios'
 
 // dialogs and other components
+import { Breadcrumb } from '@/components/common'
 import GenesysWebMessage from '@bcrs-shared-components/genesys-web-message/GenesysWebMessage.vue'
 import { WebChat as ChatPopup } from '@bcrs-shared-components/web-chat'
 import {
@@ -112,6 +124,7 @@ import { PAYMENT_REQUIRED } from 'http-status-codes'
   components: {
     ChatPopup,
     AffiliationErrorDialog,
+    Breadcrumb,
     CancelDialog,
     ConditionsDialog,
     ConfirmNrDialog,
@@ -185,6 +198,27 @@ export default class App extends Mixins(
   /** The About text. */
   get aboutText (): string {
     return process.env.ABOUT_TEXT
+  }
+
+  /** The route breadcrumbs list. */
+  get breadcrumbs (): Array<BreadcrumbIF> {
+    const crumbs: Array<BreadcrumbIF> = [
+      {
+        text: 'Name Request',
+        to: { name: Routes.REQUEST }
+      }
+    ]
+
+    // Set base crumbs based on user role
+    // Staff don't want the home landing page and they can't access the Manage Business Dashboard
+    if (this.isRoleStaff) {
+      // If staff, set StaffDashboard as home crumb
+      crumbs.unshift(getStaffDashboardBreadcrumb(sessionStorage.getItem('BUSINESSES_URL')))
+    } else {
+      // For non-staff, set Home crumb
+      crumbs.unshift(getRegistryDashboardBreadcrumb(sessionStorage.getItem('REGISTRY_HOME_URL')))
+    }
+    return crumbs
   }
 
   async created (): Promise<void> {
