@@ -105,7 +105,7 @@ import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 
 // Interfaces / Enums
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import NamexServices from './services/namex.services'
+import NamexServices from './services/namex-services'
 import { PAYMENT_REQUIRED } from 'http-status-codes'
 
 @Component({

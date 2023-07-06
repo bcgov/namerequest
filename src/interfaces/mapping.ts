@@ -1,4 +1,6 @@
+import { EntityType } from '@/enums'
+
 export interface MappingI {
-  ASSUMED: string[]
-  [propName: string]: string[] // misc properties that are arrays of strings
+  ASSUMED: EntityType[]
+  [propName: string]: EntityType[] // misc properties that are arrays of entity types
 }

@@ -107,7 +107,7 @@ import { Jurisdictions, NrAction, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
 import { getBaseUrl } from '@/components/payment/payment-utils'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import NamexServices from '@/services/namex.services'
+import NamexServices from '@/services/namex-services'
 import { PaymentRequiredError } from '@/errors'
 import { GetFeatureFlag, Navigate } from '@/plugins'
 

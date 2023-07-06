@@ -17,7 +17,7 @@ import {
 import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
 import removeAccents from 'remove-accents'
 import { GetFeatureFlag, Sleep, sanitizeName } from '@/plugins'
-import NamexServices from '@/services/namex.services'
+import NamexServices from '@/services/namex-services'
 import { MRAS_MIN_LENGTH, MRAS_MAX_LENGTH } from '@/components/new-request/constants'
 
 // List Data
