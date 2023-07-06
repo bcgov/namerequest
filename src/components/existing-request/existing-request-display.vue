@@ -229,7 +229,7 @@ import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
 import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished,
   NrRequestActionCodes } from '@/enums'
 import { Sleep, GetFeatureFlag, Navigate } from '@/plugins'
-import NamexServices from '@/services/namex.services'
+import NamexServices from '@/services/namex-services'
 import ContactInfo from '@/components/common/contact-info.vue'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 

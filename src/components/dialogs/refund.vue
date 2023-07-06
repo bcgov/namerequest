@@ -90,7 +90,7 @@ import { REFUND_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import { NrAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import NamexServices from '@/services/namex.services'
+import NamexServices from '@/services/namex-services'
 
 @Component({
   components: {

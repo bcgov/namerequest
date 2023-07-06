@@ -42,7 +42,7 @@ import SubmissionTabs from '@/components/new-request/submit-request/submission-t
 import Success from '@/components/common/success.vue'
 import Tabs from '@/components/tabs.vue'
 
-import NamexServices from '@/services/namex.services'
+import NamexServices from '@/services/namex-services'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({

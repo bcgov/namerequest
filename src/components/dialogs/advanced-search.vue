@@ -135,7 +135,7 @@
 
 <script lang='ts'>
 import { Component, Emit, Prop, Watch, Vue } from 'vue-property-decorator'
-import NamexServices from '@/services/namex.services'
+import NamexServices from '@/services/namex-services'
 import { Getter } from 'vuex-class'
 import { AdvancedSearchForm, AdvancedSearchRetrieve, AdvancedSearchTable } from '@/components/advanced-search'
 
