@@ -248,6 +248,14 @@ export default class App extends Mixins(
       sessionStorage.removeItem('NR_DATA')
     }
 
+    // if there is stored legal type for an IA then incorporate it now
+    const legaltype = sessionStorage.getItem('LEGAL_TYPE')
+    if (legaltype) {
+      await this.incorporateNow(legaltype)
+      // clear the legal type data
+      sessionStorage.removeItem('LEGAL_TYPE')
+    }
+
     // listen for save error events
     this.$root.$on('save-error-event', (error: any) => {
       // save errors/warnings

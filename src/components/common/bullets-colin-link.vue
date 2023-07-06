@@ -36,7 +36,7 @@
         <div class="btn-spacing" v-else>
           <v-btn
             class="px-9"
-            @click="incorporateNow()"
+            @click="incorporateNowClicked()"
           >
             Incorporate Now
           </v-btn>
@@ -47,20 +47,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from 'vue-property-decorator'
+import { Component, Emit, Mixins, Prop } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
 import { CompanyType, EntityType } from '@/enums'
 import NameInput from '@/components/new-request/name-input.vue'
 import { Navigate } from '@/plugins'
-import BusinessServices from '@/services/business.services'
-import { BusinessRequest } from '@/interfaces'
+import { NrAffiliationMixin } from '@/mixins'
 
 @Component({
   components: {
     NameInput
   }
 })
-export default class BulletsColinLink extends Vue {
+export default class BulletsColinLink extends Mixins(NrAffiliationMixin) {
   /** The selected business type. */
   @Prop({ default: '' }) readonly businessType!: EntityType
 
@@ -86,14 +85,16 @@ export default class BulletsColinLink extends Vue {
   readonly CompanyType = CompanyType
 
   /**
-   * The alternate short names for entity types.
-   * Alternate names are used in Entities UIs.
+   * The alternate codes for entity types.
+   * Alternate codes are used in Entities UIs.
    */
-  entityTypeAlternateShort (entityType: string): string {
-    if (entityType === 'BC' || entityType === 'CC') return entityType
-    if (entityType === 'CR') return 'BEN'
-    if (entityType === 'UL') return 'ULC'
-    return ''
+  entityTypeAlternateCode (entityType: string): string {
+    switch (entityType) {
+      case EntityType.BC: return 'BEN'
+      case EntityType.CR: return 'BC'
+      case EntityType.UL: return 'ULC'
+      default: return entityType
+    }
   }
 
   /** Navigate to the Entity Dashboard. */
@@ -108,59 +109,18 @@ export default class BulletsColinLink extends Vue {
    * If user is authenticated, create draft business and redirect to Dashboard.
    * If user is not authenticated, redirect to login screen then redirect back.
    */
-  async incorporateNow () {
+  async incorporateNowClicked () {
     if (this.getIsAuthenticated) {
-      try {
-        // show spinner since this is a network call
-        this.$root.$emit('showSpinner', true)
-        const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || 0
-        const businessId = await this.createBusiness(accountId)
-        this.goToEntityDashboard(businessId)
-      } catch (error) {
-        this.$root.$emit('showSpinner', false)
-        console.error('incorporateNow() = ', error) // eslint-disable-line no-console
-        throw new Error('Unable to Incorporate Now')
-      }
+      const legalType = this.entityTypeAlternateCode(this.businessType)
+      await this.incorporateNow(legalType)
     } else {
       // persist legal type of incorporate now in session upon authentication via Signin component
-      sessionStorage.setItem('LEGAL-TYPE', this.businessType)
+      sessionStorage.setItem('LEGAL_TYPE', this.businessType)
       // navigate to BC Registry login page with return parameter
       const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
       const nameRequestUrl = `${window.location.origin}`
       Navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
     }
-  }
-
-  /**
-   * Create a draft business based on selected business type (If applicable).
-   * @param accountId Account ID of logged in user.
-   */
-  async createBusiness (accountId: number): Promise<string> {
-    const legalType = this.entityTypeAlternateShort(this.businessType)
-    const businessRequest = {
-      filing: {
-        header: {
-          name: 'incorporationApplication',
-          accountId: accountId
-        },
-        business: {
-          legalType: legalType
-        },
-        incorporationApplication: {
-          nameRequest: {
-            legalType: legalType
-          }
-        }
-      }
-    } as BusinessRequest
-
-    const createBusinessResponse =
-      await BusinessServices.createBusiness(businessRequest).catch(error => {
-        console.error('createBusiness() = ', error) // eslint-disable-line no-console
-        throw new Error('Unable to create new Business')
-      })
-
-    return createBusinessResponse.data?.filing?.business?.identifier as string
   }
 
   /** Emit the selected radio button CompanyType enum value. */

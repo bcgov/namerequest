@@ -173,17 +173,17 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
    * Redirect to Dashboard.
    * @param legalType The legal type of the IA that's being incorporated.
    */
-  async incorporateNow (legalType: string) {
+  async incorporateNow (legalType: string): Promise<any> {
     try {
       // show spinner since this is a network call
       this.$root.$emit('showSpinner', true)
       const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || 0
       const businessId = await this.createBusinessIA(accountId, legalType)
       this.goToEntityDashboard(businessId)
+      return
     } catch (error) {
       this.$root.$emit('showSpinner', false)
-      console.error('incorporateNow() = ', error) // eslint-disable-line no-console
-      throw new Error('Unable to Incorporate Now')
+      throw new Error('Unable to Incorporate Now ' + error)
     }
   }
 
@@ -212,8 +212,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
 
     const createBusinessResponse =
       await BusinessServices.createBusiness(businessRequest).catch(error => {
-        console.error('createBusiness() = ', error) // eslint-disable-line no-console
-        throw new Error('Unable to create new Business')
+        throw new Error('Unable to create new Business ' + error)
       })
 
     return createBusinessResponse.data?.filing?.business?.identifier as string

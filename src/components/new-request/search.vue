@@ -208,10 +208,10 @@
       <template v-slot:designation>
         <v-col md="4" lg="4">
           <v-select
-            :error-messages="getErrors.includes('designation') ? 'Please select a designation' : ''"
+            :error-messages="getErrors.includes('designation') ? 'Please enter a designation' : ''"
             filled
             :items="designationOptions"
-            label="Select a Designation"
+            label="Enter designation"
             :readonly="!entity_type_cd"
             :menu-props="{ bottom: true, offsetY: true}"
             v-model="designation"
