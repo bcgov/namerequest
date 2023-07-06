@@ -45,7 +45,7 @@ import { Sleep } from '@/plugins'
 import { NrAction } from '@/enums'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { CANCEL_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
-import NamexServices from '@/services/namex.services'
+import NamexServices from '@/services/namex-services'
 
 @Component({})
 export default class CancelDialog extends Mixins(PaymentMixin) {

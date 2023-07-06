@@ -62,7 +62,7 @@ import { Action, Getter } from 'vuex-class'
 import { StatsI } from '@/interfaces'
 import { GetFeatureFlag } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import NamexServices from '@/services/namex.services'
+import NamexServices from '@/services/namex-services'
 
 @Component({})
 export default class Stats extends Vue {

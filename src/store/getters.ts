@@ -221,7 +221,7 @@ export const getIsPersonsName = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.isPersonsName
 }
 
-export const getDoNotAnalyzeEntities = (state: StateIF): string[] => {
+export const getDoNotAnalyzeEntities = (state: StateIF): EntityType[] => {
   return state.stateModel.newRequestModel.doNotAnalyzeEntities
 }
 

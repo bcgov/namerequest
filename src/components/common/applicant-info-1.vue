@@ -405,7 +405,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { EmptyApplicant, NameRequestI } from '@/interfaces'
 import { removeExcessSpaces } from '@/plugins/utilities'
 import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
-import AuthServices from '@/services/auth.services'
+import AuthServices from '@/services/auth-services'
 
 @Component({
   components: {

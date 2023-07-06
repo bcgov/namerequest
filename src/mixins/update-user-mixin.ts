@@ -1,6 +1,6 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { UpdateLdUser } from '@/plugins'
-import AuthServices from '@/services/auth.services'
+import AuthServices from '@/services/auth-services'
 
 @Component({})
 export class UpdateUserMixin extends Vue {

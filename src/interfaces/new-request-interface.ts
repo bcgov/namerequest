@@ -25,7 +25,7 @@ export interface NewRequestIF {
   corpSearch: string
   designationIssueTypes: string[]
   displayedComponent: string
-  doNotAnalyzeEntities: string[]
+  doNotAnalyzeEntities: EntityType[]
   editMode: boolean
   entity_type_cd: EntityType
   entityTypeAddToSelect: SelectOptionsI

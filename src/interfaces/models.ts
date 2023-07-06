@@ -198,7 +198,7 @@ export interface QuillOpsI {
 }
 
 export interface RequestActionMappingI {
-  [propName: string]: string[] // misc properties that are arrays of strings
+  [propName: string]: EntityType[] // misc properties that are arrays of entity types
 }
 
 export interface RequestActionsI {
