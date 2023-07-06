@@ -96,6 +96,7 @@ export interface DraftReqI {
   xproJurisdiction?: string
   request_type_cd?: string
   hotjarUserId?: string
+  conversion_type_cd?: string
 }
 
 export interface EntityI {

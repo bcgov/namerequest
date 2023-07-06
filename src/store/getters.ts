@@ -953,6 +953,7 @@ export const getDraftNameReservation = (state: StateIF): DraftReqI => {
     priorityCd: getPriorityRequest(state) ? PriorityCode.YES : PriorityCode.NO,
     entity_type_cd: getEntityTypeCd(state),
     request_action_cd: getRequestActionCd(state),
+    conversion_type_cd: getConversionType(state),
     stateCd: NrState.DRAFT,
     english: getNameIsEnglish(state),
     nameFlag: getIsPersonsName(state),
