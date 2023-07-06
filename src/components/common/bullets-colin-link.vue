@@ -1,57 +1,55 @@
 <template>
-  <div id="bullets-colin-link">
-    <v-row>
-      <v-col cols="12" sm="3">
-        <v-radio-group v-model="selectedCompanyType" @change="radioButtonChanged" flat mandatory>
-          <v-radio id="named-company-radio"
-            class="mb-0 pb-4"
-            :label="getRadioText(CompanyType.NAMED_COMPANY)"
-            :value="CompanyType.NAMED_COMPANY"
-          />
-          <v-radio id="numbered-company-radio"
-            :label="getRadioText(CompanyType.NUMBERED_COMPANY)"
-            :value="CompanyType.NUMBERED_COMPANY"
-          />
-        </v-radio-group>
-      </v-col>
-      <v-col cols="12" sm="9">
-        <div v-if="selectedCompanyType === CompanyType.NAMED_COMPANY">
-          <v-row>
-            <slot name="name-input-slot">Name Input</slot>
-            <template v-if="showDesignation">
-              <slot name="designation">Designation</slot>
-            </template>
-          </v-row>
+  <v-row id="bullets-colin-link">
+    <v-col cols="12" sm="3">
+      <v-radio-group v-model="selectedCompanyType" @change="radioButtonChanged(selectedCompanyType)" flat mandatory>
+        <v-radio id="named-company-radio"
+          class="mb-0 pb-4"
+          label="Named Company"
+          :value="CompanyType.NAMED_COMPANY"
+        />
+        <v-radio id="numbered-company-radio"
+          label="Numbered Company"
+          :value="CompanyType.NUMBERED_COMPANY"
+        />
+      </v-radio-group>
+    </v-col>
+    <v-col cols="12" sm="9">
+      <div v-if="selectedCompanyType === CompanyType.NAMED_COMPANY">
+        <v-row>
+          <slot name="name-input-slot">Name Input</slot>
+          <template v-if="showDesignation">
+            <slot name="designation">Designation</slot>
+          </template>
+        </v-row>
+      </div>
+      <div v-else>
+        <ul class="bullet-points">
+          <li v-for="bulletPoint in bulletPoints" :key="bulletPoint">
+            {{ bulletPoint }}
+          </li>
+        </ul>
+        <div class="btn-spacing" v-if="colinButton">
+          <v-btn class="px-9" :href="colinLink" target="_blank">
+            Go to Corporate Online to Register <v-icon small class="ml-1">mdi-open-in-new</v-icon>
+          </v-btn>
         </div>
-        <div v-else>
-          <ul class="bullet-points">
-            <li v-for="bulletPoint in bulletPoints" :key="bulletPoint">
-              {{ bulletPoint }}
-            </li>
-          </ul>
-          <div class="btn-spacing" v-if="colinButton">
-            <v-btn class="px-9" :href="colinLink" target="_blank">
-              Go to Corporate Online to Register <v-icon small class="ml-1">mdi-open-in-new</v-icon>
-            </v-btn>
-          </div>
-          <div class="btn-spacing" v-else>
-            <v-btn
-              class="px-9"
-              @click="incorporateNow"
-            >
-              Incorporate Now
-            </v-btn>
-          </div>
+        <div class="btn-spacing" v-else>
+          <v-btn
+            class="px-9"
+            @click="incorporateNow()"
+          >
+            Incorporate Now
+          </v-btn>
         </div>
-      </v-col>
-    </v-row>
-  </div>
+      </div>
+    </v-col>
+  </v-row>
 </template>
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
-import { CompanyType } from '@/enums'
+import { CompanyType, EntityType } from '@/enums'
 import NameInput from '@/components/new-request/name-input.vue'
 import { Navigate } from '@/plugins'
 import BusinessServices from '@/services/business.services'
@@ -64,7 +62,7 @@ import { BusinessRequest } from '@/interfaces'
 })
 export default class BulletsColinLink extends Vue {
   /** The selected business type. */
-  @Prop({ default: '' }) readonly businessType!: string
+  @Prop({ default: '' }) readonly businessType!: EntityType
 
   /** Show Colin Button. */
   @Prop({ default: false }) readonly colinButton!: boolean
@@ -76,7 +74,7 @@ export default class BulletsColinLink extends Vue {
   @Getter getIsAuthenticated!: boolean
 
   // Local properties
-  selectedCompanyType = ''
+  selectedCompanyType: CompanyType = null
   bulletPoints = [
     'Your business name will be the Incorporation Number assinged by the Registry.',
     'You can change your business name at a later date.',
@@ -86,16 +84,6 @@ export default class BulletsColinLink extends Vue {
 
   // For template
   readonly CompanyType = CompanyType
-
-  // Get radio text respective to Enum values of CompanyType.
-  getRadioText (option: string): string {
-    if (option === CompanyType.NAMED_COMPANY) {
-      return `Named Company`
-    } else if (option === CompanyType.NUMBERED_COMPANY) {
-      return 'Numbered Company'
-    }
-    return '[error]'
-  }
 
   /**
    * The alternate short names for entity types.
@@ -108,7 +96,7 @@ export default class BulletsColinLink extends Vue {
     return ''
   }
 
-  // Navigate to the Entity Dashboard.
+  /** Navigate to the Entity Dashboard. */
   goToEntityDashboard (businessId: string): void {
     if (businessId) {
       const dashboardUrl = sessionStorage.getItem('DASHBOARD_URL')
@@ -130,9 +118,13 @@ export default class BulletsColinLink extends Vue {
         this.goToEntityDashboard(businessId)
       } catch (error) {
         this.$root.$emit('showSpinner', false)
-        throw error
+        console.error('incorporateNow() = ', error) // eslint-disable-line no-console
+        throw new Error('Unable to Incorporate Now')
       }
     } else {
+      // persist legal type of incorporate now in session upon authentication via Signin component
+      sessionStorage.setItem('LEGAL-TYPE', this.businessType)
+      // navigate to BC Registry login page with return parameter
       const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
       const nameRequestUrl = `${window.location.origin}`
       Navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
@@ -164,13 +156,14 @@ export default class BulletsColinLink extends Vue {
 
     const createBusinessResponse =
       await BusinessServices.createBusiness(businessRequest).catch(error => {
-        throw error
+        console.error('createBusiness() = ', error) // eslint-disable-line no-console
+        throw new Error('Unable to create new Business')
       })
 
     return createBusinessResponse.data?.filing?.business?.identifier as string
   }
 
-  // Emit the selected radio button CompanyType enum value.
+  /** Emit the selected radio button CompanyType enum value. */
   @Emit('radioButtonChange')
   radioButtonChanged (event: CompanyType): CompanyType {
     return event

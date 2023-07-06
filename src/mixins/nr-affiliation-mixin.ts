@@ -166,4 +166,56 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
       Navigate(`${dashboardUrl}${businessId}`)
     }
   }
+
+  /**
+   * Handle "Incorporate Now" button.
+   * Create draft business depending on business type.
+   * Redirect to Dashboard.
+   * @param legalType The legal type of the IA that's being incorporated.
+   */
+  async incorporateNow (legalType: string) {
+    try {
+      // show spinner since this is a network call
+      this.$root.$emit('showSpinner', true)
+      const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || 0
+      const businessId = await this.createBusinessIA(accountId, legalType)
+      this.goToEntityDashboard(businessId)
+    } catch (error) {
+      this.$root.$emit('showSpinner', false)
+      console.error('incorporateNow() = ', error) // eslint-disable-line no-console
+      throw new Error('Unable to Incorporate Now')
+    }
+  }
+
+  /**
+   * Create a draft business based on selected business type (If applicable).
+   * @param accountId Account ID of logged in user.
+   * @param legalType The legal type of the IA that's being incorporated.
+   */
+  async createBusinessIA (accountId: number, legalType: string): Promise<string> {
+    const businessRequest = {
+      filing: {
+        header: {
+          name: 'incorporationApplication',
+          accountId: accountId
+        },
+        business: {
+          legalType: legalType
+        },
+        incorporationApplication: {
+          nameRequest: {
+            legalType: legalType
+          }
+        }
+      }
+    } as BusinessRequest
+
+    const createBusinessResponse =
+      await BusinessServices.createBusiness(businessRequest).catch(error => {
+        console.error('createBusiness() = ', error) // eslint-disable-line no-console
+        throw new Error('Unable to create new Business')
+      })
+
+    return createBusinessResponse.data?.filing?.business?.identifier as string
+  }
 }

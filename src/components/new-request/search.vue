@@ -319,7 +319,7 @@ export default class NewSearch extends Mixins(CommonMixin) {
   // Local properties
   corpNumValid = true
   locationDisabled = false
-  selectedCompanyType = ''
+  selectedCompanyType: CompanyType = null
   readonly corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
   readonly EntityType = EntityType
   request_action_enum = [
