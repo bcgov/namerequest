@@ -52,7 +52,7 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
 
   // Global getters
   @Getter getNameAnalysisTimeout!: boolean
-  @Getter getDoNotAnalyzeEntities!: string[]
+  @Getter getDoNotAnalyzeEntities!: EntityType[]
   @Getter getEntityTextFromValue!: string
   @Getter getEntityTypeCd!: EntityType
   @Getter getIsPersonsName!: boolean

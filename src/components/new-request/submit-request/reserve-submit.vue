@@ -19,7 +19,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { ConditionalReqI, DraftReqI, IssueI, NameRequestI, ReservedReqI } from '@/interfaces'
-import NamexServices from '@/services/namex.services'
+import NamexServices from '@/services/namex-services'
 import { Location, NrRequestActionCodes, NrType } from '@/enums'
 
 @Component({})

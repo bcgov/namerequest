@@ -42,7 +42,7 @@ import { CommonMixin, PaymentMixin, PaymentSessionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { NameChoicesIF } from '@/interfaces'
 import { PAYMENT_COMPLETE_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
-import NamexServices from '@/services/namex.services'
+import NamexServices from '@/services/namex-services'
 
 /**
  * Makes debugging the receipt easier.

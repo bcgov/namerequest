@@ -51,7 +51,7 @@ import AdvancedSearchDates from '@/components/advanced-search/advanced-search-da
 import { FormType, NameRequestI } from '@/interfaces'
 import { Action, Getter } from 'vuex-class'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import NamexServices from '@/services/namex.services'
+import NamexServices from '@/services/namex-services'
 
 @Component({
   components: {
