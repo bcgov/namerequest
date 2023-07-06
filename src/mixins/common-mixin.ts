@@ -18,23 +18,25 @@ export class CommonMixin extends Vue {
   }
 
   /** Returns entity type text for the the specified code. */
+  // FUTURE: use GetCorpFullDescription() instead
   entityTypeCdToText (cd: EntityType): string {
     switch (cd) {
       // BC Entity Types:
-      case EntityType.FR: return 'BC Sole Proprietorship'
-      case EntityType.DBA: return 'BC "Doing Business As" name (DBA)'
-      case EntityType.CR: return 'BC Limited Company'
-      case EntityType.UL: return 'BC Unlimited Liability Company'
-      case EntityType.GP: return 'BC General Partnership'
-      case EntityType.LP: return 'BC Limited Partnership'
-      case EntityType.LL: return 'BC Limited Liability Partnership'
-      case EntityType.CP: return 'BC Cooperative Association'
       case EntityType.BC: return 'BC Benefit Company'
       case EntityType.CC: return 'BC Community Contribution Company'
-      case EntityType.SO: return 'BC Social Enterprise'
-      case EntityType.PA: return 'BC Private Act'
+      case EntityType.CP: return 'BC Cooperative Association'
+      case EntityType.CR: return 'BC Limited Company'
+      case EntityType.DBA: return 'BC "Doing Business As" name (DBA)'
       case EntityType.FI: return 'BC Credit Union'
+      case EntityType.FR: return 'BC Sole Proprietorship'
+      case EntityType.GP: return 'BC General Partnership'
+      case EntityType.LL: return 'BC Limited Liability Partnership'
+      case EntityType.LP: return 'BC Limited Partnership'
+      case EntityType.PA: return 'BC Private Act'
       case EntityType.PAR: return 'BC Parish'
+      case EntityType.SO: return 'BC Social Enterprise'
+      case EntityType.SP: return 'BC Sole Proprietorship'
+      case EntityType.UL: return 'BC Unlimited Liability Company'
 
       // XPRO Entity Types:
       case EntityType.XCR: return 'Extraprovincial Limited Company'
@@ -45,7 +47,7 @@ export class CommonMixin extends Vue {
       case EntityType.XCP: return 'Extraprovincial Cooperative Association'
       case EntityType.XSO: return 'Extraprovincial Social Enterprise'
 
-      default: return cd
+      default: return (cd as unknown as string)
     }
   }
 
@@ -87,6 +89,7 @@ export class CommonMixin extends Vue {
   isFirm (nr: any): boolean {
     return (
       nr?.legalType === EntityType.SP ||
+      nr?.legalType === EntityType.DBA ||
       nr?.legalType === EntityType.GP)
   }
 

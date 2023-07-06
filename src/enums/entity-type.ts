@@ -1,5 +1,17 @@
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 
+// Namerequest-only entity types
+// FUTURE: declare these in CorpTypeCd instead
+enum Other {
+  SO = 'SO',
+  XUL = 'XUL',
+  RLC = 'RLC',
+  XLP = 'XLP',
+  XLL = 'XLL',
+  XSO = 'XSO',
+  INFO = 'INFO'
+}
+
 /** Enum for Entity Type codes. */
 export enum EntityType {
   // BC Entity Types:
@@ -15,18 +27,18 @@ export enum EntityType {
   LP = CorpTypeCd.LIM_PARTNERSHIP,
   PA = CorpTypeCd.PRIVATE_ACT,
   PAR = CorpTypeCd.PARISHES,
-  SO = 'SO',
+  SO = Other.SO,
   SP = CorpTypeCd.SOLE_PROP,
   UL = CorpTypeCd.BC_UNLIMITED,
 
   // XPRO Entity Types:
   XCR = CorpTypeCd.XPRO_CORPORATION,
-  XUL = 'XUL',
-  RLC = 'RLC',
-  XLP = 'XLP',
-  XLL = 'XLL',
+  XUL = Other.XUL,
+  RLC = Other.RLC,
+  XLP = Other.XLP,
+  XLL = Other.XLL,
   XCP = CorpTypeCd.XPRO_COOP,
-  XSO = 'XSO',
+  XSO = Other.XSO,
 
-  INFO = 'INFO', // special value for sub-menu
+  INFO = Other.INFO, // special value for sub-menu
 }
