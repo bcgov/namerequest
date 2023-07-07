@@ -94,14 +94,6 @@ export default class Tabs extends Mixins(CommonMixin) {
   background-color: $BCgovBlue5;
 }
 
-#new-tab {
-  width: 67%;
-}
-
-#existing-tab {
-  width: 33%;
-}
-
 .upper-border {
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
