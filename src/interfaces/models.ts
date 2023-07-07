@@ -4,6 +4,7 @@ import {
   NameCheckAnalysisJurisdiction,
   NameCheckAnalysisType,
   NrRequestActionCodes,
+  NrRequestTypeCodes,
   NrState,
   PriorityCode
 } from '@/enums'
@@ -85,7 +86,7 @@ export interface ConversionTypesI {
   short?: string
   shortlist?: boolean
   text: string
-  value: string
+  value: NrRequestTypeCodes
 }
 
 export interface DraftReqI {
