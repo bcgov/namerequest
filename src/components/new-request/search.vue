@@ -18,24 +18,27 @@
           @change="clearErrors()"
         >
           <template v-slot:item="{ item }">
-            <v-list-item-title
+            <v-list-item-content
               v-if="item.isHeader"
-              class="group-header d-flex justify-space-between align-center"
+              class="group-header px-4 py-5"
               @click.stop="toggleActionGroup(item.group)"
             >
-              <div class="app-blue mr-4">{{ item.text }}</div>
-              <v-icon color="primary">
-                {{ item.group === activeActionGroup ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-              </v-icon>
-            </v-list-item-title>
-            <v-list-item-title
+              <div class="d-flex justify-space-between align-center">
+                <p class="mb-0 mr-4" :class="{'app-blue': item.group === activeActionGroup}">{{ item.text }}</p>
+                <v-icon color="primary">
+                  {{ item.group === activeActionGroup ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                </v-icon>
+              </div>
+            </v-list-item-content>
+
+            <v-list-item-content
               v-else
-              class="group-item ml-2 colour-text"
+              class="group-item pl-8 pr-4 py-4"
               @click="request_action_cd = item.value"
             >
               <div class="font-weight-bold">{{ item.text }}</div>
               <div>{{ item.subtext }}</div>
-            </v-list-item-title>
+            </v-list-item-content>
           </template>
         </v-select>
       </v-col>
@@ -553,13 +556,13 @@ export default class NewSearch extends Mixins(CommonMixin) {
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
 
-// set min height of request action groups and items only
+// remove v-list-item clickable padding
 ::v-deep .v-list-item:has(.group-header),
 ::v-deep .v-list-item:has(.group-item) {
-  min-height: 60px;
+  padding: 0;
 }
 
-// set border at top of group headers only
+// set border at top of group headers
 ::v-deep .v-list-item:has(.group-header) {
   border-top: 1px solid $gray3;
 }
@@ -575,9 +578,14 @@ export default class NewSearch extends Mixins(CommonMixin) {
   border-top: 1px solid $gray3;
   padding: 20px 8px !important;
 }
+
+// set content colour when hovering over list items
+
+.v-list-item:hover .v-list-item__content,
 .list-item:hover {
-  color: $app-blue;
+  color: $app-blue !important;
 }
+
 .disabled-custom {
   opacity: 0.4;
   pointer-events: none;
