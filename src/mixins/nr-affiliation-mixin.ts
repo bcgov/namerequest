@@ -8,6 +8,7 @@ import { Navigate } from '@/plugins'
 import { CommonMixin } from '@/mixins'
 import { NrAffiliationErrors } from '@/enums'
 import { CREATED, BAD_REQUEST } from 'http-status-codes'
+import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 
 @Component({})
 export class NrAffiliationMixin extends Mixins(CommonMixin) {
@@ -173,7 +174,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
    * Redirect to Dashboard.
    * @param legalType The legal type of the IA that's being incorporated.
    */
-  async incorporateNow (legalType: string): Promise<any> {
+  async incorporateNow (legalType: CorpTypeCd): Promise<any> {
     try {
       // show spinner since this is a network call
       this.$root.$emit('showSpinner', true)
@@ -192,7 +193,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
    * @param accountId Account ID of logged in user.
    * @param legalType The legal type of the IA that's being incorporated.
    */
-  async createBusinessIA (accountId: number, legalType: string): Promise<string> {
+  async createBusinessIA (accountId: number, legalType: CorpTypeCd): Promise<string> {
     const businessRequest = {
       filing: {
         header: {

@@ -11,6 +11,7 @@
 import { Component, Prop, Mixins } from 'vue-property-decorator'
 import SbcSignin from 'sbc-common-components/src/components/SbcSignin.vue'
 import { LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin } from '@/mixins'
+import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 
 /**
  * When the user clicks "Log in", they are are redirected to THIS page, which
@@ -45,6 +46,18 @@ export default class Signin extends Mixins(LoadKeycloakRolesMixin, NrAffiliation
       await this.createAffiliation(nr)
       // clear NR data for next time
       sessionStorage.removeItem('NR_DATA')
+    }
+
+    // if there is stored legal type for an IA then incorporate it now
+    const legaltype = sessionStorage.getItem('LEGAL_TYPE')
+    if (legaltype) {
+      try {
+        await this.incorporateNow(legaltype as CorpTypeCd)
+        // clear the legal type data
+        sessionStorage.removeItem('LEGAL_TYPE')
+      } catch (error) {
+        console.error(error)
+      }
     }
 
     // go to main app page

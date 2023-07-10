@@ -206,7 +206,7 @@
           register your extraprovincial business immediately using its existing name at Corporate Online.</p>
       </template>
       <template v-slot:designation>
-        <v-col md="4" lg="4">
+        <v-col cols="12" sm="4">
           <v-select
             :error-messages="getErrors.includes('designation') ? 'Please enter a designation' : ''"
             filled

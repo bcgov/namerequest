@@ -1,7 +1,12 @@
 <template>
   <v-row id="bullets-colin-link">
     <v-col cols="12" sm="3">
-      <v-radio-group v-model="selectedCompanyType" @change="radioButtonChanged(selectedCompanyType)" flat mandatory>
+      <v-radio-group
+        v-model="selectedCompanyType"
+        flat
+        mandatory
+        @change="radioButtonChanged(selectedCompanyType)"
+      >
         <v-radio id="named-company-radio"
           class="mb-0 pb-4"
           label="Named Company"
@@ -36,6 +41,7 @@
         <div class="btn-spacing" v-else>
           <v-btn
             class="px-9"
+            id="incorporate-now-button"
             @click="incorporateNowClicked()"
           >
             Incorporate Now
@@ -53,6 +59,7 @@ import { CompanyType, EntityType } from '@/enums'
 import NameInput from '@/components/new-request/name-input.vue'
 import { Navigate } from '@/plugins'
 import { NrAffiliationMixin } from '@/mixins'
+import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 
 @Component({
   components: {
@@ -88,12 +95,13 @@ export default class BulletsColinLink extends Mixins(NrAffiliationMixin) {
    * The alternate codes for entity types.
    * Alternate codes are used in Entities UIs.
    */
-  entityTypeAlternateCode (entityType: string): string {
+  entityTypeAlternateCode (entityType: EntityType): CorpTypeCd {
     switch (entityType) {
-      case EntityType.BC: return 'BEN'
-      case EntityType.CR: return 'BC'
-      case EntityType.UL: return 'ULC'
-      default: return entityType
+      case EntityType.BC: return CorpTypeCd.BENEFIT_COMPANY
+      case EntityType.CC: return CorpTypeCd.BC_CCC
+      case EntityType.CR: return CorpTypeCd.BC_COMPANY
+      case EntityType.UL: return CorpTypeCd.BC_ULC_COMPANY
+      default: return null
     }
   }
 
@@ -110,12 +118,12 @@ export default class BulletsColinLink extends Mixins(NrAffiliationMixin) {
    * If user is not authenticated, redirect to login screen then redirect back.
    */
   async incorporateNowClicked () {
+    const legalType = this.entityTypeAlternateCode(this.businessType)
     if (this.getIsAuthenticated) {
-      const legalType = this.entityTypeAlternateCode(this.businessType)
       await this.incorporateNow(legalType)
     } else {
       // persist legal type of incorporate now in session upon authentication via Signin component
-      sessionStorage.setItem('LEGAL_TYPE', this.businessType)
+      sessionStorage.setItem('LEGAL_TYPE', legalType)
       // navigate to BC Registry login page with return parameter
       const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
       const nameRequestUrl = `${window.location.origin}`
@@ -145,8 +153,10 @@ export default class BulletsColinLink extends Mixins(NrAffiliationMixin) {
     font-weight: bold;
 }
 
-// Line spacing between bullet points
+// Line spacing between bullet points and sizing
 .bullet-points {
+  font-size: 0.875rem;
+  margin-top: -0.75rem;
   line-height: 2rem;
 }
 
