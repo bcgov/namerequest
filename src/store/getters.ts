@@ -337,7 +337,7 @@ export const getConversionTypeOptions = (state: StateIF): ConversionTypesI[] => 
     options = options.concat(getConversionTypeAddToSelect(state))
     n = 4
   }
-  options = options.concat({ text: 'View all Alterations', value: 'INFO', rank: n })
+  options = options.concat({ text: 'View all Alterations', value: 'INFO' as any, rank: n })
   return options.sort((a, b) => {
     if (a.rank < b.rank) {
       return -1
