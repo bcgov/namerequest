@@ -1,6 +1,6 @@
 {
   "name": "name-request",
-  "version": "5.0.3",
+  "version": "5.0.4",
   "private": true,
   "appName": "Name Request UI",
   "sbcName": "SBC Common Components",
@@ -14,10 +14,10 @@
   },
   "dependencies": {
     "@babel/compat-data": "^7.12.13",
-    "@bcrs-shared-components/corp-type-module": "1.0.12",
-    "@bcrs-shared-components/enums": "1.0.40",
+    "@bcrs-shared-components/corp-type-module": "1.0.13",
+    "@bcrs-shared-components/enums": "1.0.41",
     "@bcrs-shared-components/genesys-web-message": "1.0.0",
-    "@bcrs-shared-components/interfaces": "1.0.22",
+    "@bcrs-shared-components/interfaces": "1.0.65",
     "@bcrs-shared-components/staff-payment": "1.0.29",
     "@bcrs-shared-components/web-chat": "2.0.0",
     "@mdi/font": "^4.5.95",
