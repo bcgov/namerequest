@@ -13,16 +13,9 @@ export function getRegistryDashboardBreadcrumb (registryHomeUrl: string): Breadc
   }
 }
 
-export function getMyBusinessRegistryBreadcrumb (businessUrl: string): BreadcrumbIF {
-  return {
-    text: 'BC Registries and Online Services',
-    href: `${businessUrl}business/${getParams()}`
-  }
-}
-
 export function getStaffDashboardBreadcrumb (businessUrl: string): BreadcrumbIF {
   return {
-    text: 'BC Registries and Online Services',
+    text: 'Staff Dashboard',
     href: `${businessUrl}staff/${getParams()}`
   }
 }
