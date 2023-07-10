@@ -1,44 +1,32 @@
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 
-// Namerequest-only entity types
-// FUTURE: declare these in CorpTypeCd instead
-enum Other {
-  SO = 'SO',
-  XUL = 'XUL',
-  RLC = 'RLC',
-  XLP = 'XLP',
-  XLL = 'XLL',
-  XSO = 'XSO',
-  INFO = 'INFO'
-}
-
 /** Enum for Entity Type codes. */
 export enum EntityType {
   // BC Entity Types:
   BC = CorpTypeCd.BC_COMPANY,
   CC = CorpTypeCd.BC_CCC,
   CP = CorpTypeCd.COOP,
-  CR = CorpTypeCd.BC_CORPORATION,
+  CR = CorpTypeCd.CORPORATION,
   DBA = CorpTypeCd.DOING_BUSINESS_AS,
   FI = CorpTypeCd.FINANCIAL,
-  FR = CorpTypeCd.NR_SOLE_PROP,
+  FR = CorpTypeCd.SOLE_PROPRIETORSHIP,
   GP = CorpTypeCd.PARTNERSHIP,
   LL = CorpTypeCd.LL_PARTNERSHIP,
   LP = CorpTypeCd.LIM_PARTNERSHIP,
   PA = CorpTypeCd.PRIVATE_ACT,
   PAR = CorpTypeCd.PARISHES,
-  SO = Other.SO,
+  SO = CorpTypeCd.SOCIETY_NR,
   SP = CorpTypeCd.SOLE_PROP,
-  UL = CorpTypeCd.BC_UNLIMITED,
+  UL = CorpTypeCd.UNLIMITED_LIABILITY_COMPANY,
 
   // XPRO Entity Types:
-  XCR = CorpTypeCd.XPRO_CORPORATION,
-  XUL = Other.XUL,
-  RLC = Other.RLC,
-  XLP = Other.XLP,
-  XLL = Other.XLL,
+  RLC = CorpTypeCd.XPRO_LIMITED_LIABILITY_COMPANY,
   XCP = CorpTypeCd.XPRO_COOP,
-  XSO = Other.XSO,
+  XCR = CorpTypeCd.XPRO_CORPORATION,
+  XLL = CorpTypeCd.XPRO_LIMITED_LIABILITY_PARTNERSHIP,
+  XLP = CorpTypeCd.XPRO_LIMITED_PARTNERSHIP,
+  XSO = CorpTypeCd.XPRO_SOCIETY_NR,
+  XUL = CorpTypeCd.XPRO_UNLIMITED_LIABILITY_COMPANY,
 
-  INFO = Other.INFO, // special value for sub-menu
+  INFO = 'INFO' as any // special value for sub-menu
 }

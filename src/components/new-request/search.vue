@@ -257,7 +257,7 @@ import NameInput from './name-input.vue'
 // Interfaces / Enums / List Data
 import { ConversionTypesI, EntityI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { AccountType, EntityType, Location, NrRequestActionCodes } from '@/enums'
+import { AccountType, EntityType, Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin } from '@/mixins'
 import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
 
@@ -400,7 +400,9 @@ export default class NewSearch extends Mixins(CommonMixin) {
       return
     }
     if (type && this.getIsConversion) {
-      let { entity_type_cd } = this.$conversionTypes.find(conv => conv.value === type)
+      // convert NrRequestTypeCodes -> EntityType
+      const value = type as unknown as NrRequestTypeCodes
+      let { entity_type_cd } = this.$conversionTypes.find(conv => conv.value === value)
       this.setEntityTypeCd(entity_type_cd)
       this.setConversionType(type)
       return
@@ -416,7 +418,9 @@ export default class NewSearch extends Mixins(CommonMixin) {
   }
 
   get entityConversionText () {
-    return this.$conversionTypes.find(conversion => conversion.value === this.getConversionType)?.text
+    // convert NrRequestTypeCodes -> EntityType
+    const value = this.getConversionType as unknown as NrRequestTypeCodes
+    return this.$conversionTypes.find(conversion => conversion.value === value)?.text
   }
 
   get isFederal () {
