@@ -14,6 +14,7 @@
           label="Select an Action"
           :error-messages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
           :items="requestActions"
+          item-value="[group,value]"
           :menu-props="{ bottom: true, offsetY: true, maxHeight: 423 }"
           @change="clearErrors()"
         >
