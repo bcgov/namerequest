@@ -11,7 +11,6 @@
 import { Component, Prop, Mixins } from 'vue-property-decorator'
 import SbcSignin from 'sbc-common-components/src/components/SbcSignin.vue'
 import { LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin } from '@/mixins'
-import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 
 /**
  * When the user clicks "Log in", they are are redirected to THIS page, which

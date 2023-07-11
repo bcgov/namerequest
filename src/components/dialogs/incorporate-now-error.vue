@@ -32,11 +32,8 @@ export default class IncorporateNowErrorDialog extends Vue {
   /** Prop to provide attachment selector. */
   @Prop() readonly attach: string
 
-  /** Pass click event to parent. Remove the session storage LEGAL_TYPE variable. */
-  @Emit()
-  close () {
-    sessionStorage.removeItem('LEGAL_TYPE')
-  }
+  /** Pass click event to parent. */
+  @Emit() close () { }
 
   /** Try again button clicked. Refresh the page. */
   tryAgain () {

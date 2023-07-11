@@ -69,7 +69,7 @@
     <IncorporateNowErrorDialog
       attach="#app"
       :dialog="incorporateNowErrorDialog"
-      @close="incorporateNowErrorDialog = false"
+      @close="closeIncorporateNowErrorDialog()"
     />
     <LocationInfoDialog />
     <MrasSearchInfoDialog />
@@ -331,6 +331,12 @@ export default class App extends Mixins(
   /** Whether the Genesys web message should be enabled. */
   get enableGenesysWebMessage (): boolean {
     return !!GetFeatureFlag('enable-genesys-web-message')
+  }
+
+  /** Close IncorporateNowErrorDialog and clear session storage. */
+  closeIncorporateNowErrorDialog (): void {
+    sessionStorage.removeItem('LEGAL_TYPE')
+    this.incorporateNowErrorDialog = false
   }
 }
 </script>
