@@ -185,9 +185,6 @@ export default class App extends Mixins(
   /** Whether the StaffPaymentErrorDialog should be displayed */
   staffPaymentErrorDialog = false
 
-  /** Whether the IncorporateNowErrorDialog should be displayed */
-  incorporateNowErrorDialog = false
-
   /** Errors from the API */
   saveErrors: Array<string> = []
 
