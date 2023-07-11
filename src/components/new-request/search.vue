@@ -75,7 +75,7 @@
                       <div v-for="(blurb, index) in item.blurbs "
                            :key="`Location-Blurb-${index}`">
                         <span v-if="request_action_cd === request_action_enum[index]">
-                          {{ item }}
+                          {{ blurb }}
                         </span>
                       </div>
                   </v-tooltip>
@@ -124,7 +124,7 @@
                     <div v-for="(blurb, index) in entityBlurbs(item.value)"
                          :key="`Blurb-${index}`">
                       <span :class="{ 'tooltip-bullet': index !== 0}">
-                        {{ item }}
+                        {{ blurb }}
                       </span>
                     </div>
                   </v-tooltip>
