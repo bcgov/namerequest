@@ -7,33 +7,126 @@
           <v-col cols="6" class="d-flex justify-end py-0"></v-col>
         </v-row>
 
-        <v-row class="mt-3">
-          <v-col cols="12" md="5" lg="5" :class="{'py-0': !isMobile}">
-            <v-select :error-messages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
-                      :hide-details="!getErrors.includes('request_action_cd')"
-                      :items="getRequestTypeOptions"
-                      @change="clearErrors()"
-                      filled
+        <v-row class="mt-4" no-gutters>
+          <!--request_action_cd-->
+          <v-col cols="12" md="4" lg="4">
+            <v-tooltip top
                       id="search-type-options-select"
-                      v-model="request_action_cd" />
+                      content-class="top-tooltip"
+                      transition="fade-transition"
+                      :disabled="request_action_cd !== RequestCode.CNV || isMobile">
+              <template v-slot:activator="scope">
+                <div v-on="scope.on">
+                  <v-select :error-messages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
+                            :items="$requestActions"
+                            :menu-props="{ bottom: true, offsetY: true}"
+                            @change="clearErrors()"
+                            label="Select an Action"
+                            filled
+                            v-model="request_action_cd">
+                    <template slot="item" slot-scope="data">
+                      <v-tooltip :disabled="!data.item.blurbs || isMobile" right transition="fade-transition">
+                        <template v-slot:activator="scope">
+                          <span v-on="scope.on" class="list-item">
+                            {{ data.item.text }}
+                          </span>
+                        </template>
+                        <span>{{ data.item.blurbs }}</span>
+                      </v-tooltip>
+                    </template>
+                  </v-select>
+                </div>
+              </template>
+              <span>{{ getRequestText }}</span>
+            </v-tooltip>
           </v-col>
-          <v-col cols="12" md="2" lg="2" :class="{'py-0': !isMobile}">
-            <v-select :error-messages="getErrors.includes('location') ? 'Please select a jurisdiction' : ''"
-                      :hide-details="!getErrors.includes('location')"
-                      :items="getLocationOptions"
-                      @change="clearErrors()"
-                      filled
-                      id="location-options-select"
-                      v-model="location" />
+          <!--location (aka jurisdiction)-->
+          <v-col cols="12" md="4" lg="4" :class="{'px-3': !isMobile }">
+            <v-tooltip id="location-options-select"
+                      top
+                      content-class="top-tooltip"
+                      transition="fade-transition"
+                      :disabled="!location || location === 'BC' || isMobile">
+              <template v-slot:activator="scope">
+                <div v-on="scope.on">
+                  <v-select :error-messages="getErrors.includes('location') ? 'Please select a jurisdiction' : ''"
+                            :items="getLocationOptions"
+                            :disabled="locationDisabled"
+                            :readonly="!request_action_cd"
+                            :class="!request_action_cd ? 'disabled-custom' : ''"
+                            :menu-props="{ bottom: true, offsetY: true}"
+                            @change="clearErrors()"
+                            filled
+                            label="Select a Jurisdiction"
+                            v-model="location">
+                    <template slot="item" slot-scope="data">
+                      <v-tooltip
+                        right
+                        transition="fade-transition"
+                        :disabled="!request_action_cd || !data.item.blurbs || isMobile"
+                      >
+                        <template v-slot:activator="scope">
+                          <span v-on="scope.on" class="list-item">{{ data.item.text }}</span>
+                        </template>
+                          <div v-for="(item, index) in data.item.blurbs "
+                              :key="`Location-Blurb-${index}`">
+                            <span v-if="request_action_cd === request_action_enum[index]">
+                              {{ item }}
+                            </span>
+                          </div>
+                      </v-tooltip>
+                    </template>
+                  </v-select>
+                </div>
+              </template>
+              <span>{{ getLocationText }}</span>
+            </v-tooltip>
           </v-col>
-          <v-col cols="12" md="5" lg="5" :class="{'py-0': !isMobile}">
-            <v-select :error-messages="getErrors.includes('entity_type_cd') ? 'Please select a business type' : ''"
-                      :hide-details="!getErrors.includes('entity_type_cd')"
-                      :items="getEntityTypeOptions"
-                      @change="clearErrors()"
-                      filled
-                      id="entity-type-options-select"
-                      v-model="entity_type_cd" />
+          <!--entity_type_cd-->
+          <v-col cols="12" md="4" lg="4">
+            <v-tooltip id="entity-type-options-select"
+                      top
+                      content-class="top-tooltip"
+                      :disabled="request_action_cd !== RequestCode.CNV || !entityConversionText || isMobile"
+                      transition="fade-transition">
+              <template v-slot:activator="scope">
+                <div v-on="scope.on">
+                  <v-select :error-messages="getErrors.includes('entity_type_cd') ? 'Please select a business type':''"
+                            :items="entityConversionTypeOptions"
+                            :label="getIsConversion ? 'Select an Alteration Type' : 'Select a Business Type'"
+                            :readonly="!request_action_cd || !location"
+                            :class="!location ? 'disabled-custom' : ''"
+                            :menu-props="{ bottom: true, offsetY: true}"
+                            @change="clearErrors()"
+                            filled
+                            v-model="entity_type_cd">
+                    <template slot="item" slot-scope="data">
+                      <v-tooltip
+                              :right="isScreenLg"
+                              :left="!isScreenLg"
+                              :disabled="!data.item.blurbs || isMobile"
+                              :content-class="!isScreenLg ? 'left-tooltip' : ''"
+                              transition="fade-transition">
+                        <template v-slot:activator="scope">
+                          <span v-on="scope.on"
+                                class="list-item"
+                                :class="{ 'last-select-item': data.item.value === 'INFO' }">
+                            {{ data.item.text }}
+                          </span>
+                        </template>
+                        <div v-for="(item, index) in entityBlurbs(data.item.value)"
+                            :key="`Blurb-${index}`">
+                          <span :class="{ 'tooltip-bullet': index !== 0}">
+                            {{ item }}
+                          </span>
+                        </div>
+                      </v-tooltip>
+                    </template>
+                  </v-select>
+                </div>
+              </template>
+              <span>{{ entityConversionText }}</span>
+            </v-tooltip>
           </v-col>
         </v-row>
       </template>
@@ -287,7 +380,7 @@ import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
-import { EntityI, NameChoicesIF, NameRequestI, RequestActionsI } from '@/interfaces'
+import { ConversionTypesI, EntityI, NameChoicesIF, NameRequestI, RequestActionsI } from '@/interfaces'
 import { sanitizeName } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { EntityType, Location, RequestCode } from '@/enums'
@@ -299,25 +392,37 @@ import { CommonMixin } from '@/mixins'
   }
 })
 export default class NamesCapture extends Mixins(CommonMixin) {
+  // enums for template
+  readonly Location = Location
+  readonly RequestCode = RequestCode
+
   // Global getters
+  @Getter getConversionType!: EntityType
+  @Getter getAllConversionTypeOptions!: ConversionTypesI[]
   @Getter getDisplayedComponent!: string
   @Getter getDesignation!: string
+  @Getter getEntityBlurbs!: Array<EntityI>
   @Getter getEditMode!: boolean
   @Getter getErrors!: string[]
   @Getter getEntityTypeCd!: EntityType
   @Getter getEntityTypeOptions!: Array<EntityI>
   @Getter getIsAssumedName!: boolean
   @Getter getLocation!: Location
+  @Getter getLocationText!: string
   @Getter getLocationOptions!: any[]
+  @Getter getIsConversion!: boolean
   @Getter getName!: string
   @Getter getNameChoices!: NameChoicesIF
   @Getter getNr!: Partial<NameRequestI>
   @Getter getRequestActionCd!: RequestCode
+  @Getter getRequestText!: string
+  @Getter getRequestTypeCd!: EntityType
   @Getter getRequestTypeOptions!: RequestActionsI[]
   @Getter getSubmissionTabNumber!: number
   @Getter isMobile!: boolean
 
   // Global actions
+  @Action setConversionType!: ActionBindingIF
   @Action setClearErrors!: ActionBindingIF
   @Action setEntityTypeCd!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
@@ -332,6 +437,19 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   @Action setSubmissionTabComponent!: ActionBindingIF
   @Action setSubmissionType!: ActionBindingIF
   @Action startEditName!: ActionBindingIF
+
+  // local properties
+  private locationDisabled = false
+
+  // Local enum
+  private request_action_enum = [
+    RequestCode.NEW,
+    RequestCode.MVE,
+    RequestCode.REH,
+    RequestCode.AML,
+    RequestCode.CHG,
+    RequestCode.CNV
+  ]
 
   readonly buildNameURL = 'https://www2.gov.bc.ca/gov/content?id=4A6A55FAD204494D9AF0B53BDC13A24F'
 
@@ -527,15 +645,55 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   }
 
   get entity_type_cd (): EntityType {
+    if (this.getIsConversion) {
+      if (!this.getConversionType) {
+        this.setConversionType(this.getRequestTypeCd)
+      }
+      return this.getConversionType
+    }
     return this.getEntityTypeCd
   }
 
   set entity_type_cd (type: EntityType) {
+    // special case for sub-menu
+    if (type === EntityType.INFO) {
+      // clear current value until user chooses a new one
+      this.setEntityTypeCd(null)
+      // show the "View all business types" modal
+      this.setPickEntityModalVisible(true)
+      return
+    }
+    if (type && this.getIsConversion) {
+      let { entity_type_cd } = this.$conversionTypes.find(conv => conv.value === type)
+      this.setEntityTypeCd(entity_type_cd)
+      this.setConversionType(type)
+      return
+    }
     this.setEntityTypeCd(type)
   }
 
   get entityTypeText (): string {
     return (this.entity_type_cd === EntityType.CC) ? 'Community Contribution Company' : 'Cooperative'
+  }
+
+  get entityConversionText () {
+    return this.$conversionTypes.find(conversion => conversion.value === this.getConversionType)?.text
+  }
+
+  get entityConversionTypeOptions () {
+    if (this.getIsConversion) {
+      return this.getAllConversionTypeOptions
+    }
+    return this.getEntityTypeOptions
+  }
+
+  get isScreenLg () {
+    return this.$vuetify.breakpoint.lgAndUp
+  }
+
+  // FUTURE: clean up return type
+  entityBlurbs (entity_type_cd: string): string | string[] | string[][] {
+    return this.getEntityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs
   }
 
   get isValid (): boolean {
