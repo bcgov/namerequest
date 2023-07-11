@@ -133,9 +133,7 @@ export default class BulletsColinLink extends Mixins(NrAffiliationMixin) {
 
   /** Emit the selected radio button CompanyType enum value. */
   @Emit('radioButtonChange')
-  radioButtonChanged (event: CompanyType): CompanyType {
-    return event
-  }
+  radioButtonChanged (event: CompanyType): void {}
 }
 </script>
 
