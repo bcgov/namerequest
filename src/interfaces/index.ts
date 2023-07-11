@@ -1,5 +1,4 @@
 export * from './app-config'
-export * from './breadcrumb-interface'
 export * from './business'
 export * from './form-type'
 export * from './new-request-interface'
@@ -17,4 +16,4 @@ export * from './dialog-options'
 export * from './refund-params-interface'
 
 // external interfaces
-export { FormIF, StaffPaymentIF } from '@bcrs-shared-components/interfaces'
+export { FormIF, StaffPaymentIF, BreadcrumbIF } from '@bcrs-shared-components/interfaces'
