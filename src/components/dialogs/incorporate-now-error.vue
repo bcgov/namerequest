@@ -6,7 +6,7 @@
       <v-card-text id="dialog-text">
         <!-- display message -->
         <div class="general-error">
-          <p>Unable to incorporate now. Please refresh the page or try again.</p>
+          <p>Unable to incorporate now. Please cancel or try again.</p>
         </div>
       </v-card-text>
 
@@ -14,7 +14,8 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn id="dialog-exit-button" class="dialog-close" text @click="close()">OK</v-btn>
+        <v-btn id="dialog-cancel-button" class="dialog-close" text @click="close()">Cancel</v-btn>
+        <v-btn id="dialog-try-again-button" class="dialog-close" text @click="tryAgain()">Try Again</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -33,6 +34,11 @@ export default class IncorporateNowErrorDialog extends Vue {
 
   /** Pass click event to parent. */
   @Emit() close () { }
+
+  /** Try again button clicked. Refresh the page. */
+  tryAgain () {
+    window.location.reload()
+  }
 }
 </script>
 

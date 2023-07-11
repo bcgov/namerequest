@@ -48,18 +48,6 @@ export default class Signin extends Mixins(LoadKeycloakRolesMixin, NrAffiliation
       sessionStorage.removeItem('NR_DATA')
     }
 
-    // if there is stored legal type for an IA then incorporate it now
-    const legaltype = sessionStorage.getItem('LEGAL_TYPE')
-    if (legaltype) {
-      try {
-        await this.incorporateNow(legaltype as CorpTypeCd)
-        // clear the legal type data
-        sessionStorage.removeItem('LEGAL_TYPE')
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
     // go to main app page
     await this.$router.push('/')
   }
