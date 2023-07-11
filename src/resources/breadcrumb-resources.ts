@@ -6,14 +6,16 @@ function getParams (): string {
   return accountId ? `?accountid=${accountId}` : ''
 }
 
-export function getRegistryDashboardBreadcrumb (registryHomeUrl: string): BreadcrumbIF {
+export function getRegistryDashboardBreadcrumb (): BreadcrumbIF {
+  const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
   return {
     text: 'BC Registries and Online Services',
     href: `${registryHomeUrl}dashboard/${getParams()}`
   }
 }
 
-export function getStaffDashboardBreadcrumb (businessUrl: string): BreadcrumbIF {
+export function getStaffDashboardBreadcrumb (): BreadcrumbIF {
+  const businessUrl = sessionStorage.getItem('BUSINESSES_URL')
   return {
     text: 'Staff Dashboard',
     href: `${businessUrl}staff/${getParams()}`

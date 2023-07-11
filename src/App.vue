@@ -213,10 +213,10 @@ export default class App extends Mixins(
     // Staff don't want the home landing page and they can't access the Manage Business Dashboard
     if (this.isRoleStaff) {
       // If staff, set StaffDashboard as home crumb
-      crumbs.unshift(getStaffDashboardBreadcrumb(sessionStorage.getItem('BUSINESSES_URL')))
+      crumbs.unshift(getStaffDashboardBreadcrumb())
     } else {
       // For non-staff, set Home crumb
-      crumbs.unshift(getRegistryDashboardBreadcrumb(sessionStorage.getItem('REGISTRY_HOME_URL')))
+      crumbs.unshift(getRegistryDashboardBreadcrumb())
     }
     return crumbs
   }
