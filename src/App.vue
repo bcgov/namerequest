@@ -68,7 +68,7 @@
     <HelpMeChooseDialog />
     <IncorporateNowErrorDialog
       attach="#app"
-      :dialog="incorporateNowErrorDialog"
+      :dialog="getIncorporateNowErrorStatus"
       @close="closeIncorporateNowErrorDialog()"
     />
     <LocationInfoDialog />
@@ -162,6 +162,7 @@ export default class App extends Mixins(
 ) {
   // Global getters
   @Getter getDisplayedComponent!: string
+  @Getter getIncorporateNowErrorStatus!: boolean
   @Getter getNrId!: number
   @Getter isRoleStaff: boolean
   @Getter isMobile!: boolean
@@ -172,6 +173,7 @@ export default class App extends Mixins(
   @Action setDisplayedComponent!: ActionBindingIF
   @Action toggleConfirmNrModal!: ActionBindingIF
   @Action setCurrentJsDate!: ActionBindingIF
+  @Action setIncorporateNowErrorStatus!: ActionBindingIF
   @Action setWindowWidth!: ActionBindingIF
 
   readonly axios = axios
@@ -266,7 +268,7 @@ export default class App extends Mixins(
         // clear the legal type data
         sessionStorage.removeItem('LEGAL_TYPE')
       } catch (error) {
-        this.incorporateNowErrorDialog = true
+        this.setIncorporateNowErrorStatus(true)
         console.error(error)
       }
     }
@@ -336,7 +338,7 @@ export default class App extends Mixins(
   /** Close IncorporateNowErrorDialog and clear session storage. */
   closeIncorporateNowErrorDialog (): void {
     sessionStorage.removeItem('LEGAL_TYPE')
-    this.incorporateNowErrorDialog = false
+    this.setIncorporateNowErrorStatus(false)
   }
 }
 </script>

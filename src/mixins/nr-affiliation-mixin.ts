@@ -14,6 +14,7 @@ import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 export class NrAffiliationMixin extends Mixins(CommonMixin) {
   // Global action
   @Action setAffiliationErrorModalValue!: ActionBindingIF
+  @Action setIncorporateNowErrorStatus!: ActionBindingIF
 
   /**
    * Affiliates a NR to the current account, creates a temporary business, and then navigates
@@ -184,6 +185,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
       return
     } catch (error) {
       this.$root.$emit('showSpinner', false)
+      this.setIncorporateNowErrorStatus(true)
       throw new Error('Unable to Incorporate Now ' + error)
     }
   }
