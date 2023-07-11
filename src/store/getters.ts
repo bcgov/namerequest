@@ -75,6 +75,10 @@ export const getNr = (state: StateIF): Partial<NameRequestI> => {
   return state.stateModel.newRequestModel.nr
 }
 
+export const getRequestTypeCd = (state: StateIF): any => {
+  return state.stateModel.newRequestModel.nr.requestTypeCd
+}
+
 export const getNrNames = (state: StateIF): any => {
   return state.stateModel.newRequestModel.nr.names
 }
@@ -331,6 +335,19 @@ export const getConversionTypeOptions = (state: StateIF): ConversionTypesI[] => 
     n = 4
   }
   options = options.concat({ text: 'View all Alterations', value: 'INFO', rank: n })
+  return options.sort((a, b) => {
+    if (a.rank < b.rank) {
+      return -1
+    }
+    if (a.rank > b.rank) {
+      return 1
+    }
+    return 0
+  })
+}
+
+export const getAllConversionTypeOptions = (state: StateIF): ConversionTypesI[] => {
+  let options = [...ConversionTypes]
   return options.sort((a, b) => {
     if (a.rank < b.rank) {
       return -1
@@ -724,6 +741,7 @@ export const getEditNameReservation = (state: StateIF): NameRequestI => {
     applicants: [getApplicant(state)],
     request_action_cd: getRequestActionCd(state),
     entity_type_cd: getEntityTypeCd(state),
+    conversion_type_cd: getConversionType(state),
     ...nrData,
     ...getCorpNumForReservation(state) // must be last
   }
