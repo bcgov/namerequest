@@ -66,6 +66,11 @@
     <ExitDialog />
     <ExitIncompletePaymentDialog />
     <HelpMeChooseDialog />
+    <IncorporateNowErrorDialog
+      attach="#app"
+      :dialog="getIncorporateNowErrorStatus"
+      @close="closeIncorporateNowErrorDialog()"
+    />
     <LocationInfoDialog />
     <MrasSearchInfoDialog />
     <NrNotRequiredDialog />
@@ -108,9 +113,9 @@ import GenesysWebMessage from '@bcrs-shared-components/genesys-web-message/Genes
 import { WebChat as ChatPopup } from '@bcrs-shared-components/web-chat'
 import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
-  LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog, PaymentCompleteDialog,
-  PickEntityOrConversionDialog, PickRequestTypeDialog, RenewDialog, ReceiptsDialog, RefundDialog,
-  ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
+  IncorporateNowErrorDialog, LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog,
+  PaymentCompleteDialog, PickEntityOrConversionDialog, PickRequestTypeDialog, RenewDialog, ReceiptsDialog,
+  RefundDialog, ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
 } from '@/components/dialogs'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
@@ -119,6 +124,7 @@ import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from './services/namex-services'
 import { PAYMENT_REQUIRED } from 'http-status-codes'
+import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 
 @Component({
   components: {
@@ -133,6 +139,7 @@ import { PAYMENT_REQUIRED } from 'http-status-codes'
     ExitIncompletePaymentDialog,
     GenesysWebMessage,
     HelpMeChooseDialog,
+    IncorporateNowErrorDialog,
     LocationInfoDialog,
     MrasSearchInfoDialog,
     NrNotRequiredDialog,
@@ -155,6 +162,7 @@ export default class App extends Mixins(
 ) {
   // Global getters
   @Getter getDisplayedComponent!: string
+  @Getter getIncorporateNowErrorStatus!: boolean
   @Getter getNrId!: number
   @Getter isRoleStaff: boolean
   @Getter isMobile!: boolean
@@ -165,6 +173,7 @@ export default class App extends Mixins(
   @Action setDisplayedComponent!: ActionBindingIF
   @Action toggleConfirmNrModal!: ActionBindingIF
   @Action setCurrentJsDate!: ActionBindingIF
+  @Action setIncorporateNowErrorStatus!: ActionBindingIF
   @Action setWindowWidth!: ActionBindingIF
 
   readonly axios = axios
@@ -248,6 +257,19 @@ export default class App extends Mixins(
       sessionStorage.removeItem('NR_DATA')
     }
 
+    // if there is stored legal type for an IA then incorporate it now
+    const legaltype = sessionStorage.getItem('LEGAL_TYPE')
+    if (legaltype) {
+      try {
+        await this.incorporateNow(legaltype as CorpTypeCd)
+        // clear the legal type data
+        sessionStorage.removeItem('LEGAL_TYPE')
+      } catch (error) {
+        this.setIncorporateNowErrorStatus(true)
+        console.error(error)
+      }
+    }
+
     // listen for save error events
     this.$root.$on('save-error-event', (error: any) => {
       // save errors/warnings
@@ -308,6 +330,12 @@ export default class App extends Mixins(
   /** Whether the Genesys web message should be enabled. */
   get enableGenesysWebMessage (): boolean {
     return !!GetFeatureFlag('enable-genesys-web-message')
+  }
+
+  /** Close IncorporateNowErrorDialog and clear session storage. */
+  closeIncorporateNowErrorDialog (): void {
+    sessionStorage.removeItem('LEGAL_TYPE')
+    this.setIncorporateNowErrorStatus(false)
   }
 }
 </script>

@@ -1231,3 +1231,7 @@ export const startQuickSearch = async ({ commit, getters }, checks: QuickSearchP
 export const setRefundParams: ActionIF = ({ commit }, refundParams: RefundParamsIF): void => {
   commit('mutateRefundParams', refundParams)
 }
+
+export const setIncorporateNowErrorStatus: ActionIF = ({ commit }, incorporateNowError: boolean): void => {
+  commit('mutateIncorporateNowErrorStatus', incorporateNowError)
+}
