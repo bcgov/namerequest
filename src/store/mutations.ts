@@ -555,3 +555,7 @@ export const mutateWindowWidth = (state: StateIF, width: number) => {
 export const mutateHotjarUserId = (state: StateIF, hotjarUserId: string) => {
   state.stateModel.newRequestModel.hotjarUserId = hotjarUserId
 }
+
+export const mutateIncorporateNowErrorStatus = (state: StateIF, incorporateNowError: boolean) => {
+  state.stateModel.newRequestModel.incorporateNowError = incorporateNowError
+}
