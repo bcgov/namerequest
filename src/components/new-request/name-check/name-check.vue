@@ -18,7 +18,7 @@
       <v-col v-if="showDesignationSelect" :class="{'pl-3': !isMobile}" cols="12" lg="3">
         <v-select filled
                   :items="designationOptions"
-                  label="Select a Designation"
+                  label="Enter designation"
                   style="line-height: 20px;"
                   v-model="designation">
         </v-select>
