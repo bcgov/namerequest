@@ -35,6 +35,7 @@ export interface NewRequestIF {
   getNameReservationFailed: boolean
   helpMeChooseModalVisible: boolean
   affiliationErrorModalValue: NrAffiliationErrors
+  incorporateNowError: boolean
   isPersonsName: boolean
   issueIndex: number
   location: Location
