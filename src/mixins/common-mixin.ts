@@ -1,5 +1,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { EntityType, PriorityCode, NrRequestActionCodes } from '@/enums'
+import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
+import { GetFeatureFlag } from '@/plugins'
 
 @Component({})
 export class CommonMixin extends Vue {
@@ -52,6 +54,20 @@ export class CommonMixin extends Vue {
   }
 
   /**
+   * The alternate codes for entity types.
+   * Alternate codes are used in Entities UIs.
+   */
+  entityTypeAlternateCode (entityType: EntityType): CorpTypeCd {
+    switch (entityType) {
+      case EntityType.BC: return CorpTypeCd.BENEFIT_COMPANY
+      case EntityType.CC: return CorpTypeCd.BC_CCC
+      case EntityType.CR: return CorpTypeCd.BC_COMPANY
+      case EntityType.UL: return CorpTypeCd.BC_ULC_COMPANY
+      default: return null
+    }
+  }
+
+  /**
    * Returns request action text for the the specified code.
    * See namex -> api/namex/resources/name_requests/report_resource.py::_get_request_action_cd_description()
    */
@@ -80,9 +96,10 @@ export class CommonMixin extends Vue {
     return (nr?.priorityCd === PriorityCode.YES)
   }
 
-  /** Returns true if the specified NR is for a Benefit Company. */
-  isBenefitCompany (nr: any): boolean {
-    return (nr?.entity_type_cd === EntityType.BC)
+  /** Returns true if the specified NR is for a supported Incorporation Entity Type (FF). */
+  isSupportedEntity (nr: any): boolean {
+    const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
+    return supportedEntites.includes(nr?.entity_type_cd)
   }
 
   /** Returns true if the specified NR is for a firm (SP/GP). */

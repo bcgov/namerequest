@@ -194,8 +194,10 @@
             :nrNum="nr && nr.nrNum"
             :approvedName="approvedName && approvedName.name"
             :emailAddress="nr && nr.applicants && nr.applicants.emailAddress"
+            :showIncorporateNowButton="showIncorporateButton"
             :showRegisterButton="showRegisterButton"
             :disabled="disableUnfurnished"
+            @incorporateYourBusiness="handleButtonClick(NrAction.INCORPORATE)"
             @registerYourBusiness="registerYourBusiness()"
           />
 
@@ -204,13 +206,6 @@
             v-if="showNrNotApprovedGrayBox"
             :nrNum="nr.nrNum"
           />
-
-          <!-- incorporate button -->
-          <div class="mt-5 text-center" v-if="showIncorporateButton">
-            <v-btn id="INCORPORATE-btn" @click="handleButtonClick(NrAction.INCORPORATE)">
-              Incorporate Using This Name Request
-            </v-btn>
-          </div>
         </div>
       </transition>
     </template>
@@ -417,8 +412,10 @@ export default class ExistingRequestDisplay extends Mixins(
    */
   get showIncorporateButton (): boolean {
     return (
-      this.isBenefitCompany(this.nr) &&
-      this.actions.includes(NrAction.INCORPORATE)
+      this.isSupportedEntity(this.nr) &&
+      this.nr.request_action_cd &&
+      this.nr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS &&
+      NrState.APPROVED === this.nr.state
     )
   }
 

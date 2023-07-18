@@ -12,6 +12,17 @@
         </v-btn>
       </div>
 
+      <div v-else-if="showIncorporateNowButton" class="d-flex justify-center my-1 pb-1">
+        <v-btn
+          class="incorporate-now-btn"
+          min-width="20rem"
+          :disabled="disabled"
+          @click="$emit('incorporateYourBusiness')"
+        >
+          <strong>Incorporate Your Business</strong>
+        </v-btn>
+      </div>
+
       <p v-else>
         Your Name Request <strong>{{nrNum}}</strong> for <strong>{{approvedName}}</strong> has been
         approved for use. An email has been sent to <strong>{{emailAddress}}</strong> with instructions
@@ -47,6 +58,9 @@ export default class NrApprovedGrayBox extends Vue {
 
   @Prop({ default: false })
   readonly showRegisterButton: boolean
+
+  @Prop({ default: false })
+  readonly showIncorporateNowButton: boolean
 
   @Prop({ default: false })
   readonly disabled: boolean
