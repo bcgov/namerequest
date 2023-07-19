@@ -197,8 +197,7 @@
             :showIncorporateNowButton="showIncorporateButton"
             :showRegisterButton="showRegisterButton"
             :disabled="disableUnfurnished"
-            @incorporateYourBusiness="handleButtonClick(NrAction.INCORPORATE)"
-            @registerYourBusiness="registerYourBusiness()"
+            @incorporateRegisterYourBusiness="incorporateRegisterYourBusiness()"
           />
 
           <NrNotApprovedGrayBox
@@ -413,7 +412,6 @@ export default class ExistingRequestDisplay extends Mixins(
   get showIncorporateButton (): boolean {
     return (
       this.isSupportedEntity(this.nr) &&
-      this.nr.request_action_cd &&
       this.nr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS &&
       NrState.APPROVED === this.nr.state
     )
@@ -422,7 +420,6 @@ export default class ExistingRequestDisplay extends Mixins(
   /** True if the Register button should be shown. */
   get showRegisterButton (): boolean {
     return this.isFirm(this.nr) &&
-           this.nr.request_action_cd &&
            this.nr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS &&
            (NrState.APPROVED === this.nr.state ||
             this.isConsentUnRequired)
@@ -685,8 +682,8 @@ export default class ExistingRequestDisplay extends Mixins(
     this.setConditionsModalVisible(true)
   }
 
-  /** Called to register the business. */
-  async registerYourBusiness (): Promise<void> {
+  /** Called to incorporate/register the business. */
+  async incorporateRegisterYourBusiness (): Promise<void> {
     // safety check
     if (!this.isNrApprovedOrConditional) return
 

@@ -6,7 +6,7 @@
           class="register-btn"
           min-width="20rem"
           :disabled="disabled"
-          @click="$emit('registerYourBusiness')"
+          @click="$emit('incorporateRegisterYourBusiness')"
         >
           <strong>Register Your Business</strong>
         </v-btn>
@@ -17,7 +17,7 @@
           class="incorporate-now-btn"
           min-width="20rem"
           :disabled="disabled"
-          @click="$emit('incorporateYourBusiness')"
+          @click="$emit('incorporateRegisterYourBusiness')"
         >
           <strong>Incorporate Your Business</strong>
         </v-btn>
