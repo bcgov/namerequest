@@ -58,15 +58,14 @@ import { Getter } from 'vuex-class'
 import { CompanyType, EntityType } from '@/enums'
 import NameInput from '@/components/new-request/name-input.vue'
 import { Navigate } from '@/plugins'
-import { NrAffiliationMixin } from '@/mixins'
-import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
+import { CommonMixin, NrAffiliationMixin } from '@/mixins'
 
 @Component({
   components: {
     NameInput
   }
 })
-export default class BulletsColinLink extends Mixins(NrAffiliationMixin) {
+export default class BulletsColinLink extends Mixins(CommonMixin, NrAffiliationMixin) {
   /** The selected business type. */
   @Prop({ default: '' }) readonly businessType!: EntityType
 
@@ -90,20 +89,6 @@ export default class BulletsColinLink extends Mixins(NrAffiliationMixin) {
 
   // For template
   readonly CompanyType = CompanyType
-
-  /**
-   * The alternate codes for entity types.
-   * Alternate codes are used in Entities UIs.
-   */
-  entityTypeAlternateCode (entityType: EntityType): CorpTypeCd {
-    switch (entityType) {
-      case EntityType.BC: return CorpTypeCd.BENEFIT_COMPANY
-      case EntityType.CC: return CorpTypeCd.BC_CCC
-      case EntityType.CR: return CorpTypeCd.BC_COMPANY
-      case EntityType.UL: return CorpTypeCd.BC_ULC_COMPANY
-      default: return null
-    }
-  }
 
   /** Navigate to the Entity Dashboard. */
   goToEntityDashboard (businessId: string): void {

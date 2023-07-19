@@ -6,9 +6,20 @@
           class="register-btn"
           min-width="20rem"
           :disabled="disabled"
-          @click="$emit('registerYourBusiness')"
+          @click="$emit('incorporateRegisterYourBusiness')"
         >
           <strong>Register Your Business</strong>
+        </v-btn>
+      </div>
+
+      <div v-else-if="showIncorporateNowButton" class="d-flex justify-center my-1 pb-1">
+        <v-btn
+          class="incorporate-now-btn"
+          min-width="20rem"
+          :disabled="disabled"
+          @click="$emit('incorporateRegisterYourBusiness')"
+        >
+          <strong>Incorporate Your Business</strong>
         </v-btn>
       </div>
 
@@ -47,6 +58,9 @@ export default class NrApprovedGrayBox extends Vue {
 
   @Prop({ default: false })
   readonly showRegisterButton: boolean
+
+  @Prop({ default: false })
+  readonly showIncorporateNowButton: boolean
 
   @Prop({ default: false })
   readonly disabled: boolean
