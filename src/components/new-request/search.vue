@@ -104,6 +104,7 @@
                         :readonly="!request_action_cd || !location"
                         :class="!location ? 'disabled-custom' : ''"
                         :menu-props="{ bottom: true, offsetY: true}"
+                        ref="selectBusinessTypeRef"
                         @change="clearErrors()"
                         filled
                         v-model="entity_type_cd">
@@ -540,6 +541,10 @@ export default class NewSearch extends Mixins(CommonMixin) {
   @Watch('entity_type_cd')
   clearDesignation (newVal) {
     this.designation = ''
+    // Clear "Select a Business Type" field when "View all business types" or Society is selected.
+    if (!this.entity_type_cd || this.entity_type_cd === EntityType.INFO) {
+      this.$refs.selectBusinessTypeRef.reset()
+    }
   }
 
   /** Reset search values when location changes */
