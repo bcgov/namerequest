@@ -5,6 +5,7 @@
         {{ editModeHeader }}
       </v-col>
     </template>
+
     <template v-slot:content>
       <v-tabs v-model="submissionTabNumber" id="applicant-info-slider">
         <v-tabs-items v-model="submissionTabNumber" touchless>
@@ -13,12 +14,16 @@
               <EntityCannotBeAutoAnalyzed />
             </keep-alive>
           </v-tab-item>
+
           <v-tab-item>
+            <!-- Names Capture also shows the menus -->
             <NamesCapture />
           </v-tab-item>
+
           <v-tab-item>
             <ApplicantInfo1 />
           </v-tab-item>
+
           <v-tab-item>
             <ApplicantInfo2 v-if="getActingOnOwnBehalf" />
             <ApplicantInfo3 v-else />
@@ -43,7 +48,7 @@ import ApplicantInfo3 from '@/components/common/applicant-info-3.vue'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 /**
- * This is the component container for editing an existing NR.
+ * This is the component for the steps when editing an existing NR.
  */
 @Component({
   components: {
@@ -64,7 +69,7 @@ export default class ExistingRequestEdit extends Vue {
   // Global Action
   @Action setSubmissionTabNumber!: ActionBindingIF
 
-  private get editModeHeader (): string {
+  get editModeHeader (): string {
     // safety check
     if (!this.getEditMode) return ''
 
@@ -75,11 +80,11 @@ export default class ExistingRequestEdit extends Vue {
     }
   }
 
-  private get submissionTabNumber (): number {
+  get submissionTabNumber (): number {
     return this.getSubmissionTabNumber
   }
 
-  private set submissionTabNumber (value: number) {
+  set submissionTabNumber (value: number) {
     this.setSubmissionTabNumber(value)
   }
 }

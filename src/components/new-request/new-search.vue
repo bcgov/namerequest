@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid id="new-request-container" class="copy-normal pa-10">
+  <v-container fluid id="new-search-container" class="copy-normal pa-10">
     <v-row no-gutters>
       <v-col cols="12" class="pt-0 font-weight-bold h6"><span>I need a name to:</span></v-col>
     </v-row>
@@ -37,6 +37,7 @@
           <span>{{ getRequestText }}</span>
         </v-tooltip>
       </v-col>
+
       <!--location (aka jurisdiction)-->
       <v-col cols="12" md="4" lg="4" :class="{'px-3': !isMobile }">
         <v-tooltip id="location-options-select"
@@ -79,6 +80,7 @@
           <span>{{ getLocationText }}</span>
         </v-tooltip>
       </v-col>
+
       <!--entity_type_cd-->
       <v-col cols="12" md="4" lg="4">
         <v-tooltip id="entity-type-options-select"
@@ -143,6 +145,7 @@
           </template>
         </v-select>
       </v-col>
+
       <v-col :class="{
         'pl-3': (getIsXproMras && !isFederal && !isMobile),
         'pr-3': (!getIsXproMras && showDesignationSelect && !isMobile)
@@ -158,6 +161,7 @@
         <p v-else class="pl-3 text-body-2">Federally incorporated businesses do not need a Name Request. You may
           register  your extraprovincial business immediately using its existing name at Corporate Online.</p>
       </v-col>
+
       <v-col v-if="showDesignationSelect" cols="12" md="4" lg="4">
         <v-select :class="!entity_type_cd ? 'disabled-custom' : ''"
                   :error-messages="getErrors.includes('designation') ? 'Please select a designation' : ''"
@@ -217,6 +221,7 @@
           </v-btn>
         </v-col>
       </v-row>
+
       <v-row v-if="isPremium" class="pt-7" justify="center" no-gutters>
         <v-col cols="auto">
           <v-btn id="name-check-skip-btn" class="outlined pa-0" :ripple="false" text @click="handleSubmit(false)">
@@ -226,6 +231,7 @@
         </v-col>
       </v-row>
     </div>
+
     <div v-else class="mt-3 text-center">
       <v-btn id="goto-corporate-btn" :href="corpOnlineLink" target="_blank">
         Go to Corporate Online to Register <v-icon small class="ml-1">mdi-open-in-new</v-icon>
@@ -235,7 +241,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Vue, Watch } from 'vue-property-decorator'
+import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 // bcregistry common
@@ -251,6 +257,9 @@ import { AccountType, EntityType, Location, RequestCode } from '@/enums'
 import { CommonMixin } from '@/mixins'
 import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
 
+/*
+ * This is the component that displays the New NR menus and flows.
+*/
 @Component({
   components: { NameInput }
 })

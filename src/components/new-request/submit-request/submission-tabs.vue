@@ -5,6 +5,7 @@
         {{ submissionModeHeader }}
       </v-col>
     </template>
+
     <template v-slot:content>
       <v-tabs v-model="submissionTabNumber" id="applicant-info-slider" class="mt-2">
         <v-tabs-items v-model="submissionTabNumber" touchless>
@@ -13,19 +14,24 @@
               <EntityCannotBeAutoAnalyzed />
             </keep-alive>
           </v-tab-item>
+
           <v-tab-item>
             <NamesCapture />
           </v-tab-item>
+
           <v-tab-item>
             <ApplicantInfo1 />
           </v-tab-item>
+
           <v-tab-item>
             <ApplicantInfo2 v-if="getActingOnOwnBehalf" />
             <ApplicantInfo3 v-else />
           </v-tab-item>
+
           <v-tab-item>
             <InvalidActionMessage />
           </v-tab-item>
+
           <v-tab-item>
             <Timeout />
           </v-tab-item>
@@ -50,7 +56,7 @@ import Timeout from './timeout.vue'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 /**
- * This is the component container for a new submission.
+ * This is the component for the steps when creating a new NR.
  */
 @Component({
   components: {
@@ -80,7 +86,7 @@ export default class SubmissionTabs extends Vue {
     document.head.appendChild(link)
   }
 
-  private get submissionModeHeader (): string {
+  get submissionModeHeader (): string {
     // safety check
     if (this.getEditMode) return ''
 
@@ -91,11 +97,11 @@ export default class SubmissionTabs extends Vue {
     }
   }
 
-  private get submissionTabNumber (): number {
+  get submissionTabNumber (): number {
     return this.getSubmissionTabNumber
   }
 
-  private set submissionTabNumber (value: number) {
+  set submissionTabNumber (value: number) {
     this.setSubmissionTabNumber(value)
   }
 }

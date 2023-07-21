@@ -1,6 +1,8 @@
 <template>
-  <v-form @keydown="validate" id="send-to-examination-form">
-    <v-container fluid class="pa-0" id="send-to-examination-container">
+  <v-form @keydown="validate" id="names-capture-form">
+    <v-container fluid class="pa-0" id="names-capture-container">
+      <!-- *** EDIT MODE DISPLAYS ITS MENUS HERE *** -->
+      <!-- *** WHEREAS NEW NR SHOWED THEM IN A TAB IN A PREVIOUS STEP *** -->
       <template v-if="getEditMode">
         <v-row class="mt-5">
           <v-col cols="6" class="font-weight-bold py-0">I need a name to:</v-col>
@@ -293,6 +295,10 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { EntityType, Location, RequestCode } from '@/enums'
 import { CommonMixin } from '@/mixins'
 
+/*
+ * This is the component that displays the name choices.
+ * It also shows the menu here when editing a NR.
+ */
 @Component({
   components: {
     ApplicantInfoNav

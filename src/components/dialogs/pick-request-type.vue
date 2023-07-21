@@ -9,13 +9,13 @@
         <v-row>
           <v-col cols="6">
             <v-simple-table class="text-left">
-              <tr v-for="type in tableData.col1" :key="type.value+'-tr'">
-                <td class="clickable-cell" :id="type.value" @click="chooseType(type)">
+              <tr v-for="(item, i) in tableData.col1" :key="`col1-${i}`">
+                <td class="clickable-cell" :id="item.value" @click="chooseType(item)">
                   <v-tooltip bottom max-width="500" :disabled="isMobile">
                     <template v-slot:activator="scope">
-                      <button class="link-sm-sans-ul" v-on="scope.on">{{ type.text }}</button>
+                      <button class="link-sm-sans-ul" v-on="scope.on">{{ item.text }}</button>
                     </template>
-                    <span>{{ type.blurb }}</span>
+                    <span>{{ item['blurb'] }}</span>
                   </v-tooltip>
                 </td>
               </tr>
@@ -23,13 +23,13 @@
           </v-col>
           <v-col cols="6">
             <v-simple-table class="text-left">
-              <tr v-for="type in tableData.col2" :key="type.value+'-tr'">
-                <td class="clickable-cell" :id="type.value" @click="chooseType(type)">
+              <tr v-for="(item, i) in tableData.col2" :key="`col2-${i}`">
+                <td class="clickable-cell" :id="item.value" @click="chooseType(item)">
                   <v-tooltip bottom max-width="500" :disabled="isMobile">
                     <template v-slot:activator="scope">
-                      <button class="link-sm-sans-ul" v-on="scope.on">{{ type.text }}</button>
+                      <button class="link-sm-sans-ul" v-on="scope.on">{{ item.text }}</button>
                     </template>
-                    <span>{{ type.blurb }}</span>
+                    <span>{{ item['blurb'] }}</span>
                   </v-tooltip>
                 </td>
               </tr>

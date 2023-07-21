@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 // import newReqModule from '@/store/new-request-module'
-import Search from '@/components/new-request/search.vue'
+import Search from '@/components/new-request/new-search.vue'
 import Vuetify from 'vuetify'
 
 const localVue = createLocalVue()

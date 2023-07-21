@@ -6,7 +6,8 @@
             hide-slider
             height="64"
             centered
-            grow>
+            grow
+    >
       <v-tab :ripple="false"
               id="new-tab"
               class="upper-border"
@@ -15,6 +16,7 @@
         <v-icon v-if="!isMobile" class="mr-2">mdi-magnify</v-icon>
         <span :class="[tabNumber === 0 ? 'h5' : 'h5-lt', { 'mobile-font' : isMobile }]">Request a Business Name</span>
       </v-tab>
+
       <v-tab :ripple="false"
               id="existing-tab"
               class="upper-border"
@@ -23,6 +25,7 @@
         <v-icon v-if="!isMobile" class="mr-2">mdi-file-document-edit-outline</v-icon>
         <span :class="[tabNumber === 1 ? 'h5' : 'h5-lt', { 'mobile-font' : isMobile }]">Manage My Name Request</span>
       </v-tab>
+
       <v-tabs-items class="rounded-b tab-items" v-model="tabNumber" touchless>
         <v-tab-item>
           <NewSearch />
@@ -41,7 +44,7 @@ import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 // Components
-import NewSearch from '@/components/new-request/search.vue'
+import NewSearch from '@/components/new-request/new-search.vue'
 import ExistingRequestSearch from './existing-request/existing-request-search.vue'
 import LinkRow from '@/components/common/link-row.vue'
 import { CommonMixin } from '@/mixins'
