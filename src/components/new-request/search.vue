@@ -262,11 +262,11 @@ import { BulletsColinLink } from '../common'
 import NameInput from './name-input.vue'
 
 // Interfaces / Enums / List Data
-import { ConversionTypesI, EntityI } from '@/interfaces'
+import { ConversionTypesI, EntityI, FormType } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { AccountType, CompanyType, EntityType, Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin } from '@/mixins'
-import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
+import { CanJurisdictions, ConversionTypes, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
 import { GetFeatureFlag } from '@/plugins'
 
 /** This component is used for CREATING a Name Request. */
@@ -274,6 +274,11 @@ import { GetFeatureFlag } from '@/plugins'
   components: { BulletsColinLink, NameInput }
 })
 export default class NewSearch extends Mixins(CommonMixin) {
+  // Refs
+  $refs!: {
+    selectBusinessTypeRef: FormType
+  }
+
   // enums for template
   readonly Location = Location
   readonly NrRequestActionCodes = NrRequestActionCodes
@@ -343,6 +348,7 @@ export default class NewSearch extends Mixins(CommonMixin) {
     })
   }
 
+  // called when switching between request and manage tabs (which are cached)
   private activated () {
     this.scrollTo('namerequest-sbc-header')
   }
@@ -355,7 +361,7 @@ export default class NewSearch extends Mixins(CommonMixin) {
 
   /** The request action items to display. */
   get requestActions () {
-    return this.$requestActions.filter(action => {
+    return RequestActions.filter(action => {
       // always show header action
       if (action.isHeader) return true
       // show item action if group is open
@@ -377,9 +383,9 @@ export default class NewSearch extends Mixins(CommonMixin) {
     this.setDesignation(value)
   }
   get designationOptions (): Array<string> {
-    let output: string[] = this.$designations[this.getEntityTypeCd]?.words
+    let output: string[] = Designations[this.getEntityTypeCd]?.words
     if (this.getEntityTypeCd === EntityType.CC) {
-      output = this.$designations[EntityType.CR].words
+      output = Designations[EntityType.CR].words
     }
     return output
   }
@@ -412,7 +418,7 @@ export default class NewSearch extends Mixins(CommonMixin) {
     if (type && this.getIsConversion) {
       // convert NrRequestTypeCodes -> EntityType
       const value = type as unknown as NrRequestTypeCodes
-      let { entity_type_cd } = this.$conversionTypes.find(conv => conv.value === value)
+      let { entity_type_cd } = ConversionTypes.find(conv => conv.value === value)
       this.setEntityTypeCd(entity_type_cd)
       this.setConversionType(type)
       return
@@ -430,7 +436,7 @@ export default class NewSearch extends Mixins(CommonMixin) {
   get entityConversionText () {
     // convert NrRequestTypeCodes -> EntityType
     const value = this.getConversionType as unknown as NrRequestTypeCodes
-    return this.$conversionTypes.find(conversion => conversion.value === value)?.text
+    return ConversionTypes.find(conversion => conversion.value === value)?.text
   }
 
   get isFederal () {
@@ -491,7 +497,7 @@ export default class NewSearch extends Mixins(CommonMixin) {
   }
 
   set request_action_cd (value: NrRequestActionCodes) {
-    const request = this.$requestActions.find(request => request.value === value)
+    const request = RequestActions.find(request => request.value === value)
     this.location = null
     if (this.entity_type_cd) {
       this.entity_type_cd = null
@@ -511,7 +517,7 @@ export default class NewSearch extends Mixins(CommonMixin) {
 
   get showDesignationSelect (): boolean {
     if (this.getEntityTypeCd) {
-      return this.$designations[this.getEntityTypeCd]?.end && !this.getIsXproMras
+      return Designations[this.getEntityTypeCd]?.end && !this.getIsXproMras
     }
     // hide until entity type is selected and needs it
     return false

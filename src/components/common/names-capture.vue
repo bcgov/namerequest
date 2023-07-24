@@ -285,15 +285,19 @@
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { EntityI, NameChoicesIF, NameRequestI, RequestActionsI } from '@/interfaces'
 import { sanitizeName } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { EntityType, Location, NrRequestActionCodes } from '@/enums'
 import { CommonMixin } from '@/mixins'
+import { Designations } from '@/list-data'
 
-/** This component is used for EDITING a Name Request. */
+/**
+ * This component is used for confirming/entering name choices.
+ * When editing a Name Request, this component also displays menus for selecting
+ * a different request action, location, or entity type.
+ */
 @Component({
   components: {
     ApplicantInfoNav
@@ -452,8 +456,8 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   }
 
   get designationAtEnd () {
-    if (this.entity_type_cd && this.$designations[this.entity_type_cd]) {
-      return this.$designations[this.entity_type_cd].end
+    if (this.entity_type_cd && Designations[this.entity_type_cd]) {
+      return Designations[this.entity_type_cd].end
     }
     return false
   }
@@ -508,14 +512,14 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   }
 
   get entityPhraseChoices () {
-    if (!this.entity_type_cd || !this.$designations[this.entity_type_cd]) {
+    if (!this.entity_type_cd || !Designations[this.entity_type_cd]) {
       return []
     }
-    let basePhrases = this.$designations[this.entity_type_cd].words
+    let basePhrases = Designations[this.entity_type_cd].words
     // these are the inner phrases for the CCC and CP types.  Filtering out CR designations from CPs has no effect
     // and CCC designations are a mix of CR-type ending designations and CCC specific inner phrases so filter out
     // the CR designations for the purposes of this getter
-    return basePhrases.filter(phrase => !this.$designations['CR'].words.includes(phrase))
+    return basePhrases.filter(phrase => !Designations['CR'].words.includes(phrase))
   }
 
   get entityPhraseRequired (): boolean {
@@ -600,6 +604,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
       }
       return true
     }
+
     function name2 () {
       messages.name2 = ''
       messages.des2 = ''
@@ -619,6 +624,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
       }
       return true
     }
+
     function name3 () {
       messages.name3 = ''
       messages.des3 = ''
@@ -685,9 +691,9 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   }
 
   get items (): string[] {
-    let output: string[] = this.$designations[this.entity_type_cd].words
+    let output: string[] = Designations[this.entity_type_cd].words
     if (this.entity_type_cd === EntityType.CC) {
-      output = this.$designations['CR'].words
+      output = Designations['CR'].words
     }
     return output
   }
