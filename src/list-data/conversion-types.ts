@@ -43,5 +43,25 @@ export const ConversionTypes: ConversionTypesI[] = [
     ],
     value: NrRequestTypeCodes.CONVERT_CORP,
     shortlist: false
+  },
+  {
+    desc: 'Unlimited Liability Company to a limited Company',
+    text: 'Unlimited Liability Company to a limited Company',
+    entity_type_cd: EntityType.CR,
+    blurbs: [
+      'Alter business type from an unlimited Liability Company to a limited Company.'
+    ],
+    value: NrRequestTypeCodes.CONVERT_ULCB,
+    shortlist: false
+  },
+  {
+    desc: 'Unlimited Liability Company to a Benefit Company',
+    text: 'Unlimited Liability Company to a Benefit Company',
+    entity_type_cd: EntityType.BC,
+    blurbs: [
+      'Alter business type from an ULC to a Benefit Company.'
+    ],
+    value: NrRequestTypeCodes.CONVERT_ULBE,
+    shortlist: false
   }
 ]
