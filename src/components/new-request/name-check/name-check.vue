@@ -197,18 +197,17 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-
 import NameCheckIssuesDialog from '@/components/dialogs/name-check-issues.vue'
 import MainContainer from '@/components/new-request/main-container.vue'
 import NameCheckConflicts from '@/components/new-request/name-check/name-check-conflicts.vue'
 import NameCheckTabContent from '@/components/new-request/name-check/name-check-tab-content.vue'
 import NameInput from '@/components/new-request/name-input.vue'
 import QuickSearchNames from '@/components/new-request/name-check/quick-search-names.vue'
-
 import { EntityType, NameCheckErrorType } from '@/enums'
 import { ConditionalInstructionI, DialogOptionsI, NameCheckErrorI, NameCheckItemIF } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { baseItemsConflicts, baseItemsStructure } from './resources'
+import { Designations } from '@/list-data'
 
 @Component({
   components: {
@@ -350,9 +349,9 @@ export default class NameCheck extends Vue {
     this.setDesignation(value)
   }
   get designationOptions (): Array<string> {
-    let output: string[] = this.$designations[this.getEntityTypeCd]?.words
+    let output: string[] = Designations[this.getEntityTypeCd]?.words
     if (this.getEntityTypeCd === EntityType.CC) {
-      output = this.$designations[EntityType.CR].words
+      output = Designations[EntityType.CR].words
     }
     return output
   }
@@ -611,7 +610,7 @@ export default class NameCheck extends Vue {
     return 'You can edit your name here and check it again'
   }
   get showDesignationSelect (): boolean {
-    return (this.$designations[this.getEntityTypeCd]?.end || false) && !this.getIsXproMras
+    return (Designations[this.getEntityTypeCd]?.end || false) && !this.getIsXproMras
   }
   get specialCharacters (): Array<string> {
     return this.getSpecialCharacters

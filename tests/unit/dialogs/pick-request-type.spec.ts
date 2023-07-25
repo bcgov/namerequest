@@ -2,7 +2,6 @@ import Vue from 'vue'
 import { shallowMount } from '@vue/test-utils'
 import { getVuetify } from '@/plugins'
 import { getVuexStore } from '@/store'
-import { RequestActions } from '@/list-data'
 import PickRequestTypeDialog from '@/components/dialogs/pick-request-type.vue'
 // import newReqModule from '@/store/new-request-module'
 
@@ -17,9 +16,6 @@ describe('PickRequestTypeDialog', () => {
     const wrapper = shallowMount(PickRequestTypeDialog, {
       vuetify,
       store,
-      mocks: {
-        $requestActions: RequestActions
-      },
       computed: { showModal: () => true }
     })
 
