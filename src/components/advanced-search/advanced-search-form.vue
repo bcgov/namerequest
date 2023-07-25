@@ -108,21 +108,21 @@ export default class AdvancedSearchForm extends Vue {
   @Prop() readonly advSearchDialogState: boolean
 
   // Local Properties
-  private isValid = false
-  private dateDialog = false
+  isValid = false
+  dateDialog = false
 
   // Local model
-  private compName = ''
-  private applicantFirstName = ''
-  private applicantLastName = ''
-  private startDate = ''
-  private endDate = ''
+  compName = ''
+  applicantFirstName = ''
+  applicantLastName = ''
+  startDate = ''
+  endDate = ''
 
   /** Validation rules for Applicant last name. */
-  private applicantLastNameRules = []
+  applicantLastNameRules = []
 
   /** Is true when start and End dates are applied. */
-  private get hasAppliedDates (): boolean {
+  get hasAppliedDates (): boolean {
     return !!this.startDate && !!this.endDate
   }
 
@@ -137,7 +137,7 @@ export default class AdvancedSearchForm extends Vue {
   }
 
   /** Apply the date selections to local model. */
-  private addDates (dates: StartEndDatesI): void {
+  addDates (dates: StartEndDatesI): void {
     this.startDate = dates.startDate
     this.endDate = dates.endDate
   }
@@ -156,7 +156,7 @@ export default class AdvancedSearchForm extends Vue {
   }
 
   /** Clear local dates. */
-  private clearDates (): void {
+  clearDates (): void {
     this.startDate = ''
     this.endDate = ''
   }

@@ -173,7 +173,6 @@ export default class App extends Mixins(
   @Action setDisplayedComponent!: ActionBindingIF
   @Action toggleConfirmNrModal!: ActionBindingIF
   @Action setCurrentJsDate!: ActionBindingIF
-  @Action setIncorporateNowErrorStatus!: ActionBindingIF
   @Action setWindowWidth!: ActionBindingIF
 
   readonly axios = axios
