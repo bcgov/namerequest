@@ -1,6 +1,5 @@
 import NamesCapture from '@/components/common/names-capture.vue'
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
-import { Designations } from '@/list-data'
 // import store from '@/store/new-request-module'
 import Vuetify from 'vuetify'
 
@@ -19,9 +18,6 @@ describe('NamesCapture component', () => {
   //     wrapper = mount(NamesCapture, {
   //       localVue,
   //       vuetify,
-  //       mocks: {
-  //         $designations: Designations
-  //       }
   //     })
   //     store.mutateRequestAction('NEW')
   //     store.mutateLocation('BC')

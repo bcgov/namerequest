@@ -265,7 +265,7 @@
             >
               <label for="state" class="hidden">State</label>
               <v-select
-                :items="$usaStateCodes"
+                :items="UsaStateCodes"
                 :messages="messages['State']"
                 :rules="requiredRules"
                 :value="applicant.stateProvinceCd"
@@ -404,7 +404,7 @@ import { ActionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { EmptyApplicant, NameRequestI } from '@/interfaces'
 import { removeExcessSpaces } from '@/plugins/utilities'
-import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
+import { CanJurisdictions, IntlJurisdictions, UsaStateCodes } from '@/list-data'
 import AuthServices from '@/services/auth-services'
 
 @Component({
@@ -413,8 +413,9 @@ import AuthServices from '@/services/auth-services'
   }
 })
 export default class ApplicantInfo1 extends Mixins(ActionMixin) {
-  // enum for template
+  // enums for template
   readonly Location = Location
+  readonly UsaStateCodes = UsaStateCodes
 
   // Global getters
   @Getter getActingOnOwnBehalf!: boolean

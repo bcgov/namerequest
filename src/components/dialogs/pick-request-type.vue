@@ -43,7 +43,12 @@ import { Action, Getter } from 'vuex-class'
 // Interfaces / enums / list data
 import { RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { RequestActions } from '@/list-data'
 
+/*
+ * This is the dialog for picking a request type (when the menu doesn't
+ * display all the request actions).
+ */
 @Component({})
 export default class PickRequestTypeDialog extends Vue {
   // Global getter
@@ -65,7 +70,7 @@ export default class PickRequestTypeDialog extends Vue {
 
   get tableData () {
     // get just the selectable items
-    const items = this.$requestActions.filter(item => !item.isHeader)
+    const items = RequestActions.filter(item => !item.isHeader)
 
     const length = items.length
     const midIndex = length % 2 ? (length + 1) / 2 : (length / 2)

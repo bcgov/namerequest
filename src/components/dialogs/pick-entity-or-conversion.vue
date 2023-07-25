@@ -16,7 +16,7 @@
             <v-row class="category-bg">
               <v-col cols="12" class="font-weight-bold">Alterations</v-col>
             </v-row>
-            <v-row v-for="(conversion, i) in $conversionTypes" :key="'conv-' + i">
+            <v-row v-for="(conversion, i) in ConversionTypes" :key="'conv-' + i">
               <v-col cols="12" class="clickable-cell"
                      :id="conversion.value"
                      @click="chooseConversion(conversion)">
@@ -88,13 +88,16 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-
 import { ConversionTypesI, EntityI, SelectOptionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { EntityType, Location } from '@/enums'
+import { ConversionTypes } from '@/list-data'
 
 @Component({})
 export default class PickEntityOrConversionDialog extends Vue {
+  // enum for template
+  readonly ConversionTypes = ConversionTypes
+
   // Global getters
   @Getter getConversionTypeOptions!: ConversionTypesI[]
   @Getter getEntityBlurbs!: Array<EntityI>
