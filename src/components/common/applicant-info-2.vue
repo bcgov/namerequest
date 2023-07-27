@@ -247,7 +247,7 @@ export default class ApplicantInfo2 extends Vue {
   // Enum declaration
   readonly CorpNumRequests = CorpNumRequests
 
-  corpNumError: string = ''
+  corpNumError = ''
   corpNumFieldLabel = 'Incorporation or Registration Number'
   additionalInfoRules = [
     v => (!v || v.length <= 120) || 'Cannot exceed 120 characters'
@@ -279,11 +279,11 @@ export default class ApplicantInfo2 extends Vue {
   trademarkRules = [
     v => (!v || v.length <= 100) || 'Cannot exceed 100 characters'
   ]
-  error: boolean = false
-  isEditingCorpNum: boolean = false
-  isValid: boolean = false
+  error = false
+  isEditingCorpNum = false
+  isValid = false
   hideCorpNum: boolean | 'auto' = true
-  loading: boolean = false
+  loading = false
   messages = {}
 
   /** Whether priority checkbox should be enabled. */

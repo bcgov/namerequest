@@ -324,7 +324,7 @@ export default class NamexServices {
   static async searchNameRequests (
     params: AdvancedSearchI,
     handleError: boolean,
-    isCountCheck: boolean = false
+    isCountCheck = false
   ): Promise<AdvancedSearchResultsI> {
     try {
       const token = sessionStorage.getItem('KEYCLOAK_TOKEN')

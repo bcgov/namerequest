@@ -6,28 +6,34 @@
             hide-slider
             height="64"
             centered
-            grow>
+            grow
+    >
       <v-tab :ripple="false"
               id="new-tab"
               class="upper-border"
               :class="{ 'mt-1': tabNumber === 1 }"
-              tabindex="0">
+              tabindex="0"
+      >
         <v-icon v-if="!isMobile" class="mr-2">mdi-magnify</v-icon>
         <span :class="[tabNumber === 0 ? 'h5' : 'h5-lt', { 'mobile-font' : isMobile }]">Request a Business Name</span>
       </v-tab>
+
       <v-tab :ripple="false"
               id="existing-tab"
               class="upper-border"
              :class="{ 'mt-1': tabNumber === 0 }"
-              tabindex="1">
+              tabindex="1"
+      >
         <v-icon v-if="!isMobile" class="mr-2">mdi-file-document-edit-outline</v-icon>
         <span :class="[tabNumber === 1 ? 'h5' : 'h5-lt', { 'mobile-font' : isMobile }]">Manage My Name Request</span>
       </v-tab>
+
       <v-tabs-items class="rounded-b tab-items" v-model="tabNumber" touchless>
         <v-tab-item>
           <NewSearch />
           <LinkRow />
         </v-tab-item>
+
         <v-tab-item>
           <ExistingRequestSearch/>
         </v-tab-item>

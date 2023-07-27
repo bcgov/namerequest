@@ -294,9 +294,8 @@ import { CommonMixin } from '@/mixins'
 import { Designations } from '@/list-data'
 
 /**
- * This component is used for confirming/entering name choices.
- * When editing a Name Request, this component also displays menus for selecting
- * a different request action, location, or entity type.
+ * This is the component that displays the name choices.
+ * It also shows the menu here when editing a NR.
  */
 @Component({
   components: {

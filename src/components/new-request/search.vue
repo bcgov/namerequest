@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid id="new-request-container" class="copy-normal pa-10">
+  <v-container fluid id="search-container" class="copy-normal pa-10">
     <v-row no-gutters>
       <v-col cols="12" class="pt-0 font-weight-bold h6">
         I need a name to: {{ getRequestActionCd }} / {{ getLocation }} / {{ entity_type_cd }}
@@ -289,7 +289,9 @@ import { CommonMixin } from '@/mixins'
 import { CanJurisdictions, ConversionTypes, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
 import { GetFeatureFlag } from '@/plugins'
 
-/** This component is used for CREATING a Name Request. */
+/**
+ * This is the component that displays the new NR menus and flows.
+ */
 @Component({
   components: { BulletsColinLink, NameInput }
 })
@@ -513,7 +515,7 @@ export default class Search extends Mixins(CommonMixin) {
     return this.getEntityTextFromValue || 'specified business type'
   }
 
-  async handleSubmit (doNameCheck: boolean = true) {
+  async handleSubmit (doNameCheck = true) {
     this.setDoNameCheck(doNameCheck)
     if (this.getIsXproMras) this.$root.$emit('showSpinner', true)
     await this.startAnalyzeName(null)
