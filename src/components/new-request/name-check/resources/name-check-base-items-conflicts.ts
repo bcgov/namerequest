@@ -36,11 +36,11 @@ export const baseItemsConflicts = {
   [NameCheckItemType.EXACT_MATCH]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
-    problem: 'This <b>exact name</b> is currently used by an existing BC entity or reserved for use',
+    problem: 'This <b>exact name</b> is currently in use or reserved for use by a BC corporation',
     words: null,
     expandExtraInfo: false,
-    expandedInfo1: 'Exact name in use or reserved for use (NR). A name will not be approved if there is ' +
-    'an existing business using the exact same name.',
+    expandedInfo1: 'This exact name is currently in use or reserved for use. A name will not be approved if there is ' +
+    'an existing business  or approved name request with the exact same name.',
     expandedInfo2: null,
     expandedList: [],
     expandLabel: {
@@ -53,11 +53,11 @@ export const baseItemsConflicts = {
   [NameCheckItemType.EXACT_MATCH_XPRO]: {
     icon: 'mdi-alert-octagon',
     iconColor: 'red darken-2',
-    problem: 'This <b>exact name</b> is currently used by an existing BC entity or reserved for use',
+    problem: 'This <b>exact name</b> is currently in use or reserved for use by a BC corporation',
     words: null,
     expandExtraInfo: false,
-    expandedInfo1: 'Exact name in use or reserved for use (NR). You must use (assume) a new name unless ' +
-    'you can obtain consent to use this name. You will need to change ' +
+    expandedInfo1: 'This exact name is is currently in use or reserved for use. You must use (assume) a new name ' +
+    'unless you can obtain consent to use this name. You will need to change ' +
     'your business name in your home jurisdiction to match the assumed name in BC.',
     expandedInfo2: 'You will be able to enter up to two Assumed Name ' +
     'choices as part of the name request submission process. Assumed ' +
@@ -101,7 +101,7 @@ export const baseItemsConflicts = {
   [NameCheckItemType.SIMILAR_MATCH]: {
     icon: 'mdi-alert',
     iconColor: 'caution',
-    problem: '<b>Same or similar words</b> are used by existing BC entities or reserved for use (NR)',
+    problem: '<b>Similar names are currently in use or reserved for use by a BC corporation',
     words: null,
     expandExtraInfo: false,
     expandedInfo1: 'custom text for similarMatch in component',
@@ -117,7 +117,7 @@ export const baseItemsConflicts = {
   [NameCheckItemType.SIMILAR_MATCH_XPRO]: {
     icon: 'mdi-alert',
     iconColor: 'caution',
-    problem: '<b>Same or similar words</b> are used by existing BC entities or reserved for use (NR)',
+    problem: '<b>Similar names are currently in use or reserved for use by a BC corporation',
     words: null,
     expandExtraInfo: false,
     expandedInfo1: 'No exact matches were found for your name, ' +
