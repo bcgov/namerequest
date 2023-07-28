@@ -101,7 +101,7 @@ export const baseItemsConflicts = {
   [NameCheckItemType.SIMILAR_MATCH]: {
     icon: 'mdi-alert',
     iconColor: 'caution',
-    problem: '<b>Similar names are currently in use or reserved for use by a BC corporation',
+    problem: '<b>Similar names</b> are currently in use or reserved for use by a BC corporation',
     words: null,
     expandExtraInfo: false,
     expandedInfo1: 'custom text for similarMatch in component',
@@ -117,7 +117,7 @@ export const baseItemsConflicts = {
   [NameCheckItemType.SIMILAR_MATCH_XPRO]: {
     icon: 'mdi-alert',
     iconColor: 'caution',
-    problem: '<b>Similar names are currently in use or reserved for use by a BC corporation',
+    problem: '<b>Similar names</b> are currently in use or reserved for use by a BC corporation',
     words: null,
     expandExtraInfo: false,
     expandedInfo1: 'No exact matches were found for your name, ' +
