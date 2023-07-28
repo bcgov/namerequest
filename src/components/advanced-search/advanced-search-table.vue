@@ -61,7 +61,7 @@ export default class AdvancedSearchTable extends Mixins(DateMixin) {
    * @param items An array of Name Request objects
    * @param columnValue The string value of the associated column. By Vuetify default always the first index.
    * @param isDesc A boolean indicated if sort is Asc or Desc.
-   * */
+   */
   private sortTable (items: Array<NameRequestI>, columnValue: Array<string>, isDesc: boolean): NameRequestI[] {
     // Sort by date
     if (columnValue[0] === 'date') {
@@ -96,7 +96,7 @@ export default class AdvancedSearchTable extends Mixins(DateMixin) {
    * @param a Date A
    * @param b Date B
    * @return An integer
-   * */
+   */
   private sortByDate (a, b): number {
     const dateA = new Date(a).getTime()
     const dateB = new Date(b).getTime()
