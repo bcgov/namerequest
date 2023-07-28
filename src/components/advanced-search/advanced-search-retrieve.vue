@@ -122,7 +122,7 @@ export default class AdvancedSearchRetrieve extends Vue {
   /** Update store values with search parameters.
    * @param key The store key value (ie.. phoneNumber or emailAddress).
    * @param value The search parameter for the associated key.
-   * */
+   */
   private handleExistingRequestSearch (key: string, value: string) {
     this.clearValidations()
     this.setExistingRequestSearch({ key, value })
