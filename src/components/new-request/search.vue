@@ -1,14 +1,14 @@
 <template>
-  <v-container fluid id="new-request-container" class="copy-normal pa-10">
+  <v-container fluid id="search-container" class="copy-normal pa-10">
     <v-row no-gutters>
       <v-col cols="12" class="pt-0 font-weight-bold h6">
-        I need a name to: {{ request_action_cd }} / {{ location }} / {{ entity_type_cd }}
+        I need a name to: {{ getRequestActionCd }} / {{ getLocation }} / {{ entity_type_cd }}
       </v-col>
     </v-row>
 
-    <v-row class="mt-4" no-gutters>
-      <!-- request_action_cd -->
-      <v-col cols="12" md="4" lg="4">
+    <v-row class="mt-6">
+      <!-- Request Action -->
+      <v-col cols="12" md="6" class="py-0">
         <v-select
           filled
           label="Select an Action"
@@ -16,7 +16,7 @@
           :items="requestActions"
           item-value="[group,value]"
           :menu-props="{ bottom: true, offsetY: true, maxHeight: 423 }"
-          @change="clearErrors()"
+          @change="setClearErrors(null); onRequestActionChange($event)"
         >
           <template v-slot:item="{ item }">
             <v-list-item-content
@@ -35,7 +35,6 @@
             <v-list-item-content
               v-else
               class="group-item pl-8 pr-4 py-4"
-              @click="request_action_cd = item.value"
             >
               <div class="font-weight-bold">{{ item.text }}</div>
               <div>{{ item.subtext }}</div>
@@ -44,40 +43,49 @@
         </v-select>
       </v-col>
 
-      <!-- location (aka jurisdiction) -->
-      <v-col cols="12" md="4" lg="4" :class="{'px-3': !isMobile }">
-        <v-tooltip id="location-options-select"
-                   top
-                   content-class="top-tooltip"
-                   transition="fade-transition"
-                   :disabled="!location || location === 'BC' || isMobile">
+      <!-- display a dummy input box here when Jurisdiction and Entity Type are not shown -->
+      <v-col v-if="!showJurisdiction && !showEntityType" cols="12" md="6" class="py-0">
+        <v-text-field filled disabled />
+      </v-col>
+
+      <!-- Jurisdiction -->
+      <v-col v-if="showJurisdiction" cols="12" md="6" class="py-0">
+        <v-tooltip
+          id="location-options-select"
+          top
+          content-class="top-tooltip"
+          transition="fade-transition"
+          :disabled="!getLocation || getLocation === 'BC' || isMobile"
+        >
           <template v-slot:activator="scope">
             <div v-on="scope.on">
-              <v-select :error-messages="getErrors.includes('location') ? 'Please select a jurisdiction' : ''"
-                        :items="getLocationOptions"
-                        :disabled="locationDisabled"
-                        :readonly="!request_action_cd"
-                        :class="!request_action_cd ? 'disabled-custom' : ''"
-                        :menu-props="{ bottom: true, offsetY: true}"
-                        @change="clearErrors()"
-                        filled
-                        label="Select a Jurisdiction"
-                        v-model="location">
+              <v-select
+                label="Select your jurisdiction"
+                :error-messages="getErrors.includes('location') ? 'Please select a jurisdiction' : ''"
+                :items="getLocationOptions"
+                :readonly="!getRequestActionCd"
+                :class="!getRequestActionCd ? 'disabled-custom' : ''"
+                :menu-props="{ bottom: true, offsetY: true}"
+                @change="setClearErrors(null)"
+                filled
+                :value="getLocation"
+                @input="setLocation($event)"
+              >
                 <template v-slot:item="{ item }">
                   <v-tooltip
                     right
                     transition="fade-transition"
-                    :disabled="!request_action_cd || !item.blurbs || isMobile"
+                    :disabled="!getRequestActionCd || !item.blurbs || isMobile"
                   >
                     <template v-slot:activator="scope">
                       <span v-on="scope.on" class="list-item">{{ item.text }}</span>
                     </template>
-                      <div v-for="(blurb, index) in item.blurbs "
-                           :key="`Location-Blurb-${index}`">
-                        <span v-if="request_action_cd === request_action_enum[index]">
-                          {{ blurb }}
-                        </span>
-                      </div>
+
+                    <div v-for="(blurb, index) in item.blurbs " :key="`location-blurb-${index}`">
+                      <span v-if="getRequestActionCd === request_action_enum[index]">
+                        {{ blurb }}
+                      </span>
+                    </div>
                   </v-tooltip>
                 </template>
               </v-select>
@@ -87,43 +95,45 @@
         </v-tooltip>
       </v-col>
 
-      <!-- entity_type_cd -->
-      <v-col cols="12" md="4" lg="4">
+      <!-- Entity Type -->
+      <v-col v-if="showEntityType" cols="12" md="6" class="py-0">
         <v-tooltip
           id="entity-type-options-select"
           top
           content-class="top-tooltip"
-          :disabled="request_action_cd !== NrRequestActionCodes.CONVERSION || !entityConversionText || isMobile"
+          :disabled="getRequestActionCd !== NrRequestActionCodes.CONVERSION || !entityConversionText || isMobile"
           transition="fade-transition"
         >
           <template v-slot:activator="scope">
             <div v-on="scope.on">
-              <v-select :error-messages="getErrors.includes('entity_type_cd') ? 'Please select a business type' : ''"
-                        :items="entityConversionTypeOptions"
-                        :label="getIsConversion ? 'Select an Alteration Type' : 'Select a Business Type'"
-                        :readonly="!request_action_cd || !location"
-                        :class="!location ? 'disabled-custom' : ''"
-                        :menu-props="{ bottom: true, offsetY: true}"
-                        ref="selectBusinessTypeRef"
-                        @change="clearErrors()"
-                        filled
-                        v-model="entity_type_cd">
+              <v-select
+                :label="getIsConversion ? 'Select type of business to alter into' : 'Select type of business in B.C.'"
+                :error-messages="getErrors.includes('entity_type_cd') ? 'Please select a business type' : ''"
+                :items="entityConversionTypeOptions"
+                :class="!getLocation ? 'disabled-custom' : ''"
+                :menu-props="{ bottom: true, offsetY: true}"
+                ref="selectBusinessTypeRef"
+                @change="setClearErrors(null)"
+                filled
+                v-model="entity_type_cd"
+              >
                 <template v-slot:item="{ item }">
                   <v-tooltip
-                          :right="isScreenLg"
-                          :left="!isScreenLg"
-                          :disabled="!item.blurbs || isMobile"
-                          :content-class="!isScreenLg ? 'left-tooltip' : ''"
-                          transition="fade-transition">
+                    :right="isScreenLg"
+                    :left="!isScreenLg"
+                    :disabled="!item.blurbs || isMobile"
+                    :content-class="!isScreenLg ? 'left-tooltip' : ''"
+                    transition="fade-transition"
+                  >
                     <template v-slot:activator="scope">
-                      <span v-on="scope.on"
-                            class="list-item"
-                            :class="{ 'last-select-item': item.value === 'INFO' }">
-                        {{ item.text }}
-                      </span>
+                      <span
+                        v-on="scope.on"
+                        class="list-item"
+                        :class="{ 'last-select-item': item.value === 'INFO' }"
+                      >{{ item.text }}</span>
                     </template>
-                    <div v-for="(blurb, index) in entityBlurbs(item.value)"
-                         :key="`Blurb-${index}`">
+
+                    <div v-for="(blurb, index) in entityBlurbs(item.value)" :key="`blurb-${index}`">
                       <span :class="{ 'tooltip-bullet': index !== 0}">
                         {{ blurb }}
                       </span>
@@ -136,18 +146,19 @@
           <span>{{ entityConversionText }}</span>
         </v-tooltip>
       </v-col>
-    </v-row>
 
-    <v-row no-gutters>
-      <!-- jurisdiction for xpro/mras -->
-      <v-col cols="12" md="4" lg="4" v-if="getIsXproMras">
-        <v-select :error-messages="getErrors.includes('jurisdiction') ? 'Please select a jurisdiction' : ''"
-                  :items="jurisdictionOptions"
-                  :menu-props="{ bottom: true, offsetY: true}"
-                  label="Select business' home jurisdiction"
-                  @change="clearErrors()"
-                  filled
-                  v-model="jurisdiction">
+      <!-- Jurisdiction for xpro/mras -->
+      <v-col v-if="getIsXproMras" cols="12" md="6" class="py-0">
+        <v-select
+          label="Select business' home jurisdiction"
+          :error-messages="getErrors.includes('jurisdiction') ? 'Please select a jurisdiction' : ''"
+          :items="jurisdictionOptions"
+          :menu-props="{ bottom: true, offsetY: true}"
+          @change="setClearErrors(null)"
+          filled
+          :value="getJurisdictionCd"
+          @input="setJurisdiction($event)"
+        >
           <template v-slot:item="{ item }">
             <span class="list-item" :class="{ 'last-select-item': item.value === Location.FD }">
               {{ item.text }}
@@ -157,7 +168,7 @@
       </v-col>
     </v-row>
 
-    <!-- Corporate number checkbox, only for XPro Canadian Locations -->
+    <!-- Corporate Number checkbox, only for XPro Canadian locations -->
     <v-row v-if="getIsXproMras && !isFederal && !isInternational" no-gutters>
       <v-col class="d-flex justify-end">
         <v-tooltip
@@ -168,26 +179,30 @@
         >
           <template v-slot:activator="{ on }">
             <v-checkbox
-                    v-model="noCorpNum"
-                    id="corp-num-checkbox"
-                    class="copy-small mt-0 pt-0"
-                    hide-details
-                    v-slot:label
-                    v-on="on">
+              :value="getHasNoCorpNum"
+              @input="setNoCorpNum($event)"
+              id="corp-num-checkbox"
+              class="copy-small mt-0 pt-0"
+              hide-details
+              v-slot:label
+              v-on="on"
+            >
               <template>
                 <span v-on="on" class="copy-small">I don't have a corporate number</span>
               </template>
             </v-checkbox>
           </template>
+
           <p>If you don't have or don't know the corporation number of the business, enter the full legal name of the
             business in its home jurisdiction.</p>
+
           <p>Note: If the home jurisdiction requires a name reservation, you may want to complete a name search in the
-            home jurisdiction first to ensure that the name is available and then return to BC</p>
+            home jurisdiction first to ensure that the name is available and then return to BC.</p>
         </v-tooltip>
       </v-col>
     </v-row>
 
-    <!-- Bullets Colin Link component. Show only if a business type is selected. -->
+    <!-- Bullets Colin Link component, only when an entity type is selected -->
     <BulletsColinLink
       v-if="entity_type_cd"
       :businessType="entity_type_cd"
@@ -198,14 +213,16 @@
       <template v-slot:name-input-slot>
         <NameInput
           v-if="!isFederal"
-          :is-mras-search="(getIsXproMras && !noCorpNum)"
+          :is-mras-search="(getIsXproMras && !getHasNoCorpNum)"
           :menu-props="{ bottom: true, offsetY: true}"
           id="name-input-component"
           class="pt-3"
-          @emit-corp-num-validity="corpNumValid = $event"/>
+          @emit-corp-num-validity="corpNumValid = $event"
+        />
         <p v-else class="pl-3 text-body-2">Federally incorporated businesses do not need a Name Request. You may
           register your extraprovincial business immediately using its existing name at Corporate Online.</p>
       </template>
+
       <template v-slot:designation>
         <v-col cols="12" sm="4">
           <v-select
@@ -215,14 +232,16 @@
             label="Enter designation"
             :readonly="!entity_type_cd"
             :menu-props="{ bottom: true, offsetY: true}"
-            v-model="designation"
+            :value="getDesignation"
+            @input="setDesignation($event)"
             class="mb-n3"
-            @change="clearErrors()">
-          </v-select>
+            @change="setClearErrors(null)"
+          />
         </v-col>
       </template>
     </BulletsColinLink>
 
+    <!-- Actions -->
     <div v-if="!isFederal && isNamedCompany" class="mt-3 text-center">
       <v-row justify="center" no-gutters>
         <v-col cols="auto">
@@ -238,6 +257,7 @@
           </v-btn>
         </v-col>
       </v-row>
+
       <v-row v-if="isPremiumOrStaff" class="pt-7" justify="center" no-gutters>
         <v-col cols="auto">
           <v-btn id="name-check-skip-btn" class="outlined pa-0" :ripple="false" text @click="handleSubmit(false)">
@@ -262,18 +282,20 @@ import { BulletsColinLink } from '../common'
 import NameInput from './name-input.vue'
 
 // Interfaces / Enums / List Data
-import { ConversionTypesI, EntityI, FormType } from '@/interfaces'
+import { ConversionTypesI, EntityI, FormType, RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { AccountType, CompanyType, EntityType, Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin } from '@/mixins'
 import { CanJurisdictions, ConversionTypes, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
 import { GetFeatureFlag } from '@/plugins'
 
-/** This component is used for CREATING a Name Request. */
+/**
+ * This is the component that displays the new NR menus and flows.
+ */
 @Component({
   components: { BulletsColinLink, NameInput }
 })
-export default class NewSearch extends Mixins(CommonMixin) {
+export default class Search extends Mixins(CommonMixin) {
   // Refs
   $refs!: {
     selectBusinessTypeRef: FormType
@@ -294,13 +316,11 @@ export default class NewSearch extends Mixins(CommonMixin) {
   @Getter getErrors!: string[]
   @Getter getHasNoCorpNum!: boolean
   @Getter getIsConversion!: boolean
-  @Getter getIsPersonsName!: boolean
   @Getter getIsXproMras!: boolean
   @Getter getJurisdictionCd!: string
   @Getter getLocation!: Location
   @Getter getLocationOptions!: any[]
   @Getter getLocationText!: string
-  @Getter getNameIsEnglish!: boolean
   @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter isMobile!: boolean
 
@@ -312,11 +332,9 @@ export default class NewSearch extends Mixins(CommonMixin) {
   @Action setDoNameCheck!: ActionBindingIF
   @Action setEntityTypeCd!: ActionBindingIF
   @Action setExtendedRequestType!: ActionBindingIF
-  @Action setIsPersonsName!: ActionBindingIF
   @Action setJurisdiction!: ActionBindingIF
   @Action setLocation!: ActionBindingIF
   @Action setName!: ActionBindingIF
-  @Action setNameIsEnglish!: ActionBindingIF
   @Action setNoCorpNum!: ActionBindingIF
   @Action setPickEntityModalVisible!: ActionBindingIF
   @Action setRequestAction!: ActionBindingIF
@@ -324,8 +342,8 @@ export default class NewSearch extends Mixins(CommonMixin) {
 
   // Local properties
   corpNumValid = true
-  locationDisabled = false
-  selectedCompanyType: CompanyType = null
+  request = null as RequestActionsI
+  selectedCompanyType = null as CompanyType
   readonly corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
   readonly EntityType = EntityType
   request_action_enum = [
@@ -348,12 +366,38 @@ export default class NewSearch extends Mixins(CommonMixin) {
     })
   }
 
-  // called when switching between request and manage tabs (which are cached)
+  /** Called when switching between request and manage tabs (which are cached). */
   private activated () {
     this.scrollTo('namerequest-sbc-header')
   }
 
-  // Local Getters
+  get isNewBcBusiness (): boolean {
+    return (this.request?.value === NrRequestActionCodes.NEW_BUSINESS && this.request?.group === 0)
+  }
+
+  get isContinuationIn (): boolean {
+    return (this.request?.value === NrRequestActionCodes.MOVE)
+  }
+
+  get isAlterType (): boolean {
+    return (this.request?.value === NrRequestActionCodes.CONVERSION)
+  }
+
+  get showJurisdiction (): boolean {
+    if (!this.request) return false
+    if (this.isNewBcBusiness) return false
+    if (this.isContinuationIn) return false
+    if (this.isAlterType) return false
+    return true
+  }
+
+  get showEntityType (): boolean {
+    if (this.getRequestActionCd) return true
+    if (this.getLocation) return true
+    return false
+  }
+
+  /** Whether current account type is Premium, SBC Staff or Staff. */
   get isPremiumOrStaff (): boolean {
     return [AccountType.PREMIUM, AccountType.SBC_STAFF, AccountType.STAFF]
       .includes(JSON.parse(sessionStorage.getItem(SessionStorageKeys.CurrentAccount))?.accountType)
@@ -371,17 +415,11 @@ export default class NewSearch extends Mixins(CommonMixin) {
     })
   }
 
-  /** If current group is active, deactivate it, otherwise activate group. */
+  /** If current group is active, deactivates it, otherwise activates group. */
   toggleActionGroup (group: number) {
     this.activeActionGroup = (this.activeActionGroup === group) ? NaN : group
   }
 
-  get designation (): string {
-    return this.getDesignation
-  }
-  set designation (value: string) {
-    this.setDesignation(value)
-  }
   get designationOptions (): Array<string> {
     let output: string[] = Designations[this.getEntityTypeCd]?.words
     if (this.getEntityTypeCd === EntityType.CC) {
@@ -440,75 +478,19 @@ export default class NewSearch extends Mixins(CommonMixin) {
   }
 
   get isFederal () {
-    return (this.location === Location.CA && this.jurisdiction === Location.FD)
+    return (this.getLocation === Location.CA && this.getJurisdictionCd === Location.FD)
   }
 
   get isInternational () {
-    return (this.location === Location.IN)
+    return (this.getLocation === Location.IN)
   }
 
-  // If selected radio button is Named Company.
+  /** Whether selected radio button is Named Company. */
   get isNamedCompany (): boolean {
     return (this.selectedCompanyType === CompanyType.NAMED_COMPANY)
   }
 
-  get isPersonsName () {
-    return this.getIsPersonsName
-  }
-
-  set isPersonsName (value) {
-    this.setIsPersonsName(value)
-  }
-
-  get location (): Location {
-    return this.getLocation
-  }
-
-  set location (location: Location) {
-    this.setLocation(location)
-  }
-
-  get jurisdiction (): string {
-    return this.getJurisdictionCd
-  }
-
-  set jurisdiction (jurisdiction: string) {
-    this.setJurisdiction(jurisdiction)
-  }
-
-  get nameIsEnglish () {
-    return this.getNameIsEnglish
-  }
-
-  set nameIsEnglish (value) {
-    this.setNameIsEnglish(value)
-  }
-
-  get noCorpNum () {
-    return this.getHasNoCorpNum
-  }
-
-  set noCorpNum (value) {
-    this.setNoCorpNum(value)
-  }
-
-  get request_action_cd (): NrRequestActionCodes {
-    return this.getRequestActionCd
-  }
-
-  set request_action_cd (value: NrRequestActionCodes) {
-    const request = RequestActions.find(request => request.value === value)
-    this.location = null
-    if (this.entity_type_cd) {
-      this.entity_type_cd = null
-    }
-    if (request?.value !== NrRequestActionCodes.NEW_BUSINESS) {
-      this.setExtendedRequestType(request)
-    }
-    this.setRequestAction(value)
-  }
-
-  // Whether to show "Colin" or "Incorporate Now" button based on FF.
+  /** Whether to show "Colin" or "Incorporate Now" button based on FF. */
   get showColinButton (): boolean {
     const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
     const isIncorporateEntity = supportedEntites.includes(this.entity_type_cd)
@@ -524,7 +506,7 @@ export default class NewSearch extends Mixins(CommonMixin) {
   }
 
   get jurisdictionOptions () {
-    return (this.location === Location.CA)
+    return (this.getLocation === Location.CA)
       ? CanJurisdictions.filter(jur => jur.value !== Location.BC)
       : IntlJurisdictions.filter(jur => jur.value !== Location.CA)
   }
@@ -533,11 +515,7 @@ export default class NewSearch extends Mixins(CommonMixin) {
     return this.getEntityTextFromValue || 'specified business type'
   }
 
-  clearErrors () {
-    this.setClearErrors(null)
-  }
-
-  async handleSubmit (doNameCheck: boolean = true) {
+  async handleSubmit (doNameCheck = true) {
     this.setDoNameCheck(doNameCheck)
     if (this.getIsXproMras) this.$root.$emit('showSpinner', true)
     await this.startAnalyzeName(null)
@@ -546,15 +524,15 @@ export default class NewSearch extends Mixins(CommonMixin) {
 
   @Watch('entity_type_cd')
   clearDesignation (newVal) {
-    this.designation = ''
-    // Clear "Select a Business Type" field when "View all business types" or Society is selected.
+    this.setDesignation('')
+    // clear "Select a Business Type" field when "View all business types" or Society is selected
     if (!this.entity_type_cd || this.entity_type_cd === EntityType.INFO) {
       this.$refs.selectBusinessTypeRef.reset()
     }
   }
 
-  /** Reset search values when location changes */
-  @Watch('location')
+  /** Resets search values when location changes. */
+  @Watch('getLocation')
   watchLocation (newVal: Location) {
     // if they need to search by corp num first then reset the name
     if ([Location.CA, Location.FD, Location.IN, Location.US].includes(newVal)) {
@@ -564,17 +542,29 @@ export default class NewSearch extends Mixins(CommonMixin) {
     this.setNoCorpNum(false)
   }
 
-  @Watch('request_action_cd')
-  watchRequestActionCd (newVal: NrRequestActionCodes) {
-    // Set default location to BC for the requests where BC is the only location option
-    if ([NrRequestActionCodes.CONVERSION, NrRequestActionCodes.MOVE].includes(newVal)) {
+  /** Called when Request Action menu item is changed. */
+  onRequestActionChange (text: string): void {
+    this.request = RequestActions.find(request => request.text === text)
+
+    // clear Jurisdiction and Entity Type
+    this.setLocation(null)
+    if (this.entity_type_cd) {
+      this.entity_type_cd = null
+    }
+    if (this.request?.value !== NrRequestActionCodes.NEW_BUSINESS) {
+      this.setExtendedRequestType(this.request)
+    }
+
+    this.setRequestAction(this.request?.value || null)
+
+    // set default location to BC for requests where BC is the only location option
+    if (this.isNewBcBusiness || this.isContinuationIn || this.isAlterType) {
       this.setLocation(Location.BC)
-      this.locationDisabled = true
       return
     }
-    this.locationDisabled = false
-    if ([NrRequestActionCodes.ASSUMED].includes(newVal)) {
-      if (this.location === Location.BC) {
+
+    if (this.request?.value === NrRequestActionCodes.ASSUMED) {
+      if (this.getLocation === Location.BC) {
         this.setLocation(Location.CA)
       }
     }

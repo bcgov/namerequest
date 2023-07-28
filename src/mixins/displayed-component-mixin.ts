@@ -18,7 +18,7 @@ export class DisplayedComponentMixin extends Vue {
   @Action setSubmissionTabComponent!: ActionBindingIF
   @Action setEditMode!: ActionBindingIF
 
-  componentName: string = ''
+  componentName = ''
 
   get displayedComponent () {
     // We can't watch a computed property directly, and we don't want to inject displayedComponent as a prop
