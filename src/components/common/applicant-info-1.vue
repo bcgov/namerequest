@@ -440,7 +440,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   @Action setFolioNumber!: ActionBindingIF
 
   highlightedSuggestion: string = null
-  isValid: boolean = false
+  isValid = false
   messages = {}
   provStateRules = [
     v => (typeof v === 'string') || 'Must be letters only',
@@ -456,7 +456,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   requiredRules = [
     v => !!v || 'Required field'
   ]
-  showAddressMenu: boolean = false
+  showAddressMenu = false
 
   async mounted () {
     // add event listener when this component is mounted

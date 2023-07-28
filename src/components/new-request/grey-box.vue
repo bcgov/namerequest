@@ -183,9 +183,9 @@ export default class GreyBox extends Vue {
   @Action setRequestExaminationOrProvideConsent!: ActionBindingIF
   @Action setShowActualInput!: ActionBindingIF
 
-  clickedDesignation: string = ''
-  originalNameBase: string = ''
-  showError: boolean = false
+  clickedDesignation = ''
+  originalNameBase = ''
+  showError = false
   showLastStepButtons = {
     assumed_name: false,
     conflict_self_consent: false,
