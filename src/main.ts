@@ -8,6 +8,8 @@ import KeycloakService from 'sbc-common-components/src/services/keycloak.service
 import * as Sentry from '@sentry/browser'
 import * as Integrations from '@sentry/integrations'
 import { AllDesignationsList, ConversionTypes, Designations, RequestActions, UsaStateCodes } from '@/list-data'
+import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
+import ConfigHelper from 'sbc-common-components/src/util/config-helper'
 
 // NB: order matters - do not change
 import 'quill/dist/quill.core.css'
@@ -104,7 +106,12 @@ async function syncSession () {
   // Auto authenticate user only if they are not trying a login or logout
   if (!isSigningIn() && !isSigningOut()) {
     // Initialize token service which will do a check-sso to initiate session
-    await KeycloakService.initializeToken(null).then(() => {}).catch(err => {
+    await KeycloakService.initializeToken(null).then(() => {
+      const token = ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakToken)
+      if (!token) {
+        ConfigHelper.removeFromSession(SessionStorageKeys.CurrentAccount)
+      }
+    }).catch(err => {
       if (err?.message !== 'NOT_AUTHENTICATED') {
         throw err
       }
