@@ -109,6 +109,8 @@ async function syncSession () {
     await KeycloakService.initializeToken(null).then(() => {
       const token = ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakToken)
       if (!token) {
+        // when there is no token in session storage, e.g. because token has expired due to user inactivity,
+        // make sure to clear out account info saved on previous login
         ConfigHelper.removeFromSession(SessionStorageKeys.CurrentAccount)
       }
     }).catch(err => {
