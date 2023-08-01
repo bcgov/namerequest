@@ -299,7 +299,7 @@ export default class ApplicantInfo3 extends Vue {
   // Enum declaration
   readonly CorpNumRequests = CorpNumRequests
 
-  corpNumError: string = ''
+  corpNumError = ''
   corpNumFieldLabel = 'Incorporation or Registration Number'
   additionalInfoRules = [
     v => (!v || v.length <= 120) || 'Cannot exceed 120 characters'
@@ -331,9 +331,9 @@ export default class ApplicantInfo3 extends Vue {
   trademarkRules = [
     v => (!v || v.length <= 100) || 'Cannot exceed 100 characters'
   ]
-  error: boolean = false
-  isValid: boolean = false
-  loading: boolean = false
+  error = false
+  isValid = false
+  loading = false
   messages = {}
   $hj: any
 

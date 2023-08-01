@@ -45,7 +45,7 @@ import { RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { RequestActions } from '@/list-data'
 
-/*
+/**
  * This is the dialog for picking a request type (when the menu doesn't
  * display all the request actions).
  */
