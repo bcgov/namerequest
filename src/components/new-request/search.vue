@@ -8,7 +8,7 @@
 
     <v-row class="mt-6">
       <!-- Request Action -->
-      <v-col cols="12" md="6" class="py-0">
+      <v-col cols="12" sm="8" class="py-0">
         <v-select
           filled
           label="Select an Action"
@@ -40,16 +40,23 @@
               <div>{{ item.subtext }}</div>
             </v-list-item-content>
           </template>
+
+          <template v-slot:selection="{ item }">
+              <p class="selected-item">
+                <span class="font-weight-bold">{{ item.text }}</span><br>
+                <span>{{ item.subtext }}</span>
+              </p>
+          </template>
         </v-select>
       </v-col>
 
       <!-- display a dummy input box here when Jurisdiction and Entity Type are not shown -->
-      <v-col v-if="!showJurisdiction && !showEntityType" cols="12" md="6" class="py-0">
+      <v-col v-if="!showJurisdiction && !showEntityType" cols="12" sm="4" class="py-0">
         <v-text-field filled disabled />
       </v-col>
 
       <!-- Jurisdiction -->
-      <v-col v-if="showJurisdiction" cols="12" md="6" class="py-0">
+      <v-col v-if="showJurisdiction" cols="12" sm="4" class="py-0">
         <v-tooltip
           id="location-options-select"
           top
@@ -96,7 +103,7 @@
       </v-col>
 
       <!-- Entity Type -->
-      <v-col v-if="showEntityType" cols="12" md="6" class="py-0">
+      <v-col v-if="showEntityType" cols="12" sm="4" class="py-0">
         <v-tooltip
           id="entity-type-options-select"
           top
@@ -148,7 +155,7 @@
       </v-col>
 
       <!-- Jurisdiction for xpro/mras -->
-      <v-col v-if="getIsXproMras" cols="12" md="6" class="py-0">
+      <v-col v-if="getIsXproMras" cols="12" sm="4" class="py-0">
         <v-select
           label="Select business' home jurisdiction"
           :error-messages="getErrors.includes('jurisdiction') ? 'Please select a jurisdiction' : ''"
@@ -208,6 +215,7 @@
       :businessType="entity_type_cd"
       :colinButton="showColinButton"
       :showDesignation="showDesignationSelect"
+      :showCompanyRadioBtn="showCompanyRadioBtn"
       @radioButtonChange="selectedCompanyType = $event"
     >
       <template v-slot:name-input-slot>
@@ -492,9 +500,16 @@ export default class Search extends Mixins(CommonMixin) {
 
   /** Whether to show "Colin" or "Incorporate Now" button based on FF. */
   get showColinButton (): boolean {
-    const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
-    const isIncorporateEntity = supportedEntites.includes(this.entity_type_cd)
-    return !isIncorporateEntity
+    if (this.isContinuationIn) {
+      return true
+    } else {
+      const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
+      console.log('supportedEntites', supportedEntites)
+      const isIncorporateEntity = supportedEntites.includes(this.entity_type_cd)
+      console.log('isIncorporateEntity', isIncorporateEntity)
+      console.log('not isIncorporateEntity', !isIncorporateEntity)
+      return !isIncorporateEntity
+    }
   }
 
   get showDesignationSelect (): boolean {
@@ -503,6 +518,10 @@ export default class Search extends Mixins(CommonMixin) {
     }
     // hide until entity type is selected and needs it
     return false
+  }
+
+  get showCompanyRadioBtn (): boolean {
+    return this.getEntityTypeCd !== EntityType.CP
   }
 
   get jurisdictionOptions () {
@@ -629,6 +648,10 @@ export default class Search extends Mixins(CommonMixin) {
 }
 .mobile-btn {
   width: 17rem !important;
+}
+.selected-item {
+  margin-top: 10px !important;
+  margin-bottom: 5px !important;
 }
 /* Deep Vuetify overrides */
 ::v-deep {
