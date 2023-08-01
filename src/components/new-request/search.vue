@@ -139,6 +139,16 @@
     </v-row>
 
     <v-row no-gutters>
+      <v-col cols="12">
+        <BusinessLookup
+          :showErrors="false"
+          :businessLookup="inProgressBusinessLookup"
+          :BusinessLookupServices="BusinessLookupServices"
+        />
+      </v-col>
+    </v-row>
+
+    <v-row no-gutters>
       <!-- jurisdiction for xpro/mras -->
       <v-col cols="12" md="4" lg="4" v-if="getIsXproMras">
         <v-select :error-messages="getErrors.includes('jurisdiction') ? 'Please select a jurisdiction' : ''"
@@ -257,6 +267,8 @@ import { Action, Getter } from 'vuex-class'
 // bcregistry common
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
+import { BusinessLookup } from '@bcrs-shared-components/business-lookup'
+
 // Components
 import { BulletsColinLink } from '../common'
 import NameInput from './name-input.vue'
@@ -268,10 +280,11 @@ import { AccountType, CompanyType, EntityType, Location, NrRequestActionCodes, N
 import { CommonMixin } from '@/mixins'
 import { CanJurisdictions, ConversionTypes, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
 import { GetFeatureFlag } from '@/plugins'
+import BusinessLookupServices from '@/services/business-lookup-services'
 
 /** This component is used for CREATING a Name Request. */
 @Component({
-  components: { BulletsColinLink, NameInput }
+  components: { BulletsColinLink, NameInput, BusinessLookup }
 })
 export default class NewSearch extends Mixins(CommonMixin) {
   // Refs
@@ -282,6 +295,7 @@ export default class NewSearch extends Mixins(CommonMixin) {
   // enums for template
   readonly Location = Location
   readonly NrRequestActionCodes = NrRequestActionCodes
+  readonly BusinessLookupServices = BusinessLookupServices
 
   // Global getters
   @Getter getConversionType!: EntityType

@@ -15,4 +15,10 @@ export * from './dialog-options'
 export * from './refund-params-interface'
 
 // external interfaces
-export { FormIF, StaffPaymentIF, BreadcrumbIF } from '@bcrs-shared-components/interfaces'
+export {
+  FormIF,
+  StaffPaymentIF,
+  BreadcrumbIF,
+  BusinessLookupResultIF,
+  EmptyBusinessLookup
+} from '@bcrs-shared-components/interfaces'

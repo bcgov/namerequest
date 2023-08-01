@@ -1,10 +1,14 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { EntityType, PriorityCode, NrRequestActionCodes } from '@/enums'
+import { EmptyBusinessLookup } from '@/interfaces'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 import { GetFeatureFlag } from '@/plugins'
 
 @Component({})
 export class CommonMixin extends Vue {
+  // Local properties
+  inProgressBusinessLookup = EmptyBusinessLookup
+
   /** True if Jest is running the code. */
   get isJestRunning (): boolean {
     return (process.env.JEST_WORKER_ID !== undefined)
