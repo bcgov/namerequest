@@ -297,6 +297,7 @@ import NameInput from './name-input.vue'
 // Interfaces / Enums / List Data
 import { ConversionTypesI, EntityI, FormType, RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { EmptyBusinessLookup } from '@/interfaces'
 import { AccountType, CompanyType, EntityType, Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin } from '@/mixins'
 import { CanJurisdictions, ConversionTypes, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
@@ -370,6 +371,7 @@ export default class Search extends Mixins(CommonMixin) {
     NrRequestActionCodes.CONVERSION
   ]
   activeActionGroup = NaN
+  inProgressBusinessLookup = EmptyBusinessLookup
 
   private mounted () {
     this.$nextTick(() => {
