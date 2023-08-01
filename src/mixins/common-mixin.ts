@@ -63,6 +63,7 @@ export class CommonMixin extends Vue {
       case EntityType.CC: return CorpTypeCd.BC_CCC
       case EntityType.CR: return CorpTypeCd.BC_COMPANY
       case EntityType.UL: return CorpTypeCd.BC_ULC_COMPANY
+      case EntityType.CP: return CorpTypeCd.COOP
       default: return null
     }
   }
