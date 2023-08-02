@@ -1,7 +1,5 @@
 import { NameRequestI, StateModelIF } from '@/interfaces'
 import {
-  CorpTypeCd,
-  EntityStates,
   EntityType,
   Location,
   NameCheckErrorType,
@@ -153,11 +151,11 @@ export const stateModel: StateModelIF = {
     isLoadingSubmission: false,
     hotjarUserId: '',
     businessLookup: {
-      identifier: '',
-      legalType: CorpTypeCd.BC_CCC,
-      bn: '',
-      status: EntityStates.ACTIVE,
-      name: '',
+      identifier: null,
+      legalType: null,
+      bn: null,
+      status: null,
+      name: null,
       disabled: false
     }
   },
