@@ -171,11 +171,22 @@
     <!-- business lookup -->
     <v-row no-gutters>
       <v-col cols="12">
-        <BusinessLookup
-          :showErrors="false"
-          :businessLookup="inProgressBusinessLookup"
-          :BusinessLookupServices="BusinessLookupServices"
-        />
+        <template>
+          <!-- Search for business identifier or name -->
+          <BusinessLookup
+            @business="businessName = $event.name; businessIdentifier = $event.identifier"
+          />
+
+          <template v-if="businessIdentifier">
+            <dl>
+              <dt class="font-weight-bold mr-2">Business Name:</dt>
+              <dd>{{businessName}}</dd>
+
+              <dt class="font-weight-bold mr-2">Incorporation Number:</dt>
+              <dd>{{businessIdentifier}}</dd>
+            </dl>
+          </template>
+        </template>
       </v-col>
     </v-row>
 
@@ -288,7 +299,7 @@ import { Action, Getter } from 'vuex-class'
 // bcregistry common
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
-import { BusinessLookup } from '@bcrs-shared-components/business-lookup'
+import BusinessLookup from '@/components/new-request/business-lookup.vue'
 
 // Components
 import { BulletsColinLink } from '../common'
@@ -297,7 +308,6 @@ import NameInput from './name-input.vue'
 // Interfaces / Enums / List Data
 import { ConversionTypesI, EntityI, FormType, RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { EmptyBusinessLookup } from '@/interfaces'
 import { AccountType, CompanyType, EntityType, Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin } from '@/mixins'
 import { CanJurisdictions, ConversionTypes, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
@@ -371,7 +381,8 @@ export default class Search extends Mixins(CommonMixin) {
     NrRequestActionCodes.CONVERSION
   ]
   activeActionGroup = NaN
-  inProgressBusinessLookup = EmptyBusinessLookup
+  businessName = ''
+  businessIdentifier = ''
 
   private mounted () {
     this.$nextTick(() => {

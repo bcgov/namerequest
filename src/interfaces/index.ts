@@ -19,6 +19,5 @@ export {
   FormIF,
   StaffPaymentIF,
   BreadcrumbIF,
-  BusinessLookupResultIF,
-  EmptyBusinessLookup
+  BusinessLookupResultIF
 } from '@bcrs-shared-components/interfaces'

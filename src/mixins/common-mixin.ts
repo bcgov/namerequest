@@ -5,7 +5,6 @@ import { GetFeatureFlag } from '@/plugins'
 
 @Component({})
 export class CommonMixin extends Vue {
-
   /** True if Jest is running the code. */
   get isJestRunning (): boolean {
     return (process.env.JEST_WORKER_ID !== undefined)

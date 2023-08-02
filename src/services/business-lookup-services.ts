@@ -2,17 +2,19 @@ import Axios from 'axios'
 import { AddAxiosInterceptors } from '@/plugins'
 import { BusinessLookupResultIF } from '@/interfaces'
 
+const axios = AddAxiosInterceptors(Axios.create())
+
 /**
  * Class that provides integration with the BusinessLookup API.
  */
 export default class BusinessLookupServices {
   /** The Business API URL, from session storage. */
-  static get businessApiUrl (): string {
+  static get registriesSearchApiUrl (): string {
     return sessionStorage.getItem('REGISTRIES_SEARCH_API_URL')
   }
 
   /** The Business API Key, from session storage. */
-  static get businessApiKey (): string {
+  static get registriesSearchApiKey (): string {
     return sessionStorage.getItem('BUSINESS_API_KEY')
   }
 
@@ -31,24 +33,20 @@ export default class BusinessLookupServices {
   /**
    * Searches for business by code or words.
    * @param query code or words to search
+   * @param status status to match (ACTIVE or HISTORICAL or empty to match all statuses)
    * @returns a promise to return the search results
    */
-  static async search (query: string): Promise<BusinessLookupResultIF[]> {
-    // this func is not called when input the texts
-    const legalType = 'BC,A,ULC,C,S,XP,GP,LP,CUL,XS,LLC,LL,BEN,CP,CC,XL,FI,XCP,PA'
-    const url = this.businessApiUrl +
-      `businesses/search/facets?start=0&rows=20&categories=legalType:${legalType}::status:ACTIVE` +
-      `&query=value:${encodeURIComponent(query)}`
+  static async search (query: string, status = ''): Promise<BusinessLookupResultIF[]> {
+    const legalType = 'A,BC,BEN,C,CC,CP,CUL,FI,GP,LL,LLC,LP,PA,S,SP,ULC,XCP,XL,XP,XS'
 
-    const axios = AddAxiosInterceptors(Axios.create())
-    const token = sessionStorage.getItem('KEYCLOAK_TOKEN')
+    let url = this.registriesSearchApiUrl + 'businesses/search/facets?start=0&rows=20'
+    url += `&categories=legalType:${legalType}${status ? '::status:' + status : ''}`
+    url += `&query=value:${encodeURIComponent(query)}`
 
     return axios.get(url, {
       headers: {
-        'x-apikey': this.businessApiKey,
-        'Account-Id': this.accountId,
-        Authorization: `Bearer ${token}`,
-        'Accept': 'application/pdf'
+        'x-apikey': this.registriesSearchApiKey,
+        'Account-Id': this.accountId
       }
     }).then(response => {
       const results: Array<BusinessLookupResultIF> = response?.data?.searchResults?.results
@@ -58,7 +56,7 @@ export default class BusinessLookupServices {
 
       // filter out results without a valid identifier
       return results.filter(result => {
-        const pattern = /^[A-Z]{1,3}[0-9]{7}$/
+        const pattern = /^[A-Z]{1,3}\d{7}$/
         return pattern.test(result.identifier)
       })
     })
