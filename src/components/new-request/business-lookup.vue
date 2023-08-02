@@ -40,28 +40,19 @@
           Ensure you have entered the correct business name or number.
         </p>
       </template>
-
-      <template v-slot:item="{ item }">
-        <v-row class="business-lookup-result pt-1">
-          <v-col cols="2" class="result-identifier">{{item.identifier}}</v-col>
-          <v-col cols="8" class="result-name">{{item.name}}</v-col>
-          <v-col cols="2" class="result-action">
-            <span v-if="item.disabled" class="added">Added</span>
-            <span v-else class="select">Select</span>
-          </v-col>
-        </v-row>
-      </template>
     </v-autocomplete>
   </div>
 </template>
 
 <script lang="ts">
+import Vue from 'vue'
 import { Component, Emit, Watch } from 'vue-property-decorator'
+import { Action } from 'vuex-class'
+import { debounce } from 'lodash'
+
 import { BusinessLookupResultIF } from '@/interfaces'
 import BusinessLookupServices from '@/services/business-lookup-services'
-import { Debounce } from 'vue-debounce-decorator'
-import Vue from 'vue'
-import { namespace } from 'vuex-class'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 enum States {
   INITIAL = 'initial',
@@ -88,30 +79,37 @@ export default class BusinessLookup extends Vue {
   /** State of this component. */
   state = States.INITIAL
 
+  // Global actions
+  @Action setBusinessLookup!: ActionBindingIF
+
   /** Called when searchField property has changed. */
   @Watch('searchField')
-  @Debounce(600)
-  private async onSearchFieldChanged (): Promise<void> {
+  onSearchFieldChanged (): void {
+    this.onSearchInputDebounced(this)
+  }
+
+  private onSearchInputDebounced = debounce(async (that: this) => {
     // safety check
-    if (this.searchField && this.searchField.length > 2) {
-      this.state = States.SEARCHING
-      const searchStatus = null // search all (ACTIVE + HISTORICAL)
-      this.searchResults = await BusinessLookupServices.search(this.searchField, searchStatus).catch(() => [])
+    if (that.searchField && that.searchField.length > 2) {
+      that.state = States.SEARCHING
+      const searchStatus = 'ACTIVE' // search for ACTIVE
+      that.searchResults = await BusinessLookupServices.search(that.searchField, searchStatus).catch(() => [])
 
       // display appropriate section
-      this.state = (this.searchResults.length > 0) ? States.SHOW_RESULTS : States.NO_RESULTS
+      that.state = (that.searchResults.length > 0) ? States.SHOW_RESULTS : States.NO_RESULTS
     } else {
       // reset variables
-      this.searchResults = []
-      this.state = States.INITIAL
+      that.searchResults = []
+      that.state = States.INITIAL
     }
-  }
+  }, 600)
 
   /** When an item has been selected, emits event with business object. */
   @Emit('business')
   onItemSelected (input: BusinessLookupResultIF): void {
     // safety check
     if (input) {
+      this.setBusinessLookup(input)
       // change to summary state
       this.state = States.SUMMARY
     }

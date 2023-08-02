@@ -26,6 +26,7 @@ import { appBaseURL } from '../router/router'
 
 // Interfaces
 import {
+  BusinessLookupResultIF,
   CleanedNameIF,
   ConversionTypesI,
   NameRequestI,
@@ -1234,4 +1235,8 @@ export const setRefundParams: ActionIF = ({ commit }, refundParams: RefundParams
 
 export const setIncorporateNowErrorStatus: ActionIF = ({ commit }, incorporateNowError: boolean): void => {
   commit('mutateIncorporateNowErrorStatus', incorporateNowError)
+}
+
+export const setBusinessLookup: ActionIF = ({ commit }, businessLookupResult: BusinessLookupResultIF): void => {
+  commit('mutateBusinessLookup', businessLookupResult)
 }
