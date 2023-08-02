@@ -63,8 +63,6 @@ import { Debounce } from 'vue-debounce-decorator'
 import Vue from 'vue'
 import { namespace } from 'vuex-class'
 
-const BusinessModule = namespace('business')
-
 enum States {
   INITIAL = 'initial',
   SEARCHING = 'searching',
@@ -80,10 +78,6 @@ enum States {
 export default class BusinessLookup extends Vue {
   // enum for template
   readonly States = States
-
-  // action from business module
-  @BusinessModule.Action('isAffiliated')
-  private readonly isAffiliated!: (identifier: string) => Promise<boolean>
 
   /** V-model for search field. */
   searchField = ''
@@ -103,11 +97,6 @@ export default class BusinessLookup extends Vue {
       this.state = States.SEARCHING
       const searchStatus = null // search all (ACTIVE + HISTORICAL)
       this.searchResults = await BusinessLookupServices.search(this.searchField, searchStatus).catch(() => [])
-
-      // enable or disable items according to whether they have already been added
-      for (const result of this.searchResults) {
-        result.disabled = await this.isAffiliated(result.identifier)
-      }
 
       // display appropriate section
       this.state = (this.searchResults.length > 0) ? States.SHOW_RESULTS : States.NO_RESULTS
