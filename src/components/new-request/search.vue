@@ -328,7 +328,7 @@ import BusinessLookupServices from '@/services/business-lookup-services'
  * This is the component that displays the new NR menus and flows.
  */
 @Component({
-  components: { BulletsColinLink, NameInput, BusinessLookup }
+  components: { BulletsColinLink, BusinessLookup, NameInput }
 })
 export default class Search extends Mixins(CommonMixin) {
   // Refs
