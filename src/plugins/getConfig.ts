@@ -43,6 +43,13 @@ export async function getConfig (): Promise<EnvConfigI> {
   const authWebUrl: string = process.env.VUE_APP_AUTH_WEB_URL
   sessionStorage.setItem('AUTH_WEB_URL', authWebUrl)
 
+  const registriesSearchApiUrl: string =
+    (process.env.VUE_APP_REGISTRIES_SEARCH_API_URL + process.env.VUE_APP_REGISTRIES_SEARCH_API_VERSION + '/')
+  sessionStorage.setItem('REGISTRIES_SEARCH_API_URL', registriesSearchApiUrl)
+
+  const businessApiKey: string = process.env.VUE_APP_REGISTRIES_SEARCH_API_KEY
+  sessionStorage.setItem('BUSINESS_API_KEY', businessApiKey)
+
   const sentryDsn: string = process.env.VUE_APP_SENTRY_DSN;
   (<any>window).sentryDsn = sentryDsn
 
