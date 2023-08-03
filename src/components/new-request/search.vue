@@ -17,8 +17,15 @@
           item-value="[group,value]"
           :menu-props="{ bottom: true, offsetY: true, maxHeight: 423 }"
           @change="setClearErrors(null); onRequestActionChange($event)"
+          return-object
         >
-          <template v-slot:item="{ item }">
+          <!-- FUTURE: use "selection" slot to format the selected business -->
+          <!-- <template #selection="{ item }">
+            <div class="font-weight-bold text-truncate">{{ item.text }}</div>
+            <div class="text-subtitle-1">{{ item.subtext }}</div>
+          </template> -->
+
+          <template #item="{ item }">
             <v-list-item-content
               v-if="item.isHeader"
               class="group-header px-4 py-5"
@@ -32,9 +39,12 @@
               </div>
             </v-list-item-content>
 
+            <!-- render but conditionally hide disabled list items, so that the v-select
+            continues to display the current selection even when a different group is active -->
             <v-list-item-content
               v-else
               class="group-item pl-8 pr-4 py-4"
+              :class="{ 'hide-me': item.disabled }"
             >
               <div class="font-weight-bold">{{ item.text }}</div>
               <div>{{ item.subtext }}</div>
@@ -406,19 +416,20 @@ export default class Search extends Mixins(CommonMixin) {
   }
 
   /** The request action items to display. */
-  get requestActions () {
-    return RequestActions.filter(action => {
-      // always show header action
-      if (action.isHeader) return true
-      // show item action if group is open
-      if (action.group === this.activeActionGroup) return true
-      // don't show this action
-      return false
+  get requestActions (): RequestActionsI[] {
+    return RequestActions.filter(item => {
+      // always include header items
+      if (item.isHeader) return true
+
+      // include but disable items not in active group
+      // (they will be hidden via CSS)
+      item['disabled'] = (item.group !== this.activeActionGroup)
+      return true
     })
   }
 
   /** If current group is active, deactivates it, otherwise activates group. */
-  toggleActionGroup (group: number) {
+  toggleActionGroup (group: number): void {
     this.activeActionGroup = (this.activeActionGroup === group) ? NaN : group
   }
 
@@ -573,8 +584,8 @@ export default class Search extends Mixins(CommonMixin) {
   }
 
   /** Called when Request Action menu item is changed. */
-  onRequestActionChange (text: string): void {
-    this.request = RequestActions.find(request => request.text === text)
+  onRequestActionChange (request: RequestActionsI): void {
+    this.request = request
 
     // clear Jurisdiction and Entity Type
     this.setLocation(null)
@@ -628,8 +639,12 @@ export default class Search extends Mixins(CommonMixin) {
   padding: 20px 8px !important;
 }
 
-// set content colour when hovering over list items
+// hide disabled list items
+::v-deep .v-list-item:has(.v-list-item__content.hide-me) {
+  display: none;
+}
 
+// set content colour when hovering over list items
 .v-list-item:hover .v-list-item__content,
 .list-item:hover {
   color: $app-blue !important;
