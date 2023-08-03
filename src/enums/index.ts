@@ -27,6 +27,8 @@ export * from './xpro-name-type'
 
 // external enums
 export {
+  CorpTypeCd,
+  EntityStates,
   NrRequestActionCodes,
   NrRequestTypeCodes,
   StaffPaymentOptions

@@ -1,5 +1,11 @@
 import { NameRequestI, StateModelIF } from '@/interfaces'
-import { EntityType, Location, NameCheckErrorType, NrAffiliationErrors, StaffPaymentOptions } from '@/enums'
+import {
+  EntityType,
+  Location,
+  NameCheckErrorType,
+  NrAffiliationErrors,
+  StaffPaymentOptions
+} from '@/enums'
 
 export const stateModel: StateModelIF = {
   common: {
@@ -143,7 +149,15 @@ export const stateModel: StateModelIF = {
     userCancelledAnalysis: false,
     waitingAddressSearch: null,
     isLoadingSubmission: false,
-    hotjarUserId: ''
+    hotjarUserId: '',
+    businessLookup: {
+      identifier: null,
+      legalType: null,
+      bn: null,
+      status: null,
+      name: null,
+      disabled: false
+    }
   },
   staffPayment: {
     option: StaffPaymentOptions.NONE,

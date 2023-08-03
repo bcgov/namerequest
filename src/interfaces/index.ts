@@ -17,6 +17,7 @@ export * from './refund-params-interface'
 // external interfaces
 export type {
   BreadcrumbIF,
+  BusinessLookupResultIF,
   FormIF,
   StaffPaymentIF
 } from '@bcrs-shared-components/interfaces'
