@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import {
   AnalysisJSONI,
+  BusinessLookupResultIF,
   ConditionalInstructionI,
   ConversionTypesI,
   NameRequestI,
@@ -558,4 +559,8 @@ export const mutateHotjarUserId = (state: StateIF, hotjarUserId: string) => {
 
 export const mutateIncorporateNowErrorStatus = (state: StateIF, incorporateNowError: boolean) => {
   state.stateModel.newRequestModel.incorporateNowError = incorporateNowError
+}
+
+export const mutateBusinessLookup = (state: StateIF, businessLookupResult: BusinessLookupResultIF) => {
+  state.stateModel.newRequestModel.businessLookup = businessLookupResult
 }
