@@ -44,7 +44,7 @@
             id="incorporate-now-button"
             @click="incorporateNowClicked()"
           >
-            Incorporate Now
+            {{ incorporateNowButtonText }}
           </v-btn>
         </div>
       </div>
@@ -77,6 +77,9 @@ export default class BulletsColinLink extends Mixins(CommonMixin, NrAffiliationM
 
   /** Hide Company Radio buttons */
   @Prop({ default: true }) readonly showCompanyRadioBtn!: boolean
+
+  /** Button text based on selected action/flow */
+  @Prop({ default: '' }) readonly incorporateNowButtonText!: string
 
   /** Whether user is authenticated. */
   @Getter getIsAuthenticated!: boolean

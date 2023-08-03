@@ -15,7 +15,8 @@
               tabindex="0"
       >
         <v-icon v-if="!isMobile" class="mr-2">mdi-magnify</v-icon>
-        <span :class="[tabNumber === 0 ? 'h5' : 'h5-lt', { 'mobile-font' : isMobile }]">Request a Business Name</span>
+        <span :class="[tabNumber === 0 ? 'h5' : 'h5-lt', { 'mobile-font' : isMobile }]">Get a Business Name or Start a
+          Numbered Business</span>
       </v-tab>
 
       <v-tab :ripple="false"
