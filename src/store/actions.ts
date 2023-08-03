@@ -297,6 +297,8 @@ export const setAddressSuggestions: ActionIF = ({ commit }, addressSuggestions: 
 
 // FUTURE: not an action - move it to another module?
 export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> => {
+  // NB: MRAS search should have been done on first page for xpro
+  // NB: COLIN search should have been done on first page for BC
   if (getters.getShowCorpNum) {
     if (getters.getShowCorpNum === CorpNumRequests.MRAS) {
       return checkMRAS({ getters }, corpNum)

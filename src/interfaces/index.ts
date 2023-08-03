@@ -15,7 +15,7 @@ export * from './dialog-options'
 export * from './refund-params-interface'
 
 // external interfaces
-export {
+export type {
   BreadcrumbIF,
   BusinessLookupResultIF,
   FormIF,
