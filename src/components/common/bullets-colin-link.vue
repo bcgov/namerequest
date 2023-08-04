@@ -170,9 +170,4 @@ export default class BulletsColinLink extends Mixins(CommonMixin, NrAffiliationM
   margin-top: 1rem;
   padding-left: 8rem;
 }
-
-.nr-input {
-  padding-right: 1.5rem;
-  padding-left: 1.5rem;
-}
 </style>
