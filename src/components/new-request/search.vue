@@ -228,6 +228,8 @@
       :businessType="entity_type_cd"
       :colinButton="showColinButton"
       :showDesignation="showDesignationSelect"
+      :showCompanyRadioBtn="showCompanyRadioBtn"
+      :incorporateNowButtonText="incorporateNowButtonText"
       @radioButtonChange="selectedCompanyType = $event"
     >
       <template v-slot:name-input-slot>
@@ -515,11 +517,32 @@ export default class Search extends Mixins(CommonMixin) {
     return (this.selectedCompanyType === CompanyType.NAMED_COMPANY)
   }
 
-  /** Whether to show "Colin" or "Incorporate Now" button based on FF. */
+  /** Whether to show "Colin" or "Incorporate Now" button based on FF for Incorporation or Registration. */
   get showColinButton (): boolean {
-    const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
-    const isIncorporateEntity = supportedEntites.includes(this.entity_type_cd)
-    return !isIncorporateEntity
+    // Contuniation In - returning true because Continuation In application are not yet implemented
+    // FUTURE: FF created already for Continuation In, use showContinueInButton
+    if (this.isContinuationIn) {
+      return true
+    } else {
+      const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
+      const isIncorporateEntity = supportedEntites.includes(this.entity_type_cd)
+      return !isIncorporateEntity
+    }
+  }
+
+  get showContinueInButton (): boolean {
+    const supportedContInEntites = GetFeatureFlag('supported-continuation-in-entities')
+    const isContInEntity = supportedContInEntites.includes(this.entity_type_cd)
+    return !isContInEntity
+  }
+
+  /** Retrieve text based on selected action/flow */
+  get incorporateNowButtonText (): string {
+    if (this.isContinuationIn) {
+      return 'Continue In Now'
+    } else {
+      return 'Incorporate Now'
+    }
   }
 
   get showDesignationSelect (): boolean {
@@ -528,6 +551,13 @@ export default class Search extends Mixins(CommonMixin) {
     }
     // hide until entity type is selected and needs it
     return false
+  }
+
+  get showCompanyRadioBtn (): boolean {
+    if (this.getEntityTypeCd === EntityType.CP) {
+      this.selectedCompanyType = CompanyType.NAMED_COMPANY
+    }
+    return this.getEntityTypeCd !== EntityType.CP
   }
 
   get jurisdictionOptions () {
@@ -669,6 +699,7 @@ export default class Search extends Mixins(CommonMixin) {
 .mobile-btn {
   width: 17rem !important;
 }
+
 /* Deep Vuetify overrides */
 ::v-deep {
   .theme--light.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
