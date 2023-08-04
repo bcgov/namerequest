@@ -184,16 +184,6 @@
         <template>
           <!-- Search for business identifier or name if NR request action is one of [CHG, AML, CNV, REH] -->
           <BusinessLookup v-if="isBusinessLookup" />
-
-          <template v-if="businessIdentifier">
-            <dl>
-              <dt class="font-weight-bold mr-2">Business Name:</dt>
-              <dd>{{businessName}}</dd>
-
-              <dt class="font-weight-bold mr-2">Incorporation Number:</dt>
-              <dd>{{businessIdentifier}}</dd>
-            </dl>
-          </template>
         </template>
       </v-col>
     </v-row>
