@@ -18,7 +18,7 @@
         />
       </v-radio-group>
     </v-col>
-    <v-col cols="12" :sm="companyRadioBtnApplicable ? 9 : 12" :class="{ 'nr-input' : !companyRadioBtnApplicable}">
+    <v-col cols="12" :sm="companyRadioBtnApplicable ? 9 : 12" :class="{ 'px-6' : !companyRadioBtnApplicable}">
       <div v-if="selectedCompanyType === CompanyType.NAMED_COMPANY">
         <v-row>
           <slot name="name-input-slot">Name Input</slot>

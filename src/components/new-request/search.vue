@@ -675,10 +675,7 @@ export default class Search extends Mixins(CommonMixin) {
 .mobile-btn {
   width: 17rem !important;
 }
-.selected-item {
-  margin-top: 10px !important;
-  margin-bottom: 5px !important;
-}
+
 /* Deep Vuetify overrides */
 ::v-deep {
   .theme--light.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
