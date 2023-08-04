@@ -379,8 +379,6 @@ export default class Search extends Mixins(CommonMixin) {
     NrRequestActionCodes.CONVERSION
   ]
   activeActionGroup = NaN
-  businessName = ''
-  businessIdentifier = ''
 
   private mounted () {
     this.$nextTick(() => {
