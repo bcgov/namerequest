@@ -178,6 +178,16 @@
       </v-col>
     </v-row>
 
+    <!-- business lookup -->
+    <v-row no-gutters>
+      <v-col cols="12">
+        <template>
+          <!-- Search for business identifier or name if NR request action is one of [CHG, AML, CNV, REH] -->
+          <BusinessLookup v-if="isBusinessLookup" />
+        </template>
+      </v-col>
+    </v-row>
+
     <!-- Corporate Number checkbox, only for XPro Canadian locations -->
     <v-row v-if="getIsXproMras && !isFederal && !isInternational" no-gutters>
       <v-col class="d-flex justify-end">
@@ -289,6 +299,8 @@ import { Action, Getter } from 'vuex-class'
 // bcregistry common
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
+import BusinessLookup from '@/components/new-request/business-lookup.vue'
+
 // Components
 import { BulletsColinLink } from '../common'
 import NameInput from './name-input.vue'
@@ -300,12 +312,13 @@ import { AccountType, CompanyType, EntityType, Location, NrRequestActionCodes, N
 import { CommonMixin } from '@/mixins'
 import { CanJurisdictions, ConversionTypes, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
 import { GetFeatureFlag } from '@/plugins'
+import BusinessLookupServices from '@/services/business-lookup-services'
 
 /**
  * This is the component that displays the new NR menus and flows.
  */
 @Component({
-  components: { BulletsColinLink, NameInput }
+  components: { BulletsColinLink, BusinessLookup, NameInput }
 })
 export default class Search extends Mixins(CommonMixin) {
   // Refs
@@ -316,6 +329,7 @@ export default class Search extends Mixins(CommonMixin) {
   // enums for template
   readonly Location = Location
   readonly NrRequestActionCodes = NrRequestActionCodes
+  readonly BusinessLookupServices = BusinessLookupServices
 
   // Global getters
   @Getter getConversionType!: EntityType
@@ -554,6 +568,16 @@ export default class Search extends Mixins(CommonMixin) {
 
   get entityTextFromValue (): string {
     return this.getEntityTextFromValue || 'specified business type'
+  }
+
+  get isBusinessLookup () {
+    // show BusinessLookup when NR request actions are following these
+    return [
+      NrRequestActionCodes.AMALGAMATE,
+      NrRequestActionCodes.CHANGE_NAME,
+      NrRequestActionCodes.CONVERSION,
+      NrRequestActionCodes.RESTORE
+    ].includes(this.getRequestActionCd)
   }
 
   async handleSubmit (doNameCheck = true) {
