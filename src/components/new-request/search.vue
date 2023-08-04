@@ -182,20 +182,8 @@
     <v-row no-gutters>
       <v-col cols="12">
         <template>
-          <!-- Search for business identifier or name -->
-          <BusinessLookup
-            @business="businessName = $event.name; businessIdentifier = $event.identifier"
-          />
-
-          <template v-if="businessIdentifier">
-            <dl>
-              <dt class="font-weight-bold mr-2">Business Name:</dt>
-              <dd>{{businessName}}</dd>
-
-              <dt class="font-weight-bold mr-2">Incorporation Number:</dt>
-              <dd>{{businessIdentifier}}</dd>
-            </dl>
-          </template>
+          <!-- Search for business identifier or name if NR request action is one of [CHG, AML, CNV, REH] -->
+          <BusinessLookup v-if="isBusinessLookup" />
         </template>
       </v-col>
     </v-row>
@@ -391,8 +379,6 @@ export default class Search extends Mixins(CommonMixin) {
     NrRequestActionCodes.CONVERSION
   ]
   activeActionGroup = NaN
-  businessName = ''
-  businessIdentifier = ''
 
   private mounted () {
     this.$nextTick(() => {
@@ -552,6 +538,16 @@ export default class Search extends Mixins(CommonMixin) {
 
   get entityTextFromValue (): string {
     return this.getEntityTextFromValue || 'specified business type'
+  }
+
+  get isBusinessLookup () {
+    // show BusinessLookup when NR request actions are following these
+    return [
+      NrRequestActionCodes.AMALGAMATE,
+      NrRequestActionCodes.CHANGE_NAME,
+      NrRequestActionCodes.CONVERSION,
+      NrRequestActionCodes.RESTORE
+    ].includes(this.getRequestActionCd)
   }
 
   async handleSubmit (doNameCheck = true) {
