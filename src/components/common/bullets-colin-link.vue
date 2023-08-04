@@ -1,6 +1,6 @@
 <template>
   <v-row id="bullets-colin-link">
-    <v-col cols="12" sm="3">
+    <v-col cols="12" sm="3" v-if="companyRadioBtnApplicable">
       <v-radio-group
         v-model="selectedCompanyType"
         flat
@@ -18,7 +18,7 @@
         />
       </v-radio-group>
     </v-col>
-    <v-col cols="12" sm="9">
+    <v-col cols="12" :sm="companyRadioBtnApplicable ? 9 : 12" :class="{ 'px-6' : !companyRadioBtnApplicable}">
       <div v-if="selectedCompanyType === CompanyType.NAMED_COMPANY">
         <v-row>
           <slot name="name-input-slot">Name Input</slot>
@@ -44,7 +44,7 @@
             id="incorporate-now-button"
             @click="incorporateNowClicked()"
           >
-            Incorporate Now
+            {{ incorporateNowButtonText }}
           </v-btn>
         </div>
       </div>
@@ -75,11 +75,17 @@ export default class BulletsColinLink extends Mixins(CommonMixin, NrAffiliationM
   /** Show Designation Dropdown. */
   @Prop({ default: false }) readonly showDesignation!: boolean
 
+  /** Hide Company Radio buttons */
+  @Prop({ default: true }) readonly showCompanyRadioBtn!: boolean
+
+  /** Button text based on selected action/flow */
+  @Prop({ default: '' }) readonly incorporateNowButtonText!: string
+
   /** Whether user is authenticated. */
   @Getter getIsAuthenticated!: boolean
 
   // Local properties
-  selectedCompanyType: CompanyType = null
+  selectedCompanyType = null as CompanyType
   bulletPoints = [
     'Your business name will be the Incorporation Number assinged by the Registry.',
     'You can change your business name at a later date.',
@@ -96,6 +102,15 @@ export default class BulletsColinLink extends Mixins(CommonMixin, NrAffiliationM
       const dashboardUrl = sessionStorage.getItem('DASHBOARD_URL')
       Navigate(`${dashboardUrl}${businessId}`)
     }
+  }
+
+  get companyRadioBtnApplicable (): boolean {
+    if (!this.showCompanyRadioBtn) {
+      this.selectedCompanyType = CompanyType.NAMED_COMPANY
+      return false
+    }
+
+    return true
   }
 
   /**
