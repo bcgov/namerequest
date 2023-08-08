@@ -46,6 +46,7 @@
 
       <!-- Breadcrumb -->
       <Breadcrumb
+        class="namerequest-sbc-breadcrumb"
         :breadcrumbs="breadcrumbs"
       />
 
@@ -355,6 +356,14 @@ export default class App extends Mixins(
     font-weight: normal !important;
     letter-spacing: normal !important;
     font-size: .875rem !important;
+  }
+}
+
+.namerequest-sbc-breadcrumb {
+  .v-btn {
+    width: 28px;
+    height: 28px !important;
+    background-color: white !important;
   }
 }
 

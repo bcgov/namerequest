@@ -19,14 +19,8 @@
   padding-right: 0 !important;
 }
 
-#breadcrumb > .container {
+.container {
   max-width: 1360px; // should match auth-web, etc
-}
-
-#breadcrumb-back-btn {
-  width: 28px;
-  height: 28px !important;
-  background-color: white !important;
 }
 
 @media only screen and (max-width: 925px) {
