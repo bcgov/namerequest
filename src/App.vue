@@ -360,10 +360,6 @@ export default class App extends Mixins(
 }
 
 .namerequest-sbc-breadcrumb {
-  .container {
-    max-width: 1360px; // should match auth-web, etc
-  }
-
   .v-btn {
     width: 28px;
     height: 28px !important;
