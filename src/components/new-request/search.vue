@@ -554,10 +554,11 @@ export default class Search extends Mixins(CommonMixin) {
   }
 
   get showCompanyRadioBtn (): boolean {
-    if (this.getEntityTypeCd === EntityType.CP) {
+    if (this.getEntityTypeCd === EntityType.CP || this.getEntityTypeCd === EntityType.SO) {
       this.selectedCompanyType = CompanyType.NAMED_COMPANY
+      return false
     }
-    return this.getEntityTypeCd !== EntityType.CP
+    return true
   }
 
   get jurisdictionOptions () {
