@@ -349,6 +349,7 @@ export default class Search extends Mixins(CommonMixin) {
   @Getter getLocationText!: string
   @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter isMobile!: boolean
+  @Getter isBcCcCrUl!: boolean
 
   // Global actions
   @Action setConversionType!: ActionBindingIF
@@ -554,10 +555,7 @@ export default class Search extends Mixins(CommonMixin) {
   }
 
   get showCompanyRadioBtn (): boolean {
-    if (this.getEntityTypeCd === EntityType.CP) {
-      this.selectedCompanyType = CompanyType.NAMED_COMPANY
-    }
-    return this.getEntityTypeCd !== EntityType.CP
+    return this.isBcCcCrUl
   }
 
   get jurisdictionOptions () {
