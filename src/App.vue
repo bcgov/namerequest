@@ -365,6 +365,10 @@ export default class App extends Mixins(
     height: 28px !important;
     background-color: white !important;
   }
+
+  .container {
+    max-width: 1360px; // should match auth-web, etc
+  }
 }
 
 .loading-container.grayed-out {
