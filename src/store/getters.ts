@@ -128,11 +128,6 @@ export const getRequestActionCd = (state: StateIF): NrRequestActionCodes => {
   return state.stateModel.newRequestModel.request_action_cd
 }
 
-/** The request text for the current request action code. */
-export const getRequestText = (state: StateIF): string => {
-  return RequestActions.find(options => options.value === getRequestActionCd(state))?.text
-}
-
 export const getApplicant = (state: StateIF): ApplicantI => {
   return state.stateModel.newRequestModel.applicant
 }
