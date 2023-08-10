@@ -19,10 +19,6 @@
   padding-right: 0 !important;
 }
 
-.container {
-  max-width: 1360px; // should match auth-web, etc
-}
-
 @media only screen and (max-width: 925px) {
   html, body {
     max-width: 100%;
