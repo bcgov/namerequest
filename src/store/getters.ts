@@ -1188,3 +1188,13 @@ export const getIncorporateNowErrorStatus = (state: StateIF): boolean => {
 export const getBusinessLookup = (state: StateIF): BusinessLookupResultIF => {
   return state.stateModel.newRequestModel.businessLookup
 }
+
+/** Check if BC company, CCC, Corporation or ULC  */
+export const isBcCcCrUl = (state: StateIF): boolean => {
+  return (
+    getEntityTypeCd(state) === EntityType.BC ||
+    getEntityTypeCd(state) === EntityType.CC ||
+    getEntityTypeCd(state) === EntityType.CR ||
+    getEntityTypeCd(state) === EntityType.UL
+  )
+}
