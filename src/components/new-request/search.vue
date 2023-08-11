@@ -9,48 +9,62 @@
     <v-row class="mt-6">
       <!-- Request Action -->
       <v-col cols="12" md="6" class="py-0">
-        <v-select
-          filled
-          label="Select an Action"
-          :error-messages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
-          :items="requestActions"
-          item-value="[group,value]"
-          :menu-props="{ bottom: true, offsetY: true, maxHeight: 423 }"
-          @change="setClearErrors(null); onRequestActionChange($event)"
-          return-object
+        <v-tooltip
+          top
+          content-class="top-tooltip"
+          transition="fade-transition"
+          :disabled="!showRequestActionTooltip || isMobile"
         >
-          <!-- FUTURE: use "selection" slot to format the selected business -->
-          <!-- <template #selection="{ item }">
-            <div class="font-weight-bold text-truncate">{{ item.text }}</div>
-            <div class="text-subtitle-1">{{ item.subtext }}</div>
-          </template> -->
+          <template v-slot:activator="scope">
+            <div v-on="scope.on">
+              <v-select
+                id="search-type-options-select"
+                class="request-action-select"
+                filled
+                label="Select an Action"
+                :error-messages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
+                :items="requestActions"
+                item-value="[group,value]"
+                :menu-props="{ bottom: true, offsetY: true, maxHeight: 423 }"
+                @change="setClearErrors(null); onRequestActionChange($event)"
+                return-object
+              >
+                <!-- FUTURE: use "selection" slot to format the selected business -->
+                <!-- <template #selection="{ item }">
+                  <div class="font-weight-bold text-truncate">{{ item.text }}</div>
+                  <div class="text-subtitle-1">{{ item.subtext }}</div>
+                </template> -->
 
-          <template #item="{ item }">
-            <v-list-item-content
-              v-if="item.isHeader"
-              class="group-header px-4 py-5"
-              @click.stop="toggleActionGroup(item.group)"
-            >
-              <div class="d-flex justify-space-between align-center">
-                <p class="mb-0 mr-4" :class="{'app-blue': item.group === activeActionGroup}">{{ item.text }}</p>
-                <v-icon color="primary">
-                  {{ item.group === activeActionGroup ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-                </v-icon>
-              </div>
-            </v-list-item-content>
+                <template #item="{ item }">
+                  <v-list-item-content
+                    v-if="item.isHeader"
+                    class="group-header px-4 py-5"
+                    @click.stop="toggleActionGroup(item.group)"
+                  >
+                    <div class="d-flex justify-space-between align-center">
+                      <p class="mb-0 mr-4" :class="{'app-blue': item.group === activeActionGroup}">{{ item.text }}</p>
+                      <v-icon color="primary">
+                        {{ item.group === activeActionGroup ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                      </v-icon>
+                    </div>
+                  </v-list-item-content>
 
-            <!-- render but conditionally hide disabled list items, so that the v-select
-            continues to display the current selection even when a different group is active -->
-            <v-list-item-content
-              v-else
-              class="group-item pl-8 pr-4 py-4"
-              :class="{ 'hide-me': item.disabled }"
-            >
-              <div class="font-weight-bold">{{ item.text }}</div>
-              <div>{{ item.subtext }}</div>
-            </v-list-item-content>
+                  <!-- render but conditionally hide disabled list items, so that the v-select
+                  continues to display the current selection even when a different group is active -->
+                  <v-list-item-content
+                    v-else
+                    class="group-item pl-8 pr-4 py-4"
+                    :class="{ 'hide-me': item.disabled }"
+                  >
+                    <div class="font-weight-bold">{{ item.text }}</div>
+                    <div>{{ item.subtext }}</div>
+                  </v-list-item-content>
+                </template>
+              </v-select>
+            </div>
           </template>
-        </v-select>
+          <span>{{ request && request.text }}</span>
+        </v-tooltip>
       </v-col>
 
       <!-- display a dummy input box here when Jurisdiction and Entity Type are not shown -->
@@ -61,7 +75,6 @@
       <!-- Jurisdiction -->
       <v-col v-if="showJurisdiction" cols="12" md="6" class="py-0">
         <v-tooltip
-          id="location-options-select"
           top
           content-class="top-tooltip"
           transition="fade-transition"
@@ -70,6 +83,7 @@
           <template v-slot:activator="scope">
             <div v-on="scope.on">
               <v-select
+                id="location-options-select"
                 label="Select your jurisdiction"
                 :error-messages="getErrors.includes('location') ? 'Please select a jurisdiction' : ''"
                 :items="getLocationOptions"
@@ -108,7 +122,6 @@
       <!-- Entity Type -->
       <v-col v-if="showEntityType" cols="12" md="6" class="py-0">
         <v-tooltip
-          id="entity-type-options-select"
           top
           content-class="top-tooltip"
           :disabled="getRequestActionCd !== NrRequestActionCodes.CONVERSION || !entityConversionText || isMobile"
@@ -117,6 +130,7 @@
           <template v-slot:activator="scope">
             <div v-on="scope.on">
               <v-select
+                id="entity-type-options-select"
                 :label="getIsConversion ? 'Select type of business to alter into' : 'Select type of business in B.C.'"
                 :error-messages="getErrors.includes('entity_type_cd') ? 'Please select a business type' : ''"
                 :items="entityConversionTypeOptions"
@@ -189,6 +203,7 @@
     </v-row>
 
     <!-- Corporate Number checkbox, only for XPro Canadian locations -->
+    <!-- *** TODO: change this to "isCanadian" -->
     <v-row v-if="getIsXproMras && !isFederal && !isInternational" no-gutters>
       <v-col class="d-flex justify-end">
         <v-tooltip
@@ -293,7 +308,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Watch } from 'vue-property-decorator'
+import { Component, Mixins, Vue, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 // bcregistry common
@@ -382,6 +397,7 @@ export default class Search extends Mixins(CommonMixin) {
     NrRequestActionCodes.CONVERSION
   ]
   activeActionGroup = NaN
+  showRequestActionTooltip = false
 
   private mounted () {
     this.$nextTick(() => {
@@ -586,7 +602,7 @@ export default class Search extends Mixins(CommonMixin) {
   }
 
   @Watch('entity_type_cd')
-  clearDesignation (newVal) {
+  clearDesignation () {
     this.setDesignation('')
     // clear "Select a Business Type" field when "View all business types" or Society is selected
     if (!this.entity_type_cd || this.entity_type_cd === EntityType.INFO) {
@@ -608,6 +624,15 @@ export default class Search extends Mixins(CommonMixin) {
   /** Called when Request Action menu item is changed. */
   onRequestActionChange (request: RequestActionsI): void {
     this.request = request
+
+    // calculate whether to show tooltip
+    // (in next tick after DOM update)
+    Vue.nextTick(() => {
+      const el = document.querySelector('.request-action-select .v-select__selection') as any
+      const offsetWidth = el?.offsetWidth as number
+      const scrollWidth = el?.scrollWidth as number
+      this.showRequestActionTooltip = (offsetWidth < scrollWidth)
+    })
 
     // clear Jurisdiction and Entity Type
     this.setLocation(null)
