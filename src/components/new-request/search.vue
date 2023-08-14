@@ -571,7 +571,8 @@ export default class Search extends Mixins(CommonMixin) {
   }
 
   get showCompanyRadioBtn (): boolean {
-    return this.isBcCcCrUl
+    return this.isBcCcCrUl &&
+          !(this.isSupportSociety() && this.getEntityTypeCd === EntityType.SO)
   }
 
   get jurisdictionOptions () {

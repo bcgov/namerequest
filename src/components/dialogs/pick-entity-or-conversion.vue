@@ -92,9 +92,10 @@ import { ConversionTypesI, EntityI, SelectOptionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { EntityType, Location } from '@/enums'
 import { ConversionTypes } from '@/list-data'
+import { CommonMixin } from '@/mixins'
 
 @Component({})
-export default class PickEntityOrConversionDialog extends Vue {
+export default class PickEntityOrConversionDialog extends CommonMixin {
   // enum for template
   readonly ConversionTypes = ConversionTypes
 
@@ -229,7 +230,7 @@ export default class PickEntityOrConversionDialog extends Vue {
   }
 
   chooseType (entity: SelectOptionsI) {
-    if (entity.value === EntityType.SO || entity.value === EntityType.XSO) {
+    if (!this.isSupportSociety() && (entity.value === EntityType.SO || entity.value === EntityType.XSO)) {
       this.showSocietiesInfo = true
       this.clearEntitySelection()
       return
