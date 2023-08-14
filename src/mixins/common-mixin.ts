@@ -103,6 +103,10 @@ export class CommonMixin extends Vue {
     return supportedEntites.includes(nr?.entity_type_cd)
   }
 
+  isSupportSociety (): boolean {
+    return GetFeatureFlag('is-support-society')
+  }
+
   /** Returns true if the specified NR is for a firm (SP/GP). */
   isFirm (nr: any): boolean {
     return (

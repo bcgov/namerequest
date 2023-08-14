@@ -35,7 +35,7 @@
       </template>
 
       <!--  List Tables -->
-      <template v-else>
+      <template v-else-if="!showSocietiesInfo">
         <v-card-text class="">
           <v-row no-gutters>
             <v-col v-for="(category, i) in tableData" :key="'cat' + i">
@@ -68,6 +68,20 @@
         </v-card-text>
       </template>
 
+      <template v-else>
+        <v-card-text>
+          <v-container fluid>
+            <v-row no-gutters class="text-center">
+              <v-col cols="12">To request a name for a Society</v-col>
+              <v-col cols="12">please use the Societies Online website</v-col>
+              <v-col cols="12">
+                <a href="https://www.bcregistry.ca/societies/">https://www.bcregistry.ca/societies/</a>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+      </template>
+
     </v-card>
   </v-dialog>
 </template>
@@ -79,9 +93,10 @@ import { ConversionTypesI, EntityI, SelectOptionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { EntityType, Location } from '@/enums'
 import { ConversionTypes } from '@/list-data'
+import { CommonMixin } from '@/mixins'
 
 @Component({})
-export default class PickEntityOrConversionDialog extends Vue {
+export default class PickEntityOrConversionDialog extends CommonMixin {
   // enum for template
   readonly ConversionTypes = ConversionTypes
 
@@ -104,6 +119,14 @@ export default class PickEntityOrConversionDialog extends Vue {
   @Action setEntityTypeCd!: ActionBindingIF
   @Action setEntityTypeAddToSelect!: ActionBindingIF
   @Action setPickEntityModalVisible!: ActionBindingIF
+
+  showSocietiesInfo = false
+  @Watch('showModal')
+  handleModalClose (newVal) {
+    if (!newVal) {
+      setTimeout(() => { this.showSocietiesInfo = false }, 500)
+    }
+  }
 
   get entity_type_cd (): EntityType {
     return this.getEntityTypeCd
@@ -174,7 +197,7 @@ export default class PickEntityOrConversionDialog extends Vue {
   }
 
   get width (): string {
-    if (this.getIsConversion) {
+    if (this.showSocietiesInfo || this.getIsConversion) {
       return '550px'
     }
     let cols = this.tableData.length
@@ -207,6 +230,11 @@ export default class PickEntityOrConversionDialog extends Vue {
   }
 
   chooseType (entity: SelectOptionsI) {
+    if (!this.isSupportSociety() && (entity.value === EntityType.SO || entity.value === EntityType.XSO)) {
+      this.showSocietiesInfo = true
+      this.clearEntitySelection()
+      return
+    }
     let index = this.getEntityTypeOptions.findIndex((ent: any) => ent.value === entity.value)
     if (index === -1) {
       this.setEntityTypeAddToSelect(entity)
