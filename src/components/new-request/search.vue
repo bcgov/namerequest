@@ -571,6 +571,9 @@ export default class Search extends Mixins(CommonMixin) {
   }
 
   get showCompanyRadioBtn (): boolean {
+    if (!this.isBcCcCrUl) {
+      this.selectedCompanyType = CompanyType.NAMED_COMPANY
+    }
     return this.isBcCcCrUl
   }
 
