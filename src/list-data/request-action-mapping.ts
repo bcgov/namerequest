@@ -26,7 +26,8 @@ export const BcMapping: RequestActionMappingI = {
     EntityType.UL,
     EntityType.CC,
     EntityType.CP,
-    EntityType.BC
+    EntityType.BC,
+    EntityType.SO
   ],
   REN: [
     EntityType.CR,
@@ -72,7 +73,10 @@ export const XproMapping: MappingI = {
   ],
   AML: [
     EntityType.XCR,
-    EntityType.XCP
+    EntityType.XUL,
+    EntityType.RLC,
+    EntityType.XCP,
+    EntityType.XSO
   ]
 }
 
