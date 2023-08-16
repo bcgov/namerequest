@@ -256,8 +256,7 @@
           class="pt-3"
           @emit-corp-num-validity="corpNumValid = $event"
         />
-        <p v-else class="pl-3 text-body-2">Federally incorporated businesses do not need a Name Request. You may
-          register your extraprovincial business immediately using its existing name at Corporate Online.</p>
+        <p v-else class="pl-3 text-body-2">{{ nameInputFederalText }}</p>
       </template>
 
       <template v-slot:designation>
@@ -426,6 +425,10 @@ export default class Search extends Mixins(CommonMixin) {
     return (this.request?.value === NrRequestActionCodes.CONVERSION)
   }
 
+  get isAmalgamation (): boolean {
+    return (this.request?.value === NrRequestActionCodes.AMALGAMATE)
+  }
+
   get showJurisdiction (): boolean {
     if (!this.request) return false
     if (this.isNewBcBusiness) return false
@@ -557,12 +560,14 @@ export default class Search extends Mixins(CommonMixin) {
   get incorporateNowButtonText (): string {
     if (this.isContinuationIn) {
       return 'Continue In Now'
-    } else {
-      return 'Incorporate Now'
+    } else if (this.isAmalgamation) {
+      return 'Amalgamate Now'
     }
+    return 'Incorporate Now'
   }
 
   get showDesignationSelect (): boolean {
+    if (this.isAmalgamation) return false
     if (this.getEntityTypeCd) {
       return Designations[this.getEntityTypeCd]?.end && !this.getIsXproMras
     }
@@ -585,6 +590,15 @@ export default class Search extends Mixins(CommonMixin) {
 
   get entityTextFromValue (): string {
     return this.getEntityTextFromValue || 'specified business type'
+  }
+
+  get nameInputFederalText (): string {
+    if (this.isAmalgamation) {
+      return `Federally incorporated businesses do not need a Name Request.
+        To register your extraprovincial amalgamation, download and complete this form.`
+    }
+    return `Federally incorporated businesses do not need a Name Request. You may \
+      register your extraprovincial business immediately using its existing name at Corporate Online.`
   }
 
   get isBusinessLookup () {
