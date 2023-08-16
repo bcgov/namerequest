@@ -15,7 +15,8 @@ const defaultFlagSet: LDFlagSet = {
   'sentry-enable': false, // by default, no sentry logs
   'banner-text': '', // by default, there is no banner text
   'enable-web-chat': false, // by default, old webchat is disabled
-  'enable-genesys-web-message': false // by default, genesys web message is disabled
+  'enable-genesys-web-message': false, // by default, genesys web message is disabled
+  'is-support-society': true // by default support society
 }
 
 /**

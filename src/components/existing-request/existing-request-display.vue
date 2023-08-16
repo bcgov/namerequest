@@ -196,8 +196,10 @@
             :emailAddress="nr && nr.applicants && nr.applicants.emailAddress"
             :showIncorporateNowButton="showIncorporateButton"
             :showRegisterButton="showRegisterButton"
+            :showGoToSocietiesButton="showGoToSocietiesButton"
             :disabled="disableUnfurnished"
             @incorporateRegisterYourBusiness="incorporateRegisterYourBusiness()"
+            @goToSocietiesOnline="goToSocietiesOnline"
           />
 
           <NrNotApprovedGrayBox
@@ -221,7 +223,7 @@ import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
 import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished,
-  NrRequestActionCodes } from '@/enums'
+  NrRequestActionCodes, EntityType } from '@/enums'
 import { Sleep, GetFeatureFlag, Navigate } from '@/plugins'
 import NamexServices from '@/services/namex-services'
 import ContactInfo from '@/components/common/contact-info.vue'
@@ -420,6 +422,14 @@ export default class ExistingRequestDisplay extends Mixins(
   /** True if the Register button should be shown. */
   get showRegisterButton (): boolean {
     return this.isFirm(this.nr) &&
+           this.nr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS &&
+           (NrState.APPROVED === this.nr.state ||
+            this.isConsentUnRequired)
+  }
+
+  /** True if the Go To Societies Online button should be shown. */
+  get showGoToSocietiesButton (): boolean {
+    return this.nr?.entity_type_cd === EntityType.SO &&
            this.nr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS &&
            (NrState.APPROVED === this.nr.state ||
             this.isConsentUnRequired)
@@ -702,6 +712,12 @@ export default class ExistingRequestDisplay extends Mixins(
       const nameRequestUrl = `${window.location.origin}`
       Navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
     }
+  }
+
+  // redirect to Societies Online
+  goToSocietiesOnline () {
+    const societyHomeUrl = sessionStorage.getItem('SOCIETIES_ONLINE_HOME_URL')
+    Navigate(`${societyHomeUrl}`)
   }
 
   private cancelledUpgrade (status: string, payments: any): string {
