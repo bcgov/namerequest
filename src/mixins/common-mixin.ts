@@ -103,8 +103,9 @@ export class CommonMixin extends Vue {
     return supportedEntites.includes(nr?.entity_type_cd)
   }
 
-  isSupportSociety (): boolean {
-    return GetFeatureFlag('is-support-society')
+  /** in case Societies NR needs to be released AFTER the way of navigating changes (feature branch) */
+  isSocietyEnabled (): boolean {
+    return GetFeatureFlag('enable-society')
   }
 
   /** Returns true if the specified NR is for a firm (SP/GP). */
