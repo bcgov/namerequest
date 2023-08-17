@@ -572,7 +572,7 @@ export default class Search extends Mixins(CommonMixin) {
 
   get showCompanyRadioBtn (): boolean {
     const isSociety = this.isSocietyEnabled() && this.getEntityTypeCd === EntityType.SO
-    // society NR have to has a name and does not allow numbered name
+    // society NR name is required and no numbered name allowed
     const showButton = this.isBcCcCrUl && !isSociety
     if (!showButton) {
       this.selectedCompanyType = CompanyType.NAMED_COMPANY
