@@ -16,7 +16,7 @@ const defaultFlagSet: LDFlagSet = {
   'banner-text': '', // by default, there is no banner text
   'enable-web-chat': false, // by default, old webchat is disabled
   'enable-genesys-web-message': false, // by default, genesys web message is disabled
-  'enable-society': true // by default society is enabled
+  'enable-society': false // by default society is disabled
 }
 
 /**
