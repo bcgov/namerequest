@@ -210,8 +210,8 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { Action, Getter } from 'vuex-class'
+import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { CorpNumRequests, NrRequestActionCodes, NrState } from '@/enums'
@@ -390,6 +390,7 @@ export default class ApplicantInfo2 extends Vue {
   async nextAction () {
     this.setIsLoadingSubmission(true)
     this.validate()
+    // validate corp num in COLIN
     if (this.getShowCorpNum === CorpNumRequests.COLIN) {
       this.$root.$emit('showSpinner', true)
       await this.validateCorpNum(this.getCorpNum)
@@ -410,7 +411,7 @@ export default class ApplicantInfo2 extends Vue {
 
 ::v-deep .v-textarea textarea {
   line-height: 1.375rem !important;
-  font-size: 0.875rem !important;
+  font-size: $px-14 !important;
 }
 
 // disabled checkbox label

@@ -153,7 +153,7 @@ export default class BulletsColinLink extends Mixins(CommonMixin, NrAffiliationM
 
 // Line spacing between bullet points and sizing
 .bullet-points {
-  font-size: 0.875rem;
+  font-size: $px-14;
   margin-top: -0.75rem;
   line-height: 2rem;
 }

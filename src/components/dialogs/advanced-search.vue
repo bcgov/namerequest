@@ -325,7 +325,7 @@ export default class AdvancedSearch extends Vue {
 }
 
 ::v-deep .v-btn:not(.dialog-close) .v-icon.v-icon {
-  font-size: 1.25rem !important;
+  font-size: $px-20 !important;
 }
 
 ::v-deep .v-btn__content {

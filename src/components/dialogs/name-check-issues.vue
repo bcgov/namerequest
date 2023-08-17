@@ -69,7 +69,7 @@ export default class NameCheckIssuesDialog extends Vue {
   }
 }
 .accept-btn {
-  font-size: 0.875rem !important;
+  font-size: $px-14 !important;
   font-weight: bold;
 
   @media only screen and (max-width: 600px) {
@@ -87,7 +87,7 @@ export default class NameCheckIssuesDialog extends Vue {
 }
 .dialog-title {
   color: $gray9;
-  font-size: 1.5rem;
+  font-size: $px-24;
   font-weight: bold;
   text-align: center;
 }

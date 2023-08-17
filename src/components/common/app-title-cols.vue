@@ -49,7 +49,7 @@ export default class AppTitleCols extends Vue {
 
 #app-subtitle {
    font-weight: normal;
-   font-size: 18px;
+   font-size: $px-18;
 }
 
 </style>

@@ -44,7 +44,7 @@ export default class UnavailableWords extends Vue {
 
 #unavailable-words {
   p {
-    font-size: 14px;
+    font-size: $px-14;
   }
 
   .unavailable-words-list {
@@ -52,7 +52,7 @@ export default class UnavailableWords extends Vue {
 
     .unavailable-words-list-item {
       color: $text;
-      font-size: 14px;
+      font-size: $px-14;
       letter-spacing: 0;
       line-height: 22px;
       min-height: 0 !important;

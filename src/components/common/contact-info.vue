@@ -60,7 +60,7 @@ export default class ContactInfo extends Vue {
 }
 
 .contact-icon {
-  font-size: 1.25rem;
+  font-size: $px-20;
   color: $non-clickable-blue;
 }
 

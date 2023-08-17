@@ -1,21 +1,23 @@
 <template>
   <v-row no-gutters>
     <v-col cols="12" class="pa-0">
-      <v-text-field :error-messages="message"
-                    @input="clearErrors()"
-                    @blur="handleBlur()"
-                    @keydown.enter="handleSubmit"
-                    autocomplete="chrome-off"
-                    :filled="!isReadOnly"
-                    id="name-input-text-field"
-                    ref="nameInput"
-                    :rules="(searchValue && isMrasSearch) ? mrasRules : additionalRules"
-                    :label="label"
-                    :class="{ 'read-only-mode': isReadOnly }"
-                    :disabled="isReadOnly"
-                    :hint="hint"
-                    persistent-hint
-                    v-model="searchValue">
+      <v-text-field
+        id="name-input-text-field"
+        ref="nameInput"
+        :error-messages="message"
+        autocomplete="chrome-off"
+        :filled="!isReadOnly"
+        :rules="(searchValue && isMrasSearch) ? mrasRules : additionalRules"
+        :label="label"
+        :class="{ 'read-only-mode': isReadOnly }"
+        :disabled="isReadOnly"
+        :hint="hint"
+        persistent-hint
+        v-model="searchValue"
+        @input="clearErrors()"
+        @blur="handleBlur()"
+        @keydown.enter="handleSubmit($event)"
+      >
       </v-text-field>
     </v-col>
   </v-row>
@@ -65,9 +67,11 @@ export default class NameInput extends Vue {
   readonly hint: string
 
   private err_msg = 'Cannot exceed ' + MRAS_MAX_LENGTH + ' characters'
+
   additionalRules = [
     v => (!v || v.length <= MRAS_MAX_LENGTH) || this.err_msg
   ]
+
   /** The array of validation rules for the MRAS corp num. */
   get mrasRules (): Function[] {
     return [
@@ -77,41 +81,15 @@ export default class NameInput extends Vue {
   }
 
   /** Local validator when input is a MRAS corp num. */
-  private get isCorpNumValid (): boolean {
+  get isCorpNumValid (): boolean {
     return this.isMrasSearch ? this.$refs['nameInput']?.valid : true
   }
 
   get label (): string {
     if (this.isReadOnly && (this.isMrasSearch || !this.getIsXproMras)) return ''
+
     if (this.isReadOnly && this.getIsXproMras) return 'Name in home jurisdiction'
-    return this.nameLabel
-  }
 
-  get message (): string | string[] {
-    if (this.isMrasSearch && this.getErrors.includes('name')) {
-      return ['Please enter a corporation number to search for']
-    }
-    if (this.getErrors.includes('length')) {
-      return ['Please enter a longer name']
-    }
-    if (this.getErrors.includes('name')) {
-      return ['Please enter a name to search for']
-    }
-    if (this.getErrors.includes('mras_length_exceeded')) {
-      return [this.err_msg]
-    }
-    return ''
-  }
-
-  get searchValue (): string {
-    return this.isMrasSearch ? this.getCorpSearch : this.getName
-  }
-
-  set searchValue (value: string) {
-    this.isMrasSearch ? this.setCorpSearch(value) : this.setName(value)
-  }
-
-  get nameLabel (): string {
     if (this.isMrasSearch) return 'Enter the corporate number assigned by the home jurisdiction'
 
     if (
@@ -123,6 +101,34 @@ export default class NameInput extends Vue {
     }
 
     return 'Enter a name to request'
+  }
+
+  get message (): string[] {
+    if (this.isMrasSearch && this.getErrors.includes('name')) {
+      return ['Please enter a corporation number to search for']
+    }
+
+    if (this.getErrors.includes('length')) {
+      return ['Please enter a longer name']
+    }
+
+    if (this.getErrors.includes('name')) {
+      return ['Please enter a name to search for']
+    }
+
+    if (this.getErrors.includes('mras_length_exceeded')) {
+      return [this.err_msg]
+    }
+
+    return null
+  }
+
+  get searchValue (): string {
+    return this.isMrasSearch ? this.getCorpSearch : this.getName
+  }
+
+  set searchValue (value: string) {
+    this.isMrasSearch ? this.setCorpSearch(value) : this.setName(value)
   }
 
   clearErrors () {
@@ -156,19 +162,21 @@ export default class NameInput extends Vue {
     return this.isCorpNumValid
   }
 }
-
 </script>
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
+
 .search-tooltip {
   max-width: 100px;
   text-align: center;
   padding: 10px !important;
 }
+
 ::v-deep .read-only-mode .v-input__slot:not(.v-input--checkbox .v-input__slot) {
   background-color: transparent !important;
 }
+
 ::v-deep .theme--light.v-input--is-disabled input, .theme--light.v-input--is-disabled textarea {
   color: $gray9 !important;
 }

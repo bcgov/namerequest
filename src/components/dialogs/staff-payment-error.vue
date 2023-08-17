@@ -82,7 +82,7 @@ export default class StaffPaymentErrorDialog extends Vue {
       padding: 1.25rem 1.5rem;
       color: $BCgovFontColorInverted;
       background: $BCgovBlue5;
-      font-size: 1.125rem;
+      font-size: $px-18;
       font-weight: bold;
       margin: 0;
     }
@@ -91,7 +91,7 @@ export default class StaffPaymentErrorDialog extends Vue {
       padding: 1.5rem !important;
       font-weight: 300;
       color: $gray7 !important;
-      font-size: 1rem;
+      font-size: $px-16;
     }
 
     .v-card__actions {
