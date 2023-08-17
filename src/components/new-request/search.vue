@@ -576,10 +576,13 @@ export default class Search extends Mixins(CommonMixin) {
   }
 
   get showCompanyRadioBtn (): boolean {
-    if (!this.isBcCcCrUl) {
+    const isSociety = this.isSocietyEnabled() && this.getEntityTypeCd === EntityType.SO
+    // society NR name is required and no numbered name allowed
+    const showButton = this.isBcCcCrUl && !isSociety
+    if (!showButton) {
       this.selectedCompanyType = CompanyType.NAMED_COMPANY
     }
-    return this.isBcCcCrUl
+    return showButton
   }
 
   get jurisdictionOptions () {
