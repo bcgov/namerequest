@@ -25,7 +25,7 @@
 
       <div v-else-if="showGoToSocietiesButton" class="d-flex justify-center my-1 pb-1">
         <v-btn
-          class="incorporate-now-btn"
+          class="societies-online-btn"
           min-width="20rem"
           :disabled="disabled"
           @click="$emit('goToSocietiesOnline')"

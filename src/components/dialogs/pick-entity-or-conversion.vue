@@ -86,7 +86,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { ConversionTypesI, EntityI, SelectOptionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
@@ -230,7 +230,8 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
   }
 
   chooseType (entity: SelectOptionsI) {
-    if (!this.isSupportSociety() && (entity.value === EntityType.SO || entity.value === EntityType.XSO)) {
+    // show an URL of creating society NR if Societies NR needs to be released AFTER the way of navigating changes
+    if (!this.isSocietyEnabled() && (entity.value === EntityType.SO || entity.value === EntityType.XSO)) {
       this.showSocietiesInfo = true
       this.clearEntitySelection()
       return
