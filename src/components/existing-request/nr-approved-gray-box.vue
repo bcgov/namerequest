@@ -23,6 +23,19 @@
         </v-btn>
       </div>
 
+      <div v-else-if="showGoToSocietiesButton" class="d-flex justify-center my-1 pb-1">
+        <v-btn
+          class="societies-online-btn"
+          min-width="20rem"
+          :disabled="disabled"
+          @click="$emit('goToSocietiesOnline')"
+        >
+          <strong>Go to Societies Online to Register</strong>
+          &nbsp;
+          <v-icon small>mdi-open-in-new</v-icon>
+        </v-btn>
+      </div>
+
       <p v-else>
         Your Name Request <strong>{{nrNum}}</strong> for <strong>{{approvedName}}</strong> has been
         approved for use. An email has been sent to <strong>{{emailAddress}}</strong> with instructions
@@ -61,6 +74,9 @@ export default class NrApprovedGrayBox extends Vue {
 
   @Prop({ default: false })
   readonly showIncorporateNowButton: boolean
+
+  @Prop({ default: false })
+  readonly showGoToSocietiesButton: boolean
 
   @Prop({ default: false })
   readonly disabled: boolean
