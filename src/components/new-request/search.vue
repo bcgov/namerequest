@@ -434,6 +434,7 @@ export default class Search extends Mixins(CommonMixin) {
     if (this.isNewBcBusiness) return false
     if (this.isContinuationIn) return false
     if (this.isAlterType) return false
+    if (this.isAmalgamation) return false
     return true
   }
 
@@ -593,10 +594,6 @@ export default class Search extends Mixins(CommonMixin) {
   }
 
   get nameInputFederalText (): string {
-    if (this.isAmalgamation) {
-      return `Federally incorporated businesses do not need a Name Request.
-        To register your extraprovincial amalgamation, download and complete this form.`
-    }
     return `Federally incorporated businesses do not need a Name Request. You may \
       register your extraprovincial business immediately using its existing name at Corporate Online.`
   }
@@ -663,7 +660,7 @@ export default class Search extends Mixins(CommonMixin) {
     this.setRequestAction(this.request?.value || null)
 
     // set default location to BC for requests where BC is the only location option
-    if (this.isNewBcBusiness || this.isContinuationIn || this.isAlterType) {
+    if (this.isNewBcBusiness || this.isContinuationIn || this.isAlterType || this.isAmalgamation) {
       this.setLocation(Location.BC)
       return
     }

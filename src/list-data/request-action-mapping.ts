@@ -70,13 +70,6 @@ export const XproMapping: MappingI = {
     EntityType.XCR,
     EntityType.XCP,
     EntityType.RLC
-  ],
-  AML: [
-    EntityType.XCR,
-    EntityType.XUL,
-    EntityType.RLC,
-    EntityType.XCP,
-    EntityType.XSO
   ]
 }
 
