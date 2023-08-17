@@ -86,7 +86,23 @@ export const Designations = {
     end: true
   },
   SO: {
-    words: [],
+    words: [
+      'ASSOCIATION',
+      'ASSN.',
+      'CHAMBER OF COMMERCE',
+      'CHURCH',
+      'EGLISE',
+      'CLUB',
+      'CHRISTIAN SCHOOL',
+      'FELLOWSHIP',
+      'FOUNDATION',
+      'FONDATION',
+      'GUILD',
+      'PARISH',
+      'SOCIETY',
+      'SOCIETE',
+      'WATERSHED'
+    ],
     end: false
   },
   UL: {

@@ -523,7 +523,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
 
   get entityPhraseRequired (): boolean {
     if (!this.entity_type_cd) return false
-    return [EntityType.CC, EntityType.CP].includes(this.entity_type_cd)
+    return [EntityType.CC, EntityType.CP, EntityType.SO].includes(this.entity_type_cd)
   }
 
   get entityPhraseText (): string {

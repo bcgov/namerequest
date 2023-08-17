@@ -35,7 +35,8 @@ export const BcMapping: RequestActionMappingI = {
     EntityType.CC,
     EntityType.UL,
     EntityType.FI,
-    EntityType.BC
+    EntityType.BC,
+    EntityType.SO
   ],
   REH: [
     EntityType.CR,
@@ -43,7 +44,8 @@ export const BcMapping: RequestActionMappingI = {
     EntityType.CC,
     EntityType.UL,
     EntityType.FI,
-    EntityType.BC
+    EntityType.BC,
+    EntityType.SO
   ],
   CHG: entityTypesBC.filter(ent => ent !== EntityType.PAR && ent !== EntityType.PA),
   MVE: [
