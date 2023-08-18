@@ -601,7 +601,6 @@ export default class Search extends Mixins(CommonMixin) {
   get isBusinessLookup () {
     // show BusinessLookup when NR request actions are following these
     return [
-      NrRequestActionCodes.AMALGAMATE,
       NrRequestActionCodes.CHANGE_NAME,
       NrRequestActionCodes.CONVERSION,
       NrRequestActionCodes.RESTORE
