@@ -1,12 +1,11 @@
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
 // import newReqModule from '@/store/new-request-module'
 import Search from '@/components/new-request/search.vue'
 import Vuetify from 'vuetify'
 
 const localVue = createLocalVue()
-const vuetify = new Vuetify()
-
 localVue.use(Vuetify)
+const vuetify = new Vuetify()
 
 describe('Search component', () => {
   it('is an empty test', () => {})
@@ -41,5 +40,37 @@ describe('Search component', () => {
   //   wrapper.vm.entity_type_cd = 'INFO'
   //   await wrapper.vm.$nextTick()
   //   expect(newReqModule.pickEntityModalVisible).toBe(true)
+  // })
+})
+
+describe('Select Company Type block', () => {
+  // let wrapperFactory: any
+
+  // beforeEach(() => {
+  //   wrapperFactory = () => mount(Search, { vuetify })
+  // })
+
+  // it('renders the component properly', () => {
+  //   // verify the component is rendered
+  //   const wrapper = wrapperFactory()
+
+  //   expect(wrapper.find('#search-container').exists()).toBe(true)
+  //   wrapper.destroy()
+  // })
+
+  // it('renders the incorporate button correctly when numbered company is selected', async () => {
+  //   const wrapper = wrapperFactory()
+  //   await wrapper.find('#numbered-company-radio').setChecked()
+
+  //   expect(wrapper.find('#incorporate-now-button').exists()).toBe(true)
+  //   wrapper.destroy()
+  // })
+
+  // it('emits event that named company is selected (show check this name button)', async () => {
+  //   const wrapper = wrapperFactory()
+  //   await wrapper.find('#named-company-radio').setChecked()
+
+  //   expect(wrapper.vm.selectedCompanyType).toBe('namedCompany')
+  //   wrapper.destroy()
   // })
 })

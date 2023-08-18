@@ -17,9 +17,11 @@
         <p>{{ resultDesc  }}</p>
         <p>{{ resultAct }}</p>
       </v-card-text>
-      <NameInput id="name-input-component"
-                 class="mb-n7 pa-0"
-                  :is-mras-search="!isNameSearch"/>
+      <NameInput
+        id="name-input-component"
+        class="mb-n7 pa-0"
+        :is-mras-search="!isNameSearch"
+      />
       <v-card-actions class="justify-center">
         <div class="mt-1 mb-1 text-center">
           <v-btn class="search-btn"
