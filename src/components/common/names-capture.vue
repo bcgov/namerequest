@@ -938,14 +938,14 @@ export default class NamesCapture extends Mixins(CommonMixin) {
 }
 
 .label-style {
-  font-size: 1rem;
+  font-size: $px-16;
   font-weight: bold;
   color: $gray9;
 }
 
 .launch-icon {
   display: inline-block;
-  font-size: 0.875rem;
+  font-size: $px-14;
   color: $app-blue;
 }
 

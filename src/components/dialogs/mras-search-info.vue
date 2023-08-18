@@ -45,7 +45,6 @@ export default class MrasSearchInfoDialog extends Vue {
   @Getter getCorpSearch!: string
   @Getter getErrors!: string[]
   @Getter getHasNoCorpNum!: boolean
-  @Getter getIsXproMras!: boolean
   @Getter getJurisdictionText!: string
   @Getter getMrasSearchResultCode!: number
   @Getter getName!: string
@@ -118,7 +117,7 @@ export default class MrasSearchInfoDialog extends Vue {
     this.setNoCorpNum(false)
   }
 
-  private clearAndClose (): void {
+  clearAndClose (): void {
     this.showModal = false
     this.setName('')
     this.setNoCorpNum(false)

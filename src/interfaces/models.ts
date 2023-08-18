@@ -210,6 +210,7 @@ export interface RequestActionsI {
   subtext?: string
   text: string
   value?: NrRequestActionCodes // items only (not headers)
+  icon?: string // headers only (not items)
 }
 
 export interface RequestNameI {

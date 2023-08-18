@@ -208,7 +208,7 @@ export default class AdvancedSearchForm extends Vue {
 
 #find-nr-btn {
   color: $app-blue;
-  font-size: .875rem;
+  font-size: $px-14;
 }
 
 #clear-date-btn {

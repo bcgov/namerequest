@@ -225,7 +225,7 @@
             <template v-slot:activator="{ on }">
               <div v-on="on">
                 <v-checkbox
-                  v-if="showPriorityRequest"
+                  v-if="getShowPriorityRequest"
                   hide-details
                   v-model="priorityRequest"
                   class="pre-wrap mt-0 pt-0"
@@ -254,12 +254,11 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { FolioNumberInput } from '@bcrs-shared-components/folio-number-input'
-import { ApplicantI, SubmissionTypeT } from '@/interfaces'
+import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { CorpNumRequests, Location, NrRequestActionCodes, NrState } from '@/enums'
+import { CorpNumRequests, NrRequestActionCodes, NrState } from '@/enums'
 import { GetFeatureFlag } from '@/plugins'
 
 @Component({
@@ -270,17 +269,14 @@ import { GetFeatureFlag } from '@/plugins'
 export default class ApplicantInfo3 extends Vue {
   // Global getters
   @Getter getCorpNum!: string
-  @Getter getIsPersonsName!: boolean
   @Getter getApplicant!: ApplicantI
   @Getter getPriorityRequest!: boolean
   @Getter getEditMode!: boolean
-  @Getter getLocation!: Location
   @Getter getNrData!: any
   @Getter getNrState!: string
   @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter getShowPriorityRequest!: boolean
   @Getter getShowCorpNum!: string
-  @Getter getSubmissionType!: SubmissionTypeT
   @Getter getFolioNumber!: string
   @Getter isRoleStaff!: boolean
   @Getter isMobile!: boolean
@@ -363,45 +359,33 @@ export default class ApplicantInfo3 extends Vue {
   get applicant () {
     return this.getApplicant
   }
+
   get corpNum () {
     return this.getCorpNum
-  }
-  get isPersonsName () {
-    return this.getIsPersonsName
-  }
-  get location (): Location {
-    return this.getLocation
-  }
-  get priorityRequest (): boolean {
-    return this.getPriorityRequest
-  }
-  get showAllFields (): boolean {
-    return (!this.getEditMode || this.getNrState === NrState.DRAFT)
-  }
-  get showCorpNum () {
-    return this.getShowCorpNum
-  }
-  get showPriorityRequest () {
-    return this.getShowPriorityRequest
-  }
-  get submissionType () {
-    return this.getSubmissionType
-  }
-  get xproJurisdiction () {
-    return (this.getNrData || {}).xproJurisdiction
   }
   set corpNum (num) {
     this.setCorpNum(num)
   }
+
+  get priorityRequest (): boolean {
+    return this.getPriorityRequest
+  }
   set priorityRequest (value: boolean) {
     this.setPriorityRequest(value)
+  }
+
+  get showAllFields (): boolean {
+    return (!this.getEditMode || this.getNrState === NrState.DRAFT)
+  }
+
+  get xproJurisdiction () {
+    return (this.getNrData || {}).xproJurisdiction
   }
 
   async validateCorpNum (num): Promise<boolean> {
     if (!num || num.length < 4) {
       return false
     }
-
     this.loading = true
     try {
       await this.fetchCorpNum(num)
@@ -459,6 +443,7 @@ export default class ApplicantInfo3 extends Vue {
     }
     this.setIsLoadingSubmission(true)
     this.validate()
+    // validate corp num in COLIN
     if (this.getShowCorpNum === CorpNumRequests.COLIN) {
       this.$root.$emit('showSpinner', true)
       await this.validateCorpNum(this.getCorpNum)
@@ -479,7 +464,7 @@ export default class ApplicantInfo3 extends Vue {
 
 ::v-deep .v-textarea textarea {
   line-height: 1.375rem !important;
-  font-size: 0.875rem !important;
+  font-size: $px-14 !important;
 }
 
 // disabled checkbox label

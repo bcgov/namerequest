@@ -262,7 +262,7 @@ export default class ExistingRequestSearch extends Vue {
 #retrieve-name-btn {
   min-height: 45px !important;
   padding: 0 30px !important;
-  font-size: 1rem !important;
+  font-size: $px-16 !important;
 }
 
 .mobile-btn {

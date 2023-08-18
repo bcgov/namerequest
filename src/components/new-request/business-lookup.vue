@@ -122,7 +122,7 @@ export default class BusinessLookup extends Vue {
 @import '@/assets/styles/theme.scss';
 
 .font-size-12 {
-  font-size: 12px;
+  font-size: $px-12;
 }
 
 p {

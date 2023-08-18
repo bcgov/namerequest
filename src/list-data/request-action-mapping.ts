@@ -93,3 +93,13 @@ export const XproColinRequestTypes = [
   EntityType.XCR,
   EntityType.XUL
 ]
+
+export const MrasEntities = [
+  EntityType.BC,
+  EntityType.CC,
+  EntityType.CP,
+  EntityType.CR,
+  EntityType.UL,
+  EntityType.XCR,
+  EntityType.XLP
+]

@@ -130,7 +130,7 @@ export default class FeeSummary extends Vue {
 }
 
 .header {
-  font-size: 1.125rem;
+  font-size: $px-18;
   color: $dk-text;
   border-bottom: 1px solid $gray4;
 }

@@ -74,7 +74,7 @@ export const CanJurisdictions: JurisdictionI[] = [
   }
 ]
 
-export const MrasJurisdictions: string[] = [
+export const MrasJurisdictions = [
   'alberta',
   'manitoba',
   'saskatchewan',
