@@ -350,7 +350,7 @@
           </v-row>
 
           <!--BUSINESS JURISDICTION-->
-          <v-row v-if="getShowXproJurisdiction && showAllFields && getEditMode" class="mt-2 mb-0">
+          <v-row v-if="(getLocation !== Location.BC) && showAllFields && getEditMode" class="mt-2 mb-0">
             <v-col cols="12" md="6" lg="6" class="py-0 my-0">
               <label for="xprojurisdiction" class="hidden">Business Jurisdiction</label>
               <v-select
@@ -427,7 +427,6 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   @Getter getNrData!: any
   @Getter getNrState!: string
   @Getter getSubmissionTabNumber!: number
-  @Getter getShowXproJurisdiction!: boolean
   @Getter getKeycloakRoles!: string[]
   @Getter isMobile!: boolean
   @Getter isRoleStaff!: boolean

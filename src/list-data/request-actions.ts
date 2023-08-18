@@ -6,7 +6,8 @@ export const RequestActions: RequestActionsI[] = [
   {
     isHeader: true,
     group: 0,
-    text: 'For businesses that do not exist yet:'
+    text: 'For businesses that do not exist yet',
+    icon: 'mdi-briefcase-plus'
   },
   {
     group: 0,
@@ -18,7 +19,8 @@ export const RequestActions: RequestActionsI[] = [
   {
     isHeader: true,
     group: 1,
-    text: 'For businesses that already exist outside BC:'
+    text: 'For businesses that already exist outside BC',
+    icon: 'mdi-earth'
   },
   {
     group: 1,
@@ -37,7 +39,8 @@ export const RequestActions: RequestActionsI[] = [
   {
     isHeader: true,
     group: 2,
-    text: 'For businesses that are already incorporated or registered in BC:'
+    text: 'For businesses that are already incorporated or registered in BC',
+    icon: 'mdi-domain'
   },
   {
     group: 2,

@@ -51,9 +51,11 @@ export default class UniqueNames extends Vue {}
 </script>
 
 <style scoped lang="scss">
-  #unique-names {
-    p {
-      font-size: 14px;
-    }
+@import '@/assets/styles/theme.scss';
+
+#unique-names {
+  p {
+    font-size: $px-14;
   }
+}
 </style>

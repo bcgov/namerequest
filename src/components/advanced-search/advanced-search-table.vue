@@ -126,7 +126,7 @@ export default class AdvancedSearchTable extends Mixins(DateMixin) {
 
 #advanced-search-results-table {
   ::v-deep th {
-    font-size: .875rem;
+    font-size: $px-14;
     font-weight: bold;
     color: $dk-text;
   }
@@ -175,7 +175,7 @@ export default class AdvancedSearchTable extends Mixins(DateMixin) {
 }
 
 ::v-deep .v-data-table > .v-data-table__wrapper > table > tbody > tr > td {
-  font-size: 1rem;
+  font-size: $px-16;
   color: $text;
   line-height: 1.375rem;
 }

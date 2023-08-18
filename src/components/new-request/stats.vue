@@ -110,6 +110,8 @@ export default class Stats extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import '@/assets/styles/theme.scss';
+
 .stats-content-inner-1 {
   width: 68px;
   display: inline-block;
@@ -119,7 +121,7 @@ export default class Stats extends Vue {
 .stats-content-inner-2 {
   white-space: nowrap;
   padding-left: 8px;
-  font-size: 12px;
+  font-size: $px-12;
   line-height: 18px;
 }
 
@@ -139,18 +141,15 @@ export default class Stats extends Vue {
   display: block;
   position: relative;
   top: -8px;
-  font-size: 12px;
+  font-size: $px-12;
   font-weight: bold;
-}
-
-.stats-v-row {
 }
 
 .stats-value {
   display: block;
   margin: 0;
   padding: 0;
-  font-size: 24px;
+  font-size: $px-24;
   font-weight: bold;
 }
 

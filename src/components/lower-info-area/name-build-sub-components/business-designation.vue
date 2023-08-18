@@ -92,7 +92,7 @@ export default class BusinessDesignation extends Vue {
 
   #business-designation {
     p {
-      font-size: 14px;
+      font-size: $px-14;
       margin-bottom: 0;
     }
 
@@ -101,7 +101,7 @@ export default class BusinessDesignation extends Vue {
 
       .business-designation-list-item {
         color: $text;
-        font-size: 14px;
+        font-size: $px-14;
         letter-spacing: 0;
         line-height: 22px;
         min-height: 0 !important;
@@ -113,7 +113,7 @@ export default class BusinessDesignation extends Vue {
       }
 
       .business-designation-list-item-title {
-        font-size: 14px;
+        font-size: $px-14;
         color: $app-blue;
         margin-bottom: 0;
         text-decoration: underline;

@@ -1,5 +1,13 @@
 import { Location } from '@/enums'
 
+// blurbs strings correspond to:
+//   1. NEW
+//   2. MVE
+//   3. REH
+//   4. AML
+//   5. CHG
+//   6. CNV
+
 export const Locations: any[] = [
   {
     text: 'British Columbia',
