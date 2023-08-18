@@ -14,7 +14,7 @@
               :class="{ 'mt-1': tabNumber === 1 }"
               tabindex="0"
       >
-        <v-icon v-if="!isMobile" class="mr-2">mdi-magnify</v-icon>
+        <v-icon v-if="!isMobile" class="mr-3">mdi-domain</v-icon>
         <span :class="[tabNumber === 0 ? 'h5' : 'h5-lt', { 'mobile-font' : isMobile }]">Get a Business Name or Start a
           Numbered Business</span>
       </v-tab>
@@ -25,7 +25,7 @@
              :class="{ 'mt-1': tabNumber === 0 }"
               tabindex="1"
       >
-        <v-icon v-if="!isMobile" class="mr-2">mdi-file-document-edit-outline</v-icon>
+        <v-icon v-if="!isMobile" class="mr-3">mdi-file-document-edit-outline</v-icon>
         <span :class="[tabNumber === 1 ? 'h5' : 'h5-lt', { 'mobile-font' : isMobile }]">Manage My Name Request</span>
       </v-tab>
 
@@ -87,10 +87,12 @@ export default class Tabs extends Mixins(CommonMixin) {
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
+
 .mobile-font {
-  font-size: .875rem;
+  font-size: $px-14;
   max-width: 120px;
 }
+
 #tabs-landing-comp {
   max-width: 1140px !important;
   padding: 0 !important;

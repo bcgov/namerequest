@@ -145,11 +145,11 @@ export default class PaymentConfirm extends Vue {
   flex-flow: row nowrap;
   line-height: 0;
   justify-content: space-between;
-  font-size: 1rem;
+  font-size: $px-16;
 }
 
 .header {
-  font-size: 1.125rem;
+  font-size: $px-18;
   color: $dk-text;
   border-bottom: 1px solid $gray4;
 }

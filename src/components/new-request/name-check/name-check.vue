@@ -745,7 +745,7 @@ export default class NameCheck extends Vue {
   margin: 13px 15px 0 5px;
 }
 #name-check-header {
-  font-size: 1rem;
+  font-size: $px-16;
   color: $gray9;
   text-align: center;
 }
@@ -767,7 +767,7 @@ export default class NameCheck extends Vue {
   }
 }
 #name-check-submit-btn {
-  font-size: 0.875rem !important;
+  font-size: $px-14 !important;
   font-weight: bold;
 
   @media only screen and (max-width: 600px) {
@@ -789,7 +789,7 @@ export default class NameCheck extends Vue {
   }
 }
 #name-check-title {
-  font-size: 1.5rem;
+  font-size: $px-24;
   color: $gray9;
   text-align: center;
   padding-top: 0.3125rem;
@@ -802,7 +802,7 @@ export default class NameCheck extends Vue {
   width: 14rem;
 }
 #search-name-btn {
-  font-size: 0.875rem !important;
+  font-size: $px-14 !important;
 }
 #structure-tab {
   background-color: $app-blue;
@@ -822,12 +822,12 @@ export default class NameCheck extends Vue {
 }
 .name-check-info-text {
   color: $gray7;
-  font-size: 0.875rem;
+  font-size: $px-14;
   line-height: 1.375rem;
 }
 .name-check-info-text-no-border {
   color: $gray7;
-  font-size: 0.875rem;
+  font-size:$px-14;
   line-height: 1.375rem;
   padding-left: 118px;
   padding-right: 130px;

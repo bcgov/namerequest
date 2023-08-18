@@ -16,9 +16,11 @@ export default class UnknownWords extends Vue {}
 </script>
 
 <style scoped lang="scss">
+@import '@/assets/styles/theme.scss';
+
 #unknown-words {
   p {
-    font-size: 14px;
+    font-size: $px-14;
   }
 }
 </style>

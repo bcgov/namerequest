@@ -60,7 +60,7 @@ export default class ExampleName extends Vue {}
 
 #example-name {
   p {
-    font-size: .875rem;
+    font-size: $px-14;
     margin-bottom: 0;
   }
 
