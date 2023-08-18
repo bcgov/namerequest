@@ -2,7 +2,7 @@
   <v-container fluid id="search-container" class="copy-normal pa-10">
     <v-row no-gutters>
       <v-col cols="12" class="pt-0 font-weight-bold h6">
-        I need a name to: {{ getRequestActionCd }} / {{ getLocation }} / {{ entity_type_cd }}
+        Get started by selecting an action: [{{ getRequestActionCd }} / {{ getLocation }} / {{ entity_type_cd }}]
       </v-col>
     </v-row>
 
@@ -17,106 +17,33 @@
         >
           <template v-slot:activator="scope">
             <div v-on="scope.on">
-              <v-select
-                id="search-type-options-select"
-                class="request-action-select"
-                filled
-                label="Select an Action"
-                :error-messages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
-                :items="requestActions"
-                item-value="[group,value]"
-                :menu-props="{ bottom: true, offsetY: true, maxHeight: 423 }"
+              <NestedSelect
+                label="Action"
+                :menuItems="RequestActions"
+                :errorMessages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
+                :value="request"
                 @change="setClearErrors(null); onRequestActionChange($event)"
-                return-object
-              >
-                <!-- FUTURE: use "selection" slot to format the selected business -->
-                <!-- <template #selection="{ item }">
-                  <div class="font-weight-bold text-truncate">{{ item.text }}</div>
-                  <div class="text-subtitle-1">{{ item.subtext }}</div>
-                </template> -->
-
-                <template #item="{ item }">
-                  <v-list-item-content
-                    v-if="item.isHeader"
-                    class="group-header px-4 py-5"
-                    @click.stop="toggleActionGroup(item.group)"
-                  >
-                    <div class="d-flex justify-space-between align-center">
-                      <p class="mb-0 mr-4" :class="{'app-blue': item.group === activeActionGroup}">{{ item.text }}</p>
-                      <v-icon color="primary">
-                        {{ item.group === activeActionGroup ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-                      </v-icon>
-                    </div>
-                  </v-list-item-content>
-
-                  <!-- render but conditionally hide disabled list items, so that the v-select
-                  continues to display the current selection even when a different group is active -->
-                  <v-list-item-content
-                    v-else
-                    class="group-item pl-8 pr-4 py-4"
-                    :class="{ 'hide-me': item.disabled }"
-                  >
-                    <div class="font-weight-bold">{{ item.text }}</div>
-                    <div>{{ item.subtext }}</div>
-                  </v-list-item-content>
-                </template>
-              </v-select>
+              />
             </div>
           </template>
           <span>{{ request && request.text }}</span>
         </v-tooltip>
       </v-col>
 
-      <!-- display a dummy input box here when Jurisdiction and Entity Type are not shown -->
-      <v-col v-if="!showJurisdiction && !showEntityType" cols="12" md="6" class="py-0">
-        <v-text-field filled disabled />
+      <!-- display a dummy input box when Request Action is not yet selected -->
+      <v-col v-if="!request" cols="12" md="6" class="py-0">
+        <v-text-field filled disabled label="Select an action first" />
       </v-col>
 
       <!-- Jurisdiction -->
       <v-col v-if="showJurisdiction" cols="12" md="6" class="py-0">
-        <v-tooltip
-          top
-          content-class="top-tooltip"
-          transition="fade-transition"
-          :disabled="!getLocation || getLocation === 'BC' || isMobile"
-        >
-          <template v-slot:activator="scope">
-            <div v-on="scope.on">
-              <v-select
-                id="location-options-select"
-                label="Select your jurisdiction"
-                :error-messages="getErrors.includes('location') ? 'Please select a jurisdiction' : ''"
-                :items="getLocationOptions"
-                :readonly="!getRequestActionCd"
-                :class="!getRequestActionCd ? 'disabled-custom' : ''"
-                :menu-props="{ bottom: true, offsetY: true}"
-                @change="setClearErrors(null)"
-                filled
-                :value="getLocation"
-                @input="setLocation($event)"
-              >
-                <template v-slot:item="{ item }">
-                  <v-tooltip
-                    right
-                    transition="fade-transition"
-                    :disabled="!getRequestActionCd || !item.blurbs || isMobile"
-                  >
-                    <template v-slot:activator="scope">
-                      <span v-on="scope.on" class="list-item">{{ item.text }}</span>
-                    </template>
-
-                    <div v-for="(blurb, index) in item.blurbs " :key="`location-blurb-${index}`">
-                      <span v-if="getRequestActionCd === request_action_enum[index]">
-                        {{ blurb }}
-                      </span>
-                    </div>
-                  </v-tooltip>
-                </template>
-              </v-select>
-            </div>
-          </template>
-          <span>{{ getLocationText }}</span>
-        </v-tooltip>
+        <NestedSelect
+          label="Select your home jurisdiction"
+          :menuItems="jurisdictionOptions"
+          :error-messages="getErrors.includes('jurisdiction') ? 'Please select a jurisdiction' : ''"
+          :value="jurisdiction"
+          @change="setClearErrors(null); onJurisdictionChange($event)"
+        />
       </v-col>
 
       <!-- Entity Type -->
@@ -134,7 +61,6 @@
                 :label="getIsConversion ? 'Select type of business to alter into' : 'Select type of business in B.C.'"
                 :error-messages="getErrors.includes('entity_type_cd') ? 'Please select a business type' : ''"
                 :items="entityConversionTypeOptions"
-                :class="!getLocation ? 'disabled-custom' : ''"
                 :menu-props="{ bottom: true, offsetY: true}"
                 ref="selectBusinessTypeRef"
                 @change="setClearErrors(null)"
@@ -170,41 +96,17 @@
           <span>{{ entityConversionText }}</span>
         </v-tooltip>
       </v-col>
-
-      <!-- Jurisdiction for xpro/mras -->
-      <v-col v-if="getIsXproMras" cols="12" md="6" class="py-0">
-        <v-select
-          label="Select business' home jurisdiction"
-          :error-messages="getErrors.includes('jurisdiction') ? 'Please select a jurisdiction' : ''"
-          :items="jurisdictionOptions"
-          :menu-props="{ bottom: true, offsetY: true}"
-          @change="setClearErrors(null)"
-          filled
-          :value="getJurisdictionCd"
-          @input="setJurisdiction($event)"
-        >
-          <template v-slot:item="{ item }">
-            <span class="list-item" :class="{ 'last-select-item': item.value === Location.FD }">
-              {{ item.text }}
-            </span>
-          </template>
-        </v-select>
-      </v-col>
     </v-row>
 
-    <!-- business lookup -->
-    <v-row no-gutters>
+    <!-- Business Lookup -->
+    <v-row v-if="showBusinessLookup" no-gutters>
       <v-col cols="12">
-        <template>
-          <!-- Search for business identifier or name if NR request action is one of [CHG, AML, CNV, REH] -->
-          <BusinessLookup v-if="isBusinessLookup" />
-        </template>
+        <BusinessLookup />
       </v-col>
     </v-row>
 
     <!-- Corporate Number checkbox, only for XPro Canadian locations -->
-    <!-- *** TODO: change this to "isCanadian" -->
-    <v-row v-if="getIsXproMras && !isFederal && !isInternational" no-gutters>
+    <v-row v-if="isCanadian" no-gutters>
       <v-col class="d-flex justify-end">
         <v-tooltip
           top min-width="390"
@@ -318,21 +220,22 @@ import BusinessLookup from '@/components/new-request/business-lookup.vue'
 // Components
 import { BulletsColinLink } from '../common'
 import NameInput from './name-input.vue'
+import NestedSelect from '../common/nested-select.vue'
 
 // Interfaces / Enums / List Data
 import { ConversionTypesI, EntityI, FormType, RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { AccountType, CompanyType, EntityType, Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin } from '@/mixins'
-import { CanJurisdictions, ConversionTypes, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
+import { CanJurisdictions, ConversionTypes, Designations, IntlJurisdictions, RequestActions }
+  from '@/list-data'
 import { GetFeatureFlag } from '@/plugins'
-import BusinessLookupServices from '@/services/business-lookup-services'
 
 /**
  * This is the component that displays the new NR menus and flows.
  */
 @Component({
-  components: { BulletsColinLink, BusinessLookup, NameInput }
+  components: { BulletsColinLink, BusinessLookup, NameInput, NestedSelect }
 })
 export default class Search extends Mixins(CommonMixin) {
   // Refs
@@ -341,9 +244,8 @@ export default class Search extends Mixins(CommonMixin) {
   }
 
   // enums for template
-  readonly Location = Location
   readonly NrRequestActionCodes = NrRequestActionCodes
-  readonly BusinessLookupServices = BusinessLookupServices
+  readonly RequestActions = RequestActions
 
   // Global getters
   @Getter getConversionType!: EntityType
@@ -360,10 +262,9 @@ export default class Search extends Mixins(CommonMixin) {
   @Getter getJurisdictionCd!: string
   @Getter getLocation!: Location
   @Getter getLocationOptions!: any[]
-  @Getter getLocationText!: string
   @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter isMobile!: boolean
-  @Getter isBcCcCrUl!: boolean
+  @Getter isColinRequestType!: boolean
 
   // Global actions
   @Action setConversionType!: ActionBindingIF
@@ -384,17 +285,10 @@ export default class Search extends Mixins(CommonMixin) {
   // Local properties
   corpNumValid = true
   request = null as RequestActionsI
+  jurisdiction = null
   selectedCompanyType = null as CompanyType
   readonly corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
   readonly EntityType = EntityType
-  request_action_enum = [
-    NrRequestActionCodes.NEW_BUSINESS,
-    NrRequestActionCodes.MOVE,
-    NrRequestActionCodes.RESTORE,
-    NrRequestActionCodes.AMALGAMATE,
-    NrRequestActionCodes.CHANGE_NAME,
-    NrRequestActionCodes.CONVERSION
-  ]
   activeActionGroup = NaN
   showRequestActionTooltip = false
 
@@ -414,33 +308,48 @@ export default class Search extends Mixins(CommonMixin) {
   }
 
   get isNewBcBusiness (): boolean {
-    return (this.request?.value === NrRequestActionCodes.NEW_BUSINESS && this.request?.group === 0)
+    return (this.getRequestActionCd === NrRequestActionCodes.NEW_BUSINESS && this.request?.group === 0)
+  }
+
+  get isNewXproBusiness (): boolean {
+    return (this.getRequestActionCd === NrRequestActionCodes.NEW_BUSINESS && this.request?.group === 1)
   }
 
   get isContinuationIn (): boolean {
-    return (this.request?.value === NrRequestActionCodes.MOVE)
+    return (this.getRequestActionCd === NrRequestActionCodes.MOVE)
   }
 
-  get isAlterType (): boolean {
-    return (this.request?.value === NrRequestActionCodes.CONVERSION)
+  get isAlteration (): boolean {
+    return (this.getRequestActionCd === NrRequestActionCodes.CONVERSION)
   }
 
   get isAmalgamation (): boolean {
-    return (this.request?.value === NrRequestActionCodes.AMALGAMATE)
+    return (this.getRequestActionCd === NrRequestActionCodes.AMALGAMATE)
+  }
+
+  get isChangeName (): boolean {
+    return (this.getRequestActionCd === NrRequestActionCodes.CHANGE_NAME)
+  }
+
+  get isRestoration (): boolean {
+    return (this.getRequestActionCd === NrRequestActionCodes.RESTORE)
   }
 
   get showJurisdiction (): boolean {
-    if (!this.request) return false
-    if (this.isNewBcBusiness) return false
-    if (this.isContinuationIn) return false
-    if (this.isAlterType) return false
-    if (this.isAmalgamation) return false
-    return true
+    // if (this.isAmalgamation) return true // *** FUTURE
+    if (this.isNewXproBusiness) return true
+    return false
   }
 
   get showEntityType (): boolean {
-    if (this.getRequestActionCd) return true
     if (this.getLocation) return true
+    return false
+  }
+
+  get showBusinessLookup () {
+    if (this.isChangeName) return true
+    if (this.isAlteration) return true
+    if (this.isRestoration) return true
     return false
   }
 
@@ -448,19 +357,6 @@ export default class Search extends Mixins(CommonMixin) {
   get isPremiumOrStaff (): boolean {
     return [AccountType.PREMIUM, AccountType.SBC_STAFF, AccountType.STAFF]
       .includes(JSON.parse(sessionStorage.getItem(SessionStorageKeys.CurrentAccount))?.accountType)
-  }
-
-  /** The request action items to display. */
-  get requestActions (): RequestActionsI[] {
-    return RequestActions.filter(item => {
-      // always include header items
-      if (item.isHeader) return true
-
-      // include but disable items not in active group
-      // (they will be hidden via CSS)
-      item['disabled'] = (item.group !== this.activeActionGroup)
-      return true
-    })
   }
 
   /** If current group is active, deactivates it, otherwise activates group. */
@@ -501,6 +397,7 @@ export default class Search extends Mixins(CommonMixin) {
       this.setPickEntityModalVisible(true)
       return
     }
+    // special case for conversion
     if (type && this.getIsConversion) {
       // convert NrRequestTypeCodes -> EntityType
       const value = type as unknown as NrRequestTypeCodes
@@ -529,6 +426,10 @@ export default class Search extends Mixins(CommonMixin) {
     return (this.getLocation === Location.CA && this.getJurisdictionCd === Location.FD)
   }
 
+  get isCanadian (): boolean {
+    return (this.getLocation === Location.CA && this.getJurisdictionCd !== Location.FD)
+  }
+
   get isInternational () {
     return (this.getLocation === Location.IN)
   }
@@ -540,7 +441,7 @@ export default class Search extends Mixins(CommonMixin) {
 
   /** Whether to show "Colin" or "Incorporate Now" button based on FF for Incorporation or Registration. */
   get showColinButton (): boolean {
-    // Contuniation In - returning true because Continuation In application are not yet implemented
+    // Continuation In - returning true because Continuation In application are not yet implemented
     // FUTURE: FF created already for Continuation In, use showContinueInButton
     if (this.isContinuationIn) {
       return true
@@ -579,17 +480,39 @@ export default class Search extends Mixins(CommonMixin) {
   get showCompanyRadioBtn (): boolean {
     const isSociety = this.isSocietyEnabled() && this.getEntityTypeCd === EntityType.SO
     // society NR name is required and no numbered name allowed
-    const showButton = this.isBcCcCrUl && !isSociety
+    const showButton = this.isColinRequestType && !isSociety
     if (!showButton) {
       this.selectedCompanyType = CompanyType.NAMED_COMPANY
     }
     return showButton
   }
 
-  get jurisdictionOptions () {
-    return (this.getLocation === Location.CA)
-      ? CanJurisdictions.filter(jur => jur.value !== Location.BC)
-      : IntlJurisdictions.filter(jur => jur.value !== Location.CA)
+  get jurisdictionOptions (): Array<any> {
+    const array = []
+
+    // add in Canadian jurisdictions (not including BC)
+    array.push({ isHeader: true, group: 0, text: 'Canadian' })
+    CanJurisdictions
+      .filter(jur => jur.value !== Location.BC)
+      .forEach(jur => array.push({
+        group: 0,
+        text: jur.text,
+        value: jur.value,
+        separator: (jur.value === Location.FD)
+      }))
+
+    // add in International jurisdictions (not including CA)
+    array.push({ isHeader: true, group: 1, text: 'International' })
+    IntlJurisdictions
+      .filter(jur => jur.value !== Location.CA)
+      .forEach(jur => array.push({
+        group: 1,
+        text: jur.text,
+        value: jur.value,
+        separator: false
+      }))
+
+    return array
   }
 
   get entityTextFromValue (): string {
@@ -599,15 +522,6 @@ export default class Search extends Mixins(CommonMixin) {
   get nameInputFederalText (): string {
     return `Federally incorporated businesses do not need a Name Request. You may \
       register your extraprovincial business immediately using its existing name at Corporate Online.`
-  }
-
-  get isBusinessLookup () {
-    // show BusinessLookup when NR request actions are following these
-    return [
-      NrRequestActionCodes.CHANGE_NAME,
-      NrRequestActionCodes.CONVERSION,
-      NrRequestActionCodes.RESTORE
-    ].includes(this.getRequestActionCd)
   }
 
   async handleSubmit (doNameCheck = true) {
@@ -650,28 +564,36 @@ export default class Search extends Mixins(CommonMixin) {
       this.showRequestActionTooltip = (offsetWidth < scrollWidth)
     })
 
-    // clear Jurisdiction and Entity Type
+    this.setRequestAction(this.request?.value || null)
+
+    // clear previous state
     this.setLocation(null)
-    if (this.entity_type_cd) {
-      this.entity_type_cd = null
-    }
-    if (this.request?.value !== NrRequestActionCodes.NEW_BUSINESS) {
+    this.setJurisdiction(null)
+    if (this.entity_type_cd) this.entity_type_cd = null
+
+    if (this.getRequestActionCd !== NrRequestActionCodes.NEW_BUSINESS) {
       this.setExtendedRequestType(this.request)
     }
 
-    this.setRequestAction(this.request?.value || null)
-
     // set default location to BC for requests where BC is the only location option
-    if (this.isNewBcBusiness || this.isContinuationIn || this.isAlterType || this.isAmalgamation) {
+    if (this.isNewBcBusiness || this.isContinuationIn || this.isAlteration || this.isAmalgamation) {
       this.setLocation(Location.BC)
       return
     }
 
-    if (this.request?.value === NrRequestActionCodes.ASSUMED) {
+    if (this.getRequestActionCd === NrRequestActionCodes.ASSUMED) {
       if (this.getLocation === Location.BC) {
         this.setLocation(Location.CA)
       }
     }
+  }
+
+  /** Called when Jurisdiction menu item is changed. */
+  onJurisdictionChange (jurisdiction: any): void {
+    this.jurisdiction = jurisdiction
+
+    this.setLocation(jurisdiction.group === 0 ? Location.CA : Location.IN)
+    this.setJurisdiction(jurisdiction.value)
   }
 }
 </script>
@@ -679,24 +601,15 @@ export default class Search extends Mixins(CommonMixin) {
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
 
-// remove v-list-item clickable padding
-::v-deep .v-list-item:has(.group-header),
-::v-deep .v-list-item:has(.group-item) {
-  padding: 0;
-}
-
-// set border at top of group headers
-::v-deep .v-list-item:has(.group-header) {
-  border-top: 1px solid $gray3;
-}
-
 .v-list {
   padding: 0;
 }
+
 .list-item {
   width: 100%;
   padding: 8px;
 }
+
 .last-select-item {
   border-top: 1px solid $gray3;
   padding: 20px 8px !important;
@@ -713,54 +626,60 @@ export default class Search extends Mixins(CommonMixin) {
   color: $app-blue !important;
 }
 
-.disabled-custom {
-  opacity: 0.4;
-  pointer-events: none;
-}
 #name-check-skip-btn {
-  font-size: 0.875rem !important;
+  font-size: $px-14 !important;
   box-shadow: none !important;
   height: 1.5rem !important;
   min-height: 0;
 }
+
 #name-check-skip-btn:before {
   box-shadow: none !important;
   background-color: transparent !important;
 }
+
 #search-name-btn {
-  font-size: 0.875rem !important;
+  font-size: $px-14 !important;
   font-weight: bold;
   min-height: 45px;
 }
+
 #goto-corporate-btn {
   min-height: 45px !important;
 }
+
 .mobile-btn {
   width: 17rem !important;
 }
 
-/* Deep Vuetify overrides */
+// Vuetify overrides
 ::v-deep {
   .theme--light.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
     background-color: RGBA(22,105,187,.6) !important;
     color: white !important;
   }
+
   .v-select:not(.v-select--is-multi).v-text-field--single-line .v-select__selections{
     line-height: 2;
   }
+
   .v-select__selections {
     line-height: 20px !important;
   }
+
   .v-input--is-disabled .v-input__icon {
     display: none !important;
   }
+
   .v-select__selection--disabled {
     color: $gray9 !important;
   }
-  /* reduce checkbox height when there are no error messages */
+
+  // reduce checkbox height when there are no error messages
   .v-messages:not(.error--text) {
     margin-bottom: -22px;
   }
+
   .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
     color: $gray7 !important;
   }

@@ -42,9 +42,9 @@ import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // List Data
 // NB: can't use `this.$xxx` because we don't have `this` (ie, Vue)
 import {
-  CanJurisdictions, IntlJurisdictions, ConversionTypes, MrasJurisdictions,
-  ColinRequestActions, ColinRequestTypes, XproColinRequestTypes, BcMapping, XproMapping,
-  Designations, EntityTypesBcData, EntityTypesXproData, Locations, RequestActions
+  CanJurisdictions, IntlJurisdictions, ConversionTypes, MrasJurisdictions, ColinRequestActions,
+  ColinRequestTypes, XproColinRequestTypes, MrasEntities, BcMapping, XproMapping, Designations,
+  EntityTypesBcData, EntityTypesXproData, Locations, RequestActions
 } from '@/list-data'
 
 export const isMobile = (state: StateIF): boolean => {
@@ -153,7 +153,6 @@ export const getErrors = (state: StateIF): string[] => {
   return state.stateModel.newRequestModel.errors
 }
 
-/** True if XproMras. */
 export const getIsXproMras = (state: StateIF): boolean => {
   return (
     [Location.CA, Location.IN].includes(getLocation(state)) &&
@@ -508,10 +507,6 @@ export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
   }
 }
 
-export const getShowXproJurisdiction = (state: StateIF): boolean => {
-  return getLocation(state) !== Location.BC
-}
-
 // For reference, see request_type_mapping in Namex constants file.
 export const getXproRequestTypeCd = (state: StateIF): XproNameType => {
   if (getIsAssumedName(state)) {
@@ -666,34 +661,29 @@ export const getNameIsSlashed = (state: StateIF): boolean => {
 }
 
 export const getShowCorpNum = (state: StateIF): CorpNumRequests.COLIN | CorpNumRequests.MRAS | false => {
-  if ((ColinRequestActions.includes(getRequestActionCd(state)) &&
-    ColinRequestTypes.includes(getEntityTypeCd(state)))) {
+  if (ColinRequestActions.includes(getRequestActionCd(state)) && isColinRequestType) {
     return CorpNumRequests.COLIN
   }
-  if (ColinRequestActions.includes(getRequestActionCd(state)) &&
-    XproColinRequestTypes.includes(getEntityTypeCd(state))) {
-    return CorpNumRequests.COLIN
-  }
-  let mrasEntities = [EntityType.XCR, EntityType.XLP, EntityType.UL, EntityType.CR, EntityType.CP, EntityType.BC,
-    EntityType.CC]
-  let { xproJurisdiction } = getNrData(state)
 
-  if (
-    MrasJurisdictions.includes(xproJurisdiction?.toLowerCase()) &&
-    mrasEntities.includes(getEntityTypeCd(state))
-  ) {
+  if (ColinRequestActions.includes(getRequestActionCd(state)) && isXproColinRequestType) {
+    return CorpNumRequests.COLIN
+  }
+
+  if (isMrasJurisdiction && isMrasRequestType) {
     if (
       getLocation(state) === Location.CA &&
       [NrRequestActionCodes.NEW_BUSINESS, NrRequestActionCodes.ASSUMED].includes(getRequestActionCd(state))
     ) {
       return CorpNumRequests.MRAS
     }
+
     if (getLocation(state) === Location.BC &&
       [NrRequestActionCodes.MOVE].includes(getRequestActionCd(state))
     ) {
       return CorpNumRequests.MRAS
     }
   }
+
   return false
 }
 
@@ -706,7 +696,7 @@ export const getCorpNumForReservation = (state: StateIF): any => {
     tradeMark: getNrData(state).tradeMark, // may be empty
     xproJurisdiction: getNrData(state).xproJurisdiction // may be empty
   }
-  if (!getShowCorpNum(state)) {
+  if (getShowCorpNum(state) === false) {
     ret.corpNum = ''
     ret.homeJurisNum = getNrData(state).homeJurisNum
   }
@@ -1184,12 +1174,23 @@ export const getBusinessLookup = (state: StateIF): BusinessLookupResultIF => {
   return state.stateModel.newRequestModel.businessLookup
 }
 
-/** Check if BC company, CCC, Corporation or ULC  */
-export const isBcCcCrUl = (state: StateIF): boolean => {
-  return (
-    getEntityTypeCd(state) === EntityType.BC ||
-    getEntityTypeCd(state) === EntityType.CC ||
-    getEntityTypeCd(state) === EntityType.CR ||
-    getEntityTypeCd(state) === EntityType.UL
-  )
+/** True if entity type is one of the COLIN request types. */
+export const isColinRequestType = (state: StateIF): boolean => {
+  return ColinRequestTypes.includes(getEntityTypeCd(state))
+}
+
+/** True if entity type is one of the XPRO COLIN request types. */
+export const isXproColinRequestType = (state: StateIF): boolean => {
+  return XproColinRequestTypes.includes(getEntityTypeCd(state))
+}
+
+/** True if entity type is one of the MRAS entities. */
+export const isMrasRequestType = (state: StateIF): boolean => {
+  return MrasEntities.includes(getEntityTypeCd(state))
+}
+
+/** True if jurisdiction is a MRAS jurisdiction. */
+export const isMrasJurisdiction = (state: StateIF): boolean => {
+  const { xproJurisdiction } = getNrData(state)
+  return MrasJurisdictions.includes(xproJurisdiction?.toLowerCase())
 }

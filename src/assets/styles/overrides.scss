@@ -5,7 +5,7 @@
 @import "theme.scss";
 
 .v-application {
-  font-size: 1rem;
+  font-size: $px-16;
   line-height: 1.5rem;
   font-family: 'BCSans', Verdana, Arial, sans-serif !important;
   padding: 0;
@@ -24,20 +24,20 @@
 
   .text-body-3 {
     font-family: inherit;
-    font-size: 0.875rem;
+    font-size: $px-14;
     line-height: 1.375rem;
   }
 
   .text-body-4 {
     font-family: inherit;
-    font-size: 0.875rem;
+    font-size: $px-14;
     line-height: 1.375rem;
     color: $text;
   }
 
   .text-name {
     font-family: inherit;
-    font-size: 1.125rem;
+    font-size: $px-18;
     line-height: 1.875rem;
     text-transform: capitalize;
     color: $text;
@@ -50,7 +50,7 @@
 
   .v-card__title {
     padding: 0;
-    font-size: 1.5rem;
+    font-size: $px-24;
     font-weight: bold;
     color: $dk-text;
     letter-spacing: normal;
@@ -60,7 +60,7 @@
 
   .v-card__text {
     padding: 2rem 0 0 0;
-    font-size: 1rem;
+    font-size: $px-16;
     color: $text;
     line-height: 1.5rem;
   }
@@ -94,13 +94,13 @@
 }
 
 .grey-box-checkbox-button label {
-  font-size: 14px;
+  font-size: $px-14;
   color: $non-clickable-blue !important;
 }
 
 .v-btn {
   font-family: inherit !important;
-  font-size: 0.875rem !important;
+  font-size: $px-14 !important;
   text-transform: none !important;
   letter-spacing: normal !important;
   height: 2.5rem !important;
@@ -176,7 +176,7 @@
 }
 
 .v-select__selections {
-  font-size: 16px;
+  font-size: $px-16;
   color: $text !important;
 }
 
@@ -186,14 +186,14 @@
 
 .v-tab {
   text-transform: none !important;
-  font-size: 18px !important;
+  font-size: $px-18 !important;
   font-weight: bold !important;
   color: white !important;
 }
 
 .v-tab.active-tab {
   text-transform: none !important;
-  font-size: 18px !important;
+  font-size: $px-18 !important;
   font-weight: bold !important;
   color: $dk-text !important;
 }
@@ -216,7 +216,7 @@
   background-color: RGB(73,80,87) !important;
   color: white !important;
   border-radius: 4px;
-  font-size: 12px !important;
+  font-size: $px-12 !important;
   line-height: 18px !important;
   padding: 20px !important;
   letter-spacing: 0;
@@ -294,7 +294,7 @@ input#name-generator-1, input#name-generator-2 {
 
 .ql-container {
   font-family: inherit !important;
-  font-size: 16px !important;
+  font-size: $px-16 !important;
   border-left: none !important;
   border-right: none !important;
   border-top: none !important;

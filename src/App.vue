@@ -342,6 +342,7 @@ export default class App extends Mixins(
 
 <style lang="scss">
 @import '@/assets/styles/theme.scss';
+
 #main-column {
   display: flex;
   flex-flow: column nowrap;
@@ -355,7 +356,7 @@ export default class App extends Mixins(
     text-transform: none !important;
     font-weight: normal !important;
     letter-spacing: normal !important;
-    font-size: .875rem !important;
+    font-size: $px-14 !important;
   }
 }
 

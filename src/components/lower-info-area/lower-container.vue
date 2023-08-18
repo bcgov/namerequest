@@ -140,7 +140,7 @@ export default class LowerContainer extends Vue {
 #lower-container {
   padding: 0;
   margin: 0;
-  font-size: 1rem;
+  font-size: $px-16;
   color: $text;
   background-color: $gray1;
 
@@ -155,7 +155,7 @@ export default class LowerContainer extends Vue {
     }
 
     .info-underline {
-      font-size: 1.25rem;
+      font-size: $px-20;
       border-bottom: 1px solid $BCgovBlue3;
       color: white;
     }
@@ -171,7 +171,7 @@ export default class LowerContainer extends Vue {
 
     .launch-icon {
       display: inline-block;
-      font-size: 0.875rem;
+      font-size: $px-14;
       color: $app-blue;
     }
   }

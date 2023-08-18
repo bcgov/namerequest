@@ -299,12 +299,11 @@ export const setAddressSuggestions: ActionIF = ({ commit }, addressSuggestions: 
 export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> => {
   // NB: MRAS search should have been done on first page for xpro
   // NB: COLIN search should have been done on first page for BC
-  if (getters.getShowCorpNum) {
-    if (getters.getShowCorpNum === CorpNumRequests.MRAS) {
-      return checkMRAS({ getters }, corpNum)
-    } else {
-      return checkCOLIN({ getters }, corpNum)
-    }
+  if (getters.getShowCorpNum === CorpNumRequests.MRAS) {
+    return checkMRAS({ getters }, corpNum)
+  }
+  if (getters.getShowCorpNum === CorpNumRequests.COLIN) {
+    return checkCOLIN({ getters }, corpNum)
   }
 }
 
@@ -1050,10 +1049,12 @@ export const startEditName: ActionIF = ({ commit, getters }) => {
 export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
   resetAnalyzeName({ commit, getters })
   setUserCancelledAnalysis({ commit, getters }, false)
-  /* validation */
+
+  // validation
   if (!getters.getRequestActionCd) commit('setErrors', 'request_action_cd')
   if (!getters.getLocation) commit('setErrors', 'location')
   if (!getters.getEntityTypeCd) commit('setErrors', 'entity_type_cd')
+
   // if designation selection is required
   if (!getters.getIsXproMras && Designations[getters.getEntityTypeCd]?.end) {
     if (!getters.getDesignation) commit('setErrors', 'designation')
@@ -1080,9 +1081,11 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
   if (getters.getErrors.length > 0) {
     return
   }
+
   // prep name for analysis
   let name = removeAccents(getters.getName)
   name = name.toUpperCase()
+
   // auto fix LTD/INC/CORP designations without a period unless xpro
   if (!getters.getIsXproMras) {
     name = name.replace(/^LTD$/g, 'LTD.')
@@ -1102,7 +1105,8 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
   const designation = getters.getDesignation
   commit('mutateFullName', `${name} ${designation}`)
   commit('mutateNameOriginal', name) // Set original name for reset baseline
-  /* xpro get name call */
+
+  // xpro get name call
   if (getters.getIsXproMras) {
     commit('mutateNRData', { key: 'xproJurisdiction', value: getters.getJurisdictionText })
     commit('mutateNRData', { key: 'homeJurisNum', value: getters.getCorpSearch })
@@ -1120,7 +1124,8 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
       }
     }
   }
-  /* name check */
+
+  // name check
   if (getters.getDoNameCheck) {
     commit('mutateAnalyzeDesignationPending', true)
     commit('mutateAnalyzeStructurePending', true)

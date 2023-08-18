@@ -818,7 +818,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
 .nr-data .col {
   color: $text;
-  font-size: 1rem;
+  font-size: $px-16;
 
   span {
     color: $dk-text;
