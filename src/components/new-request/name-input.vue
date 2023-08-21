@@ -12,6 +12,7 @@
         :class="{ 'read-only-mode': isReadOnly }"
         :disabled="isReadOnly"
         :hint="hint"
+        hide-details="auto"
         persistent-hint
         v-model="searchValue"
         @input="clearErrors()"
@@ -54,17 +55,10 @@ export default class NameInput extends Vue {
   @Action startAnalyzeName!: ActionBindingIF
 
   // Props
-  @Prop({ default: false })
-  readonly isSearchAgain: boolean
-
-  @Prop({ default: false })
-  readonly isMrasSearch: boolean
-
-  @Prop({ default: false })
-  readonly isReadOnly: boolean
-
-  @Prop({ default: null })
-  readonly hint: string
+  @Prop({ default: false }) readonly isSearchAgain!: boolean
+  @Prop({ default: false }) readonly isMrasSearch!: boolean
+  @Prop({ default: false }) readonly isReadOnly!: boolean
+  @Prop({ default: null }) readonly hint!: string
 
   private err_msg = 'Cannot exceed ' + MRAS_MAX_LENGTH + ' characters'
 

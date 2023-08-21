@@ -31,11 +31,11 @@ import {
   CorpNumRequests,
   EntityType,
   Location,
-  XproNameType,
   NrAffiliationErrors,
+  NrRequestActionCodes,
   NrState,
   PriorityCode,
-  NrRequestActionCodes
+  XproNameType
 } from '@/enums'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
@@ -101,6 +101,27 @@ export const getLocation = (state: StateIF): Location => {
   return state.stateModel.newRequestModel.location
 }
 
+/** True if current request location is Canadian. */
+export const isCanadian = (state: StateIF): boolean => {
+  return (
+    getLocation(state) === Location.CA &&
+    getJurisdictionCd(state) !== Location.FD
+  )
+}
+
+/** True if current request location is Federal. */
+export const isFederal = (state: StateIF): boolean => {
+  return (
+    getLocation(state) === Location.CA &&
+    getJurisdictionCd(state) === Location.FD
+  )
+}
+
+/** True if current request location is International. */
+export const isInternational = (state: StateIF): boolean => {
+  return (getLocation(state) === Location.IN)
+}
+
 export const getLocationText = (state: StateIF): string => {
   return getLocationOptions(state).find(options => options.value === getLocation(state))?.text
 }
@@ -136,9 +157,29 @@ export const getCorpSearch = (state: StateIF): string => {
   return state.stateModel.newRequestModel.corpSearch
 }
 
-/** True if current request action code is "conversion". */
-export const getIsConversion = (state: StateIF): boolean => {
-  return getRequestActionCd(state) === NrRequestActionCodes.CONVERSION
+/** True if current request action is Amalgamation. */
+export const isAmalgamation = (state: StateIF): boolean => {
+  return (getRequestActionCd(state) === NrRequestActionCodes.AMALGAMATE)
+}
+
+/** True if current request action is Change Name. */
+export const isChangeName = (state: StateIF): boolean => {
+  return (getRequestActionCd(state) === NrRequestActionCodes.CHANGE_NAME)
+}
+
+/** True if current request action is Continuation In (aka Move). */
+export const isContinuationIn = (state: StateIF): boolean => {
+  return (getRequestActionCd(state) === NrRequestActionCodes.MOVE)
+}
+
+/** True if current request action is Conversion (aka Alteration). */
+export const isConversion = (state: StateIF): boolean => {
+  return (getRequestActionCd(state) === NrRequestActionCodes.CONVERSION)
+}
+
+/** True if current request action is Restoration. */
+export const isRestoration = (state: StateIF): boolean => {
+  return (getRequestActionCd(state) === NrRequestActionCodes.RESTORE)
 }
 
 export const getExistingRequestSearch = (state: StateIF): ExistingRequestSearchI => {
@@ -153,6 +194,7 @@ export const getErrors = (state: StateIF): string[] => {
   return state.stateModel.newRequestModel.errors
 }
 
+/** True if current flow is XPRO/MRAS. */
 export const getIsXproMras = (state: StateIF): boolean => {
   return (
     [Location.CA, Location.IN].includes(getLocation(state)) &&

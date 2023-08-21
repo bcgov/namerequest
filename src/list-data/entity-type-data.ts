@@ -3,7 +3,7 @@ import { EntityI } from '@/interfaces/models'
 
 export const EntityTypesBcData: EntityI[] = [
   {
-    text: 'Sole proprietorship',
+    text: 'Sole Proprietorship',
     value: EntityType.FR,
     cat: 'Proprietorships',
     blurbs: [
@@ -30,7 +30,7 @@ export const EntityTypesBcData: EntityI[] = [
     ]
   },
   {
-    text: 'Limited company',
+    text: 'Limited Company',
     cat: 'Corporations',
     blurbs: [
       `A company that may have one or more people who own shares with some personal responsibility for debt and
@@ -60,7 +60,7 @@ export const EntityTypesBcData: EntityI[] = [
     rank: 1
   },
   {
-    text: 'Unlimited liability company',
+    text: 'Unlimited Liability Company',
     cat: 'Corporations',
     blurbs: [
       `A type of corporation that is often used by American corporations as a Canadian subsidiary or to hold Canadian
@@ -88,7 +88,7 @@ export const EntityTypesBcData: EntityI[] = [
     value: EntityType.UL
   },
   {
-    text: 'General partnership',
+    text: 'General Partnership',
     cat: 'Partnerships',
     blurbs: [
       `A business owned and operated by two or more people or BC entities who are personally responsible for all debt
@@ -104,7 +104,7 @@ export const EntityTypesBcData: EntityI[] = [
     value: EntityType.GP
   },
   {
-    text: 'Limited partnership',
+    text: 'Limited Partnership',
     cat: 'Partnerships',
     blurbs: [
       `Frequently used in real estate developments or film industry projects.  This type of partnership ends when
@@ -119,7 +119,7 @@ export const EntityTypesBcData: EntityI[] = [
     value: EntityType.LP
   },
   {
-    text: 'Limited liability partnership',
+    text: 'Limited Liability Partnership',
     cat: 'Partnerships',
     blurbs: [
       'Frequently used by professionals such as doctors or lawyers to form a practice.',
@@ -134,7 +134,7 @@ export const EntityTypesBcData: EntityI[] = [
     value: EntityType.LL
   },
   {
-    text: 'Cooperative association',
+    text: 'Cooperative Association',
     cat: 'Social Enterprises',
     blurbs: [
       'Membership-based organization, owned and operated by the people who use its services.',
@@ -163,7 +163,7 @@ export const EntityTypesBcData: EntityI[] = [
     value: EntityType.CP
   },
   {
-    text: 'Benefit company',
+    text: 'Benefit Company',
     cat: 'Corporations',
     blurbs: [
       `A type of corporation with special commitments to conduct business in a responsible and sustainable way.`,
@@ -189,7 +189,7 @@ export const EntityTypesBcData: EntityI[] = [
     value: EntityType.BC
   },
   {
-    text: 'Community contribution company',
+    text: 'Community Contribution Company',
     cat: 'Social Enterprises',
     blurbs: [
       `A type of corporation that has a benefit to the community. It is intended to bridge the gap between
@@ -240,7 +240,7 @@ export const EntityTypesBcData: EntityI[] = [
     value: EntityType.SO
   },
   {
-    text: 'Private act',
+    text: 'Private Act',
     cat: 'Other',
     blurbs: [
       `A special type of business structure that may often be established through legislation or by economic growth
@@ -251,7 +251,7 @@ export const EntityTypesBcData: EntityI[] = [
     value: EntityType.PA
   },
   {
-    text: 'Credit union',
+    text: 'Credit Union',
     cat: 'Other',
     blurbs: [
       'Credit union',
@@ -280,7 +280,7 @@ export const EntityTypesBcData: EntityI[] = [
 
 export const EntityTypesXproData: EntityI[] = [
   {
-    text: 'Limited company',
+    text: 'Limited Company',
     cat: 'Corporations',
     blurbs: [
       `Corporation established and operating in a Canadian province or territory that plans to operate in
@@ -318,7 +318,7 @@ export const EntityTypesXproData: EntityI[] = [
     rank: 1
   },
   {
-    text: 'Unlimited liability company',
+    text: 'Unlimited Liability Company',
     cat: 'Corporations',
     blurbs: [
       'ULC established and operating in Alberta or Nova Scotia and plans to operate in BC as well.',
@@ -345,7 +345,7 @@ export const EntityTypesXproData: EntityI[] = [
     value: EntityType.XUL
   },
   {
-    text: 'Limited liability company',
+    text: 'Limited Liability Company',
     cat: 'Corporations',
     blurbs: [
       ''
@@ -379,7 +379,7 @@ export const EntityTypesXproData: EntityI[] = [
     value: EntityType.RLC
   },
   {
-    text: 'Limited partnership',
+    text: 'Limited Partnership',
     cat: 'Partnerships',
     blurbs: [
       `Limited partnership (LP) established and operating in a Canadian province or territory that plans
@@ -407,7 +407,7 @@ export const EntityTypesXproData: EntityI[] = [
     value: EntityType.XLP
   },
   {
-    text: 'Limited liability partnership',
+    text: 'Limited Liability Partnership',
     cat: 'Partnerships',
     blurbs: [
       `Limited liability partnership (LLP) established and operating in a Canadian province or territory
@@ -436,7 +436,7 @@ export const EntityTypesXproData: EntityI[] = [
     value: EntityType.XLL
   },
   {
-    text: 'Cooperative association',
+    text: 'Cooperative Association',
     cat: 'Social Enterprises',
     blurbs: [
       `Cooperative association established and operating in a Canadian province or territory or in the federal
