@@ -2,6 +2,7 @@
   <v-select
     class="request-action-select"
     filled
+    hide-details="auto"
     item-value="[group,value]"
     return-object
     :error-messages="errorMessages"
