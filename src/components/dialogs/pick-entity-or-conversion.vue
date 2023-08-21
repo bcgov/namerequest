@@ -10,7 +10,7 @@
         </v-col>
       </v-row>
 
-      <template v-if="getIsConversion">
+      <template v-if="isConversion">
         <v-card-text>
           <v-container>
             <v-row class="category-bg">
@@ -106,7 +106,7 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
   @Getter getEntityTypeOptions!: Array<EntityI>
   @Getter getEntityTypesBC!: Array<EntityI>
   @Getter getEntityTypesXPRO!: Array<EntityI>
-  @Getter getIsConversion!: boolean
+  @Getter isConversion!: boolean
   @Getter getLocation!: Location
   @Getter getLocationText!: string
   @Getter getPickEntityModalVisible!: boolean
@@ -197,7 +197,7 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
   }
 
   get width (): string {
-    if (this.showSocietiesInfo || this.getIsConversion) {
+    if (this.showSocietiesInfo || this.isConversion) {
       return '550px'
     }
     let cols = this.tableData.length
