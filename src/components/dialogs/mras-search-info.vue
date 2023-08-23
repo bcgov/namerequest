@@ -1,31 +1,32 @@
 <template>
   <v-dialog v-model="showModal" id="mras-search-info-modal" width="40rem" persistent>
     <v-card class="pa-9">
-      <v-row no-gutters>
-        <v-col cols="11">
-          <v-card-title>
-            Corporate Number Not Found
-          </v-card-title>
-        </v-col>
-        <v-col cols="1">
-          <v-icon md color="primary" @click="clearAndClose()">mdi-close</v-icon>
-        </v-col>
-      </v-row>
+      <v-card-title class="d-flex justify-space-between">
+        Corporate Number Not Found
+        <div class="mt-3">
+          <v-btn icon large class="dialog-close" @click="clearAndClose()">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </div>
+      </v-card-title>
+
       <v-card-text class="copy-normal pb-3">
         <p>Corporate Number assigned by Home Jurisdiction: <span class="font-weight-bold">{{ corpSearch }}</span><br>
           Home jurisdiction: <span class="font-weight-bold">{{ jurisdictionText }}</span></p>
         <p>{{ resultDesc  }}</p>
         <p>{{ resultAct }}</p>
+
+        <NameInput
+          id="name-input-component"
+          :is-mras-search="!isNameSearch"
+        />
       </v-card-text>
-      <NameInput
-        id="name-input-component"
-        class="mb-n7 pa-0"
-        :is-mras-search="!isNameSearch"
-      />
+
       <v-card-actions class="justify-center">
         <div class="mt-1 mb-1 text-center">
-          <v-btn class="search-btn"
-                 @click="isNameSearch ? handleSubmit() : clearAndClose()">{{ name ? 'Search' : 'Close' }}</v-btn>
+          <v-btn class="search-btn" @click="isNameSearch ? handleSubmit() : clearAndClose()">
+            {{ name ? 'Search' : 'Close' }}
+          </v-btn>
         </div>
       </v-card-actions>
     </v-card>

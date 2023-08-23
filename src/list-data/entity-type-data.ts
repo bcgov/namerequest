@@ -31,6 +31,7 @@ export const EntityTypesBcData: EntityI[] = [
   },
   {
     text: 'Limited Company',
+    value: EntityType.CR,
     cat: 'Corporations',
     blurbs: [
       `A company that may have one or more people who own shares with some personal responsibility for debt and
@@ -55,12 +56,12 @@ export const EntityTypesBcData: EntityI[] = [
     chgBlurbs: [
       'Change/Correct the name of an existing limited company.'
     ],
-    value: EntityType.CR,
     shortlist: true,
     rank: 1
   },
   {
     text: 'Unlimited Liability Company',
+    value: EntityType.UL,
     cat: 'Corporations',
     blurbs: [
       `A type of corporation that is often used by American corporations as a Canadian subsidiary or to hold Canadian
@@ -84,11 +85,11 @@ export const EntityTypesBcData: EntityI[] = [
     ],
     chgBlurbs: [
       'Change/Correct the name of an existing unlimited liability company.'
-    ],
-    value: EntityType.UL
+    ]
   },
   {
     text: 'General Partnership',
+    value: EntityType.GP,
     cat: 'Partnerships',
     blurbs: [
       `A business owned and operated by two or more people or BC entities who are personally responsible for all debt
@@ -100,11 +101,11 @@ export const EntityTypesBcData: EntityI[] = [
     ],
     chgBlurbs: [
       'Change the name of an existing general partnership.'
-    ],
-    value: EntityType.GP
+    ]
   },
   {
     text: 'Limited Partnership',
+    value: EntityType.LP,
     cat: 'Partnerships',
     blurbs: [
       `Frequently used in real estate developments or film industry projects.  This type of partnership ends when
@@ -115,11 +116,11 @@ export const EntityTypesBcData: EntityI[] = [
     ],
     chgBlurbs: [
       'Change the name of an existing limited partnership.'
-    ],
-    value: EntityType.LP
+    ]
   },
   {
     text: 'Limited Liability Partnership',
+    value: EntityType.LL,
     cat: 'Partnerships',
     blurbs: [
       'Frequently used by professionals such as doctors or lawyers to form a practice.',
@@ -130,11 +131,11 @@ export const EntityTypesBcData: EntityI[] = [
     ],
     chgBlurbs: [
       'Change the name of an existing limited liability partnership.'
-    ],
-    value: EntityType.LL
+    ]
   },
   {
     text: 'Cooperative Association',
+    value: EntityType.CP,
     cat: 'Social Enterprises',
     blurbs: [
       'Membership-based organization, owned and operated by the people who use its services.',
@@ -159,11 +160,11 @@ export const EntityTypesBcData: EntityI[] = [
     ],
     chgBlurbs: [
       'Change/correct the name of an existing cooperative association.'
-    ],
-    value: EntityType.CP
+    ]
   },
   {
     text: 'Benefit Company',
+    value: EntityType.BC,
     cat: 'Corporations',
     blurbs: [
       `A type of corporation with special commitments to conduct business in a responsible and sustainable way.`,
@@ -185,11 +186,11 @@ export const EntityTypesBcData: EntityI[] = [
     ],
     chgBlurbs: [
       'Change/Correct the name of an existing benefit company.'
-    ],
-    value: EntityType.BC
+    ]
   },
   {
     text: 'Community Contribution Company',
+    value: EntityType.CC,
     cat: 'Social Enterprises',
     blurbs: [
       `A type of corporation that has a benefit to the community. It is intended to bridge the gap between
@@ -212,11 +213,11 @@ export const EntityTypesBcData: EntityI[] = [
     ],
     chgBlurbs: [
       'Change/correct the name of an existing community contribution company.'
-    ],
-    value: EntityType.CC
+    ]
   },
   {
     text: 'Society',
+    value: EntityType.SO,
     cat: 'Social Enterprises',
     blurbs: [
       `A non-profit organization that is also known as a non-share corporation.`,
@@ -236,22 +237,22 @@ export const EntityTypesBcData: EntityI[] = [
     ],
     chgBlurbs: [
       'Societies must use Societies Online to get their name.'
-    ],
-    value: EntityType.SO
+    ]
   },
   {
     text: 'Private Act',
+    value: EntityType.PA,
     cat: 'Other',
     blurbs: [
       `A special type of business structure that may often be established through legislation or by economic growth
         initiatives.`,
       'Examples include resorts and ski areas',
       'Has name protection in BC'
-    ],
-    value: EntityType.PA
+    ]
   },
   {
     text: 'Credit Union',
+    value: EntityType.FI,
     cat: 'Other',
     blurbs: [
       'Credit union',
@@ -263,24 +264,24 @@ export const EntityTypesBcData: EntityI[] = [
     ],
     chgBlurbs: [
       'Correct/change the name of an existing credit union.'
-    ],
-    value: EntityType.FI
+    ]
   },
   {
     text: 'Parish',
+    value: EntityType.PAR,
     cat: 'Other',
     blurbs: [
       'Church Parish',
       'Call BC Registries and Online Services at 1-877-526-162 for more information',
       'Has name protection in BC'
-    ],
-    value: EntityType.PAR
+    ]
   }
 ]
 
 export const EntityTypesXproData: EntityI[] = [
   {
     text: 'Limited Company',
+    value: EntityType.XCR,
     cat: 'Corporations',
     blurbs: [
       `Corporation established and operating in a Canadian province or territory that plans to operate in
@@ -313,12 +314,12 @@ export const EntityTypesXproData: EntityI[] = [
         'Update the name of an extraprovincial company to reflect a change of name in the home jurisdiction.'
       ]
     ],
-    value: EntityType.XCR,
     shortlist: true,
     rank: 1
   },
   {
     text: 'Unlimited Liability Company',
+    value: EntityType.XUL,
     cat: 'Corporations',
     blurbs: [
       'ULC established and operating in Alberta or Nova Scotia and plans to operate in BC as well.',
@@ -341,11 +342,11 @@ export const EntityTypesXproData: EntityI[] = [
       [
         'Unlimited liability company'
       ]
-    ],
-    value: EntityType.XUL
+    ]
   },
   {
     text: 'Limited Liability Company',
+    value: EntityType.RLC,
     cat: 'Corporations',
     blurbs: [
       ''
@@ -375,11 +376,11 @@ export const EntityTypesXproData: EntityI[] = [
         `Update the name of an extraprovincial limited liability company (LLC) to reflect a change of
           name in the home jurisdiction.`
       ]
-    ],
-    value: EntityType.RLC
+    ]
   },
   {
     text: 'Limited Partnership',
+    value: EntityType.XLP,
     cat: 'Partnerships',
     blurbs: [
       `Limited partnership (LP) established and operating in a Canadian province or territory that plans
@@ -403,11 +404,11 @@ export const EntityTypesXproData: EntityI[] = [
         `Update the name of an extraprovincial limited partnership to reflect a change of name in the home
           jurisdiction.`
       ]
-    ],
-    value: EntityType.XLP
+    ]
   },
   {
     text: 'Limited Liability Partnership',
+    value: EntityType.XLL,
     cat: 'Partnerships',
     blurbs: [
       `Limited liability partnership (LLP) established and operating in a Canadian province or territory
@@ -432,11 +433,11 @@ export const EntityTypesXproData: EntityI[] = [
         `Update the name of an extraprovincial limited liability partnership to reflect a change of name in the home
           jurisdiction.`
       ]
-    ],
-    value: EntityType.XLL
+    ]
   },
   {
     text: 'Cooperative Association',
+    value: EntityType.XCP,
     cat: 'Social Enterprises',
     blurbs: [
       `Cooperative association established and operating in a Canadian province or territory or in the federal
@@ -461,11 +462,11 @@ export const EntityTypesXproData: EntityI[] = [
         `Update the name of an extraprovincial cooperative association to reflect a change of name in the home
           jurisdiction.`
       ]
-    ],
-    value: EntityType.XCP
+    ]
   },
   {
     text: 'Society',
+    value: EntityType.XSO,
     cat: 'Social Enterprises',
     blurbs: [
       'A non-profit organization that is also known as a non-share corporation.',
@@ -491,7 +492,6 @@ export const EntityTypesXproData: EntityI[] = [
       [
         'Societies must use Societies Online to get their name.'
       ]
-    ],
-    value: EntityType.XSO
+    ]
   }
 ]

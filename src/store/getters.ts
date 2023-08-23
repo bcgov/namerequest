@@ -42,9 +42,21 @@ import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // List Data
 // NB: can't use `this.$xxx` because we don't have `this` (ie, Vue)
 import {
-  CanJurisdictions, IntlJurisdictions, ConversionTypes, MrasJurisdictions, ColinRequestActions,
-  ColinRequestTypes, XproColinRequestTypes, MrasEntities, BcMapping, XproMapping, Designations,
-  EntityTypesBcData, EntityTypesXproData, Locations, RequestActions
+  BcMapping,
+  CanJurisdictions,
+  ColinRequestActions,
+  ColinRequestTypes,
+  ConversionTypes,
+  Designations,
+  EntityTypesBcData,
+  EntityTypesXproData,
+  IntlJurisdictions,
+  Locations,
+  MrasEntities,
+  MrasJurisdictions,
+  RequestActions,
+  XproColinRequestTypes,
+  XproMapping
 } from '@/list-data'
 
 export const isMobile = (state: StateIF): boolean => {
@@ -162,6 +174,11 @@ export const isAmalgamation = (state: StateIF): boolean => {
   return (getRequestActionCd(state) === NrRequestActionCodes.AMALGAMATE)
 }
 
+/** True if current request action is Assumed. */
+export const isAssumed = (state: StateIF): boolean => {
+  return (getRequestActionCd(state) === NrRequestActionCodes.ASSUMED)
+}
+
 /** True if current request action is Change Name. */
 export const isChangeName = (state: StateIF): boolean => {
   return (getRequestActionCd(state) === NrRequestActionCodes.CHANGE_NAME)
@@ -182,6 +199,14 @@ export const isRestoration = (state: StateIF): boolean => {
   return (getRequestActionCd(state) === NrRequestActionCodes.RESTORE)
 }
 
+/** True if current flow is XPRO (includes AMALGAMATION, NEW_BUSINESS, and possibly others). */
+export const getIsXproFlow = (state: StateIF): boolean => {
+  return (
+    (getRequestActionCd(state) !== NrRequestActionCodes.MOVE) &&
+    [Location.CA, Location.IN].includes(getLocation(state))
+  )
+}
+
 export const getExistingRequestSearch = (state: StateIF): ExistingRequestSearchI => {
   return state.stateModel.newRequestModel.existingRequestSearch
 }
@@ -192,14 +217,6 @@ export const getDoNameCheck = (state: StateIF): boolean => {
 
 export const getErrors = (state: StateIF): string[] => {
   return state.stateModel.newRequestModel.errors
-}
-
-/** True if current flow is XPRO/MRAS. */
-export const getIsXproMras = (state: StateIF): boolean => {
-  return (
-    [Location.CA, Location.IN].includes(getLocation(state)) &&
-    (getRequestActionCd(state) !== NrRequestActionCodes.MOVE)
-  )
 }
 
 export const getHasNoCorpNum = (state: StateIF): boolean => {
@@ -564,13 +581,13 @@ export const getXproRequestTypeCd = (state: StateIF): XproNameType => {
 
 /** Get entity type options. */
 export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
-  let bcOptions: SelectOptionsI[] = getEntityTypesBC(state)?.filter(x => {
+  const bcOptions: SelectOptionsI[] = getEntityTypesBC(state)?.filter(x => {
     // Set shortlisted entity types for BC Move and Restoration requests.
     if (
       [NrRequestActionCodes.MOVE, NrRequestActionCodes.RESTORE].includes(getRequestActionCd(state)) &&
       getLocation(state) === Location.BC
     ) {
-      // Shortlist order: Limited company, Cooperative association
+      // Shortlist order: Limited Company, Cooperative Association
       if (x.value === EntityType.CP) {
         x.shortlist = true
         x.rank = 2
@@ -579,7 +596,7 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
         x.rank = null
       }
     } else if (getRequestActionCd(state) === NrRequestActionCodes.AMALGAMATE && getLocation(state) === Location.BC) {
-      // Shortlist order: Limited company, Unlimited liability company
+      // Shortlist order: Limited Company, Unlimited Liability Company
       if (x.value === EntityType.UL) {
         x.shortlist = true
         x.rank = 2
@@ -588,7 +605,7 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
         x.rank = null
       }
     } else {
-      // Shortlist order: Limited Company, Sole proprietorship, DBA, General partnership
+      // Shortlist order: Limited Company, Sole Proprietorship, DBA, General Partnership
       if ([EntityType.UL, EntityType.CP].includes(x.value)) {
         x.shortlist = null
         x.rank = null
@@ -607,12 +624,13 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
       return x
     }
   })
-  let xproOptions: SelectOptionsI[] = getEntityTypesXPRO(state).filter(x => {
+
+  const xproOptions: SelectOptionsI[] = getEntityTypesXPRO(state).filter(x => {
     if (
       getRequestActionCd(state) === NrRequestActionCodes.NEW_BUSINESS &&
       [Location.CA, Location.IN].includes(getLocation(state))
     ) {
-      // Shortlist order: Limited company, Limited partnership
+      // Shortlist order: Limited Company, Limited Partnership
       if (x.value === EntityType.XLP) {
         x.shortlist = true
         x.rank = 2
@@ -624,7 +642,7 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
       getRequestActionCd(state) === NrRequestActionCodes.MOVE &&
       [Location.CA, Location.IN].includes(getLocation(state))
     ) {
-      // Shortlist order: Limited company, Cooperative association
+      // Shortlist order: Limited Company, Cooperative Association
       if (x.value === EntityType.XLP) {
         x.shortlist = null
         x.rank = null
@@ -636,7 +654,7 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
       getRequestActionCd(state) === NrRequestActionCodes.CHANGE_NAME &&
       [Location.CA, Location.IN].includes(getLocation(state))
     ) {
-      // Shortlist order: Limited company, Limited partnership, Limited liability partnership
+      // Shortlist order: Limited Company, Limited Partnership, Limited Liability Partnership
       if (x.value === EntityType.XLP) {
         x.shortlist = true
         x.rank = 2
@@ -652,7 +670,8 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
       return x
     }
   })
-  let options: SelectOptionsI[] = getLocation(state) === Location.BC ? [...bcOptions] : [...xproOptions]
+
+  let options: SelectOptionsI[] = (getLocation(state) === Location.BC) ? [...bcOptions] : [...xproOptions]
   let n = 4
 
   if (getEntityTypeAddToSelect(state)) {
@@ -660,7 +679,9 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
     options = options.concat(getEntityTypeAddToSelect(state))
     n = 5
   }
+
   options = options.concat({ text: 'View all business types', value: 'INFO', rank: n })
+
   return options.sort((a, b) => {
     if (a.rank < b.rank) {
       return -1
@@ -703,6 +724,7 @@ export const getNameIsSlashed = (state: StateIF): boolean => {
 }
 
 export const getShowCorpNum = (state: StateIF): CorpNumRequests.COLIN | CorpNumRequests.MRAS | false => {
+  // *** FUTURE: COLIN search (business lookup) should have been done on first page
   if (ColinRequestActions.includes(getRequestActionCd(state)) && isColinRequestType) {
     return CorpNumRequests.COLIN
   }
@@ -711,20 +733,21 @@ export const getShowCorpNum = (state: StateIF): CorpNumRequests.COLIN | CorpNumR
     return CorpNumRequests.COLIN
   }
 
-  if (isMrasJurisdiction && isMrasRequestType) {
-    if (
-      getLocation(state) === Location.CA &&
-      [NrRequestActionCodes.NEW_BUSINESS, NrRequestActionCodes.ASSUMED].includes(getRequestActionCd(state))
-    ) {
-      return CorpNumRequests.MRAS
-    }
+  // NB: MRAS search was done on first page
+  // if (isMrasJurisdiction && isMrasRequestType) {
+  //   if (
+  //     getLocation(state) === Location.CA &&
+  //     [NrRequestActionCodes.NEW_BUSINESS, NrRequestActionCodes.ASSUMED].includes(getRequestActionCd(state))
+  //   ) {
+  //     return CorpNumRequests.MRAS
+  //   }
 
-    if (getLocation(state) === Location.BC &&
-      [NrRequestActionCodes.MOVE].includes(getRequestActionCd(state))
-    ) {
-      return CorpNumRequests.MRAS
-    }
-  }
+  //   if (getLocation(state) === Location.BC &&
+  //     [NrRequestActionCodes.MOVE].includes(getRequestActionCd(state))
+  //   ) {
+  //     return CorpNumRequests.MRAS
+  //   }
+  // }
 
   return false
 }
@@ -1233,6 +1256,6 @@ export const isMrasRequestType = (state: StateIF): boolean => {
 
 /** True if jurisdiction is a MRAS jurisdiction. */
 export const isMrasJurisdiction = (state: StateIF): boolean => {
-  const { xproJurisdiction } = getNrData(state)
+  const xproJurisdiction = getJurisdictionText(state)
   return MrasJurisdictions.includes(xproJurisdiction?.toLowerCase())
 }

@@ -16,6 +16,12 @@
             </keep-alive>
           </transition>
         </div>
+
+        <!-- FOR DEBUGGING -->
+        <div>getRequestActionCd={{ getRequestActionCd }}</div>
+        <div>getLocation={{ getLocation }}</div>
+        <div>getEntityTypeCd={{ getEntityTypeCd }}</div>
+        <div>isMrasJurisdiction={{ isMrasJurisdiction }}</div>
       </v-container>
     </v-row>
 
@@ -63,6 +69,13 @@ export default class Landing extends Vue {
   // Global getter
   @Getter getDisplayedComponent!: string
 
+  // FOR DEBUGGING:
+  @Getter getEntityTypeCd!: any
+  @Getter getLocation!: any
+  @Getter getRequestActionCd!: any
+  @Getter getNrData!: any
+  @Getter isMrasJurisdiction!: boolean
+
   // Global actions
   @Action loadExistingNameRequest!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
@@ -84,6 +97,11 @@ export default class Landing extends Vue {
     // everything is rendered/loaded - hide spinner
     // (spinner was shown in App.vue)
     this.$root.$emit('showSpinner', false)
+  }
+
+  // FOR DEBUGGING:
+  get xproJurisdiction (): string {
+    return this.getNrData?.xproJurisdiction
   }
 }
 </script>

@@ -23,7 +23,7 @@ describe('ApplicantInfo2 component', () => {
   // it('checks the corpNum against the appropriate database given the setup: BC location', async () => {
   //   const mrasActions = []
   //   function setStore (jurisdiction, action) {
-  //     module.mutateNRData({ key: 'xproJurisdiction', value: 'Alberta' })
+  //     module.mutateXproJurisdiction('Alberta')
   //   }
   // })
 })
