@@ -15,6 +15,7 @@ export interface NewRequestIF {
   analysisJSON: AnalysisJSONI
   applicant: ApplicantI
   assumedNameOriginal: string
+  businessLookup: BusinessLookupResultIF
   conditionsModalVisible: boolean
   conflictId: string
   conversionType: NrRequestTypeCodes
