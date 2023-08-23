@@ -10,12 +10,12 @@
       append-icon="mdi-magnify"
       autocomplete="chrome-off"
       autofocus
-      class="mt-5 mb-n2"
       filled
-      hint="For example: &quot;Joe's Plumbing Inc.&quot;, &quot;BC1234567&quot;, &quot;FM1234567&quot;"
+      hint="Search by name, incorporation or registration number of existing business"
       item-text="name"
       item-value="identifier"
-      label="Business Name or Incorporation/Registration Number"
+      label="Find an existing business"
+      hide-details="auto"
       no-filter
       persistent-hint
       return-object

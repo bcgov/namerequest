@@ -10,14 +10,13 @@ interface RequestNameMapI extends RequestNameI {}
 export interface NewRequestIF {
   actingOnOwnBehalf: boolean
   addressSuggestions: any[]
+  affiliationErrorModalValue: NrAffiliationErrors
   allowAutoApprove: boolean
   analysisJSON: AnalysisJSONI
   applicant: ApplicantI
-  folioNumber?: string
   assumedNameOriginal: string
+  businessLookup: BusinessLookupResultIF
   conditionsModalVisible: boolean
-  exitModalVisible: boolean
-  exitIncompletePaymentVisible: boolean
   conflictId: string
   conversionType: EntityType
   conversionTypeAddToSelect: ConversionTypesI
@@ -30,12 +29,16 @@ export interface NewRequestIF {
   entity_type_cd: EntityType
   entityTypeAddToSelect: SelectOptionsI
   errors: string[]
+  exitIncompletePaymentVisible: boolean
+  exitModalVisible: boolean
   existingRequestSearch: ExistingRequestSearchI
   extendedRequestType: SelectOptionsI
+  folioNumber?: string
   getNameReservationFailed: boolean
   helpMeChooseModalVisible: boolean
-  affiliationErrorModalValue: NrAffiliationErrors
+  hotjarUserId: string,
   incorporateNowError: boolean
+  isLoadingSubmission: boolean
   isPersonsName: boolean
   issueIndex: number
   location: Location
@@ -43,10 +46,10 @@ export interface NewRequestIF {
   mrasSearchInfoModalVisible: boolean
   mrasSearchResultCode: number
   name: string
-  nameOriginal: string
+  nameAnalysisTimedOut: boolean
   nameChoices: NameChoicesIF
   nameIsEnglish: boolean
-  nameAnalysisTimedOut: boolean
+  nameOriginal: string
   noCorpNum: boolean
   nr: Partial<NameRequestI>
   nrData: NrDataIF
@@ -66,8 +69,5 @@ export interface NewRequestIF {
   submissionType: SubmissionTypeT
   tabNumber: number
   userCancelledAnalysis: boolean
-  isLoadingSubmission: boolean
   waitingAddressSearch: WaitingAddressSearchI
-  hotjarUserId: string,
-  businessLookup: BusinessLookupResultIF
 }
