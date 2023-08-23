@@ -164,7 +164,7 @@ export const mutateMrasSearchInfoModalVisible = (state: StateIF, mrasSearchInfoM
   state.stateModel.newRequestModel.mrasSearchInfoModalVisible = mrasSearchInfoModalVisible
 }
 
-export const mutateJurisdiction = (state: StateIF, request_jurisdiction_cd: string) => {
+export const mutateJurisdictionCd = (state: StateIF, request_jurisdiction_cd: string) => {
   state.stateModel.newRequestModel.request_jurisdiction_cd = request_jurisdiction_cd
 }
 
@@ -248,6 +248,14 @@ export const mutateNameRequestByKey = (state: StateIF, kv: any) => {
 
 export const mutateNRData = (state: StateIF, { key, value }) => {
   state.stateModel.newRequestModel.nrData[key] = value
+}
+
+export const mutateXproJurisdiction = (state: StateIF, val: string) => {
+  state.stateModel.newRequestModel.nrData.xproJurisdiction = val
+}
+
+export const mutateHomeJurisNum = (state: StateIF, val: string) => {
+  state.stateModel.newRequestModel.nrData.homeJurisNum = val
 }
 
 export const mutateNrRequiredModalVisible = (state: StateIF, nrRequiredModalVisible: boolean) => {

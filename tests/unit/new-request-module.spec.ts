@@ -8,7 +8,7 @@ describe('New Request module', () => {
   //   store.mutateEntityType(entityType)
   //   store.mutateRequestAction(requestAction)
   //   store.mutateLocation(location)
-  //   store.mutateNRData({ key: 'xproJurisdiction', value: jurisdiction })
+  //   store.mutateXproJurisdiction(jurisdiction)
   // }
   // const spreadSheetData = [
   //   { number: 1, location: 'BC', requestAction: 'NEW', entityType: 'FR', showCorpNum: 'N/A' },
