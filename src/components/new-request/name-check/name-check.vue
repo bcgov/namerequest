@@ -12,8 +12,8 @@
       </v-col>
     </v-row>
     <v-row class="px-10 pt-6" no-gutters>
-      <v-col :class="getIsXproMras ? 'pr-8' : ''" cols="12" lg="7">
-        <NameInput :hint="nameInputHint" :isReadOnly="getIsXproMras"/>
+      <v-col :class="{'pr-8': getIsXproFlow}" cols="12" lg="7">
+        <NameInput :hint="nameInputHint" :isReadOnly="getIsXproFlow"/>
       </v-col>
       <v-col v-if="showDesignationSelect" :class="{'pl-3': !isMobile}" cols="12" lg="3">
         <v-select filled
@@ -23,7 +23,7 @@
                   v-model="designation">
         </v-select>
       </v-col>
-      <v-col v-if="!getIsXproMras" class="pl-3 pt-3" cols="1">
+      <v-col v-if="!getIsXproFlow" class="pl-3 pt-3" cols="1">
         <v-btn
           id="search-name-btn"
           class="outlined px-5 py-4"
@@ -67,7 +67,7 @@
                    class="ma-0 pt-7">
         <v-tabs no-gutters
                 id="name-check-tabs"
-                :active-class="getIsXproMras? 'active-tab no-border-top' : 'active-tab'"
+                :active-class="getIsXproFlow? 'active-tab no-border-top' : 'active-tab'"
                 centered
                 grow
                 height="7rem"
@@ -75,7 +75,7 @@
                 style="border-radius: 4px 4px 0 0;"
                 v-model="checks">
           <v-tab href="#structure-check"
-                 v-if="!getIsXproMras"
+                 v-if="!getIsXproFlow"
                  id="structure-tab"
                  class="upper-border px-0 pt-3"
                  :ripple="false">
@@ -123,7 +123,7 @@
               </v-col>
               <v-col class="pl-2">
                 <p class="ma-0" v-html="infoTextTab" />
-                <div v-if="!getIsXproMras">
+                <div v-if="!getIsXproFlow">
                   <p class="ma-0 pt-2">
                     <a class="txt-link" text @click="expandHelpTxt = !expandHelpTxt">
                       {{ expandBtnTxt }}
@@ -232,7 +232,7 @@ export default class NameCheck extends Vue {
   @Getter getEntityTextFromValue!: string
   @Getter getEntityTypeCd!: EntityType
   @Getter getFullName!: string
-  @Getter getIsXproMras!: boolean
+  @Getter getIsXproFlow!: boolean
   @Getter getLocationText!: string
   @Getter getNameCheckErrors!: NameCheckErrorI
   @Getter getNumbersCheckUse!: Array<string>
@@ -291,7 +291,7 @@ export default class NameCheck extends Vue {
   }
 
   get bottomText (): string {
-    if (!this.getIsXproMras) {
+    if (!this.getIsXproFlow) {
       if (
         this.hasIssuesConflictAlert ||
         this.hasIssuesConflictCaution ||
@@ -446,8 +446,8 @@ export default class NameCheck extends Vue {
       }
       return 'This name structure check helps you build a name according to the naming rules.'
     } else {
-      if (!this.getIsXproMras) {
-        return 'The Similar Name Check helps you find existing BC corporations or name requests that may be ' +
+      if (!this.getIsXproFlow) {
+        return 'The Similar Name Check helps you find existing BC corporations that may be ' +
                'using a similar name. The check is not exhaustive and does not guarantee name ' +
                'availability. For the best chance of having your name approved, ensure that ' +
                'your name is unique.'
@@ -479,14 +479,16 @@ export default class NameCheck extends Vue {
       items.push(baseItemsConflicts.errorSimilar)
     }
     if (this.conflictsExact?.length > 0) {
-      let newItem = this.getIsXproMras ? { ...baseItemsConflicts.exactMatchXpro } : { ...baseItemsConflicts.exactMatch }
+      let newItem = this.getIsXproFlow
+        ? { ...baseItemsConflicts.exactMatchXpro }
+        : { ...baseItemsConflicts.exactMatch }
       newItem.expandedList = this.conflictsExact
       newItem.count = this.conflictsExactNum
       items.push(newItem)
     }
     if (this.conflictsSimilar?.length > 0) {
       let newItem = (
-        this.getIsXproMras ? { ...baseItemsConflicts.similarMatchXpro } : { ...baseItemsConflicts.similarMatch }
+        this.getIsXproFlow ? { ...baseItemsConflicts.similarMatchXpro } : { ...baseItemsConflicts.similarMatch }
       )
       newItem.expandedList = this.conflictsSimilar
       newItem.count = this.conflictsSimilarNum
@@ -604,13 +606,13 @@ export default class NameCheck extends Vue {
     return this.getLocationText
   }
   get nameInputHint (): string {
-    if (this.getIsXproMras) {
+    if (this.getIsXproFlow) {
       return 'Your name in your home jurisdiction cannot be edited'
     }
     return 'You can edit your name here and check it again'
   }
   get showDesignationSelect (): boolean {
-    return (Designations[this.getEntityTypeCd]?.end || false) && !this.getIsXproMras
+    return (Designations[this.getEntityTypeCd]?.end || false) && !this.getIsXproFlow
   }
   get specialCharacters (): Array<string> {
     return this.getSpecialCharacters
@@ -680,7 +682,7 @@ export default class NameCheck extends Vue {
   dialogCheck () {
     const hasMajorIssues = this.hasIssuesConflictAlert || this.hasIssuesStructureAlert
     // only show dialog for non xpro
-    if (hasMajorIssues && !this.getIsXproMras) {
+    if (hasMajorIssues && !this.getIsXproFlow) {
       this.dialogOptions.icon = this.tabIconVerdict.icon
       this.dialogOptions.iconColor = this.tabIconVerdict.color
       this.showNameCheckIssuesDialog = true

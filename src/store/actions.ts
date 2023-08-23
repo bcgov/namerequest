@@ -297,11 +297,12 @@ export const setAddressSuggestions: ActionIF = ({ commit }, addressSuggestions: 
 
 // FUTURE: not an action - move it to another module?
 export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> => {
-  // NB: MRAS search should have been done on first page for xpro
-  // NB: COLIN search should have been done on first page for BC
-  if (getters.getShowCorpNum === CorpNumRequests.MRAS) {
-    return checkMRAS({ getters }, corpNum)
-  }
+  // NB: MRAS search was done on first page
+  // if (getters.getShowCorpNum === CorpNumRequests.MRAS) {
+  //   return checkMRAS({ getters }, corpNum)
+  // }
+
+  // *** FUTURE: COLIN search (business lookup) should have been done on first page
   if (getters.getShowCorpNum === CorpNumRequests.COLIN) {
     return checkCOLIN({ getters }, corpNum)
   }
@@ -568,8 +569,8 @@ export const setConversionType: ActionIF = ({ commit }, conversionType: string):
   commit('mutateConversionType', conversionType)
 }
 
-export const setJurisdiction: ActionIF = ({ commit }, jurisdictionCd: string): void => {
-  commit('mutateJurisdiction', jurisdictionCd)
+export const setJurisdictionCd: ActionIF = ({ commit }, jurisdictionCd: string): void => {
+  commit('mutateJurisdictionCd', jurisdictionCd)
 }
 
 export const setIsPersonsName: ActionIF = ({ commit }, isPersonsName: boolean): void => {
@@ -1050,20 +1051,26 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
   resetAnalyzeName({ commit, getters })
   setUserCancelledAnalysis({ commit, getters }, false)
 
-  // validation
+  // check basic state values
   if (!getters.getRequestActionCd) commit('setErrors', 'request_action_cd')
   if (!getters.getLocation) commit('setErrors', 'location')
   if (!getters.getEntityTypeCd) commit('setErrors', 'entity_type_cd')
 
-  // if designation selection is required
-  if (!getters.getIsXproMras && Designations[getters.getEntityTypeCd]?.end) {
+  // check if designation selection is required and present
+  if (!getters.getIsXproFlow && Designations[getters.getEntityTypeCd]?.end) {
     if (!getters.getDesignation) commit('setErrors', 'designation')
   }
-  if ([Location.CA, Location.IN].includes(getters.getLocation) &&
-    ![NrRequestActionCodes.MOVE].includes(getters.getRequestActionCd) && !getters.getJurisdictionCd) {
+
+  // check if jurisdiction selection is required and present
+  if (
+    [Location.CA, Location.IN].includes(getters.getLocation) &&
+    ![NrRequestActionCodes.MOVE].includes(getters.getRequestActionCd) &&
+    !getters.getJurisdictionCd
+  ) {
     commit('setErrors', 'jurisdiction')
     return
   }
+
   if (!getters.getCorpSearch) {
     if (!getters.getName) {
       commit('setErrors', 'name')
@@ -1087,7 +1094,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
   name = name.toUpperCase()
 
   // auto fix LTD/INC/CORP designations without a period unless xpro
-  if (!getters.getIsXproMras) {
+  if (!getters.getIsXproFlow) {
     name = name.replace(/^LTD$/g, 'LTD.')
       .replace(/^LTD\s/g, 'LTD. ')
       .replace(/\sLTD\s/g, ' LTD. ')
@@ -1107,10 +1114,11 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
   commit('mutateNameOriginal', name) // Set original name for reset baseline
 
   // xpro get name call
-  if (getters.getIsXproMras) {
-    commit('mutateNRData', { key: 'xproJurisdiction', value: getters.getJurisdictionText })
-    commit('mutateNRData', { key: 'homeJurisNum', value: getters.getCorpSearch })
-    if (!getters.getHasNoCorpNum) {
+  if (getters.getIsXproFlow && !getters.getHasNoCorpNum) {
+    commit('mutateXproJurisdiction', getters.getJurisdictionText)
+    commit('mutateHomeJurisNum', getters.getCorpSearch)
+    // only make MRAS call for MRAS jurisdictions and if we have a corp num
+    if (getters.isMrasJurisdiction && !getters.getHasNoCorpNum) {
       const profile: any = await fetchMRASProfile({ commit, getters })
       if (profile) {
         const hasMultipleNames = profile?.LegalEntity?.names && profile?.LegalEntity?.names.constructor === Array
@@ -1134,7 +1142,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
     // similar name check / conditional + restricted word check
     startQuickSearch({ commit, getters }, { exact: true, similar: true, restricted: true })
     // we don't do a structure name check for xpro names
-    if (getters.getIsXproMras) {
+    if (getters.getIsXproFlow) {
       commit('mutateAnalyzeDesignationPending', false)
       commit('mutateAnalyzeStructurePending', false)
     } else {

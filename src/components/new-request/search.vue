@@ -2,7 +2,7 @@
   <v-container fluid id="search-container" class="copy-normal pt-10 px-10 pb-12">
     <v-row>
       <v-col cols="12" class="font-weight-bold h6">
-        Get started by selecting an action: [{{ getRequestActionCd }} / {{ getLocation }} / {{ entity_type_cd }}]
+        Get started by selecting an action:
       </v-col>
 
       <!-- Request Action -->
@@ -45,7 +45,7 @@
       </v-col>
 
       <!-- Entity Type -->
-      <v-col v-if="showEntityType" cols="12" md="6">
+      <v-col v-if="showEntityType" cols="12" :md="getIsXproFlow ? 4 : 6">
         <v-tooltip
           top
           content-class="top-tooltip"
@@ -58,7 +58,7 @@
                 id="entity-type-options-select"
                 :label="isConversion ? 'Select type of business to alter into' : 'Select type of business in B.C.'"
                 :error-messages="getErrors.includes('entity_type_cd') ? 'Please select a business type' : ''"
-                :items="entityConversionTypeOptions"
+                :items="entityTypeOptions"
                 :menu-props="{ bottom: true, offsetY: true}"
                 ref="selectBusinessTypeRef"
                 @change="setClearErrors()"
@@ -97,133 +97,141 @@
       </v-col>
 
       <!-- Business Lookup -->
-      <v-col v-if="showBusinessLookup" cols="12">
-        <BusinessLookup />
-      </v-col>
-    </v-row>
-
-    <!-- Type of Business, only when an entity type is selected (or federal) -->
-    <v-row v-if="entity_type_cd || isFederal" class="mt-6">
-      <v-col v-if="companyRadioBtnApplicable" cols="12">
-        <p class="font-weight-bold h6">Select a company type:</p>
-        <v-radio-group
-          v-model="selectedCompanyType"
-          class="mt-3"
-          hide-details
-          mandatory
-          row
-          @change="selectedCompanyType = $event"
-        >
-          <v-radio
-            id="named-company-radio"
-            label="Named Company"
-            :value="CompanyType.NAMED_COMPANY"
-          />
-          <v-radio
-            id="numbered-company-radio"
-            label="Numbered Company"
-            :value="CompanyType.NUMBERED_COMPANY"
-          />
-        </v-radio-group>
+      <v-col v-if="showBusinessLookup" cols="12" md="6">
+        <BusinessLookup v-if="!business" @business="business=$event"/>
+        <v-text-field v-else clearable disabled filled hide-details :value="business.name" />
       </v-col>
 
-      <template v-if="selectedCompanyType === CompanyType.NAMED_COMPANY">
-        <v-col cols="12" :md="showDesignation ? '8' : '12'">
-          <ul v-if="isFederal" class="bullet-points">
-            <li>Federally incorporated businesses do not need a Name Request.</li>
-            <li>You may register your extraprovincial business immediately using its existing name
-              at Corporate Online.</li>
-          </ul>
-          <NameInput
-            v-else
-            id="name-input-component"
-            :is-mras-search="(getIsXproMras && !getHasNoCorpNum)"
-            :menu-props="{ bottom: true, offsetY: true}"
-            @emit-corp-num-validity="corpNumValid = $event"
-          />
-        </v-col>
-
-        <v-col v-if="showDesignation" cols="12" md="4">
-          <v-select
-            :error-messages="getErrors.includes('designation') ? 'Please enter a designation' : ''"
-            filled
-            :items="designationOptions"
-            label="Select a Designation"
-            :readonly="!entity_type_cd"
-            :menu-props="{ bottom: true, offsetY: true}"
-            :value="getDesignation"
-            @input="setDesignation($event)"
-            class="mb-n3"
-            @change="setClearErrors()"
-          />
-        </v-col>
-
-        <!-- Corporate Number checkbox, only for XPro Canadian locations -->
-        <v-col v-if="isCanadian" class="d-flex justify-end">
-          <v-tooltip
-            top min-width="390"
-            content-class="top-tooltip"
-            transition="fade-transition"
-            :disabled="isMobile"
+      <!-- once an entity type is selected (or Federal)... -->
+      <template v-if="entity_type_cd || isFederal">
+        <!-- Company Type -->
+        <v-col v-if="companyRadioBtnApplicable" cols="12">
+          <p class="font-weight-bold h6">Select a company type:</p>
+          <v-radio-group
+            v-model="selectedCompanyType"
+            class="mt-3"
+            hide-details
+            mandatory
+            row
+            @change="selectedCompanyType = $event"
           >
-            <template v-slot:activator="{ on }">
-              <v-checkbox
-                :value="getHasNoCorpNum"
-                @input="setNoCorpNum($event)"
-                id="corp-num-checkbox"
-                class="copy-small mt-0 pt-0"
-                hide-details
-                v-slot:label
-                v-on="on"
-              >
-                <template>
-                  <span v-on="on" class="copy-small">I don't have a corporate number</span>
-                </template>
-              </v-checkbox>
-            </template>
+            <v-radio
+              id="named-company-radio"
+              label="Named Company"
+              :value="CompanyType.NAMED_COMPANY"
+            />
+            <v-radio
+              id="numbered-company-radio"
+              label="Numbered Company"
+              :value="CompanyType.NUMBERED_COMPANY"
+            />
+          </v-radio-group>
+        </v-col>
 
-            <p>If you don't have or don't know the corporation number of the business, enter the full legal name of the
-              business in its home jurisdiction.</p>
+        <template v-if="selectedCompanyType === CompanyType.NAMED_COMPANY">
+          <!-- Xpro/Federal bullets -->
+          <v-col v-if="getIsXproFlow && isFederal" cols="12" md="8">
+            <ul class="bullet-points">
+              <li>Federally incorporated businesses do not need a Name Request.</li>
+              <li>You may register your extraprovincial business immediately using its existing name
+                at Corporate Online.</li>
+            </ul>
+          </v-col>
 
-            <p>Note: If the home jurisdiction requires a name reservation, you may want to complete a name search in the
-              home jurisdiction first to ensure that the name is available and then return to BC.</p>
-          </v-tooltip>
+          <!-- XPRO/MRAS number/name search/input -->
+          <v-col v-if="!isFederal" cols="12" :md="(getIsXproFlow || showDesignation) ? 8 : 12">
+            <NameInput
+              id="name-input-component"
+              :is-mras-search="(getIsXproFlow && isMrasJurisdiction && !noCorpNum)"
+              @emit-corp-num-validity="corpNumValid = $event"
+            />
+          </v-col>
+
+          <!-- Designation -->
+          <v-col v-if="showDesignation" cols="12" md="4">
+            <v-select
+              :error-messages="getErrors.includes('designation') ? 'Please enter a designation' : ''"
+              filled
+              :items="designationOptions"
+              label="Select a Designation"
+              :readonly="!entity_type_cd"
+              :menu-props="{ bottom: true, offsetY: true}"
+              :value="getDesignation"
+              @input="setDesignation($event)"
+              class="mb-n3"
+              @change="setClearErrors()"
+            />
+          </v-col>
+
+          <!-- Corporate Number checkbox, only for Canadian MRAS jurisdictions -->
+          <v-col v-if="isCanadian && isMrasJurisdiction" class="d-flex justify-end">
+            <v-tooltip
+              top min-width="390"
+              content-class="top-tooltip"
+              transition="fade-transition"
+              :disabled="isMobile"
+            >
+              <template v-slot:activator="{ on }">
+                <v-checkbox
+                  v-model="noCorpNum"
+                  id="corp-num-checkbox"
+                  class="copy-small mt-0 pt-0"
+                  hide-details
+                  v-slot:label
+                  v-on="on"
+                >
+                  <template>
+                    <span v-on="on" class="copy-small">I don't have a corporate number</span>
+                  </template>
+                </v-checkbox>
+              </template>
+
+              <p>If you don't have or don't know the corporation number of the business, enter the full legal name
+                of the business in its home jurisdiction.</p>
+
+              <p>Note: If the home jurisdiction requires a name reservation, you may want to complete a name search
+                in the home jurisdiction first to ensure that the name is available and then return to BC.</p>
+            </v-tooltip>
+          </v-col>
+        </template>
+
+        <!-- Numbered company bullets -->
+        <v-col v-if="selectedCompanyType === CompanyType.NUMBERED_COMPANY" cols="12">
+          <ul class="bullet-points">
+            <li>Your business name will be the Incorporation Number assigned by the Registry.</li>
+            <li>You can change your business name at a later date.</li>
+            <li>It is not possible to request a specific Incorporation Number.</li>
+          </ul>
+        </v-col>
+
+        <!-- Go to COLIN / Incorporate Now buttons -->
+        <v-col v-if="selectedCompanyType === CompanyType.NUMBERED_COMPANY || isFederal" cols="12"
+          class="d-flex justify-center"
+        >
+          <v-btn
+            v-if="showColinButton"
+            class="px-9"
+            id="go-to-colin-button"
+            :href="colinLink"
+            target="_blank"
+          >
+            Go to Corporate Online to Register <v-icon small class="ml-1">mdi-open-in-new</v-icon>
+          </v-btn>
+          <v-btn
+            v-else
+            class="px-9"
+            id="incorporate-now-button"
+            @click="incorporateNowClicked()"
+          >
+            {{ incorporateNowButtonText }}
+          </v-btn>
         </v-col>
       </template>
-
-      <v-col v-if="selectedCompanyType === CompanyType.NUMBERED_COMPANY" cols="12">
-        <ul class="bullet-points">
-          <li>Your business name will be the Incorporation Number assigned by the Registry.</li>
-          <li>You can change your business name at a later date.</li>
-          <li>It is not possible to request a specific Incorporation Number.</li>
-        </ul>
-      </v-col>
-
-      <v-col v-if="selectedCompanyType === CompanyType.NUMBERED_COMPANY || isFederal" cols="12"
-        class="d-flex justify-center"
-      >
-        <v-btn
-          v-if="showColinButton"
-          class="px-9"
-          :href="colinLink"
-          target="_blank"
-        >
-          Go to Corporate Online to Register <v-icon small class="ml-1">mdi-open-in-new</v-icon>
-        </v-btn>
-        <v-btn
-          v-else
-          class="px-9"
-          id="incorporate-now-button"
-          @click="incorporateNowClicked()"
-        >
-          {{ incorporateNowButtonText }}
-        </v-btn>
-      </v-col>
     </v-row>
 
-    <!-- Actions -->
-    <template v-if="!isFederal && isNamedCompany">
-      <v-row justify="center">
+    <!-- Check This Name button -->
+    <template v-if="!isFederal && isNamedCompany && entity_type_cd">
+      <v-row justify="center" class="mt-6">
         <v-col cols="auto">
           <v-btn
             id="search-name-btn"
@@ -264,7 +272,7 @@ import NameInput from './name-input.vue'
 import NestedSelect from '../common/nested-select.vue'
 
 // Interfaces / Enums / List Data
-import { ConversionTypesI, EntityI, FormType, RequestActionsI } from '@/interfaces'
+import { BusinessLookupResultIF, ConversionTypesI, EntityI, FormType, RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { AccountType, CompanyType, EntityType, Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin, NrAffiliationMixin } from '@/mixins'
@@ -299,12 +307,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   @Getter getErrors!: string[]
   @Getter getHasNoCorpNum!: boolean
   @Getter getIsAuthenticated!: boolean
-  @Getter getIsXproMras!: boolean
+  @Getter getIsXproFlow!: boolean
   @Getter getJurisdictionCd!: string
   @Getter getLocation!: Location
   @Getter getLocationOptions!: any[]
   @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter isAmalgamation!: boolean
+  @Getter isAssumed!: boolean
   @Getter isCanadian!: boolean
   @Getter isChangeName!: boolean
   @Getter isColinRequestType!: boolean
@@ -313,6 +322,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   @Getter isFederal!: boolean
   @Getter isInternational!: boolean
   @Getter isMobile!: boolean
+  @Getter isMrasJurisdiction!: boolean
   @Getter isRestoration!: boolean
 
   // Store actions
@@ -323,7 +333,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   @Action setDoNameCheck!: ActionBindingIF
   @Action setEntityTypeCd!: ActionBindingIF
   @Action setExtendedRequestType!: ActionBindingIF
-  @Action setJurisdiction!: ActionBindingIF
+  @Action setJurisdictionCd!: ActionBindingIF
   @Action setLocation!: ActionBindingIF
   @Action setName!: ActionBindingIF
   @Action setNoCorpNum!: ActionBindingIF
@@ -341,6 +351,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   readonly EntityType = EntityType
   activeActionGroup = NaN
   showRequestActionTooltip = false
+  business = null as BusinessLookupResultIF
 
   private mounted () {
     this.$nextTick(() => {
@@ -391,7 +402,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
   get showDesignation (): boolean {
     if (this.isAmalgamation) return false
-    if (this.getEntityTypeCd) return (Designations[this.getEntityTypeCd]?.end && !this.getIsXproMras)
+    if (this.getEntityTypeCd) return (Designations[this.getEntityTypeCd]?.end && !this.getIsXproFlow)
     // hide until entity type is selected and needs it
     return false
   }
@@ -451,11 +462,16 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     this.setEntityTypeCd(type)
   }
 
-  get entityConversionTypeOptions () {
-    if (this.isConversion) {
-      return this.getConversionTypeOptions
-    }
-    return this.getEntityTypeOptions
+  get noCorpNum (): boolean {
+    return this.getHasNoCorpNum
+  }
+
+  set noCorpNum (value: boolean) {
+    this.setNoCorpNum(value)
+  }
+
+  get entityTypeOptions () {
+    return (this.isConversion ? this.getConversionTypeOptions : this.getEntityTypeOptions)
   }
 
   get entityConversionText () {
@@ -482,9 +498,10 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
   get showContinueInButton (): boolean {
     // for now, return True because Continuation In filings are not yet implemented
-    return true
+    return this.isContinuationIn
 
     // *** FUTURE: use code below
+    // if (!this.isContinuationIn) return false
     // const supportedContInEntites = GetFeatureFlag('supported-continuation-in-entities')
     // const isContInEntity = supportedContInEntites.includes(this.entity_type_cd)
     // return !isContInEntity
@@ -552,9 +569,9 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
   async handleSubmit (doNameCheck = true) {
     this.setDoNameCheck(doNameCheck)
-    if (this.getIsXproMras) this.$root.$emit('showSpinner', true)
+    if (this.getIsXproFlow) this.$root.$emit('showSpinner', true)
     await this.startAnalyzeName(null)
-    if (this.getIsXproMras) this.$root.$emit('showSpinner', false)
+    if (this.getIsXproFlow) this.$root.$emit('showSpinner', false)
   }
 
   @Watch('entity_type_cd')
@@ -578,41 +595,39 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   /** Called when Request Action menu item is changed. */
-  onRequestActionChange (request: RequestActionsI): void {
+  async onRequestActionChange (request: RequestActionsI): Promise<void> {
     this.request = request
-
-    // calculate whether to show tooltip
-    // (in next tick after DOM update)
-    Vue.nextTick(() => {
-      const el = document.querySelector('.request-action-select .v-select__selection') as any
-      const offsetWidth = el?.offsetWidth as number
-      const scrollWidth = el?.scrollWidth as number
-      this.showRequestActionTooltip = (offsetWidth < scrollWidth)
-    })
 
     this.setRequestAction(this.request?.value || null)
 
     // clear previous state
+    this.jurisdiction = null
     this.setLocation(null)
-    this.setJurisdiction(null)
+    this.setJurisdictionCd(null)
     if (this.entity_type_cd) this.entity_type_cd = null
     this.selectedCompanyType = null
+
+    // wait for updates
+    await Vue.nextTick()
 
     if (this.getRequestActionCd !== NrRequestActionCodes.NEW_BUSINESS) {
       this.setExtendedRequestType(this.request)
     }
 
-    // set default location to BC for requests where BC is the only location option
+    // set default location for requests where there is only one location option
     if (this.isNewBcBusiness || this.isContinuationIn || this.isConversion || this.isAmalgamation) {
       this.setLocation(Location.BC)
-      return
+    } else if (this.isAssumed && this.getLocation === Location.BC) {
+      this.setLocation(Location.CA)
     }
 
-    if (this.getRequestActionCd === NrRequestActionCodes.ASSUMED) {
-      if (this.getLocation === Location.BC) {
-        this.setLocation(Location.CA)
-      }
-    }
+    // calculate whether to show tooltip
+    // (after waiting for DOM update)
+    await Vue.nextTick()
+    const el = document.querySelector('.request-action-select .v-select__selection') as any
+    const offsetWidth = el?.offsetWidth as number
+    const scrollWidth = el?.scrollWidth as number
+    this.showRequestActionTooltip = (offsetWidth < scrollWidth)
   }
 
   /** Called when Jurisdiction menu item is changed. */
@@ -620,7 +635,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     this.jurisdiction = jurisdiction
 
     this.setLocation(jurisdiction.group === 0 ? Location.CA : Location.IN)
-    this.setJurisdiction(jurisdiction.value)
+    this.setJurisdictionCd(jurisdiction.value)
   }
 }
 </script>
@@ -665,6 +680,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   background-color: transparent !important;
 }
 
+#go-to-colin-button,
+#incorporate-now-button,
 #search-name-btn {
   font-size: $px-14 !important;
   font-weight: bold;
@@ -681,8 +698,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
 // Line spacing between bullet points and sizing
 .bullet-points {
-  font-size: $px-14;
   line-height: 1.5rem;
+  font-size: $px-15;
 }
 
 // Vuetify overrides
