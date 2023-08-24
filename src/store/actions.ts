@@ -295,6 +295,10 @@ export const setAddressSuggestions: ActionIF = ({ commit }, addressSuggestions: 
   commit('mutateAddressSuggestions', addressSuggestions)
 }
 
+/**
+ * Makes API calls to verify that the Corp Num is valid.
+ * @returns a resolved promise on success or a rejected promise on failure
+ */
 // FUTURE: not an action - move it to another module?
 export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> => {
   // NB: MRAS search was done on first page
