@@ -37,17 +37,17 @@
       </v-col>
     </v-row>
     <v-container id="name-check-lower-container" class="rounded copy-normal mt-5 pa-0 name-check">
-      <v-row no-gutters justify="center" class="pt-8">
+      <v-row no-gutters justify="center" class="pt-8" v-if="hasNameLengthError">
         <v-col cols="auto" id="name-check-header">
           <b>Showing Results for:</b>
         </v-col>
       </v-row>
-      <v-row no-gutters justify="center">
+      <v-row no-gutters justify="center" v-if="hasNameLengthError">
         <v-col cols="auto" id="name-check-title">
           <b>{{ originalName }}</b>
         </v-col>
       </v-row>
-      <v-row id="name-check-verdict" class="white mt-7 pa-2" no-gutters align="center">
+      <v-row id="name-check-verdict" class="white mt-7 pa-2" no-gutters align="center" v-if="hasNameLengthError">
         <v-progress-circular v-if="loadingStructureCheck"
                              color="primary"
                              indeterminate
@@ -60,9 +60,9 @@
           {{ nameCheckVerdict }}
         </span>
       </v-row>
-      <v-container v-if="hasIssuesConflictAlert || hasIssuesConflictCaution ||
+      <v-container v-if="(hasIssuesConflictAlert || hasIssuesConflictCaution ||
                          hasIssuesStructureAlert || hasIssuesStructureCaution ||
-                         loadingStructureCheck"
+                         loadingStructureCheck) && hasNameLengthError"
                    id="name-check-tabs-container"
                    class="ma-0 pt-7">
         <v-tabs no-gutters
@@ -169,7 +169,7 @@
           </v-tab-item>
         </v-tabs-items>
       </v-container>
-      <v-row no-gutters class="pt-3 name-check-info-text-no-border">
+      <v-row no-gutters class="pt-3 name-check-info-text-no-border" v-if="hasNameLengthError">
         <v-col cols="auto">
           <v-icon>mdi-information-outline</v-icon>
         </v-col>
@@ -184,7 +184,7 @@
           </v-btn>
         </v-col>
         <v-col>
-          <v-btn id="name-check-submit-btn" class="float-right" @click="dialogCheck()">
+          <v-btn id="name-check-submit-btn" class="float-right" @click="dialogCheck()" v-if="hasNameLengthError">
             Submit this Name for Review
             <v-icon>mdi-chevron-right</v-icon>
           </v-btn>
@@ -244,6 +244,7 @@ export default class NameCheck extends Vue {
   @Getter isMissingDesignation!: boolean
   @Getter isMissingDistinctive!: boolean
   @Getter isMobile!: boolean
+  @Getter getErrors!: string[]
 
   @Action getNameAnalysis!: ActionBindingIF
   @Action nameCheckClearError!: ActionBindingIF
@@ -411,6 +412,13 @@ export default class NameCheck extends Vue {
   }
   get hasIssuesConflictCaution (): boolean {
     return this.conflictsSimilar?.length > 0
+  }
+  get hasNameLengthError (): boolean {
+    if (this.getErrors.includes('length')) {
+      return false
+    } else {
+      return true
+    }
   }
   get hasIssuesStructureAlert (): boolean {
     return (
