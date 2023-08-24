@@ -447,7 +447,7 @@ export default class NameCheck extends Vue {
       return 'This name structure check helps you build a name according to the naming rules.'
     } else {
       if (!this.getIsXproFlow) {
-        return 'The Similar Name Check helps you find existing BC corporations that may be ' +
+        return 'The Similar Name Check helps you find existing BC corporations or name requests that may be ' +
                'using a similar name. The check is not exhaustive and does not guarantee name ' +
                'availability. For the best chance of having your name approved, ensure that ' +
                'your name is unique.'

@@ -31,7 +31,6 @@ import {
   CorpNumRequests,
   EntityType,
   Location,
-  XproNameType,
   NrAffiliationErrors,
   NrRequestActionCodes,
   NrState,

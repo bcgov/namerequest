@@ -261,6 +261,7 @@
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
+import Vue from 'vue'
 
 // bcregistry common
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
