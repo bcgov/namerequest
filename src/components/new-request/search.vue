@@ -401,7 +401,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   get showDesignation (): boolean {
-    if (this.isAmalgamation) return false
     if (this.getEntityTypeCd) return (Designations[this.getEntityTypeCd]?.end && !this.getIsXproFlow)
     // hide until entity type is selected and needs it
     return false
