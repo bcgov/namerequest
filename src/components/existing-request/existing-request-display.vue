@@ -40,7 +40,7 @@
 
       <transition mode="out-in" name="fade">
         <div class="nr-data">
-          <v-row class="mt-5" :key="refreshCount">
+          <v-row class="mt-6 mb-0" :key="refreshCount">
             <!-- labels and values -->
             <v-col cols="12" md="9" lg="9" class="py-0">
               <v-row dense>
@@ -151,7 +151,7 @@
             </v-col>
 
             <!-- action buttons -->
-            <v-col cols="12" md="3" lg="3" class="py-0">
+            <v-col cols="12" md="3" lg="3" class="py-0" :class="{ 'mt-6': isMobile }">
               <v-row dense>
                 <template v-for="action of actions">
                   <!-- incorporate action is a distinct button below -->
@@ -194,9 +194,12 @@
             :nrNum="nr && nr.nrNum"
             :approvedName="approvedName && approvedName.name"
             :emailAddress="nr && nr.applicants && nr.applicants.emailAddress"
+            :showIncorporateNowButton="showIncorporateButton"
             :showRegisterButton="showRegisterButton"
+            :showGoToSocietiesButton="showGoToSocietiesButton"
             :disabled="disableUnfurnished"
-            @registerYourBusiness="registerYourBusiness()"
+            @incorporateRegisterYourBusiness="incorporateRegisterYourBusiness()"
+            @goToSocietiesOnline="goToSocietiesOnline"
           />
 
           <NrNotApprovedGrayBox
@@ -204,13 +207,6 @@
             v-if="showNrNotApprovedGrayBox"
             :nrNum="nr.nrNum"
           />
-
-          <!-- incorporate button -->
-          <div class="mt-5 text-center" v-if="showIncorporateButton">
-            <v-btn id="INCORPORATE-btn" @click="handleButtonClick(NrAction.INCORPORATE)">
-              Incorporate Using This Name Request
-            </v-btn>
-          </div>
         </div>
       </transition>
     </template>
@@ -226,10 +222,10 @@ import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
-import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished, RequestCode }
-  from '@/enums'
-import { sleep, getFeatureFlag, navigate } from '@/plugins'
-import NamexServices from '@/services/namex.services'
+import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished,
+  NrRequestActionCodes, EntityType } from '@/enums'
+import { Sleep, GetFeatureFlag, Navigate } from '@/plugins'
+import NamexServices from '@/services/namex-services'
 import ContactInfo from '@/components/common/contact-info.vue'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
@@ -275,10 +271,10 @@ export default class ExistingRequestDisplay extends Mixins(
   NrState = NrState
 
   /** This is used in the template as the transition key for the affected template, triggering a fade in/out. */
-  protected refreshCount = 0
+  refreshCount = 0
 
   /** This is used in the template as the transition key for the affected template, triggering a fade in/out. */
-  protected furnished = 'notfurnished'
+  furnished = 'notfurnished'
 
   /** The pending payment, if any. See mounted(). */
   private pendingPayment = null
@@ -407,7 +403,7 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   /** The current NR object. */
-  private get nr () {
+  get nr () {
     return this.getNr
   }
 
@@ -417,16 +413,24 @@ export default class ExistingRequestDisplay extends Mixins(
    */
   get showIncorporateButton (): boolean {
     return (
-      this.isBenefitCompany(this.nr) &&
-      this.actions.includes(NrAction.INCORPORATE)
+      this.isSupportedEntity(this.nr) &&
+      this.nr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS &&
+      NrState.APPROVED === this.nr.state
     )
   }
 
   /** True if the Register button should be shown. */
   get showRegisterButton (): boolean {
     return this.isFirm(this.nr) &&
-           this.nr.request_action_cd &&
-           this.nr.request_action_cd === RequestCode.NEW &&
+           this.nr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS &&
+           (NrState.APPROVED === this.nr.state ||
+            this.isConsentUnRequired)
+  }
+
+  /** True if the Go To Societies Online button should be shown. */
+  get showGoToSocietiesButton (): boolean {
+    return this.nr?.entity_type_cd === EntityType.SO &&
+           this.nr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS &&
            (NrState.APPROVED === this.nr.state ||
             this.isConsentUnRequired)
   }
@@ -550,18 +554,18 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** Whether Upgrade Priority button should be enabled. */
   get enableUpgradeButton (): boolean {
-    return getFeatureFlag('enable-priority-checkbox')
+    return GetFeatureFlag('enable-priority-checkbox')
   }
 
   /** Returns True if the specified action button should be disabled. */
-  protected isDisabledButton (action: NrAction): boolean {
+  isDisabledButton (action: NrAction): boolean {
     if (action === NrAction.UPGRADE && !this.enableUpgradeButton) return true
     if (this.disableUnfurnished && action !== NrAction.RECEIPTS) return true
     return false
   }
 
   /** Returns tooltip (or '') for the specified action button. */
-  protected actionTooltip (action: NrAction): string {
+  actionTooltip (action: NrAction): string {
     if (action === NrAction.UPGRADE && !this.enableUpgradeButton) {
       return 'Due to the on-going labour dispute between the government and its employees, ' +
         'priority filings are temporarily disabled.'
@@ -570,12 +574,12 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   /** Returns True if the specified action should display a red button. */
-  protected isRedButton (action: NrAction): boolean {
+  isRedButton (action: NrAction): boolean {
     return [NrAction.REQUEST_REFUND, NrAction.CANCEL].includes(action)
   }
 
   /** Returns display text for the specified action button. */
-  protected actionText (action: NrAction): string {
+  actionText (action: NrAction): string {
     switch (action) {
       case NrAction.CANCEL: return 'Cancel Name Request'
       case NrAction.RENEW: return 'Renew Name Request ($30)' // FUTURE: fetch this fee
@@ -590,7 +594,7 @@ export default class ExistingRequestDisplay extends Mixins(
     }
   }
 
-  protected async handleButtonClick (action: NrAction) {
+  async handleButtonClick (action: NrAction) {
     // FUTURE: reinstate this check?
     // const confirmed = await newReqModule.confirmAction(action)
     const confirmed = true
@@ -659,7 +663,7 @@ export default class ExistingRequestDisplay extends Mixins(
         default:
           if (await NamexServices.patchNameRequestsByAction(this.getNrId, action)) {
             this.setDisplayedComponent('Success')
-            await sleep(1000)
+            await Sleep(1000)
             this.setDisplayedComponent('ExistingRequestDisplay')
           }
           break
@@ -668,7 +672,7 @@ export default class ExistingRequestDisplay extends Mixins(
     // else do nothing -- errors are handled by newReqModule
   }
 
-  protected async refresh (): Promise<void> {
+  async refresh (): Promise<void> {
     this.$root.$emit('showSpinner', true)
     this.refreshCount += 1
     try {
@@ -684,12 +688,12 @@ export default class ExistingRequestDisplay extends Mixins(
     }
   }
 
-  protected showConditionsModal () {
+  showConditionsModal () {
     this.setConditionsModalVisible(true)
   }
 
-  /** Called to register the business. */
-  protected async registerYourBusiness (): Promise<void> {
+  /** Called to incorporate/register the business. */
+  async incorporateRegisterYourBusiness (): Promise<void> {
     // safety check
     if (!this.isNrApprovedOrConditional) return
 
@@ -706,8 +710,14 @@ export default class ExistingRequestDisplay extends Mixins(
       // navigate to BC Registry login page with return parameter
       const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
       const nameRequestUrl = `${window.location.origin}`
-      navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
+      Navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
     }
+  }
+
+  // redirect to Societies Online
+  goToSocietiesOnline () {
+    const societyHomeUrl = sessionStorage.getItem('SOCIETIES_ONLINE_HOME_URL')
+    Navigate(`${societyHomeUrl}`)
   }
 
   private cancelledUpgrade (status: string, payments: any): string {
@@ -808,7 +818,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
 .nr-data .col {
   color: $text;
-  font-size: 1rem;
+  font-size: $px-16;
 
   span {
     color: $dk-text;

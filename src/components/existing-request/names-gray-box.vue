@@ -1,5 +1,5 @@
 <template>
-  <div id="names-container" class="bg-light-gray">
+  <div id="names-container" class="bg-light-gray mt-5">
     <div class="px-5 py-4 text-name">
       <v-tooltip v-for="name of names" :key="name.choice"
         transition="fade-transition" right content-class="tooltip" :disabled="isMobile"

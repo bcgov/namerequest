@@ -6,28 +6,35 @@
             hide-slider
             height="64"
             centered
-            grow>
+            grow
+    >
       <v-tab :ripple="false"
               id="new-tab"
               class="upper-border"
               :class="{ 'mt-1': tabNumber === 1 }"
-              tabindex="0">
-        <v-icon v-if="!isMobile" class="mr-2">mdi-magnify</v-icon>
-        <span :class="[tabNumber === 0 ? 'h5' : 'h5-lt', { 'mobile-font' : isMobile }]">Request a Business Name</span>
+              tabindex="0"
+      >
+        <v-icon v-if="!isMobile" class="mr-3">mdi-domain</v-icon>
+        <span :class="[tabNumber === 0 ? 'h5' : 'h5-lt', { 'mobile-font' : isMobile }]">Get a Business Name or Start a
+          Numbered Business</span>
       </v-tab>
+
       <v-tab :ripple="false"
               id="existing-tab"
               class="upper-border"
              :class="{ 'mt-1': tabNumber === 0 }"
-              tabindex="1">
-        <v-icon v-if="!isMobile" class="mr-2">mdi-file-document-edit-outline</v-icon>
+              tabindex="1"
+      >
+        <v-icon v-if="!isMobile" class="mr-3">mdi-file-document-edit-outline</v-icon>
         <span :class="[tabNumber === 1 ? 'h5' : 'h5-lt', { 'mobile-font' : isMobile }]">Manage My Name Request</span>
       </v-tab>
+
       <v-tabs-items class="rounded-b tab-items" v-model="tabNumber" touchless>
         <v-tab-item>
           <NewSearch />
           <LinkRow />
         </v-tab-item>
+
         <v-tab-item>
           <ExistingRequestSearch/>
         </v-tab-item>
@@ -80,10 +87,12 @@ export default class Tabs extends Mixins(CommonMixin) {
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
+
 .mobile-font {
-  font-size: .875rem;
+  font-size: $px-14;
   max-width: 120px;
 }
+
 #tabs-landing-comp {
   max-width: 1140px !important;
   padding: 0 !important;
@@ -92,6 +101,14 @@ export default class Tabs extends Mixins(CommonMixin) {
 #new-tab, #existing-tab {
   min-height: 64px;
   background-color: $BCgovBlue5;
+}
+
+#new-tab {
+  width: 67%;
+}
+
+#existing-tab {
+  width: 33%;
 }
 
 .upper-border {

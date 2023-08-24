@@ -9,7 +9,7 @@
                               width="2"/>
       </div>
       <v-row v-else justify="center" no-gutters>
-        <v-col v-if="!getIsXproMras" cols="auto">
+        <v-col v-if="!getIsXproFlow" cols="auto">
           <v-icon class="check-tab-icon pt-2" size="1.3rem">
             {{ tabIcon }}
           </v-icon>
@@ -28,23 +28,16 @@ import { Getter } from 'vuex-class'
 
 @Component({})
 export default class NameCheckTabContent extends Vue {
-  @Getter getIsXproMras!: boolean
+  @Getter getIsXproFlow!: boolean
 
-  @Prop({ default: true })
-  readonly loading: boolean
-
-  @Prop()
-  readonly subtitle: string
-
-  @Prop()
-  readonly tabIcon: string
-
-  @Prop()
-  readonly title: string
+  @Prop({ default: true }) readonly loading!: boolean
+  @Prop() readonly subtitle!: string
+  @Prop() readonly tabIcon!: string
+  @Prop() readonly title!: string
 
   get contentClass (): string {
     const baseClasses = 'check-tab-sub-title pt-2 pb-7'
-    if (this.getIsXproMras) return baseClasses
+    if (this.getIsXproFlow) return baseClasses
     if (this.noConflicts) return baseClasses + ' no-text-decoration pl-1'
     return baseClasses + ' pl-2'
   }
@@ -81,7 +74,7 @@ export default class NameCheckTabContent extends Vue {
 }
 .check-tab-sub-title {
   color: white;
-  font-size: 1rem !important;
+  font-size: $px-16 !important;
   font-weight: normal;
   letter-spacing: normal !important;
   margin: 0 !important;
@@ -89,7 +82,7 @@ export default class NameCheckTabContent extends Vue {
 }
 .check-tab-title {
   color: white;
-  font-size: 1.125rem !important;
+  font-size: $px-18 !important;
   font-weight: bold;
   letter-spacing: normal !important;
   margin: 0 !important;

@@ -10,7 +10,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('applicant-info-1', () => {
+describe('ApplicantInfo1 component', () => {
   it('is an empty test', () => {})
   // let wrapper
 

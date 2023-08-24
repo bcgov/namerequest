@@ -44,6 +44,12 @@
         v-html="bannerText"
       />
 
+      <!-- Breadcrumb -->
+      <Breadcrumb
+        class="namerequest-sbc-breadcrumb"
+        :breadcrumbs="breadcrumbs"
+      />
+
       <!-- Components according to route -->
       <router-view />
 
@@ -61,6 +67,11 @@
     <ExitDialog />
     <ExitIncompletePaymentDialog />
     <HelpMeChooseDialog />
+    <IncorporateNowErrorDialog
+      attach="#app"
+      :dialog="getIncorporateNowErrorStatus"
+      @close="closeIncorporateNowErrorDialog()"
+    />
     <LocationInfoDialog />
     <MrasSearchInfoDialog />
     <NrNotRequiredDialog />
@@ -87,31 +98,40 @@
 // libraries, etc
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { getFeatureFlag } from '@/plugins'
+import { GetFeatureFlag } from '@/plugins'
 import { DateMixin, LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin } from '@/mixins'
+import { Routes } from '@/enums'
+import { BreadcrumbIF } from '@/interfaces'
+import {
+  getRegistryDashboardBreadcrumb,
+  getStaffDashboardBreadcrumb
+} from '@/resources'
 import axios from 'axios'
 
 // dialogs and other components
-import { GenesysWebMessage } from '@bcrs-shared-components/genesys-web-message'
+import { Breadcrumb } from '@/components/common'
+import GenesysWebMessage from '@bcrs-shared-components/genesys-web-message/GenesysWebMessage.vue'
 import { WebChat as ChatPopup } from '@bcrs-shared-components/web-chat'
 import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
-  LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog, PaymentCompleteDialog,
-  PickEntityOrConversionDialog, PickRequestTypeDialog, RenewDialog, ReceiptsDialog, RefundDialog,
-  ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
+  IncorporateNowErrorDialog, LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog,
+  PaymentCompleteDialog, PickEntityOrConversionDialog, PickRequestTypeDialog, RenewDialog, ReceiptsDialog,
+  RefundDialog, ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
 } from '@/components/dialogs'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 
 // Interfaces / Enums
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import NamexServices from './services/namex.services'
+import NamexServices from './services/namex-services'
 import { PAYMENT_REQUIRED } from 'http-status-codes'
+import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 
 @Component({
   components: {
     ChatPopup,
     AffiliationErrorDialog,
+    Breadcrumb,
     CancelDialog,
     ConditionsDialog,
     ConfirmNrDialog,
@@ -120,6 +140,7 @@ import { PAYMENT_REQUIRED } from 'http-status-codes'
     ExitIncompletePaymentDialog,
     GenesysWebMessage,
     HelpMeChooseDialog,
+    IncorporateNowErrorDialog,
     LocationInfoDialog,
     MrasSearchInfoDialog,
     NrNotRequiredDialog,
@@ -142,6 +163,7 @@ export default class App extends Mixins(
 ) {
   // Global getters
   @Getter getDisplayedComponent!: string
+  @Getter getIncorporateNowErrorStatus!: boolean
   @Getter getNrId!: number
   @Getter isRoleStaff: boolean
   @Getter isMobile!: boolean
@@ -158,16 +180,16 @@ export default class App extends Mixins(
   readonly window = window
 
   /** Whether to show the loading spinner. */
-  protected showSpinner = false
+  showSpinner = false
 
   /** Whether the StaffPaymentErrorDialog should be displayed */
-  protected staffPaymentErrorDialog = false
+  staffPaymentErrorDialog = false
 
   /** Errors from the API */
-  protected saveErrors: Array<string> = []
+  saveErrors: Array<string> = []
 
   /** Warnings from the API */
-  protected saveWarnings: Array<string> = []
+  saveWarnings: Array<string> = []
 
   /** The Update Current JS Date timer id. */
   private updateCurrentJsDateId = 0
@@ -177,7 +199,7 @@ export default class App extends Mixins(
   }
 
   get bannerText (): string | null {
-    const bannerText: string = getFeatureFlag('banner-text')
+    const bannerText: string = GetFeatureFlag('banner-text')
     // remove spaces so that " " becomes falsy
     return bannerText?.trim()
   }
@@ -185,6 +207,27 @@ export default class App extends Mixins(
   /** The About text. */
   get aboutText (): string {
     return process.env.ABOUT_TEXT
+  }
+
+  /** The route breadcrumbs list. */
+  get breadcrumbs (): Array<BreadcrumbIF> {
+    const crumbs: Array<BreadcrumbIF> = [
+      {
+        text: 'Name Request',
+        to: { name: Routes.REQUEST }
+      }
+    ]
+
+    // Set base crumbs based on user role
+    // Staff don't want the home landing page and they can't access the Manage Business Dashboard
+    if (this.isRoleStaff) {
+      // If staff, set StaffDashboard as home crumb
+      crumbs.unshift(getStaffDashboardBreadcrumb())
+    } else {
+      // For non-staff, set Home crumb
+      crumbs.unshift(getRegistryDashboardBreadcrumb())
+    }
+    return crumbs
   }
 
   async created (): Promise<void> {
@@ -212,6 +255,19 @@ export default class App extends Mixins(
       await this.createAffiliation(nr)
       // clear NR data for next time
       sessionStorage.removeItem('NR_DATA')
+    }
+
+    // if there is stored legal type for an IA then incorporate it now
+    const legaltype = sessionStorage.getItem('LEGAL_TYPE')
+    if (legaltype) {
+      try {
+        await this.incorporateNow(legaltype as CorpTypeCd)
+        // clear the legal type data
+        sessionStorage.removeItem('LEGAL_TYPE')
+      } catch (error) {
+        this.setIncorporateNowErrorStatus(true)
+        console.error(error)
+      }
     }
 
     // listen for save error events
@@ -268,18 +324,25 @@ export default class App extends Mixins(
 
   /** Whether the old webchat should be enabled. */
   get enableOldWebchat (): boolean {
-    return !!getFeatureFlag('enable-web-chat')
+    return !!GetFeatureFlag('enable-web-chat')
   }
 
   /** Whether the Genesys web message should be enabled. */
   get enableGenesysWebMessage (): boolean {
-    return !!getFeatureFlag('enable-genesys-web-message')
+    return !!GetFeatureFlag('enable-genesys-web-message')
+  }
+
+  /** Close IncorporateNowErrorDialog and clear session storage. */
+  closeIncorporateNowErrorDialog (): void {
+    sessionStorage.removeItem('LEGAL_TYPE')
+    this.setIncorporateNowErrorStatus(false)
   }
 }
 </script>
 
 <style lang="scss">
 @import '@/assets/styles/theme.scss';
+
 #main-column {
   display: flex;
   flex-flow: column nowrap;
@@ -293,7 +356,19 @@ export default class App extends Mixins(
     text-transform: none !important;
     font-weight: normal !important;
     letter-spacing: normal !important;
-    font-size: .875rem !important;
+    font-size: $px-14 !important;
+  }
+}
+
+.namerequest-sbc-breadcrumb {
+  .v-btn {
+    width: 28px;
+    height: 28px !important;
+    background-color: white !important;
+  }
+
+  .container {
+    max-width: 1360px; // should match auth-web, etc
   }
 }
 

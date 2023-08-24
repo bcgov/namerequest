@@ -12,7 +12,7 @@ localVue.use(Vuetify)
    analyze approvals and conditional approvals */
 
 async function provideWrapper (setup) {
-  let wrapper = mount(ReserveSubmit, {
+  const wrapper = mount(ReserveSubmit, {
     localVue,
     vuetify,
     propsData: {
@@ -23,9 +23,10 @@ async function provideWrapper (setup) {
   await wrapper.vm.$nextTick()
   return wrapper
 }
-let sandbox = sinon.createSandbox()
 
-describe('reserve-submit', () => {
+const sandbox = sinon.createSandbox()
+
+describe('ReserveSubmit component', () => {
   it('is an empty test', () => {})
   // describe('Case: it handles the NORMAL route (!setup) properly', () => {
   //   sandbox.spy(newReqModule, 'postNameRequest')

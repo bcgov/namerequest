@@ -4,7 +4,7 @@
                :key="option.type + '-' + i  + '-container-'">
     <v-row no-gutters class="ma-0 pa-0">
       <v-col cols="12">
-        <span class="title-bold-14" v-if="this.issue.setup.length > 1">Option {{ i + 1 }}:</span>
+        <span class="title-bold-14" v-if="issue.setup.length > 1">Option {{ i + 1 }}:</span>
         <span class="ml-1 title-bold-16">{{ option.header }}</span>
       </v-col>
       <template v-if="issueType === 'user_cancelled'">
@@ -23,7 +23,7 @@
       </template>
       <template v-else>
         <transition :name="i === 0 ? 'fade' : '' " mode="out-in">
-          <v-row :key="changesInBaseName+designationIsFixed+'key'+i"
+          <v-row :key="`${changesInBaseName}-${designationIsFixed}-key-${i}`"
                  align-content="start"
                  class="copy-small colour-p-blue-text">
             <!-- Header, Line 1 and Line 2-->
@@ -138,13 +138,12 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-
 import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
-
 import { AnalysisJSONI, OptionI } from '@/interfaces'
 import { replaceWord } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { EntityType } from '@/enums'
+import { AllDesignationsList, Designations } from '@/list-data'
 
 @Component({
   components: { ReserveSubmit }
@@ -184,9 +183,9 @@ export default class GreyBox extends Vue {
   @Action setRequestExaminationOrProvideConsent!: ActionBindingIF
   @Action setShowActualInput!: ActionBindingIF
 
-  clickedDesignation: string = ''
-  originalNameBase: string = ''
-  showError: boolean = false
+  clickedDesignation = ''
+  originalNameBase = ''
+  showError = false
   showLastStepButtons = {
     assumed_name: false,
     conflict_self_consent: false,
@@ -213,7 +212,7 @@ export default class GreyBox extends Vue {
       this.originalNameBase = originalName
       return
     }
-    for (let word of this.$allDesignationsList) {
+    for (let word of AllDesignationsList) {
       originalName = replaceWord(originalName, word)
     }
     this.originalNameBase = originalName
@@ -501,7 +500,7 @@ export default class GreyBox extends Vue {
   }
 
   extractInnerDesignation (name, designation = null) {
-    let { words } = this.$designations[this.entity_type_cd]
+    let { words } = Designations[this.entity_type_cd]
     if (!designation) {
       for (let word of words) {
         name = replaceWord(name, word)
@@ -544,7 +543,7 @@ export default class GreyBox extends Vue {
   }
 
   stripAllDesignations (name) {
-    for (let word of this.$allDesignationsList) {
+    for (let word of AllDesignationsList) {
       name = replaceWord(name, word)
     }
     return name

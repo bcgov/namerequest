@@ -1,27 +1,39 @@
-import { mount, createLocalVue } from '@vue/test-utils'
-import Vuetify from 'vuetify'
-import { PickRequestTypeDialog } from '@/components/dialogs'
+import Vue from 'vue'
+import { shallowMount } from '@vue/test-utils'
+import { getVuetify } from '@/plugins'
+import { getVuexStore } from '@/store'
+import PickRequestTypeDialog from '@/components/dialogs/pick-request-type.vue'
 // import newReqModule from '@/store/new-request-module'
+
+const vuetify = getVuetify()
+const store = getVuexStore()
 
 // Prevent the warning "[Vuetify] Unable to locate target [data-app]"
 document.body.setAttribute('data-app', 'true')
 
-const localVue = createLocalVue()
-const vuetify = new Vuetify()
+describe('PickRequestTypeDialog', () => {
+  it('renders the dialog when showModal is true', () => {
+    const wrapper = shallowMount(PickRequestTypeDialog, {
+      vuetify,
+      store,
+      computed: { showModal: () => true }
+    })
 
-localVue.use(Vuetify)
+    // verify dialog and title
+    expect(wrapper.isVisible()).toBe(true)
+    expect(wrapper.find('h4').text()).toBe('What would you like to do?')
+    expect(wrapper.find('v-icon-stub').text()).toBe('mdi-close')
 
-describe('pick-request-type-modal', (): void => {
-  it('is an empty test', () => {})
-  // let wrapper: any
+    // verify list items
+    const texts = ['Start', 'Register', 'End', 'Change', 'Combine', 'Alter', 'Reactivate']
+    const items = wrapper.findAll('.clickable-cell')
+    expect(items.length).toBe(7)
+    for (let i = 0; i < items.length; i++) {
+      expect(items.at(i).text()).toContain(texts[i])
+    }
 
-  // beforeEach(() => {
-  //   wrapper = mount(PickRequestTypeDialog, { localVue, vuetify })
-  // })
-
-  // afterEach(() => {
-  //   wrapper.destroy()
-  // })
+    wrapper.destroy()
+  })
 
   // it('When the modal visibility state key is set to false, the components internal getter is false', () => {
   //   newReqModule.store.state.newRequestModule.pickRequestTypeModalVisible = false

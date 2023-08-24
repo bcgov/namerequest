@@ -8,16 +8,16 @@ import {
   NameCheckAnalysisType,
   NameCheckConflictType,
   NameCheckErrorType,
+  XproNameType,
   NrAffiliationErrors,
+  NrRequestActionCodes,
   NrState,
-  NrType,
-  RequestCode
+  NrType
 } from '@/enums'
 import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
-import { sanitizeName } from '@/plugins/utilities'
 import removeAccents from 'remove-accents'
-import { getFeatureFlag, sleep } from '@/plugins'
-import NamexServices from '@/services/namex.services'
+import { GetFeatureFlag, Sleep, sanitizeName } from '@/plugins'
+import NamexServices from '@/services/namex-services'
 import { MRAS_MIN_LENGTH, MRAS_MAX_LENGTH } from '@/components/new-request/constants'
 
 // List Data
@@ -26,6 +26,7 @@ import { appBaseURL } from '../router/router'
 
 // Interfaces
 import {
+  BusinessLookupResultIF,
   CleanedNameIF,
   ConversionTypesI,
   NameRequestI,
@@ -257,11 +258,13 @@ const commitExistingData = ({ commit, getters }) => {
     commit('mutateEntityTypeAddToSelect', obj)
   }
   let { requestTypeCd, request_action_cd } = getters.getNr
-  if (['AS', 'AL', 'XASO', 'XCASO', 'UA'].includes(requestTypeCd)) {
-    request_action_cd = RequestCode.ASSUMED
+  if (
+    [XproNameType.AS, XproNameType.AL, XproNameType.XASO, XproNameType.XCASO, XproNameType.UA].includes(requestTypeCd)
+  ) {
+    request_action_cd = NrRequestActionCodes.ASSUMED
   }
   commit('mutateRequestAction', request_action_cd)
-  if (request_action_cd !== RequestCode.NEW) {
+  if (request_action_cd !== NrRequestActionCodes.NEW_BUSINESS) {
     let reqObj = RequestActions.find(type => type.value === request_action_cd)
     commit('mutateExtendedRequestType', reqObj)
   }
@@ -294,12 +297,14 @@ export const setAddressSuggestions: ActionIF = ({ commit }, addressSuggestions: 
 
 // FUTURE: not an action - move it to another module?
 export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> => {
-  if (getters.getShowCorpNum) {
-    if (getters.getShowCorpNum === CorpNumRequests.MRAS) {
-      return checkMRAS({ getters }, corpNum)
-    } else {
-      return checkCOLIN({ getters }, corpNum)
-    }
+  // NB: MRAS search was done on first page
+  // if (getters.getShowCorpNum === CorpNumRequests.MRAS) {
+  //   return checkMRAS({ getters }, corpNum)
+  // }
+
+  // *** FUTURE: COLIN search (business lookup) should have been done on first page
+  if (getters.getShowCorpNum === CorpNumRequests.COLIN) {
+    return checkCOLIN({ getters }, corpNum)
   }
 }
 
@@ -345,7 +350,8 @@ export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
         return response.data
       }
       throw new Error(`Status was not 200, response = ${response}`)
-    } catch (err) {
+    } catch (error) {
+      const err = error as any
       const status: number = err?.response?.status
       // do not generate console error for the errors codes
       // that mras-search-info page handles
@@ -436,7 +442,7 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
 
         // show success page briefly
         commit('mutateDisplayedComponent', 'Success')
-        await sleep(1000)
+        await Sleep(1000)
 
         // reload NR and show existing NR component
         const nrData = await NamexServices.getNameRequest(true)
@@ -563,8 +569,8 @@ export const setConversionType: ActionIF = ({ commit }, conversionType: string):
   commit('mutateConversionType', conversionType)
 }
 
-export const setJurisdiction: ActionIF = ({ commit }, jurisdictionCd: string): void => {
-  commit('mutateJurisdiction', jurisdictionCd)
+export const setJurisdictionCd: ActionIF = ({ commit }, jurisdictionCd: string): void => {
+  commit('mutateJurisdictionCd', jurisdictionCd)
 }
 
 export const setIsPersonsName: ActionIF = ({ commit }, isPersonsName: boolean): void => {
@@ -583,7 +589,7 @@ export const setExtendedRequestType: ActionIF = ({ commit }, extendedRequestType
   commit('mutateExtendedRequestType', extendedRequestType)
 }
 
-export const setRequestAction: ActionIF = ({ commit }, requestAction: RequestCode): void => {
+export const setRequestAction: ActionIF = ({ commit }, requestAction: NrRequestActionCodes): void => {
   commit('mutateRequestAction', requestAction)
 }
 
@@ -1044,19 +1050,27 @@ export const startEditName: ActionIF = ({ commit, getters }) => {
 export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
   resetAnalyzeName({ commit, getters })
   setUserCancelledAnalysis({ commit, getters }, false)
-  /* validation */
+
+  // check basic state values
   if (!getters.getRequestActionCd) commit('setErrors', 'request_action_cd')
   if (!getters.getLocation) commit('setErrors', 'location')
   if (!getters.getEntityTypeCd) commit('setErrors', 'entity_type_cd')
-  // if designation selection is required
-  if (!getters.getIsXproMras && Designations[getters.getEntityTypeCd]?.end) {
+
+  // check if designation selection is required and present
+  if (!getters.getIsXproFlow && Designations[getters.getEntityTypeCd]?.end) {
     if (!getters.getDesignation) commit('setErrors', 'designation')
   }
-  if ([Location.CA, Location.IN].includes(getters.getLocation) &&
-    ![RequestCode.MVE].includes(getters.getRequestActionCd) && !getters.getJurisdictionCd) {
+
+  // check if jurisdiction selection is required and present
+  if (
+    [Location.CA, Location.IN].includes(getters.getLocation) &&
+    ![NrRequestActionCodes.MOVE].includes(getters.getRequestActionCd) &&
+    !getters.getJurisdictionCd
+  ) {
     commit('setErrors', 'jurisdiction')
     return
   }
+
   if (!getters.getCorpSearch) {
     if (!getters.getName) {
       commit('setErrors', 'name')
@@ -1074,11 +1088,13 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
   if (getters.getErrors.length > 0) {
     return
   }
+
   // prep name for analysis
   let name = removeAccents(getters.getName)
   name = name.toUpperCase()
+
   // auto fix LTD/INC/CORP designations without a period unless xpro
-  if (!getters.getIsXproMras) {
+  if (!getters.getIsXproFlow) {
     name = name.replace(/^LTD$/g, 'LTD.')
       .replace(/^LTD\s/g, 'LTD. ')
       .replace(/\sLTD\s/g, ' LTD. ')
@@ -1096,11 +1112,13 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
   const designation = getters.getDesignation
   commit('mutateFullName', `${name} ${designation}`)
   commit('mutateNameOriginal', name) // Set original name for reset baseline
-  /* xpro get name call */
-  if (getters.getIsXproMras) {
-    commit('mutateNRData', { key: 'xproJurisdiction', value: getters.getJurisdictionText })
-    commit('mutateNRData', { key: 'homeJurisNum', value: getters.getCorpSearch })
-    if (!getters.getHasNoCorpNum) {
+
+  // xpro get name call
+  if (getters.getIsXproFlow && !getters.getHasNoCorpNum) {
+    commit('mutateXproJurisdiction', getters.getJurisdictionText)
+    commit('mutateHomeJurisNum', getters.getCorpSearch)
+    // only make MRAS call for MRAS jurisdictions and if we have a corp num
+    if (getters.isMrasJurisdiction && !getters.getHasNoCorpNum) {
       const profile: any = await fetchMRASProfile({ commit, getters })
       if (profile) {
         const hasMultipleNames = profile?.LegalEntity?.names && profile?.LegalEntity?.names.constructor === Array
@@ -1114,7 +1132,8 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
       }
     }
   }
-  /* name check */
+
+  // name check
   if (getters.getDoNameCheck) {
     commit('mutateAnalyzeDesignationPending', true)
     commit('mutateAnalyzeStructurePending', true)
@@ -1123,7 +1142,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
     // similar name check / conditional + restricted word check
     startQuickSearch({ commit, getters }, { exact: true, similar: true, restricted: true })
     // we don't do a structure name check for xpro names
-    if (getters.getIsXproMras) {
+    if (getters.getIsXproFlow) {
       commit('mutateAnalyzeDesignationPending', false)
       commit('mutateAnalyzeStructurePending', false)
     } else {
@@ -1132,7 +1151,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
         { commit, getters },
         { xpro: false, designationOnly: true })
       // descriptive/distinctive check - if disabled in LD then ignore
-      if (getFeatureFlag('disable-analysis')) {
+      if (GetFeatureFlag('disable-analysis')) {
         commit('mutateAnalyzeStructurePending', false)
       } else {
         getNameAnalysis(
@@ -1227,4 +1246,12 @@ export const startQuickSearch = async ({ commit, getters }, checks: QuickSearchP
 
 export const setRefundParams: ActionIF = ({ commit }, refundParams: RefundParamsIF): void => {
   commit('mutateRefundParams', refundParams)
+}
+
+export const setIncorporateNowErrorStatus: ActionIF = ({ commit }, incorporateNowError: boolean): void => {
+  commit('mutateIncorporateNowErrorStatus', incorporateNowError)
+}
+
+export const setBusinessLookup: ActionIF = ({ commit }, businessLookupResult: BusinessLookupResultIF): void => {
+  commit('mutateBusinessLookup', businessLookupResult)
 }

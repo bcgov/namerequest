@@ -8,7 +8,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('new-search', () => {
+describe('NewSearch component', () => {
   it('is an empty test', () => {})
   // let wrapper: any
 

@@ -8,7 +8,7 @@ const localVue = createLocalVue()
 const vuetify = new Vuetify()
 localVue.use(Vuetify)
 
-describe('applicant-info-2', () => {
+describe('ApplicantInfo2 component', () => {
   it('is an empty test', () => {})
   // let wrapper: any
 
@@ -23,7 +23,7 @@ describe('applicant-info-2', () => {
   // it('checks the corpNum against the appropriate database given the setup: BC location', async () => {
   //   const mrasActions = []
   //   function setStore (jurisdiction, action) {
-  //     module.mutateNRData({ key: 'xproJurisdiction', value: 'Alberta' })
+  //     module.mutateXproJurisdiction('Alberta')
   //   }
   // })
 })

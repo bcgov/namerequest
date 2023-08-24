@@ -1,5 +1,7 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { EntityType, PriorityCode, RequestCode } from '@/enums'
+import { EntityType, PriorityCode, NrRequestActionCodes } from '@/enums'
+import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
+import { GetFeatureFlag } from '@/plugins'
 
 @Component({})
 export class CommonMixin extends Vue {
@@ -18,23 +20,25 @@ export class CommonMixin extends Vue {
   }
 
   /** Returns entity type text for the the specified code. */
+  // FUTURE: use GetCorpFullDescription() instead
   entityTypeCdToText (cd: EntityType): string {
     switch (cd) {
       // BC Entity Types:
-      case EntityType.FR: return 'BC Sole Proprietorship'
-      case EntityType.DBA: return 'BC "Doing Business As" name (DBA)'
-      case EntityType.CR: return 'BC Limited Company'
-      case EntityType.UL: return 'BC Unlimited Liability Company'
-      case EntityType.GP: return 'BC General Partnership'
-      case EntityType.LP: return 'BC Limited Partnership'
-      case EntityType.LL: return 'BC Limited Liability Partnership'
-      case EntityType.CP: return 'BC Cooperative Association'
       case EntityType.BC: return 'BC Benefit Company'
       case EntityType.CC: return 'BC Community Contribution Company'
-      case EntityType.SO: return 'BC Social Enterprise'
-      case EntityType.PA: return 'BC Private Act'
+      case EntityType.CP: return 'BC Cooperative Association'
+      case EntityType.CR: return 'BC Limited Company'
+      case EntityType.DBA: return 'BC "Doing Business As" name (DBA)'
       case EntityType.FI: return 'BC Credit Union'
+      case EntityType.FR: return 'BC Sole Proprietorship'
+      case EntityType.GP: return 'BC General Partnership'
+      case EntityType.LL: return 'BC Limited Liability Partnership'
+      case EntityType.LP: return 'BC Limited Partnership'
+      case EntityType.PA: return 'BC Private Act'
       case EntityType.PAR: return 'BC Parish'
+      case EntityType.SO: return 'BC Social Enterprise'
+      case EntityType.SP: return 'BC Sole Proprietorship'
+      case EntityType.UL: return 'BC Unlimited Liability Company'
 
       // XPRO Entity Types:
       case EntityType.XCR: return 'Extraprovincial Limited Company'
@@ -45,7 +49,22 @@ export class CommonMixin extends Vue {
       case EntityType.XCP: return 'Extraprovincial Cooperative Association'
       case EntityType.XSO: return 'Extraprovincial Social Enterprise'
 
-      default: return cd
+      default: return (cd as unknown as string)
+    }
+  }
+
+  /**
+   * The alternate codes for entity types.
+   * Alternate codes are used in Entities UIs.
+   */
+  entityTypeAlternateCode (entityType: EntityType): CorpTypeCd {
+    switch (entityType) {
+      case EntityType.BC: return CorpTypeCd.BENEFIT_COMPANY
+      case EntityType.CC: return CorpTypeCd.BC_CCC
+      case EntityType.CR: return CorpTypeCd.BC_COMPANY
+      case EntityType.UL: return CorpTypeCd.BC_ULC_COMPANY
+      case EntityType.CP: return CorpTypeCd.COOP
+      default: return null
     }
   }
 
@@ -53,18 +72,18 @@ export class CommonMixin extends Vue {
    * Returns request action text for the the specified code.
    * See namex -> api/namex/resources/name_requests/report_resource.py::_get_request_action_cd_description()
    */
-  requestActionCdToText (cd: RequestCode): string {
+  requestActionCdToText (cd: NrRequestActionCodes): string {
     switch (cd) {
-      case RequestCode.NEW: return 'New Business'
-      case RequestCode.MVE: return 'Continuation In'
-      case RequestCode.REH: return 'Restoration or Reinstatement'
-      case RequestCode.AML: return 'Amalgamation'
-      case RequestCode.CHG: return 'Name Change'
-      case RequestCode.CNV: return 'Alteration'
-      case RequestCode.DBA: return 'Doing Business As'
-      case RequestCode.ASSUMED: return 'Assumed Named'
-      case RequestCode.REN: return 'Restoration or Reinstatement'
-      case RequestCode.REST: return 'Restoration or Reinstatement'
+      case NrRequestActionCodes.NEW_BUSINESS: return 'New Business'
+      case NrRequestActionCodes.MOVE: return 'Continuation In'
+      case NrRequestActionCodes.RESTORE: return 'Restoration or Reinstatement'
+      case NrRequestActionCodes.AMALGAMATE: return 'Amalgamation'
+      case NrRequestActionCodes.CHANGE_NAME: return 'Name Change'
+      case NrRequestActionCodes.CONVERSION: return 'Alteration'
+      case NrRequestActionCodes.DBA: return 'Doing Business As'
+      case NrRequestActionCodes.ASSUMED: return 'Assumed Named'
+      case NrRequestActionCodes.RENEW: return 'Restoration or Reinstatement'
+      case NrRequestActionCodes.RESTORATION: return 'Restoration or Reinstatement'
       // the following may be returned by the namex API:
       case 'NRO-NEWAML' as any: return 'Amalgamation'
       case 'NRO-REST' as any: return 'Restoration or Reinstatement'
@@ -78,15 +97,22 @@ export class CommonMixin extends Vue {
     return (nr?.priorityCd === PriorityCode.YES)
   }
 
-  /** Returns true if the specified NR is for a Benefit Company. */
-  isBenefitCompany (nr: any): boolean {
-    return (nr?.entity_type_cd === EntityType.BC)
+  /** Returns true if the specified NR is for a supported Incorporation Entity Type (FF). */
+  isSupportedEntity (nr: any): boolean {
+    const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
+    return supportedEntites.includes(nr?.entity_type_cd)
+  }
+
+  /** in case Societies NR needs to be released AFTER the way of navigating changes (feature branch) */
+  isSocietyEnabled (): boolean {
+    return GetFeatureFlag('enable-society')
   }
 
   /** Returns true if the specified NR is for a firm (SP/GP). */
   isFirm (nr: any): boolean {
     return (
       nr?.legalType === EntityType.SP ||
+      nr?.legalType === EntityType.DBA ||
       nr?.legalType === EntityType.GP)
   }
 

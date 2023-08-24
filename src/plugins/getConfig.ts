@@ -17,6 +17,9 @@ export async function getConfig (): Promise<EnvConfigI> {
   const businessesUrl = process.env.VUE_APP_BUSINESSES_URL
   sessionStorage.setItem('BUSINESSES_URL', businessesUrl)
 
+  const corporateOnlineUrl = process.env.VUE_APP_CORPORATE_ONLINE_URL
+  sessionStorage.setItem('CORPORATE_ONLINE_URL', corporateOnlineUrl)
+
   const dashboardUrl = process.env.VUE_APP_DASHBOARD_URL
   sessionStorage.setItem('DASHBOARD_URL', dashboardUrl)
 
@@ -32,6 +35,9 @@ export async function getConfig (): Promise<EnvConfigI> {
   const registryHomeUrl: string = process.env.VUE_APP_REGISTRY_HOME_URL
   sessionStorage.setItem('REGISTRY_HOME_URL', registryHomeUrl)
 
+  const societiesOnlineHomeUrl: string = process.env.VUE_APP_SOCIETIES_ONLINE_HOME_URL
+  sessionStorage.setItem('SOCIETIES_ONLINE_HOME_URL', societiesOnlineHomeUrl)
+
   // for system alert banner (sbc-common-components)
   const statusApiUrl: string = process.env.VUE_APP_STATUS_API_URL + process.env.VUE_APP_STATUS_API_VERSION
   sessionStorage.setItem('STATUS_API_URL', statusApiUrl)
@@ -39,6 +45,13 @@ export async function getConfig (): Promise<EnvConfigI> {
   // for sbc header (sbc-common-components)
   const authWebUrl: string = process.env.VUE_APP_AUTH_WEB_URL
   sessionStorage.setItem('AUTH_WEB_URL', authWebUrl)
+
+  const registriesSearchApiUrl: string =
+    (process.env.VUE_APP_REGISTRIES_SEARCH_API_URL + process.env.VUE_APP_REGISTRIES_SEARCH_API_VERSION + '/')
+  sessionStorage.setItem('REGISTRIES_SEARCH_API_URL', registriesSearchApiUrl)
+
+  const businessApiKey: string = process.env.VUE_APP_REGISTRIES_SEARCH_API_KEY
+  sessionStorage.setItem('BUSINESS_API_KEY', businessApiKey)
 
   const sentryDsn: string = process.env.VUE_APP_SENTRY_DSN;
   (<any>window).sentryDsn = sentryDsn

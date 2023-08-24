@@ -135,7 +135,7 @@
 
 <script lang='ts'>
 import { Component, Emit, Prop, Watch, Vue } from 'vue-property-decorator'
-import NamexServices from '@/services/namex.services'
+import NamexServices from '@/services/namex-services'
 import { Getter } from 'vuex-class'
 import { AdvancedSearchForm, AdvancedSearchRetrieve, AdvancedSearchTable } from '@/components/advanced-search'
 
@@ -325,7 +325,7 @@ export default class AdvancedSearch extends Vue {
 }
 
 ::v-deep .v-btn:not(.dialog-close) .v-icon.v-icon {
-  font-size: 1.25rem !important;
+  font-size: $px-20 !important;
 }
 
 ::v-deep .v-btn__content {

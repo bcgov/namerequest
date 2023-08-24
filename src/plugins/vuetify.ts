@@ -7,7 +7,7 @@ import Vuetify from 'vuetify/lib'
 export function getVuetify () {
   Vue.use(Vuetify)
 
-  const vuetify = new Vuetify({
+  return new Vuetify({
     iconfont: 'mdi',
     theme: {
       options: {
@@ -27,6 +27,4 @@ export function getVuetify () {
       }
     }
   })
-
-  return vuetify
 }

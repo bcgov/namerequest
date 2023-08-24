@@ -1,30 +1,23 @@
 import Vue from 'vue'
 import { shallowMount } from '@vue/test-utils'
-// import { getVuexStore } from '@/store'
-import { Store } from 'vuex'
-import ContactInfo from '@/components/common/contact-info.vue'
-import { DateMixin } from '@/mixins'
-
-// the "non-actions" in actions.ts cause "TypeError: Cannot read property 'default' of undefined"
-// so this is commented out for now -- FUTURE: restore this when actions.ts is cleaned up
-const store = new Store({ state: {} as any }) // getVuexStore()
+import MixinTester from '../mixin-tester.vue'
 
 describe('Date Mixin', () => {
   let vm: any
 
   beforeAll(async () => {
     // mount the component and wait for everything to stabilize
-    // (this can be any component since we are not really using it)
-    const wrapper = shallowMount(ContactInfo, { store, mixins: [DateMixin] })
+    const wrapper = shallowMount(MixinTester, {
+      computed: {
+        getCurrentJsDate: () => new Date('2021-01-20')
+      }
+    })
     vm = wrapper.vm
     await Vue.nextTick()
   })
 
   // FUTURE: this works locally but not in GHA; fix later
   xit('returns correct values for createUtcDate()', () => {
-    // init store
-    store.state.stateModel.currentJsDate = new Date()
-
     expect(vm.createUtcDate(2021, 0, 1, 0, 0).toISOString()).toBe('2021-01-01T08:00:00.000Z')
     expect(vm.createUtcDate(2021, 6, 1, 0, 0).toISOString()).toBe('2021-07-01T07:00:00.000Z')
   })
@@ -104,10 +97,8 @@ describe('Date Mixin', () => {
       .toBe('July 1, 2021 at 12:00 am Pacific time')
   })
 
+  // FUTURE: this works locally but not in GHA; fix later
   xit('returns correct values for daysFromToday()', () => {
-    // init store
-    store.state.stateModel.tombstone.currentJsDate = new Date('2021-01-20')
-
     expect(vm.daysFromToday(null)).toBeNaN()
     expect(vm.dateToPacificDateTime(new Date('not a date'))).toBeNaN()
     expect(vm.daysFromToday(new Date('2021-01-19'))).toBe(-1) // yesterday

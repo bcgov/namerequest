@@ -12,7 +12,7 @@ import {
   StatsI
 } from '@/interfaces'
 import { RequestActions } from '@/list-data'
-import { NrAction, NrState, RequestCode, RollbackActions } from '@/enums'
+import { NrAction, NrState, NrRequestActionCodes, RollbackActions } from '@/enums'
 import { NameRequestPayment } from '@/modules/payment/models'
 import { appBaseURL } from '../router/router'
 
@@ -39,7 +39,7 @@ export default class NamexServices {
   static axios = axiosNamex
 
   static async addRequestActionComment (
-    requestActionCd: RequestCode,
+    requestActionCd: NrRequestActionCodes,
     data: NameRequestI
   ): Promise<NameRequestI> {
     try {
@@ -324,7 +324,7 @@ export default class NamexServices {
   static async searchNameRequests (
     params: AdvancedSearchI,
     handleError: boolean,
-    isCountCheck: boolean = false
+    isCountCheck = false
   ): Promise<AdvancedSearchResultsI> {
     try {
       const token = sessionStorage.getItem('KEYCLOAK_TOKEN')
@@ -401,7 +401,7 @@ export default class NamexServices {
     throw new Error(`Invalid response = ${response}`)
   }
 
-  static async patchNameRequests (nrId: number, requestActionCd: RequestCode, nr: NameRequestI): Promise<any> {
+  static async patchNameRequests (nrId: number, requestActionCd: NrRequestActionCodes, nr: NameRequestI): Promise<any> {
     try {
       // const nr = getters.getEditNameReservation
       const requestData: any = nr && await this.addRequestActionComment(requestActionCd, nr)
@@ -448,7 +448,7 @@ export default class NamexServices {
   }
 
   static async postNameRequest (
-    requestActionCd: RequestCode,
+    requestActionCd: NrRequestActionCodes,
     data: NameRequestI
   ): Promise<NameRequestI> {
     try {
@@ -474,7 +474,8 @@ export default class NamexServices {
         return response.data
       }
       throw new Error(`Invalid response = ${response}`)
-    } catch (err) {
+    } catch (error) {
+      const err = error as any
       // extra logging to help find errors
       err?.message && console.log('postNameRequest(), message =', err.message) // eslint-disable-line no-console
       err?.request && console.log('postNameRequest(), request =', err.request) // eslint-disable-line no-console
@@ -488,7 +489,7 @@ export default class NamexServices {
 
   static async putNameReservation (
     nrId: number,
-    requestActionCd: RequestCode,
+    requestActionCd: NrRequestActionCodes,
     data: NameRequestI
   ): Promise<NameRequestI> {
     try {

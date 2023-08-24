@@ -1,5 +1,6 @@
 export * from './account-type'
 export * from './advanced-search-tabs'
+export * from './company-type'
 export * from './corp-num-requests'
 export * from './entity-type'
 export * from './furnished'
@@ -19,10 +20,16 @@ export * from './payment-action'
 export * from './payment-method'
 export * from './payment-status'
 export * from './priority-code'
-export * from './request-code'
 export * from './routes'
 export * from './rollback-actions'
 export * from './sbc-payment-status'
+export * from './xpro-name-type'
 
 // external enums
-export { StaffPaymentOptions } from '@bcrs-shared-components/enums'
+export {
+  CorpTypeCd,
+  EntityStates,
+  NrRequestActionCodes,
+  NrRequestTypeCodes,
+  StaffPaymentOptions
+} from '@bcrs-shared-components/enums'

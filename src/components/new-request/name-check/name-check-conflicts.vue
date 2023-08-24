@@ -271,7 +271,7 @@ export default class NameCheckConflicts extends Vue {
 }
 .expand-label {
   color: $app-blue;
-  font-size: 0.875rem;
+  font-size: $px-14;
   padding-top: 7px;
 }
 .ignore-btn {
@@ -279,7 +279,7 @@ export default class NameCheckConflicts extends Vue {
 }
 .name-check-info-text {
   color: $gray7;
-  font-size: 0.875rem;
+  font-size: $px-14;
   line-height: 1.375rem;
 }
 .no-hover:hover {
@@ -290,7 +290,7 @@ export default class NameCheckConflicts extends Vue {
 }
 .table-text {
   color: $gray7;
-  font-size: 1rem;
+  font-size: $px-16;
   line-height: 1.5rem;
 }
 .v-btn.tips-btn {

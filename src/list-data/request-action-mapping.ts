@@ -1,4 +1,4 @@
-import { EntityType, RequestCode } from '@/enums'
+import { EntityType, NrRequestActionCodes } from '@/enums'
 import { RequestActionMappingI, MappingI } from '@/interfaces'
 
 const entityTypesBC = [
@@ -26,7 +26,8 @@ export const BcMapping: RequestActionMappingI = {
     EntityType.UL,
     EntityType.CC,
     EntityType.CP,
-    EntityType.BC
+    EntityType.BC,
+    EntityType.SO
   ],
   REN: [
     EntityType.CR,
@@ -34,7 +35,8 @@ export const BcMapping: RequestActionMappingI = {
     EntityType.CC,
     EntityType.UL,
     EntityType.FI,
-    EntityType.BC
+    EntityType.BC,
+    EntityType.SO
   ],
   REH: [
     EntityType.CR,
@@ -42,7 +44,8 @@ export const BcMapping: RequestActionMappingI = {
     EntityType.CC,
     EntityType.UL,
     EntityType.FI,
-    EntityType.BC
+    EntityType.BC,
+    EntityType.SO
   ],
   CHG: entityTypesBC.filter(ent => ent !== EntityType.PAR && ent !== EntityType.PA),
   MVE: [
@@ -69,18 +72,14 @@ export const XproMapping: MappingI = {
     EntityType.XCR,
     EntityType.XCP,
     EntityType.RLC
-  ],
-  AML: [
-    EntityType.XCR,
-    EntityType.XCP
   ]
 }
 
 export const ColinRequestActions = [
-  RequestCode.AML,
-  RequestCode.CHG,
-  RequestCode.CNV,
-  RequestCode.REH
+  NrRequestActionCodes.AMALGAMATE,
+  NrRequestActionCodes.CHANGE_NAME,
+  NrRequestActionCodes.CONVERSION,
+  NrRequestActionCodes.RESTORE
 ]
 
 export const ColinRequestTypes = [
@@ -93,4 +92,14 @@ export const ColinRequestTypes = [
 export const XproColinRequestTypes = [
   EntityType.XCR,
   EntityType.XUL
+]
+
+export const MrasEntities = [
+  EntityType.BC,
+  EntityType.CC,
+  EntityType.CP,
+  EntityType.CR,
+  EntityType.UL,
+  EntityType.XCR,
+  EntityType.XLP
 ]

@@ -1,75 +1,73 @@
 <template>
-  <v-row no-gutters>
-    <v-col cols="12" class="pa-0">
-      <v-text-field :error-messages="message"
-                    @input="clearErrors()"
-                    @blur="handleBlur()"
-                    @keydown.enter="handleSubmit"
-                    autocomplete="chrome-off"
-                    :filled="!isReadOnly"
-                    id="name-input-text-field"
-                    ref="nameInput"
-                    :rules="(searchValue && isMrasSearch) ? mrasRules : additionalRules"
-                    :label="label"
-                    :class="{ 'read-only-mode': isReadOnly }"
-                    :disabled="isReadOnly"
-                    :hint="hint"
-                    persistent-hint
-                    v-model="searchValue">
-      </v-text-field>
-    </v-col>
-  </v-row>
+  <v-text-field
+    id="name-input-text-field"
+    ref="nameInputRef"
+    :error-messages="message"
+    autocomplete="chrome-off"
+    :filled="!isReadOnly"
+    :rules="(searchValue && isMrasSearch) ? mrasRules : defaultRules"
+    :label="label"
+    :class="{ 'read-only-mode': isReadOnly }"
+    :disabled="isReadOnly"
+    :hint="hint"
+    hide-details="auto"
+    persistent-hint
+    v-model="searchValue"
+    @input="setClearErrors()"
+    @blur="handleBlur()"
+    @keydown.enter="handleSubmit($event)"
+  />
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch, Emit } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
-import { Location, RequestCode } from '@/enums'
+import { Location, NrRequestActionCodes } from '@/enums'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { sanitizeName } from '@/plugins'
 import { MRAS_MAX_LENGTH } from '@/components/new-request/constants'
 
 @Component({})
 export default class NameInput extends Vue {
-  // Refs
-  $refs!: {
-    nameInput: any
-  }
+  /** Whether to perform MRAS search. */
+  @Prop({ default: false }) readonly isMrasSearch!: boolean
+  /** Whether this component is read-only (eg, on name check page). */
+  @Prop({ default: false }) readonly isReadOnly!: boolean
+  /** Hint to show (eg, on name check page). */
+  @Prop({ default: null }) readonly hint!: string
 
-  // Global getters
+  // Store getters
   @Getter getCorpSearch!: string
   @Getter getErrors!: string[]
+  @Getter getHasNoCorpNum!: boolean
+  @Getter getIsXproFlow!: boolean
   @Getter getLocation!: Location
   @Getter getName!: string
-  @Getter getRequestActionCd!: RequestCode
-  @Getter getIsXproMras!: boolean
+  @Getter getRequestActionCd!: NrRequestActionCodes
+  @Getter isMrasJurisdiction!: boolean
 
-  // Global actions
-  @Action setClearErrors!: ActionBindingIF
+  // Store actions
+  @Action setClearErrors!: () => void
   @Action setCorpSearch!: ActionBindingIF
   @Action setName!: ActionBindingIF
   @Action setMrasSearchInfoModalVisible!: ActionBindingIF
   @Action startAnalyzeName!: ActionBindingIF
 
-  // Props
-  @Prop({ default: false })
-  readonly isSearchAgain: boolean
+  readonly err_msg = 'Cannot exceed ' + MRAS_MAX_LENGTH + ' characters'
 
-  @Prop({ default: false })
-  readonly isMrasSearch: boolean
-
-  @Prop({ default: false })
-  readonly isReadOnly: boolean
-
-  @Prop({ default: null })
-  readonly hint: string
-
-  private err_msg = 'Cannot exceed ' + MRAS_MAX_LENGTH + ' characters'
-  additionalRules = [
+  readonly defaultRules = [
     v => (!v || v.length <= MRAS_MAX_LENGTH) || this.err_msg
   ]
+
+  nameInputComponent = null
+
+  mounted (): void {
+    // ref is only valid after component is mounted
+    this.nameInputComponent = this.$refs['nameInputRef']
+  }
+
   /** The array of validation rules for the MRAS corp num. */
-  private get mrasRules (): Function[] {
+  get mrasRules (): Function[] {
     return [
       v => (/^[0-9a-zA-Z-]+$/.test(v) || 'A corporate number is required'),
       v => (!v || v.length <= 40) || 'Cannot exceed 40 characters' // maximum character count
@@ -77,30 +75,45 @@ export default class NameInput extends Vue {
   }
 
   /** Local validator when input is a MRAS corp num. */
-  private get isCorpNumValid (): boolean {
-    return this.isMrasSearch ? this.$refs['nameInput']?.valid : true
+  get isCorpNumValid (): boolean {
+    if (this.isMrasSearch) return this.nameInputComponent?.valid || false
+    return true
   }
 
   get label (): string {
-    if (this.isReadOnly && (this.isMrasSearch || !this.getIsXproMras)) return ''
-    if (this.isReadOnly && this.getIsXproMras) return 'Name in home jurisdiction'
-    return this.nameLabel
+    if (this.isReadOnly && (this.isMrasSearch || !this.getIsXproFlow)) return '' // should never happen
+
+    if (this.isReadOnly && this.getIsXproFlow) return 'Name in home jurisdiction'
+
+    if (this.getIsXproFlow) {
+      if (this.isMrasJurisdiction && !this.getHasNoCorpNum) {
+        return 'Enter the corporate number assigned by the home jurisdiction'
+      } else {
+        return 'Business\'s full legal name in home jurisdiction'
+      }
+    }
+
+    return 'Enter a name to request'
   }
 
-  get message (): string | string[] {
-    if (this.isMrasSearch && this.getErrors.includes('name')) {
-      return ['Please enter a corporation number to search for']
+  get message (): string[] {
+    if (this.getErrors.includes('name')) {
+      if (this.isMrasSearch) {
+        return ['Please enter a corporation number to search for']
+      } else {
+        return ['Please enter a name to search for']
+      }
     }
+
     if (this.getErrors.includes('length')) {
       return ['Please enter a longer name']
     }
-    if (this.getErrors.includes('name')) {
-      return ['Please enter a name to search for']
-    }
+
     if (this.getErrors.includes('mras_length_exceeded')) {
       return [this.err_msg]
     }
-    return ''
+
+    return null
   }
 
   get searchValue (): string {
@@ -111,45 +124,25 @@ export default class NameInput extends Vue {
     this.isMrasSearch ? this.setCorpSearch(value) : this.setName(value)
   }
 
-  get nameLabel (): string {
-    if (this.isMrasSearch) return 'Enter the corporate number assigned by the home jurisdiction'
-
-    if (
-      this.getLocation &&
-      (this.getLocation !== Location.BC) &&
-      (this.getRequestActionCd !== RequestCode.MVE)
-    ) {
-      return 'Business\'s full legal name in home jurisdiction'
-    }
-
-    return 'Enter a Name'
-  }
-
-  clearErrors () {
-    this.setClearErrors(null)
-  }
-
-  /* the leading and trailing spaces need to be removed when name input finished
-      Using the sanitizeName, which has been used in name-capture to do the work
-  */
   handleBlur (): void {
+    // The leading and trailing spaces need to be removed when name input finished,
+    // using sanitizeName() which has was used in name-capture to do the work.
     this.searchValue = sanitizeName(this.searchValue)
   }
 
   async handleSubmit (event: KeyboardEvent) {
     if (event.key === 'Enter' && this.isCorpNumValid) {
       event.preventDefault()
-      if (this.searchValue) await this.analyzeName()
+      if (this.searchValue) {
+        // hide modal and perform name analysis
+        this.setMrasSearchInfoModalVisible(false)
+        if (this.getIsXproFlow) this.$root.$emit('showSpinner', true)
+        if (this.searchValue) await this.startAnalyzeName(null)
+        if (this.getIsXproFlow) this.$root.$emit('showSpinner', false)
+      }
       return
     }
     return event
-  }
-
-  async analyzeName () {
-    this.setMrasSearchInfoModalVisible(false)
-    if (this.getIsXproMras) this.$root.$emit('showSpinner', true)
-    if (this.searchValue) await this.startAnalyzeName(null)
-    if (this.getIsXproMras) this.$root.$emit('showSpinner', false)
   }
 
   @Watch('isCorpNumValid')
@@ -157,19 +150,21 @@ export default class NameInput extends Vue {
     return this.isCorpNumValid
   }
 }
-
 </script>
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
+
 .search-tooltip {
   max-width: 100px;
   text-align: center;
   padding: 10px !important;
 }
+
 ::v-deep .read-only-mode .v-input__slot:not(.v-input--checkbox .v-input__slot) {
   background-color: transparent !important;
 }
+
 ::v-deep .theme--light.v-input--is-disabled input, .theme--light.v-input--is-disabled textarea {
   color: $gray9 !important;
 }

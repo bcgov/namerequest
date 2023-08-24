@@ -1,14 +1,14 @@
 // import store from '@/store/new-request-module'
 
 // Testing behavior of getters.showCorpNum: (state) => return value
-describe('new-request-module', () => {
+describe('New Request module', () => {
   it('is an empty test', () => {})
   // /* -- SETUP CONSTANTS FOR TESTING -- */
   // function setState ({ entityType, requestAction, location, jurisdiction }) {
   //   store.mutateEntityType(entityType)
   //   store.mutateRequestAction(requestAction)
   //   store.mutateLocation(location)
-  //   store.mutateNRData({ key: 'xproJurisdiction', value: jurisdiction })
+  //   store.mutateXproJurisdiction(jurisdiction)
   // }
   // const spreadSheetData = [
   //   { number: 1, location: 'BC', requestAction: 'NEW', entityType: 'FR', showCorpNum: 'N/A' },

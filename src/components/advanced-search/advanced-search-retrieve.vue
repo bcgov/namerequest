@@ -51,7 +51,7 @@ import AdvancedSearchDates from '@/components/advanced-search/advanced-search-da
 import { FormType, NameRequestI } from '@/interfaces'
 import { Action, Getter } from 'vuex-class'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import NamexServices from '@/services/namex.services'
+import NamexServices from '@/services/namex-services'
 
 @Component({
   components: {
@@ -122,7 +122,7 @@ export default class AdvancedSearchRetrieve extends Vue {
   /** Update store values with search parameters.
    * @param key The store key value (ie.. phoneNumber or emailAddress).
    * @param value The search parameter for the associated key.
-   * */
+   */
   private handleExistingRequestSearch (key: string, value: string) {
     this.clearValidations()
     this.setExistingRequestSearch({ key, value })
@@ -166,7 +166,7 @@ export default class AdvancedSearchRetrieve extends Vue {
 
 #find-nr-btn {
   color: $app-blue;
-  font-size: .875rem;
+  font-size: $px-14;
 }
 
 #clear-date-btn {

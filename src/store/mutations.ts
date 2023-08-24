@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import {
   AnalysisJSONI,
+  BusinessLookupResultIF,
   ConditionalInstructionI,
   ConversionTypesI,
   NameRequestI,
@@ -18,7 +19,7 @@ import {
   NameCheckErrorType,
   NrAffiliationErrors,
   PriorityCode,
-  RequestCode
+  NrRequestActionCodes
 } from '@/enums'
 
 export const clearErrors = (state: StateIF) => {
@@ -163,7 +164,7 @@ export const mutateMrasSearchInfoModalVisible = (state: StateIF, mrasSearchInfoM
   state.stateModel.newRequestModel.mrasSearchInfoModalVisible = mrasSearchInfoModalVisible
 }
 
-export const mutateJurisdiction = (state: StateIF, request_jurisdiction_cd: string) => {
+export const mutateJurisdictionCd = (state: StateIF, request_jurisdiction_cd: string) => {
   state.stateModel.newRequestModel.request_jurisdiction_cd = request_jurisdiction_cd
 }
 
@@ -249,6 +250,14 @@ export const mutateNRData = (state: StateIF, { key, value }) => {
   state.stateModel.newRequestModel.nrData[key] = value
 }
 
+export const mutateXproJurisdiction = (state: StateIF, val: string) => {
+  state.stateModel.newRequestModel.nrData.xproJurisdiction = val
+}
+
+export const mutateHomeJurisNum = (state: StateIF, val: string) => {
+  state.stateModel.newRequestModel.nrData.homeJurisNum = val
+}
+
 export const mutateNrRequiredModalVisible = (state: StateIF, nrRequiredModalVisible: boolean) => {
   state.stateModel.newRequestModel.nrRequiredModalVisible = nrRequiredModalVisible
 }
@@ -265,7 +274,7 @@ export const mutatePriorityRequest = (state: StateIF, priorityRequest: boolean) 
   state.stateModel.newRequestModel.priorityRequest = priorityRequest
 }
 
-export const mutateRequestAction = (state: StateIF, requestCd: RequestCode) => {
+export const mutateRequestAction = (state: StateIF, requestCd: NrRequestActionCodes) => {
   state.stateModel.newRequestModel.conversionType = null
   state.stateModel.newRequestModel.request_action_cd = requestCd
 }
@@ -398,7 +407,7 @@ export const setNrResponse = (state: StateIF, nr: NameRequestI) => {
 }
 
 export const updateReservationNames = (state: StateIF, nrNames: [] = []) => {
-  nrNames.forEach(({ choice, name = '', designation = '' }) => {
+  nrNames.forEach(({ choice = 1, name = '', designation = '' }) => {
     state.stateModel.newRequestModel.nameChoices[`name${choice}`] = name
     state.stateModel.newRequestModel.nameChoices[`designation${choice}`] = designation
   })
@@ -554,4 +563,12 @@ export const mutateWindowWidth = (state: StateIF, width: number) => {
 
 export const mutateHotjarUserId = (state: StateIF, hotjarUserId: string) => {
   state.stateModel.newRequestModel.hotjarUserId = hotjarUserId
+}
+
+export const mutateIncorporateNowErrorStatus = (state: StateIF, incorporateNowError: boolean) => {
+  state.stateModel.newRequestModel.incorporateNowError = incorporateNowError
+}
+
+export const mutateBusinessLookup = (state: StateIF, businessLookupResult: BusinessLookupResultIF) => {
+  state.stateModel.newRequestModel.businessLookup = businessLookupResult
 }

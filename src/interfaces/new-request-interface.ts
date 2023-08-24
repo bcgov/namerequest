@@ -2,22 +2,21 @@ import {
   AnalysisJSONI, ApplicantI, ConversionTypesI, ExistingRequestSearchI, NameRequestI,
   RequestNameI, SelectOptionsI, StatsI, SubmissionTypeT, WaitingAddressSearchI
 } from '@/interfaces/models'
-import { NameChoicesIF, NrDataIF, RequestOrConsentIF } from '@/interfaces'
-import { EntityType, Location, NrAffiliationErrors, RequestCode } from '@/enums'
+import { BusinessLookupResultIF, NameChoicesIF, NrDataIF, RequestOrConsentIF } from '@/interfaces'
+import { EntityType, Location, NrAffiliationErrors, NrRequestActionCodes } from '@/enums'
 
 interface RequestNameMapI extends RequestNameI {}
 
 export interface NewRequestIF {
   actingOnOwnBehalf: boolean
   addressSuggestions: any[]
+  affiliationErrorModalValue: NrAffiliationErrors
   allowAutoApprove: boolean
   analysisJSON: AnalysisJSONI
   applicant: ApplicantI
-  folioNumber?: string
   assumedNameOriginal: string
+  businessLookup: BusinessLookupResultIF
   conditionsModalVisible: boolean
-  exitModalVisible: boolean
-  exitIncompletePaymentVisible: boolean
   conflictId: string
   conversionType: EntityType
   conversionTypeAddToSelect: ConversionTypesI
@@ -25,16 +24,21 @@ export interface NewRequestIF {
   corpSearch: string
   designationIssueTypes: string[]
   displayedComponent: string
-  doNotAnalyzeEntities: string[]
+  doNotAnalyzeEntities: EntityType[]
   editMode: boolean
   entity_type_cd: EntityType
   entityTypeAddToSelect: SelectOptionsI
   errors: string[]
+  exitIncompletePaymentVisible: boolean
+  exitModalVisible: boolean
   existingRequestSearch: ExistingRequestSearchI
   extendedRequestType: SelectOptionsI
+  folioNumber?: string
   getNameReservationFailed: boolean
   helpMeChooseModalVisible: boolean
-  affiliationErrorModalValue: NrAffiliationErrors
+  hotjarUserId: string,
+  incorporateNowError: boolean
+  isLoadingSubmission: boolean
   isPersonsName: boolean
   issueIndex: number
   location: Location
@@ -42,10 +46,10 @@ export interface NewRequestIF {
   mrasSearchInfoModalVisible: boolean
   mrasSearchResultCode: number
   name: string
-  nameOriginal: string
+  nameAnalysisTimedOut: boolean
   nameChoices: NameChoicesIF
   nameIsEnglish: boolean
-  nameAnalysisTimedOut: boolean
+  nameOriginal: string
   noCorpNum: boolean
   nr: Partial<NameRequestI>
   nrData: NrDataIF
@@ -56,7 +60,7 @@ export interface NewRequestIF {
   pickRequestTypeModalVisible: boolean
   priorityRequest: boolean
   quickSearchNames: any[]
-  request_action_cd: RequestCode
+  request_action_cd: NrRequestActionCodes
   request_jurisdiction_cd: string
   requestExaminationOrProvideConsent: RequestOrConsentIF
   showActualInput: boolean
@@ -65,7 +69,5 @@ export interface NewRequestIF {
   submissionType: SubmissionTypeT
   tabNumber: number
   userCancelledAnalysis: boolean
-  isLoadingSubmission: boolean
   waitingAddressSearch: WaitingAddressSearchI
-  hotjarUserId: string
 }

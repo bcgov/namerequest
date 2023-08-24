@@ -40,12 +40,12 @@ import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 import { PaymentMixin } from '@/mixins'
-import { sleep } from '@/plugins'
+import { Sleep } from '@/plugins'
 
 import { NrAction } from '@/enums'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { CANCEL_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
-import NamexServices from '@/services/namex.services'
+import NamexServices from '@/services/namex-services'
 
 @Component({})
 export default class CancelDialog extends Mixins(PaymentMixin) {
@@ -57,13 +57,14 @@ export default class CancelDialog extends Mixins(PaymentMixin) {
   @Action toggleCancelModal!: ActionBindingIF
 
   /** Used to show loading state on button. */
-  private loading = false
+  loading = false
 
-  private get emailAddress (): string {
-    return this.getApplicant?.emailAddress
-  }
+  // FOR FUTURE USE
+  // get emailAddress (): string {
+  //   return this.getApplicant?.emailAddress
+  // }
 
-  private get isVisible (): boolean {
+  get isVisible (): boolean {
     return this.$store.getters[CANCEL_MODAL_IS_VISIBLE]
   }
 
@@ -72,7 +73,7 @@ export default class CancelDialog extends Mixins(PaymentMixin) {
   }
 
   /** Called when user clicks "Cancel this NR" button. */
-  private async confirmCancel (): Promise<void> {
+  async confirmCancel (): Promise<void> {
     this.loading = true
     const data = await NamexServices.patchNameRequestsByAction(this.getNrId, NrAction.CANCEL)
     if (data) {
@@ -80,7 +81,7 @@ export default class CancelDialog extends Mixins(PaymentMixin) {
       this.loading = false
       await this.hideModal()
       this.setDisplayedComponent('Success')
-      await sleep(1000)
+      await Sleep(1000)
       this.setDisplayedComponent('ExistingRequestDisplay')
     } else {
       this.loading = false
@@ -89,7 +90,7 @@ export default class CancelDialog extends Mixins(PaymentMixin) {
   }
 
   /** Called when user clicks "Keep this NR" button. */
-  private async hideModal (): Promise<void> {
+  async hideModal (): Promise<void> {
     await this.toggleCancelModal(false)
   }
 }

@@ -42,7 +42,7 @@ import { Action, Getter } from 'vuex-class'
 import { RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NameInput from '@/components/new-request/name-input.vue'
-import { EntityType, RequestCode } from '@/enums'
+import { EntityType, NrRequestActionCodes } from '@/enums'
 
 @Component({
   components: { NameInput }
@@ -52,14 +52,14 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
 
   // Global getters
   @Getter getNameAnalysisTimeout!: boolean
-  @Getter getDoNotAnalyzeEntities!: string[]
+  @Getter getDoNotAnalyzeEntities!: EntityType[]
   @Getter getEntityTextFromValue!: string
   @Getter getEntityTypeCd!: EntityType
   @Getter getIsPersonsName!: boolean
   @Getter getName!: string
   @Getter getNameIsEnglish!: boolean
   @Getter getNameIsSlashed!: boolean
-  @Getter getRequestActionCd!: RequestCode
+  @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter getRequestTypeOptions!: RequestActionsI[]
 
   // Global actions
@@ -158,7 +158,7 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   }
 
   get requestActionNotSupported (): boolean {
-    const requests = [RequestCode.NEW, RequestCode.DBA, RequestCode.CHG]
+    const requests = [NrRequestActionCodes.NEW_BUSINESS, NrRequestActionCodes.DBA, NrRequestActionCodes.CHANGE_NAME]
     return !(requests.includes(this.getRequestActionCd))
   }
 

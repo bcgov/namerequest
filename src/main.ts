@@ -3,11 +3,10 @@ import App from './App.vue'
 import Hotjar from 'vue-hotjar'
 import { getVueRouter } from '@/router'
 import { getVuexStore } from '@/store'
-import { getConfig, getFeatureFlag, getVuetify, initLdClient, isSigningIn, isSigningOut } from '@/plugins'
+import { getConfig, GetFeatureFlag, getVuetify, InitLdClient, isSigningIn, isSigningOut } from '@/plugins'
 import KeycloakService from 'sbc-common-components/src/services/keycloak.services'
 import * as Sentry from '@sentry/browser'
 import * as Integrations from '@sentry/integrations'
-import { AllDesignationsList, ConversionTypes, Designations, RequestActions, UsaStateCodes } from '@/list-data'
 
 // NB: order matters - do not change
 import 'quill/dist/quill.core.css'
@@ -28,23 +27,17 @@ Vue.config.devtools = true
 async function startVue () {
   // Fetch the configuration
   const envConfig = await getConfig()
-  const store = await getVuexStore()
+  const store = getVuexStore()
 
-  // FUTURE: remove these config assignments if possible
+  // FUTURE: remove this global assignment if possible
   // Load environment config
   Vue.prototype.$PAYMENT_PORTAL_URL = envConfig.$PAYMENT_PORTAL_URL
+
+  // FUTURE: remove this config assignment if possible
   // Load Vuex config
   store.state.config = envConfig
 
-  // FUTURE: remove these globally scoped lists and import locally where needed
-  // Load global data
-  Vue.prototype.$allDesignationsList = AllDesignationsList
-  Vue.prototype.$conversionTypes = ConversionTypes
-  Vue.prototype.$designations = Designations
-  Vue.prototype.$requestActions = RequestActions
-  Vue.prototype.$usaStateCodes = UsaStateCodes
-
-  if (getFeatureFlag('sentry-enable')) {
+  if (GetFeatureFlag('sentry-enable')) {
     // Initialize Sentry
     if (window['sentryDsn']) {
       console.info('Initializing Sentry...') // eslint-disable-line no-console
@@ -79,7 +72,7 @@ async function startVue () {
   // Initialize Launch Darkly
   if (window['ldClientId']) {
     console.info('Initializing Launch Darkly...') // eslint-disable-line no-console
-    await initLdClient()
+    await InitLdClient()
   }
 
   // Start Vue application

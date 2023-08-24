@@ -50,14 +50,14 @@ import { DialogOptionsI } from '@/interfaces'
 
 @Component({})
 export default class NameCheckIssuesDialog extends Vue {
-  @Prop() private readonly attach: string
-  @Prop() private readonly display: boolean
-  @Prop() private readonly options: DialogOptionsI
+  @Prop() readonly attach: string
+  @Prop() readonly display: boolean
+  @Prop() readonly options: DialogOptionsI
 
   // Global getter
   @Getter isMobile!: boolean
 
-  @Emit() private proceed (val: boolean) { }
+  @Emit() proceed (val: boolean) { }
 }
 </script>
 
@@ -69,7 +69,7 @@ export default class NameCheckIssuesDialog extends Vue {
   }
 }
 .accept-btn {
-  font-size: 0.875rem !important;
+  font-size: $px-14 !important;
   font-weight: bold;
 
   @media only screen and (max-width: 600px) {
@@ -87,7 +87,7 @@ export default class NameCheckIssuesDialog extends Vue {
 }
 .dialog-title {
   color: $gray9;
-  font-size: 1.5rem;
+  font-size: $px-24;
   font-weight: bold;
   text-align: center;
 }

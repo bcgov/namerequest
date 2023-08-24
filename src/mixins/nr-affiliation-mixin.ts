@@ -1,18 +1,20 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action } from 'vuex-class'
-import AuthServices from '@/services/auth.services'
-import BusinessServices from '@/services/business.services'
+import AuthServices from '@/services/auth-services'
+import BusinessServices from '@/services/business-services'
 import { BusinessRequest, NameRequestI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { navigate } from '@/plugins'
+import { Navigate } from '@/plugins'
 import { CommonMixin } from '@/mixins'
 import { NrAffiliationErrors } from '@/enums'
 import { CREATED, BAD_REQUEST } from 'http-status-codes'
+import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 
 @Component({})
 export class NrAffiliationMixin extends Mixins(CommonMixin) {
   // Global action
   @Action setAffiliationErrorModalValue!: ActionBindingIF
+  @Action setIncorporateNowErrorStatus!: ActionBindingIF
 
   /**
    * Affiliates a NR to the current account, creates a temporary business, and then navigates
@@ -132,8 +134,12 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
 
   /** Returns business request object. */
   private getBusinessRequest (accountId: number, nr: NameRequestI): BusinessRequest {
-    const name = this.isBenefitCompany(nr) ? 'incorporationApplication' : 'registration'
-    const legalType = this.isBenefitCompany(nr) ? 'BEN' : nr.legalType
+    let name = 'registration'
+    let legalType = nr.legalType
+    if (this.isSupportedEntity(nr)) {
+      name = 'incorporationApplication'
+      legalType = this.entityTypeAlternateCode(nr.entity_type_cd)
+    }
     const nrNumber = nr.nrNum
 
     const businessRequest = {
@@ -163,7 +169,59 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
   private goToEntityDashboard (businessId: string): void {
     if (businessId) {
       const dashboardUrl = sessionStorage.getItem('DASHBOARD_URL')
-      navigate(`${dashboardUrl}${businessId}`)
+      Navigate(`${dashboardUrl}${businessId}`)
     }
+  }
+
+  /**
+   * Handle "Incorporate Now" button.
+   * Create draft business depending on business type.
+   * Redirect to Dashboard.
+   * @param legalType The legal type of the IA that's being incorporated.
+   */
+  async incorporateNow (legalType: CorpTypeCd): Promise<any> {
+    try {
+      // show spinner since this is a network call
+      this.$root.$emit('showSpinner', true)
+      const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || 0
+      const businessId = await this.createBusinessIA(accountId, legalType)
+      this.goToEntityDashboard(businessId)
+      return
+    } catch (error) {
+      this.$root.$emit('showSpinner', false)
+      this.setIncorporateNowErrorStatus(true)
+      throw new Error('Unable to Incorporate Now ' + error)
+    }
+  }
+
+  /**
+   * Create a draft business based on selected business type (If applicable).
+   * @param accountId Account ID of logged in user.
+   * @param legalType The legal type of the IA that's being incorporated.
+   */
+  async createBusinessIA (accountId: number, legalType: CorpTypeCd): Promise<string> {
+    const businessRequest = {
+      filing: {
+        header: {
+          name: 'incorporationApplication',
+          accountId: accountId
+        },
+        business: {
+          legalType: legalType
+        },
+        incorporationApplication: {
+          nameRequest: {
+            legalType: legalType
+          }
+        }
+      }
+    } as BusinessRequest
+
+    const createBusinessResponse =
+      await BusinessServices.createBusiness(businessRequest).catch(error => {
+        throw new Error('Unable to create new Business ' + error)
+      })
+
+    return createBusinessResponse.data?.filing?.business?.identifier as string
   }
 }

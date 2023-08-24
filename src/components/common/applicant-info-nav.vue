@@ -1,5 +1,5 @@
 <template>
-  <v-col cols="12" md="5" lg="5" class="py-0" :class="isMobile ? 'text-center' : 'text-right'">
+  <v-col cols="12" md="5" lg="5" class="py-0" :class="isMobile ? 'mt-6 text-center' : 'text-right'">
     <v-btn x-large
            id="submit-back-btn"
            :class="isMobile ? 'mobile-btn' : 'mr-3'"
@@ -75,7 +75,7 @@ export default class ApplicantInfoNav extends Vue {
   }
 
   @Emit('nextAction')
-  private nextAction () : void {}
+  nextAction () : void {}
 }
 </script>
 

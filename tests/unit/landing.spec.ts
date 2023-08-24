@@ -18,7 +18,7 @@ const stubs = {
   quillEditor: true
 }
 
-describe('landing part 1', () => {
+describe('Landing view', () => {
   it('is an empty test', () => {})
   //   let wrapper: any
 

@@ -1,9 +1,11 @@
 <template>
   <v-form v-model="isValid" ref="step2" id="applicant-info-2-form">
-    <v-container fluid class="pa-0 mt-5" id="applicant-info-2">
+    <v-container fluid class="pa-0 mt-6" id="applicant-info-2">
       <v-row>
-        <v-col cols="12" md="2" lg="2" class="h6 align-self-start pt-0">Contact Info</v-col>
-        <v-col cols="12" md="5" lg="5" class="py-0">
+        <v-col cols="12" md="2" lg="2" class="h6 align-self-start">Contact Info</v-col>
+
+        <!--EMAIL ADDRESS-->
+        <v-col cols="12" md="5" lg="5">
           <v-text-field :messages="messages['email']"
                         :rules="emailRules"
                         :validate-on-blur="true"
@@ -20,8 +22,9 @@
         <v-col cols="5" class="py-0" />
       </v-row>
 
-      <v-row>
+      <v-row class="mt-0">
         <v-col cols="12" md="2" lg="2" />
+        <!--PHONE NUMBER-->
         <v-col cols="12" md="5" lg="5">
           <v-text-field :messages="messages['phone']"
                         :value="getApplicant.phoneNumber"
@@ -36,6 +39,7 @@
                         hide-details="auto"
                         label="Phone Number" />
         </v-col>
+        <!--FAX NUMBER-->
         <v-col cols="12" md="5" lg="5">
           <v-text-field :messages="messages['fax']"
                         :value="getApplicant.faxNumber"
@@ -53,6 +57,7 @@
 
       <v-row v-if="showAllFields">
         <v-col cols="12" md="2" lg="2" class="h6">About Your Business</v-col>
+        <!--NATURE OF BUSINESS-->
         <v-col cols="12" md="5" lg="5" align-self="start">
           <v-tooltip top
             content-class="top-tooltip"
@@ -81,6 +86,7 @@
             </span>
           </v-tooltip>
         </v-col>
+        <!--ADDITIONAL INFORMATION-->
         <v-col cols="12" md="5" lg="5" align-self="start">
           <v-tooltip top
             content-class="top-tooltip"
@@ -110,6 +116,7 @@
           </v-tooltip>
         </v-col>
         <v-col cols="12" md="2" lg="2" />
+        <!--CORP NUMBER-->
         <v-col cols="12" md="5" lg="5" v-if="getShowCorpNum === CorpNumRequests.COLIN">
           <v-tooltip top
             content-class="top-tooltip"
@@ -134,6 +141,7 @@
             </span>
           </v-tooltip>
         </v-col>
+        <!--TRADEMARK-->
         <v-col cols="12" md="5" lg="5">
           <v-tooltip top
             content-class="top-tooltip"
@@ -162,8 +170,9 @@
         </v-col>
       </v-row>
 
-      <v-row class="align-center mt-2">
+      <v-row class="align-center mt-2 mb-0">
         <v-col cols="12" md="2" lg="2" />
+        <!--PRIORITY REQUEST-->
         <v-col cols="12" md="5" lg="5">
           <v-tooltip top
             content-class="top-tooltip"
@@ -192,6 +201,7 @@
             </span>
           </v-tooltip>
         </v-col>
+
         <ApplicantInfoNav @nextAction="nextAction()" />
       </v-row>
     </v-container>
@@ -200,12 +210,12 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { Action, Getter } from 'vuex-class'
+import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { CorpNumRequests, NrState, RequestCode } from '@/enums'
-import { getFeatureFlag } from '@/plugins'
+import { CorpNumRequests, NrRequestActionCodes, NrState } from '@/enums'
+import { GetFeatureFlag } from '@/plugins'
 
 @Component({
   components: {
@@ -220,7 +230,7 @@ export default class ApplicantInfo2 extends Vue {
   @Getter getEditMode!: boolean
   @Getter getNrData!: any
   @Getter getNrState!: string
-  @Getter getRequestActionCd!: RequestCode
+  @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter getShowPriorityRequest!: boolean
   @Getter getShowCorpNum!: string
   @Getter isMobile!: boolean
@@ -237,7 +247,7 @@ export default class ApplicantInfo2 extends Vue {
   // Enum declaration
   readonly CorpNumRequests = CorpNumRequests
 
-  corpNumError: string = ''
+  corpNumError = ''
   corpNumFieldLabel = 'Incorporation or Registration Number'
   additionalInfoRules = [
     v => (!v || v.length <= 120) || 'Cannot exceed 120 characters'
@@ -269,21 +279,21 @@ export default class ApplicantInfo2 extends Vue {
   trademarkRules = [
     v => (!v || v.length <= 100) || 'Cannot exceed 100 characters'
   ]
-  error: boolean = false
-  isEditingCorpNum: boolean = false
-  isValid: boolean = false
+  error = false
+  isEditingCorpNum = false
+  isValid = false
   hideCorpNum: boolean | 'auto' = true
-  loading: boolean = false
+  loading = false
   messages = {}
 
   /** Whether priority checkbox should be enabled. */
   get enablePriorityCheckbox (): boolean {
-    return !!getFeatureFlag('enable-priority-checkbox')
+    return !!GetFeatureFlag('enable-priority-checkbox')
   }
 
   mounted () {
     // Apply optional corpNum validations for Amalgamations as they are NOT a required field but require COLIN lookup.
-    if (this.getRequestActionCd === RequestCode.AML) {
+    if (this.getRequestActionCd === NrRequestActionCodes.AMALGAMATE) {
       this.corpNumFieldLabel += ' (Optional)'
       this.corpNumRules = [
         v => (!v || v.length > 3) || 'Must be at least 4 characters'
@@ -380,6 +390,7 @@ export default class ApplicantInfo2 extends Vue {
   async nextAction () {
     this.setIsLoadingSubmission(true)
     this.validate()
+    // validate corp num in COLIN
     if (this.getShowCorpNum === CorpNumRequests.COLIN) {
       this.$root.$emit('showSpinner', true)
       await this.validateCorpNum(this.getCorpNum)
@@ -400,7 +411,7 @@ export default class ApplicantInfo2 extends Vue {
 
 ::v-deep .v-textarea textarea {
   line-height: 1.375rem !important;
-  font-size: 0.875rem !important;
+  font-size: $px-14 !important;
 }
 
 // disabled checkbox label

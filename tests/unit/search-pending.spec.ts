@@ -7,7 +7,7 @@ const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-describe('search-pending', () => {
+describe('SearchPending component', () => {
   it('is an empty test', () => {})
   // const wrapper = mount(SearchPending, {
   //   localVue,
