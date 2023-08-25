@@ -47,12 +47,9 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Emit, Watch } from 'vue-property-decorator'
-import { Action } from 'vuex-class'
 import { debounce } from 'lodash'
-
 import { BusinessLookupResultIF } from '@/interfaces'
 import BusinessLookupServices from '@/services/business-lookup-services'
-import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 enum States {
   INITIAL = 'initial',
@@ -78,9 +75,6 @@ export default class BusinessLookup extends Vue {
 
   /** State of this component. */
   state = States.INITIAL
-
-  // Global actions
-  @Action setBusinessLookup!: ActionBindingIF
 
   /** Called when searchField property has changed. */
   @Watch('searchField')
@@ -109,7 +103,6 @@ export default class BusinessLookup extends Vue {
   onItemSelected (input: BusinessLookupResultIF): void {
     // safety check
     if (input) {
-      this.setBusinessLookup(input)
       // change to summary state
       this.state = States.SUMMARY
     }

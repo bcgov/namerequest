@@ -2,7 +2,7 @@
   <v-dialog id="advanced-search-dialog" v-model="dialog" max-width="55rem" persistent :attach="attach">
 
     <v-card :class="{'retrieve-card-height': isTabRetrieve, 'tab-card-height': !isTabRetrieve}">
-      <v-btn icon large class="dialog-close" @click="emitClose()" >
+      <v-btn icon large class="dialog-close" @click="emitClose()">
         <v-icon>mdi-close</v-icon>
       </v-btn>
 

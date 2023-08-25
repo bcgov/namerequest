@@ -96,10 +96,24 @@
         </v-tooltip>
       </v-col>
 
-      <!-- Business Lookup -->
+      <!-- Business Lookup/Fetch -->
       <v-col v-if="showBusinessLookup" cols="12" md="6">
-        <BusinessLookup v-if="!business" @business="business=$event"/>
-        <v-text-field v-else clearable disabled filled hide-details :value="business.name" />
+        <template v-if="!business">
+          <BusinessLookup v-if="getIsAuthenticated" @business="business=$event"/>
+          <BusinessFetch v-else @business="business=$event"/>
+        </template>
+        <div v-else class="d-flex justify-space-between align-center">
+          <v-text-field
+            append-outer-icon="mdi-close"
+            disabled
+            filled
+            hide-details
+            :value="business.name"
+          />
+          <div @click="business=null">
+            <v-icon color="primary">mdi-close</v-icon>
+          </div>
+        </div>
       </v-col>
 
       <!-- once an entity type is selected (or Federal)... -->
@@ -262,14 +276,11 @@
 import { Component, Mixins, Vue, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
-// bcregistry common
-import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
-
-import BusinessLookup from '@/components/new-request/business-lookup.vue'
-
 // Components
 import NameInput from './name-input.vue'
 import NestedSelect from '../common/nested-select.vue'
+import BusinessLookup from '@/components/new-request/business-lookup.vue'
+import BusinessFetch from '@/components/new-request/business-fetch.vue'
 
 // Interfaces / Enums / List Data
 import { BusinessLookupResultIF, ConversionTypesI, EntityI, FormType, RequestActionsI } from '@/interfaces'
@@ -278,12 +289,13 @@ import { AccountType, CompanyType, EntityType, Location, NrRequestActionCodes, N
 import { CommonMixin, NrAffiliationMixin } from '@/mixins'
 import { CanJurisdictions, ConversionTypes, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
 import { GetFeatureFlag, Navigate } from '@/plugins'
+import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 /**
  * This is the component that displays the new NR menus and flows.
  */
 @Component({
-  components: { BusinessLookup, NameInput, NestedSelect }
+  components: { BusinessLookup, BusinessFetch, NameInput, NestedSelect }
 })
 export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   // Refs
