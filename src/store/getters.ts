@@ -2,7 +2,6 @@ import { getVuetify } from '@/plugins'
 import {
   AnalysisJSONI,
   ApplicantI,
-  BusinessLookupResultIF,
   ConditionalInstructionI,
   ConditionalReqI,
   ConsentConflictI,
@@ -1234,10 +1233,6 @@ export const getRefundParams = (state: StateIF): RefundParamsIF => {
 
 export const getIncorporateNowErrorStatus = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.incorporateNowError
-}
-
-export const getBusinessLookup = (state: StateIF): BusinessLookupResultIF => {
-  return state.stateModel.newRequestModel.businessLookup
 }
 
 /** True if entity type is one of the COLIN request types. */

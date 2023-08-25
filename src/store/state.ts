@@ -149,15 +149,7 @@ export const stateModel: StateModelIF = {
     userCancelledAnalysis: false,
     waitingAddressSearch: null,
     isLoadingSubmission: false,
-    hotjarUserId: '',
-    businessLookup: {
-      identifier: null,
-      legalType: null,
-      bn: null,
-      status: null,
-      name: null,
-      disabled: false
-    }
+    hotjarUserId: ''
   },
   staffPayment: {
     option: StaffPaymentOptions.NONE,
