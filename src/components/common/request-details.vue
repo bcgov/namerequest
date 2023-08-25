@@ -17,7 +17,7 @@
         <h4>Applicant Information</h4>
         <ul class="pl-0">
           <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
-          <li >{{`${applicantName}`}}</li>
+          <li>{{`${applicantName}`}}</li>
           <li>
             {{`${applicant.addrLine1 ? applicant.addrLine1 : ''} ${applicant.addrLine2 ? applicant.addrLine2 : ''}`}}
           </li>
