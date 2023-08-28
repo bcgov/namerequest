@@ -26,7 +26,7 @@ axiosNamex.interceptors.request.use(
     config.headers.common['BCREG-NRL'] = sessionStorage.getItem('BCREG-NRL')
     config.headers.common['BCREG-User-Phone'] = sessionStorage.getItem('BCREG-phoneNumber')
     config.headers.common['BCREG-User-Email'] = sessionStorage.getItem('BCREG-emailAddress')
-    console.log('in interceptor, headers: ', config?.headers?.common) // eslint-disable-line
+    // console.log('in interceptor, headers: ', config?.headers?.common) // eslint-disable-line
     return config
   },
   error => {
@@ -120,6 +120,28 @@ export default class NamexServices {
       await errorModule.setAppError({ id: 'cancel-payment-error', error: msg } as ErrorI)
       return null
     }
+  }
+
+  /**
+   * Searches Entities (Legal API) for business record for specified corp num.
+   * Can be called while not logged in.
+   * Throws an exception on error.
+   */
+  static async searchEntities (corpNum: string): Promise<any> {
+    const url = `${appBaseURL}/businesses/${corpNum}`
+    return this.axios.get(url).then(response => response.data?.business)
+  }
+
+  /**
+   * Searches COLIN for business record for specified corp num.
+   * Can be called while not logged in.
+   * Throws an exception on error.
+   */
+  static async searchColin (corpNum: string): Promise<any> {
+    // remove BC prefix as COLIN only supports base number with no prefix for BC's
+    const cleanedCorpNum = corpNum.replace(/^BC+/i, '')
+    const url = `${appBaseURL}/colin/${cleanedCorpNum}`
+    return this.axios.post(url).then(response => response.data)
   }
 
   static async checkinNameRequest (nrId: number, nrState: NrState): Promise<boolean> {

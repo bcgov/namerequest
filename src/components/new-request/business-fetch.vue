@@ -5,8 +5,9 @@
       append-icon="mdi-magnify"
       autocomplete="chrome-off"
       autofocus
+      :error-messages="errorMessages"
       filled
-      @change="onItemSelected()"
+      @keyup.enter="onItemSelected()"
       @click:append="onItemSelected()"
       :loading="state === States.SEARCHING"
       :name="Math.random()"
@@ -24,10 +25,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Emit } from 'vue-property-decorator'
-import { BusinessLookupResultIF, FormType } from '@/interfaces'
-import { Sleep } from '@/plugins'
-import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
-import { EntityStates } from '@bcrs-shared-components/enums'
+import { Action } from 'vuex-class'
+import { BusinessFetchIF, FormType } from '@/interfaces'
 
 enum States {
   INITIAL = 'initial',
@@ -40,45 +39,63 @@ enum States {
  */
 @Component({})
 export default class BusinessFetch extends Vue {
+  // Enum for template
+  readonly States = States
+
   // Refs
   $refs!: {
     searchField: FormType
   }
 
-  // enum for template
-  readonly States = States
+  // Store actions
+  @Action fetchCorpNum!: (corpNum: string) => Promise<BusinessFetchIF>
 
   /** V-model for search field. */
   searchField = ''
+
+  /** For custom error messages. */
+  errorMessages = [] as Array<string>
 
   /** State of this component. */
   state = States.INITIAL
 
   /** Validation rules. */
-  rules = [
-    v => !!v || 'Required field',
-    v => (!v || v.length === 9) || 'Please enter a valid registration number'
-  ]
+  get rules (): Array<any> {
+    function isValidCorpNum (corpNum: string): boolean {
+      return (corpNum && corpNum.length === 9)
+    }
+
+    return [
+      v => !!v || 'Required field',
+      v => isValidCorpNum(v) || 'Please enter a valid registration number'
+    ]
+  }
 
   /** When an item has been selected, emits event with business object. */
+  // *** TODO: fix validation issues
   @Emit('business')
-  async onItemSelected (): Promise<BusinessLookupResultIF> {
+  async onItemSelected (): Promise<BusinessFetchIF> {
+    console.log(`*** validating = [${this.searchField}]`)
     const valid = this.$refs.searchField.validate()
     if (!valid) return
 
-    // set state and perform search
+    // perform search
+    // *** BC0870000 - in COLIN only
+    // *** BC0871000 - does not exist
+    // *** BC0871408 - in LEAR
+    // *** FM1041131 - in LEAR
     this.state = States.SEARCHING
-    await Sleep(1000) // *** TODO: perform search here
+    const result = await this.fetchCorpNum(this.searchField).catch(e => null)
 
-    // set state and return result
-    this.state = States.SUMMARY
-    return {
-      identifier: this.searchField,
-      legalType: CorpTypeCd.BC_COMPANY,
-      bn: '',
-      status: EntityStates.ACTIVE,
-      name: this.searchField
+    if (result) {
+      this.state = States.SUMMARY
+      return result
     }
+
+    // show error for 5 seconds
+    this.state = States.INITIAL
+    this.errorMessages = ['BUSINESS NOT FOUND']
+    setTimeout(() => { this.errorMessages = [] }, 5000)
   }
 }
 </script>
