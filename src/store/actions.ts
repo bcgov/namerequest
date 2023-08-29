@@ -320,7 +320,7 @@ async function checkCOLIN ({ getters }, corpNum: string): Promise<BusinessFetchI
       identifier: data.identifier,
       legalName: data.legalName,
       legalType: data.legalType,
-      status: data.state
+      state: data.state
     }
   } catch (error) {
     if ((error as any).response?.status === NOT_FOUND) {
@@ -335,7 +335,7 @@ async function checkCOLIN ({ getters }, corpNum: string): Promise<BusinessFetchI
           identifier: corpNum, // data['incorp #'],
           legalName: 'Future Name From COLIN',
           legalType: EntityType.BC,
-          status: EntityStates.ACTIVE
+          state: EntityStates.ACTIVE
         }
       } catch (error) {
         return Promise.reject(error) // network error

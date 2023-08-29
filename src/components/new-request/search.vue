@@ -339,6 +339,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
   // Store actions
   @Action setConversionType!: ActionBindingIF
+  @Action setCorpNum!: ActionBindingIF
   @Action setCorpSearch!: ActionBindingIF
   @Action setClearErrors!: () => void
   @Action setDesignation!: ActionBindingIF
@@ -564,6 +565,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   onBusiness (business: BusinessFetchIF): void {
     this.business = business
     this.entity_type_cd = this.business?.legalType || null
+    this.setCorpNum(business?.identifier || null)
   }
 
   /**
@@ -624,6 +626,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     this.setJurisdictionCd(null)
     if (this.entity_type_cd) this.entity_type_cd = null
     this.selectedCompanyType = null
+    this.setCorpNum(null)
 
     // wait for updates
     await Vue.nextTick()

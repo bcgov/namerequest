@@ -37,5 +37,5 @@ export interface BusinessFetchIF {
   identifier: string
   legalName: string
   legalType: EntityType
-  status: EntityStates
+  state: EntityStates
 }
