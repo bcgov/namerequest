@@ -10,7 +10,7 @@
       hint="Enter registration number of existing business"
       label="Fetch an existing business"
       persistent-hint
-      v-model="searchField"
+      v-model.trim="searchField"
       @click:append="onItemSelected()"
       @keydown.tab.exact="onItemSelected()"
       @keyup.enter="onItemSelected()"
