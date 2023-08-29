@@ -12,11 +12,13 @@
       persistent-hint
       v-model.trim="searchField"
       @click:append="onItemSelected()"
+      @input="onInput()"
       @keydown.tab.exact="onItemSelected()"
       @keyup.enter="onItemSelected()"
       :error-messages="errorMessages"
       :loading="state === States.SEARCHING"
       :name="Math.random()"
+      :readonly="state === States.SEARCHING"
     />
   </div>
 </template>
@@ -65,6 +67,12 @@ export default class BusinessFetch extends Vue {
     return (this.errorMessages.length === 0)
   }
 
+  /** When bound model is updated, clear errors and reset state. */
+  onInput (): void {
+    this.errorMessages = []
+    this.state = States.INITIAL
+  }
+
   /** When an item has been selected, emits event with business object. */
   @Emit('business')
   async onItemSelected (): Promise<BusinessFetchIF> {
@@ -76,15 +84,15 @@ export default class BusinessFetch extends Vue {
     this.state = States.SEARCHING
     const result = await this.fetchCorpNum(this.searchField).catch(e => null)
 
+    // return result
     if (result) {
       this.state = States.SUMMARY
       return result
     }
 
-    // show error for 5 seconds
+    // show error
     this.state = States.INITIAL
-    this.errorMessages = ['BUSINESS NOT FOUND']
-    setTimeout(() => { this.errorMessages = [] }, 5000)
+    this.errorMessages = ['Business not found']
   }
 }
 </script>
