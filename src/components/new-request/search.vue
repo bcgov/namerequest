@@ -328,13 +328,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   @Getter isAssumed!: boolean
   @Getter isCanadian!: boolean
   @Getter isChangeName!: boolean
-  @Getter isColinRequestType!: boolean
   @Getter isConversion!: boolean
   @Getter isContinuationIn!: boolean
   @Getter isFederal!: boolean
   @Getter isInternational!: boolean
   @Getter isMobile!: boolean
   @Getter isMrasJurisdiction!: boolean
+  @Getter isNumberedRequestType!: boolean
   @Getter isRestoration!: boolean
 
   // Store actions
@@ -429,8 +429,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
   get companyRadioBtnApplicable (): boolean {
     const isSociety = (this.isSocietyEnabled() && this.getEntityTypeCd === EntityType.SO)
-    // society NR name is required and no numbered name allowed
-    if (!this.isColinRequestType || isSociety) {
+    // check if numbered is not allowed or society NR name is required
+    if (!this.isNumberedRequestType || isSociety) {
       this.selectedCompanyType = CompanyType.NAMED_COMPANY
       return false
     }

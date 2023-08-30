@@ -11,10 +11,10 @@
       label="Fetch an existing business"
       persistent-hint
       v-model.trim="searchField"
-      @click:append="onItemSelected()"
-      @input="onInput()"
-      @keydown.tab.exact="onItemSelected()"
-      @keyup.enter="onItemSelected()"
+      @click:append="search()"
+      @input="reset()"
+      @keydown.tab.exact="search()"
+      @keyup.enter="search()"
       :error-messages="errorMessages"
       :loading="state === States.SEARCHING"
       :name="Math.random()"
@@ -67,15 +67,18 @@ export default class BusinessFetch extends Vue {
     return (this.errorMessages.length === 0)
   }
 
-  /** When bound model is updated, clear errors and reset state. */
-  onInput (): void {
+  /** Clears errors and resets state. Called whenever users changes input. */
+  reset (): void {
     this.errorMessages = []
     this.state = States.INITIAL
   }
 
-  /** When an item has been selected, emits event with business object. */
+  /** Searches for business and emits business fetch object. Called by various events. */
   @Emit('business')
-  async onItemSelected (): Promise<BusinessFetchIF> {
+  async search (): Promise<BusinessFetchIF> {
+    // safety check
+    if (this.state !== States.INITIAL) return
+
     // validate search field
     const valid = this.validate()
     if (!valid) return
