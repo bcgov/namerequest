@@ -2,17 +2,18 @@ import querystring from 'qs'
 import axios from 'axios'
 import {
   CorpNumRequests,
+  EntityStates,
   EntityType,
   Location,
   NameCheckAnalysisJurisdiction,
   NameCheckAnalysisType,
   NameCheckConflictType,
   NameCheckErrorType,
-  XproNameType,
   NrAffiliationErrors,
   NrRequestActionCodes,
   NrState,
-  NrType
+  NrType,
+  XproNameType
 } from '@/enums'
 import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
 import removeAccents from 'remove-accents'
@@ -22,31 +23,30 @@ import { MRAS_MIN_LENGTH, MRAS_MAX_LENGTH } from '@/components/new-request/const
 
 // List Data
 import { CanJurisdictions, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
-import { appBaseURL } from '../router/router'
 
 // Interfaces
 import {
+  BusinessFetchIF,
   CleanedNameIF,
+  ConflictListItemI,
   ConversionTypesI,
   NameRequestI,
   NewRequestNameSearchI,
   ParsedRestrictedResponseIF,
+  QuickSearchParamsI,
+  QuickSearchParsedRespI,
+  RefundParamsIF,
   RestrictedResponseIF,
   SelectOptionsI,
   StatsI,
-  SubmissionTypeT,
   StaffPaymentIF,
-  QuickSearchParamsI,
-  QuickSearchParsedRespI,
-  ConflictListItemI,
-  RefundParamsIF
+  SubmissionTypeT
 } from '@/interfaces'
-import { ActionIF } from '@/interfaces/store-interfaces'
 
 const qs: any = querystring
 let source: any
 
-export const setActiveComponent: any = ({ commit }, component): void => {
+export const setActiveComponent = ({ commit }, component): void => {
   enum Tabs {
     NewSearch,
     ExistingRequestSearch
@@ -80,7 +80,7 @@ export const setActiveComponent: any = ({ commit }, component): void => {
  * @param action the action to confirm
  * @returns True if confirmed, otherwise False
  */
-export const confirmAction: ActionIF = async ({ commit, getters }, action: string): Promise<boolean> => {
+export const confirmAction = async ({ commit }, action: string): Promise<boolean> => {
   try {
     const nrData = await NamexServices.getNameRequest(true)
     if (!nrData) throw new Error('Got error from getNameRequest()')
@@ -92,7 +92,7 @@ export const confirmAction: ActionIF = async ({ commit, getters }, action: strin
   }
 }
 
-export const findNameRequest: ActionIF = async ({ commit, getters }): Promise<void> => {
+export const findNameRequest = async ({ commit, getters }): Promise<void> => {
   try {
     resetAnalyzeName({ commit, getters })
     commit('mutateDisplayedComponent', 'SearchPending')
@@ -133,7 +133,7 @@ export const findNameRequest: ActionIF = async ({ commit, getters }): Promise<vo
  * NB: To fetch the NR from the API, use getNameRequest().
  * @param nrData the NR data object
  */
-export const loadExistingNameRequest:ActionIF = async ({ commit }, nrData: any) => {
+export const loadExistingNameRequest = async ({ commit }, nrData: any): Promise<void> => {
   if (!nrData) {
     commit('mutateNameRequest', {
       text: 'No records were found that match the information you entered.<br>' +
@@ -151,16 +151,16 @@ export const loadExistingNameRequest:ActionIF = async ({ commit }, nrData: any) 
   }
 }
 
-export const setStats: ActionIF = async ({ commit }, stats: StatsI) => {
+export const setStats = async ({ commit }, stats: StatsI): Promise<void> => {
   commit('mutateStats', stats)
 }
 
-export const userClickedStopAnalysis: ActionIF = ({ commit }) => {
+export const userClickedStopAnalysis = ({ commit }): void => {
   commit('mutateUserCancelledAnalysis', true)
   commit('mutateSubmissionType', 'examination')
 }
 
-export const resetAnalyzeName = ({ commit, getters }) => {
+export const resetAnalyzeName = ({ commit, getters }): void => {
   commit('clearAssumedNameOriginal')
   if (!getters.getUserCancelledAnalysis) {
     commit('mutateAnalysisJSON', null)
@@ -197,7 +197,7 @@ export const resetAnalyzeName = ({ commit, getters }) => {
   commit('mutateSpecialCharacters', [])
 }
 
-export const cancelAnalyzeName: ActionIF = ({ commit, getters }, destination: string) => {
+export const cancelAnalyzeName = ({ commit, getters }, destination: string): void => {
   commit('mutateAnalyzeDesignationPending', false)
   commit('mutateAnalyzeStructurePending', false)
   commit('mutateAnalyzeConflictsPending', false)
@@ -215,7 +215,7 @@ export const cancelAnalyzeName: ActionIF = ({ commit, getters }, destination: st
   }
 }
 
-export const cancelEditExistingRequest: ActionIF = ({ commit }) => {
+export const cancelEditExistingRequest = ({ commit }): void => {
   commit('mutateDisplayedComponent', 'ExistingRequestDisplay')
   commit('resetApplicantDetails')
   commit('mutateNameChoicesToInitialState')
@@ -225,7 +225,7 @@ export const cancelEditExistingRequest: ActionIF = ({ commit }) => {
 }
 
 // called to commit data into "newRequestModel" object
-const commitExistingData = ({ commit, getters }) => {
+const commitExistingData = ({ commit, getters }): void => {
   commit('populateApplicantData')
   commit('populateNrData')
   if (['clientFirstName', 'clientLastName', 'contact'].some(field => !!getters.getNr.applicants[field])) {
@@ -272,7 +272,7 @@ const commitExistingData = ({ commit, getters }) => {
   }
 }
 
-export const editExistingRequest: ActionIF = ({ commit, getters }) => {
+export const editExistingRequest = ({ commit, getters }): void => {
   commit('mutateEditMode', true)
   commitExistingData({ commit, getters })
   if (getters.getNrState === NrState.DRAFT) {
@@ -283,14 +283,14 @@ export const editExistingRequest: ActionIF = ({ commit, getters }) => {
   commit('mutateDisplayedComponent', 'ExistingRequestEdit')
 }
 
-export const setApplicantDetails: ActionIF = ({ commit }, appKV) => {
+export const setApplicantDetails = ({ commit }, appKV): void => {
   commit('mutateApplicant', appKV)
   if (!appKV || !appKV.value || appKV.key !== 'addrLine1') {
     commit('mutateAddressSuggestions', null)
   }
 }
 
-export const setAddressSuggestions: ActionIF = ({ commit }, addressSuggestions: any[]) => {
+export const setAddressSuggestions = ({ commit }, addressSuggestions: any[]): void => {
   commit('mutateAddressSuggestions', addressSuggestions)
 }
 
@@ -299,7 +299,7 @@ export const setAddressSuggestions: ActionIF = ({ commit }, addressSuggestions: 
  * @returns a resolved promise on success or a rejected promise on failure
  */
 // FUTURE: not an action - move it to another module?
-export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> => {
+export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<BusinessFetchIF> => {
   // NB: MRAS search was done on first page
   // if (getters.getShowCorpNum === CorpNumRequests.MRAS) {
   //   return checkMRAS({ getters }, corpNum)
@@ -312,37 +312,47 @@ export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<any> =
 }
 
 // FUTURE: not an action - move it to another module?
-export const checkCOLIN = ({ getters }, corpNum: string) => {
-  const myToken = sessionStorage.getItem('KEYCLOAK_TOKEN')
-
-  // check entity for the corp num first
-  let url = `${appBaseURL}/businesses/${corpNum}`
-  return axios.get(url, {}).catch(error => {
-    if (error.response && error.response.status === 404) {
-      // Remove BC prefix as Colin only supports base number with no prefix for BC's
-      const cleanedCorpNum = corpNum.replace(/^BC+/i, '')
-      url = `${appBaseURL}/colin/${cleanedCorpNum}`
-      return axios.post(url, {}).then(response => {
-        if (response.data.directors === 'Not Available' && response.data.incorporated === 'Not Available') {
-          const error = new Error('Not Found')
-          return Promise.reject(error)
-        }
-      }).catch(error => {
-        return Promise.reject(error)
-      })
-    } else {
-      return Promise.reject(error)
+async function checkCOLIN ({ getters }, corpNum: string): Promise<BusinessFetchIF> {
+  try {
+    // first try to find business in Entities (Legal API)
+    const data = await NamexServices.searchEntities(corpNum)
+    return {
+      identifier: data.identifier,
+      legalName: data.legalName,
+      legalType: data.legalType,
+      state: data.state
     }
-  })
+  } catch (error) {
+    if ((error as any).response?.status === NOT_FOUND) {
+      // now try to find business in COLIN
+      try {
+        const data = await NamexServices.searchColin(corpNum)
+        if (data.directors === 'Not Available' && data.incorporated === 'Not Available') {
+          return Promise.reject(error) // business not found
+        }
+        // *** TODO: update this when new endpoint is available
+        return {
+          identifier: corpNum, // data['incorp #'],
+          legalName: 'Future Name From COLIN',
+          legalType: EntityType.BC,
+          state: EntityStates.ACTIVE
+        }
+      } catch (error) {
+        return Promise.reject(error) // network error
+      }
+    }
+
+    return Promise.reject(error) // network error
+  }
 }
 
 // FUTURE: not an action - move it to another module?
-export const checkMRAS = ({ getters }, corpNum: string) => {
-  let { xproJurisdiction } = getters.getNrData
-  let { SHORT_DESC } = CanJurisdictions.find(jur => jur.text === xproJurisdiction)
-  let url = `mras-profile/${SHORT_DESC}/${corpNum}`
-  return axios.get(url)
-}
+// async function checkMRAS ({ getters }, corpNum: string): Promise<any> {
+//   let { xproJurisdiction } = getters.getNrData
+//   let { SHORT_DESC } = CanJurisdictions.find(jur => jur.text === xproJurisdiction)
+//   let url = `mras-profile/${SHORT_DESC}/${corpNum}`
+//   return axios.get(url)
+// }
 
 export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
   if (getters.getCorpSearch) {
@@ -371,7 +381,7 @@ export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
 }
 
 // FUTURE: not an action - move it to another module?
-export const getNrStateData = ({ getters }) => {
+export const getNrStateData = ({ getters }): any => {
   let nrState = getters.getNrState
   if (getters.getAssumedName) nrState = NrState.ASSUMED
   let data: any
@@ -420,7 +430,7 @@ export const getNrTypeData = ({ getters }, type: NrType): any => {
 }
 
 /** Submits an edited NR or a new name submission. */
-export const submit: any = async ({ commit, getters, dispatch }): Promise<any> => {
+export const submit = async ({ commit, getters, dispatch }): Promise<any> => {
   if (getters.getEditMode) {
     // TODO-CAM: Refactor the way these async requests are used to provide conditional booleans
     const data = await NamexServices.patchNameRequests(getters.getNrId, getters.getRequestActionCd,
@@ -463,7 +473,7 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
       if (!getters.isEditMode && [NrState.COND_RESERVED, NrState.RESERVED].includes(getters.getNrState)) {
         request = await NamexServices.getNameRequest(true)
         if (request?.stateCd === NrState.CANCELLED) {
-          await setActiveComponent('Timeout')
+          setActiveComponent({ commit }, 'Timeout')
           return
         }
       }
@@ -477,7 +487,7 @@ export const submit: any = async ({ commit, getters, dispatch }): Promise<any> =
 /**
  * Re-submits an expired NR (without changing the current NR data).
  */
-export const resubmit: any = async ({ commit, getters }): Promise<boolean> => {
+export const resubmit = async ({ commit, getters }): Promise<boolean> => {
   // safety check
   if (getters.getEditMode) {
     console.error('resubmit() - should not be edit mode') // eslint-disable-line no-console
@@ -533,90 +543,90 @@ export const resubmit: any = async ({ commit, getters }): Promise<boolean> => {
  * This helper returns the designation, if there is one, or the last word of the name, which is
  * assumed to be the designation.
  */
-const getNameDesignation = (name: any): string => {
+function getNameDesignation (name: any): string {
   if (name.designation) return name.designation
   const words = name.name.split(' ')
   const len = words.length
   return words[len - 1]
 }
 
-export const setCurrentJsDate: ActionIF = ({ commit }, date: Date): void => {
+export const setCurrentJsDate = ({ commit }, date: Date): void => {
   commit('mutateCurrentJsDate', date)
 }
 
-export const setName: ActionIF = ({ commit }, name: string): void => {
+export const setName = ({ commit }, name: string): void => {
   commit('mutateName', name)
 }
 
-export const setLocation: ActionIF = ({ commit }, location: Location): void => {
+export const setLocation = ({ commit }, location: Location): void => {
   commit('mutateLocation', location)
 }
 
-export const setDisplayedComponent: ActionIF = ({ commit }, component: string): void => {
+export const setDisplayedComponent = ({ commit }, component: string): void => {
   commit('mutateDisplayedComponent', component)
 }
 
-export const setTabNumber: ActionIF = ({ commit }, tabNumber: number): void => {
+export const setTabNumber = ({ commit }, tabNumber: number): void => {
   commit('mutateTabNumber', tabNumber)
 }
 
-export const setCorpSearch: ActionIF = ({ commit }, corpSearch: string): void => {
+export const setCorpSearch = ({ commit }, corpSearch: string): void => {
   commit('mutateCorpSearch', corpSearch)
 }
 
-export const setEntityTypeCd: ActionIF = ({ commit }, entityTypeCd: EntityType): void => {
+export const setEntityTypeCd = ({ commit }, entityTypeCd: EntityType): void => {
   commit('mutateEntityType', entityTypeCd)
 }
 
-export const setConversionType: ActionIF = ({ commit }, conversionType: string): void => {
+export const setConversionType = ({ commit }, conversionType: string): void => {
   commit('mutateConversionType', conversionType)
 }
 
-export const setJurisdictionCd: ActionIF = ({ commit }, jurisdictionCd: string): void => {
+export const setJurisdictionCd = ({ commit }, jurisdictionCd: string): void => {
   commit('mutateJurisdictionCd', jurisdictionCd)
 }
 
-export const setIsPersonsName: ActionIF = ({ commit }, isPersonsName: boolean): void => {
+export const setIsPersonsName = ({ commit }, isPersonsName: boolean): void => {
   commit('mutateIsPersonsName', isPersonsName)
 }
 
-export const setNameIsEnglish: ActionIF = ({ commit }, isEnglishName: boolean): void => {
+export const setNameIsEnglish = ({ commit }, isEnglishName: boolean): void => {
   commit('mutateNameIsEnglish', isEnglishName)
 }
 
-export const setNoCorpNum: ActionIF = ({ commit }, noCorpNum: boolean): void => {
+export const setNoCorpNum = ({ commit }, noCorpNum: boolean): void => {
   commit('mutateNoCorpNum', noCorpNum)
 }
 
-export const setExtendedRequestType: ActionIF = ({ commit }, extendedRequestType: SelectOptionsI): void => {
+export const setExtendedRequestType = ({ commit }, extendedRequestType: SelectOptionsI): void => {
   commit('mutateExtendedRequestType', extendedRequestType)
 }
 
-export const setRequestAction: ActionIF = ({ commit }, requestAction: NrRequestActionCodes): void => {
+export const setRequestAction = ({ commit }, requestAction: NrRequestActionCodes): void => {
   commit('mutateRequestAction', requestAction)
 }
 
-export const setConversionTypeAddToSelect: ActionIF = ({ commit }, conversionType: ConversionTypesI): void => {
+export const setConversionTypeAddToSelect = ({ commit }, conversionType: ConversionTypesI): void => {
   commit('mutateConversionTypeAddToSelect', conversionType)
 }
 
-export const setEntityTypeAddToSelect: ActionIF = ({ commit }, entityType: SelectOptionsI): void => {
+export const setEntityTypeAddToSelect = ({ commit }, entityType: SelectOptionsI): void => {
   commit('mutateEntityTypeAddToSelect', entityType)
 }
 
-export const setClearErrors: ActionIF = ({ commit }): void => {
+export const setClearErrors = ({ commit }): void => {
   commit('clearErrors')
 }
 
-export const setUserCancelledAnalysis: ActionIF = ({ commit }, cancelledAnalysis: boolean): void => {
+export const setUserCancelledAnalysis = ({ commit }, cancelledAnalysis: boolean): void => {
   commit('mutateUserCancelledAnalysis', cancelledAnalysis)
 }
 
-export const setNameRequest: ActionIF = ({ commit }, nameRequest: NameRequestI): void => {
+export const setNameRequest = ({ commit }, nameRequest: NameRequestI): void => {
   commit('mutateNameRequest', nameRequest)
 }
 
-export const setExistingRequestSearch: ActionIF = (
+export const setExistingRequestSearch = (
   { commit, getters },
   existingRequest: { key: string, value: string }
 ): void => {
@@ -634,126 +644,126 @@ export const setExistingRequestSearch: ActionIF = (
   commit('mutateExistingRequestSearch', existingRequest)
 }
 
-export const setNrResponse: ActionIF = ({ commit }, request: NameRequestI): void => {
+export const setNrResponse = ({ commit }, request: NameRequestI): void => {
   commit('setNrResponse', request)
 }
 
-export const setSubmissionTabNumber: ActionIF = ({ commit }, tabNumber: number): void => {
+export const setSubmissionTabNumber = ({ commit }, tabNumber: number): void => {
   commit('mutateSubmissionTabNumber', tabNumber)
 }
 
-export const setSubmissionType: ActionIF = ({ commit }, submissionType: SubmissionTypeT): void => {
+export const setSubmissionType = ({ commit }, submissionType: SubmissionTypeT): void => {
   commit('mutateSubmissionType', submissionType)
 }
 
-export const setCorpNum: ActionIF = ({ commit }, corpNum: string): void => {
+export const setCorpNum = ({ commit }, corpNum: string): void => {
   commit('mutateCorpNum', corpNum)
 }
 
-export const setActingOnOwnBehalf: ActionIF = ({ commit }, isActingOnOwn: boolean): void => {
+export const setActingOnOwnBehalf = ({ commit }, isActingOnOwn: boolean): void => {
   commit('mutateActingOnOwnBehalf', isActingOnOwn)
 }
 
-export const setNRData: ActionIF = ({ commit }, nrData: any): void => {
+export const setNRData = ({ commit }, nrData: any): void => {
   commit('mutateNRData', nrData)
 }
 
-export const setEditMode: ActionIF = ({ commit }, editMode: boolean): void => {
+export const setEditMode = ({ commit }, editMode: boolean): void => {
   commit('mutateEditMode', editMode)
 }
 
-export const setAssumedNameOriginal: ActionIF = ({ commit }): void => {
+export const setAssumedNameOriginal = ({ commit }): void => {
   commit('mutateAssumedNameOriginal')
 }
 
-export const setNameChoicesToInitialState: ActionIF = ({ commit }): void => {
+export const setNameChoicesToInitialState = ({ commit }): void => {
   commit('mutateNameChoicesToInitialState')
 }
 
-export const setNameChoices: ActionIF = ({ commit }, choiceObj: any): void => {
+export const setNameChoices = ({ commit }, choiceObj: any): void => {
   commit('mutateNameChoices', choiceObj)
 }
 
-export const setPriorityRequest: ActionIF = ({ commit }, isPriorityRequest: boolean): void => {
+export const setPriorityRequest = ({ commit }, isPriorityRequest: boolean): void => {
   commit('mutatePriorityRequest', isPriorityRequest)
 }
 
-export const setIsLoadingSubmission: ActionIF = ({ commit }, isLoading: boolean): void => {
+export const setIsLoadingSubmission = ({ commit }, isLoading: boolean): void => {
   commit('mutateIsLoadingSubmission', isLoading)
 }
 
-export const setShowActualInput: ActionIF = ({ commit }, showInput: boolean): void => {
+export const setShowActualInput = ({ commit }, showInput: boolean): void => {
   commit('mutateShowActualInput', showInput)
 }
 
 //
 // Dialog Actions
 //
-export const setPickEntityModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
+export const setPickEntityModalVisible = ({ commit }, isVisible: boolean): void => {
   commit('mutatePickEntityModalVisible', isVisible)
 }
 
-export const setPickRequestTypeModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
+export const setPickRequestTypeModalVisible = ({ commit }, isVisible: boolean): void => {
   commit('mutatePickRequestTypeModalVisible', isVisible)
 }
 
-export const setMrasSearchInfoModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
+export const setMrasSearchInfoModalVisible = ({ commit }, isVisible: boolean): void => {
   commit('mutateMrasSearchInfoModalVisible', isVisible)
 }
 
-export const setExitModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
+export const setExitModalVisible = ({ commit }, isVisible: boolean): void => {
   commit('mutateExitModalVisible', isVisible)
 }
 
-export const setExitIncompletePaymentVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
+export const setExitIncompletePaymentVisible = ({ commit }, isVisible: boolean): void => {
   commit('mutateExitIncompletePaymentVisible', isVisible)
 }
 
-export const setSubmissionTabComponent: ActionIF = ({ commit }, isVisible: boolean): void => {
+export const setSubmissionTabComponent = ({ commit }, isVisible: boolean): void => {
   commit('mutateSubmissionTabComponent', isVisible)
 }
 
-export const setConditionsModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
+export const setConditionsModalVisible = ({ commit }, isVisible: boolean): void => {
   commit('mutateConditionsModalVisible', isVisible)
 }
 
-export const setAffiliationErrorModalValue: ActionIF = ({ commit }, modalValue: NrAffiliationErrors): void => {
+export const setAffiliationErrorModalValue = ({ commit }, modalValue: NrAffiliationErrors): void => {
   commit('mutateAffiliationErrorModalValue', modalValue)
 }
 
-export const setHelpMeChooseModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
+export const setHelpMeChooseModalVisible = ({ commit }, isVisible: boolean): void => {
   commit('mutateHelpMeChooseModalVisible', isVisible)
 }
 
-export const setLocationInfoModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
+export const setLocationInfoModalVisible = ({ commit }, isVisible: boolean): void => {
   commit('mutateLocationInfoModalVisible', isVisible)
 }
 
-export const setNrRequiredModalVisible: ActionIF = ({ commit }, isVisible: boolean): void => {
+export const setNrRequiredModalVisible = ({ commit }, isVisible: boolean): void => {
   commit('mutateNrRequiredModalVisible', isVisible)
 }
 
-export const setRequestExaminationOrProvideConsent: ActionIF = ({ commit }, requestExamOrConsent: any): void => {
+export const setRequestExaminationOrProvideConsent = ({ commit }, requestExamOrConsent: any): void => {
   commit('mutateRequestExaminationOrProvideConsent', requestExamOrConsent)
 }
 
-export const setKeycloakRoles: ActionIF = ({ commit }, keycloakRoles: string[]): void => {
+export const setKeycloakRoles = ({ commit }, keycloakRoles: string[]): void => {
   commit('mutateKeycloakRoles', keycloakRoles)
 }
 
-export const setStaffPayment: ActionIF = ({ commit }, staffPayment: StaffPaymentIF): void => {
+export const setStaffPayment = ({ commit }, staffPayment: StaffPaymentIF): void => {
   commit('mutateStaffPayment', staffPayment)
 }
 
-export const setFolioNumber: ActionIF = ({ commit }, folioNumber: string): void => {
+export const setFolioNumber = ({ commit }, folioNumber: string): void => {
   commit('mutateFolioNumber', folioNumber)
 }
 
-export const setWindowWidth: ActionIF = ({ commit }, width: number): void => {
+export const setWindowWidth = ({ commit }, width: number): void => {
   commit('mutateWindowWidth', width)
 }
 
-export const setHotjarUserId: ActionIF = ({ commit }, hotjarUserId: string): void => {
+export const setHotjarUserId = ({ commit }, hotjarUserId: string): void => {
   commit('mutateHotjarUserId', hotjarUserId)
 }
 
@@ -807,7 +817,7 @@ const getMatchesRestricted = async (
     : { conditionalInstructions: [], conditionalWords: [], restrictedWords: [] }
 }
 
-export const getNameAnalysis: ActionIF = async (
+export const getNameAnalysis = async (
   { commit, getters },
   options: { xpro: boolean, designationOnly: boolean }
 ) => {
@@ -1038,21 +1048,21 @@ const parseSynonymNames = (
   return names
 }
 
-export const setDesignation: ActionIF = ({ commit }, designation: string): void => {
+export const setDesignation = ({ commit }, designation: string): void => {
   commit('mutateDesignation', designation)
 }
 
-export const setDoNameCheck: ActionIF = ({ commit }, check: boolean): void => {
+export const setDoNameCheck = ({ commit }, check: boolean): void => {
   commit('mutateDoNameCheck', check)
 }
 
-export const startEditName: ActionIF = ({ commit, getters }) => {
+export const startEditName = ({ commit, getters }) => {
   if (!getters.getEntityTypeCd) commit('setErrors', 'entity_type_cd')
 }
 
-export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
+export const startAnalyzeName = async ({ commit, getters }) => {
   resetAnalyzeName({ commit, getters })
-  setUserCancelledAnalysis({ commit, getters }, false)
+  setUserCancelledAnalysis({ commit }, false)
 
   // check basic state values
   if (!getters.getRequestActionCd) commit('setErrors', 'request_action_cd')
@@ -1122,7 +1132,7 @@ export const startAnalyzeName: ActionIF = async ({ commit, getters }) => {
     commit('mutateHomeJurisNum', getters.getCorpSearch)
     // only make MRAS call for MRAS jurisdictions and if we have a corp num
     if (getters.isMrasJurisdiction && !getters.getHasNoCorpNum) {
-      const profile: any = await fetchMRASProfile({ commit, getters })
+      const profile = await fetchMRASProfile({ commit, getters })
       if (profile) {
         const hasMultipleNames = profile?.LegalEntity?.names && profile?.LegalEntity?.names.constructor === Array
         name = hasMultipleNames
@@ -1247,10 +1257,10 @@ export const startQuickSearch = async ({ commit, getters }, checks: QuickSearchP
   }
 }
 
-export const setRefundParams: ActionIF = ({ commit }, refundParams: RefundParamsIF): void => {
+export const setRefundParams = ({ commit }, refundParams: RefundParamsIF): void => {
   commit('mutateRefundParams', refundParams)
 }
 
-export const setIncorporateNowErrorStatus: ActionIF = ({ commit }, incorporateNowError: boolean): void => {
+export const setIncorporateNowErrorStatus = ({ commit }, incorporateNowError: boolean): void => {
   commit('mutateIncorporateNowErrorStatus', incorporateNowError)
 }

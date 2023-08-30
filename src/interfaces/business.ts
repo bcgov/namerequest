@@ -1,27 +1,28 @@
-export interface Business {
-  natureOfBusiness: string
-}
-
-export interface NameRequest {
-  legalType: string,
-  nrNumber?: string
-}
+import { EntityStates, EntityType } from '@/enums'
 
 export interface BusinessRequest {
   filing: {
     header: {
-      name: string,
+      name: string
       accountId: number
     },
     business: {
       legalType: string
     },
     incorporationApplication?: {
-      nameRequest: NameRequest
+      nameRequest: {
+        legalType: string
+        nrNumber?: string
+      }
     },
     registration?: {
-      business: Business
-      nameRequest: NameRequest
+      business: {
+        natureOfBusiness: string
+      }
+      nameRequest: {
+        legalType: string
+        nrNumber?: string
+      }
     }
   }
 }
@@ -30,4 +31,11 @@ export interface CreateNRAffiliationRequestBody {
   businessIdentifier: string
   phone?: string
   email?: string
+}
+
+export interface BusinessFetchIF {
+  identifier: string
+  legalName: string
+  legalType: EntityType
+  state: EntityStates
 }
