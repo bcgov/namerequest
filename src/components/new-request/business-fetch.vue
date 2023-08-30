@@ -6,17 +6,19 @@
       autocomplete="chrome-off"
       autofocus
       filled
-      @change="onItemSelected()"
-      @click:append="onItemSelected()"
-      :loading="state === States.SEARCHING"
-      :name="Math.random()"
       hide-details="auto"
       hint="Enter registration number of existing business"
       label="Fetch an existing business"
       persistent-hint
-      ref="searchField"
-      :rules="rules"
-      v-model="searchField"
+      v-model.trim="searchField"
+      @click:append="onItemSelected()"
+      @input="onInput()"
+      @keydown.tab.exact="onItemSelected()"
+      @keyup.enter="onItemSelected()"
+      :error-messages="errorMessages"
+      :loading="state === States.SEARCHING"
+      :name="Math.random()"
+      :readonly="state === States.SEARCHING"
     />
   </div>
 </template>
@@ -24,10 +26,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Emit } from 'vue-property-decorator'
-import { BusinessLookupResultIF, FormType } from '@/interfaces'
-import { Sleep } from '@/plugins'
-import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
-import { EntityStates } from '@bcrs-shared-components/enums'
+import { Action } from 'vuex-class'
+import { BusinessFetchIF } from '@/interfaces'
 
 enum States {
   INITIAL = 'initial',
@@ -40,45 +40,59 @@ enum States {
  */
 @Component({})
 export default class BusinessFetch extends Vue {
-  // Refs
-  $refs!: {
-    searchField: FormType
-  }
-
-  // enum for template
+  // Enum for template
   readonly States = States
+
+  // Store action
+  @Action fetchCorpNum!: (corpNum: string) => Promise<BusinessFetchIF>
 
   /** V-model for search field. */
   searchField = ''
 
+  /** For custom error messages. */
+  errorMessages = [] as Array<string>
+
   /** State of this component. */
   state = States.INITIAL
 
-  /** Validation rules. */
-  rules = [
-    v => !!v || 'Required field',
-    v => (!v || v.length === 9) || 'Please enter a valid registration number'
-  ]
+  /** Validates the search field, sets any error messages, and returns validity. */
+  private validate (): boolean {
+    if (!this.searchField) {
+      this.errorMessages = ['Required field']
+    } else if (!/^(A|BC|C|CP|FM)\d{7}$/.test(this.searchField)) {
+      this.errorMessages = ['Please enter a valid registration number']
+    } else {
+      this.errorMessages = []
+    }
+    return (this.errorMessages.length === 0)
+  }
+
+  /** When bound model is updated, clear errors and reset state. */
+  onInput (): void {
+    this.errorMessages = []
+    this.state = States.INITIAL
+  }
 
   /** When an item has been selected, emits event with business object. */
   @Emit('business')
-  async onItemSelected (): Promise<BusinessLookupResultIF> {
-    const valid = this.$refs.searchField.validate()
+  async onItemSelected (): Promise<BusinessFetchIF> {
+    // validate search field
+    const valid = this.validate()
     if (!valid) return
 
-    // set state and perform search
+    // perform search
     this.state = States.SEARCHING
-    await Sleep(1000) // *** TODO: perform search here
+    const result = await this.fetchCorpNum(this.searchField).catch(e => null)
 
-    // set state and return result
-    this.state = States.SUMMARY
-    return {
-      identifier: this.searchField,
-      legalType: CorpTypeCd.BC_COMPANY,
-      bn: '',
-      status: EntityStates.ACTIVE,
-      name: this.searchField
+    // return result
+    if (result) {
+      this.state = States.SUMMARY
+      return result
     }
+
+    // show error
+    this.state = States.INITIAL
+    this.errorMessages = ['Business not found']
   }
 }
 </script>

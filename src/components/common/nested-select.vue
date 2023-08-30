@@ -8,7 +8,7 @@
     :error-messages="errorMessages"
     :items="items"
     :label="label"
-    :menu-props="{ bottom: true, offsetY: true }"
+    :menu-props="menuProps"
     :value="value"
     @change="emitChangeEvent($event)"
   >
@@ -67,6 +67,7 @@ export default class NestedSelect extends Vue {
   @Prop() readonly menuItems!: Array<any>
   @Prop() readonly errorMessages!: string
   @Prop({ default: null }) readonly value!: any
+  @Prop() readonly maxHeight!: string
 
   // data
   activeActionGroup = NaN
@@ -82,6 +83,13 @@ export default class NestedSelect extends Vue {
       item['disabled'] = (item.group !== this.activeActionGroup)
       return true
     })
+  }
+
+  get menuProps (): any {
+    // specify maxHeight only if it's set, otherwise the v-menu doesn't show all items
+    // ("maxHeight: auto" doesn't work either)
+    if (this.maxHeight) return { bottom: true, offsetY: true, maxHeight: this.maxHeight }
+    return { bottom: true, offsetY: true }
   }
 
   // methods

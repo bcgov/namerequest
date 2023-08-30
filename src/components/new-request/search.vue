@@ -20,6 +20,7 @@
                 :menuItems="RequestActions"
                 :errorMessages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
                 :value="request"
+                maxHeight="333"
                 @change="setClearErrors(); onRequestActionChange($event)"
               />
             </div>
@@ -97,23 +98,22 @@
       </v-col>
 
       <!-- Business Lookup/Fetch -->
-      <v-col v-if="showBusinessLookup" cols="12" md="6">
+      <v-col v-if="showBusinessLookup" cols="12" md="6" class="business-lookup">
         <template v-if="!business">
-          <BusinessLookup v-if="getIsAuthenticated" @business="business=$event"/>
-          <BusinessFetch v-else @business="business=$event"/>
+          <BusinessLookup v-if="getIsAuthenticated" @business="onBusiness($event)"/>
+          <BusinessFetch v-else @business="onBusiness($event)"/>
         </template>
-        <div v-else class="d-flex justify-space-between align-center">
-          <v-text-field
-            append-outer-icon="mdi-close"
-            disabled
-            filled
-            hide-details
-            :value="business.name"
-          />
-          <div @click="business=null">
-            <v-icon color="primary">mdi-close</v-icon>
-          </div>
-        </div>
+        <v-text-field
+          v-else
+          append-icon="mdi-close"
+          readonly
+          filled
+          hide-details
+          :label="business.identifier"
+          :value="business.legalName"
+          @click:append="onBusiness(null)"
+          @keyup.delete="onBusiness(null)"
+        />
       </v-col>
 
       <!-- once an entity type is selected (or Federal)... -->
@@ -283,7 +283,7 @@ import BusinessLookup from '@/components/new-request/business-lookup.vue'
 import BusinessFetch from '@/components/new-request/business-fetch.vue'
 
 // Interfaces / Enums / List Data
-import { BusinessLookupResultIF, ConversionTypesI, EntityI, FormType, RequestActionsI } from '@/interfaces'
+import { BusinessFetchIF, ConversionTypesI, EntityI, FormType, RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { AccountType, CompanyType, EntityType, Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin, NrAffiliationMixin } from '@/mixins'
@@ -339,6 +339,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
   // Store actions
   @Action setConversionType!: ActionBindingIF
+  @Action setCorpNum!: ActionBindingIF
   @Action setCorpSearch!: ActionBindingIF
   @Action setClearErrors!: () => void
   @Action setDesignation!: ActionBindingIF
@@ -363,7 +364,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   readonly EntityType = EntityType
   activeActionGroup = NaN
   showRequestActionTooltip = false
-  business = null as BusinessLookupResultIF
+  business = null as BusinessFetchIF
 
   private mounted () {
     this.$nextTick(() => {
@@ -465,7 +466,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     if (type && this.isConversion) {
       // convert NrRequestTypeCodes -> EntityType
       const value = type as unknown as NrRequestTypeCodes
-      let { entity_type_cd } = ConversionTypes.find(conv => conv.value === value)
+      let { entity_type_cd } = ConversionTypes.find(conv => conv.value === value) || { entity_type_cd: null }
       this.setEntityTypeCd(entity_type_cd)
       this.setConversionType(type)
       return
@@ -560,6 +561,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     return this.getEntityTextFromValue || 'specified business type'
   }
 
+  /** Event handled for business lookup/fetch. */
+  onBusiness (business: BusinessFetchIF): void {
+    this.business = business
+    this.entity_type_cd = this.business?.legalType || null
+    this.setCorpNum(business?.identifier || null)
+  }
+
   /**
    * If user is authenticated, create draft business and redirect to Dashboard.
    * If user is not authenticated, redirect to login screen then redirect back.
@@ -590,7 +598,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     this.setDesignation('')
     // clear "Select a Business Type" field when "View all business types" or Society is selected
     if (!this.entity_type_cd || this.entity_type_cd === EntityType.INFO) {
-      this.$refs.selectBusinessTypeRef.reset()
+      this.$refs.selectBusinessTypeRef && this.$refs.selectBusinessTypeRef.reset()
     }
   }
 
@@ -612,11 +620,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     this.setRequestAction(this.request?.value || null)
 
     // clear previous state
+    this.business = null
     this.jurisdiction = null
     this.setLocation(null)
     this.setJurisdictionCd(null)
     if (this.entity_type_cd) this.entity_type_cd = null
     this.selectedCompanyType = null
+    this.setCorpNum(null)
 
     // wait for updates
     await Vue.nextTick()
@@ -671,6 +681,11 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 // hide disabled list items
 ::v-deep .v-list-item:has(.v-list-item__content.hide-me) {
   display: none;
+}
+
+// make the business lookup close button always blue
+::v-deep .business-lookup button.mdi-close {
+  color: $app-blue;
 }
 
 // set content colour when hovering over list items

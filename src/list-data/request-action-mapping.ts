@@ -75,6 +75,7 @@ export const XproMapping: MappingI = {
   ]
 }
 
+// *** FUTURE: get rid of these when we remove getShowCorpNum()
 export const ColinRequestActions = [
   NrRequestActionCodes.AMALGAMATE,
   NrRequestActionCodes.CHANGE_NAME,
@@ -82,6 +83,7 @@ export const ColinRequestActions = [
   NrRequestActionCodes.RESTORE
 ]
 
+// *** TODO: should these be from FF instead?
 export const ColinRequestTypes = [
   EntityType.BC,
   EntityType.CC,
