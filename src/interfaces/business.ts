@@ -33,7 +33,8 @@ export interface CreateNRAffiliationRequestBody {
   email?: string
 }
 
-export interface BusinessFetchIF {
+/** Result object from business fetch/lookup. */
+export interface BusinessSearchIF {
   identifier: string
   legalName: string
   legalType: EntityType

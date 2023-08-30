@@ -283,7 +283,7 @@ import BusinessLookup from '@/components/new-request/business-lookup.vue'
 import BusinessFetch from '@/components/new-request/business-fetch.vue'
 
 // Interfaces / Enums / List Data
-import { BusinessFetchIF, ConversionTypesI, EntityI, FormType, RequestActionsI } from '@/interfaces'
+import { BusinessSearchIF, ConversionTypesI, EntityI, FormType, RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { AccountType, CompanyType, EntityType, Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin, NrAffiliationMixin } from '@/mixins'
@@ -334,7 +334,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   @Getter isInternational!: boolean
   @Getter isMobile!: boolean
   @Getter isMrasJurisdiction!: boolean
-  @Getter isNumberedRequestType!: boolean
+  @Getter isNumberedEntityType!: boolean
   @Getter isRestoration!: boolean
 
   // Store actions
@@ -364,7 +364,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   readonly EntityType = EntityType
   activeActionGroup = NaN
   showRequestActionTooltip = false
-  business = null as BusinessFetchIF
+  business = null as BusinessSearchIF
 
   private mounted () {
     this.$nextTick(() => {
@@ -430,7 +430,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   get companyRadioBtnApplicable (): boolean {
     const isSociety = (this.isSocietyEnabled() && this.getEntityTypeCd === EntityType.SO)
     // check if numbered is not allowed or society NR name is required
-    if (!this.isNumberedRequestType || isSociety) {
+    if (!this.isNumberedEntityType || isSociety) {
       this.selectedCompanyType = CompanyType.NAMED_COMPANY
       return false
     }
@@ -562,7 +562,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   /** Event handled for business lookup/fetch. */
-  onBusiness (business: BusinessFetchIF): void {
+  onBusiness (business: BusinessSearchIF): void {
     this.business = business
     this.entity_type_cd = this.business?.legalType || null
     this.setCorpNum(business?.identifier || null)
