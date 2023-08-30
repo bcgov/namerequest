@@ -1,7 +1,6 @@
 import querystring from 'qs'
 import axios from 'axios'
 import {
-  CorpNumRequests,
   EntityStates,
   EntityType,
   Location,
@@ -26,7 +25,7 @@ import { CanJurisdictions, Designations, IntlJurisdictions, RequestActions } fro
 
 // Interfaces
 import {
-  BusinessFetchIF,
+  BusinessSearchIF,
   CleanedNameIF,
   ConflictListItemI,
   ConversionTypesI,
@@ -295,24 +294,12 @@ export const setAddressSuggestions = ({ commit }, addressSuggestions: any[]): vo
 }
 
 /**
- * Makes API calls to verify that the Corp Num is valid.
+ * Searches Entities or COLIN to fetch a business' info.
+ * @param corpNum the business identifier to search for
  * @returns a resolved promise on success or a rejected promise on failure
  */
 // FUTURE: not an action - move it to another module?
-export const fetchCorpNum = async ({ getters }, corpNum: string): Promise<BusinessFetchIF> => {
-  // NB: MRAS search was done on first page
-  // if (getters.getShowCorpNum === CorpNumRequests.MRAS) {
-  //   return checkMRAS({ getters }, corpNum)
-  // }
-
-  // *** FUTURE: COLIN search (business lookup) should have been done on first page
-  if (getters.getShowCorpNum === CorpNumRequests.COLIN) {
-    return checkCOLIN({ getters }, corpNum)
-  }
-}
-
-// FUTURE: not an action - move it to another module?
-async function checkCOLIN ({ getters }, corpNum: string): Promise<BusinessFetchIF> {
+export async function searchBusiness ({ getters }, corpNum: string): Promise<BusinessSearchIF> {
   try {
     // first try to find business in Entities (Legal API)
     const data = await NamexServices.searchEntities(corpNum)
@@ -345,14 +332,6 @@ async function checkCOLIN ({ getters }, corpNum: string): Promise<BusinessFetchI
     return Promise.reject(error) // network error
   }
 }
-
-// FUTURE: not an action - move it to another module?
-// async function checkMRAS ({ getters }, corpNum: string): Promise<any> {
-//   let { xproJurisdiction } = getters.getNrData
-//   let { SHORT_DESC } = CanJurisdictions.find(jur => jur.text === xproJurisdiction)
-//   let url = `mras-profile/${SHORT_DESC}/${corpNum}`
-//   return axios.get(url)
-// }
 
 export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
   if (getters.getCorpSearch) {
@@ -432,7 +411,7 @@ export const getNrTypeData = ({ getters }, type: NrType): any => {
 /** Submits an edited NR or a new name submission. */
 export const submit = async ({ commit, getters, dispatch }): Promise<any> => {
   if (getters.getEditMode) {
-    // TODO-CAM: Refactor the way these async requests are used to provide conditional booleans
+    // FUTURE: Refactor the way these async requests are used to provide conditional booleans
     const data = await NamexServices.patchNameRequests(getters.getNrId, getters.getRequestActionCd,
       getters.getEditNameReservation)
     if (data) {

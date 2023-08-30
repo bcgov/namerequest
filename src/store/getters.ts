@@ -27,7 +27,6 @@ import {
   SubmissionTypeT
 } from '@/interfaces'
 import {
-  CorpNumRequests,
   EntityType,
   Location,
   NrAffiliationErrors,
@@ -42,20 +41,19 @@ import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 // NB: can't use `this.$xxx` because we don't have `this` (ie, Vue)
 import {
   BcMapping,
+  BusinessLookupEntityTypes,
+  BusinessLookupRequestActions,
   CanJurisdictions,
-  ColinRequestActions,
   ConversionTypes,
   Designations,
   EntityTypesBcData,
   EntityTypesXproData,
   IntlJurisdictions,
   Locations,
-  MrasEntities,
   MrasJurisdictions,
-  NumberedRequestTypes,
+  NumberedEntityTypes,
   RequestActions,
-  XproMapping,
-  XproRequestTypes
+  XproMapping
 } from '@/list-data'
 
 export const isMobile = (state: StateIF): boolean => {
@@ -722,49 +720,20 @@ export const getNameIsSlashed = (state: StateIF): boolean => {
   return false
 }
 
-export const getShowCorpNum = (state: StateIF): CorpNumRequests.COLIN | CorpNumRequests.MRAS | false => {
-  // *** FUTURE: COLIN search (business lookup) should have been done on first page
-  if (ColinRequestActions.includes(getRequestActionCd(state)) && isNumberedRequestType) {
-    return CorpNumRequests.COLIN
-  }
-
-  if (ColinRequestActions.includes(getRequestActionCd(state)) && isXproRequestType) {
-    return CorpNumRequests.COLIN
-  }
-
-  // NB: MRAS search was done on first page
-  // if (isMrasJurisdiction && isMrasRequestType) {
-  //   if (
-  //     getLocation(state) === Location.CA &&
-  //     [NrRequestActionCodes.NEW_BUSINESS, NrRequestActionCodes.ASSUMED].includes(getRequestActionCd(state))
-  //   ) {
-  //     return CorpNumRequests.MRAS
-  //   }
-
-  //   if (getLocation(state) === Location.BC &&
-  //     [NrRequestActionCodes.MOVE].includes(getRequestActionCd(state))
-  //   ) {
-  //     return CorpNumRequests.MRAS
-  //   }
-  // }
-
-  return false
+export const getShowCorpNum = (state: StateIF): boolean => {
+  return (isBusinessLookupRequestAction(state) && isBusinessLookupEntityType(state))
 }
 
 export const getCorpNumForReservation = (state: StateIF): any => {
   // this function may supply empty keys for various properties
   // which is necessary to effect their deletion during the PATCH operation
   const ret = {
-    corpNum: getCorpNum(state),
+    corpNum: '',
     homeJurisNum: getNrData(state).homeJurisNum,
     tradeMark: getNrData(state).tradeMark, // may be empty
     xproJurisdiction: getNrData(state).xproJurisdiction // may be empty
   }
-  if (getShowCorpNum(state) === false) {
-    ret.corpNum = ''
-    ret.homeJurisNum = getNrData(state).homeJurisNum
-  }
-  if (getShowCorpNum(state) === CorpNumRequests.COLIN) {
+  if (getShowCorpNum(state)) {
     ret.corpNum = getCorpNum(state)
     ret.homeJurisNum = ''
   }
@@ -1019,7 +988,7 @@ export const getDraftNameReservation = (state: StateIF): DraftReqI => {
     nameFlag: getIsPersonsName(state),
     hotjarUserId: getHotjarUserId(state),
     submit_count: 0,
-    ...getCorpNumForReservation(state)
+    ...getCorpNumForReservation(state) // must be last
   }
   if (getXproRequestTypeCd(state)) {
     data['request_type_cd'] = getXproRequestTypeCd(state)
@@ -1078,7 +1047,7 @@ export const getReservedNameReservation = (state: StateIF): ReservedReqI => {
     nameFlag: getIsPersonsName(state),
     hotjarUserId: getHotjarUserId(state),
     submit_count: 0,
-    ...getCorpNumForReservation(state)
+    ...getCorpNumForReservation(state) // must be last
   }
   return data
 }
@@ -1122,7 +1091,7 @@ export const getConditionalNameReservation = (state: StateIF): ConditionalReqI =
     nameFlag: getIsPersonsName(state),
     hotjarUserId: getHotjarUserId(state),
     submit_count: 0,
-    ...getCorpNumForReservation(state)
+    ...getCorpNumForReservation(state) // must be last
   }
   return data
 }
@@ -1147,9 +1116,10 @@ export const getFolioNumber = (state: StateIF): string => {
   return state.stateModel.newRequestModel.folioNumber
 }
 
-/** Name Check Getters
- * TODO: move existing getters used only for name check above to here
- * TODO: eventually move this all out of vuex (if we refactor to composition api)
+/**
+ * Name Check Getters
+ * FUTURE: move existing getters used only for name check above to here
+ * FUTURE: eventually move this all out of vuex (if we refactor to composition api)
  */
 export const getConflictsConditional = (state: StateIF): Array<string> => {
   return state.stateModel.nameCheckModel.conflictsConditional
@@ -1235,22 +1205,22 @@ export const getIncorporateNowErrorStatus = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.incorporateNowError
 }
 
-/** True if entity type is one of the numbered request types. */
-export const isNumberedRequestType = (state: StateIF): boolean => {
-  return NumberedRequestTypes.includes(getEntityTypeCd(state))
+/** True if current request action requires business lookup. */
+export const isBusinessLookupRequestAction = (state: StateIF): boolean => {
+  return BusinessLookupRequestActions.includes(getRequestActionCd(state))
 }
 
-/** True if entity type is one of the XPRO request types. */
-export const isXproRequestType = (state: StateIF): boolean => {
-  return XproRequestTypes.includes(getEntityTypeCd(state))
+/** True if current entity type supports the numbered company option. */
+export const isNumberedEntityType = (state: StateIF): boolean => {
+  return NumberedEntityTypes.includes(getEntityTypeCd(state))
 }
 
-/** True if entity type is one of the MRAS entities. */
-export const isMrasRequestType = (state: StateIF): boolean => {
-  return MrasEntities.includes(getEntityTypeCd(state))
+/** True if current entity type requires business lookup. */
+export const isBusinessLookupEntityType = (state: StateIF): boolean => {
+  return BusinessLookupEntityTypes.includes(getEntityTypeCd(state))
 }
 
-/** True if jurisdiction is a MRAS jurisdiction. */
+/** True if current jurisdiction is a MRAS jurisdiction. */
 export const isMrasJurisdiction = (state: StateIF): boolean => {
   const xproJurisdiction = getJurisdictionText(state)
   return MrasJurisdictions.includes(xproJurisdiction?.toLowerCase())

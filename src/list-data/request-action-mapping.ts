@@ -75,36 +75,27 @@ export const XproMapping: MappingI = {
   ]
 }
 
-// *** FUTURE: get rid of these when we remove getShowCorpNum()
-export const ColinRequestActions = [
-  NrRequestActionCodes.AMALGAMATE,
+/** Request actions that require business lookup. */
+export const BusinessLookupRequestActions = [
   NrRequestActionCodes.CHANGE_NAME,
   NrRequestActionCodes.CONVERSION,
   NrRequestActionCodes.RESTORE
 ]
 
-// list of entity types for which we show the corp num input
-// and allow the numbered company option
-export const NumberedRequestTypes = [
+/** Entity types that require business lookup. */
+export const BusinessLookupEntityTypes = [
   EntityType.BC,
   EntityType.CC,
   EntityType.CR,
-  EntityType.UL
-]
-
-// list of entity types for which we show the corp num input
-export const XproRequestTypes = [
+  EntityType.UL,
   EntityType.XCR,
   EntityType.XUL
 ]
 
-// MAY BE OBSOLETE
-export const MrasEntities = [
+/** Entity types that support the numbered company option. */
+export const NumberedEntityTypes = [
   EntityType.BC,
   EntityType.CC,
-  EntityType.CP,
   EntityType.CR,
-  EntityType.UL,
-  EntityType.XCR,
-  EntityType.XLP
+  EntityType.UL
 ]

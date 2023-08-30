@@ -27,7 +27,7 @@
 import Vue from 'vue'
 import { Component, Emit } from 'vue-property-decorator'
 import { Action } from 'vuex-class'
-import { BusinessFetchIF } from '@/interfaces'
+import { BusinessSearchIF } from '@/interfaces'
 
 enum States {
   INITIAL = 'initial',
@@ -44,7 +44,7 @@ export default class BusinessFetch extends Vue {
   readonly States = States
 
   // Store action
-  @Action fetchCorpNum!: (corpNum: string) => Promise<BusinessFetchIF>
+  @Action searchBusiness!: (corpNum: string) => Promise<BusinessSearchIF>
 
   /** V-model for search field. */
   searchField = ''
@@ -73,9 +73,9 @@ export default class BusinessFetch extends Vue {
     this.state = States.INITIAL
   }
 
-  /** Searches for business and emits business fetch object. Called by various events. */
+  /** Searches for business and emits business search object. Called by various events. */
   @Emit('business')
-  async search (): Promise<BusinessFetchIF> {
+  async search (): Promise<BusinessSearchIF> {
     // safety check
     if (this.state !== States.INITIAL) return
 
@@ -85,7 +85,7 @@ export default class BusinessFetch extends Vue {
 
     // perform search
     this.state = States.SEARCHING
-    const result = await this.fetchCorpNum(this.searchField).catch(e => null)
+    const result = await this.searchBusiness(this.searchField).catch(e => null)
 
     // return result
     if (result) {

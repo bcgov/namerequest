@@ -48,7 +48,7 @@
 import Vue from 'vue'
 import { Component, Emit, Watch } from 'vue-property-decorator'
 import { debounce } from 'lodash'
-import { BusinessFetchIF, BusinessLookupResultIF } from '@/interfaces'
+import { BusinessLookupResultIF, BusinessSearchIF } from '@/interfaces'
 import BusinessLookupServices from '@/services/business-lookup-services'
 import { EntityType } from '@/enums'
 
@@ -99,9 +99,9 @@ export default class BusinessLookup extends Vue {
     }
   }, 600)
 
-  /** When an item has been selected, emits event with business fetch object. */
+  /** When an item has been selected, emits business search object. */
   @Emit('business')
-  onItemSelected (input: BusinessLookupResultIF): BusinessFetchIF {
+  onItemSelected (input: BusinessLookupResultIF): BusinessSearchIF {
     // safety check
     if (input) {
       // change to summary state
