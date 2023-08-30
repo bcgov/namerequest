@@ -24,6 +24,7 @@
 
       <v-row class="mt-0">
         <v-col cols="12" md="2" lg="2" />
+
         <!--PHONE NUMBER-->
         <v-col cols="12" md="5" lg="5">
           <v-text-field :messages="messages['phone']"
@@ -39,6 +40,7 @@
                         hide-details="auto"
                         label="Phone Number" />
         </v-col>
+
         <!--FAX NUMBER-->
         <v-col cols="12" md="5" lg="5">
           <v-text-field :messages="messages['fax']"
@@ -57,6 +59,7 @@
 
       <v-row v-if="showAllFields">
         <v-col cols="12" md="2" lg="2" class="h6">About Your Business</v-col>
+
         <!--NATURE OF BUSINESS-->
         <v-col cols="12" md="5" lg="5" align-self="start">
           <v-tooltip top
@@ -86,6 +89,7 @@
             </span>
           </v-tooltip>
         </v-col>
+
         <!--ADDITIONAL INFORMATION-->
         <v-col cols="12" md="5" lg="5" align-self="start">
           <v-tooltip top
@@ -116,31 +120,7 @@
           </v-tooltip>
         </v-col>
         <v-col cols="12" md="2" lg="2" />
-        <!--CORP NUMBER-->
-        <v-col cols="12" md="5" lg="5" v-if="getShowCorpNum === CorpNumRequests.COLIN">
-          <v-tooltip top
-            content-class="top-tooltip"
-            transition="fade-transition"
-            :disabled="isMobile"
-          >
-            <template v-slot:activator="{ on }">
-              <div v-on="on">
-                <v-text-field :messages="messages['corpNum']"
-                              :rules="corpNumRules"
-                              :error-messages="corpNumError"
-                              @focus="corpNumError = ''"
-                              :loading="loading"
-                              filled
-                              :label="corpNumFieldLabel"
-                              v-model="corpNum">
-                </v-text-field>
-              </div>
-            </template>
-            <span>
-              Enter the BC incorporation number of your business.
-            </span>
-          </v-tooltip>
-        </v-col>
+
         <!--TRADEMARK-->
         <v-col cols="12" md="5" lg="5">
           <v-tooltip top
@@ -172,6 +152,7 @@
 
       <v-row class="align-center mt-2 mb-0">
         <v-col cols="12" md="2" lg="2" />
+
         <!--PRIORITY REQUEST-->
         <v-col cols="12" md="5" lg="5">
           <v-tooltip top
@@ -214,7 +195,7 @@ import { Action, Getter } from 'vuex-class'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { CorpNumRequests, NrRequestActionCodes, NrState } from '@/enums'
+import { NrState } from '@/enums'
 import { GetFeatureFlag } from '@/plugins'
 
 @Component({
@@ -224,41 +205,27 @@ import { GetFeatureFlag } from '@/plugins'
 })
 export default class ApplicantInfo2 extends Vue {
   // Global getters
-  @Getter getCorpNum!: string
   @Getter getApplicant!: ApplicantI
-  @Getter getPriorityRequest!: boolean
   @Getter getEditMode!: boolean
   @Getter getNrData!: any
   @Getter getNrState!: string
-  @Getter getRequestActionCd!: NrRequestActionCodes
+  @Getter getPriorityRequest!: boolean
   @Getter getShowPriorityRequest!: boolean
-  @Getter getShowCorpNum!: string
   @Getter isMobile!: boolean
 
   // Global actions
-  @Action setCorpNum!: ActionBindingIF
-  @Action setPriorityRequest!: ActionBindingIF
-  @Action fetchCorpNum!: ActionBindingIF
   @Action setApplicantDetails: ActionBindingIF
-  @Action submit!: ActionBindingIF
-  @Action setNRData!: ActionBindingIF
   @Action setIsLoadingSubmission!: ActionBindingIF
+  @Action setNRData!: ActionBindingIF
+  @Action setPriorityRequest!: ActionBindingIF
+  @Action submit!: ActionBindingIF
 
-  // Enum declaration
-  readonly CorpNumRequests = CorpNumRequests
-
-  corpNumError = ''
-  corpNumFieldLabel = 'Incorporation or Registration Number'
   additionalInfoRules = [
     v => (!v || v.length <= 120) || 'Cannot exceed 120 characters'
   ]
   businessNatureRules = [
     v => !!v || 'Required field',
     v => (!v || v.length <= 1000) || 'Cannot exceed 1000 characters'
-  ]
-  corpNumRules = [
-    v => !!v || 'Required field',
-    v => (!v || v.length > 3) || 'Must be at least 4 characters'
   ]
   emailRules = [
     (v: string) => !!v || 'Required field',
@@ -280,9 +247,7 @@ export default class ApplicantInfo2 extends Vue {
     v => (!v || v.length <= 100) || 'Cannot exceed 100 characters'
   ]
   error = false
-  isEditingCorpNum = false
   isValid = false
-  hideCorpNum: boolean | 'auto' = true
   loading = false
   messages = {}
 
@@ -291,30 +256,12 @@ export default class ApplicantInfo2 extends Vue {
     return !!GetFeatureFlag('enable-priority-checkbox')
   }
 
-  mounted () {
-    // Apply optional corpNum validations for Amalgamations as they are NOT a required field but require COLIN lookup.
-    if (this.getRequestActionCd === NrRequestActionCodes.AMALGAMATE) {
-      this.corpNumFieldLabel += ' (Optional)'
-      this.corpNumRules = [
-        v => (!v || v.length > 3) || 'Must be at least 4 characters'
-      ]
-    }
-  }
-
   @Watch('xproJurisdiction')
   async hanldeJurisdiction (newVal, oldVal) {
     if (newVal !== oldVal) {
       await this.$nextTick()
       this.validate()
     }
-  }
-
-  get corpNum () {
-    return this.getCorpNum
-  }
-
-  set corpNum (num) {
-    this.setCorpNum(num)
   }
 
   get priorityRequest (): boolean {
@@ -333,24 +280,6 @@ export default class ApplicantInfo2 extends Vue {
     return (this.getNrData || {}).xproJurisdiction
   }
 
-  async validateCorpNum (num) {
-    this.isEditingCorpNum = false
-    if (!num || num.length < 4) {
-      return false
-    }
-    this.loading = true
-    try {
-      await this.fetchCorpNum(num)
-      this.corpNumError = ''
-      this.loading = false
-      return true
-    } catch (error) {
-      this.corpNumError = 'Error validating number. Please try again.'
-      this.loading = false
-      return false
-    }
-  }
-
   setError (error) {
     this.error = error
   }
@@ -363,13 +292,8 @@ export default class ApplicantInfo2 extends Vue {
     this.setNRData({ key, value })
   }
 
-  validate () {
-    if (this.hideCorpNum !== 'auto') {
-      this.hideCorpNum = 'auto'
-    }
-    if (this.$refs.step2 as Vue) {
-      (this.$refs.step2 as any).validate()
-    }
+  validate (): boolean {
+    return (this.$refs.step2 && (this.$refs.step2 as any).validate())
   }
 
   @Watch('isValid')
@@ -390,15 +314,7 @@ export default class ApplicantInfo2 extends Vue {
   async nextAction () {
     this.setIsLoadingSubmission(true)
     this.validate()
-    // validate corp num in COLIN
-    if (this.getShowCorpNum === CorpNumRequests.COLIN) {
-      this.$root.$emit('showSpinner', true)
-      await this.validateCorpNum(this.getCorpNum)
-      this.$root.$emit('showSpinner', false)
-    }
-    if (this.isValid && !this.corpNumError) {
-      await this.submit(null)
-    }
+    if (this.isValid) await this.submit(null)
     // hang on to the loading state for a bit
     // to prevent users clicking button again while next component displays
     setTimeout(() => this.setIsLoadingSubmission(false), 1000)
