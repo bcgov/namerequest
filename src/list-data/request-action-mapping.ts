@@ -83,19 +83,22 @@ export const ColinRequestActions = [
   NrRequestActionCodes.RESTORE
 ]
 
-// *** TODO: should these be from FF instead?
-export const ColinRequestTypes = [
+// list of entity types for which we show the corp num input
+// and allow the numbered company option
+export const NumberedRequestTypes = [
   EntityType.BC,
   EntityType.CC,
   EntityType.CR,
   EntityType.UL
 ]
 
-export const XproColinRequestTypes = [
+// list of entity types for which we show the corp num input
+export const XproRequestTypes = [
   EntityType.XCR,
   EntityType.XUL
 ]
 
+// MAY BE OBSOLETE
 export const MrasEntities = [
   EntityType.BC,
   EntityType.CC,

@@ -11,19 +11,19 @@ export async function getConfig (): Promise<EnvConfigI> {
   }
   axios.defaults.baseURL = appBaseURL
 
-  const paymentPortalUrl = process.env.VUE_APP_PAYMENT_PORTAL_URL
+  const paymentPortalUrl: string = process.env.VUE_APP_PAYMENT_PORTAL_URL
   sessionStorage.setItem('PAYMENT_PORTAL_URL', paymentPortalUrl)
 
-  const businessesUrl = process.env.VUE_APP_BUSINESSES_URL
+  const businessesUrl: string = process.env.VUE_APP_BUSINESSES_URL
   sessionStorage.setItem('BUSINESSES_URL', businessesUrl)
 
-  const corporateOnlineUrl = process.env.VUE_APP_CORPORATE_ONLINE_URL
+  const corporateOnlineUrl: string = process.env.VUE_APP_CORPORATE_ONLINE_URL
   sessionStorage.setItem('CORPORATE_ONLINE_URL', corporateOnlineUrl)
 
-  const dashboardUrl = process.env.VUE_APP_DASHBOARD_URL
+  const dashboardUrl: string = process.env.VUE_APP_DASHBOARD_URL
   sessionStorage.setItem('DASHBOARD_URL', dashboardUrl)
 
-  const legalApiUrl: string = process.env.VUE_APP_LEGAL_API_URL + process.env.VUE_APP_LEGAL_API_VERSION
+  const legalApiUrl: string = process.env.VUE_APP_LEGAL_API_URL + process.env.VUE_APP_LEGAL_API_VERSION_2
   sessionStorage.setItem('LEGAL_API_URL', legalApiUrl)
 
   const authApiUrl: string = process.env.VUE_APP_AUTH_API_URL + process.env.VUE_APP_AUTH_API_VERSION
@@ -89,7 +89,7 @@ export async function getConfig (): Promise<EnvConfigI> {
   const webChatStatusUrl: string = process.env.VUE_APP_WEBCHAT_STATUS_URL;
   (<any>window).webChatStatusUrl = webChatStatusUrl
 
-  const entitySelectorUrl = process.env.VUE_APP_ENTITY_SELECTOR_URL
+  const entitySelectorUrl: string = process.env.VUE_APP_ENTITY_SELECTOR_URL
   entitySelectorUrl && sessionStorage.setItem('ENTITY_SELECTOR_URL', entitySelectorUrl)
 
   const keycloakAuthUrl: string = process.env.VUE_APP_KEYCLOAK_AUTH_URL;
