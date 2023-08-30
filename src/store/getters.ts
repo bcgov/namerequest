@@ -44,7 +44,6 @@ import {
   BcMapping,
   CanJurisdictions,
   ColinRequestActions,
-  ColinRequestTypes,
   ConversionTypes,
   Designations,
   EntityTypesBcData,
@@ -53,9 +52,10 @@ import {
   Locations,
   MrasEntities,
   MrasJurisdictions,
+  NumberedRequestTypes,
   RequestActions,
-  XproColinRequestTypes,
-  XproMapping
+  XproMapping,
+  XproRequestTypes
 } from '@/list-data'
 
 export const isMobile = (state: StateIF): boolean => {
@@ -724,11 +724,11 @@ export const getNameIsSlashed = (state: StateIF): boolean => {
 
 export const getShowCorpNum = (state: StateIF): CorpNumRequests.COLIN | CorpNumRequests.MRAS | false => {
   // *** FUTURE: COLIN search (business lookup) should have been done on first page
-  if (ColinRequestActions.includes(getRequestActionCd(state)) && isColinRequestType) {
+  if (ColinRequestActions.includes(getRequestActionCd(state)) && isNumberedRequestType) {
     return CorpNumRequests.COLIN
   }
 
-  if (ColinRequestActions.includes(getRequestActionCd(state)) && isXproColinRequestType) {
+  if (ColinRequestActions.includes(getRequestActionCd(state)) && isXproRequestType) {
     return CorpNumRequests.COLIN
   }
 
@@ -1235,14 +1235,14 @@ export const getIncorporateNowErrorStatus = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.incorporateNowError
 }
 
-/** True if entity type is one of the COLIN request types. */
-export const isColinRequestType = (state: StateIF): boolean => {
-  return ColinRequestTypes.includes(getEntityTypeCd(state))
+/** True if entity type is one of the numbered request types. */
+export const isNumberedRequestType = (state: StateIF): boolean => {
+  return NumberedRequestTypes.includes(getEntityTypeCd(state))
 }
 
-/** True if entity type is one of the XPRO COLIN request types. */
-export const isXproColinRequestType = (state: StateIF): boolean => {
-  return XproColinRequestTypes.includes(getEntityTypeCd(state))
+/** True if entity type is one of the XPRO request types. */
+export const isXproRequestType = (state: StateIF): boolean => {
+  return XproRequestTypes.includes(getEntityTypeCd(state))
 }
 
 /** True if entity type is one of the MRAS entities. */
