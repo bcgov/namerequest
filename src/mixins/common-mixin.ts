@@ -69,6 +69,21 @@ export class CommonMixin extends Vue {
   }
 
   /**
+   * Entities UI codes to Name Request Code
+   * @example ULC --> UL
+   */
+  corpTypeToEntityType (entityType: CorpTypeCd): EntityType {
+    switch (entityType) {
+      case CorpTypeCd.BENEFIT_COMPANY: return EntityType.BC
+      case CorpTypeCd.BC_CCC: return EntityType.CC
+      case CorpTypeCd.BC_COMPANY: return EntityType.CR
+      case CorpTypeCd.BC_ULC_COMPANY: return EntityType.UL
+      case CorpTypeCd.COOP: return EntityType.CP
+      default: return null
+    }
+  }
+
+  /**
    * Returns request action text for the the specified code.
    * See namex -> api/namex/resources/name_requests/report_resource.py::_get_request_action_cd_description()
    */

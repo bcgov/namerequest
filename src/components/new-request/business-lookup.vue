@@ -14,7 +14,7 @@
       hint="Search by name, incorporation or registration number of existing business"
       item-text="name"
       item-value="identifier"
-      label="Find an existing business"
+      :label="lookupLabel"
       hide-details="auto"
       no-filter
       persistent-hint
@@ -34,7 +34,7 @@
 
       <template v-slot:no-data>
         <p class="pl-5 font-weight-bold">
-          No active B.C. business found
+          {{  lookupNoActiveText }}
         </p>
         <p class="pl-5">
           Ensure you have entered the correct business name or number.
@@ -46,7 +46,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { Component, Emit, Watch } from 'vue-property-decorator'
+import { Component, Emit, Prop, Watch } from 'vue-property-decorator'
 import { debounce } from 'lodash'
 import { BusinessLookupResultIF, BusinessSearchIF } from '@/interfaces'
 import BusinessLookupServices from '@/services/business-lookup-services'
@@ -65,6 +65,9 @@ enum States {
  */
 @Component({})
 export default class BusinessLookup extends Vue {
+  // Status of businesses to search for prop
+  @Prop({ default: 'ACTIVE' }) readonly businessStatus!: string
+
   // enum for template
   readonly States = States
 
@@ -77,17 +80,43 @@ export default class BusinessLookup extends Vue {
   /** State of this component. */
   state = States.INITIAL
 
+  /** Business Lookup labels and warnings. */
+  lookupLabel = ''
+  lookupNoActiveText = ''
+
+  /** Set business lookup text on mount. */
+  mounted (): void {
+    this.setLookupText()
+  }
+
   /** Called when searchField property has changed. */
   @Watch('searchField')
   onSearchFieldChanged (): void {
     this.onSearchInputDebounced(this)
   }
 
+  /** Called when business lookup search status prop has changed. */
+  @Watch('businessStatus')
+  onStatuschanged (): void {
+    this.setLookupText()
+  }
+
+  /** Business lookup text based on the business status to search for. */
+  private setLookupText (): void {
+    if (this.businessStatus === 'HISTORICAL') {
+      this.lookupLabel = 'Find a historical business'
+      this.lookupNoActiveText = 'No historical business found'
+    } else {
+      this.lookupLabel = 'Find an existing business'
+      this.lookupNoActiveText = 'No active B.C. business found'
+    }
+  }
+
   private onSearchInputDebounced = debounce(async (that: this) => {
     // safety check
     if (that.searchField && that.searchField.length > 2) {
       that.state = States.SEARCHING
-      const searchStatus = 'ACTIVE' // search for ACTIVE
+      const searchStatus = this.businessStatus // search for status based on prop
       that.searchResults = await BusinessLookupServices.search(that.searchField, searchStatus).catch(() => [])
 
       // display appropriate section
