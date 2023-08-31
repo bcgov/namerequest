@@ -35,29 +35,30 @@
       </v-col>
 
       <!-- Business Lookup/Fetch -->
-      <v-col v-if="showBusinessLookup" cols="12" md="6">
+      <v-col v-if="showBusinessLookup" cols="12" md="6" class="business-lookup">
         <template v-if="!business">
           <BusinessLookup
             v-if="getIsAuthenticated"
             :businessStatus="fetchActiveOrHistorical"
-            @business="business=$event"
+            @business="onBusiness($event)"
           />
-          <BusinessFetch v-else @business="business=$event"/>
+          <BusinessFetch v-else @business="onBusiness($event)"/>
         </template>
-        <div v-else class="d-flex justify-space-between align-center">
-          <v-text-field
-            filled
-            hide-details
-            :value="business.name"
-          />
-          <div @click="business=null">
-            <v-icon color="primary">mdi-close</v-icon>
-          </div>
-        </div>
+        <v-text-field
+          v-else
+          append-icon="mdi-close"
+          readonly
+          filled
+          hide-details
+          :label="business.identifier"
+          :value="business.legalName"
+          @click:append="onBusiness(null)"
+          @keyup.delete="onBusiness(null)"
+        />
       </v-col>
 
       <!-- Jurisdiction -->
-      <v-col v-if="showJurisdiction" cols="12" :md="isSelectedXproRestorable ? 4 : 6">
+      <v-col v-if="showJurisdiction" cols="12" :md="isSelectedXproAndRestorable ? 4 : 6">
         <NestedSelect
           label="Select your home jurisdiction"
           :menuItems="jurisdictionOptions"
@@ -119,27 +120,8 @@
         </v-tooltip>
       </v-col>
 
-      <!-- Business Lookup/Fetch -->
-      <v-col v-if="showBusinessLookup" cols="12" md="6" class="business-lookup">
-        <template v-if="!business">
-          <BusinessLookup v-if="getIsAuthenticated" @business="onBusiness($event)"/>
-          <BusinessFetch v-else @business="onBusiness($event)"/>
-        </template>
-        <v-text-field
-          v-else
-          append-icon="mdi-close"
-          readonly
-          filled
-          hide-details
-          :label="business.identifier"
-          :value="business.legalName"
-          @click:append="onBusiness(null)"
-          @keyup.delete="onBusiness(null)"
-        />
-      </v-col>
-
-      <!-- once an entity type is selected (or Federal)... -->
-      <template v-if="entity_type_cd || isFederal">
+      <!-- once an entity type or business is selected (or Federal) -->
+      <template v-if="entity_type_cd || isFederal || business">
         <!-- Company Type -->
         <v-col v-if="companyRadioBtnApplicable" cols="12">
           <p class="font-weight-bold h6">Select a company type:</p>
@@ -166,10 +148,10 @@
 
         <template v-if="selectedCompanyType === CompanyType.NAMED_COMPANY">
           <!-- Xpro/Federal bullets -->
-          <v-col v-if="getIsXproFlow && isFederal" cols="12" :md="isSelectedXproRestorable ? 10 : 8">
+          <v-col v-if="getIsXproFlow && isFederal" cols="12" :md="isSelectedXproAndRestorable ? 10 : 8">
             <ul class="bullet-points">
               <li>Federally incorporated businesses do not need a Name Request.</li>
-              <li v-if="!isSelectedXproRestorable">
+              <li v-if="!isSelectedXproAndRestorable">
                 You may register your extraprovincial business immediately using its existing name
                 at Corporate Online.
               </li>
@@ -318,10 +300,10 @@ import BusinessFetch from '@/components/new-request/business-fetch.vue'
 // Interfaces / Enums / List Data
 import { BusinessSearchIF, ConversionTypesI, EntityI, FormType, RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { AccountType, CompanyType, CorpTypeCd, EntityType,
-  Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
+import { AccountType, CompanyType, EntityType, Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin, NrAffiliationMixin } from '@/mixins'
-import { CanJurisdictions, ConversionTypes, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
+import { CanJurisdictions, ConversionTypes, Designations,
+  IntlJurisdictions, RequestActions, XproMapping } from '@/list-data'
 import { GetFeatureFlag, Navigate } from '@/plugins'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
@@ -441,7 +423,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   get showJurisdiction (): boolean {
     // if (this.isAmalgamation) return true // *** FUTURE
     if (this.isNewXproBusiness) return true
-    if (this.isSelectedXproRestorable) return true
+    if (this.isSelectedXproAndRestorable) return true
     return false
   }
 
@@ -629,11 +611,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   /** Returns whether the selected XPRO is restorable. */
-  get isSelectedXproRestorable (): boolean {
-    return this.business?.legalType === CorpTypeCd.EXTRA_PRO_A ||
-      this.business?.legalType === CorpTypeCd.LIMITED_CO ||
-      this.business?.legalType === CorpTypeCd.XPRO_COOP ||
-      this.business?.legalType === CorpTypeCd.XPRO_SOCIETY
+  get isSelectedXproAndRestorable (): boolean {
+    return XproMapping.REH.includes(this.business?.legalType)
   }
 
   /**
@@ -698,7 +677,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     if (this.business) {
       console.log(this.business)
       if (this.isRestoration) {
-        if (!this.isSelectedXproRestorable) {
+        if (!this.isSelectedXproAndRestorable) {
           const businessEntityTypeCd = this.corpTypeToEntityType(this.business.legalType)
           this.setLocation(Location.BC)
           this.setEntityTypeCd(businessEntityTypeCd)

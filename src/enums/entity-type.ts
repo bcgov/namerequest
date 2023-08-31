@@ -21,12 +21,17 @@ export enum EntityType {
 
   // XPRO Entity Types:
   RLC = CorpTypeCd.XPRO_LIMITED_LIABILITY_COMPANY,
-  XCP = CorpTypeCd.XPRO_COOP,
   XCR = CorpTypeCd.XPRO_CORPORATION,
   XLL = CorpTypeCd.XPRO_LIMITED_LIABILITY_PARTNERSHIP,
   XLP = CorpTypeCd.XPRO_LIMITED_PARTNERSHIP,
   XSO = CorpTypeCd.XPRO_SOCIETY_NR,
   XUL = CorpTypeCd.XPRO_UNLIMITED_LIABILITY_COMPANY,
+
+  // XPRO Entity types + restorable:
+  A = CorpTypeCd.EXTRA_PRO_A,
+  LLC = CorpTypeCd.LIMITED_CO,
+  XCP = CorpTypeCd.XPRO_COOP,
+  XS = CorpTypeCd.XPRO_SOCIETY,
 
   INFO = 'INFO' as any // special value for sub-menu
 }
