@@ -122,7 +122,7 @@
         </v-tooltip>
       </v-col>
 
-      <!-- once an entity type or business is selected (or Federal) -->
+      <!-- once an entity type is selected, is Federal, or is Restorable -->
       <template v-if="entity_type_cd || isFederal || isRestorable">
         <!-- Company Type -->
         <v-col v-if="companyRadioBtnApplicable" cols="12">
