@@ -445,8 +445,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   get isOpenExternal (): boolean {
     if (this.showAlterNowButton) {
-      const supportedAlterationTypes = GetFeatureFlag('supported-alteration-types')
-      return !supportedAlterationTypes.includes(this.nr.requestTypeCd)
+      return !this.isSupportedAlteration(this.nr.requestTypeCd)
     }
     return false
   }

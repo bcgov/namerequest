@@ -116,6 +116,12 @@ export class CommonMixin extends Vue {
       nr?.legalType === EntityType.GP)
   }
 
+  /** Returns true if the specified NR is for alteration (conversion). */
+  isSupportedAlteration (type: any): boolean {
+    const supportedAlterationTypes = GetFeatureFlag('supported-alteration-types')
+    return supportedAlterationTypes.includes(type)
+  }
+
   /** Returns true if the specified NR is for an Extraprovincial Company. */
   isXProCompany (nr: any): boolean {
     return [EntityType.XCR, EntityType.XUL, EntityType.RLC, EntityType.XLP, EntityType.XLL,

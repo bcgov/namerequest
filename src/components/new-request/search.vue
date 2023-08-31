@@ -131,7 +131,7 @@
       </v-col>
 
       <!-- once an entity type is selected (or Federal)... -->
-      <template v-if="companyRadioBtnApplicable && (entity_type_cd || getConversionType || isFederal)">
+      <template v-if="companyRadioBtnApplicable">
         <!-- Company Type -->
         <v-col cols="12">
           <p class="font-weight-bold h6">Select a company type:</p>
@@ -228,9 +228,8 @@
         <template v-if="selectedCompanyType === CompanyType.NUMBERED_COMPANY" cols="12">
           <v-col v-if="isConversion && !isAlterOnline">
             <div class="contact-registries">
-              To complete this alteration, please contact us at:
+              <p>To complete this alteration, please contact us at:</p>
               <p>
-                <br/>
                   <v-icon small>mdi-phone</v-icon>  Canada and U.S. Toll Free:
                   <a href="tel:+1877-370-1033">1-877-370-1033</a>
               </p>
@@ -307,7 +306,7 @@
 
 <script lang="ts">
 import { Component, Mixins, Vue, Watch } from 'vue-property-decorator'
-import { Action, Getter, State } from 'vuex-class'
+import { Action, Getter } from 'vuex-class'
 
 // Components
 import NameInput from './name-input.vue'
@@ -325,8 +324,6 @@ import { CorpTypeCd } from '@bcrs-shared-components/enums'
 import { CanJurisdictions, ConversionTypes, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
 import { GetFeatureFlag, Navigate } from '@/plugins'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
-
-import { getVuexStore } from '@/store' // DEGUB
 
 /**
  * This is the component that displays the new NR menus and flows.
@@ -402,7 +399,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   activeActionGroup = NaN
   showRequestActionTooltip = false
   business = null as BusinessSearchIF
-  isPassValidation = false
 
   private mounted () {
     this.$nextTick(() => {
@@ -423,11 +419,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     return [
       value => {
         if (this.isConversion) {
-          const legalType = this.business.legalType
-          this.isPassValidation = legalType === CorpTypeCd.BC_COMPANY ||
-            legalType === CorpTypeCd.BENEFIT_COMPANY ||
-            legalType === CorpTypeCd.BC_ULC_COMPANY
-          return this.isPassValidation || 'This business cannot alter their business type'
+          return this.isPassAlterValidation || 'This business cannot alter their business type'
         }
         return true
       }]
@@ -452,6 +444,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     return (this.getRequestActionCd === NrRequestActionCodes.NEW_BUSINESS && this.request?.group === 1)
   }
 
+  get isPassAlterValidation (): boolean {
+    const legalType = this.business.legalType
+    return legalType === CorpTypeCd.BC_COMPANY ||
+      legalType === CorpTypeCd.BENEFIT_COMPANY ||
+      legalType === CorpTypeCd.BC_ULC_COMPANY
+  }
+
   get showJurisdiction (): boolean {
     // if (this.isAmalgamation) return true // *** FUTURE
     if (this.isNewXproBusiness) return true
@@ -460,7 +459,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
   get showEntityType (): boolean {
     if (this.isConversion) {
-      return this.business != null && this.isPassValidation
+      return this.business && this.isPassAlterValidation
     }
     if (this.getLocation && !this.isFederal) return true
     return false
@@ -494,6 +493,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   get companyRadioBtnApplicable (): boolean {
+    if (!this.entity_type_cd && !this.getConversionType && !this.isFederal) return false
     const isSociety = (this.isSocietyEnabled() && this.getEntityTypeCd === EntityType.SO)
     // check if numbered is not allowed or society NR name is required
     if (!this.isNumberedEntityType || isSociety) {
@@ -501,7 +501,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
       return false
     }
     if (this.isConversion) {
-      return this.business != null && this.getConversionType != null
+      return this.business && this.getConversionType
     }
     return true
   }
@@ -577,8 +577,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     if (this.isFederal) return true
 
     if (this.isConversion) {
-      const supportedAlterationTypes = GetFeatureFlag('supported-alteration-types')
-      return !supportedAlterationTypes.includes(this.getConversionType)
+      return !this.isSupportedAlteration(this.getConversionType)
     }
 
     // don't show COLIN button for supported entities
@@ -688,7 +687,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
   get isShowCheckNameButton (): boolean {
     if (!this.isFederal && this.isNamedCompany && this.entity_type_cd) {
-      if (this.isConversion) return this.business != null && this.isPassValidation
+      if (this.isConversion) return this.business && this.isPassAlterValidation
       return true
     }
     return false
@@ -765,7 +764,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
 
-.contact-registries .v-icon.v-icon {
+.v-icon.mdi-phone,
+.v-icon.mdi-email {
   color: $app-dk-blue;
 }
 
