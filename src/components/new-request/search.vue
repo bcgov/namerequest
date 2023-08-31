@@ -49,9 +49,11 @@
           append-icon="mdi-close"
           readonly
           filled
-          hide-details
           :label="business.identifier"
           :value="business.legalName"
+          :rules="rules"
+          persistent-hint
+          autofocus
           @click:append="onBusiness(null)"
           @keyup.delete="onBusiness(null)"
         />
@@ -121,7 +123,7 @@
       </v-col>
 
       <!-- once an entity type or business is selected (or Federal) -->
-      <template v-if="entity_type_cd || isFederal || business">
+      <template v-if="entity_type_cd || isFederal || isRestorable">
         <!-- Company Type -->
         <v-col v-if="companyRadioBtnApplicable" cols="12">
           <p class="font-weight-bold h6">Select a company type:</p>
@@ -300,9 +302,10 @@ import BusinessFetch from '@/components/new-request/business-fetch.vue'
 // Interfaces / Enums / List Data
 import { BusinessSearchIF, ConversionTypesI, EntityI, FormType, RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { AccountType, CompanyType, EntityType, Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
+import { AccountType, CompanyType, CorpTypeCd, EntityType,
+  Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin, NrAffiliationMixin } from '@/mixins'
-import { CanJurisdictions, ConversionTypes, Designations,
+import { BcMapping, CanJurisdictions, ConversionTypes, Designations,
   IntlJurisdictions, RequestActions, XproMapping } from '@/list-data'
 import { GetFeatureFlag, Navigate } from '@/plugins'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
@@ -608,11 +611,45 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     this.business = business
     this.entity_type_cd = this.business?.legalType || null
     this.setCorpNum(business?.identifier || null)
+
+    if (this.isRestoration) {
+      // Check if not XPRO and BC restorable
+      if (!this.isSelectedXproAndRestorable && this.isBcRestorable) {
+        this.setLocation(Location.BC)
+        this.setEntityTypeCd(this.corpTypeToEntityType(this.business.legalType as unknown as CorpTypeCd))
+      } else if (this.isSelectedXproAndRestorable) { // Check if XPRO and restorable
+        this.setLocation(Location.CA)
+        this.setEntityTypeCd(this.business.legalType)
+      } else {
+        this.setEntityTypeCd(null)
+      }
+    }
+  }
+
+  // Text field rules for the business lookup
+  get rules (): any {
+    return [
+      val => {
+        if (this.isRestoration) {
+          return this.isRestorable || 'This business cannot be restored.'
+        }
+        return true
+      }]
   }
 
   /** Returns whether the selected XPRO is restorable. */
   get isSelectedXproAndRestorable (): boolean {
     return XproMapping.REH.includes(this.business?.legalType)
+  }
+
+  /** Returns whether the selected business' legal type is BC and restorable. */
+  get isBcRestorable (): boolean {
+    return BcMapping.REH.includes(this.corpTypeToEntityType(this.business?.legalType as unknown as CorpTypeCd))
+  }
+
+  /** Returns whether company is restorable. */
+  get isRestorable (): boolean {
+    return this.isSelectedXproAndRestorable || this.isBcRestorable
   }
 
   /**
@@ -666,31 +703,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     this.setNoCorpNum(false)
   }
 
-  /** Watch for when a business is selected via the business lookup. */
-  @Watch('business')
-  watchBusiness () {
-    // Clearing fields each time the business is changed
-    this.jurisdiction = null
-    this.setLocation(null)
-    this.setJurisdictionCd(null)
-
-    if (this.business) {
-      console.log(this.business)
-      if (this.isRestoration) {
-        if (!this.isSelectedXproAndRestorable) {
-          const businessEntityTypeCd = this.corpTypeToEntityType(this.business.legalType)
-          this.setLocation(Location.BC)
-          this.setEntityTypeCd(businessEntityTypeCd)
-        } else {
-          this.setLocation(Location.CA)
-          this.setEntityTypeCd(this.business.legalType)
-        }
-      }
-    } else {
-      this.entity_type_cd = null
-    }
-  }
-
   /** Called when Request Action menu item is changed. */
   async onRequestActionChange (request: RequestActionsI): Promise<void> {
     this.request = request
@@ -735,6 +747,10 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
     this.setLocation(jurisdiction.group === 0 ? Location.CA : Location.IN)
     this.setJurisdictionCd(jurisdiction.value)
+    // Prevent entity type from being cleared when jurisdiction is changed
+    if (this.business) {
+      this.setEntityTypeCd(this.business.legalType)
+    }
   }
 }
 </script>
