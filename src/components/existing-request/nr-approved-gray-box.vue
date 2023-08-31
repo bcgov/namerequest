@@ -1,7 +1,7 @@
 <template>
   <v-row no-gutters class="bg-light-gray">
     <v-col class="text-body-4 px-5 py-4">
-      <div v-if="showRegisterButton" class="d-flex justify-center my-1 pb-1">
+      <div v-if="showRegisterButton" class="d-flex justify-center my-1">
         <v-btn
           class="register-btn"
           min-width="20rem"
@@ -12,7 +12,7 @@
         </v-btn>
       </div>
 
-      <div v-else-if="showIncorporateNowButton" class="d-flex justify-center my-1 pb-1">
+      <div v-else-if="showIncorporateNowButton" class="d-flex justify-center my-1">
         <v-btn
           class="incorporate-now-btn"
           min-width="20rem"
@@ -23,7 +23,7 @@
         </v-btn>
       </div>
 
-      <div v-else-if="showGoToSocietiesButton" class="d-flex justify-center my-1 pb-1">
+      <div v-else-if="showGoToSocietiesButton" class="d-flex justify-center my-1">
         <v-btn
           class="societies-online-btn"
           min-width="20rem"
@@ -36,15 +36,55 @@
         </v-btn>
       </div>
 
+      <div v-else-if="showAlterNowButton" class="my-1">
+        <div v-if="isAllowAlterOnline" class="d-flex justify-center alter-now-btn">
+          <v-btn
+            class="alter-now-external-btn"
+            v-if="isOpenExternal"
+            min-width="20rem"
+            :disabled="disabled"
+            @click="$emit('goToCorpOnline')"
+          >
+            <strong>Alter Now</strong>
+            &nbsp;
+            <v-icon small>mdi-open-in-new</v-icon>
+          </v-btn>
+          <v-btn
+            v-else
+            class="alter-now-btn"
+            min-width="20rem"
+            :disabled="disabled"
+            @click="$emit('goToEntityDashboard')"
+          >
+            <strong>Alter Now</strong>
+          </v-btn>
+        </div>
+
+        <div v-else class="contact-registries">
+              To complete this alteration, please contact us at:
+              <p>
+                <br/>
+                  <v-icon small>mdi-phone</v-icon>  Canada and U.S. Toll Free:
+                  <a href="tel:+1877-370-1033">1-877-370-1033</a>
+              </p>
+              <p><v-icon small>mdi-phone</v-icon>  Victoria Office:
+                 <a href="tel:250-370-1033">250-370-1033</a>
+              </p>
+              <p><v-icon small>mdi-email</v-icon>  Email:
+                 <a href="mailto:BCRegistries@gov.bc.ca">BCRegistries@gov.bc.ca</a>
+              </p>
+        </div>
+      </div>
+
       <p v-else>
         Your Name Request <strong>{{nrNum}}</strong> for <strong>{{approvedName}}</strong> has been
         approved for use. An email has been sent to <strong>{{emailAddress}}</strong> with instructions
         for how to use your Name Request.
       </p>
 
-      <v-row no-gutters>
-        <v-col cols="auto" class="pt-1 mr-2"><v-icon color="caution">mdi-alert</v-icon></v-col>
-        <v-col cols="11" class="pt-1 pb-1" no-gutters>
+      <v-row no-gutters class="important-note">
+        <v-col cols="auto" class="mr-2"><v-icon color="caution">mdi-alert</v-icon></v-col>
+        <v-col cols="11" no-gutters>
         <strong>Important:</strong> Name Requests expire. Your Name Request is <strong>reserved for 56
         days</strong> from the date of approval. Be sure to use your Name Request before it expires. If
         it expires, you will need to submit a new Name Request ($30.00 fee) as the name will once again
@@ -70,6 +110,15 @@ export default class NrApprovedGrayBox extends Vue {
   readonly emailAddress: string
 
   @Prop({ default: false })
+  readonly isAllowAlterOnline: boolean
+
+  @Prop({ default: false })
+  readonly isOpenExternal: boolean
+
+  @Prop({ default: true })
+  readonly showAlterNowButton: boolean
+
+  @Prop({ default: false })
   readonly showRegisterButton: boolean
 
   @Prop({ default: false })
@@ -82,3 +131,24 @@ export default class NrApprovedGrayBox extends Vue {
   readonly disabled: boolean
 }
 </script>
+
+<style lang="scss" scoped>
+@import '@/assets/styles/theme.scss';
+
+.v-btn {
+  margin-top: 30px;
+}
+
+.contact-registries {
+  font-size: $px-16;
+  margin-top: 30px;
+  .v-icon.v-icon {
+    color: $app-dk-blue;
+  }
+}
+
+.important-note {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+</style>
