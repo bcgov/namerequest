@@ -39,7 +39,7 @@
         <template v-if="!business">
           <BusinessLookup
             v-if="getIsAuthenticated"
-            :businessStatus="fetchActiveOrHistorical"
+            :searchStatus="lookupActiveOrHistorical"
             @business="onBusiness($event)"
           />
           <BusinessFetch v-else @business="onBusiness($event)"/>
@@ -160,10 +160,10 @@
               <li v-else>
                 To reinstate your business, complete
                 <a :href="fullReinstatementFormLink">
-                  this form <v-icon small class="ml-1 open-form-icon">mdi-open-in-new</v-icon>
+                  this form <v-icon small class="ml-1" color="primary">mdi-open-in-new</v-icon>
                 </a> for a full reinstatement or
                 <a :href="limitedReinstatementFormLink">
-                  this form  <v-icon small class="ml-1 open-form-icon">mdi-open-in-new</v-icon>
+                  this form  <v-icon small class="ml-1" color="primary">mdi-open-in-new</v-icon>
                 </a> for a limited reinstatement.
               </li>
             </ul>
@@ -302,7 +302,7 @@ import BusinessFetch from '@/components/new-request/business-fetch.vue'
 // Interfaces / Enums / List Data
 import { BusinessSearchIF, ConversionTypesI, EntityI, FormType, RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { AccountType, CompanyType, CorpTypeCd, EntityType,
+import { AccountType, CompanyType, CorpTypeCd, EntityStates, EntityType,
   Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin, NrAffiliationMixin } from '@/mixins'
 import { BcMapping, CanJurisdictions, ConversionTypes, Designations,
@@ -406,13 +406,9 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     this.scrollTo('namerequest-sbc-header')
   }
 
-  /** Fetch businesses with business lookup depending on the Action selected */
-  get fetchActiveOrHistorical (): String {
-    if (this.isRestoration) {
-      return 'HISTORICAL'
-    } else {
-      return 'ACTIVE'
-    }
+  /** Search businesses with business lookup depending on the Action selected */
+  get lookupActiveOrHistorical (): String {
+    return this.isRestoration ? EntityStates.HISTORICAL : EntityStates.ACTIVE
   }
 
   get isNewBcBusiness (): boolean {
@@ -658,13 +654,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
    * If user is not authenticated, redirect to login screen then redirect back.
    */
   async incorporateNowClicked () {
-    const legalType = this.entityTypeAlternateCode(this.entity_type_cd)
+    const legalType = this.entityTypeToCorpType(this.entity_type_cd)
     if (this.getIsAuthenticated) {
-      if (!this.isRestoration && !this.business) {
-        await this.incorporateNow(legalType)
-      } else {
+      if (this.isRestoration) {
         const dashboardUrl = sessionStorage.getItem('DASHBOARD_URL')
         Navigate(`${dashboardUrl}${this.business.identifier}`)
+      } else {
+        await this.incorporateNow(legalType)
       }
     } else {
       // persist legal type of incorporate now in session upon authentication via Signin component
@@ -770,11 +766,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 .last-select-item {
   border-top: 1px solid $gray3;
   padding: 20px 8px !important;
-}
-
-// Change color of the open form icon
-.open-form-icon {
-  color: $app-blue;
 }
 
 // hide disabled list items

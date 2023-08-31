@@ -57,7 +57,7 @@ export class CommonMixin extends Vue {
    * The alternate codes for entity types.
    * Alternate codes are used in Entities UIs.
    */
-  entityTypeAlternateCode (entityType: EntityType): CorpTypeCd {
+  entityTypeToCorpType (entityType: EntityType): CorpTypeCd {
     switch (entityType) {
       case EntityType.BC: return CorpTypeCd.BENEFIT_COMPANY
       case EntityType.CC: return CorpTypeCd.BC_CCC

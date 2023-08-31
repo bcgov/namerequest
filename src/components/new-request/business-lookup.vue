@@ -50,7 +50,7 @@ import { Component, Emit, Prop, Watch } from 'vue-property-decorator'
 import { debounce } from 'lodash'
 import { BusinessLookupResultIF, BusinessSearchIF } from '@/interfaces'
 import BusinessLookupServices from '@/services/business-lookup-services'
-import { EntityType } from '@/enums'
+import { EntityStates, EntityType } from '@/enums'
 
 enum States {
   INITIAL = 'initial',
@@ -66,7 +66,7 @@ enum States {
 @Component({})
 export default class BusinessLookup extends Vue {
   // Status of businesses to search for prop
-  @Prop({ default: 'ACTIVE' }) readonly businessStatus!: string
+  @Prop({ default: EntityStates.ACTIVE }) readonly searchStatus!: string
 
   // enum for template
   readonly States = States
@@ -84,26 +84,19 @@ export default class BusinessLookup extends Vue {
   lookupLabel = ''
   lookupNoActiveText = ''
 
-  /** Set business lookup text on mount. */
-  mounted (): void {
-    this.setLookupText()
-  }
-
   /** Called when searchField property has changed. */
   @Watch('searchField')
   onSearchFieldChanged (): void {
     this.onSearchInputDebounced(this)
   }
 
-  /** Called when business lookup search status prop has changed. */
-  @Watch('businessStatus')
+  /**
+   * Called when business lookup search status prop has changed.
+   * Business lookup text based on the business status to search for.
+   */
+  @Watch('businessStatus', { immediate: true })
   onStatuschanged (): void {
-    this.setLookupText()
-  }
-
-  /** Business lookup text based on the business status to search for. */
-  private setLookupText (): void {
-    if (this.businessStatus === 'HISTORICAL') {
+    if (this.searchStatus === EntityStates.HISTORICAL) {
       this.lookupLabel = 'Find a historical business'
       this.lookupNoActiveText = 'No historical business found'
     } else {
@@ -116,8 +109,7 @@ export default class BusinessLookup extends Vue {
     // safety check
     if (that.searchField && that.searchField.length > 2) {
       that.state = States.SEARCHING
-      const searchStatus = this.businessStatus // search for status based on prop
-      that.searchResults = await BusinessLookupServices.search(that.searchField, searchStatus).catch(() => [])
+      that.searchResults = await BusinessLookupServices.search(that.searchField, this.searchStatus).catch(() => [])
 
       // display appropriate section
       that.state = (that.searchResults.length > 0) ? States.SHOW_RESULTS : States.NO_RESULTS
