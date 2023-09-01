@@ -429,13 +429,14 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
   get isAlterOnline (): boolean {
     if (!this.isConversion) return true
-    return !(this.getConversionType === NrRequestTypeCodes.CONVERT_BEN ||
-      this.getConversionType === NrRequestTypeCodes.CONVERT_CORP ||
-      this.getConversionType === NrRequestTypeCodes.CONVERT_ULBE)
+    const conversionType = this.getConversionType as string
+    return !(conversionType === NrRequestTypeCodes.CONVERT_BEN ||
+      conversionType === NrRequestTypeCodes.CONVERT_CORP ||
+      conversionType === NrRequestTypeCodes.CONVERT_ULBE)
   }
 
   get isBenBusiness (): boolean {
-    return this.business?.legalType === CorpTypeCd.BENEFIT_COMPANY
+    return this.business?.legalType as string === CorpTypeCd.BENEFIT_COMPANY
   }
 
   get isNewBcBusiness (): boolean {
@@ -447,7 +448,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   get isPassAlterValidation (): boolean {
-    const legalType = this.business.legalType
+    const legalType = this.business.legalType as string
     return legalType === CorpTypeCd.BC_COMPANY ||
       legalType === CorpTypeCd.BENEFIT_COMPANY ||
       legalType === CorpTypeCd.BC_ULC_COMPANY
