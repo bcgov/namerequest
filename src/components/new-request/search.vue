@@ -133,9 +133,9 @@
       </v-col>
 
       <!-- once an entity type is selected (or Federal)... -->
-      <template v-if="companyRadioBtnApplicable">
+      <template v-if="entity_type_cd || isFederal">
         <!-- Company Type -->
-        <v-col cols="12">
+        <v-col v-if="companyRadioBtnApplicable" cols="12">
           <p class="font-weight-bold h6">Select a company type:</p>
           <v-radio-group
             v-model="selectedCompanyType"
@@ -227,8 +227,8 @@
         </template>
 
         <!-- Numbered company bullets -->
-        <template v-if="selectedCompanyType === CompanyType.NUMBERED_COMPANY" cols="12">
-          <v-col v-if="isConversion && !isAlterOnline">
+        <template v-if="selectedCompanyType === CompanyType.NUMBERED_COMPANY || isFederal" cols="12">
+          <v-col v-if="isConversion && !isAlterOnline(getConversionType)">
             <div class="contact-registries">
               <p>To complete this alteration, please contact us at:</p>
               <p>
@@ -252,7 +252,7 @@
           </v-col>
 
           <!-- Go to COLIN / Incorporate Now buttons -->
-          <v-col v-if = "isAlterOnline" cols="12"
+          <v-col v-if = "!isConversion || isAlterOnline(getConversionType)" cols="12"
             class="d-flex justify-center"
           >
             <v-btn
@@ -427,13 +427,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
       }]
   }
 
-  get isAlterOnline (): boolean {
-    if (!this.isConversion) return true
-    return !(this.getConversionType === NrRequestTypeCodes.CONVERT_BEN ||
-      this.getConversionType === NrRequestTypeCodes.CONVERT_CORP ||
-      this.getConversionType === NrRequestTypeCodes.CONVERT_ULBE)
-  }
-
   get isBenBusiness (): boolean {
     return this.business?.legalType as string === CorpTypeCd.BENEFIT_COMPANY
   }
@@ -561,7 +554,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   get showActionButton (): boolean {
-    if (this.isConversion && !this.isAlterOnline) return false
+    if (this.isConversion && !this.isAlterOnline(this.getConversionType)) return false
     return true
   }
 

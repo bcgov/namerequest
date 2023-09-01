@@ -40,7 +40,7 @@
         <div v-if="isAllowAlterOnline" class="d-flex justify-center">
           <v-btn
             class="alter-now-external-btn mt-30"
-            v-if="isOpenExternal"
+            v-if="showOpenExternalIcon"
             min-width="20rem"
             :disabled="disabled"
             @click="$emit('goToCorpOnline')"
@@ -113,11 +113,11 @@ export default class NrApprovedGrayBox extends Vue {
   @Prop({ default: false })
   readonly isAllowAlterOnline: boolean
 
-  @Prop({ default: false })
-  readonly isOpenExternal: boolean
-
   @Prop({ default: true })
   readonly showAlterNowButton: boolean
+
+  @Prop({ default: false })
+  readonly showOpenExternalIcon: boolean
 
   @Prop({ default: false })
   readonly showRegisterButton: boolean

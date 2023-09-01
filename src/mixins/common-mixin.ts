@@ -92,6 +92,13 @@ export class CommonMixin extends Vue {
     }
   }
 
+  /** Returns true if the specified alteration NR is allowed to be done online. */
+  isAlterOnline (type: NrRequestTypeCodes): boolean {
+    return !(type === NrRequestTypeCodes.CONVERT_BEN ||
+      type === NrRequestTypeCodes.CONVERT_CORP ||
+      type === NrRequestTypeCodes.CONVERT_ULBE)
+  }
+
   /** Returns true if the specified NR is a priority request. */
   isPriorityReq (nr: any): boolean {
     return (nr?.priorityCd === PriorityCode.YES)

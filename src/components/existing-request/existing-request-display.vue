@@ -197,8 +197,8 @@
             :showIncorporateNowButton="showIncorporateButton"
             :showRegisterButton="showRegisterButton"
             :showAlterNowButton="showAlterNowButton"
-            :isAllowAlterOnline="isAllowAlterOnline"
-            :isOpenExternal="isOpenExternal"
+            :isAllowAlterOnline="isAlterOnline(nr.requestTypeCd)"
+            :showOpenExternalIcon="showOpenExternalIcon"
             :showGoToSocietiesButton="showGoToSocietiesButton"
             :disabled="disableUnfurnished"
             @incorporateRegisterYourBusiness="incorporateRegisterYourBusiness()"
@@ -437,13 +437,7 @@ export default class ExistingRequestDisplay extends Mixins(
           this.nr.state === NrState.APPROVED
   }
 
-  get isAllowAlterOnline (): boolean {
-    return !(this.nr.requestTypeCd === NrRequestTypeCodes.CONVERT_BEN ||
-      this.nr.requestTypeCd === NrRequestTypeCodes.CONVERT_CORP ||
-      this.nr.requestTypeCd === NrRequestTypeCodes.CONVERT_ULBE)
-  }
-
-  get isOpenExternal (): boolean {
+  get showOpenExternalIcon (): boolean {
     if (this.showAlterNowButton) {
       return !this.isSupportedAlteration(this.nr.requestTypeCd)
     }
