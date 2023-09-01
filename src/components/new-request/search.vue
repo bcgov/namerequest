@@ -56,7 +56,9 @@
           append-icon="mdi-close"
           readonly
           filled
-          :label="business.identifier"
+          :label="getIsAuthenticated ?
+           'Find an existing business' :
+            'Fetch an existing business'"
           :value="business.legalName"
           @click:append="onBusiness(null)"
           @keyup.delete="onBusiness(null)"
