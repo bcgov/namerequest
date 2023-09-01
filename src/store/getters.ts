@@ -31,6 +31,7 @@ import {
   Location,
   NrAffiliationErrors,
   NrRequestActionCodes,
+  NrRequestTypeCodes,
   NrState,
   PriorityCode,
   XproNameType
@@ -292,7 +293,7 @@ export const getTabNumber = (state: StateIF): number => {
   return state.stateModel.newRequestModel.tabNumber
 }
 
-export const getConversionType = (state: StateIF): EntityType => {
+export const getConversionType = (state: StateIF): NrRequestTypeCodes => {
   return state.stateModel.newRequestModel.conversionType
 }
 

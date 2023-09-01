@@ -345,7 +345,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   readonly RequestActions = RequestActions
 
   // Store getters
-  @Getter getConversionType!: EntityType
+  @Getter getConversionType!: NrRequestTypeCodes
   @Getter getConversionTypeOptions!: ConversionTypesI[]
   @Getter getDesignation!: string
   @Getter getEntityBlurbs!: Array<EntityI>
@@ -429,10 +429,9 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
   get isAlterOnline (): boolean {
     if (!this.isConversion) return true
-    const conversionType = this.getConversionType as string
-    return !(conversionType === NrRequestTypeCodes.CONVERT_BEN ||
-      conversionType === NrRequestTypeCodes.CONVERT_CORP ||
-      conversionType === NrRequestTypeCodes.CONVERT_ULBE)
+    return !(this.getConversionType === NrRequestTypeCodes.CONVERT_BEN ||
+      this.getConversionType === NrRequestTypeCodes.CONVERT_CORP ||
+      this.getConversionType === NrRequestTypeCodes.CONVERT_ULBE)
   }
 
   get isBenBusiness (): boolean {
@@ -553,8 +552,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
   get entityConversionText () {
     // convert NrRequestTypeCodes -> EntityType
-    const value = this.getConversionType as unknown as NrRequestTypeCodes
-    return ConversionTypes.find(conversion => conversion.value === value)?.text
+    return ConversionTypes.find(conversion => conversion.value === this.getConversionType)?.text
   }
 
   /** Whether selected radio button is Named Company. */

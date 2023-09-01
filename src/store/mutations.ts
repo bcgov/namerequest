@@ -18,7 +18,8 @@ import {
   NameCheckErrorType,
   NrAffiliationErrors,
   PriorityCode,
-  NrRequestActionCodes
+  NrRequestActionCodes,
+  NrRequestTypeCodes
 } from '@/enums'
 
 export const clearErrors = (state: StateIF) => {
@@ -59,7 +60,7 @@ export const mutateConflictId = (state: StateIF, conflictId: string) => {
   state.stateModel.newRequestModel.conflictId = conflictId
 }
 
-export const mutateConversionType = (state: StateIF, conversionType: EntityType) => {
+export const mutateConversionType = (state: StateIF, conversionType: NrRequestTypeCodes) => {
   state.stateModel.newRequestModel.conversionType = conversionType
 }
 

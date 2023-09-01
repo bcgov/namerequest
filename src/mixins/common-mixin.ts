@@ -1,5 +1,5 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { EntityType, PriorityCode, NrRequestActionCodes } from '@/enums'
+import { EntityType, PriorityCode, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 import { GetFeatureFlag } from '@/plugins'
 
@@ -117,7 +117,7 @@ export class CommonMixin extends Vue {
   }
 
   /** Returns true if the specified NR is for alteration (conversion). */
-  isSupportedAlteration (type: any): boolean {
+  isSupportedAlteration (type: NrRequestTypeCodes): boolean {
     const supportedAlterationTypes = GetFeatureFlag('supported-alteration-types')
     return supportedAlterationTypes.includes(type)
   }
