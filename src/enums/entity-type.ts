@@ -4,6 +4,7 @@ import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 export enum EntityType {
   // BC Entity Types:
   BC = CorpTypeCd.BC_COMPANY,
+  BEN = CorpTypeCd.BENEFIT_COMPANY,
   CC = CorpTypeCd.BC_CCC,
   CP = CorpTypeCd.COOP,
   CR = CorpTypeCd.CORPORATION,
@@ -18,6 +19,7 @@ export enum EntityType {
   SO = CorpTypeCd.SOCIETY_NR,
   SP = CorpTypeCd.SOLE_PROP,
   UL = CorpTypeCd.UNLIMITED_LIABILITY_COMPANY,
+  ULC = CorpTypeCd.BC_ULC_COMPANY,
 
   // XPRO Entity Types:
   RLC = CorpTypeCd.XPRO_LIMITED_LIABILITY_COMPANY,

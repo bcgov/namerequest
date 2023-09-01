@@ -5,7 +5,7 @@ export const ConversionTypes: ConversionTypesI[] = [
   {
     desc: 'Limited company to an unlimited liability company',
     text: 'Limited company to an unlimited liability company',
-    entity_type_cd: EntityType.UL,
+    entity_type_cd: EntityType.BC,
     blurbs: [
       'Alter business type from a limited company to an unlimited liability company.'
     ],
@@ -16,7 +16,7 @@ export const ConversionTypes: ConversionTypesI[] = [
   {
     desc: 'Limited company to a community contribution company',
     text: 'Limited company to a community contribution company',
-    entity_type_cd: EntityType.CC,
+    entity_type_cd: EntityType.BC,
     blurbs: [
       'Alter business type from a limited company to a community contribution company.'
     ],
@@ -37,7 +37,7 @@ export const ConversionTypes: ConversionTypesI[] = [
   {
     desc: 'Benefit company to a limited company',
     text: 'Benefit company to a limited company',
-    entity_type_cd: EntityType.CR,
+    entity_type_cd: EntityType.BEN,
     blurbs: [
       'Alter business type from a benefit company to a limited company.'
     ],
@@ -47,7 +47,7 @@ export const ConversionTypes: ConversionTypesI[] = [
   {
     desc: 'Unlimited liability company to a limited company',
     text: 'Unlimited liability company to a limited company',
-    entity_type_cd: EntityType.CR,
+    entity_type_cd: EntityType.ULC,
     blurbs: [
       'Alter business type from an unlimited liability company to a limited company.'
     ],
@@ -57,7 +57,7 @@ export const ConversionTypes: ConversionTypesI[] = [
   {
     desc: 'Unlimited liability company to a benefit company',
     text: 'Unlimited liability company to a benefit company',
-    entity_type_cd: EntityType.BC,
+    entity_type_cd: EntityType.ULC,
     blurbs: [
       'Alter business type from an unlimited liability company to a benefit company.'
     ],

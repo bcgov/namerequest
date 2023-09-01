@@ -496,14 +496,14 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
   get companyRadioBtnApplicable (): boolean {
     if (!this.entity_type_cd && !this.getConversionType && !this.isFederal) return false
+    if (this.isConversion) {
+      return this.business !== null && this.getConversionType !== null
+    }
     const isSociety = (this.isSocietyEnabled() && this.getEntityTypeCd === EntityType.SO)
     // check if numbered is not allowed or society NR name is required
     if (!this.isNumberedEntityType || isSociety) {
       this.selectedCompanyType = CompanyType.NAMED_COMPANY
       return false
-    }
-    if (this.isConversion) {
-      return this.business && this.getConversionType
     }
     return true
   }
@@ -518,9 +518,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   get entity_type_cd (): EntityType {
-    if (this.isConversion) {
-      return this.getConversionType
-    }
     return this.getEntityTypeCd
   }
 
@@ -534,11 +531,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
       return
     }
     // special case for conversion
-    if (type && this.isConversion) {
-      // convert NrRequestTypeCodes -> EntityType
-      const value = type as unknown as NrRequestTypeCodes
-      let { entity_type_cd } = ConversionTypes.find(conv => conv.value === value) || { entity_type_cd: null }
-      this.setEntityTypeCd(entity_type_cd)
+    if (this.getEntityTypeCd && this.isConversion && type) {
       this.setConversionType(type)
       return
     }
@@ -653,8 +646,14 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     this.business = business
     this.entity_type_cd = this.business?.legalType || null
     this.setCorpNum(business?.identifier || null)
+    this.setEntityTypeCd(this.business?.legalType)
     if (this.isConversion && this.isBenBusiness) {
-      this.entity_type_cd = NrRequestTypeCodes.CONVERT_CORP
+      this.setConversionType(NrRequestTypeCodes.CONVERT_CORP)
+    }
+    // clear all related fields when clearing business search/fetch for alter
+    if (this.isConversion && !this.business) {
+      this.setConversionType(null)
+      this.selectedCompanyType = null
     }
   }
 
@@ -689,7 +688,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
   get isShowCheckNameButton (): boolean {
     if (!this.isFederal && this.isNamedCompany && this.entity_type_cd) {
-      if (this.isConversion) return this.business && this.isPassAlterValidation
       return true
     }
     return false

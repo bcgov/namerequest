@@ -380,7 +380,8 @@ export const getDesignationIssueTypes = (state: StateIF): string[] => {
 }
 
 export const getConversionTypeOptions = (state: StateIF): ConversionTypesI[] => {
-  let options = [...ConversionTypes].filter(type => type.shortlist)
+  const selected = state.stateModel.newRequestModel.entity_type_cd
+  let options = [...ConversionTypes].filter(type => type.entity_type_cd === selected)
   let n = 3
 
   if (getConversionTypeAddToSelect(state)) {
@@ -388,7 +389,6 @@ export const getConversionTypeOptions = (state: StateIF): ConversionTypesI[] => 
     options = options.concat(getConversionTypeAddToSelect(state))
     n = 4
   }
-  options = options.concat({ text: 'View all Alterations', value: 'INFO' as any, rank: n })
   return options.sort((a, b) => {
     if (a.rank < b.rank) {
       return -1
