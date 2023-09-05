@@ -743,7 +743,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
     this.setLocation(jurisdiction.group === 0 ? Location.CA : Location.IN)
     this.setJurisdictionCd(jurisdiction.value)
-    // Prevent entity type from being cleared when jurisdiction is changed
+    // Resetting the entity type when a business is selected (after jurisdiction change)
     if (this.business) {
       this.setEntityTypeCd(this.business.legalType)
     }

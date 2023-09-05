@@ -94,7 +94,7 @@ export default class BusinessLookup extends Vue {
    * Called when business lookup search status prop has changed.
    * Business lookup text based on the business status to search for.
    */
-  @Watch('businessStatus', { immediate: true })
+  @Watch('searchStatus', { immediate: true })
   onStatuschanged (): void {
     if (this.searchStatus === EntityStates.HISTORICAL) {
       this.lookupLabel = 'Find a historical business'
