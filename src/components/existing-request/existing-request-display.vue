@@ -1,13 +1,13 @@
 <template>
   <MainContainer id="existing-request-display" class="pa-10">
-    <template v-slot:container-header>
-      <v-col cols="auto" class="py-0">
-        <span v-if="!isIncompletePayment" class="h3 user-select-all mr-4">{{ nr.nrNum }}</span>
-        <span class="h6">{{ entityTypeCdToText(nr.entity_type_cd) }}</span>
+    <template #container-header>
+      <v-col cols="auto">
+        <span v-if="!isIncompletePayment" class="h3 user-select-all">{{ nr.nrNum }}</span>
+        <span class="ml-4 h6">{{ entityTypeCdToText(nr.entity_type_cd) }}</span>
       </v-col>
     </template>
 
-    <template v-slot:content>
+    <template #content>
       <div v-if="isIncompletePayment" class="pt-6 pb-4">
         <v-row class="warning-message px-5 py-4 rounded-sm" no-gutters>
           <v-col cols="auto" class="pt-1 mr-2">
@@ -194,7 +194,7 @@
             :nrNum="nr && nr.nrNum"
             :approvedName="approvedName && approvedName.name"
             :emailAddress="nr && nr.applicants && nr.applicants.emailAddress"
-            :showIncorporateNowButton="showIncorporateButton"
+            :showIncorporateNowButton="showIncorporateNowButton"
             :showRegisterButton="showRegisterButton"
             :showAlterNowButton="showAlterNowButton"
             :isAllowAlterOnline="isAlterOnline(nr.requestTypeCd)"
@@ -252,7 +252,7 @@ export default class ExistingRequestDisplay extends Mixins(
 ) {
   // Global getters
   @Getter getDisplayedComponent!: string
-  @Getter getIsAuthenticated!: boolean
+  @Getter isAuthenticated!: boolean
   @Getter getNrId!: number
   @Getter getNrState!: NrState
   @Getter isMobile!: boolean
@@ -413,23 +413,34 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   /**
-   * True if the Incorporate button should be shown.
+   * True if the Incorporate Now button should be shown.
    * (It is shown as a distinct button instead of an action.)
    */
-  get showIncorporateButton (): boolean {
+  get showIncorporateNowButton (): boolean {
     return (
+      !this.isFirm(this.nr) &&
       this.isSupportedEntity(this.nr) &&
       this.nr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS &&
-      NrState.APPROVED === this.nr.state
+      (NrState.APPROVED === this.nr.state || this.isConsentUnRequired)
     )
   }
 
   /** True if the Register button should be shown. */
   get showRegisterButton (): boolean {
-    return this.isFirm(this.nr) &&
-           this.nr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS &&
-           (NrState.APPROVED === this.nr.state ||
-            this.isConsentUnRequired)
+    return (
+      this.isFirm(this.nr) &&
+      this.isSupportedEntity(this.nr) &&
+      this.nr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS &&
+      (NrState.APPROVED === this.nr.state || this.isConsentUnRequired)
+    )
+  }
+
+  /** True if the Alter Now button should be shown. */
+  get showAlterNowButton (): boolean {
+    return (
+      this.nr.request_action_cd === NrRequestActionCodes.CONVERSION &&
+      (NrState.APPROVED === this.nr.state || this.isConsentUnRequired)
+    )
   }
 
   get showAlterNowButton (): boolean {
@@ -446,10 +457,11 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** True if the Go To Societies Online button should be shown. */
   get showGoToSocietiesButton (): boolean {
-    return this.nr?.entity_type_cd === EntityType.SO &&
-           this.nr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS &&
-           (NrState.APPROVED === this.nr.state ||
-            this.isConsentUnRequired)
+    return (
+      this.nr?.entity_type_cd === EntityType.SO &&
+      this.nr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS &&
+      (NrState.APPROVED === this.nr.state || this.isConsentUnRequired)
+    )
   }
 
   get isConsentUnRequired (): boolean {
@@ -719,7 +731,7 @@ export default class ExistingRequestDisplay extends Mixins(
 
   /** Affiliates the current NR if authenticated, or prompts login if unauthenticated. */
   private async affiliateOrLogin (): Promise<any> {
-    if (this.getIsAuthenticated) {
+    if (this.isAuthenticated) {
       await this.createAffiliation(this.nr)
     } else {
       // persist NR in session for affiliation upon authentication via Signin component

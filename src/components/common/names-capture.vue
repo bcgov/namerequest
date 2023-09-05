@@ -1,59 +1,24 @@
 <template>
   <v-form @keydown="validate" id="send-to-examination-form">
     <v-container fluid class="pa-0" id="send-to-examination-container">
-      <template v-if="getEditMode">
-        <v-row class="mt-5 mb-0">
-          <v-col cols="6" class="font-weight-bold py-0">I need a name to:</v-col>
-          <v-col cols="6" class="d-flex justify-end py-0"></v-col>
-        </v-row>
+      <NameRequestDetails v-if="getEditMode" />
 
-        <v-row class="mt-3 mb-0">
-          <v-col cols="12" md="5" lg="5" :class="{'py-0': !isMobile}">
-            <v-select :error-messages="getErrors.includes('request_action_cd') ? 'Please select an action' : ''"
-                      :hide-details="!getErrors.includes('request_action_cd')"
-                      :items="getRequestTypeOptions"
-                      @change="clearErrors()"
-                      filled
-                      id="search-type-options-select"
-                      v-model="request_action_cd" />
-          </v-col>
-          <v-col cols="12" md="2" lg="2" :class="{'py-0': !isMobile}">
-            <v-select :error-messages="getErrors.includes('location') ? 'Please select a jurisdiction' : ''"
-                      :hide-details="!getErrors.includes('location')"
-                      :items="getLocationOptions"
-                      @change="clearErrors()"
-                      filled
-                      id="location-options-select"
-                      v-model="location" />
-          </v-col>
-          <v-col cols="12" md="5" lg="5" :class="{'py-0': !isMobile}">
-            <v-select :error-messages="getErrors.includes('entity_type_cd') ? 'Please select a business type' : ''"
-                      :hide-details="!getErrors.includes('entity_type_cd')"
-                      :items="getEntityTypeOptions"
-                      @change="clearErrors()"
-                      filled
-                      id="entity-type-options-select"
-                      v-model="entity_type_cd" />
-          </v-col>
-        </v-row>
-      </template>
-
-      <v-row class="mt-5 mb-0" v-if="getEditMode || getIsAssumedName">
-        <v-col cols="auto" class="font-weight-bold h5 py-0" v-if="getEditMode">
+      <v-row class="pt-8 my-0" v-if="getEditMode || isAssumedName">
+        <v-col cols="auto" class="font-weight-bold h4 py-0" v-if="getEditMode">
           Name Choices
         </v-col>
-        <v-col cols="auto" class="text-body-3 py-0" v-else-if="getIsAssumedName">
+        <v-col cols="auto" class="text-body-3 py-0" v-else-if="isAssumedName">
           Name in Home Jurisdiction: {{getName}}
         </v-col>
       </v-row>
 
-      <v-row class="mt-5 mb-0">
+      <v-row class="pt-8 my-0">
         <v-col cols="12" md="2" lg="2" class="label-style align-self-start pt-0" key="static-1">
           {{choicesLabelsAndHints[0].label}}
         </v-col>
         <transition name="fade" mode="out-in">
           <v-col :key="transitionKey(1)" class="ma-0 pa-0" :cols="isMobile ? 12 : 10">
-            <v-row class="ma-0 pa-0" v-if="location === 'BC'">
+            <v-row class="ma-0 pa-0" v-if="getLocation === 'BC'">
               <v-col :cols="(designationAtEnd && !isMobile) ? 8 : 12" :class="{ 'py-0' : !isMobile }" >
                 <v-text-field :error-messages="messages.name1"
                               :hide-details="hideDetails"
@@ -92,20 +57,20 @@
               </v-col>
             </v-row>
             <v-row class="ma-0 pa-0" v-else>
-              <v-col :cols="getIsAssumedName ? 8 : 12" class="py-0" >
+              <v-col :cols="isAssumedName ? 8 : 12" class="py-0" >
                 <v-text-field :error-messages="messages.name1"
                               :hide-details="hideDetails"
                               :value="xproNameWithoutConflict"
                               @blur="handleBlur()"
                               @input="editChoices('name1', $event, true)"
-                              :filled="getIsAssumedName"
-                              :class="{ 'read-only-mode': !getIsAssumedName }"
+                              :filled="isAssumedName"
+                              :class="{ 'read-only-mode': !isAssumedName }"
                               id="choice-1-text-field"
                               :label="choicesLabelsAndHints[0].hint"
-                              :disabled="!getIsAssumedName"
+                              :disabled="!isAssumedName"
                               :name="Math.random()"/>
               </v-col>
-              <v-col cols="4" class="py-0" v-if="getIsAssumedName">
+              <v-col cols="4" class="py-0" v-if="isAssumedName">
                 <v-tooltip top
                   transition="fade-transition"
                   content-class="top-tooltip"
@@ -135,11 +100,11 @@
         </transition>
       </v-row>
 
-      <v-row v-if="!getEditMode" class="my-1 py-0 colour-text mt-5 mb-0">
+      <v-row v-if="!getEditMode" class="pt-6 my-0 colour-text">
         <v-col :cols="isMobile ? 0 : 2" class="py-0"></v-col>
         <v-col :cols="isMobile ? 12 : 10" class="py-0 text-body-3">
-          <span v-if="location!=='BC'">
-            <span v-if="getIsAssumedName">
+          <span v-if="getLocation !== 'BC'">
+            <span v-if="isAssumedName">
               You may provide up to two additional assumed names which will be considered at no further
               cost, in the order provided, if your first choice cannot be approved. Be sure to follow all
               <a :href="buildNameURL" target="_blank">
@@ -176,7 +141,7 @@
         </v-col>
       </v-row>
 
-      <v-row v-if="showSecondAndThirdNameChoices" class="mt-5 mb-0">
+      <v-row v-if="showSecondAndThirdNameChoices" class="pt-8 my-0">
         <v-col cols="12" md="2" lg="2" class="label-style align-self-start pt-0" key="static-2">
           {{choicesLabelsAndHints[1].label}}
         </v-col>
@@ -224,7 +189,7 @@
         </transition>
       </v-row>
 
-      <v-row v-if="showSecondAndThirdNameChoices" class="mt-5 mb-0" key="static-3">
+      <v-row v-if="showSecondAndThirdNameChoices" class="pt-8 my-0" key="static-3">
         <v-col cols="12" md="2" lg="2" class="label-style align-self-start pt-0">
           {{choicesLabelsAndHints[2].label}}
         </v-col>
@@ -274,7 +239,7 @@
         </transition>
       </v-row>
 
-      <v-row class="mt-7 mb-0">
+      <v-row class="pt-8 my-0">
         <v-col cols="7" class="py-0" />
         <ApplicantInfoNav @nextAction="validateButton()" />
       </v-row>
@@ -286,10 +251,11 @@
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
-import { EntityI, NameChoicesIF, NameRequestI, RequestActionsI } from '@/interfaces'
+import NameRequestDetails from '@/components/existing-request/name-request-details.vue'
+import { NameChoicesIF, NameRequestI } from '@/interfaces'
 import { sanitizeName } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { EntityType, Location, NrRequestActionCodes } from '@/enums'
+import { EntityType, Location } from '@/enums'
 import { CommonMixin } from '@/mixins'
 import { Designations } from '@/list-data'
 
@@ -299,7 +265,8 @@ import { Designations } from '@/list-data'
  */
 @Component({
   components: {
-    ApplicantInfoNav
+    ApplicantInfoNav,
+    NameRequestDetails
   }
 })
 export default class NamesCapture extends Mixins(CommonMixin) {
@@ -307,31 +274,19 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   @Getter getDisplayedComponent!: string
   @Getter getDesignation!: string
   @Getter getEditMode!: boolean
-  @Getter getErrors!: string[]
   @Getter getEntityTypeCd!: EntityType
-  @Getter getEntityTypeOptions!: Array<EntityI>
-  @Getter getIsAssumedName!: boolean
   @Getter getLocation!: Location
-  @Getter getLocationOptions!: any[]
   @Getter getName!: string
   @Getter getNameChoices!: NameChoicesIF
   @Getter getNr!: Partial<NameRequestI>
-  @Getter getRequestActionCd!: NrRequestActionCodes
-  @Getter getRequestTypeOptions!: RequestActionsI[]
   @Getter getSubmissionTabNumber!: number
+  @Getter isAssumedName!: boolean
   @Getter isMobile!: boolean
 
   // Global actions
-  @Action setClearErrors!: ActionBindingIF
-  @Action setEntityTypeCd!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
-  @Action setLocation!: ActionBindingIF
-  @Action setLocationInfoModalVisible!: ActionBindingIF
   @Action setNameChoices!: ActionBindingIF
   @Action setNameChoicesToInitialState!: ActionBindingIF
-  @Action setNRData!: ActionBindingIF
-  @Action setPickEntityModalVisible!: ActionBindingIF
-  @Action setPickRequestTypeModalVisible!: ActionBindingIF
   @Action setRequestAction!: ActionBindingIF
   @Action setSubmissionTabComponent!: ActionBindingIF
   @Action setSubmissionType!: ActionBindingIF
@@ -363,7 +318,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
     this.$el.addEventListener('keydown', this.handleKeydown)
 
     this.setNameChoicesToInitialState(null)
-    if (this.getIsAssumedName && !this.getEditMode) {
+    if (this.isAssumedName && !this.getEditMode) {
       await this.$nextTick() // FUTURE: remove if not needed
       this.hideDetails = true
       return
@@ -399,11 +354,11 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   }
 
   get showSecondAndThirdNameChoices () {
-    if (this.location !== Location.BC) {
-      if (this.entity_type_cd === EntityType.XLP ||
-        this.entity_type_cd === EntityType.XLL ||
-        this.entity_type_cd === EntityType.XCP ||
-        this.entity_type_cd === EntityType.XSO) {
+    if (this.getLocation !== Location.BC) {
+      if (this.getEntityTypeCd === EntityType.XLP ||
+        this.getEntityTypeCd === EntityType.XLL ||
+        this.getEntityTypeCd === EntityType.XCP ||
+        this.getEntityTypeCd === EntityType.XSO) {
         return false
       }
     }
@@ -411,7 +366,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   }
 
   get autofocusField () {
-    if (this.getIsAssumedName) {
+    if (this.isAssumedName) {
       return 'name1'
     }
     let output = 'name2'
@@ -455,66 +410,66 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   }
 
   get designationAtEnd () {
-    if (this.entity_type_cd && Designations[this.entity_type_cd]) {
-      return Designations[this.entity_type_cd].end
+    if (this.getEntityTypeCd && Designations[this.getEntityTypeCd]) {
+      return Designations[this.getEntityTypeCd].end
     }
     return false
   }
 
   get choicesLabelsAndHints () {
-    if (this.location === 'BC') {
+    if (this.getLocation === Location.BC) {
       return [
         {
-          'label': 'First Choice',
-          'hint': 'First Name Choice'
+          label: 'First Choice',
+          hint: 'First Name Choice'
         },
         {
-          'label': 'Second Choice',
-          'hint': 'Second Name Choice (Optional)'
+          label: 'Second Choice',
+          hint: 'Second Name Choice (Optional)'
         },
         {
-          'label': 'Third Choice',
-          'hint': 'Third Name Choice (Optional)'
+          label: 'Third Choice',
+          hint: 'Third Name Choice (Optional)'
         }
       ]
-    } else if (this.getIsAssumedName) {
+    } else if (this.isAssumedName) {
       return [
         {
-          'label': 'Assumed Name First Choice',
-          'hint': 'Enter your first choice for an assumed name'
+          label: 'Assumed Name First Choice',
+          hint: 'Enter your first choice for an assumed name'
         },
         {
-          'label': 'Assumed Name Second Choice',
-          'hint': 'Enter your second choice for an assumed name (Optional)'
+          label: 'Assumed Name Second Choice',
+          hint: 'Enter your second choice for an assumed name (Optional)'
         },
         {
-          'label': 'Assumed Name Third Choice',
-          'hint': 'Enter your third choice for an assumed name (Optional)'
+          label: 'Assumed Name Third Choice',
+          hint: 'Enter your third choice for an assumed name (Optional)'
         }
       ]
     } else {
       return [
         {
-          'label': 'Name in Home Jurisdiction',
-          'hint': ''
+          label: 'Name in Home Jurisdiction',
+          hint: ''
         },
         {
-          'label': 'Assumed Name First Choice',
-          'hint': 'Enter your first choice for an assumed name (Optional)'
+          label: 'Assumed Name First Choice',
+          hint: 'Enter your first choice for an assumed name (Optional)'
         },
         {
-          'label': 'Assumed Name Second Choice',
-          'hint': 'Enter your second choice for an assumed name (Optional)'
+          label: 'Assumed Name Second Choice',
+          hint: 'Enter your second choice for an assumed name (Optional)'
         }
       ]
     }
   }
 
   get entityPhraseChoices () {
-    if (!this.entity_type_cd || !Designations[this.entity_type_cd]) {
+    if (!this.getEntityTypeCd || !Designations[this.getEntityTypeCd]) {
       return []
     }
-    let basePhrases = Designations[this.entity_type_cd].words
+    let basePhrases = Designations[this.getEntityTypeCd].words
     // these are the inner phrases for the CCC and CP types.  Filtering out CR designations from CPs has no effect
     // and CCC designations are a mix of CR-type ending designations and CCC specific inner phrases so filter out
     // the CR designations for the purposes of this getter
@@ -522,24 +477,16 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   }
 
   get entityPhraseRequired (): boolean {
-    return this.entity_type_cd && this.entityTypeText.length > 0
+    return this.getEntityTypeCd && this.entityTypeText.length > 0
   }
 
   get entityPhraseText (): string {
     return this.entityPhraseChoices.join(', ')
   }
 
-  get entity_type_cd (): EntityType {
-    return this.getEntityTypeCd
-  }
-
-  set entity_type_cd (type: EntityType) {
-    this.setEntityTypeCd(type)
-  }
-
   // define the text for the name designation error message for the entity types that require it
   get entityTypeText (): string {
-    switch (this.entity_type_cd) {
+    switch (this.getEntityTypeCd) {
       case EntityType.SO: return 'Society'
       case EntityType.CC: return 'Community Contribution Company'
       case EntityType.CP: return 'Cooperative'
@@ -550,12 +497,10 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   }
 
   get isValid (): boolean {
-    // invalid if there are any errors
-    if (this.getErrors.length > 0) return false
+    const { nameChoices, messages, designationAtEnd, validatePhrases } = this
+    const location = this.getLocation
 
-    let { nameChoices, messages, designationAtEnd, validatePhrases, location } = this
-
-    if (this.getIsAssumedName && this.getEditMode) {
+    if (this.isAssumedName && this.getEditMode) {
       if (!nameChoices['name1']) {
         messages['name1'] = 'Please enter at least one name'
         return false
@@ -564,7 +509,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
       return true
     }
 
-    if (this.getIsAssumedName) {
+    if (this.isAssumedName) {
       if (!nameChoices['name1']) {
         if (!nameChoices['name2'] && !nameChoices['name3']) {
           return false
@@ -600,7 +545,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
           messages.name1 = 'Please enter at least one name'
         }
       }
-      if (location === 'BC') {
+      if (location === Location.BC) {
         if (designationAtEnd && !nameChoices.designation1) {
           messages.des1 = 'Please choose a designation'
         }
@@ -666,7 +611,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
           for (let choice of [1, 2, 3]) {
             if (nameChoices[`name${choice}`]) {
               if (!nameChoices[`designation${choice}`]) {
-                if (location === 'BC' || this.getIsAssumedName) {
+                if (location === Location.BC || this.isAssumedName) {
                   messages[`des${choice}`] = 'Please choose a designation'
                   this.showDesignationErrors[`des${choice}`] = true
                   outcome = false
@@ -697,46 +642,23 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   }
 
   get items (): string[] {
-    let output: string[] = Designations[this.entity_type_cd].words
-    if (this.entity_type_cd === EntityType.CC) {
+    let output: string[] = Designations[this.getEntityTypeCd].words
+    if (this.getEntityTypeCd === EntityType.CC) {
       output = Designations['CR'].words
     }
     return output
-  }
-
-  get location (): Location {
-    return this.getLocation
-  }
-
-  set location (location: Location) {
-    this.setLocation(location)
   }
 
   get nameChoices (): NameChoicesIF {
     return this.getNameChoices
   }
 
-  get request_action_cd (): NrRequestActionCodes {
-    return this.getRequestActionCd
-  }
-
-  set request_action_cd (value: NrRequestActionCodes) {
-    this.setRequestAction(value)
-    if (value === NrRequestActionCodes.INFO) {
-      this.setPickRequestTypeModalVisible(true)
-    }
-  }
-
   get xproNameWithoutConflict () {
     var name = this.nameChoices.name1
-    if (!this.getIsAssumedName && this.nameChoices.designation1) {
+    if (!this.isAssumedName && this.nameChoices.designation1) {
       name = `${name} ${this.nameChoices.designation1}`
     }
     return name
-  }
-
-  clearErrors () {
-    this.setClearErrors(null)
   }
 
   editChoices (key, value, userInitiated = false) {
@@ -891,58 +813,11 @@ export default class NamesCapture extends Mixins(CommonMixin) {
       this.$el.removeEventListener('keydown', this.handleKeydown)
     }
   }
-
-  @Watch('request_action_cd')
-  updateLocationOnAssumedName (val: NrRequestActionCodes) {
-    if (val === NrRequestActionCodes.ASSUMED && this.location === Location.BC) {
-      this.location = Location.CA
-    }
-  }
-
-  @Watch('entity_type_cd')
-  handleEntityType (newVal: EntityType, oldVal: EntityType) {
-    // special case for sub-menu
-    if (newVal === EntityType.INFO) {
-      this.setPickEntityModalVisible(true)
-      this.entity_type_cd = oldVal
-    }
-  }
-
-  @Watch('location')
-  handleLocation (newVal: Location, oldVal: Location) {
-    // reset search values when location has changed
-    if (newVal !== oldVal) {
-      this.setNRData({ key: 'xproJurisdiction', value: '' })
-      this.setNRData({ key: 'name', value: '' })
-      this.setNRData({ key: 'corpSearch', value: '' })
-      this.setNRData({ key: 'homeJurisNum', value: '' })
-    }
-
-    // special case for sub-menu
-    if (newVal === Location.INFO) {
-      let type = this.entity_type_cd
-      this.setLocationInfoModalVisible(true)
-      this.$nextTick(function () {
-        this.location = oldVal
-        this.entity_type_cd = type
-      })
-    } else {
-      this.$nextTick(function () {
-        if (this.getEditMode) {
-          this.populateNames()
-        }
-      })
-    }
-  }
 }
 </script>
 
 <style lang="scss" scoped>
 @import "@/assets/styles/theme.scss";
-
-::v-deep .v-messages__message {
-  line-height: 14px !important;
-}
 
 .label-style {
   font-size: $px-16;
@@ -954,6 +829,10 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   display: inline-block;
   font-size: $px-14;
   color: $app-blue;
+}
+
+::v-deep .v-messages__message {
+  line-height: 14px !important;
 }
 
 ::v-deep .read-only-mode .v-input__slot:not(.v-input--checkbox .v-input__slot) {

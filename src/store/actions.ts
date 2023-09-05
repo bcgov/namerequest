@@ -686,10 +686,6 @@ export const setPickEntityModalVisible = ({ commit }, isVisible: boolean): void 
   commit('mutatePickEntityModalVisible', isVisible)
 }
 
-export const setPickRequestTypeModalVisible = ({ commit }, isVisible: boolean): void => {
-  commit('mutatePickRequestTypeModalVisible', isVisible)
-}
-
 export const setMrasSearchInfoModalVisible = ({ commit }, isVisible: boolean): void => {
   commit('mutateMrasSearchInfoModalVisible', isVisible)
 }
@@ -716,10 +712,6 @@ export const setAffiliationErrorModalValue = ({ commit }, modalValue: NrAffiliat
 
 export const setHelpMeChooseModalVisible = ({ commit }, isVisible: boolean): void => {
   commit('mutateHelpMeChooseModalVisible', isVisible)
-}
-
-export const setLocationInfoModalVisible = ({ commit }, isVisible: boolean): void => {
-  commit('mutateLocationInfoModalVisible', isVisible)
 }
 
 export const setNrRequiredModalVisible = ({ commit }, isVisible: boolean): void => {
@@ -1053,7 +1045,7 @@ export const startAnalyzeName = async ({ commit, getters }) => {
   if (!getters.getEntityTypeCd) commit('setErrors', 'entity_type_cd')
 
   // check if designation selection is required and present
-  if (!getters.getIsXproFlow && Designations[getters.getEntityTypeCd]?.end) {
+  if (!getters.isXproFlow && Designations[getters.getEntityTypeCd]?.end) {
     if (!getters.getDesignation) commit('setErrors', 'designation')
   }
 
@@ -1090,7 +1082,7 @@ export const startAnalyzeName = async ({ commit, getters }) => {
   name = name.toUpperCase()
 
   // auto fix LTD/INC/CORP designations without a period unless xpro
-  if (!getters.getIsXproFlow) {
+  if (!getters.isXproFlow) {
     name = name.replace(/^LTD$/g, 'LTD.')
       .replace(/^LTD\s/g, 'LTD. ')
       .replace(/\sLTD\s/g, ' LTD. ')
@@ -1110,7 +1102,7 @@ export const startAnalyzeName = async ({ commit, getters }) => {
   commit('mutateNameOriginal', name) // Set original name for reset baseline
 
   // xpro get name call
-  if (getters.getIsXproFlow && !getters.getHasNoCorpNum) {
+  if (getters.isXproFlow) {
     commit('mutateXproJurisdiction', getters.getJurisdictionText)
     commit('mutateHomeJurisNum', getters.getCorpSearch)
     // only make MRAS call for MRAS jurisdictions and if we have a corp num
@@ -1138,7 +1130,7 @@ export const startAnalyzeName = async ({ commit, getters }) => {
     // similar name check / conditional + restricted word check
     startQuickSearch({ commit, getters }, { exact: true, similar: true, restricted: true })
     // we don't do a structure name check for xpro names
-    if (getters.getIsXproFlow) {
+    if (getters.isXproFlow) {
       commit('mutateAnalyzeDesignationPending', false)
       commit('mutateAnalyzeStructurePending', false)
     } else {

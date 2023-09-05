@@ -1,12 +1,12 @@
 <template>
   <MainContainer id="search-pending-container">
-    <template v-slot:container-header>
+    <template #container-header>
       <v-col cols="auto h4 py-0 mt-1">
         You are searching for an existing Name Request
       </v-col>
     </template>
 
-    <template v-slot:content>
+    <template #content>
       <v-row justify="center" class="mt-3">
         <v-col cols="auto">
           <b>Please wait a moment</b>
@@ -14,10 +14,12 @@
       </v-row>
       <v-row justify="center">
         <v-col cols="auto">
-          <v-progress-circular color="orange"
-                               id="analyze-pending-spinner"
-                               size="50"
-                               indeterminate />
+          <v-progress-circular
+            color="orange"
+            id="analyze-pending-spinner"
+            size="50"
+            indeterminate
+          />
         </v-col>
       </v-row>
       <v-row justify="center">
