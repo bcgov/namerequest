@@ -196,10 +196,15 @@
             :emailAddress="nr && nr.applicants && nr.applicants.emailAddress"
             :showIncorporateNowButton="showIncorporateButton"
             :showRegisterButton="showRegisterButton"
+            :showAlterNowButton="showAlterNowButton"
+            :isAllowAlterOnline="isAlterOnline(nr.requestTypeCd)"
+            :showOpenExternalIcon="showOpenExternalIcon"
             :showGoToSocietiesButton="showGoToSocietiesButton"
             :disabled="disableUnfurnished"
             @incorporateRegisterYourBusiness="incorporateRegisterYourBusiness()"
             @goToSocietiesOnline="goToSocietiesOnline"
+            @goToCorpOnline="goToCorpOnline"
+            @goToEntityDashboard="goToEntityDashboard(nr.corpNum)"
           />
 
           <NrNotApprovedGrayBox
@@ -223,7 +228,7 @@ import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
 import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished,
-  NrRequestActionCodes, EntityType } from '@/enums'
+  NrRequestActionCodes, NrRequestTypeCodes, EntityType } from '@/enums'
 import { Sleep, GetFeatureFlag, Navigate } from '@/plugins'
 import NamexServices from '@/services/namex-services'
 import ContactInfo from '@/components/common/contact-info.vue'
@@ -425,6 +430,18 @@ export default class ExistingRequestDisplay extends Mixins(
            this.nr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS &&
            (NrState.APPROVED === this.nr.state ||
             this.isConsentUnRequired)
+  }
+
+  get showAlterNowButton (): boolean {
+    return this.nr.request_action_cd === NrRequestActionCodes.CONVERSION &&
+          this.nr.state === NrState.APPROVED
+  }
+
+  get showOpenExternalIcon (): boolean {
+    if (this.showAlterNowButton) {
+      return !this.isSupportedAlteration(this.nr.requestTypeCd)
+    }
+    return false
   }
 
   /** True if the Go To Societies Online button should be shown. */
@@ -718,6 +735,12 @@ export default class ExistingRequestDisplay extends Mixins(
   goToSocietiesOnline () {
     const societyHomeUrl = sessionStorage.getItem('SOCIETIES_ONLINE_HOME_URL')
     Navigate(`${societyHomeUrl}`)
+  }
+
+  // redirect to Corporate Online
+  goToCorpOnline () {
+    const corporateHomeUrl = sessionStorage.getItem('CORPORATE_ONLINE_URL')
+    Navigate(`${corporateHomeUrl}`)
   }
 
   private cancelledUpgrade (status: string, payments: any): string {

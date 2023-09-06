@@ -557,6 +557,10 @@ export const setEntityTypeCd = ({ commit }, entityTypeCd: EntityType): void => {
   commit('mutateEntityType', entityTypeCd)
 }
 
+export const setOriginEntityTypeCd = ({ commit }, originEntityTypeCd: EntityType): void => {
+  commit('mutateOriginEntityType', originEntityTypeCd)
+}
+
 export const setConversionType = ({ commit }, conversionType: string): void => {
   commit('mutateConversionType', conversionType)
 }
