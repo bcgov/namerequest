@@ -69,9 +69,10 @@ export const XproMapping: MappingI = {
     EntityType.RLC
   ],
   REH: [
-    EntityType.XCR,
+    EntityType.A,
+    EntityType.LLC,
     EntityType.XCP,
-    EntityType.RLC
+    EntityType.XS
   ]
 }
 

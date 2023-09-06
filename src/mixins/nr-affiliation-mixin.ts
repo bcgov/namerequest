@@ -138,7 +138,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
     let legalType = nr.legalType
     if (this.isSupportedEntity(nr)) {
       name = 'incorporationApplication'
-      legalType = this.entityTypeAlternateCode(nr.entity_type_cd)
+      legalType = this.entityTypeToCorpType(nr.entity_type_cd)
     }
     const nrNumber = nr.nrNum
 
