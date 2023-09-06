@@ -100,7 +100,7 @@
                 @change="setClearErrors()"
                 hide-details="auto"
                 filled
-                v-model="entity_type_cd"
+                v-model="entity_type_options_select_bind"
               >
                 <template v-slot:item="{ item }">
                   <v-tooltip
@@ -232,13 +232,13 @@
             <div class="contact-registries">
               <p>To complete this alteration, please contact us at:</p>
               <p>
-                  <v-icon small>mdi-phone</v-icon>  Canada and U.S. Toll Free:
+                  <v-icon small>mdi-phone</v-icon>&nbsp;Canada and U.S. Toll Free:
                   <a href="tel:+1877-370-1033">1-877-370-1033</a>
               </p>
-              <p><v-icon small>mdi-phone</v-icon>  Victoria Office:
+              <p><v-icon small>mdi-phone</v-icon>&nbsp;Victoria Office:
                 <a href="tel:250-370-1033">250-370-1033</a>
               </p>
-              <p><v-icon small>mdi-email</v-icon>  Email:
+              <p><v-icon small>mdi-email</v-icon>&nbsp;Email:
                 <a href="mailto:BCRegistries@gov.bc.ca">BCRegistries@gov.bc.ca</a>
               </p>
             </div>
@@ -359,6 +359,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   @Getter getJurisdictionCd!: string
   @Getter getLocation!: Location
   @Getter getLocationOptions!: any[]
+  @Getter getOriginEntityTypeCd!: EntityType
   @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter isAmalgamation!: boolean
   @Getter isAssumed!: boolean
@@ -386,6 +387,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   @Action setLocation!: ActionBindingIF
   @Action setName!: ActionBindingIF
   @Action setNoCorpNum!: ActionBindingIF
+  @Action setOriginEntityTypeCd!: ActionBindingIF
   @Action setPickEntityModalVisible!: ActionBindingIF
   @Action setRequestAction!: ActionBindingIF
   @Action startAnalyzeName!: ActionBindingIF
@@ -510,6 +512,15 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     return this.getEntityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs
   }
 
+  get entity_type_options_select_bind (): EntityType | NrRequestTypeCodes {
+    if (this.isConversion) return this.getOriginEntityTypeCd
+    return this.entity_type_cd
+  }
+
+  set entity_type_options_select_bind (type: EntityType) {
+    this.entity_type_cd = type
+  }
+
   get entity_type_cd (): EntityType {
     return this.getEntityTypeCd
   }
@@ -525,6 +536,10 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     }
     // special case for conversion
     if (this.getEntityTypeCd && this.isConversion && type) {
+      const value = type as unknown as NrRequestTypeCodes
+      let { entity_type_cd } = ConversionTypes.find(conv => conv.value === value) || { entity_type_cd: null }
+      this.setEntityTypeCd(entity_type_cd)
+      this.setConversionType(type)
       this.setConversionType(type)
       return
     }
@@ -639,13 +654,19 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     this.entity_type_cd = this.business?.legalType || null
     this.setCorpNum(business?.identifier || null)
     this.setEntityTypeCd(this.business?.legalType)
-    if (this.isConversion && this.isBenBusiness) {
-      this.setConversionType(NrRequestTypeCodes.CONVERT_CORP)
-    }
-    // clear all related fields when clearing business search/fetch for alter
-    if (this.isConversion && !this.business) {
-      this.setConversionType(null)
-      this.selectedCompanyType = null
+
+    if (this.isConversion) {
+      if (this.business) {
+        this.setOriginEntityTypeCd(this.business.legalType)
+        if (this.isBenBusiness) {
+          this.setConversionType(NrRequestTypeCodes.CONVERT_CORP)
+        }
+      } else {
+        // clear all related fields when clearing business search/fetch for alter
+        this.setConversionType(null)
+        this.setOriginEntityTypeCd(null)
+        this.selectedCompanyType = null
+      }
     }
   }
 

@@ -109,6 +109,7 @@ export const stateModel: StateModelIF = {
     nrOriginal: {} as NameRequestI,
     nrRequestNameMap: [],
     nrRequiredModalVisible: false,
+    origin_entity_type_cd: null,
     pickEntityModalVisible: false,
     pickRequestTypeModalVisible: false,
     priorityRequest: false,

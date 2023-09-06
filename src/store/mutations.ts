@@ -88,6 +88,10 @@ export const mutateEntityType = (state: StateIF, entity_type_cd: EntityType) => 
   state.stateModel.newRequestModel.entity_type_cd = entity_type_cd
 }
 
+export const mutateOriginEntityType = (state: StateIF, origin_entity_type_cd: EntityType) => {
+  state.stateModel.newRequestModel.origin_entity_type_cd = origin_entity_type_cd
+}
+
 export const mutateEntityTypeAddToSelect = (state: StateIF, entityTypeAddToSelect: SelectOptionsI) => {
   state.stateModel.newRequestModel.entityTypeAddToSelect = entityTypeAddToSelect
 }

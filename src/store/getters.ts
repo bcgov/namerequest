@@ -154,6 +154,10 @@ export const getEntityTypeCd = (state: StateIF): EntityType => {
   return state.stateModel.newRequestModel.entity_type_cd
 }
 
+export const getOriginEntityTypeCd = (state: StateIF): EntityType => {
+  return state.stateModel.newRequestModel.origin_entity_type_cd
+}
+
 /** The Request Code. */
 export const getRequestActionCd = (state: StateIF): NrRequestActionCodes => {
   return state.stateModel.newRequestModel.request_action_cd
@@ -381,8 +385,8 @@ export const getDesignationIssueTypes = (state: StateIF): string[] => {
 }
 
 export const getConversionTypeOptions = (state: StateIF): ConversionTypesI[] => {
-  const selected = state.stateModel.newRequestModel.entity_type_cd
-  let options = [...ConversionTypes].filter(type => type.entity_type_cd === selected)
+  const selected = state.stateModel.newRequestModel.origin_entity_type_cd
+  let options = [...ConversionTypes].filter(type => type.origin_entity_type_cd === selected)
   let n = 3
 
   if (getConversionTypeAddToSelect(state)) {
