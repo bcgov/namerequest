@@ -539,7 +539,12 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   }
 
   get entityTypeText (): string {
-    return (this.entity_type_cd === EntityType.CC) ? 'Community Contribution Company' : 'Cooperative'
+    if (this.entity_type_cd === EntityType.SO) {
+      return 'Society'
+    } else if (this.entity_type_cd === EntityType.CC) {
+      return 'Community Contribution Company'
+    }
+    return 'Cooperative'
   }
 
   get isValid (): boolean {
