@@ -201,10 +201,15 @@ export const isRestoration = (state: StateIF): boolean => {
   return (getRequestActionCd(state) === NrRequestActionCodes.RESTORE)
 }
 
-/** True if current flow is XPRO (includes AMALGAMATION, NEW_BUSINESS, and possibly others). */
+/**
+ * True if current flow is XPRO (includes AMALGAMATION, NEW_BUSINESS, and RESTORATION).
+ * FUTURE: Might need to add others.
+ */
 export const getIsXproFlow = (state: StateIF): boolean => {
   return (
-    (getRequestActionCd(state) !== NrRequestActionCodes.MOVE) &&
+    ((getRequestActionCd(state) === NrRequestActionCodes.AMALGAMATE) ||
+    (getRequestActionCd(state) === NrRequestActionCodes.NEW_BUSINESS) ||
+    (getRequestActionCd(state) === NrRequestActionCodes.RESTORE)) &&
     [Location.CA, Location.IN].includes(getLocation(state))
   )
 }
