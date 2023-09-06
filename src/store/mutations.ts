@@ -18,7 +18,8 @@ import {
   NameCheckErrorType,
   NrAffiliationErrors,
   PriorityCode,
-  NrRequestActionCodes
+  NrRequestActionCodes,
+  NrRequestTypeCodes
 } from '@/enums'
 
 export const clearErrors = (state: StateIF) => {
@@ -59,7 +60,7 @@ export const mutateConflictId = (state: StateIF, conflictId: string) => {
   state.stateModel.newRequestModel.conflictId = conflictId
 }
 
-export const mutateConversionType = (state: StateIF, conversionType: EntityType) => {
+export const mutateConversionType = (state: StateIF, conversionType: NrRequestTypeCodes) => {
   state.stateModel.newRequestModel.conversionType = conversionType
 }
 
@@ -85,6 +86,10 @@ export const mutateEditMode = (state: StateIF, editMode: boolean) => {
 
 export const mutateEntityType = (state: StateIF, entity_type_cd: EntityType) => {
   state.stateModel.newRequestModel.entity_type_cd = entity_type_cd
+}
+
+export const mutateOriginEntityType = (state: StateIF, origin_entity_type_cd: EntityType) => {
+  state.stateModel.newRequestModel.origin_entity_type_cd = origin_entity_type_cd
 }
 
 export const mutateEntityTypeAddToSelect = (state: StateIF, entityTypeAddToSelect: SelectOptionsI) => {

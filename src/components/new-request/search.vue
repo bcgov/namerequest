@@ -49,9 +49,10 @@
           append-icon="mdi-close"
           readonly
           filled
-          :label="business.identifier"
+          :label="businessLookupLabel"
           :value="business.legalName"
           :rules="rules"
+          :hint="businessLookupHint"
           persistent-hint
           autofocus
           @click:append="onBusiness(null)"
@@ -71,8 +72,17 @@
       </v-col>
 
       <!-- Entity Type -->
-      <v-col v-if="showEntityType" cols="12" :md="getIsXproFlow ? 4 : 6">
+      <v-col
+        v-if="showEntityType" cols="12"
+        :md="getIsXproFlow ? 4 : ( isConversion ? 12 : 6)">
+        <v-text-field
+          v-if="isConversion && isBenBusiness"
+          filled
+          disabled
+          hide-details
+          label="Benefit Company to Limited Company" />
         <v-tooltip
+          v-else
           top
           content-class="top-tooltip"
           :disabled="getRequestActionCd !== NrRequestActionCodes.CONVERSION || !entityConversionText || isMobile"
@@ -90,7 +100,7 @@
                 @change="setClearErrors()"
                 hide-details="auto"
                 filled
-                v-model="entity_type_cd"
+                v-model="entity_type_options_select_bind"
               >
                 <template v-slot:item="{ item }">
                   <v-tooltip
@@ -148,6 +158,7 @@
           </v-radio-group>
         </v-col>
 
+        <!-- Named company bullets -->
         <template v-if="selectedCompanyType === CompanyType.NAMED_COMPANY">
           <!-- Xpro/Federal bullets -->
           <v-col v-if="getIsXproFlow && isFederal" cols="12" :md="isSelectedXproAndRestorable ? 10 : 8">
@@ -227,41 +238,58 @@
         </template>
 
         <!-- Numbered company bullets -->
-        <v-col v-if="selectedCompanyType === CompanyType.NUMBERED_COMPANY" cols="12">
-          <ul class="bullet-points">
-            <li>Your business name will be the Incorporation Number assigned by the Registry.</li>
-            <li>You can change your business name at a later date.</li>
-            <li>It is not possible to request a specific Incorporation Number.</li>
-          </ul>
-        </v-col>
+        <template v-if="selectedCompanyType === CompanyType.NUMBERED_COMPANY || isFederal" cols="12">
+          <v-col v-if="isConversion && !isAlterOnline(getConversionType)">
+            <div class="contact-registries">
+              <p>To complete this alteration, please contact us at:</p>
+              <p>
+                  <v-icon small>mdi-phone</v-icon>&nbsp;Canada and U.S. Toll Free:
+                  <a href="tel:+1877-370-1033">1-877-370-1033</a>
+              </p>
+              <p><v-icon small>mdi-phone</v-icon>&nbsp;Victoria Office:
+                <a href="tel:250-370-1033">250-370-1033</a>
+              </p>
+              <p><v-icon small>mdi-email</v-icon>&nbsp;Email:
+                <a href="mailto:BCRegistries@gov.bc.ca">BCRegistries@gov.bc.ca</a>
+              </p>
+            </div>
+          </v-col>
+          <v-col v-else cols="12">
+            <ul class="bullet-points">
+              <li>Your business name will be the Incorporation Number assigned by the Registry.</li>
+              <li>You can change your business name at a later date.</li>
+              <li>It is not possible to request a specific Incorporation Number.</li>
+            </ul>
+          </v-col>
 
-        <!-- Go to COLIN / Incorporate Now buttons -->
-        <v-col v-if="selectedCompanyType === CompanyType.NUMBERED_COMPANY || isFederal" cols="12"
-          class="d-flex justify-center"
-        >
-          <v-btn
-            v-if="showColinButton || showRestoreNowButton"
-            class="px-9"
-            id="go-to-colin-button"
-            :href="colinLink"
-            target="_blank"
+          <!-- Go to COLIN / Incorporate Now buttons -->
+          <v-col v-if = "!isConversion || isAlterOnline(getConversionType)" cols="12"
+            class="d-flex justify-center"
           >
-            Go to Corporate Online to Register <v-icon small class="ml-1">mdi-open-in-new</v-icon>
-          </v-btn>
-          <v-btn
-            v-else
-            class="px-9"
-            id="incorporate-now-button"
-            @click="incorporateNowClicked()"
-          >
-            {{ incorporateNowButtonText }}
-          </v-btn>
-        </v-col>
+            <v-btn
+              v-if="showColinButton"
+              class="px-9"
+              id="go-to-colin-button"
+              :href="colinLink"
+              target="_blank"
+            >
+              Go to Corporate Online to {{ goToColinText }} <v-icon small class="ml-1">mdi-open-in-new</v-icon>
+            </v-btn>
+            <v-btn
+              v-else-if="showActionButton"
+              class="px-9"
+              id="incorporate-now-button"
+              @click="actionNowClicked()"
+            >
+              {{ actionNowButtonText }}
+            </v-btn>
+          </v-col>
+        </template>
       </template>
     </v-row>
 
     <!-- Check This Name button -->
-    <template v-if="!isFederal && isNamedCompany && entity_type_cd">
+    <template v-if="isShowCheckNameButton">
       <v-row justify="center" class="mt-6">
         <v-col cols="auto">
           <v-btn
@@ -328,7 +356,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   readonly RequestActions = RequestActions
 
   // Store getters
-  @Getter getConversionType!: EntityType
+  @Getter getConversionType!: NrRequestTypeCodes
   @Getter getConversionTypeOptions!: ConversionTypesI[]
   @Getter getDesignation!: string
   @Getter getEntityBlurbs!: Array<EntityI>
@@ -342,6 +370,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   @Getter getJurisdictionCd!: string
   @Getter getLocation!: Location
   @Getter getLocationOptions!: any[]
+  @Getter getOriginEntityTypeCd!: EntityType
   @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter isAmalgamation!: boolean
   @Getter isAssumed!: boolean
@@ -369,6 +398,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   @Action setLocation!: ActionBindingIF
   @Action setName!: ActionBindingIF
   @Action setNoCorpNum!: ActionBindingIF
+  @Action setOriginEntityTypeCd!: ActionBindingIF
   @Action setPickEntityModalVisible!: ActionBindingIF
   @Action setRequestAction!: ActionBindingIF
   @Action startAnalyzeName!: ActionBindingIF
@@ -406,6 +436,47 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     this.scrollTo('namerequest-sbc-header')
   }
 
+  // Text field rules for the business lookup
+  get rules (): any {
+    return [
+      value => {
+        if (this.isConversion) {
+          return this.isPassAlterValidation || 'This business cannot alter their business type'
+        } else if (this.isRestoration) {
+          return this.isRestorable || 'This business cannot be restored.'
+        }
+        return true
+      }]
+  }
+
+  get businessLookupLabel (): string {
+    if (this.getIsAuthenticated) {
+      if (this.lookupActiveOrHistorical === EntityStates.HISTORICAL) {
+        return 'Find a historical business'
+      } else {
+        return 'Find an existing business'
+      }
+    } else {
+      if (this.lookupActiveOrHistorical === EntityStates.HISTORICAL) {
+        return 'Fetch a historical business'
+      } else {
+        return 'Fetch an existing business'
+      }
+    }
+  }
+
+  get businessLookupHint (): string {
+    if (this.getIsAuthenticated) {
+      return 'Search by name, incorporation or registration number of existing business'
+    } else {
+      return 'Enter registration number of existing business'
+    }
+  }
+
+  get isBenBusiness (): boolean {
+    return this.business?.legalType as string === CorpTypeCd.BENEFIT_COMPANY
+  }
+
   /** Search businesses with business lookup depending on the Action selected */
   get lookupActiveOrHistorical (): String {
     return this.isRestoration ? EntityStates.HISTORICAL : EntityStates.ACTIVE
@@ -419,6 +490,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     return (this.getRequestActionCd === NrRequestActionCodes.NEW_BUSINESS && this.request?.group === 1)
   }
 
+  get isPassAlterValidation (): boolean {
+    const legalType = this.business.legalType as unknown as CorpTypeCd
+    return legalType === CorpTypeCd.BC_COMPANY ||
+      legalType === CorpTypeCd.BENEFIT_COMPANY ||
+      legalType === CorpTypeCd.BC_ULC_COMPANY
+  }
+
   get showJurisdiction (): boolean {
     // if (this.isAmalgamation) return true // *** FUTURE
     if (this.isNewXproBusiness) return true
@@ -427,14 +505,15 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   get showEntityType (): boolean {
+    if (this.isConversion) {
+      return this.business && this.isPassAlterValidation
+    }
     if (this.getLocation && !this.isFederal && !this.isRestoration) return true
     return false
   }
 
   get showBusinessLookup () {
-    if (this.isChangeName) return true
-    if (this.isConversion) return true
-    if (this.isRestoration) return true
+    if (this.isChangeName || this.isConversion || this.isRestoration) return true
     return false
   }
 
@@ -459,6 +538,10 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   get companyRadioBtnApplicable (): boolean {
+    if (!this.entity_type_cd && !this.getConversionType && !this.isFederal) return false
+    if (this.isConversion) {
+      return this.business !== null && this.getConversionType !== null
+    }
     const isSociety = (this.isSocietyEnabled() && this.getEntityTypeCd === EntityType.SO)
     // check if numbered is not allowed or society NR name is required
     if (!this.isNumberedEntityType || isSociety) {
@@ -477,10 +560,16 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     return this.getEntityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs
   }
 
+  get entity_type_options_select_bind (): EntityType | NrRequestTypeCodes {
+    if (this.isConversion) return this.getOriginEntityTypeCd
+    return this.entity_type_cd
+  }
+
+  set entity_type_options_select_bind (type: EntityType) {
+    this.entity_type_cd = type
+  }
+
   get entity_type_cd (): EntityType {
-    if (this.isConversion) {
-      return this.getConversionType
-    }
     return this.getEntityTypeCd
   }
 
@@ -494,11 +583,11 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
       return
     }
     // special case for conversion
-    if (type && this.isConversion) {
-      // convert NrRequestTypeCodes -> EntityType
+    if (this.getEntityTypeCd && this.isConversion && type) {
       const value = type as unknown as NrRequestTypeCodes
       let { entity_type_cd } = ConversionTypes.find(conv => conv.value === value) || { entity_type_cd: null }
       this.setEntityTypeCd(entity_type_cd)
+      this.setConversionType(type)
       this.setConversionType(type)
       return
     }
@@ -519,8 +608,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
   get entityConversionText () {
     // convert NrRequestTypeCodes -> EntityType
-    const value = this.getConversionType as unknown as NrRequestTypeCodes
-    return ConversionTypes.find(conversion => conversion.value === value)?.text
+    return ConversionTypes.find(conversion => conversion.value === this.getConversionType)?.text
   }
 
   /** Whether selected radio button is Named Company. */
@@ -528,10 +616,25 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     return (this.selectedCompanyType === CompanyType.NAMED_COMPANY)
   }
 
+  get showActionButton (): boolean {
+    if (this.isConversion && !this.isAlterOnline(this.getConversionType)) return false
+    return true
+  }
+
   /** Whether to show "Go to COLIN" button (otherwise will show "Incorporate Now" button). */
   get showColinButton (): boolean {
     if (this.showContinueInButton) return true
     if (this.isFederal) return true
+
+    if (this.isConversion) {
+      return !this.isSupportedAlteration(this.getConversionType)
+    }
+
+    if (this.isRestoration) {
+      const supportedRestorationEntites = GetFeatureFlag('supported-restoration-entities')
+      const isRestorationEntity = supportedRestorationEntites.includes(this.entity_type_cd)
+      return !isRestorationEntity
+    }
 
     // don't show COLIN button for supported entities
     const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
@@ -550,20 +653,19 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     // return !isContInEntity
   }
 
-  /** Show the "Restore Now" button depending on results returned from the FF. */
-  get showRestoreNowButton (): boolean {
-    if (!this.isRestoration) return false
-    const supportedRestorationEntites = GetFeatureFlag('supported-restoration-entities')
-    const isRestorationEntity = supportedRestorationEntites.includes(this.entity_type_cd)
-    return !isRestorationEntity
+  get goToColinText (): string {
+    if (this.isConversion) return 'Alter'
+    return 'Register'
   }
 
   /** Retrieve text based on selected action/flow */
-  get incorporateNowButtonText (): string {
+  get actionNowButtonText (): string {
     if (this.isContinuationIn) {
       return 'Continue In Now'
     } else if (this.isAmalgamation) {
       return 'Amalgamate Now'
+    } else if (this.isConversion) {
+      return 'Alter Now'
     } else if (this.isRestoration) {
       return 'Restore Now'
     }
@@ -607,6 +709,25 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     this.business = business
     this.entity_type_cd = this.business?.legalType || null
     this.setCorpNum(business?.identifier || null)
+    this.setEntityTypeCd(this.business?.legalType)
+
+    if (this.isConversion) {
+      if (this.business) {
+        // set the from business for alteration (conversion)
+        this.setOriginEntityTypeCd(this.business.legalType)
+        // special case if the from business is BEN
+        // set conversionType & entity_type_cd because there's only one alteration type for it
+        if (this.isBenBusiness) {
+          this.setConversionType(NrRequestTypeCodes.CONVERT_CORP)
+          this.setEntityTypeCd(EntityType.BC)
+        }
+      } else {
+        // clear all related fields when clearing business search/fetch for alter
+        this.setConversionType(null)
+        this.setOriginEntityTypeCd(null)
+        this.selectedCompanyType = null
+      }
+    }
 
     if (this.isRestoration) {
       // Check if not XPRO and BC restorable
@@ -620,17 +741,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
         this.setEntityTypeCd(null)
       }
     }
-  }
-
-  // Text field rules for the business lookup
-  get rules (): any {
-    return [
-      val => {
-        if (this.isRestoration) {
-          return this.isRestorable || 'This business cannot be restored.'
-        }
-        return true
-      }]
   }
 
   /** Returns whether the selected XPRO is restorable. */
@@ -653,10 +763,12 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
    * If restoration/reinstatement selected, go to business dashboard.
    * If user is not authenticated, redirect to login screen then redirect back.
    */
-  async incorporateNowClicked () {
+  async actionNowClicked () {
     const legalType = this.entityTypeToCorpType(this.entity_type_cd)
     if (this.getIsAuthenticated) {
-      if (this.isRestoration) {
+      if (this.isConversion) {
+        this.goToEntityDashboard(this.business.identifier)
+      } else if (this.isRestoration) {
         const dashboardUrl = sessionStorage.getItem('DASHBOARD_URL')
         Navigate(`${dashboardUrl}${this.business.identifier}`)
       } else {
@@ -677,6 +789,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     if (this.getIsXproFlow) this.$root.$emit('showSpinner', true)
     await this.startAnalyzeName(null)
     if (this.getIsXproFlow) this.$root.$emit('showSpinner', false)
+  }
+
+  get isShowCheckNameButton (): boolean {
+    if (!this.isFederal && this.isNamedCompany && this.entity_type_cd) {
+      return true
+    }
+    return false
   }
 
   @Watch('entity_type_cd')
@@ -753,6 +872,11 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
+
+.v-icon.mdi-phone,
+.v-icon.mdi-email {
+  color: $app-dk-blue;
+}
 
 .v-list {
   padding: 0;

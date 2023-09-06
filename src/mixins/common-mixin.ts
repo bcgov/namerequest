@@ -1,5 +1,5 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { EntityType, PriorityCode, NrRequestActionCodes } from '@/enums'
+import { EntityType, PriorityCode, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 import { GetFeatureFlag } from '@/plugins'
 
@@ -107,6 +107,13 @@ export class CommonMixin extends Vue {
     }
   }
 
+  /** Returns true if the specified alteration NR is allowed to be done online. */
+  isAlterOnline (type: NrRequestTypeCodes): boolean {
+    return !(type === NrRequestTypeCodes.CONVERT_BEN ||
+      type === NrRequestTypeCodes.CONVERT_CORP ||
+      type === NrRequestTypeCodes.CONVERT_ULBE)
+  }
+
   /** Returns true if the specified NR is a priority request. */
   isPriorityReq (nr: any): boolean {
     return (nr?.priorityCd === PriorityCode.YES)
@@ -129,6 +136,12 @@ export class CommonMixin extends Vue {
       nr?.legalType === EntityType.SP ||
       nr?.legalType === EntityType.DBA ||
       nr?.legalType === EntityType.GP)
+  }
+
+  /** Returns true if the specified NR is for alteration (conversion). */
+  isSupportedAlteration (type: NrRequestTypeCodes): boolean {
+    const supportedAlterationTypes = GetFeatureFlag('supported-alteration-types')
+    return supportedAlterationTypes.includes(type)
   }
 
   /** Returns true if the specified NR is for an Extraprovincial Company. */
