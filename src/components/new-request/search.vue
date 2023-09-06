@@ -716,6 +716,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
         // set the from business for alteration (conversion)
         this.setOriginEntityTypeCd(this.business.legalType)
         // special case if the from business is BEN
+        // set conversionType & entity_type_cd because there's only one alteration type for it
         if (this.isBenBusiness) {
           this.setConversionType(NrRequestTypeCodes.CONVERT_CORP)
           this.setEntityTypeCd(EntityType.BC)
