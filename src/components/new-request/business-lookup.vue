@@ -34,7 +34,7 @@
 
       <template v-slot:no-data>
         <p class="pl-5 font-weight-bold">
-          {{  lookupNoActiveText  }}
+          {{ lookupNoActiveText }}
         </p>
         <p class="pl-5">
           Ensure you have entered the correct business name or number.
