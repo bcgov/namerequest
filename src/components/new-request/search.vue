@@ -442,7 +442,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   get isPassAlterValidation (): boolean {
-    const legalType = this.business.legalType as string
+    const legalType = this.business.legalType as unknown as CorpTypeCd
     return legalType === CorpTypeCd.BC_COMPANY ||
       legalType === CorpTypeCd.BENEFIT_COMPANY ||
       legalType === CorpTypeCd.BC_ULC_COMPANY
