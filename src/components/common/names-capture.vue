@@ -18,7 +18,7 @@
         </v-col>
         <transition name="fade" mode="out-in">
           <v-col :key="transitionKey(1)" class="ma-0 pa-0" :cols="isMobile ? 12 : 10">
-            <v-row class="ma-0 pa-0" v-if="getLocation === 'BC'">
+            <v-row class="ma-0 pa-0" v-if="getLocation === Location.BC">
               <v-col :cols="(designationAtEnd && !isMobile) ? 8 : 12" :class="{ 'py-0' : !isMobile }" >
                 <v-text-field :error-messages="messages.name1"
                               :hide-details="hideDetails"
@@ -103,7 +103,7 @@
       <v-row v-if="!getEditMode" class="pt-6 my-0 colour-text">
         <v-col :cols="isMobile ? 0 : 2" class="py-0"></v-col>
         <v-col :cols="isMobile ? 12 : 10" class="py-0 text-body-3">
-          <span v-if="getLocation !== 'BC'">
+          <span v-if="getLocation !== Location.BC">
             <span v-if="isAssumedName">
               You may provide up to two additional assumed names which will be considered at no further
               cost, in the order provided, if your first choice cannot be approved. Be sure to follow all
@@ -270,6 +270,9 @@ import { Designations } from '@/list-data'
   }
 })
 export default class NamesCapture extends Mixins(CommonMixin) {
+  // For template
+  readonly Location = Location
+
   // Global getters
   @Getter getDisplayedComponent!: string
   @Getter getDesignation!: string

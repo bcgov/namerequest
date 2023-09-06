@@ -443,11 +443,6 @@ export default class ExistingRequestDisplay extends Mixins(
     )
   }
 
-  get showAlterNowButton (): boolean {
-    return this.nr.request_action_cd === NrRequestActionCodes.CONVERSION &&
-          this.nr.state === NrState.APPROVED
-  }
-
   get showOpenExternalIcon (): boolean {
     if (this.showAlterNowButton) {
       return !this.isSupportedAlteration(this.nr.requestTypeCd)
