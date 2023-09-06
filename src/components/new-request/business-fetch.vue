@@ -7,8 +7,8 @@
       autofocus
       filled
       hide-details="auto"
-      hint="Enter registration number of existing business"
-      label="Fetch an existing business"
+      :hint="hint"
+      label="Find an existing business"
       persistent-hint
       v-model.trim="searchField"
       @click:append="search()"
@@ -46,6 +46,8 @@ export default class BusinessFetch extends Vue {
   // Store action
   @Action searchBusiness!: (corpNum: string) => Promise<BusinessSearchIF>
 
+  readonly hint = 'Enter the incorporation or registration number of the existing business'
+
   /** V-model for search field. */
   searchField = ''
 
@@ -60,7 +62,7 @@ export default class BusinessFetch extends Vue {
     if (!this.searchField) {
       this.errorMessages = ['Required field']
     } else if (!/^(A|BC|C|CP|FM)\d{7}$/.test(this.searchField)) {
-      this.errorMessages = ['Please enter a valid registration number']
+      this.errorMessages = [this.hint]
     } else {
       this.errorMessages = []
     }

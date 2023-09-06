@@ -38,11 +38,14 @@
       <v-col v-if="showBusinessLookup" cols="12" md="6" class="business-lookup">
         <template v-if="!business">
           <BusinessLookup
-            v-if="getIsAuthenticated"
+            v-if="isAuthenticated"
             :searchStatus="lookupActiveOrHistorical"
             @business="onBusiness($event)"
           />
-          <BusinessFetch v-else @business="onBusiness($event)"/>
+          <BusinessFetch
+            v-else
+            @business="onBusiness($event)"
+          />
         </template>
         <v-text-field
           v-else
@@ -72,9 +75,7 @@
       </v-col>
 
       <!-- Entity Type -->
-      <v-col
-        v-if="showEntityType" cols="12"
-        :md="getIsXproFlow ? 4 : ( isConversion ? 12 : 6)">
+      <v-col v-if="showEntityType" cols="12" :md="isXproFlow ? 4 : ( isConversion ? 12 : 6)">
         <v-text-field
           v-if="isConversion && isBenBusiness"
           filled
@@ -161,7 +162,7 @@
         <!-- Named company bullets -->
         <template v-if="selectedCompanyType === CompanyType.NAMED_COMPANY">
           <!-- Xpro/Federal bullets -->
-          <v-col v-if="getIsXproFlow && isFederal" cols="12" :md="isSelectedXproAndRestorable ? 10 : 8">
+          <v-col v-if="isXproFlow && isFederal" cols="12" :md="isSelectedXproAndRestorable ? 10 : 8">
             <ul class="bullet-points">
               <li>Federally incorporated businesses do not need a Name Request.</li>
               <li v-if="!isSelectedXproAndRestorable">
@@ -181,10 +182,10 @@
           </v-col>
 
           <!-- XPRO/MRAS number/name search/input -->
-          <v-col v-if="!isFederal" cols="12" :md="(getIsXproFlow || showDesignation) ? 8 : 12">
+          <v-col v-if="!isFederal" cols="12" :md="(isXproFlow || showDesignation) ? 8 : 12">
             <NameInput
               id="name-input-component"
-              :is-mras-search="(getIsXproFlow && isMrasJurisdiction && !noCorpNum)"
+              :is-mras-search="(isXproFlow && isMrasJurisdiction && !noCorpNum)"
               @emit-corp-num-validity="corpNumValid = $event"
             />
           </v-col>
@@ -365,8 +366,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   @Getter getEntityTextFromValue!: string
   @Getter getErrors!: string[]
   @Getter getHasNoCorpNum!: boolean
-  @Getter getIsAuthenticated!: boolean
-  @Getter getIsXproFlow!: boolean
+  @Getter isAuthenticated!: boolean
   @Getter getJurisdictionCd!: string
   @Getter getLocation!: Location
   @Getter getLocationOptions!: any[]
@@ -384,6 +384,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   @Getter isMrasJurisdiction!: boolean
   @Getter isNumberedEntityType!: boolean
   @Getter isRestoration!: boolean
+  @Getter isXproFlow!: boolean
 
   // Store actions
   @Action setConversionType!: ActionBindingIF
@@ -450,7 +451,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   get businessLookupLabel (): string {
-    if (this.getIsAuthenticated) {
+    if (this.isAuthenticated) {
       if (this.lookupActiveOrHistorical === EntityStates.HISTORICAL) {
         return 'Find a historical business'
       } else {
@@ -466,7 +467,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   get businessLookupHint (): string {
-    if (this.getIsAuthenticated) {
+    if (this.isAuthenticated) {
       return 'Search by name, incorporation or registration number of existing business'
     } else {
       return 'Enter registration number of existing business'
@@ -524,7 +525,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   get showDesignation (): boolean {
-    if (this.getEntityTypeCd) return (Designations[this.getEntityTypeCd]?.end && !this.getIsXproFlow)
+    if (this.getEntityTypeCd) return (Designations[this.getEntityTypeCd]?.end && !this.isXproFlow)
     // hide until entity type is selected and needs it
     return false
   }
@@ -765,12 +766,9 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
    */
   async actionNowClicked () {
     const legalType = this.entityTypeToCorpType(this.entity_type_cd)
-    if (this.getIsAuthenticated) {
-      if (this.isConversion) {
+    if (this.isAuthenticated) {
+      if (this.isConversion || this.isRestoration) {
         this.goToEntityDashboard(this.business.identifier)
-      } else if (this.isRestoration) {
-        const dashboardUrl = sessionStorage.getItem('DASHBOARD_URL')
-        Navigate(`${dashboardUrl}${this.business.identifier}`)
       } else {
         await this.incorporateNow(legalType)
       }
@@ -786,9 +784,9 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
   async handleSubmit (doNameCheck = true) {
     this.setDoNameCheck(doNameCheck)
-    if (this.getIsXproFlow) this.$root.$emit('showSpinner', true)
+    if (this.isXproFlow) this.$root.$emit('showSpinner', true)
     await this.startAnalyzeName(null)
-    if (this.getIsXproFlow) this.$root.$emit('showSpinner', false)
+    if (this.isXproFlow) this.$root.$emit('showSpinner', false)
   }
 
   get isShowCheckNameButton (): boolean {

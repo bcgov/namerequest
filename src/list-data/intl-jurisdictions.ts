@@ -1279,5 +1279,5 @@ const OtherSorted = Other.sort((a, b) => {
   }
 })
 
-// put Can and USA at front of list
+// put Can and USA at front of sorted list
 export const IntlJurisdictions = CanUsa.concat(OtherSorted)

@@ -41,7 +41,6 @@ export interface NewRequestIF {
   isPersonsName: boolean
   issueIndex: number
   location: Location
-  locationInfoModalVisible: boolean
   mrasSearchInfoModalVisible: boolean
   mrasSearchResultCode: number
   name: string
@@ -57,7 +56,6 @@ export interface NewRequestIF {
   nrRequiredModalVisible: boolean
   origin_entity_type_cd: EntityType
   pickEntityModalVisible: boolean
-  pickRequestTypeModalVisible: boolean
   priorityRequest: boolean
   quickSearchNames: any[]
   request_action_cd: NrRequestActionCodes

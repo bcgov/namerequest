@@ -87,9 +87,9 @@ export class CommonMixin extends Vue {
    * Returns request action text for the the specified code.
    * See namex -> api/namex/resources/name_requests/report_resource.py::_get_request_action_cd_description()
    */
-  requestActionCdToText (cd: NrRequestActionCodes): string {
+  requestActionCdToText (cd: NrRequestActionCodes, isXpro = false): string {
     switch (cd) {
-      case NrRequestActionCodes.NEW_BUSINESS: return 'New Business'
+      case NrRequestActionCodes.NEW_BUSINESS: return isXpro ? 'Extraprovincial Registration' : 'New Business'
       case NrRequestActionCodes.MOVE: return 'Continuation In'
       case NrRequestActionCodes.RESTORE: return 'Restoration or Reinstatement'
       case NrRequestActionCodes.AMALGAMATE: return 'Amalgamation'
@@ -132,10 +132,11 @@ export class CommonMixin extends Vue {
 
   /** Returns true if the specified NR is for a firm (SP/GP). */
   isFirm (nr: any): boolean {
-    return (
-      nr?.legalType === EntityType.SP ||
-      nr?.legalType === EntityType.DBA ||
-      nr?.legalType === EntityType.GP)
+    return [
+      EntityType.SP,
+      EntityType.DBA,
+      EntityType.GP
+    ].includes(nr?.legalType)
   }
 
   /** Returns true if the specified NR is for alteration (conversion). */
@@ -146,8 +147,15 @@ export class CommonMixin extends Vue {
 
   /** Returns true if the specified NR is for an Extraprovincial Company. */
   isXProCompany (nr: any): boolean {
-    return [EntityType.XCR, EntityType.XUL, EntityType.RLC, EntityType.XLP, EntityType.XLL,
-      EntityType.XCP, EntityType.XSO].includes(nr?.entity_type_cd)
+    return [
+      EntityType.XCR,
+      EntityType.XUL,
+      EntityType.RLC,
+      EntityType.XLP,
+      EntityType.XLL,
+      EntityType.XCP,
+      EntityType.XSO
+    ].includes(nr?.entity_type_cd)
   }
 
   /** Scroll to given element Id */

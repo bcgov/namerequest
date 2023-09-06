@@ -4,16 +4,24 @@
       <slot name="container-header" />
 
       <v-col cols="auto" class="py-0" v-if="displayedComponent !== 'Success'">
-        <button id="back-to-search-btn"
-                class="modal-activator link-std-sans-ul"
-                @click="backToSearch()">
-          <span class="link-std-sans-ul" v-if="showExit">
-            Exit
-            <v-icon color="primary" class="dialog-close mt-n1">mdi-close</v-icon>
-          </span>
-          <span class="link-std-sans-ul" v-else>
-            <v-icon class="mr-n1 mini-back-arrow">mdi-chevron-left</v-icon>
-            {{ getEditMode ? 'Return' : 'Start Over' }}
+        <button
+          id="back-to-search-btn"
+          class="modal-activator link-std-sans-ul"
+          @click="backToSearch()"
+        >
+          <span class="link-std-sans-ul">
+            <template v-if="showExit">
+              Exit
+              <v-icon class="dialog-close">mdi-close</v-icon>
+            </template>
+            <template v-else-if="getEditMode">
+              <v-icon class="mr-n1 mini-back-arrow">mdi-chevron-left</v-icon>
+              Return
+            </template>
+            <template v-else>
+              <v-icon class="mr-n1 mini-back-arrow">mdi-chevron-left</v-icon>
+              Start Over
+            </template>
           </span>
         </button>
       </v-col>
@@ -79,7 +87,15 @@ export default class MainContainer extends Mixins(DisplayedComponentMixin) {
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/styles/theme.scss";
+
 #back-to-search-btn:focus {
-  outline:0;
+  outline: 0;
+}
+
+.mdi-close,
+.mini-back-arrow {
+  top: -1px !important;
+  color: $app-blue !important;
 }
 </style>

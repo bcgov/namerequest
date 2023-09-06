@@ -11,7 +11,7 @@
       autocomplete="chrome-off"
       autofocus
       filled
-      hint="Search by name, incorporation or registration number of existing business"
+      hint="Search by name, incorporation or registration number of an existing business"
       item-text="name"
       item-value="identifier"
       :label="lookupLabel"

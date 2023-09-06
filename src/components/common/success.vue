@@ -1,6 +1,6 @@
 <template>
-  <MainContainer id="analyze-pending-container">
-    <template v-slot:content>
+  <MainContainer id="success-container">
+    <template #content>
       <v-row class="my-9 py-9">
         <v-col cols="12" class="text-center h4">
           Update Successful
@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import MainContainer from '@/components/new-request/main-container.vue'
 
 @Component({

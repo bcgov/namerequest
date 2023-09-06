@@ -7,8 +7,8 @@ import { shallowMount, createLocalVue } from '@vue/test-utils'
 import App from '@/App.vue'
 import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
-  LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog, PaymentCompleteDialog,
-  PickEntityOrConversionDialog, PickRequestTypeDialog, RenewDialog, ReceiptsDialog, RefundDialog, ResubmitDialog,
+  MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog, PaymentCompleteDialog,
+  PickEntityOrConversionDialog, RenewDialog, ReceiptsDialog, RefundDialog, ResubmitDialog,
   RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
 } from '@/components/dialogs'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
@@ -73,12 +73,10 @@ describe('App component', () => {
     expect(wrapper.findComponent(ExitDialog).exists()).toBe(true)
     expect(wrapper.findComponent(ExitIncompletePaymentDialog).exists()).toBe(true)
     expect(wrapper.findComponent(HelpMeChooseDialog).exists()).toBe(true)
-    expect(wrapper.findComponent(LocationInfoDialog).exists()).toBe(true)
     expect(wrapper.findComponent(MrasSearchInfoDialog).exists()).toBe(true)
     expect(wrapper.findComponent(NrNotRequiredDialog).exists()).toBe(true)
     expect(wrapper.findComponent(PaymentCompleteDialog).exists()).toBe(true)
     expect(wrapper.findComponent(PickEntityOrConversionDialog).exists()).toBe(true)
-    expect(wrapper.findComponent(PickRequestTypeDialog).exists()).toBe(true)
     expect(wrapper.findComponent(RenewDialog).exists()).toBe(true)
     expect(wrapper.findComponent(ReceiptsDialog).exists()).toBe(true)
     expect(wrapper.findComponent(RefundDialog).exists()).toBe(true)

@@ -40,11 +40,11 @@ export default class NameInput extends Vue {
   @Getter getCorpSearch!: string
   @Getter getErrors!: string[]
   @Getter getHasNoCorpNum!: boolean
-  @Getter getIsXproFlow!: boolean
   @Getter getLocation!: Location
   @Getter getName!: string
   @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter isMrasJurisdiction!: boolean
+  @Getter isXproFlow!: boolean
 
   // Store actions
   @Action setClearErrors!: () => void
@@ -81,11 +81,11 @@ export default class NameInput extends Vue {
   }
 
   get label (): string {
-    if (this.isReadOnly && (this.isMrasSearch || !this.getIsXproFlow)) return '' // should never happen
+    if (this.isReadOnly && (this.isMrasSearch || !this.isXproFlow)) return '' // should never happen
 
-    if (this.isReadOnly && this.getIsXproFlow) return 'Name in home jurisdiction'
+    if (this.isReadOnly && this.isXproFlow) return 'Name in home jurisdiction'
 
-    if (this.getIsXproFlow) {
+    if (this.isXproFlow) {
       if (this.isMrasJurisdiction && !this.getHasNoCorpNum) {
         return 'Enter the corporate number assigned by the home jurisdiction'
       } else {
@@ -136,9 +136,9 @@ export default class NameInput extends Vue {
       if (this.searchValue) {
         // hide modal and perform name analysis
         this.setMrasSearchInfoModalVisible(false)
-        if (this.getIsXproFlow) this.$root.$emit('showSpinner', true)
-        if (this.searchValue) await this.startAnalyzeName(null)
-        if (this.getIsXproFlow) this.$root.$emit('showSpinner', false)
+        this.$root.$emit('showSpinner', true)
+        await this.startAnalyzeName(null)
+        this.$root.$emit('showSpinner', false)
       }
       return
     }
