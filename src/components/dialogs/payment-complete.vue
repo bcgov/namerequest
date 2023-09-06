@@ -44,17 +44,6 @@ import { NameChoicesIF } from '@/interfaces'
 import { PAYMENT_COMPLETE_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import NamexServices from '@/services/namex-services'
 
-/**
- * Makes debugging the receipt easier.
- * Usage:
- * Set to true and complete a name reservation.
- * The session information for the payment won't be cleared
- * which activates the receipt modal.
- *
- * Make sure this is set to false when you're done!
- */
-const DEBUG_RECEIPT = false
-
 @Component({
   components: {
     PaymentConfirm

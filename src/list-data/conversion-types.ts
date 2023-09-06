@@ -3,8 +3,8 @@ import { ConversionTypesI } from '@/interfaces/models'
 
 export const ConversionTypes: ConversionTypesI[] = [
   {
-    desc: 'Limited company to an unlimited liability company',
-    text: 'Limited company to an unlimited liability company',
+    desc: 'Limited Company to an Unlimited Liability Company',
+    text: 'Limited Company to an Unlimited Liability Company',
     entity_type_cd: EntityType.UL,
     origin_entity_type_cd: EntityType.BC,
     blurbs: [
@@ -15,8 +15,8 @@ export const ConversionTypes: ConversionTypesI[] = [
     shortlist: true
   },
   {
-    desc: 'Limited company to a community contribution company',
-    text: 'Limited company to a community contribution company',
+    desc: 'Limited Company to a Community Contribution Company',
+    text: 'Limited Company to a Community Contribution Company',
     entity_type_cd: EntityType.CC,
     origin_entity_type_cd: EntityType.BC,
     blurbs: [
@@ -27,8 +27,8 @@ export const ConversionTypes: ConversionTypesI[] = [
     shortlist: true
   },
   {
-    desc: 'Limited company to a benefit company',
-    text: 'Limited company to a benefit company',
+    desc: 'Limited Company to a Benefit Company',
+    text: 'Limited Company to a Benefit Company',
     entity_type_cd: EntityType.BC,
     origin_entity_type_cd: EntityType.BC,
     blurbs: [
@@ -38,8 +38,8 @@ export const ConversionTypes: ConversionTypesI[] = [
     shortlist: false
   },
   {
-    desc: 'Benefit company to a limited company',
-    text: 'Benefit company to a limited company',
+    desc: 'Benefit Company to a Limited Company',
+    text: 'Benefit Company to a Limited Company',
     entity_type_cd: EntityType.CR,
     origin_entity_type_cd: EntityType.BEN,
     blurbs: [
@@ -49,8 +49,8 @@ export const ConversionTypes: ConversionTypesI[] = [
     shortlist: false
   },
   {
-    desc: 'Unlimited liability company to a limited company',
-    text: 'Unlimited liability company to a limited company',
+    desc: 'Unlimited Liability Company to a Limited Company',
+    text: 'Unlimited Liability Company to a Limited Company',
     entity_type_cd: EntityType.CR,
     origin_entity_type_cd: EntityType.ULC,
     blurbs: [
@@ -60,8 +60,8 @@ export const ConversionTypes: ConversionTypesI[] = [
     shortlist: false
   },
   {
-    desc: 'Unlimited liability company to a benefit company',
-    text: 'Unlimited liability company to a benefit company',
+    desc: 'Unlimited Liability Company to a Benefit Company',
+    text: 'Unlimited Liability Company to a Benefit Company',
     entity_type_cd: EntityType.BC,
     origin_entity_type_cd: EntityType.ULC,
     blurbs: [

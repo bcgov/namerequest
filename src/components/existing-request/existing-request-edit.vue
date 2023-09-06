@@ -1,11 +1,13 @@
 <template>
-  <MainContainer>
-    <template v-slot:container-header>
-      <v-col cols="auto" class="font-weight-bold h5 py-0">
-        {{ editModeHeader }}
+  <MainContainer id="existing-request-edit">
+    <template #container-header>
+      <v-col cols="auto">
+        <span v-if="submissionTabNumber === 1" class="h3 user-select-all">{{ getNrNum }}</span>
+        <span v-else class="font-weight-bold h4 py-0">Application Details</span>
       </v-col>
     </template>
-    <template v-slot:content>
+
+    <template #content>
       <v-tabs v-model="submissionTabNumber" id="applicant-info-slider">
         <v-tabs-items v-model="submissionTabNumber" touchless>
           <v-tab-item>
@@ -13,12 +15,15 @@
               <EntityCannotBeAutoAnalyzed />
             </keep-alive>
           </v-tab-item>
-          <v-tab-item>
+
+          <v-tab-item class="pt-10">
             <NamesCapture />
           </v-tab-item>
+
           <v-tab-item>
             <ApplicantInfo1 />
           </v-tab-item>
+
           <v-tab-item>
             <ApplicantInfo2 v-if="getActingOnOwnBehalf" />
             <ApplicantInfo3 v-else />
@@ -58,22 +63,11 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 export default class ExistingRequestEdit extends Vue {
   // Global getters
   @Getter getActingOnOwnBehalf!: boolean
-  @Getter getEditMode!: boolean
+  @Getter getNrNum!: string
   @Getter getSubmissionTabNumber!: number
 
   // Global Action
   @Action setSubmissionTabNumber!: ActionBindingIF
-
-  get editModeHeader (): string {
-    // safety check
-    if (!this.getEditMode) return ''
-
-    if (this.submissionTabNumber === 1) {
-      return 'Request Type'
-    } else {
-      return 'Application Details'
-    }
-  }
 
   get submissionTabNumber (): number {
     return this.getSubmissionTabNumber

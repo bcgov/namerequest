@@ -1,8 +1,13 @@
 <template>
   <div id="names-container" class="bg-light-gray mt-5">
     <div class="px-5 py-4 text-name">
-      <v-tooltip v-for="name of names" :key="name.choice"
-        transition="fade-transition" right content-class="tooltip" :disabled="isMobile"
+      <v-tooltip
+        v-for="name of names"
+        :key="name.choice"
+        transition="fade-transition"
+        right
+        content-class="tooltip"
+        :disabled="isMobile"
       >
         <template v-slot:activator="{ on, attrs }">
           <div v-bind="attrs" v-on="on" :class="getClass(name)" class="cursor-default">
@@ -35,7 +40,7 @@ export default class NamesGrayBox extends Vue {
   @Prop({ default: () => [] })
   readonly names: any[]
 
-  private getTooltipText (name: any): string {
+  getTooltipText (name: any): string {
     switch (name.state) {
       case NameState.APPROVED: return 'Approved for use.'
       case NameState.CONDITIONAL: return `Approved for use.`
@@ -45,7 +50,7 @@ export default class NamesGrayBox extends Vue {
     }
   }
 
-  private getIcon (name:any): string {
+  getIcon (name:any): string {
     switch (name.state) {
       case NameState.APPROVED: return 'mdi-check'
       case NameState.CONDITIONAL: return 'mdi-check'
@@ -55,7 +60,7 @@ export default class NamesGrayBox extends Vue {
     }
   }
 
-  private getClass (name: any): string {
+  getClass (name: any): string {
     switch (name.state) {
       case NameState.APPROVED: return 'approved'
       case NameState.CONDITIONAL: return 'approved'

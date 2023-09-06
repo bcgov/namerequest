@@ -9,7 +9,7 @@
                               width="2"/>
       </div>
       <v-row v-else justify="center" no-gutters>
-        <v-col v-if="!getIsXproFlow" cols="auto">
+        <v-col v-if="!isXproFlow" cols="auto">
           <v-icon class="check-tab-icon pt-2" size="1.3rem">
             {{ tabIcon }}
           </v-icon>
@@ -28,7 +28,7 @@ import { Getter } from 'vuex-class'
 
 @Component({})
 export default class NameCheckTabContent extends Vue {
-  @Getter getIsXproFlow!: boolean
+  @Getter isXproFlow!: boolean
 
   @Prop({ default: true }) readonly loading!: boolean
   @Prop() readonly subtitle!: string
@@ -37,7 +37,7 @@ export default class NameCheckTabContent extends Vue {
 
   get contentClass (): string {
     const baseClasses = 'check-tab-sub-title pt-2 pb-7'
-    if (this.getIsXproFlow) return baseClasses
+    if (this.isXproFlow) return baseClasses
     if (this.noConflicts) return baseClasses + ' no-text-decoration pl-1'
     return baseClasses + ' pl-2'
   }

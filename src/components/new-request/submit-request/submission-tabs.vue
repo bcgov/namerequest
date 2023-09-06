@@ -1,12 +1,12 @@
 <template>
-  <MainContainer>
-    <template v-slot:container-header>
+  <MainContainer id="submission-tabs">
+    <template #container-header>
       <v-col cols="8" class="font-weight-bold h5 py-0">
         {{ submissionModeHeader }}
       </v-col>
     </template>
 
-    <template v-slot:content>
+    <template #content>
       <v-tabs v-model="submissionTabNumber" id="applicant-info-slider" class="mt-2">
         <v-tabs-items v-model="submissionTabNumber" touchless>
           <v-tab-item>

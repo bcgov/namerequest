@@ -72,12 +72,10 @@
       :dialog="getIncorporateNowErrorStatus"
       @close="closeIncorporateNowErrorDialog()"
     />
-    <LocationInfoDialog />
     <MrasSearchInfoDialog />
     <NrNotRequiredDialog />
     <PaymentCompleteDialog />
     <PickEntityOrConversionDialog />
-    <PickRequestTypeDialog />
     <RenewDialog />
     <ReceiptsDialog />
     <RefundDialog />
@@ -114,8 +112,8 @@ import GenesysWebMessage from '@bcrs-shared-components/genesys-web-message/Genes
 import { WebChat as ChatPopup } from '@bcrs-shared-components/web-chat'
 import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
-  IncorporateNowErrorDialog, LocationInfoDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog,
-  PaymentCompleteDialog, PickEntityOrConversionDialog, PickRequestTypeDialog, RenewDialog, ReceiptsDialog,
+  IncorporateNowErrorDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog,
+  PaymentCompleteDialog, PickEntityOrConversionDialog, RenewDialog, ReceiptsDialog,
   RefundDialog, ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
 } from '@/components/dialogs'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
@@ -141,12 +139,10 @@ import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
     GenesysWebMessage,
     HelpMeChooseDialog,
     IncorporateNowErrorDialog,
-    LocationInfoDialog,
     MrasSearchInfoDialog,
     NrNotRequiredDialog,
     PaymentCompleteDialog,
     PickEntityOrConversionDialog,
-    PickRequestTypeDialog,
     ReceiptsDialog,
     RefundDialog,
     RenewDialog,

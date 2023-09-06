@@ -21,8 +21,6 @@ describe('Search component', () => {
   // })
 
   // it('Displays the necessary UI components', () => {
-  //   expect(wrapper.find('#search-type-options-select').element).toBeTruthy()
-  //   expect(wrapper.find('#location-options-select').element).toBeTruthy()
   //   expect(wrapper.find('#entity-type-options-select').element).toBeTruthy()
   //   expect(wrapper.find('#name-input-component').element).toBeTruthy()
   // })

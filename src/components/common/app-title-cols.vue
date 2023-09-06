@@ -9,17 +9,11 @@
         <Stats />
       </v-col>
     </v-row>
-    <v-row no-gutters>
-      <v-col cols="12" md="6" lg="6" class="mb-3" :class="{'pt-3': !isMobile}">
-        <span class="h3 colour-white" id="app-subtitle">Get started with your business
-        </span>
-      </v-col>
-    </v-row>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
 import Stats from '@/components/new-request/stats.vue'
 
@@ -29,9 +23,6 @@ import Stats from '@/components/new-request/stats.vue'
   }
 })
 export default class AppTitleCols extends Vue {
-  @Prop(String)
-  readonly id: string
-
   @Getter isMobile!: boolean
 }
 </script>
@@ -46,10 +37,4 @@ export default class AppTitleCols extends Vue {
 #app-title {
   font-size: 34px;
 }
-
-#app-subtitle {
-   font-weight: normal;
-   font-size: $px-18;
-}
-
 </style>
