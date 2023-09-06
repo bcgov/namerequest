@@ -718,6 +718,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
         // special case if the from business is BEN
         if (this.isBenBusiness) {
           this.setConversionType(NrRequestTypeCodes.CONVERT_CORP)
+          this.setEntityTypeCd(EntityType.BC)
         }
       } else {
         // clear all related fields when clearing business search/fetch for alter
