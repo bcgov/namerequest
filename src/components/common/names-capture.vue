@@ -522,8 +522,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   }
 
   get entityPhraseRequired (): boolean {
-    if (!this.entity_type_cd) return false
-    return [EntityType.CC, EntityType.CP, EntityType.SO].includes(this.entity_type_cd)
+    return this.entity_type_cd && this.entityTypeText.length > 0
   }
 
   get entityPhraseText (): string {
@@ -538,8 +537,16 @@ export default class NamesCapture extends Mixins(CommonMixin) {
     this.setEntityTypeCd(type)
   }
 
+  // define the text for the name designation error message for the entity types that require it
   get entityTypeText (): string {
-    return (this.entity_type_cd === EntityType.CC) ? 'Community Contribution Company' : 'Cooperative'
+    switch (this.entity_type_cd) {
+      case EntityType.SO: return 'Society'
+      case EntityType.CC: return 'Community Contribution Company'
+      case EntityType.CP: return 'Cooperative'
+
+      // for other no name designation required entity types, return an empty string
+      default: return ''
+    }
   }
 
   get isValid (): boolean {
