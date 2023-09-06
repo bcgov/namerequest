@@ -26,11 +26,13 @@ axiosNamex.interceptors.request.use(
     config.headers.common['BCREG-NRL'] = sessionStorage.getItem('BCREG-NRL')
     config.headers.common['BCREG-User-Phone'] = sessionStorage.getItem('BCREG-phoneNumber')
     config.headers.common['BCREG-User-Email'] = sessionStorage.getItem('BCREG-emailAddress')
-    // console.log('in interceptor, headers: ', config?.headers?.common) // eslint-disable-line
+    // eslint-disable-next-line no-console
+    // console.log('in interceptor, common headers: ', config?.headers?.common)
     return config
   },
   error => {
-    // console.log('axios interceptor set request headers error: ' + error)
+    // eslint-disable-next-line no-console
+    // console.log('in interceptor, error: ', error)
     Promise.reject(error)
   }
 )
@@ -183,7 +185,7 @@ export default class NamexServices {
       let response: any
       if (checkedOutBy) {
         // eslint-disable-next-line no-console
-        console.log('checkOut ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+        console.log('checkout ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
           sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
         response = await this.axios.patch(`${appBaseURL}/namerequests/${nrId}/checkout`, {
           checkedOutBy: checkedOutBy,

@@ -63,7 +63,7 @@ export const isMobile = (state: StateIF): boolean => {
 }
 
 /** True if user is authenticated, else False. */
-export const getIsAuthenticated = (): boolean => {
+export const isAuthenticated = (): boolean => {
   return Boolean(sessionStorage.getItem(SessionStorageKeys.KeyCloakToken))
 }
 
@@ -171,6 +171,14 @@ export const getCorpSearch = (state: StateIF): string => {
   return state.stateModel.newRequestModel.corpSearch
 }
 
+/**
+ * True if current request action is a new business.
+ * NB: may be a BC or Xpro business.
+ */
+export const isNewBusiness = (state: StateIF): boolean => {
+  return (getRequestActionCd(state) === NrRequestActionCodes.NEW_BUSINESS)
+}
+
 /** True if current request action is Amalgamation. */
 export const isAmalgamation = (state: StateIF): boolean => {
   return (getRequestActionCd(state) === NrRequestActionCodes.AMALGAMATE)
@@ -205,7 +213,7 @@ export const isRestoration = (state: StateIF): boolean => {
  * True if current flow is XPRO (includes AMALGAMATION, NEW_BUSINESS, and RESTORATION).
  * FUTURE: Might need to add others.
  */
-export const getIsXproFlow = (state: StateIF): boolean => {
+export const isXproFlow = (state: StateIF): boolean => {
   return (
     ((getRequestActionCd(state) === NrRequestActionCodes.AMALGAMATE) ||
     (getRequestActionCd(state) === NrRequestActionCodes.NEW_BUSINESS) ||
@@ -234,7 +242,7 @@ export const getCorpNum = (state: StateIF): string => {
   return state.stateModel.newRequestModel.corpNum
 }
 
-export const getNameIsEnglish = (state: StateIF): boolean => {
+export const isNameEnglish = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.nameIsEnglish
 }
 
@@ -338,7 +346,7 @@ export const getAddressSuggestions = (state: StateIF): any[] => {
   return state.stateModel.newRequestModel.addressSuggestions
 }
 
-export const getIsAssumedName = (state: StateIF): boolean => {
+export const isAssumedName = (state: StateIF): boolean => {
   return !!state.stateModel.newRequestModel.assumedNameOriginal
 }
 
@@ -575,7 +583,7 @@ export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
 
 // For reference, see request_type_mapping in Namex constants file.
 export const getXproRequestTypeCd = (state: StateIF): XproNameType => {
-  if (getIsAssumedName(state)) {
+  if (isAssumedName(state)) {
     switch (getEntityTypeCd(state)) {
       // Xpro Limited Liability Company REST/REN/REH/RESUBMIT -> Xpro Limited Liability Company AS/RESUBMIT
       case EntityType.RLC: return XproNameType.AL
@@ -714,8 +722,8 @@ export const getLocationOptions = (state: StateIF): Array<any> => {
   return Locations.filter(() => true) // copy of Locations
 }
 
-/** Return true if the name is Slashed */
-export const getNameIsSlashed = (state: StateIF): boolean => {
+/** Return true if the name is slashed. */
+export const isNameSlashed = (state: StateIF): boolean => {
   if (getName(state)) {
     let name = getName(state)
     if (name.includes('/') && name.split('/').length === 2) {
@@ -785,10 +793,6 @@ export const getPickEntityModalVisible = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.pickEntityModalVisible
 }
 
-export const getPickRequestTypeModalVisible = (state: StateIF): boolean => {
-  return state.stateModel.newRequestModel.pickRequestTypeModalVisible
-}
-
 export const getExitModalVisible = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.exitModalVisible
 }
@@ -807,10 +811,6 @@ export const getConditionsModalVisible = (state: StateIF): boolean => {
 
 export const getHelpMeChooseModalVisible = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.helpMeChooseModalVisible
-}
-
-export const getLocationInfoModalVisible = (state: StateIF): boolean => {
-  return state.stateModel.newRequestModel.locationInfoModalVisible
 }
 
 export const getMrasSearchInfoModalVisible = (state: StateIF): boolean => {
@@ -994,7 +994,7 @@ export const getDraftNameReservation = (state: StateIF): DraftReqI => {
     request_action_cd: getRequestActionCd(state),
     conversion_type_cd: getConversionType(state),
     stateCd: NrState.DRAFT,
-    english: getNameIsEnglish(state),
+    english: isNameEnglish(state),
     nameFlag: getIsPersonsName(state),
     hotjarUserId: getHotjarUserId(state),
     submit_count: 0,
@@ -1003,7 +1003,7 @@ export const getDraftNameReservation = (state: StateIF): DraftReqI => {
   if (getXproRequestTypeCd(state)) {
     data['request_type_cd'] = getXproRequestTypeCd(state)
   }
-  if (getIsAssumedName(state)) {
+  if (isAssumedName(state)) {
     if (!data['additionalInfo']) {
       data['additionalInfo'] = ''
     } else {
@@ -1053,7 +1053,7 @@ export const getReservedNameReservation = (state: StateIF): ReservedReqI => {
     entity_type_cd: getEntityTypeCd(state), // FUTURE: fix entity_type_cd type
     request_action_cd: getRequestActionCd(state),
     stateCd: NrState.RESERVED,
-    english: getNameIsEnglish(state),
+    english: isNameEnglish(state),
     nameFlag: getIsPersonsName(state),
     hotjarUserId: getHotjarUserId(state),
     submit_count: 0,
@@ -1079,7 +1079,7 @@ export const getConditionalNameReservation = (state: StateIF): ConditionalReqI =
       name: getName(state),
       choice: 1,
       designation: getSplitNameDesignation(state).designation,
-      name_type_cd: getIsAssumedName(state) ? XproNameType.AS : XproNameType.CO,
+      name_type_cd: isAssumedName(state) ? XproNameType.AS : XproNameType.CO,
       consent_words: getConsentWords(state).length > 0 ? getConsentWords(state) : '',
       conflict1: getConsentConflicts(state).name,
       conflict1_num: getConsentConflicts(state).corpNum ? getConsentConflicts(state).corpNum : ''
@@ -1097,7 +1097,7 @@ export const getConditionalNameReservation = (state: StateIF): ConditionalReqI =
     request_action_cd: getRequestActionCd(state),
     request_type_cd: getXproRequestTypeCd(state) || '',
     stateCd: NrState.COND_RESERVED,
-    english: getNameIsEnglish(state),
+    english: isNameEnglish(state),
     nameFlag: getIsPersonsName(state),
     hotjarUserId: getHotjarUserId(state),
     submit_count: 0,

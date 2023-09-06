@@ -4,7 +4,7 @@
       <v-container class="landing-content-container">
         <AppTitleCols />
 
-        <div class="main-container-style mt-3">
+        <div class="main-container-style mt-7">
           <transition name="fade" mode="out-in" :duration="{ enter: 100, leave: 100 }">
             <keep-alive :include="['Tabs']">
               <component
@@ -73,7 +73,6 @@ export default class Landing extends Vue {
   @Getter getEntityTypeCd!: any
   @Getter getLocation!: any
   @Getter getRequestActionCd!: any
-  @Getter getNrData!: any
   @Getter isMrasJurisdiction!: boolean
 
   // Global actions
@@ -97,11 +96,6 @@ export default class Landing extends Vue {
     // everything is rendered/loaded - hide spinner
     // (spinner was shown in App.vue)
     this.$root.$emit('showSpinner', false)
-  }
-
-  // FOR DEBUGGING:
-  get xproJurisdiction (): string {
-    return this.getNrData?.xproJurisdiction
   }
 }
 </script>

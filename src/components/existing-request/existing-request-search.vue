@@ -97,7 +97,7 @@
           </v-row>
 
           <!-- SIXTH LINE - show this only when a user has a token -->
-          <v-row v-if="getIsAuthenticated" class="mt-3" no-gutters>
+          <v-row v-if="isAuthenticated" class="mt-3" no-gutters>
             <v-col class="text-center">
               <v-btn
                 id="advanced-search-btn"
@@ -143,7 +143,7 @@ export default class ExistingRequestSearch extends Vue {
   }
 
   // Global getters
-  @Getter getIsAuthenticated!: boolean
+  @Getter isAuthenticated!: boolean
   @Getter getNr!: Partial<NameRequestI>
   @Getter getExistingRequestSearch!: ExistingRequestSearchI
   @Getter isMobile!: boolean

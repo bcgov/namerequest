@@ -31,7 +31,7 @@
 
       <v-tabs-items class="rounded-b tab-items" v-model="tabNumber" touchless>
         <v-tab-item>
-          <NewSearch />
+          <Search />
           <LinkRow />
         </v-tab-item>
 
@@ -46,20 +46,19 @@
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
+import { CommonMixin } from '@/mixins'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 // Components
-import NewSearch from '@/components/new-request/search.vue'
+import Search from '@/components/new-request/search.vue'
 import ExistingRequestSearch from './existing-request/existing-request-search.vue'
 import LinkRow from '@/components/common/link-row.vue'
-import { CommonMixin } from '@/mixins'
-// Interfaces
-import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: {
-    NewSearch,
     ExistingRequestSearch,
-    LinkRow
+    LinkRow,
+    Search
   }
 })
 export default class Tabs extends Mixins(CommonMixin) {

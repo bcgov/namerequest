@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="pa-0">
-    <v-row v-if="nameIsSlashed">
+    <v-row v-if="isNameSlashed">
       <NameInput />
     </v-row>
     <v-row class="text-center">
@@ -57,8 +57,8 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   @Getter getEntityTypeCd!: EntityType
   @Getter getIsPersonsName!: boolean
   @Getter getName!: string
-  @Getter getNameIsEnglish!: boolean
-  @Getter getNameIsSlashed!: boolean
+  @Getter isNameEnglish!: boolean
+  @Getter isNameSlashed!: boolean
   @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter getRequestTypeOptions!: RequestActionsI[]
 
@@ -69,7 +69,7 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   @Action setSubmissionTabComponent!: ActionBindingIF
 
   mounted () {
-    if (this.nameIsSlashed) {
+    if (this.isNameSlashed) {
       this.englishOnlyName = this.name.split('/')[0]
     }
   }
@@ -118,10 +118,10 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
       let edits = { title: 'Option 1', class: 'square-card-x2' }
       return false
     }
-    if (this.nameIsSlashed) {
+    if (this.isNameSlashed) {
       return [ slashEditExplanation, slashExamineExplanation ]
     }
-    if (this.isPersonsName || !this.nameIsEnglish) {
+    if (this.isPersonsName || !this.isNameEnglish) {
       return []
     }
     return []
@@ -150,12 +150,6 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   set name (value) {
     this.setName(value)
   }
-  get nameIsEnglish () {
-    return this.getNameIsEnglish
-  }
-  get nameIsSlashed () {
-    return this.getNameIsSlashed
-  }
 
   get requestActionNotSupported (): boolean {
     const requests = [NrRequestActionCodes.NEW_BUSINESS, NrRequestActionCodes.DBA, NrRequestActionCodes.CHANGE_NAME]
@@ -180,7 +174,7 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
     if (this.entityTypeNotAnalyzed) {
       return `Name Requests for the <b>${this.entityText}</b> entity type cannot be reserved immediately.`
     }
-    if (this.nameIsSlashed) {
+    if (this.isNameSlashed) {
       return 'The slash "/" followed by a number of words implies the name is an English name followed by a French' +
         ' (or other language) name.  Names of this type must be sent to examination.'
     }
@@ -188,7 +182,7 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
     if (this.isPersonsName) {
       output = '<p class="ma-0 pa-0">Name Requests that are personal name(s) cannot be reserved immediately.</p>'
     }
-    if (!this.nameIsEnglish) {
+    if (!this.isNameEnglish) {
       output += '<p>Name Requests that contain words that are not English cannot be reserved immediately.<p>'
     }
     return output

@@ -156,10 +156,6 @@ export const mutateLocation = (state: StateIF, location: Location) => {
   state.stateModel.newRequestModel.location = location
 }
 
-export const mutateLocationInfoModalVisible = (state: StateIF, locationInfoModalVisible: boolean) => {
-  state.stateModel.newRequestModel.locationInfoModalVisible = locationInfoModalVisible
-}
-
 export const mutateMrasSearchResult = (state: StateIF, mrasSearchResultCode: number) => {
   state.stateModel.newRequestModel.mrasSearchResultCode = mrasSearchResultCode
 }
@@ -268,10 +264,6 @@ export const mutateNrRequiredModalVisible = (state: StateIF, nrRequiredModalVisi
 
 export const mutatePickEntityModalVisible = (state: StateIF, pickEntityModalVisible: boolean) => {
   state.stateModel.newRequestModel.pickEntityModalVisible = pickEntityModalVisible
-}
-
-export const mutatePickRequestTypeModalVisible = (state: StateIF, pickRequestTypeModalVisible: boolean) => {
-  state.stateModel.newRequestModel.pickRequestTypeModalVisible = pickRequestTypeModalVisible
 }
 
 export const mutatePriorityRequest = (state: StateIF, priorityRequest: boolean) => {
