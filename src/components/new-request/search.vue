@@ -34,8 +34,33 @@
         <v-text-field filled disabled hide-details label="Select an action first" />
       </v-col>
 
+      <!-- Business Lookup/Fetch -->
+      <v-col v-if="showBusinessLookup" cols="12" md="6" class="business-lookup">
+        <template v-if="!business">
+          <BusinessLookup
+            v-if="getIsAuthenticated"
+            :searchStatus="lookupActiveOrHistorical"
+            @business="onBusiness($event)"
+          />
+          <BusinessFetch v-else @business="onBusiness($event)"/>
+        </template>
+        <v-text-field
+          v-else
+          append-icon="mdi-close"
+          readonly
+          filled
+          :label="business.identifier"
+          :value="business.legalName"
+          :rules="rules"
+          persistent-hint
+          autofocus
+          @click:append="onBusiness(null)"
+          @keyup.delete="onBusiness(null)"
+        />
+      </v-col>
+
       <!-- Jurisdiction -->
-      <v-col v-if="showJurisdiction" cols="12" md="6">
+      <v-col v-if="showJurisdiction" cols="12" :md="isSelectedXproAndRestorable ? 4 : 6">
         <NestedSelect
           label="Select your home jurisdiction"
           :menuItems="jurisdictionOptions"
@@ -97,27 +122,8 @@
         </v-tooltip>
       </v-col>
 
-      <!-- Business Lookup/Fetch -->
-      <v-col v-if="showBusinessLookup" cols="12" md="6" class="business-lookup">
-        <template v-if="!business">
-          <BusinessLookup v-if="getIsAuthenticated" @business="onBusiness($event)"/>
-          <BusinessFetch v-else @business="onBusiness($event)"/>
-        </template>
-        <v-text-field
-          v-else
-          append-icon="mdi-close"
-          readonly
-          filled
-          hide-details
-          :label="business.identifier"
-          :value="business.legalName"
-          @click:append="onBusiness(null)"
-          @keyup.delete="onBusiness(null)"
-        />
-      </v-col>
-
-      <!-- once an entity type is selected (or Federal)... -->
-      <template v-if="entity_type_cd || isFederal">
+      <!-- once an entity type is selected, is Federal, or is Restorable -->
+      <template v-if="entity_type_cd || isFederal || isRestorable">
         <!-- Company Type -->
         <v-col v-if="companyRadioBtnApplicable" cols="12">
           <p class="font-weight-bold h6">Select a company type:</p>
@@ -144,11 +150,22 @@
 
         <template v-if="selectedCompanyType === CompanyType.NAMED_COMPANY">
           <!-- Xpro/Federal bullets -->
-          <v-col v-if="getIsXproFlow && isFederal" cols="12" md="8">
+          <v-col v-if="getIsXproFlow && isFederal" cols="12" :md="isSelectedXproAndRestorable ? 10 : 8">
             <ul class="bullet-points">
               <li>Federally incorporated businesses do not need a Name Request.</li>
-              <li>You may register your extraprovincial business immediately using its existing name
-                at Corporate Online.</li>
+              <li v-if="!isSelectedXproAndRestorable">
+                You may register your extraprovincial business immediately using its existing name
+                at Corporate Online.
+              </li>
+              <li v-else>
+                To reinstate your business, complete
+                <a :href="fullReinstatementFormLink">
+                  this form <v-icon small class="ml-1" color="primary">mdi-open-in-new</v-icon>
+                </a> for a full reinstatement or
+                <a :href="limitedReinstatementFormLink">
+                  this form  <v-icon small class="ml-1" color="primary">mdi-open-in-new</v-icon>
+                </a> for a limited reinstatement.
+              </li>
             </ul>
           </v-col>
 
@@ -223,7 +240,7 @@
           class="d-flex justify-center"
         >
           <v-btn
-            v-if="showColinButton"
+            v-if="showColinButton || showRestoreNowButton"
             class="px-9"
             id="go-to-colin-button"
             :href="colinLink"
@@ -285,9 +302,11 @@ import BusinessFetch from '@/components/new-request/business-fetch.vue'
 // Interfaces / Enums / List Data
 import { BusinessSearchIF, ConversionTypesI, EntityI, FormType, RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { AccountType, CompanyType, EntityType, Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
+import { AccountType, CompanyType, CorpTypeCd, EntityStates, EntityType,
+  Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin, NrAffiliationMixin } from '@/mixins'
-import { CanJurisdictions, ConversionTypes, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
+import { BcMapping, CanJurisdictions, ConversionTypes, Designations,
+  IntlJurisdictions, RequestActions, XproMapping } from '@/list-data'
 import { GetFeatureFlag, Navigate } from '@/plugins'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
@@ -365,6 +384,12 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   activeActionGroup = NaN
   showRequestActionTooltip = false
   business = null as BusinessSearchIF
+  fullReinstatementFormLink = 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-development/' +
+    'business-management/permits-licences-and-registration/registries-forms/' +
+    'form_31_xco_-_full_reinstatement_application.pdf'
+  limitedReinstatementFormLink = 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-development/' +
+    'business-management/permits-licences-and-registration/registries-forms/' +
+    'form_29_xco_-_limited_reinstatement_application.pdf'
 
   private mounted () {
     this.$nextTick(() => {
@@ -381,6 +406,11 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     this.scrollTo('namerequest-sbc-header')
   }
 
+  /** Search businesses with business lookup depending on the Action selected */
+  get lookupActiveOrHistorical (): String {
+    return this.isRestoration ? EntityStates.HISTORICAL : EntityStates.ACTIVE
+  }
+
   get isNewBcBusiness (): boolean {
     return (this.getRequestActionCd === NrRequestActionCodes.NEW_BUSINESS && this.request?.group === 0)
   }
@@ -392,11 +422,12 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   get showJurisdiction (): boolean {
     // if (this.isAmalgamation) return true // *** FUTURE
     if (this.isNewXproBusiness) return true
+    if (this.isSelectedXproAndRestorable) return true
     return false
   }
 
   get showEntityType (): boolean {
-    if (this.getLocation && !this.isFederal) return true
+    if (this.getLocation && !this.isFederal && !this.isRestoration) return true
     return false
   }
 
@@ -519,12 +550,22 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     // return !isContInEntity
   }
 
+  /** Show the "Restore Now" button depending on results returned from the FF. */
+  get showRestoreNowButton (): boolean {
+    if (!this.isRestoration) return false
+    const supportedRestorationEntites = GetFeatureFlag('supported-restoration-entities')
+    const isRestorationEntity = supportedRestorationEntites.includes(this.entity_type_cd)
+    return !isRestorationEntity
+  }
+
   /** Retrieve text based on selected action/flow */
   get incorporateNowButtonText (): string {
     if (this.isContinuationIn) {
       return 'Continue In Now'
     } else if (this.isAmalgamation) {
       return 'Amalgamate Now'
+    } else if (this.isRestoration) {
+      return 'Restore Now'
     }
     return 'Incorporate Now'
   }
@@ -566,16 +607,61 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     this.business = business
     this.entity_type_cd = this.business?.legalType || null
     this.setCorpNum(business?.identifier || null)
+
+    if (this.isRestoration) {
+      // Check if not XPRO and BC restorable
+      if (!this.isSelectedXproAndRestorable && this.isBcRestorable) {
+        this.setLocation(Location.BC)
+        this.setEntityTypeCd(this.corpTypeToEntityType(this.business.legalType as unknown as CorpTypeCd))
+      } else if (this.isSelectedXproAndRestorable) { // Check if XPRO and restorable
+        this.setLocation(Location.CA)
+        this.setEntityTypeCd(this.business.legalType)
+      } else {
+        this.setEntityTypeCd(null)
+      }
+    }
+  }
+
+  // Text field rules for the business lookup
+  get rules (): any {
+    return [
+      val => {
+        if (this.isRestoration) {
+          return this.isRestorable || 'This business cannot be restored.'
+        }
+        return true
+      }]
+  }
+
+  /** Returns whether the selected XPRO is restorable. */
+  get isSelectedXproAndRestorable (): boolean {
+    return XproMapping.REH.includes(this.business?.legalType)
+  }
+
+  /** Returns whether the selected business' legal type is BC and restorable. */
+  get isBcRestorable (): boolean {
+    return BcMapping.REH.includes(this.corpTypeToEntityType(this.business?.legalType as unknown as CorpTypeCd))
+  }
+
+  /** Returns whether company is restorable. */
+  get isRestorable (): boolean {
+    return this.isSelectedXproAndRestorable || this.isBcRestorable
   }
 
   /**
    * If user is authenticated, create draft business and redirect to Dashboard.
+   * If restoration/reinstatement selected, go to business dashboard.
    * If user is not authenticated, redirect to login screen then redirect back.
    */
   async incorporateNowClicked () {
-    const legalType = this.entityTypeAlternateCode(this.entity_type_cd)
+    const legalType = this.entityTypeToCorpType(this.entity_type_cd)
     if (this.getIsAuthenticated) {
-      await this.incorporateNow(legalType)
+      if (this.isRestoration) {
+        const dashboardUrl = sessionStorage.getItem('DASHBOARD_URL')
+        Navigate(`${dashboardUrl}${this.business.identifier}`)
+      } else {
+        await this.incorporateNow(legalType)
+      }
     } else {
       // persist legal type of incorporate now in session upon authentication via Signin component
       sessionStorage.setItem('LEGAL_TYPE', legalType)
@@ -657,6 +743,10 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
     this.setLocation(jurisdiction.group === 0 ? Location.CA : Location.IN)
     this.setJurisdictionCd(jurisdiction.value)
+    // Resetting the entity type when a business is selected (after jurisdiction change)
+    if (this.business) {
+      this.setEntityTypeCd(this.business.legalType)
+    }
   }
 }
 </script>
