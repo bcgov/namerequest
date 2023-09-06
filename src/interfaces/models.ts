@@ -82,6 +82,7 @@ export interface ConversionTypesI {
   blurbs?: string[]
   desc?: string
   entity_type_cd?: EntityType
+  origin_entity_type_cd?: EntityType
   rank?: number
   short?: string
   shortlist?: boolean
