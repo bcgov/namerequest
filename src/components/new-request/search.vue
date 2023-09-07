@@ -239,7 +239,7 @@
         </template>
 
         <!-- Numbered company bullets -->
-        <template v-if="selectedCompanyType === CompanyType.NUMBERED_COMPANY" cols="12">
+        <template v-if="selectedCompanyType === CompanyType.NUMBERED_COMPANY || isFederal" cols="12">
           <v-col v-if="isConversion && !isAlterOnline(getConversionType)">
             <div class="contact-registries">
               <p>To complete this alteration, please contact us at:</p>
@@ -255,7 +255,7 @@
               </p>
             </div>
           </v-col>
-          <v-col v-else cols="12">
+          <v-col v-else-if="!isXproFlow" cols="12">
             <ul class="bullet-points">
               <li>Your business name will be the Incorporation Number assigned by the Registry.</li>
               <li>You can change your business name at a later date.</li>
