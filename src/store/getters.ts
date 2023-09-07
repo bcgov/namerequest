@@ -217,7 +217,8 @@ export const isXproFlow = (state: StateIF): boolean => {
   return (
     ((getRequestActionCd(state) === NrRequestActionCodes.AMALGAMATE) ||
     (getRequestActionCd(state) === NrRequestActionCodes.NEW_BUSINESS) ||
-    (getRequestActionCd(state) === NrRequestActionCodes.RESTORE)) &&
+    (getRequestActionCd(state) === NrRequestActionCodes.RESTORE) ||
+    (getRequestActionCd(state) === NrRequestActionCodes.CHANGE_NAME)) &&
     [Location.CA, Location.IN].includes(getLocation(state))
   )
 }
