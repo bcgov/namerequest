@@ -784,10 +784,10 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
   /** Map to correct Entity type if legal type is Ben Bc Ulc Ccc */
   isBenBcUlcCccCorpType (): boolean {
-    return this.business?.legalType as unknown as CorpTypeCd === CorpTypeCd.BENEFIT_COMPANY ||
-        this.business?.legalType as unknown as CorpTypeCd === CorpTypeCd.BC_COMPANY ||
-        this.business?.legalType as unknown as CorpTypeCd === CorpTypeCd.BC_ULC_COMPANY ||
-        this.business?.legalType as unknown as CorpTypeCd === CorpTypeCd.BC_CCC
+    return this.business?.legalType === EntityType.BEN ||
+        this.business?.legalType === EntityType.BC ||
+        this.business?.legalType === EntityType.ULC ||
+        this.business?.legalType === EntityType.CC
   }
 
   get isChangeNameXpro (): boolean {
