@@ -47,20 +47,19 @@
             @business="onBusiness($event)"
           />
         </template>
-        <v-text-field
-          v-else
-          append-icon="mdi-close"
-          readonly
-          filled
-          :label="businessLookupLabel"
-          :value="business.legalName"
-          :rules="rules"
-          :hint="businessLookupHint"
-          persistent-hint
-          autofocus
-          @click:append="onBusiness(null)"
-          @keyup.delete="onBusiness(null)"
-        />
+        <v-form v-else ref="businessLookupTextFieldForm">
+          <v-text-field
+            append-icon="mdi-close"
+            readonly
+            filled
+            :label="businessLookupLabel"
+            :value="business.legalName"
+            :rules="rules"
+            :hint="businessLookupHint"
+            @click:append="onBusiness(null)"
+            @keyup.delete="onBusiness(null)"
+          />
+        </v-form>
       </v-col>
 
       <!-- Jurisdiction -->
@@ -350,6 +349,7 @@ import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   // Refs
   $refs!: {
+    businessLookupTextFieldForm: FormType
     selectBusinessTypeRef: FormType
   }
 
@@ -701,11 +701,16 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   /** Event handled for business lookup/fetch. */
-  onBusiness (business: BusinessSearchIF): void {
+  async onBusiness (business: BusinessSearchIF): Promise<void> {
     this.business = business
     this.entity_type_cd = this.business?.legalType || null
     this.setCorpNum(business?.identifier || null)
     this.setEntityTypeCd(this.business?.legalType)
+
+    // Waiting for DOM update to be able to access the Ref. Trigger form validation.
+    // Need to do that because the ref is in a conditional.
+    await Vue.nextTick()
+    if (this.business) this.$refs.businessLookupTextFieldForm.validate()
 
     if (this.isConversion) {
       if (this.business) {
