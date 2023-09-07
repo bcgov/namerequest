@@ -864,6 +864,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     if (this.business) {
       this.setEntityTypeCd(this.business.legalType)
     }
+    this.setCorpSearch('')
   }
 }
 </script>
