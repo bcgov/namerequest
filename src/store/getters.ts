@@ -210,7 +210,7 @@ export const isRestoration = (state: StateIF): boolean => {
 }
 
 /**
- * True if current flow is XPRO (includes AMALGAMATION, NEW_BUSINESS, and RESTORATION).
+ * True if current flow is XPRO (includes AMALGAMATION, NEW_BUSINESS, RESTORATION and CHANGE_NAME).
  * FUTURE: Might need to add others.
  */
 export const isXproFlow = (state: StateIF): boolean => {
