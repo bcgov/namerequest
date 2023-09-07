@@ -81,7 +81,8 @@
           filled
           disabled
           hide-details
-          label="Benefit Company to Limited Company" />
+          label="Benefit Company to Limited Company"
+        />
         <v-tooltip
           v-else
           top
@@ -98,10 +99,10 @@
                 :items="entityTypeOptions"
                 :menu-props="{ bottom: true, offsetY: true}"
                 ref="selectBusinessTypeRef"
-                @change="setClearErrors()"
                 hide-details="auto"
                 filled
-                v-model="entity_type_options_select_bind"
+                :value="isConversion ? getOriginEntityTypeCd : entity_type_cd"
+                @change="setClearErrors(); entity_type_cd = $event"
               >
                 <template v-slot:item="{ item }">
                   <v-tooltip
@@ -274,7 +275,8 @@
               :href="colinLink"
               target="_blank"
             >
-              Go to Corporate Online to {{ goToColinText }} <v-icon small class="ml-1">mdi-open-in-new</v-icon>
+              Go to Corporate Online to {{ isConversion ? 'Alter' : 'Register' }}
+              <v-icon small class="ml-1">mdi-open-in-new</v-icon>
             </v-btn>
             <v-btn
               v-else-if="showActionButton"
@@ -561,7 +563,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     return this.getEntityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs
   }
 
-  get entity_type_options_select_bind (): EntityType | NrRequestTypeCodes {
+  get entity_type_options_select_bind (): EntityType {
     if (this.isConversion) return this.getOriginEntityTypeCd
     return this.entity_type_cd
   }
@@ -577,8 +579,9 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   set entity_type_cd (type: EntityType) {
     // special case for sub-menu
     if (type === EntityType.INFO) {
-      // clear current value until user chooses a new one
-      this.setEntityTypeCd(null)
+      // set empty value until user chooses a new one
+      // (don't use null in case it's already null as we want reactivity)
+      this.setEntityTypeCd('')
       // show the "View all business types" modal
       this.setPickEntityModalVisible(true)
       return
@@ -622,22 +625,24 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     return true
   }
 
-  /** Whether to show "Go to COLIN" button (otherwise will show "Incorporate Now" button). */
+  /** Whether to show "Go to COLIN" button (otherwise will show `actionNowButtonText` button). */
   get showColinButton (): boolean {
     if (this.showContinueInButton) return true
     if (this.isFederal) return true
 
+    // don't show COLIN button for supported alteration entities
     if (this.isConversion) {
       return !this.isSupportedAlteration(this.getConversionType)
     }
 
+    // don't show COLIN button for supported restoration entities
     if (this.isRestoration) {
       const supportedRestorationEntites = GetFeatureFlag('supported-restoration-entities')
       const isRestorationEntity = supportedRestorationEntites.includes(this.entity_type_cd)
       return !isRestorationEntity
     }
 
-    // don't show COLIN button for supported entities
+    // don't show COLIN button for supported incorporation/registration entities
     const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
     const isIncorporateEntity = supportedEntites.includes(this.entity_type_cd)
     return !isIncorporateEntity
@@ -654,22 +659,12 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     // return !isContInEntity
   }
 
-  get goToColinText (): string {
-    if (this.isConversion) return 'Alter'
-    return 'Register'
-  }
-
   /** Retrieve text based on selected action/flow */
   get actionNowButtonText (): string {
-    if (this.isContinuationIn) {
-      return 'Continue In Now'
-    } else if (this.isAmalgamation) {
-      return 'Amalgamate Now'
-    } else if (this.isConversion) {
-      return 'Alter Now'
-    } else if (this.isRestoration) {
-      return 'Restore Now'
-    }
+    if (this.isContinuationIn) return 'Continue In Now'
+    if (this.isAmalgamation) return 'Amalgamate Now'
+    if (this.isConversion) return 'Alter Now'
+    if (this.isRestoration) return 'Restore Now'
     return 'Incorporate Now'
   }
 
