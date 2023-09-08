@@ -73,6 +73,14 @@ export const XproMapping: MappingI = {
     EntityType.LLC,
     EntityType.XCP,
     EntityType.XS
+  ],
+  CHG: [
+    EntityType.A,
+    EntityType.XP,
+    EntityType.XL,
+    EntityType.LLC,
+    EntityType.XCP,
+    EntityType.XS
   ]
 }
 
