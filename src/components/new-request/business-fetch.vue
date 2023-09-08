@@ -61,7 +61,7 @@ export default class BusinessFetch extends Vue {
   private validate (): boolean {
     if (!this.searchField) {
       this.errorMessages = ['Required field']
-    } else if (!/^(A|BC|C|CP|FM|XCP|CCC|CUL)( |)\d{7}$/i.test(this.searchField)) {
+    } else if (!/^(A|BC|C|CP|FM)( |)\d{7}$/i.test(this.searchField)) {
       this.errorMessages = [this.hint]
     } else {
       this.errorMessages = []

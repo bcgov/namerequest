@@ -20,6 +20,7 @@ export enum EntityType {
   SP = CorpTypeCd.SOLE_PROP,
   UL = CorpTypeCd.UNLIMITED_LIABILITY_COMPANY,
   ULC = CorpTypeCd.BC_ULC_COMPANY,
+  C = CorpTypeCd.CONTINUE_IN,
 
   // XPRO Entity Types:
   A = CorpTypeCd.EXTRA_PRO_A,
