@@ -889,6 +889,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     if (this.entity_type_cd) this.entity_type_cd = null
     this.selectedCompanyType = null
     this.setCorpNum(null)
+    this.setName('')
 
     // wait for updates
     await Vue.nextTick()
