@@ -622,6 +622,9 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   get showActionButton (): boolean {
+    // Since Federal Reinstatement is a paper filing, we don't show any buttons.
+    // The same conditional is in showColinButton().
+    if (this.isFederal && this.isRestoration) return false
     if (this.isConversion && !this.isAlterOnline(this.getConversionType)) return false
     return true
   }
@@ -629,6 +632,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   /** Whether to show "Go to COLIN" button (otherwise will show `actionNowButtonText` button). */
   get showColinButton (): boolean {
     if (this.showContinueInButton) return true
+    if (this.isFederal && this.isRestoration) return false
     if (this.isFederal) return true
 
     // don't show COLIN button for supported alteration entities
