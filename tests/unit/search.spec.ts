@@ -68,7 +68,7 @@ describe('Select Company Type block', () => {
   //   const wrapper = wrapperFactory()
   //   await wrapper.find('#named-company-radio').setChecked()
 
-  //   expect(wrapper.vm.selectedCompanyType).toBe('namedCompany')
+  //   expect(wrapper.vm.getSearchCompanyType).toBe('namedCompany')
   //   wrapper.destroy()
   // })
 })

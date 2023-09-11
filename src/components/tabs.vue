@@ -89,7 +89,6 @@ export default class Tabs extends Mixins(CommonMixin) {
 
 .mobile-font {
   font-size: $px-14;
-  max-width: 120px;
 }
 
 #tabs-landing-comp {
