@@ -1,5 +1,7 @@
 <template>
-  <v-container fluid id="search-container" class="copy-normal pt-10 px-10 pb-12">
+  <v-container fluid id="search-container" class="copy-normal pt-10 px-10"
+    :class="(isFederal && isRestoration) ? 'pb-0' : 'pb-12'"
+  >
     <v-row>
       <v-col cols="12" class="font-weight-bold h6">
         Get started by selecting an action:
@@ -165,7 +167,7 @@
           <v-col v-if="isXproFlow && isFederal" cols="12" :md="isSelectedCompanyXPro ? 10 : 8">
             <ul class="bullet-points">
               <li>Federally incorporated businesses do not need a Name Request.</li>
-              <li v-if="isRestoration && isSelectedXproAndRestorable" class="mb-n10">
+              <li v-if="isRestoration && isSelectedXproAndRestorable">
                 To reinstate your business, complete
                 <a :href="fullReinstatementFormLink">
                   this form <v-icon small class="ml-1" color="primary">mdi-open-in-new</v-icon>
