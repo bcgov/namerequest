@@ -1,5 +1,7 @@
 <template>
-  <v-container fluid id="search-container" class="copy-normal pt-10 px-10 pb-12">
+  <v-container fluid id="search-container" class="copy-normal pt-10 px-10"
+    :class="(isFederal && isRestoration) ? 'pb-0' : 'pb-12'"
+  >
     <v-row>
       <v-col cols="12" class="font-weight-bold h6">
         Get started by selecting an action:
