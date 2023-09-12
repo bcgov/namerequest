@@ -253,7 +253,7 @@ export default class App extends Mixins(
       sessionStorage.removeItem('NR_DATA')
     }
 
-    // if there is stored legal type for an IA then incorporate it now
+    // if there is stored legal type for an IA then incorporate/register it now
     const legaltype = sessionStorage.getItem('LEGAL_TYPE')
     if (legaltype) {
       try {

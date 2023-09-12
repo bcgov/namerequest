@@ -1,5 +1,5 @@
 import {
-  EntityType,
+  EntityTypes,
   Location,
   NameCheckAnalysisJurisdiction,
   NameCheckAnalysisType,
@@ -81,8 +81,8 @@ export interface ConsentConflictI {
 export interface ConversionTypesI {
   blurbs?: string[]
   desc?: string
-  entity_type_cd?: EntityType
-  origin_entity_type_cd?: EntityType
+  entity_type_cd?: EntityTypes
+  origin_entity_type_cd?: EntityTypes
   rank?: number
   short?: string
   shortlist?: boolean
@@ -124,7 +124,7 @@ export interface EntityI {
   rank?: number
   shortlist?: boolean
   text: string
-  value: EntityType
+  value: EntityTypes
 }
 
 export interface ExistingRequestSearchI {
@@ -200,7 +200,7 @@ export interface QuillOpsI {
 }
 
 export interface RequestActionMappingI {
-  [propName: string]: EntityType[] // misc properties that are arrays of entity types
+  [propName: string]: EntityTypes[] // misc properties that are arrays of entity types
 }
 
 export interface RequestActionsI {

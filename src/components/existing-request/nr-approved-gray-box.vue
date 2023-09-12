@@ -12,7 +12,7 @@
         </v-btn>
       </div>
 
-      <div v-else-if="showIncorporateNowButton" class="d-flex justify-center my-1">
+      <div v-else-if="showIncorporateButton" class="d-flex justify-center my-1">
         <v-btn
           class="incorporate-now-btn mt-30"
           min-width="20rem"
@@ -33,6 +33,29 @@
           <strong>Go to Societies Online to Register</strong>
           &nbsp;
           <v-icon small>mdi-open-in-new</v-icon>
+        </v-btn>
+      </div>
+
+      <div v-else-if="showAmalgamateNowButton" class="d-flex justify-center my-1">
+        <v-btn
+          class="alter-now-external-btn mt-30"
+          v-if="showOpenExternalIcon"
+          min-width="20rem"
+          :disabled="disabled"
+          @click="$emit('goToCorpOnline')"
+        >
+          <strong>Alter Now</strong>
+          &nbsp;
+          <v-icon small>mdi-open-in-new</v-icon>
+        </v-btn>
+        <v-btn
+          v-else
+          class="alter-now-btn mt-30"
+          min-width="20rem"
+          :disabled="disabled"
+          @click="$emit('goToEntityDashboard')"
+        >
+          <strong>Amalgamate Now</strong>
         </v-btn>
       </div>
 
@@ -97,39 +120,98 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Mixins, Prop } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
+import { CommonMixin } from '@/mixins'
+import { NameRequestI } from '@/interfaces'
+import { EntityTypes, NrRequestActionCodes, NrState } from '@/enums'
 
 @Component({})
-export default class NrApprovedGrayBox extends Vue {
-  @Prop({ default: 'TBD' })
-  readonly nrNum: string
+export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
+  @Prop({ default: 'TBD' }) readonly nrNum!: string
+  @Prop({ default: 'TBD' }) readonly approvedName!: string
+  @Prop({ default: 'TBD' }) readonly emailAddress!: string
+  @Prop({ default: false }) readonly disabled!: boolean
 
-  @Prop({ default: 'TBD' })
-  readonly approvedName: string
+  @Getter getNr!: Partial<NameRequestI>
 
-  @Prop({ default: 'TBD' })
-  readonly emailAddress: string
+  get isConversion (): boolean {
+    return (this.getNr.request_action_cd === NrRequestActionCodes.CONVERSION)
+  }
 
-  @Prop({ default: false })
-  readonly isAllowAlterOnline: boolean
+  get isNewBusiness (): boolean {
+    return (this.getNr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS)
+  }
 
-  @Prop({ default: true })
-  readonly showAlterNowButton: boolean
+  get isAmalgamate (): boolean {
+    return (this.getNr.request_action_cd === NrRequestActionCodes.AMALGAMATE)
+  }
 
-  @Prop({ default: false })
-  readonly showOpenExternalIcon: boolean
+  get isApprovedOrConsentUnRequired (): boolean {
+    return (NrState.APPROVED === this.getNr.state || this.isConsentUnRequired)
+  }
 
-  @Prop({ default: false })
-  readonly showRegisterButton: boolean
+  get isConsentUnRequired (): boolean {
+    return (
+      (NrState.CONDITIONAL === this.getNr.state) &&
+      (this.getNr.consentFlag === null || this.getNr.consentFlag === 'R' || this.getNr.consentFlag === 'N')
+    )
+  }
 
-  @Prop({ default: false })
-  readonly showIncorporateNowButton: boolean
+  /** True if the Alter Now button should be shown. */
+  get showAlterNowButton (): boolean {
+    return (this.isConversion && this.isApprovedOrConsentUnRequired)
+  }
 
-  @Prop({ default: false })
-  readonly showGoToSocietiesButton: boolean
+  get isAllowAlterOnline (): boolean {
+    return this.isAlterOnline(this.getNr.requestTypeCd)
+  }
 
-  @Prop({ default: false })
-  readonly disabled: boolean
+  get showOpenExternalIcon (): boolean {
+    return (
+      this.showAlterNowButton &&
+      !this.isSupportedAlteration(this.getNr.requestTypeCd)
+    )
+  }
+
+  /** True if the Go To Societies Online button should be shown. */
+  get showGoToSocietiesButton (): boolean {
+    return (
+      this.getNr.entity_type_cd === EntityTypes.SO &&
+      this.getNr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS &&
+      (NrState.APPROVED === this.getNr.state || this.isConsentUnRequired)
+    )
+  }
+
+  /** True if the Incorporate button should be shown. */
+  get showIncorporateButton (): boolean {
+    return (
+      !this.isFirm(this.getNr) &&
+      this.isNewBusiness &&
+      this.isSupportedIncorporationRegistration(this.getNr.entity_type_cd) &&
+      this.isApprovedOrConsentUnRequired
+    )
+  }
+
+  /** True if the Register button should be shown. */
+  get showRegisterButton (): boolean {
+    return (
+      this.isFirm(this.getNr) &&
+      this.isNewBusiness &&
+      this.isSupportedIncorporationRegistration(this.getNr.entity_type_cd) &&
+      this.isApprovedOrConsentUnRequired
+    )
+  }
+
+  /** True if the Amalgamate Now button should be shown. */
+  // *** TODO: verify this logic and when we show this button vs external link
+  get showAmalgamateNowButton (): boolean {
+    return (
+      this.isAmalgamate &&
+      this.isSupportedAmalgamation(this.getNr.entity_type_cd) &&
+      this.isApprovedOrConsentUnRequired
+    )
+  }
 }
 </script>
 

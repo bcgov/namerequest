@@ -133,10 +133,10 @@
         </v-tooltip>
       </v-col>
 
-      <!-- once an entity type is selected, is Federal, or is Restorable -->
+      <!-- once an entity type is selected, is Federal, or is Restorable, ... -->
       <template v-if="entity_type_cd || isFederal || isRestorable">
         <!-- Company Type -->
-        <v-col v-if="companyRadioBtnApplicable" cols="12">
+        <v-col v-if="showCompanyTypeRadioButtons" cols="12">
           <p class="font-weight-bold h6">Select a company type:</p>
           <v-radio-group
             v-model="selectedCompanyType"
@@ -149,23 +149,31 @@
             <v-radio
               id="named-company-radio"
               label="Named Company"
-              :value="CompanyType.NAMED_COMPANY"
+              :value="CompanyTypes.NAMED_COMPANY"
             />
             <v-radio
               id="numbered-company-radio"
               label="Numbered Company"
-              :value="CompanyType.NUMBERED_COMPANY"
+              :value="CompanyTypes.NUMBERED_COMPANY"
             />
           </v-radio-group>
         </v-col>
 
-        <!-- Named company bullets -->
-        <template v-if="selectedCompanyType === CompanyType.NAMED_COMPANY">
+        <!-- Numbered company (or amalgamation) -->
+        <template v-if="isNamedCompany || isAmalgamation">
           <!-- Xpro/Federal bullets -->
           <v-col v-if="isXproFlow && isFederal" cols="12" :md="isSelectedCompanyXPro ? 10 : 8">
             <ul class="bullet-points">
               <li>Federally incorporated businesses do not need a Name Request.</li>
-              <li v-if="isRestoration && isSelectedXproAndRestorable">
+
+              <li v-if="isAmalgamation">
+                To register your extraprovincial amalgamation, download and complete
+                <a :href="federalAmalgamationFormLink">
+                  this form <v-icon small class="ml-1" color="primary">mdi-open-in-new</v-icon>
+                </a>.
+              </li>
+
+              <li v-else-if="isRestoration && isSelectedXproAndRestorable">
                 To reinstate your business, complete
                 <a :href="fullReinstatementFormLink">
                   this form <v-icon small class="ml-1" color="primary">mdi-open-in-new</v-icon>
@@ -174,12 +182,13 @@
                   this form  <v-icon small class="ml-1" color="primary">mdi-open-in-new</v-icon>
                 </a> for a limited reinstatement.
               </li>
+
               <li v-else>
                 You may register your extraprovincial business immediately using its existing name
                 at Corporate Online.
               </li>
             </ul>
-        </v-col>
+          </v-col>
 
           <!-- XPRO/MRAS number/name search/input -->
           <v-col v-if="!isFederal" cols="12" :md="(isXproFlow || showDesignation) ? 8 : 12">
@@ -238,8 +247,8 @@
           </v-col>
         </template>
 
-        <!-- Numbered company bullets -->
-        <template v-if="selectedCompanyType === CompanyType.NUMBERED_COMPANY || isFederal" cols="12">
+        <!-- Numbered company (or Federal) -->
+        <template v-if="isNumberedCompany || isFederal" cols="12">
           <v-col v-if="isConversion && !isAlterOnline(getConversionType)">
             <div class="contact-registries">
               <p>To complete this alteration, please contact us at:</p>
@@ -332,7 +341,7 @@ import BusinessFetch from '@/components/new-request/business-fetch.vue'
 // Interfaces / Enums / List Data
 import { BusinessSearchIF, ConversionTypesI, EntityI, FormType, RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { AccountType, CompanyType, CorpTypeCd, EntityStates, EntityType,
+import { AccountType, CompanyTypes, CorpTypeCd, EntityStates, EntityTypes,
   Location, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin, NrAffiliationMixin } from '@/mixins'
 import { BcMapping, CanJurisdictions, ConversionTypes, Designations,
@@ -354,7 +363,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   // Enums for template
-  readonly CompanyType = CompanyType
+  readonly CompanyTypes = CompanyTypes
   readonly NrRequestActionCodes = NrRequestActionCodes
   readonly RequestActions = RequestActions
 
@@ -362,26 +371,23 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   @Getter getConversionType!: NrRequestTypeCodes
   @Getter getConversionTypeOptions!: ConversionTypesI[]
   @Getter getDesignation!: string
-  @Getter getEntityBlurbs!: Array<EntityI>
-  @Getter getEntityTypeCd!: EntityType
+  @Getter getEntityBlurbs!: Array<EntityI | ConversionTypesI>
+  @Getter getEntityTypeCd!: EntityTypes
   @Getter getEntityTypeOptions!: Array<EntityI>
   @Getter getEntityTextFromValue!: string
   @Getter getErrors!: string[]
   @Getter getHasNoCorpNum!: boolean
-  @Getter isAuthenticated!: boolean
-  @Getter getJurisdictionCd!: string
   @Getter getLocation!: Location
-  @Getter getLocationOptions!: any[]
-  @Getter getOriginEntityTypeCd!: EntityType
+  @Getter getOriginEntityTypeCd!: EntityTypes
   @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter isAmalgamation!: boolean
   @Getter isAssumed!: boolean
+  @Getter isAuthenticated!: boolean
   @Getter isCanadian!: boolean
   @Getter isChangeName!: boolean
-  @Getter isConversion!: boolean
   @Getter isContinuationIn!: boolean
+  @Getter isConversion!: boolean
   @Getter isFederal!: boolean
-  @Getter isInternational!: boolean
   @Getter isMobile!: boolean
   @Getter isMrasJurisdiction!: boolean
   @Getter isNumberedEntityType!: boolean
@@ -406,23 +412,28 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   @Action setRequestAction!: ActionBindingIF
   @Action startAnalyzeName!: ActionBindingIF
 
+  // Constants
+  readonly colinLink = sessionStorage.getItem('CORPORATE_ONLINE_URL')
+  readonly corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
+  readonly EntityTypes = EntityTypes
+  readonly federalAmalgamationFormLink = 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-' +
+    'development/business-management/permits-licences-and-registration/registries-packages/' +
+    'pack_34_xco_-_amalgamation_application_and_business_number_request.pdf'
+  readonly fullReinstatementFormLink = 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-' +
+    'development/business-management/permits-licences-and-registration/registries-forms/' +
+    'form_31_xco_-_full_reinstatement_application.pdf'
+  readonly limitedReinstatementFormLink = 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-' +
+    'development/business-management/permits-licences-and-registration/registries-forms/' +
+    'form_29_xco_-_limited_reinstatement_application.pdf'
+
   // Local properties
   corpNumValid = true
   request = null as RequestActionsI
-  jurisdiction = null
-  selectedCompanyType = null as CompanyType
-  readonly colinLink = sessionStorage.getItem('CORPORATE_ONLINE_URL')
-  readonly corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
-  readonly EntityType = EntityType
+  jurisdiction = null as any
+  selectedCompanyType = null as CompanyTypes
   activeActionGroup = NaN
   showRequestActionTooltip = false
   business = null as BusinessSearchIF
-  fullReinstatementFormLink = 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-development/' +
-    'business-management/permits-licences-and-registration/registries-forms/' +
-    'form_31_xco_-_full_reinstatement_application.pdf'
-  limitedReinstatementFormLink = 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-development/' +
-    'business-management/permits-licences-and-registration/registries-forms/' +
-    'form_29_xco_-_limited_reinstatement_application.pdf'
 
   private mounted () {
     this.$nextTick(() => {
@@ -501,7 +512,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   get showJurisdiction (): boolean {
-    // if (this.isAmalgamation) return true // *** FUTURE
+    if (this.isAmalgamation && this.isXproEntityType(this.getEntityTypeCd)) return true
     if (this.isNewXproBusiness) return true
     if (this.isSelectedXproAndRestorable) return true
     if (this.isChangeNameXpro) return true
@@ -534,22 +545,22 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   get designationOptions (): Array<string> {
-    let output: string[] = Designations[this.getEntityTypeCd]?.words
-    if (this.getEntityTypeCd === EntityType.CC) {
-      output = Designations[EntityType.CR].words
+    let output = Designations[this.getEntityTypeCd]?.words as string[]
+    if (this.getEntityTypeCd === EntityTypes.CC) {
+      output = Designations[EntityTypes.CR].words
     }
     return output
   }
 
-  get companyRadioBtnApplicable (): boolean {
+  get showCompanyTypeRadioButtons (): boolean {
     if (!this.entity_type_cd && !this.getConversionType && !this.isFederal) return false
     if (this.isConversion) {
       return this.business !== null && this.getConversionType !== null
     }
-    const isSociety = (this.isSocietyEnabled() && this.getEntityTypeCd === EntityType.SO)
+    const isSociety = (this.isSocietyEnabled() && this.getEntityTypeCd === EntityTypes.SO)
     // check if numbered is not allowed or society NR name is required
     if (!this.isNumberedEntityType || isSociety) {
-      this.selectedCompanyType = CompanyType.NAMED_COMPANY
+      this.selectedCompanyType = CompanyTypes.NAMED_COMPANY
       return false
     }
     return true
@@ -561,25 +572,16 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
   // FUTURE: clean up return type
   entityBlurbs (entity_type_cd: string): string | string[] | string[][] {
-    return this.getEntityBlurbs?.find(type => type.value === entity_type_cd)?.blurbs
+    return this.getEntityBlurbs.find(type => type.value === entity_type_cd)?.blurbs
   }
 
-  get entity_type_options_select_bind (): EntityType {
-    if (this.isConversion) return this.getOriginEntityTypeCd
-    return this.entity_type_cd
-  }
-
-  set entity_type_options_select_bind (type: EntityType) {
-    this.entity_type_cd = type
-  }
-
-  get entity_type_cd (): EntityType {
+  get entity_type_cd (): EntityTypes {
     return this.getEntityTypeCd
   }
 
-  set entity_type_cd (type: EntityType) {
+  set entity_type_cd (type: EntityTypes) {
     // special case for sub-menu
-    if (type === EntityType.INFO) {
+    if (type === EntityTypes.INFO) {
       // set empty value until user chooses a new one
       // (don't use null in case it's already null as we want reactivity)
       this.setEntityTypeCd('')
@@ -590,7 +592,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     // special case for conversion
     if (this.getEntityTypeCd && this.isConversion && type) {
       const value = type as unknown as NrRequestTypeCodes
-      let { entity_type_cd } = ConversionTypes.find(conv => conv.value === value) || { entity_type_cd: null }
+      const entity_type_cd = ConversionTypes.find(conv => conv.value === value)?.entity_type_cd || null
       this.setEntityTypeCd(entity_type_cd)
       this.setConversionType(type)
       this.setConversionType(type)
@@ -612,13 +614,18 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   }
 
   get entityConversionText () {
-    // convert NrRequestTypeCodes -> EntityType
+    // convert NrRequestTypeCodes -> EntityTypes
     return ConversionTypes.find(conversion => conversion.value === this.getConversionType)?.text
   }
 
   /** Whether selected radio button is Named Company. */
   get isNamedCompany (): boolean {
-    return (this.selectedCompanyType === CompanyType.NAMED_COMPANY)
+    return (this.selectedCompanyType === CompanyTypes.NAMED_COMPANY)
+  }
+
+  /** Whether selected radio button is Numbered Company. */
+  get isNumberedCompany (): boolean {
+    return (this.selectedCompanyType === CompanyTypes.NUMBERED_COMPANY)
   }
 
   get showActionButton (): boolean {
@@ -732,7 +739,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
         // set conversionType & entity_type_cd because there's only one alteration type for it
         if (this.isBenBusiness) {
           this.setConversionType(NrRequestTypeCodes.CONVERT_CORP)
-          this.setEntityTypeCd(EntityType.BC)
+          this.setEntityTypeCd(EntityTypes.BC)
         }
       } else {
         // clear all related fields when clearing business search/fetch for alter
@@ -770,27 +777,29 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     }
   }
 
-  /** Returns whether the selected XPRO is restorable. */
+  /** Whether the selected XPRO is restorable. */
   get isSelectedXproAndRestorable (): boolean {
     return XproMapping.REH.includes(this.business?.legalType)
   }
 
-  /** Returns whether the selected business' legal type is BC and restorable. */
+  /** Whether the selected business' legal type is BC and restorable. */
   get isBcRestorable (): boolean {
     return BcMapping.REH.includes(this.corpTypeToEntityType(this.business?.legalType as unknown as CorpTypeCd))
   }
 
-  /** Returns whether company is restorable. */
+  /** Whether company is restorable. */
   get isRestorable (): boolean {
     return this.isSelectedXproAndRestorable || this.isBcRestorable
   }
 
   /** Map to correct Entity type if legal type is Ben Bc Ulc Ccc */
   isBenBcUlcCccCorpType (): boolean {
-    return this.business?.legalType === EntityType.BEN ||
-        this.business?.legalType === EntityType.BC ||
-        this.business?.legalType === EntityType.ULC ||
-        this.business?.legalType === EntityType.CC
+    return (
+      this.business?.legalType === EntityTypes.BC ||
+      this.business?.legalType === EntityTypes.BEN ||
+      this.business?.legalType === EntityTypes.CC ||
+      this.business?.legalType === EntityTypes.ULC
+    )
   }
 
   get isChangeNameXpro (): boolean {
@@ -848,7 +857,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   clearDesignation () {
     this.setDesignation('')
     // clear "Select a Business Type" field when "View all business types" or Society is selected
-    if (!this.entity_type_cd || this.entity_type_cd === EntityType.INFO) {
+    if (!this.entity_type_cd || this.entity_type_cd === EntityTypes.INFO) {
       this.$refs.selectBusinessTypeRef && this.$refs.selectBusinessTypeRef.reset()
     }
   }
@@ -888,6 +897,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
 
     // set default location for requests where there is only one location option
     if (this.isNewBcBusiness || this.isContinuationIn || this.isConversion || this.isAmalgamation) {
+      // *** TODO: set location for amalgamation later (depending on entity type selected)
       this.setLocation(Location.BC)
     } else if (this.isAssumed && this.getLocation === Location.BC) {
       this.setLocation(Location.CA)
@@ -1020,7 +1030,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     color: $gray7 !important;
   }
 
-  // Override radio group background color.
+  // override radio group background color
   .v-input--radio-group .v-input__control .v-input__slot {
     background-color: white !important;
   }

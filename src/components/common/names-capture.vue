@@ -255,13 +255,13 @@ import NameRequestDetails from '@/components/existing-request/name-request-detai
 import { NameChoicesIF, NameRequestI } from '@/interfaces'
 import { sanitizeName } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { EntityType, Location } from '@/enums'
+import { EntityTypes, Location } from '@/enums'
 import { CommonMixin } from '@/mixins'
 import { Designations } from '@/list-data'
 
 /**
  * This is the component that displays the name choices.
- * It also shows the menu here when editing a NR.
+ * It also shows the name request details here when editing a NR.
  */
 @Component({
   components: {
@@ -277,7 +277,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   @Getter getDisplayedComponent!: string
   @Getter getDesignation!: string
   @Getter getEditMode!: boolean
-  @Getter getEntityTypeCd!: EntityType
+  @Getter getEntityTypeCd!: EntityTypes
   @Getter getLocation!: Location
   @Getter getName!: string
   @Getter getNameChoices!: NameChoicesIF
@@ -358,10 +358,10 @@ export default class NamesCapture extends Mixins(CommonMixin) {
 
   get showSecondAndThirdNameChoices () {
     if (this.getLocation !== Location.BC) {
-      if (this.getEntityTypeCd === EntityType.XLP ||
-        this.getEntityTypeCd === EntityType.XLL ||
-        this.getEntityTypeCd === EntityType.XCP ||
-        this.getEntityTypeCd === EntityType.XSO) {
+      if (this.getEntityTypeCd === EntityTypes.XLP ||
+        this.getEntityTypeCd === EntityTypes.XLL ||
+        this.getEntityTypeCd === EntityTypes.XCP ||
+        this.getEntityTypeCd === EntityTypes.XSO) {
         return false
       }
     }
@@ -490,9 +490,9 @@ export default class NamesCapture extends Mixins(CommonMixin) {
   // define the text for the name designation error message for the entity types that require it
   get entityTypeText (): string {
     switch (this.getEntityTypeCd) {
-      case EntityType.SO: return 'Society'
-      case EntityType.CC: return 'Community Contribution Company'
-      case EntityType.CP: return 'Cooperative'
+      case EntityTypes.SO: return 'Society'
+      case EntityTypes.CC: return 'Community Contribution Company'
+      case EntityTypes.CP: return 'Cooperative'
 
       // for other no name designation required entity types, return an empty string
       default: return ''
@@ -646,7 +646,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
 
   get items (): string[] {
     let output: string[] = Designations[this.getEntityTypeCd].words
-    if (this.getEntityTypeCd === EntityType.CC) {
+    if (this.getEntityTypeCd === EntityTypes.CC) {
       output = Designations['CR'].words
     }
     return output

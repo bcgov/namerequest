@@ -42,7 +42,7 @@ import { Action, Getter } from 'vuex-class'
 import { RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NameInput from '@/components/new-request/name-input.vue'
-import { EntityType, NrRequestActionCodes } from '@/enums'
+import { EntityTypes, NrRequestActionCodes } from '@/enums'
 
 @Component({
   components: { NameInput }
@@ -52,9 +52,9 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
 
   // Global getters
   @Getter getNameAnalysisTimeout!: boolean
-  @Getter getDoNotAnalyzeEntities!: EntityType[]
+  @Getter getDoNotAnalyzeEntities!: EntityTypes[]
   @Getter getEntityTextFromValue!: string
-  @Getter getEntityTypeCd!: EntityType
+  @Getter getEntityTypeCd!: EntityTypes
   @Getter getIsPersonsName!: boolean
   @Getter getName!: string
   @Getter isNameEnglish!: boolean
