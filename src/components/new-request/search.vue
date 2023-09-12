@@ -373,7 +373,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
   @Getter getConversionType!: NrRequestTypeCodes
   @Getter getConversionTypeOptions!: ConversionTypesI[]
   @Getter getDesignation!: string
-  @Getter getEntityBlurbs!: Array<EntityI | ConversionTypesI>
+  @Getter getDisplayedComponent!: string
+  @Getter getEntityBlurbs!: Array<EntityI>
   @Getter getEntityTypeCd!: EntityTypes
   @Getter getEntityTypeOptions!: Array<EntityI>
   @Getter getEntityTextFromValue!: string
@@ -727,6 +728,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     this.entity_type_cd = this.business?.legalType || null
     this.setCorpNum(business?.identifier || null)
     this.setEntityTypeCd(this.business?.legalType)
+    this.setName('')
 
     // Waiting for DOM update to be able to access the Ref. Trigger form validation.
     // Need to do that because the ref is in a conditional.
@@ -875,6 +877,14 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     this.setNoCorpNum(false)
   }
 
+  /** Resets fields when returned to the Tabs component */
+  @Watch('getDisplayedComponent')
+  watchDisplayedComponent (displayedComponent: string) {
+    if (displayedComponent === 'Tabs') {
+      this.onBusiness(null)
+    }
+  }
+
   /** Called when Request Action menu item is changed. */
   async onRequestActionChange (request: RequestActionsI): Promise<void> {
     this.request = request
@@ -889,6 +899,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin) {
     if (this.entity_type_cd) this.entity_type_cd = null
     this.selectedCompanyType = null
     this.setCorpNum(null)
+    this.setName('')
 
     // wait for updates
     await Vue.nextTick()
