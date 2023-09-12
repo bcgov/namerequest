@@ -164,7 +164,6 @@ export const resetAnalyzeName = ({ commit, getters }): void => {
   if (!getters.getUserCancelledAnalysis) {
     commit('mutateAnalysisJSON', null)
   }
-  commit('mutateCorpNum', '')
   commit('mutateEditMode', false)
   commit('mutateSubmissionType', 'normal')
   commit('mutateShowActualInput', false)

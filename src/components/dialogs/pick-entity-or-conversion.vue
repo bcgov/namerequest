@@ -1,12 +1,12 @@
 <template>
-  <v-dialog v-model="showModal" :max-width="width" persistent>
+  <v-dialog :value="getPickEntityModalVisible" :max-width="width" persistent>
     <v-card class="no-border pick-entity-card">
       <v-row>
         <v-col cols="10">
           <span class="ml-1 copy-small">{{ locationText }}:</span>
         </v-col>
         <v-col cols="2">
-          <v-icon class="float-right" md color="primary" @click="showModal = false">mdi-close</v-icon>
+          <v-icon class="float-right" md color="primary" @click="closeIconClicked()">mdi-close</v-icon>
         </v-col>
       </v-row>
 
@@ -106,10 +106,10 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
   @Getter getEntityTypeOptions!: Array<EntityI>
   @Getter getEntityTypesBC!: Array<EntityI>
   @Getter getEntityTypesXPRO!: Array<EntityI>
-  @Getter isConversion!: boolean
   @Getter getLocation!: Location
   @Getter getLocationText!: string
   @Getter getPickEntityModalVisible!: boolean
+  @Getter isConversion!: boolean
   @Getter isMobile!: boolean
 
   // Global actions
@@ -121,8 +121,14 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
 
   showSocietiesInfo = false
 
-  @Watch('showModal')
-  handleModalClose (newVal) {
+  closeIconClicked () {
+    this.setPickEntityModalVisible(false)
+    // clear "View all business types" selection
+    this.setEntityTypeCd(null)
+  }
+
+  @Watch('getPickEntityModalVisible')
+  handleModalClose (newVal: boolean) {
     if (!newVal) {
       setTimeout(() => { this.showSocietiesInfo = false }, 500)
     }
@@ -138,14 +144,6 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
 
   get locationText (): string {
     return (this.getLocationText === 'BC') ? 'British Columbia' : this.getLocationText
-  }
-
-  get showModal (): boolean {
-    return this.getPickEntityModalVisible
-  }
-
-  set showModal (value: boolean) {
-    this.setPickEntityModalVisible(value)
   }
 
   get tableData (): any[] {
@@ -226,7 +224,7 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
       this.setEntityTypeCd(conversion.entity_type_cd)
     }
     this.setConversionType(conversion.value)
-    this.showModal = false
+    this.setPickEntityModalVisible(false)
   }
 
   chooseType (entity: SelectOptionsI) {
@@ -241,7 +239,7 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
       this.setEntityTypeAddToSelect(entity)
     }
     this.setEntityTypeCd(entity.value)
-    this.showModal = false
+    this.setPickEntityModalVisible(false)
   }
 }
 </script>
