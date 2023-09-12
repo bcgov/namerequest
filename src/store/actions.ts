@@ -2,7 +2,7 @@ import querystring from 'qs'
 import axios from 'axios'
 import {
   EntityStates,
-  EntityType,
+  EntityTypes,
   Location,
   NameCheckAnalysisJurisdiction,
   NameCheckAnalysisType,
@@ -320,7 +320,7 @@ export async function searchBusiness ({ getters }, corpNum: string): Promise<Bus
         return {
           identifier: corpNum, // data['incorp #'],
           legalName: 'Future Name From COLIN',
-          legalType: EntityType.BC,
+          legalType: EntityTypes.BC,
           state: EntityStates.ACTIVE
         }
       } catch (error) {
@@ -552,11 +552,11 @@ export const setCorpSearch = ({ commit }, corpSearch: string): void => {
   commit('mutateCorpSearch', corpSearch)
 }
 
-export const setEntityTypeCd = ({ commit }, entityTypeCd: EntityType): void => {
+export const setEntityTypeCd = ({ commit }, entityTypeCd: EntityTypes): void => {
   commit('mutateEntityType', entityTypeCd)
 }
 
-export const setOriginEntityTypeCd = ({ commit }, originEntityTypeCd: EntityType): void => {
+export const setOriginEntityTypeCd = ({ commit }, originEntityTypeCd: EntityTypes): void => {
   commit('mutateOriginEntityType', originEntityTypeCd)
 }
 
@@ -967,7 +967,7 @@ const parseRestrictedWords = ({ getters }, resp: RestrictedResponseIF): ParsedRe
 
     // rules for ignoring restricted/conditional phrases
     const entityCd = getters.getEntityTypeCd
-    if (entityCd === EntityType.CR && Designations[EntityType.CC].words.includes(phrase)) continue
+    if (entityCd === EntityTypes.CR && Designations[EntityTypes.CC].words.includes(phrase)) continue
     if (Designations[entityCd].words.includes(phrase)) continue
 
     // split into restricted vs conditional
@@ -1151,13 +1151,13 @@ export const startAnalyzeName = async ({ commit, getters }) => {
       else commit('mutateSpecialCharacters', [])
       // extra designation rules that aren't in the backend for coops/cccs
       const entity_type_cd = getters.getEntityTypeCd
-      if ([EntityType.CP, EntityType.XCP, EntityType.CC].includes(entity_type_cd)) {
+      if ([EntityTypes.CP, EntityTypes.XCP, EntityTypes.CC].includes(entity_type_cd)) {
         let entityPhraseChoices = []
         let basePhrases = Designations[entity_type_cd].words
         // these are the inner phrases for the CCC and CP types.  Filtering out CR designations from CPs has no effect
         // and CCC designations are a mix of CR-type ending designations and CCC specific inner phrases so filter out
         // the CR designations for the purposes of this getter
-        entityPhraseChoices = basePhrases.filter(phrase => !Designations[EntityType.CR].words.includes(phrase))
+        entityPhraseChoices = basePhrases.filter(phrase => !Designations[EntityTypes.CR].words.includes(phrase))
         if (entityPhraseChoices.some(phrase => name.startsWith(phrase))) {
           let phrase = name.split(' ')[0].replace('COMMUNITY', 'COMMUNITY CONTRIBUTION COMPANY')
           commit('mutateDesignationsCheckUse', [phrase])

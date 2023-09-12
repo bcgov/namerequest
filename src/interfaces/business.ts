@@ -1,4 +1,4 @@
-import { EntityStates, EntityType } from '@/enums'
+import { EntityStates, EntityTypes } from '@/enums'
 
 export interface BusinessRequest {
   filing: {
@@ -37,6 +37,6 @@ export interface CreateNRAffiliationRequestBody {
 export interface BusinessSearchIF {
   identifier: string
   legalName: string
-  legalType: EntityType
+  legalType: EntityTypes
   state: EntityStates
 }

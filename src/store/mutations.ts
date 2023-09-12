@@ -13,7 +13,7 @@ import {
   WaitingAddressSearchI
 } from '@/interfaces'
 import {
-  EntityType,
+  EntityTypes,
   Location,
   NameCheckErrorType,
   NrAffiliationErrors,
@@ -84,11 +84,11 @@ export const mutateEditMode = (state: StateIF, editMode: boolean) => {
   state.stateModel.newRequestModel.editMode = editMode
 }
 
-export const mutateEntityType = (state: StateIF, entity_type_cd: EntityType) => {
+export const mutateEntityType = (state: StateIF, entity_type_cd: EntityTypes) => {
   state.stateModel.newRequestModel.entity_type_cd = entity_type_cd
 }
 
-export const mutateOriginEntityType = (state: StateIF, origin_entity_type_cd: EntityType) => {
+export const mutateOriginEntityType = (state: StateIF, origin_entity_type_cd: EntityTypes) => {
   state.stateModel.newRequestModel.origin_entity_type_cd = origin_entity_type_cd
 }
 

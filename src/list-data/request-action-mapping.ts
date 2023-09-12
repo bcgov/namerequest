@@ -1,86 +1,91 @@
-import { EntityType, NrRequestActionCodes } from '@/enums'
+import { EntityTypes, NrRequestActionCodes } from '@/enums'
 import { RequestActionMappingI, MappingI } from '@/interfaces'
 
-const entityTypesBC = [
-  EntityType.FR,
-  EntityType.DBA,
-  EntityType.CR,
-  EntityType.UL,
-  EntityType.GP,
-  EntityType.LP,
-  EntityType.LL,
-  EntityType.CP,
-  EntityType.BC,
-  EntityType.CC,
-  EntityType.SO,
-  EntityType.PA,
-  EntityType.FI,
-  EntityType.PAR
+const EntityTypesBC = [
+  EntityTypes.FR,
+  EntityTypes.DBA,
+  EntityTypes.CR,
+  EntityTypes.UL,
+  EntityTypes.GP,
+  EntityTypes.LP,
+  EntityTypes.LL,
+  EntityTypes.CP,
+  EntityTypes.BC,
+  EntityTypes.CC,
+  EntityTypes.SO,
+  EntityTypes.PA,
+  EntityTypes.FI,
+  EntityTypes.PAR
 ]
 
 // maps request_action_cd (key) to array of allowable entities (value)
 // { [request_action_cd]: entity_type_cd[] }
 export const BcMapping: RequestActionMappingI = {
   AML: [
-    EntityType.CR,
-    EntityType.UL,
-    EntityType.CC,
-    EntityType.CP,
-    EntityType.BC,
-    EntityType.SO
+    EntityTypes.CR,
+    EntityTypes.UL,
+    EntityTypes.CC,
+    EntityTypes.CP,
+    EntityTypes.BC,
+    EntityTypes.SO
   ],
   REN: [
-    EntityType.CR,
-    EntityType.CP,
-    EntityType.CC,
-    EntityType.UL,
-    EntityType.FI,
-    EntityType.BC,
-    EntityType.SO
+    EntityTypes.CR,
+    EntityTypes.CP,
+    EntityTypes.CC,
+    EntityTypes.UL,
+    EntityTypes.FI,
+    EntityTypes.BC,
+    EntityTypes.SO
   ],
   REH: [
-    EntityType.CR,
-    EntityType.CP,
-    EntityType.CC,
-    EntityType.UL,
-    EntityType.FI,
-    EntityType.BC,
-    EntityType.SO
+    EntityTypes.CR,
+    EntityTypes.CP,
+    EntityTypes.CC,
+    EntityTypes.UL,
+    EntityTypes.FI,
+    EntityTypes.BC,
+    EntityTypes.SO
   ],
-  CHG: entityTypesBC.filter(ent => ent !== EntityType.PAR && ent !== EntityType.PA),
+  // every entity type except Parishes and Private Act
+  CHG: EntityTypesBC.filter(ent => ent !== EntityTypes.PAR && ent !== EntityTypes.PA),
   MVE: [
-    EntityType.CR,
-    EntityType.CC,
-    EntityType.CP,
-    EntityType.UL,
-    EntityType.SO,
-    EntityType.BC
+    EntityTypes.CR,
+    EntityTypes.CC,
+    EntityTypes.CP,
+    EntityTypes.UL,
+    EntityTypes.SO,
+    EntityTypes.BC
   ]
 }
 
 export const XproMapping: MappingI = {
+  AML: [
+    EntityTypes.XCR,
+    EntityTypes.XCP
+  ],
   ASSUMED: [
-    EntityType.XCR,
-    EntityType.RLC
+    EntityTypes.XCR,
+    EntityTypes.RLC
   ],
   REN: [
-    EntityType.XCR,
-    EntityType.XCP,
-    EntityType.RLC
+    EntityTypes.XCR,
+    EntityTypes.XCP,
+    EntityTypes.RLC
   ],
   REH: [
-    EntityType.A,
-    EntityType.LLC,
-    EntityType.XCP,
-    EntityType.XS
+    EntityTypes.A,
+    EntityTypes.LLC,
+    EntityTypes.XCP,
+    EntityTypes.XS
   ],
   CHG: [
-    EntityType.A,
-    EntityType.XP,
-    EntityType.XL,
-    EntityType.LLC,
-    EntityType.XCP,
-    EntityType.XS
+    EntityTypes.A,
+    EntityTypes.XP,
+    EntityTypes.XL,
+    EntityTypes.LLC,
+    EntityTypes.XCP,
+    EntityTypes.XS
   ]
 }
 
@@ -93,18 +98,18 @@ export const BusinessLookupRequestActions = [
 
 /** Entity types that require business lookup. */
 export const BusinessLookupEntityTypes = [
-  EntityType.BC,
-  EntityType.CC,
-  EntityType.CR,
-  EntityType.UL,
-  EntityType.XCR,
-  EntityType.XUL
+  EntityTypes.BC,
+  EntityTypes.CC,
+  EntityTypes.CR,
+  EntityTypes.UL,
+  EntityTypes.XCR,
+  EntityTypes.XUL
 ]
 
 /** Entity types that support the numbered company option. */
 export const NumberedEntityTypes = [
-  EntityType.BC,
-  EntityType.CC,
-  EntityType.CR,
-  EntityType.UL
+  EntityTypes.BC,
+  EntityTypes.CC,
+  EntityTypes.CR,
+  EntityTypes.UL
 ]

@@ -1,7 +1,7 @@
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 
 /** Enum for Entity Type codes. */
-export enum EntityType {
+export enum EntityTypes {
   // BC Entity Types:
   BC = CorpTypeCd.BC_COMPANY,
   BEN = CorpTypeCd.BENEFIT_COMPANY,

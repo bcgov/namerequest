@@ -1,6 +1,6 @@
 import { NameRequestI, StateModelIF } from '@/interfaces'
 import {
-  EntityType,
+  EntityTypes,
   Location,
   NameCheckErrorType,
   NrAffiliationErrors,
@@ -55,13 +55,13 @@ export const stateModel: StateModelIF = {
     ],
     displayedComponent: 'Tabs',
     doNotAnalyzeEntities: [
-      EntityType.PAR,
-      EntityType.CC,
-      EntityType.CP,
-      EntityType.PA,
-      EntityType.FI,
-      EntityType.XCP,
-      EntityType.SO
+      EntityTypes.PAR,
+      EntityTypes.CC,
+      EntityTypes.CP,
+      EntityTypes.PA,
+      EntityTypes.FI,
+      EntityTypes.XCP,
+      EntityTypes.SO
     ],
     editMode: false,
     entity_type_cd: null,

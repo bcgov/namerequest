@@ -82,9 +82,9 @@ export default class NameRequestDetails extends Mixins(CommonMixin) {
     return xproJurisdiction || 'Unknown'
   }
 
-  /** Whether the entity type code denotes a XPRO business. */
+  /** Whether this is an XPRO business. */
   get isXpro (): boolean {
-    return this.isXProCompany(this.getNr)
+    return this.isXproEntityType(this.getNr.entity_type_cd)
   }
 
   /** The legal type of the new business. */

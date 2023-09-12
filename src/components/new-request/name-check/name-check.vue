@@ -203,7 +203,7 @@ import NameCheckConflicts from '@/components/new-request/name-check/name-check-c
 import NameCheckTabContent from '@/components/new-request/name-check/name-check-tab-content.vue'
 import NameInput from '@/components/new-request/name-input.vue'
 import QuickSearchNames from '@/components/new-request/name-check/quick-search-names.vue'
-import { EntityType, NameCheckErrorType } from '@/enums'
+import { EntityTypes, NameCheckErrorType } from '@/enums'
 import { ConditionalInstructionI, DialogOptionsI, NameCheckErrorI, NameCheckItemIF } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { baseItemsConflicts, baseItemsStructure } from './resources'
@@ -230,7 +230,7 @@ export default class NameCheck extends Vue {
   @Getter getDesignationsMismatched!: Array<string>
   @Getter getDesignationsMisplaced!: Array<string>
   @Getter getEntityTextFromValue!: string
-  @Getter getEntityTypeCd!: EntityType
+  @Getter getEntityTypeCd!: EntityTypes
   @Getter getErrors!: string[]
   @Getter getFullName!: string
   @Getter getLocationText!: string
@@ -351,8 +351,8 @@ export default class NameCheck extends Vue {
   }
   get designationOptions (): Array<string> {
     let output: string[] = Designations[this.getEntityTypeCd]?.words
-    if (this.getEntityTypeCd === EntityType.CC) {
-      output = Designations[EntityType.CR].words
+    if (this.getEntityTypeCd === EntityTypes.CC) {
+      output = Designations[EntityTypes.CR].words
     }
     return output
   }
@@ -537,19 +537,19 @@ export default class NameCheck extends Vue {
     if (this.hasDesignationsCheckUse) {
       let newItem = baseItemsStructure.designationsCheckUse
       const propEntities = [
-        EntityType.FR,
-        EntityType.DBA,
-        EntityType.GP,
-        EntityType.LP,
-        EntityType.LL,
-        EntityType.XLP,
-        EntityType.XLL
+        EntityTypes.DBA,
+        EntityTypes.FR,
+        EntityTypes.GP,
+        EntityTypes.LL,
+        EntityTypes.LP,
+        EntityTypes.XLL,
+        EntityTypes.XLP
       ]
       if (propEntities.includes(this.getEntityTypeCd)) {
         newItem = baseItemsStructure.designationsCheckUseProp
-      } else if ([EntityType.CP, EntityType.XCP].includes(this.getEntityTypeCd)) {
+      } else if ([EntityTypes.CP, EntityTypes.XCP].includes(this.getEntityTypeCd)) {
         newItem = baseItemsStructure.designationsCheckUseCP
-      } else if (this.getEntityTypeCd === EntityType.CC) {
+      } else if (this.getEntityTypeCd === EntityTypes.CC) {
         newItem = baseItemsStructure.designationsCheckUseCCC
       }
       newItem.words = this.designationsCheckUse
@@ -572,9 +572,9 @@ export default class NameCheck extends Vue {
     }
     if (this.isMissingDesignation) {
       let newItem = baseItemsStructure.designationsMissing
-      if ([EntityType.CP, EntityType.XCP].includes(this.getEntityTypeCd)) {
+      if ([EntityTypes.CP, EntityTypes.XCP].includes(this.getEntityTypeCd)) {
         newItem = baseItemsStructure.designationsMissingCP
-      } else if (this.getEntityTypeCd === EntityType.CC) {
+      } else if (this.getEntityTypeCd === EntityTypes.CC) {
         newItem = baseItemsStructure.designationsMissingCCC
       }
       items.push(newItem)

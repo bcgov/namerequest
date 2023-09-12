@@ -1,12 +1,12 @@
-import { EntityType, NrRequestTypeCodes } from '@/enums'
+import { EntityTypes, NrRequestTypeCodes } from '@/enums'
 import { ConversionTypesI } from '@/interfaces/models'
 
 export const ConversionTypes: ConversionTypesI[] = [
   {
     desc: 'Limited Company to an Unlimited Liability Company',
     text: 'Limited Company to an Unlimited Liability Company',
-    entity_type_cd: EntityType.UL,
-    origin_entity_type_cd: EntityType.BC,
+    entity_type_cd: EntityTypes.UL,
+    origin_entity_type_cd: EntityTypes.BC,
     blurbs: [
       'Alter business type from a limited company to an unlimited liability company.'
     ],
@@ -17,8 +17,8 @@ export const ConversionTypes: ConversionTypesI[] = [
   {
     desc: 'Limited Company to a Community Contribution Company',
     text: 'Limited Company to a Community Contribution Company',
-    entity_type_cd: EntityType.CC,
-    origin_entity_type_cd: EntityType.BC,
+    entity_type_cd: EntityTypes.CC,
+    origin_entity_type_cd: EntityTypes.BC,
     blurbs: [
       'Alter business type from a limited company to a community contribution company.'
     ],
@@ -29,8 +29,8 @@ export const ConversionTypes: ConversionTypesI[] = [
   {
     desc: 'Limited Company to a Benefit Company',
     text: 'Limited Company to a Benefit Company',
-    entity_type_cd: EntityType.BC,
-    origin_entity_type_cd: EntityType.BC,
+    entity_type_cd: EntityTypes.BC,
+    origin_entity_type_cd: EntityTypes.BC,
     blurbs: [
       'Alter business type from a limited company to a benefit company.'
     ],
@@ -40,8 +40,8 @@ export const ConversionTypes: ConversionTypesI[] = [
   {
     desc: 'Benefit Company to a Limited Company',
     text: 'Benefit Company to a Limited Company',
-    entity_type_cd: EntityType.CR,
-    origin_entity_type_cd: EntityType.BEN,
+    entity_type_cd: EntityTypes.CR,
+    origin_entity_type_cd: EntityTypes.BEN,
     blurbs: [
       'Alter business type from a benefit company to a limited company.'
     ],
@@ -51,8 +51,8 @@ export const ConversionTypes: ConversionTypesI[] = [
   {
     desc: 'Unlimited Liability Company to a Limited Company',
     text: 'Unlimited Liability Company to a Limited Company',
-    entity_type_cd: EntityType.CR,
-    origin_entity_type_cd: EntityType.ULC,
+    entity_type_cd: EntityTypes.CR,
+    origin_entity_type_cd: EntityTypes.ULC,
     blurbs: [
       'Alter business type from an unlimited liability company to a limited company.'
     ],
@@ -62,8 +62,8 @@ export const ConversionTypes: ConversionTypesI[] = [
   {
     desc: 'Unlimited Liability Company to a Benefit Company',
     text: 'Unlimited Liability Company to a Benefit Company',
-    entity_type_cd: EntityType.BC,
-    origin_entity_type_cd: EntityType.ULC,
+    entity_type_cd: EntityTypes.BC,
+    origin_entity_type_cd: EntityTypes.ULC,
     blurbs: [
       'Alter business type from an unlimited liability company to a benefit company.'
     ],

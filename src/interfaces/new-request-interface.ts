@@ -3,7 +3,7 @@ import {
   RequestNameI, SelectOptionsI, StatsI, SubmissionTypeT, WaitingAddressSearchI
 } from '@/interfaces/models'
 import { NameChoicesIF, NrDataIF, RequestOrConsentIF } from '@/interfaces'
-import { EntityType, Location, NrAffiliationErrors, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
+import { EntityTypes, Location, NrAffiliationErrors, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 
 interface RequestNameMapI extends RequestNameI {}
 
@@ -23,9 +23,9 @@ export interface NewRequestIF {
   corpSearch: string
   designationIssueTypes: string[]
   displayedComponent: string
-  doNotAnalyzeEntities: EntityType[]
+  doNotAnalyzeEntities: EntityTypes[]
   editMode: boolean
-  entity_type_cd: EntityType
+  entity_type_cd: EntityTypes
   entityTypeAddToSelect: SelectOptionsI
   errors: string[]
   exitIncompletePaymentVisible: boolean
@@ -54,7 +54,7 @@ export interface NewRequestIF {
   nrOriginal: Partial<NameRequestI>
   nrRequestNameMap: RequestNameMapI[]
   nrRequiredModalVisible: boolean
-  origin_entity_type_cd: EntityType
+  origin_entity_type_cd: EntityTypes
   pickEntityModalVisible: boolean
   priorityRequest: boolean
   quickSearchNames: any[]

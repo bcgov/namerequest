@@ -31,8 +31,10 @@ import { MRAS_MAX_LENGTH } from '@/components/new-request/constants'
 export default class NameInput extends Vue {
   /** Whether to perform MRAS search. */
   @Prop({ default: false }) readonly isMrasSearch!: boolean
+
   /** Whether this component is read-only (eg, on name check page). */
   @Prop({ default: false }) readonly isReadOnly!: boolean
+
   /** Hint to show (eg, on name check page). */
   @Prop({ default: null }) readonly hint!: string
 
