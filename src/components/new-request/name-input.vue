@@ -103,7 +103,7 @@ export default class NameInput extends Vue {
       if (this.isMrasSearch) {
         return ['Please enter a corporation number to search for']
       } else {
-        return ['Please enter a name to search for']
+        return ['Please enter the business\'s full legal name in home jurisdiction']
       }
     }
 
