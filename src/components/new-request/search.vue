@@ -24,7 +24,7 @@
               @emit-corp-num-validity="corpNumValid = $event"
             />
           </v-col>
-          <Designation cols="12" md="4" />
+          <Designation v-if="showDesignation" cols="12" md="4" />
         </template>
       </template>
 
