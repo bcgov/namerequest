@@ -140,6 +140,12 @@ export const stateModel: StateModelIF = {
         assumed_name: false
       }
     },
+    search: {
+      business: null,
+      companyType: null,
+      jurisdiction: null,
+      request: null
+    },
     showActualInput: false,
     stats: null,
     submissionTabNumber: 0,

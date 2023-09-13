@@ -16,6 +16,12 @@
             </keep-alive>
           </transition>
         </div>
+
+        <!-- FOR DEBUGGING -->
+        <div>getRequestActionCd={{ getRequestActionCd }}</div>
+        <div>getLocation={{ getLocation }}</div>
+        <div>getEntityTypeCd={{ getEntityTypeCd }}</div>
+        <div>isMrasJurisdiction={{ isMrasJurisdiction }}</div>
       </v-container>
     </v-row>
 
@@ -62,6 +68,12 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 export default class Landing extends Vue {
   // Global getter
   @Getter getDisplayedComponent!: string
+
+  // FOR DEBUGGING:
+  @Getter getEntityTypeCd!: any
+  @Getter getLocation!: any
+  @Getter getRequestActionCd!: any
+  @Getter isMrasJurisdiction!: boolean
 
   // Global actions
   @Action loadExistingNameRequest!: ActionBindingIF

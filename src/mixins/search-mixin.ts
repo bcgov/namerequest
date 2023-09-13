@@ -1,0 +1,199 @@
+// External imports
+import { Component, Mixins, Watch } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
+import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
+
+// Interfaces / enums / etc.
+import { BusinessSearchIF, ConversionTypesI, EntityI, RequestActionsI } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { AccountType, CompanyTypes, CorpTypeCd, EntityTypes, Location, NrRequestActionCodes,
+  NrRequestTypeCodes } from '@/enums'
+import { BcMapping, ConversionTypes, RequestActions, XproMapping } from '@/list-data'
+import { CommonMixin } from './common-mixin'
+
+/**
+ * Mixin to provide common/shared imports/methods to search components.
+ */
+@Component({})
+export class SearchMixin extends Mixins(CommonMixin) {
+  // Enums for template
+  readonly CompanyTypes = CompanyTypes
+  readonly EntityTypes = EntityTypes
+  readonly NrRequestActionCodes = NrRequestActionCodes
+  readonly RequestActions = RequestActions
+
+  // Store getters
+  @Getter getConversionType!: NrRequestTypeCodes
+  @Getter getConversionTypeOptions!: ConversionTypesI[]
+  @Getter getDesignation!: string
+  @Getter getDisplayedComponent!: string
+  @Getter getEntityBlurbs!: Array<EntityI | ConversionTypesI>
+  @Getter getEntityTypeCd!: EntityTypes
+  @Getter getEntityTypeOptions!: Array<EntityI>
+  @Getter getErrors!: string[]
+  @Getter getHasNoCorpNum!: boolean
+  @Getter getLocation!: Location
+  @Getter getOriginEntityTypeCd!: EntityTypes
+  @Getter getRequestActionCd!: NrRequestActionCodes
+  @Getter getSearchBusiness!: BusinessSearchIF
+  @Getter getSearchCompanyType!: CompanyTypes
+  @Getter getSearchJurisdiction!: any
+  @Getter getSearchRequest!: RequestActionsI
+  @Getter isAmalgamation!: boolean
+  @Getter isAssumed!: boolean
+  @Getter isAuthenticated!: boolean
+  @Getter isCanadian!: boolean
+  @Getter isChangeName!: boolean
+  @Getter isContinuationIn!: boolean
+  @Getter isConversion!: boolean
+  @Getter isFederal!: boolean
+  @Getter isMobile!: boolean
+  @Getter isMrasJurisdiction!: boolean
+  @Getter isNewBusiness!: boolean
+  @Getter isNumberedEntityType!: boolean
+  @Getter isRestoration!: boolean
+  @Getter isXproFlow!: boolean
+
+  // Store actions
+  @Action setClearErrors!: () => void
+  @Action setConversionType!: ActionBindingIF
+  @Action setCorpNum!: ActionBindingIF
+  @Action setCorpSearch!: ActionBindingIF
+  @Action setDesignation!: ActionBindingIF
+  @Action setDoNameCheck!: ActionBindingIF
+  @Action setEntityTypeCd!: ActionBindingIF
+  @Action setExtendedRequestType!: ActionBindingIF
+  @Action setJurisdictionCd!: ActionBindingIF
+  @Action setLocation!: ActionBindingIF
+  @Action setName!: ActionBindingIF
+  @Action setNoCorpNum!: ActionBindingIF
+  @Action setOriginEntityTypeCd!: ActionBindingIF
+  @Action setPickEntityModalVisible!: ActionBindingIF
+  @Action setRequestAction!: ActionBindingIF
+  @Action setSearchBusiness!: ActionBindingIF
+  @Action setSearchCompanyType!: ActionBindingIF
+  @Action setSearchJurisdiction!: ActionBindingIF
+  @Action setSearchRequest!: ActionBindingIF
+  @Action startAnalyzeName!: ActionBindingIF
+
+  get isScreenLg () {
+    return this.$vuetify.breakpoint.lgAndUp
+  }
+
+  /** Whether current account type is Premium, SBC Staff or Staff. */
+  get isPremiumOrStaff (): boolean {
+    return [AccountType.PREMIUM, AccountType.SBC_STAFF, AccountType.STAFF]
+      .includes(JSON.parse(sessionStorage.getItem(SessionStorageKeys.CurrentAccount))?.accountType)
+  }
+
+  get isBenBusiness (): boolean {
+    const corpType = this.getSearchBusiness?.legalType as unknown as CorpTypeCd
+    return (corpType === CorpTypeCd.BENEFIT_COMPANY)
+  }
+
+  get isNewBcBusiness (): boolean {
+    return (this.getRequestActionCd === NrRequestActionCodes.NEW_BUSINESS && this.getSearchRequest?.group === 0)
+  }
+
+  get isNewXproBusiness (): boolean {
+    return (this.getRequestActionCd === NrRequestActionCodes.NEW_BUSINESS && this.getSearchRequest?.group === 1)
+  }
+
+  get isAlterable (): boolean {
+    const corpType = this.getSearchBusiness.legalType as unknown as CorpTypeCd
+    return (
+      corpType === CorpTypeCd.BC_COMPANY ||
+      corpType === CorpTypeCd.BENEFIT_COMPANY ||
+      corpType === CorpTypeCd.BC_ULC_COMPANY
+    )
+  }
+
+  get entity_type_cd (): EntityTypes {
+    return this.getEntityTypeCd
+  }
+
+  set entity_type_cd (type: EntityTypes) {
+    // special case for sub-menu
+    if (type === EntityTypes.INFO) {
+      // set empty value until user chooses a new one
+      // (don't use null in case it's already null as we want reactivity)
+      this.setEntityTypeCd('')
+      // show the "View all business types" modal
+      this.setPickEntityModalVisible(true)
+      return
+    }
+
+    // special case for conversion
+    if (this.getEntityTypeCd && this.isConversion && type) {
+      const value = type as unknown as NrRequestTypeCodes
+      const entity_type_cd = ConversionTypes.find(conv => conv.value === value)?.entity_type_cd || null
+      this.setEntityTypeCd(entity_type_cd)
+      this.setConversionType(type)
+      this.setConversionType(type)
+      return
+    }
+
+    this.setEntityTypeCd(type)
+  }
+
+  /** Whether selected radio button is Named Company. */
+  get isNamedCompany (): boolean {
+    return (this.getSearchCompanyType === CompanyTypes.NAMED_COMPANY)
+  }
+
+  /** Whether selected radio button is Numbered Company. */
+  get isNumberedCompany (): boolean {
+    return (this.getSearchCompanyType === CompanyTypes.NUMBERED_COMPANY)
+  }
+
+  get isChangeNameXpro (): boolean {
+    return XproMapping.CHG.includes(this.getSearchBusiness?.legalType)
+  }
+
+  /** Whether the selected XPRO is restorable. */
+  get isSelectedXproAndRestorable (): boolean {
+    return XproMapping.REH.includes(this.getSearchBusiness?.legalType)
+  }
+
+  /** Whether the selected business' legal type is BC and restorable. */
+  get isBcRestorable (): boolean {
+    const corpType = this.getSearchBusiness?.legalType as unknown as CorpTypeCd
+    return BcMapping.REH.includes(this.corpTypeToEntityType(corpType))
+  }
+
+  /** Whether company is restorable. */
+  get isRestorable (): boolean {
+    return (this.isSelectedXproAndRestorable || this.isBcRestorable)
+  }
+
+  get isSelectedCompanyXPro (): boolean {
+    if (this.isRestoration) {
+      return this.isSelectedXproAndRestorable
+    }
+    if (this.isChangeName) {
+      return this.isChangeNameXpro
+    }
+    return false
+  }
+
+  /** Whether business is a BEN/BC/CC/ULC according to its legal type. */
+  get isBcBenCccUlc (): boolean {
+    return (
+      this.getSearchBusiness?.legalType === EntityTypes.BC ||
+      this.getSearchBusiness?.legalType === EntityTypes.BEN ||
+      this.getSearchBusiness?.legalType === EntityTypes.CC ||
+      this.getSearchBusiness?.legalType === EntityTypes.ULC
+    )
+  }
+
+  /** Resets search values when location changes. */
+  @Watch('getLocation')
+  private watchLocation (newVal: Location) {
+    // if they need to search by corp num first then reset the name
+    if ([Location.CA, Location.FD, Location.IN, Location.US].includes(newVal)) {
+      this.setName('')
+    }
+    this.setCorpSearch('')
+    this.setNoCorpNum(false)
+  }
+}

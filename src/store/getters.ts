@@ -2,6 +2,7 @@ import { getVuetify } from '@/plugins'
 import {
   AnalysisJSONI,
   ApplicantI,
+  BusinessSearchIF,
   ConditionalInstructionI,
   ConditionalReqI,
   ConsentConflictI,
@@ -27,6 +28,7 @@ import {
   SubmissionTypeT
 } from '@/interfaces'
 import {
+  CompanyTypes,
   EntityTypes,
   Location,
   NrAffiliationErrors,
@@ -1234,4 +1236,20 @@ export const isBusinessLookupEntityType = (state: StateIF): boolean => {
 export const isMrasJurisdiction = (state: StateIF): boolean => {
   const xproJurisdiction = getJurisdictionText(state)
   return MrasJurisdictions.includes(xproJurisdiction?.toLowerCase())
+}
+
+export const getSearchBusiness = (state: StateIF): BusinessSearchIF => {
+  return state.stateModel.newRequestModel.search.business
+}
+
+export const getSearchCompanyType = (state: StateIF): CompanyTypes => {
+  return state.stateModel.newRequestModel.search.companyType
+}
+
+export const getSearchJurisdiction = (state: StateIF): any => {
+  return state.stateModel.newRequestModel.search.jurisdiction
+}
+
+export const getSearchRequest = (state: StateIF): RequestActionsI => {
+  return state.stateModel.newRequestModel.search.request
 }

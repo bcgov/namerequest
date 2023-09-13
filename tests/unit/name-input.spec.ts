@@ -29,7 +29,7 @@ describe('NameInput component', () => {
   // })
 
   // it('Displays the required ui elements', () => {
-  //   expect(wrapper.find('#name-input-text-field').element).toBeTruthy()
+  //   expect(wrapper.find('#name-input-component').element).toBeTruthy()
   //   expect(wrapper.find('#name-input-icon').element).toBeTruthy()
   // })
   // it('Resists submitting when the entity type is set to "INFO" and detects the correct error type', async () => {

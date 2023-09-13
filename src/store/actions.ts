@@ -1,6 +1,7 @@
 import querystring from 'qs'
 import axios from 'axios'
 import {
+  CompanyTypes,
   EntityStates,
   EntityTypes,
   Location,
@@ -35,6 +36,7 @@ import {
   QuickSearchParamsI,
   QuickSearchParsedRespI,
   RefundParamsIF,
+  RequestActionsI,
   RestrictedResponseIF,
   SelectOptionsI,
   StatsI,
@@ -1237,4 +1239,20 @@ export const setRefundParams = ({ commit }, refundParams: RefundParamsIF): void 
 
 export const setIncorporateNowErrorStatus = ({ commit }, incorporateNowError: boolean): void => {
   commit('mutateIncorporateNowErrorStatus', incorporateNowError)
+}
+
+export const setSearchBusiness = ({ commit }, val: BusinessSearchIF): void => {
+  commit('mutateSearchBusiness', val)
+}
+
+export const setSearchCompanyType = ({ commit }, val: CompanyTypes): void => {
+  commit('mutateSearchCompanyType', val)
+}
+
+export const setSearchJurisdiction = ({ commit }, val: any): void => {
+  commit('mutateSearchJurisdiction', val)
+}
+
+export const setSearchRequest = ({ commit }, val: RequestActionsI): void => {
+  commit('mutateSearchRequest', val)
 }
