@@ -313,15 +313,11 @@ export async function searchBusiness ({ getters }, corpNum: string): Promise<Bus
       // now try to find business in COLIN
       try {
         const data = await NamexServices.searchColin(corpNum)
-        if (data.directors === 'Not Available' && data.incorporated === 'Not Available') {
-          return Promise.reject(error) // business not found
-        }
-        // *** TODO: update this when new endpoint is available
         return {
-          identifier: corpNum, // data['incorp #'],
-          legalName: 'Future Name From COLIN',
-          legalType: EntityType.BC,
-          state: EntityStates.ACTIVE
+          identifier: data.business.identifier,
+          legalName: data.business.legalName,
+          legalType: data.business.legalType,
+          state: data.business.state
         }
       } catch (error) {
         return Promise.reject(error) // network error
