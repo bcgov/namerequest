@@ -79,7 +79,7 @@
 
     <!-- Xpro/Federal bullets -->
     <!-- *** TODO: move this into flows above -->
-    <!-- *** TODO: simply this button's logic -->
+    <!-- *** TODO: simplify this button's logic -->
     <template v-if="entity_type_cd || isFederal || isRestorable">
       <v-row v-if="isNamedCompany || isAmalgamation">
         <XproFederalBullets v-if="isXproFlow && isFederal" cols="12" />
@@ -88,7 +88,7 @@
 
     <!-- Corporate Number checkbox, only for Canadian MRAS jurisdictions -->
     <!-- *** TODO: move this into flows above -->
-    <!-- *** TODO: simply this button's logic -->
+    <!-- *** TODO: simplify this button's logic -->
     <template v-if="entity_type_cd || isFederal || isRestorable">
       <v-row v-if="isNamedCompany || isAmalgamation">
         <v-col cols="12" class="d-flex justify-end">
@@ -97,30 +97,23 @@
       </v-row>
     </template>
 
-    <!-- Go to COLIN / Incorporate Now buttons -->
-    <!-- *** TODO: keep this as common code at bottom of template -->
-    <!-- *** TODO: simply this button's logic -->
-    <template v-if="entity_type_cd || isFederal || isRestorable">
-      <v-row v-if="isNumberedCompany || isFederal">
-        <v-col v-if = "!isConversion || isAlterOnline(getConversionType)" cols="12"
-          class="d-flex justify-center"
-        >
-          <v-btn
-            v-if="showColinButton"
-            class="px-9"
-            id="go-to-colin-button"
-            :href="colinLink"
-            target="_blank"
-          >
+    <!-- Go to COLIN button -->
+    <template v-if="showColinButton">
+      <v-row justify="center" class="mt-6">
+        <v-col cols="auto">
+          <v-btn id="go-to-colin-button" class="px-9" :href="colinLink" target="_blank">
             Go to Corporate Online to {{ isConversion ? 'Alter' : 'Register' }}
             <v-icon small class="ml-1">mdi-open-in-new</v-icon>
           </v-btn>
-          <v-btn
-            v-else-if="showActionButton"
-            class="px-9"
-            id="incorporate-now-button"
-            @click="actionNowClicked()"
-          >
+        </v-col>
+      </v-row>
+    </template>
+
+    <!-- Incorporate Now button -->
+    <template v-if="showActionButton">
+      <v-row justify="center" class="mt-6">
+        <v-col cols="auto">
+          <v-btn id="incorporate-now-button" class="px-9" @click="actionNowClicked()">
             {{ actionNowButtonText }}
           </v-btn>
         </v-col>
@@ -128,7 +121,6 @@
     </template>
 
     <!-- Check This Name button -->
-    <!-- *** TODO: keep this as common code at bottom of template -->
     <template v-if="isShowCheckNameButton">
       <v-row justify="center" class="mt-6">
         <v-col cols="auto">
@@ -259,41 +251,57 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   get showActionButton (): boolean {
-    // Since Federal Reinstatement is a paper filing, we don't show any buttons.
-    // The same conditional is in showColinButton().
-    if (this.isFederal && this.isRestoration) return false
-    if (this.isConversion && !this.isAlterOnline(this.getConversionType)) return false
-    return true
+    // FUTURE: simplify this logic
+    if (this.entity_type_cd || this.isFederal || this.isRestorable) {
+      if (this.isNumberedCompany || this.isFederal) {
+        if (!this.isConversion || this.isAlterOnline(this.getConversionType)) {
+          // Since Federal Reinstatement is a paper filing, we don't show any buttons.
+          // The same conditional is in showColinButton().
+          if (this.isFederal && this.isRestoration) return false
+          if (this.isConversion && !this.isAlterOnline(this.getConversionType)) return false
+          return true
+        }
+      }
+    }
+    return false
   }
 
   /** Whether to show "Go to COLIN" button (otherwise will show `actionNowButtonText` button). */
   get showColinButton (): boolean {
-    if (this.showContinueInButton) return true
-    if (this.isFederal && this.isRestoration) return false
-    if (this.isFederal) return true
+    // FUTURE: simplify this logic
+    if (this.entity_type_cd || this.isFederal || this.isRestorable) {
+      if (this.isNumberedCompany || this.isFederal) {
+        if (!this.isConversion || this.isAlterOnline(this.getConversionType)) {
+          if (this.showContinueInButton) return true
+          if (this.isFederal && this.isRestoration) return false
+          if (this.isFederal) return true
 
-    // don't show COLIN button for supported alteration entities
-    if (this.isConversion) {
-      return !this.isSupportedAlteration(this.getConversionType)
+          // don't show COLIN button for supported alteration entities
+          if (this.isConversion) {
+            return !this.isSupportedAlteration(this.getConversionType)
+          }
+
+          // don't show COLIN button for supported restoration entities
+          if (this.isRestoration) {
+            const supportedRestorationEntites = GetFeatureFlag('supported-restoration-entities')
+            const isRestorationEntity = supportedRestorationEntites.includes(this.entity_type_cd)
+            return !isRestorationEntity
+          }
+
+          if (this.isChangeName) {
+            const supportedChnageNameEntites = GetFeatureFlag('supported-name-change-entities')
+            const isChangeNameEntity = supportedChnageNameEntites.includes(this.entity_type_cd)
+            return !isChangeNameEntity
+          }
+
+          // don't show COLIN button for supported entities
+          const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
+          const isIncorporateEntity = supportedEntites.includes(this.entity_type_cd)
+          return !isIncorporateEntity
+        }
+      }
     }
-
-    // don't show COLIN button for supported restoration entities
-    if (this.isRestoration) {
-      const supportedRestorationEntites = GetFeatureFlag('supported-restoration-entities')
-      const isRestorationEntity = supportedRestorationEntites.includes(this.entity_type_cd)
-      return !isRestorationEntity
-    }
-
-    if (this.isChangeName) {
-      const supportedChnageNameEntites = GetFeatureFlag('supported-name-change-entities')
-      const isChangeNameEntity = supportedChnageNameEntites.includes(this.entity_type_cd)
-      return !isChangeNameEntity
-    }
-
-    // don't show COLIN button for supported entities
-    const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
-    const isIncorporateEntity = supportedEntites.includes(this.entity_type_cd)
-    return !isIncorporateEntity
+    return false
   }
 
   get showContinueInButton (): boolean {
