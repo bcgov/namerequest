@@ -298,6 +298,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
   get showActionNowButton (): boolean {
     if (
+
+    // If we're in Start a new BC based and the entity is supported, show incorporate now button.
       this.isAmalgamation &&
       this.isNumberedCompany &&
       this.isSupportedAmalgamation(this.getEntityTypeCd)
@@ -342,6 +344,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     ) return true
 
     // *** TODO: add your logic here instead of the spaghetti below
+    // If we're in Start a new BC based and the entity is not supported, show go to Colin button.
+
     if (this.isNewBcBusiness && this.isNumberedCompany) {
       return !this.showActionButton
     }
