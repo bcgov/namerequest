@@ -51,7 +51,7 @@ export const RequestActions: RequestActionsI[] = [
   },
   {
     group: 2,
-    text: 'Combine two or more businesses in BC',
+    text: 'Combine two or more businesses in BC using a new name',
     subtext: 'Amalgamation',
     shortDesc: 'Amalgamation Request',
     value: NrRequestActionCodes.AMALGAMATE

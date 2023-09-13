@@ -1,10 +1,10 @@
-import { EntityType } from '@/enums'
+import { EntityTypes } from '@/enums'
 import { EntityI } from '@/interfaces/models'
 
 export const EntityTypesBcData: EntityI[] = [
   {
     text: 'Sole Proprietorship',
-    value: EntityType.FR,
+    value: EntityTypes.FR,
     cat: 'Proprietorships',
     blurbs: [
       'A company owned and operated by one person who is personally responsible for all debts and liabilities.',
@@ -18,7 +18,7 @@ export const EntityTypesBcData: EntityI[] = [
   },
   {
     text: '"Doing Business As" name (DBA)',
-    value: EntityType.DBA,
+    value: EntityTypes.DBA,
     cat: 'Proprietorships',
     blurbs: [
       `An existing legal BC entity that would like to be known as another name. Referred to as a "Doing Business As",
@@ -31,7 +31,7 @@ export const EntityTypesBcData: EntityI[] = [
   },
   {
     text: 'Limited Company',
-    value: EntityType.CR,
+    value: EntityTypes.CR,
     cat: 'Corporations',
     blurbs: [
       `A company that may have one or more people who own shares with some personal responsibility for debt and
@@ -61,7 +61,7 @@ export const EntityTypesBcData: EntityI[] = [
   },
   {
     text: 'Unlimited Liability Company',
-    value: EntityType.UL,
+    value: EntityTypes.UL,
     cat: 'Corporations',
     blurbs: [
       `A type of corporation that is often used by American corporations as a Canadian subsidiary or to hold Canadian
@@ -89,7 +89,7 @@ export const EntityTypesBcData: EntityI[] = [
   },
   {
     text: 'General Partnership',
-    value: EntityType.GP,
+    value: EntityTypes.GP,
     cat: 'Partnerships',
     blurbs: [
       `A business owned and operated by two or more people or BC entities who are personally responsible for all debt
@@ -105,7 +105,7 @@ export const EntityTypesBcData: EntityI[] = [
   },
   {
     text: 'Limited Partnership',
-    value: EntityType.LP,
+    value: EntityTypes.LP,
     cat: 'Partnerships',
     blurbs: [
       `Frequently used in real estate developments or film industry projects.  This type of partnership ends when
@@ -120,7 +120,7 @@ export const EntityTypesBcData: EntityI[] = [
   },
   {
     text: 'Limited Liability Partnership',
-    value: EntityType.LL,
+    value: EntityTypes.LL,
     cat: 'Partnerships',
     blurbs: [
       'Frequently used by professionals such as doctors or lawyers to form a practice.',
@@ -135,7 +135,7 @@ export const EntityTypesBcData: EntityI[] = [
   },
   {
     text: 'Cooperative Association',
-    value: EntityType.CP,
+    value: EntityTypes.CP,
     cat: 'Social Enterprises',
     blurbs: [
       'Membership-based organization, owned and operated by the people who use its services.',
@@ -164,7 +164,7 @@ export const EntityTypesBcData: EntityI[] = [
   },
   {
     text: 'Benefit Company',
-    value: EntityType.BC,
+    value: EntityTypes.BC,
     cat: 'Corporations',
     blurbs: [
       `A type of corporation with special commitments to conduct business in a responsible and sustainable way.`,
@@ -190,7 +190,7 @@ export const EntityTypesBcData: EntityI[] = [
   },
   {
     text: 'Community Contribution Company',
-    value: EntityType.CC,
+    value: EntityTypes.CC,
     cat: 'Social Enterprises',
     blurbs: [
       `A type of corporation that has a benefit to the community. It is intended to bridge the gap between
@@ -217,7 +217,7 @@ export const EntityTypesBcData: EntityI[] = [
   },
   {
     text: 'Society',
-    value: EntityType.SO,
+    value: EntityTypes.SO,
     cat: 'Social Enterprises',
     blurbs: [
       `A non-profit organization that is also known as a non-share corporation.`,
@@ -235,13 +235,16 @@ export const EntityTypesBcData: EntityI[] = [
       'Has name protection in BC',
       'Must use Societies Online to register a name and incorporate'
     ],
+    amlBlurbs: [
+      'Society amalgamation'
+    ],
     chgBlurbs: [
       'Societies must use Societies Online to get their name.'
     ]
   },
   {
     text: 'Private Act',
-    value: EntityType.PA,
+    value: EntityTypes.PA,
     cat: 'Other',
     blurbs: [
       `A special type of business structure that may often be established through legislation or by economic growth
@@ -252,7 +255,7 @@ export const EntityTypesBcData: EntityI[] = [
   },
   {
     text: 'Credit Union',
-    value: EntityType.FI,
+    value: EntityTypes.FI,
     cat: 'Other',
     blurbs: [
       'Credit union',
@@ -268,7 +271,7 @@ export const EntityTypesBcData: EntityI[] = [
   },
   {
     text: 'Parish',
-    value: EntityType.PAR,
+    value: EntityTypes.PAR,
     cat: 'Other',
     blurbs: [
       'Church Parish',
@@ -280,8 +283,8 @@ export const EntityTypesBcData: EntityI[] = [
 
 export const EntityTypesXproData: EntityI[] = [
   {
-    text: 'Limited Company',
-    value: EntityType.XCR,
+    text: 'Extraprovincial Limited Company',
+    value: EntityTypes.XCR,
     cat: 'Corporations',
     blurbs: [
       `Corporation established and operating in a Canadian province or territory that plans to operate in
@@ -296,14 +299,8 @@ export const EntityTypesXproData: EntityI[] = [
       'Reinstate an extraprovincially registered company that is no longer active with BC Registries.'
     ],
     amlBlurbs: [
-      [
-        `Register an amalgamation that occurred in another jurisdiction where at least one of the companies is
-           extraprovincially registered in BC.`
-      ],
-      [
-        `Register an amalgamation or merger that occurred in another jurisdiction where at least one of the companies
-          is extraprovincially registered in BC.`
-      ]
+      `Register an amalgamation or merger that occurred in another jurisdiction where at least one of the companies
+        is extraprovincially registered in BC.`
     ],
     chgBlurbs: [
       [
@@ -318,8 +315,8 @@ export const EntityTypesXproData: EntityI[] = [
     rank: 1
   },
   {
-    text: 'Unlimited Liability Company',
-    value: EntityType.XUL,
+    text: 'Extraprovincial Unlimited Liability Company',
+    value: EntityTypes.XUL,
     cat: 'Corporations',
     blurbs: [
       'ULC established and operating in Alberta or Nova Scotia and plans to operate in BC as well.',
@@ -334,9 +331,7 @@ export const EntityTypesXproData: EntityI[] = [
       'Unlimited liability company'
     ],
     amlBlurbs: [
-      [
-        'Unlimited liability company'
-      ]
+      'Unlimited liability company amalgamation'
     ],
     chgBlurbs: [
       [
@@ -345,8 +340,8 @@ export const EntityTypesXproData: EntityI[] = [
     ]
   },
   {
-    text: 'Limited Liability Company',
-    value: EntityType.RLC,
+    text: 'Extraprovincial Limited Liability Company',
+    value: EntityTypes.RLC,
     cat: 'Corporations',
     blurbs: [
       ''
@@ -364,9 +359,7 @@ export const EntityTypesXproData: EntityI[] = [
         active with BC Registries.`
     ],
     amlBlurbs: [
-      [
-        '*** REMOVE THIS OPTION FROM AML REQUESTS ***'
-      ]
+      'Limited liability company amalgamation'
     ],
     chgBlurbs: [
       [
@@ -379,8 +372,8 @@ export const EntityTypesXproData: EntityI[] = [
     ]
   },
   {
-    text: 'Limited Partnership',
-    value: EntityType.XLP,
+    text: 'Extraprovincial Limited Partnership',
+    value: EntityTypes.XLP,
     cat: 'Partnerships',
     blurbs: [
       `Limited partnership (LP) established and operating in a Canadian province or territory that plans
@@ -395,9 +388,7 @@ export const EntityTypesXproData: EntityI[] = [
       'Limited partnership'
     ],
     amlBlurbs: [
-      [
-        'Limited partnership'
-      ]
+      'Limited partnership amalgamation'
     ],
     chgBlurbs: [
       [
@@ -407,8 +398,8 @@ export const EntityTypesXproData: EntityI[] = [
     ]
   },
   {
-    text: 'Limited Liability Partnership',
-    value: EntityType.XLL,
+    text: 'Extraprovincial Limited Liability Partnership',
+    value: EntityTypes.XLL,
     cat: 'Partnerships',
     blurbs: [
       `Limited liability partnership (LLP) established and operating in a Canadian province or territory
@@ -424,9 +415,7 @@ export const EntityTypesXproData: EntityI[] = [
       'Limited liability partnership'
     ],
     amlBlurbs: [
-      [
-        'Limited liability partnership'
-      ]
+      'Limited liability partnership amalgamation'
     ],
     chgBlurbs: [
       [
@@ -436,8 +425,8 @@ export const EntityTypesXproData: EntityI[] = [
     ]
   },
   {
-    text: 'Cooperative Association',
-    value: EntityType.XCP,
+    text: 'Extraprovincial Cooperative Association',
+    value: EntityTypes.XCP,
     cat: 'Social Enterprises',
     blurbs: [
       `Cooperative association established and operating in a Canadian province or territory or in the federal
@@ -452,10 +441,8 @@ export const EntityTypesXproData: EntityI[] = [
       'Restore an extraprovincially registered cooperative association that is no longer active with BC Registries.'
     ],
     amlBlurbs: [
-      [
-        `Register an amalgamation that occurred in another jurisdiction where at least one of the cooperative
-          associations is extraprovincially registered in BC.`
-      ]
+      `Register an amalgamation that occurred in another jurisdiction where at least one of the cooperative
+        associations is extraprovincially registered in BC.`
     ],
     chgBlurbs: [
       [
@@ -465,8 +452,8 @@ export const EntityTypesXproData: EntityI[] = [
     ]
   },
   {
-    text: 'Society',
-    value: EntityType.XSO,
+    text: 'Extraprovincial Society',
+    value: EntityTypes.XSO,
     cat: 'Social Enterprises',
     blurbs: [
       'A non-profit organization that is also known as a non-share corporation.',
@@ -484,9 +471,7 @@ export const EntityTypesXproData: EntityI[] = [
       'Must use Societies Online to register a name and incorporate'
     ],
     amlBlurbs: [
-      [
-        'Society'
-      ]
+      'Society amalgamation'
     ],
     chgBlurbs: [
       [

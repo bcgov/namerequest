@@ -27,7 +27,7 @@ import {
   SubmissionTypeT
 } from '@/interfaces'
 import {
-  EntityType,
+  EntityTypes,
   Location,
   NrAffiliationErrors,
   NrRequestActionCodes,
@@ -113,23 +113,17 @@ export const getLocation = (state: StateIF): Location => {
 
 /** True if current request location is Canadian. */
 export const isCanadian = (state: StateIF): boolean => {
-  return (
-    getLocation(state) === Location.CA &&
-    getJurisdictionCd(state) !== Location.FD
-  )
+  return (isLocationCA(state) && getJurisdictionCd(state) !== Location.FD)
 }
 
 /** True if current request location is Federal. */
 export const isFederal = (state: StateIF): boolean => {
-  return (
-    getLocation(state) === Location.CA &&
-    getJurisdictionCd(state) === Location.FD
-  )
+  return (isLocationCA(state) && getJurisdictionCd(state) === Location.FD)
 }
 
 /** True if current request location is International. */
 export const isInternational = (state: StateIF): boolean => {
-  return (getLocation(state) === Location.IN)
+  return (isLocationIN(state))
 }
 
 export const getLocationText = (state: StateIF): string => {
@@ -141,7 +135,7 @@ export const getJurisdictionCd = (state: StateIF): string => {
 }
 
 export const getJurisdictionText = (state: StateIF): string => {
-  return (getLocation(state) === Location.CA)
+  return (isLocationCA(state))
     ? CanJurisdictions.find(jur => jur.value === getJurisdictionCd(state))?.text
     : IntlJurisdictions.find(jur => jur.value === getJurisdictionCd(state))?.text
 }
@@ -150,11 +144,11 @@ export const getMrasSearchResultCode = (state: StateIF): number => {
   return state.stateModel.newRequestModel.mrasSearchResultCode
 }
 
-export const getEntityTypeCd = (state: StateIF): EntityType => {
+export const getEntityTypeCd = (state: StateIF): EntityTypes => {
   return state.stateModel.newRequestModel.entity_type_cd
 }
 
-export const getOriginEntityTypeCd = (state: StateIF): EntityType => {
+export const getOriginEntityTypeCd = (state: StateIF): EntityTypes => {
   return state.stateModel.newRequestModel.origin_entity_type_cd
 }
 
@@ -210,7 +204,7 @@ export const isRestoration = (state: StateIF): boolean => {
 }
 
 /**
- * True if current flow is XPRO (includes AMALGAMATION, NEW_BUSINESS, RESTORATION and CHANGE_NAME).
+ * True if current flow supports XPRO (includes AMALGAMATION, NEW_BUSINESS, RESTORATION and CHANGE_NAME).
  * FUTURE: Might need to add others.
  */
 export const isXproFlow = (state: StateIF): boolean => {
@@ -291,7 +285,7 @@ export const getIsPersonsName = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.isPersonsName
 }
 
-export const getDoNotAnalyzeEntities = (state: StateIF): EntityType[] => {
+export const getDoNotAnalyzeEntities = (state: StateIF): EntityTypes[] => {
   return state.stateModel.newRequestModel.doNotAnalyzeEntities
 }
 
@@ -419,69 +413,76 @@ export const getConversionTypeOptions = (state: StateIF): ConversionTypesI[] => 
   })
 }
 
+/** True if location is British Columbia. */
+export const isLocationBC = (state: StateIF): boolean => {
+  return (getLocation(state) === Location.BC)
+}
+
+/** True if location is Canada. */
+export const isLocationCA = (state: StateIF): boolean => {
+  return (getLocation(state) === Location.CA)
+}
+
+/** True if location is International. */
+export const isLocationIN = (state: StateIF): boolean => {
+  return (getLocation(state) === Location.IN)
+}
+
 /** Map the appropriate Blurb based on the request action and location */
 export const getEntityBlurbs = (state: StateIF): Array<EntityI | ConversionTypesI> => {
-  switch (getRequestActionCd(state)) {
-    case NrRequestActionCodes.NEW_BUSINESS:
-      if (getLocation(state) === Location.BC) {
-        return EntityTypesBcData
-      }
-      if (getLocation(state) === Location.CA) {
-        return EntityTypesXproData
-      }
-      if (getLocation(state) === Location.IN) {
-        return EntityTypesXproData.map(x => ({ ...x, blurbs: x.intBlurbs }))
-      }
-      break
-
-    case NrRequestActionCodes.MOVE:
-      if (getLocation(state) === Location.BC) {
-        return EntityTypesBcData.map(x => ({ ...x, blurbs: x.mveBlurbs }))
-      }
-      break
-
-    case NrRequestActionCodes.RESTORE:
-      if (getLocation(state) === Location.BC) {
-        return EntityTypesBcData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
-      }
-      if ([Location.CA, Location.IN].includes(getLocation(state))) {
-        return EntityTypesXproData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
-      }
-      break
-
-    case NrRequestActionCodes.AMALGAMATE:
-      if (getLocation(state) === Location.BC) {
-        return EntityTypesBcData.map(x => ({ ...x, blurbs: x.amlBlurbs }))
-      }
-      if (getLocation(state) === Location.CA) {
-        return EntityTypesXproData.map(x => ({ ...x, blurbs: x.amlBlurbs[0] }))
-      }
-      if (getLocation(state) === Location.IN) {
-        // If international blurb is the same as national, map that blurb
-        return EntityTypesXproData.map(x => ({ ...x, blurbs: x.amlBlurbs[1] || x.amlBlurbs[0] }))
-      }
-      break
-
-    case NrRequestActionCodes.CHANGE_NAME:
-      if (getLocation(state) === Location.BC) {
-        return EntityTypesBcData.map(x => ({ ...x, blurbs: x.chgBlurbs }))
-      }
-      if (getLocation(state) === Location.CA) {
-        return EntityTypesXproData.map(x => ({ ...x, blurbs: x.chgBlurbs[0] }))
-      }
-      if (getLocation(state) === Location.IN) {
-        // If international blurb is the same as national, map that blurb
-        return EntityTypesXproData.map(x => ({ ...x, blurbs: x.chgBlurbs[1] || x.chgBlurbs[0] }))
-      }
-      break
-
-    case NrRequestActionCodes.CONVERSION:
-      if (getLocation(state) === Location.BC) {
-        return ConversionTypes
-      }
-      break
+  if (isNewBusiness(state)) {
+    if (isLocationBC(state)) {
+      return EntityTypesBcData
+    }
+    if (isLocationCA(state)) {
+      return EntityTypesXproData
+    }
+    if (isLocationIN(state)) {
+      return EntityTypesXproData.map(x => ({ ...x, blurbs: x.intBlurbs }))
+    }
   }
-  return null
+
+  if (isContinuationIn(state)) {
+    if (isLocationBC(state)) {
+      return EntityTypesBcData.map(x => ({ ...x, blurbs: x.mveBlurbs }))
+    }
+  }
+
+  if (isRestoration(state)) {
+    if (isLocationBC(state)) {
+      return EntityTypesBcData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
+    }
+    if ([Location.CA, Location.IN].includes(getLocation(state))) {
+      return EntityTypesXproData.map(x => ({ ...x, blurbs: x.rehBlurbs }))
+    }
+  }
+
+  if (isAmalgamation(state)) {
+    const bc = EntityTypesBcData.map(x => ({ ...x, blurbs: x.amlBlurbs }))
+    const xpro = EntityTypesXproData.map(x => ({ ...x, blurbs: x.amlBlurbs }))
+    return bc.concat(xpro)
+  }
+
+  if (isChangeName(state)) {
+    if (isLocationBC(state)) {
+      return EntityTypesBcData.map(x => ({ ...x, blurbs: x.chgBlurbs }))
+    }
+    if (isLocationCA(state)) {
+      return EntityTypesXproData.map(x => ({ ...x, blurbs: x.chgBlurbs[0] }))
+    }
+    if (isLocationIN(state)) {
+      // If international blurb is the same as national, map that blurb
+      return EntityTypesXproData.map(x => ({ ...x, blurbs: x.chgBlurbs[1] || x.chgBlurbs[0] }))
+    }
+  }
+
+  if (isConversion(state)) {
+    if (isLocationBC(state)) {
+      return ConversionTypes
+    }
+  }
+
+  return []
 }
 
 /** The BC Entity Types. */
@@ -491,8 +492,9 @@ export const getEntityTypesBC = (state: StateIF): EntityI[] => {
       let output = []
       for (let entity of entities) {
         let obj = EntityTypesBcData.find(ent => ent.value === entity)
-        // "CR" type is shortlisted. if CR exists in filtered entity_types, preserve its rank and shortlist keys
-        if (entity === EntityType.CR) {
+        // "CR" type is shortlisted
+        // if CR exists in filtered entity_types, preserve its rank and shortlist keys
+        if (entity === EntityTypes.CR) {
           output.push(obj)
           continue
         }
@@ -531,8 +533,8 @@ export const getEntityTypesBC = (state: StateIF): EntityI[] => {
 /** Get Xpro entity types. */
 export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
   let _entityTypesXproData = EntityTypesXproData
-  if (getLocation(state) === Location.CA) {
-    _entityTypesXproData = _entityTypesXproData.filter(ent => ent.value !== EntityType.RLC)
+  if (isLocationCA(state)) {
+    _entityTypesXproData = _entityTypesXproData.filter(ent => ent.value !== EntityTypes.RLC)
   }
 
   try {
@@ -541,12 +543,13 @@ export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
       for (let entity of entities) {
         // use EntityTypesXproData instead of scoped _entityTypesXproData here so that RLC can be included
         let obj = EntityTypesXproData.find(ent => ent.value === entity)
-        // "CR" type is shortlisted. if XCR exists in filtered entity_types, preserve its rank and shortlist keys
-        if (entity === EntityType.XCR) {
+        // "CR" type is shortlisted
+        // if XCR exists in filtered entity_types, preserve its rank and shortlist keys
+        if (entity === EntityTypes.XCR) {
           output.push(obj)
           continue
         }
-        if (getLocation(state) === Location.CA && entity === EntityType.RLC) {
+        if (isLocationCA(state) && entity === EntityTypes.RLC) {
           continue
         }
         let objSansRankAndShortlist = {}
@@ -587,51 +590,51 @@ export const getXproRequestTypeCd = (state: StateIF): XproNameType => {
   if (isAssumedName(state)) {
     switch (getEntityTypeCd(state)) {
       // Xpro Limited Liability Company REST/REN/REH/RESUBMIT -> Xpro Limited Liability Company AS/RESUBMIT
-      case EntityType.RLC: return XproNameType.AL
+      case EntityTypes.RLC: return XproNameType.AL
       // Xpro Corporation NEW_AML/NEW/AML/RESUBMIT -> Xpro Corporation AS/RESUBMIT
-      case EntityType.XCR: return XproNameType.AS
+      case EntityTypes.XCR: return XproNameType.AS
     }
   }
   return null
 }
 
-/** Get entity type options. */
+/** Get entity type options (short list only). */
 export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
   const bcOptions: SelectOptionsI[] = getEntityTypesBC(state)?.filter(x => {
     // Set shortlisted entity types for BC Move and Restoration requests.
     if (
-      [NrRequestActionCodes.MOVE, NrRequestActionCodes.RESTORE].includes(getRequestActionCd(state)) &&
-      getLocation(state) === Location.BC
+      (isContinuationIn(state) || isRestoration(state)) &&
+      isLocationBC(state)
     ) {
       // Shortlist order: Limited Company, Cooperative Association
-      if (x.value === EntityType.CP) {
+      if (x.value === EntityTypes.CP) {
         x.shortlist = true
         x.rank = 2
-      } else if ([EntityType.FR, EntityType.GP, EntityType.UL].includes(x.value)) {
+      } else if ([EntityTypes.FR, EntityTypes.GP, EntityTypes.UL].includes(x.value)) {
         x.shortlist = null
         x.rank = null
       }
-    } else if (getRequestActionCd(state) === NrRequestActionCodes.AMALGAMATE && getLocation(state) === Location.BC) {
+    } else if (isAmalgamation(state)) {
       // Shortlist order: Limited Company, Unlimited Liability Company
-      if (x.value === EntityType.UL) {
+      if (x.value === EntityTypes.UL) {
         x.shortlist = true
         x.rank = 2
-      } else if ([EntityType.FR, EntityType.GP, EntityType.CP].includes(x.value)) {
+      } else if ([EntityTypes.FR, EntityTypes.GP, EntityTypes.CP].includes(x.value)) {
         x.shortlist = null
         x.rank = null
       }
     } else {
       // Shortlist order: Limited Company, Sole Proprietorship, DBA, General Partnership
-      if ([EntityType.UL, EntityType.CP].includes(x.value)) {
+      if ([EntityTypes.UL, EntityTypes.CP].includes(x.value)) {
         x.shortlist = null
         x.rank = null
-      } else if (x.value === EntityType.FR) {
+      } else if (x.value === EntityTypes.FR) {
         x.shortlist = true
         x.rank = 2
-      } else if (x.value === EntityType.DBA) {
+      } else if (x.value === EntityTypes.DBA) {
         x.shortlist = true
         x.rank = 3
-      } else if (x.value === EntityType.GP) {
+      } else if (x.value === EntityTypes.GP) {
         x.shortlist = true
         x.rank = 4
       }
@@ -643,41 +646,41 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
 
   const xproOptions: SelectOptionsI[] = getEntityTypesXPRO(state).filter(x => {
     if (
-      getRequestActionCd(state) === NrRequestActionCodes.NEW_BUSINESS &&
-      [Location.CA, Location.IN].includes(getLocation(state))
+      isNewBusiness(state) &&
+      (isLocationCA(state) || isLocationIN(state))
     ) {
       // Shortlist order: Limited Company, Limited Partnership
-      if (x.value === EntityType.XLP) {
+      if (x.value === EntityTypes.XLP) {
         x.shortlist = true
         x.rank = 2
-      } else if (x.value === EntityType.XCP) {
+      } else if (x.value === EntityTypes.XCP) {
         x.shortlist = null
         x.rank = null
       }
     } else if (
-      getRequestActionCd(state) === NrRequestActionCodes.MOVE &&
-      [Location.CA, Location.IN].includes(getLocation(state))
+      isContinuationIn(state) &&
+      (isLocationCA(state) || isLocationIN(state))
     ) {
       // Shortlist order: Limited Company, Cooperative Association
-      if (x.value === EntityType.XLP) {
+      if (x.value === EntityTypes.XLP) {
         x.shortlist = null
         x.rank = null
-      } else if (x.value === EntityType.XCP) {
+      } else if (x.value === EntityTypes.XCP) {
         x.shortlist = true
         x.rank = 2
       }
     } else if (
-      getRequestActionCd(state) === NrRequestActionCodes.CHANGE_NAME &&
-      [Location.CA, Location.IN].includes(getLocation(state))
+      isChangeName(state) &&
+      (isLocationCA(state) || isLocationIN(state))
     ) {
       // Shortlist order: Limited Company, Limited Partnership, Limited Liability Partnership
-      if (x.value === EntityType.XLP) {
+      if (x.value === EntityTypes.XLP) {
         x.shortlist = true
         x.rank = 2
-      } else if (x.value === EntityType.XLL) {
+      } else if (x.value === EntityTypes.XLL) {
         x.shortlist = true
         x.rank = 3
-      } else if (x.value === EntityType.XCP) {
+      } else if (x.value === EntityTypes.XCP) {
         x.shortlist = null
         x.rank = null
       }
@@ -687,7 +690,7 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
     }
   })
 
-  let options: SelectOptionsI[] = (getLocation(state) === Location.BC) ? [...bcOptions] : [...xproOptions]
+  let options: SelectOptionsI[] = (isLocationBC(state)) ? [...bcOptions] : [...xproOptions]
   let n = 4
 
   if (getEntityTypeAddToSelect(state)) {
@@ -699,25 +702,21 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
   options = options.concat({ text: 'View all business types', value: 'INFO', rank: n })
 
   return options.sort((a, b) => {
-    if (a.rank < b.rank) {
-      return -1
-    }
-    if (a.rank > b.rank) {
-      return 1
-    }
+    if (a.rank < b.rank) return -1
+    if (a.rank > b.rank) return 1
     return 0
   })
 }
 
 /** Returned the filtered location options. */
 export const getLocationOptions = (state: StateIF): Array<any> => {
-  if (getRequestActionCd(state) === NrRequestActionCodes.CONVERSION) {
+  if (isConversion(state)) {
     return Locations.filter(location => location.value === Location.BC)
   }
-  if (getRequestActionCd(state) === NrRequestActionCodes.ASSUMED) {
+  if (isAssumed(state)) {
     return Locations.filter(location => location.value !== Location.BC)
   }
-  if (getRequestActionCd(state) === NrRequestActionCodes.MOVE) {
+  if (isContinuationIn(state)) {
     return Locations.filter(location => location.value === Location.BC)
   }
   return Locations.filter(() => true) // copy of Locations
@@ -933,7 +932,7 @@ export const getNrRequestNames = (state: StateIF): RequestNameI[] => {
     }
   } else {
     // Just use the 'name' property to fill in the requestName
-    if (getEntityTypeCd(state) && getLocation(state) === Location.BC && Designations[getEntityTypeCd(state)]?.end) {
+    if (getEntityTypeCd(state) && isLocationBC(state) && Designations[getEntityTypeCd(state)]?.end) {
       requestNames.push({
         name: getName(state),
         designation: getSplitNameDesignation(state).designation,

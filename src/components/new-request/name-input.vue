@@ -31,8 +31,10 @@ import { MRAS_MAX_LENGTH } from '@/components/new-request/constants'
 export default class NameInput extends Vue {
   /** Whether to perform MRAS search. */
   @Prop({ default: false }) readonly isMrasSearch!: boolean
+
   /** Whether this component is read-only (eg, on name check page). */
   @Prop({ default: false }) readonly isReadOnly!: boolean
+
   /** Hint to show (eg, on name check page). */
   @Prop({ default: null }) readonly hint!: string
 
@@ -101,7 +103,7 @@ export default class NameInput extends Vue {
       if (this.isMrasSearch) {
         return ['Please enter a corporation number to search for']
       } else {
-        return ['Please enter a name to search for']
+        return ['Please enter the business\'s full legal name in home jurisdiction']
       }
     }
 

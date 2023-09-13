@@ -142,7 +142,7 @@ import ReserveSubmit from '@/components/new-request/submit-request/reserve-submi
 import { AnalysisJSONI, OptionI } from '@/interfaces'
 import { replaceWord } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { EntityType } from '@/enums'
+import { EntityTypes } from '@/enums'
 import { AllDesignationsList, Designations } from '@/list-data'
 
 @Component({
@@ -173,7 +173,7 @@ export default class GreyBox extends Vue {
   // Global getters
   @Getter getAnalysisJSON!: AnalysisJSONI
   @Getter getDesignationIssueTypes!: string[]
-  @Getter getEntityTypeCd!: EntityType
+  @Getter getEntityTypeCd!: EntityTypes
   @Getter getName!: string
   @Getter getRequestExaminationOrProvideConsent!: boolean
 
@@ -219,8 +219,12 @@ export default class GreyBox extends Vue {
   }
 
   get isAssumedNameEntityType () {
-    return this.entity_type_cd !== EntityType.XLP && this.entity_type_cd !== EntityType.XLL &&
-    this.entity_type_cd !== EntityType.XCP && this.entity_type_cd !== EntityType.XSO
+    return (
+      this.entity_type_cd !== EntityTypes.XLP &&
+      this.entity_type_cd !== EntityTypes.XLL &&
+      this.entity_type_cd !== EntityTypes.XCP &&
+      this.entity_type_cd !== EntityTypes.XSO
+    )
   }
 
   get allDesignationsStripped () {
@@ -274,7 +278,7 @@ export default class GreyBox extends Vue {
     return null
   }
 
-  get entity_type_cd (): EntityType {
+  get entity_type_cd (): EntityTypes {
     return this.getEntityTypeCd
   }
 

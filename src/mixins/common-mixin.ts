@@ -1,5 +1,5 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { EntityType, PriorityCode, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
+import { EntityTypes, PriorityCode, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 import { GetFeatureFlag } from '@/plugins'
 
@@ -21,33 +21,33 @@ export class CommonMixin extends Vue {
 
   /** Returns entity type text for the the specified code. */
   // FUTURE: use GetCorpFullDescription() instead
-  entityTypeCdToText (cd: EntityType): string {
+  entityTypeCdToText (cd: EntityTypes): string {
     switch (cd) {
       // BC Entity Types:
-      case EntityType.BC: return 'BC Benefit Company'
-      case EntityType.CC: return 'BC Community Contribution Company'
-      case EntityType.CP: return 'BC Cooperative Association'
-      case EntityType.CR: return 'BC Limited Company'
-      case EntityType.DBA: return 'BC "Doing Business As" name (DBA)'
-      case EntityType.FI: return 'BC Credit Union'
-      case EntityType.FR: return 'BC Sole Proprietorship'
-      case EntityType.GP: return 'BC General Partnership'
-      case EntityType.LL: return 'BC Limited Liability Partnership'
-      case EntityType.LP: return 'BC Limited Partnership'
-      case EntityType.PA: return 'BC Private Act'
-      case EntityType.PAR: return 'BC Parish'
-      case EntityType.SO: return 'BC Social Enterprise'
-      case EntityType.SP: return 'BC Sole Proprietorship'
-      case EntityType.UL: return 'BC Unlimited Liability Company'
+      case EntityTypes.BC: return 'BC Benefit Company'
+      case EntityTypes.CC: return 'BC Community Contribution Company'
+      case EntityTypes.CP: return 'BC Cooperative Association'
+      case EntityTypes.CR: return 'BC Limited Company'
+      case EntityTypes.DBA: return 'BC "Doing Business As" name (DBA)'
+      case EntityTypes.FI: return 'BC Credit Union'
+      case EntityTypes.FR: return 'BC Sole Proprietorship'
+      case EntityTypes.GP: return 'BC General Partnership'
+      case EntityTypes.LL: return 'BC Limited Liability Partnership'
+      case EntityTypes.LP: return 'BC Limited Partnership'
+      case EntityTypes.PA: return 'BC Private Act'
+      case EntityTypes.PAR: return 'BC Parish'
+      case EntityTypes.SO: return 'BC Social Enterprise'
+      case EntityTypes.SP: return 'BC Sole Proprietorship'
+      case EntityTypes.UL: return 'BC Unlimited Liability Company'
 
       // XPRO Entity Types:
-      case EntityType.XCR: return 'Extraprovincial Limited Company'
-      case EntityType.XUL: return 'Extraprovincial Unlimited Liability Company'
-      case EntityType.RLC: return 'Extraprovincial Limited Liability Company'
-      case EntityType.XLP: return 'Extraprovincial Limited Partnership'
-      case EntityType.XLL: return 'Extraprovincial Limited Liability Partnership'
-      case EntityType.XCP: return 'Extraprovincial Cooperative Association'
-      case EntityType.XSO: return 'Extraprovincial Social Enterprise'
+      case EntityTypes.XCR: return 'Extraprovincial Limited Company'
+      case EntityTypes.XUL: return 'Extraprovincial Unlimited Liability Company'
+      case EntityTypes.RLC: return 'Extraprovincial Limited Liability Company'
+      case EntityTypes.XLP: return 'Extraprovincial Limited Partnership'
+      case EntityTypes.XLL: return 'Extraprovincial Limited Liability Partnership'
+      case EntityTypes.XCP: return 'Extraprovincial Cooperative Association'
+      case EntityTypes.XSO: return 'Extraprovincial Social Enterprise'
 
       default: return (cd as unknown as string)
     }
@@ -57,13 +57,13 @@ export class CommonMixin extends Vue {
    * The alternate codes for entity types.
    * Alternate codes are used in Entities UIs.
    */
-  entityTypeToCorpType (entityType: EntityType): CorpTypeCd {
+  entityTypeToCorpType (entityType: EntityTypes): CorpTypeCd {
     switch (entityType) {
-      case EntityType.BC: return CorpTypeCd.BENEFIT_COMPANY
-      case EntityType.CC: return CorpTypeCd.BC_CCC
-      case EntityType.CR: return CorpTypeCd.BC_COMPANY
-      case EntityType.UL: return CorpTypeCd.BC_ULC_COMPANY
-      case EntityType.CP: return CorpTypeCd.COOP
+      case EntityTypes.BC: return CorpTypeCd.BENEFIT_COMPANY
+      case EntityTypes.CC: return CorpTypeCd.BC_CCC
+      case EntityTypes.CR: return CorpTypeCd.BC_COMPANY
+      case EntityTypes.UL: return CorpTypeCd.BC_ULC_COMPANY
+      case EntityTypes.CP: return CorpTypeCd.COOP
       default: return null
     }
   }
@@ -72,13 +72,13 @@ export class CommonMixin extends Vue {
    * Entities UI codes to Name Request Code
    * @example ULC --> UL
    */
-  corpTypeToEntityType (entityType: CorpTypeCd): EntityType {
+  corpTypeToEntityType (entityType: CorpTypeCd): EntityTypes {
     switch (entityType) {
-      case CorpTypeCd.BENEFIT_COMPANY: return EntityType.BC
-      case CorpTypeCd.BC_CCC: return EntityType.CC
-      case CorpTypeCd.BC_COMPANY: return EntityType.CR
-      case CorpTypeCd.BC_ULC_COMPANY: return EntityType.UL
-      case CorpTypeCd.COOP: return EntityType.CP
+      case CorpTypeCd.BENEFIT_COMPANY: return EntityTypes.BC
+      case CorpTypeCd.BC_CCC: return EntityTypes.CC
+      case CorpTypeCd.BC_COMPANY: return EntityTypes.CR
+      case CorpTypeCd.BC_ULC_COMPANY: return EntityTypes.UL
+      case CorpTypeCd.COOP: return EntityTypes.CP
       default: return null
     }
   }
@@ -109,9 +109,11 @@ export class CommonMixin extends Vue {
 
   /** Returns true if the specified alteration NR is allowed to be done online. */
   isAlterOnline (type: NrRequestTypeCodes): boolean {
-    return !(type === NrRequestTypeCodes.CONVERT_BEN ||
+    return !(
+      type === NrRequestTypeCodes.CONVERT_BEN ||
       type === NrRequestTypeCodes.CONVERT_CORP ||
-      type === NrRequestTypeCodes.CONVERT_ULBE)
+      type === NrRequestTypeCodes.CONVERT_ULBE
+    )
   }
 
   /** Returns true if the specified NR is a priority request. */
@@ -119,13 +121,16 @@ export class CommonMixin extends Vue {
     return (nr?.priorityCd === PriorityCode.YES)
   }
 
-  /** Returns true if the specified NR is for a supported Incorporation Entity Type (FF). */
-  isSupportedEntity (nr: any): boolean {
+  /** Returns true if the specified entity type is allowed for Incorporation / Registration. */
+  isSupportedIncorporationRegistration (type: EntityTypes): boolean {
     const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
-    return supportedEntites.includes(nr?.entity_type_cd)
+    return supportedEntites.includes(type)
   }
 
-  /** in case Societies NR needs to be released AFTER the way of navigating changes (feature branch) */
+  /**
+   * Returns true if society NRs are enabled -- in case societies NRs need to be released
+   * separately from the Way of Navigating feature changes.
+   */
   isSocietyEnabled (): boolean {
     return GetFeatureFlag('enable-society')
   }
@@ -133,29 +138,35 @@ export class CommonMixin extends Vue {
   /** Returns true if the specified NR is for a firm (SP/GP). */
   isFirm (nr: any): boolean {
     return [
-      EntityType.SP,
-      EntityType.DBA,
-      EntityType.GP
+      EntityTypes.SP,
+      EntityTypes.DBA,
+      EntityTypes.GP
     ].includes(nr?.legalType)
   }
 
-  /** Returns true if the specified NR is for alteration (conversion). */
+  /** Returns true if the specified request type is allowed for alteration (conversion). */
   isSupportedAlteration (type: NrRequestTypeCodes): boolean {
     const supportedAlterationTypes = GetFeatureFlag('supported-alteration-types')
     return supportedAlterationTypes.includes(type)
   }
 
-  /** Returns true if the specified NR is for an Extraprovincial Company. */
-  isXProCompany (nr: any): boolean {
+  /** Returns true if the specified entity type is allowed for amalganation. */
+  isSupportedAmalgamation (type: EntityTypes): boolean {
+    const supportedAmalgamationEntities = GetFeatureFlag('supported-amalgamation-entities')
+    return supportedAmalgamationEntities.includes(type)
+  }
+
+  /** Returns true if the specified entity type is for an Extraprovincial Company. */
+  isXproEntityType (type: EntityTypes): boolean {
     return [
-      EntityType.XCR,
-      EntityType.XUL,
-      EntityType.RLC,
-      EntityType.XLP,
-      EntityType.XLL,
-      EntityType.XCP,
-      EntityType.XSO
-    ].includes(nr?.entity_type_cd)
+      EntityTypes.XCR,
+      EntityTypes.XUL,
+      EntityTypes.RLC,
+      EntityTypes.XLP,
+      EntityTypes.XLL,
+      EntityTypes.XCP,
+      EntityTypes.XSO
+    ].includes(type)
   }
 
   /** Scroll to given element Id */

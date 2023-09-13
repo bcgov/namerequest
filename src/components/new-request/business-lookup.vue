@@ -50,7 +50,7 @@ import { Component, Emit, Prop, Watch } from 'vue-property-decorator'
 import { debounce } from 'lodash'
 import { BusinessLookupResultIF, BusinessSearchIF } from '@/interfaces'
 import BusinessLookupServices from '@/services/business-lookup-services'
-import { EntityStates, EntityType } from '@/enums'
+import { EntityStates, EntityTypes } from '@/enums'
 
 enum States {
   INITIAL = 'initial',
@@ -131,7 +131,7 @@ export default class BusinessLookup extends Vue {
     return {
       identifier: input.identifier,
       legalName: input.name,
-      legalType: (input.legalType as unknown as EntityType),
+      legalType: (input.legalType as unknown as EntityTypes),
       state: input.status
     }
   }

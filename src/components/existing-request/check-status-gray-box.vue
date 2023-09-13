@@ -2,8 +2,9 @@
   <v-row no-gutters class="bg-light-gray">
     <v-col class="text-body-4 px-5 py-4">
       <p>
-        To check on the status of this Name Request in the future, enter the request number <strong>{{nrNum}}</strong>
-        plus the Applicant Phone Number or Email Address using the "Manage My Name Request tab" on the site.
+        To check on the status of this Name Request in the future, enter the request number
+        <strong>{{nrNum}}</strong> plus the Applicant Phone Number or Email Address using the "Manage My Name
+        Request tab" on the site.
       </p>
       <v-row no-gutters>
         <v-col cols="auto" class="pt-1 mr-2">
