@@ -251,56 +251,60 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   get showActionButton (): boolean {
-    // FUTURE: simplify this logic
-    if (this.entity_type_cd || this.isFederal || this.isRestorable) {
-      if (this.isNumberedCompany || this.isFederal) {
-        if (!this.isConversion || this.isAlterOnline(this.getConversionType)) {
-          // Since Federal Reinstatement is a paper filing, we don't show any buttons.
-          // The same conditional is in showColinButton().
-          if (this.isFederal && this.isRestoration) return false
-          if (this.isConversion && !this.isAlterOnline(this.getConversionType)) return false
-          return true
-        }
-      }
-    }
+    // *** TODO: add your logic here
+
+    // if (this.entity_type_cd || this.isFederal || this.isRestorable) {
+    //   if (this.isNumberedCompany || this.isFederal) {
+    //     if (!this.isConversion || this.isAlterOnline(this.getConversionType)) {
+    //       // Since Federal Reinstatement is a paper filing, we don't show any buttons.
+    //       // The same conditional is in showColinButton().
+    //       if (this.isFederal && this.isRestoration) return false
+    //       if (this.isConversion && !this.isAlterOnline(this.getConversionType)) return false
+    //       return true
+    //     }
+    //   }
+    // }
+
     return false
   }
 
   /** Whether to show "Go to COLIN" button (otherwise will show `actionNowButtonText` button). */
   get showColinButton (): boolean {
-    // FUTURE: simplify this logic
-    if (this.entity_type_cd || this.isFederal || this.isRestorable) {
-      if (this.isNumberedCompany || this.isFederal) {
-        if (!this.isConversion || this.isAlterOnline(this.getConversionType)) {
-          if (this.showContinueInButton) return true
-          if (this.isFederal && this.isRestoration) return false
-          if (this.isFederal) return true
+    // *** TODO: add your logic here
 
-          // don't show COLIN button for supported alteration entities
-          if (this.isConversion) {
-            return !this.isSupportedAlteration(this.getConversionType)
-          }
+    // if (this.entity_type_cd || this.isFederal || this.isRestorable) {
+    //   if (this.isNumberedCompany || this.isFederal) {
+    //     if (!this.isConversion || this.isAlterOnline(this.getConversionType)) {
+    //       if (this.showContinueInButton) return true
+    //       if (this.isFederal && this.isRestoration) return false
+    //       if (this.isFederal) return true
 
-          // don't show COLIN button for supported restoration entities
-          if (this.isRestoration) {
-            const supportedRestorationEntites = GetFeatureFlag('supported-restoration-entities')
-            const isRestorationEntity = supportedRestorationEntites.includes(this.entity_type_cd)
-            return !isRestorationEntity
-          }
+    //       // don't show COLIN button for supported alteration entities
+    //       if (this.isConversion) {
+    //         return !this.isSupportedAlteration(this.getConversionType)
+    //       }
 
-          if (this.isChangeName) {
-            const supportedChnageNameEntites = GetFeatureFlag('supported-name-change-entities')
-            const isChangeNameEntity = supportedChnageNameEntites.includes(this.entity_type_cd)
-            return !isChangeNameEntity
-          }
+    //       // don't show COLIN button for supported restoration entities
+    //       if (this.isRestoration) {
+    //         const supportedRestorationEntites = GetFeatureFlag('supported-restoration-entities')
+    //         const isRestorationEntity = supportedRestorationEntites.includes(this.entity_type_cd)
+    //         return !isRestorationEntity
+    //       }
 
-          // don't show COLIN button for supported entities
-          const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
-          const isIncorporateEntity = supportedEntites.includes(this.entity_type_cd)
-          return !isIncorporateEntity
-        }
-      }
-    }
+    //       if (this.isChangeName) {
+    //         const supportedChnageNameEntites = GetFeatureFlag('supported-name-change-entities')
+    //         const isChangeNameEntity = supportedChnageNameEntites.includes(this.entity_type_cd)
+    //         return !isChangeNameEntity
+    //       }
+
+    //       // don't show COLIN button for supported entities
+    //       const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
+    //       const isIncorporateEntity = supportedEntites.includes(this.entity_type_cd)
+    //       return !isIncorporateEntity
+    //     }
+    //   }
+    // }
+
     return false
   }
 
