@@ -15,9 +15,9 @@
       <template v-if="isNewBcBusiness">
         <EntityType v-if="getLocation" />
         <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
-        <NumberedCompanyBullets v-if="isNumberedCompany" />
+        <NumberedCompanyBullets v-if="isNumberedCompany && isNumberedEntityType" />
 
-        <template v-if="isNamedCompany">
+        <template v-if="isNamedCompany || !isNumberedEntityType">
           <v-col cols="12" :md="showDesignation ? '8' : '12'">
             <NameInput
               :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
@@ -313,6 +313,12 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
     // *** TODO: add your logic here instead of the spaghetti below
     // if (this.getEntityTypeCd || this.isFederal || this.isRestorable) {
+    if (this.isNewBcBusiness && this.isNumberedCompany && this.isNumberedEntityType) {
+      const isIncorporateEntity = this.isSupportedIncorporationRegistration(this.entity_type_cd)
+      return isIncorporateEntity
+    }
+
+    // if (this.entity_type_cd || this.isFederal || this.isRestorable) {
     //   if (this.isNumberedCompany || this.isFederal) {
     //     if (!this.isConversion || this.isAlterOnline(this.getConversionType)) {
     //       // Since Federal Reinstatement is a paper filing, we don't show any buttons.
@@ -345,8 +351,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
     // *** TODO: add your logic here instead of the spaghetti below
     // If we're in Start a new BC based and the entity is not supported, show go to Colin button.
-
-    if (this.isNewBcBusiness && this.isNumberedCompany) {
+    if (this.isNewBcBusiness && this.isNumberedCompany && this.isNumberedEntityType) {
       return !this.showActionButton
     }
 
@@ -409,6 +414,11 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   get showCheckNameButton (): boolean {
+    // Show button if we're in "Start a new BC-based business" and non-numbered entity is selected.
+    if (this.isNewBcBusiness && !this.isNumberedEntityType) {
+      return true
+    }
+
     if (this.isAmalgamation) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
       if (this.getEntityTypeCd && this.isSociety) return true
