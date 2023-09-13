@@ -14,7 +14,7 @@
       <!-- New BC Business flow -->
       <template v-if="isNewBcBusiness">
         <EntityType v-if="getLocation" />
-        <CompanyType v-if="getEntityTypeCd" />
+        <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
         <NumberedCompanyBullets v-if="isNumberedCompany" />
 
         <template v-if="isNamedCompany">
@@ -342,6 +342,10 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     ) return true
 
     // *** TODO: add your logic here instead of the spaghetti below
+    if (this.isNewBcBusiness && this.isNumberedCompany) {
+      return !this.showActionButton
+    }
+
     // if (this.getEntityTypeCd || this.isFederal || this.isRestorable) {
     //   if (this.isNumberedCompany || this.isFederal) {
     //     if (!this.isConversion || this.isAlterOnline(this.getConversionType)) {
