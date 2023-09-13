@@ -93,9 +93,23 @@
 
       <!-- Conversion (aka Alteration) flow -->
       <template v-else-if="isConversion">
-        <EntityType v-if="getSearchBusiness && isAlterable" />
         <BusinessLookupFetch />
+        <EntityType v-if="getSearchBusiness && isAlterable" cols="12" md="12" />
         <CompanyType v-if="showCompanyTypeRadioButtons" />
+
+        <template v-if="isNamedCompany">
+          <v-col cols="12" :md="showDesignation ? '8' : '12'">
+            <NameInput
+              :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+              @emit-corp-num-validity="corpNumValid = $event"
+            />
+          </v-col>
+          <Designation cols="12" md="4" />
+        </template>
+
+        <template v-if="isNumberedCompany">
+          <NumberedCompanyBullets />
+        </template>
       </template>
 
       <!-- Restoration / Reinstatement flow -->
