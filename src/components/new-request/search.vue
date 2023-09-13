@@ -285,6 +285,12 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   get showCompanyTypeRadioButtons (): boolean {
+    if (
+      this.isConversion &&
+      !!this.getSearchBusiness &&
+      !!this.getConversionType
+    ) return true
+
     // *** TODO: add your logic in the template instead of the spaghetti below
     // if (!this.getEntityTypeCd && !this.getConversionType && !this.isFederal) return false
     // if (this.isConversion) {
@@ -303,6 +309,12 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       this.isAmalgamation &&
       this.isNumberedCompany &&
       this.isSupportedAmalgamation(this.getEntityTypeCd)
+    ) return true
+
+    if (
+      this.isConversion &&
+      this.isNumberedCompany &&
+      this.isSupportedAlteration(this.getConversionType)
     ) return true
 
     // *** TODO: add your logic here instead of the spaghetti below
@@ -328,6 +340,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       this.isNumberedCompany &&
       !this.isSupportedAmalgamation(this.getEntityTypeCd) &&
       !this.isXproFlow
+    ) return true
+
+    if (
+      this.isConversion &&
+      this.isNumberedCompany &&
+      !this.isSupportedAlteration(this.getConversionType) &&
+      this.isAlterOnline(this.getConversionType)
     ) return true
 
     // *** TODO: add your logic here instead of the spaghetti below
@@ -393,6 +412,10 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (this.isAmalgamation) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
       if (this.getEntityTypeCd && this.isSociety) return true
+    }
+
+    if (this.isConversion) {
+      if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
     }
 
     // *** TODO: add your logic here instead of the spaghetti below
