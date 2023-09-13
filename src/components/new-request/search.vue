@@ -17,7 +17,7 @@
         <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
         <NumberedCompanyBullets v-if="isNumberedCompany && isNumberedEntityType" />
 
-        <template v-if="isNamedCompany || !isNumberedEntityType">
+        <template v-if="(isNamedCompany || !isNumberedEntityType) && entity_type_cd">
           <v-col cols="12" :md="showDesignation ? '8' : '12'">
             <NameInput
               :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
@@ -415,7 +415,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
   get showCheckNameButton (): boolean {
     // Show button if we're in "Start a new BC-based business" and non-numbered entity is selected.
-    if (this.isNewBcBusiness && !this.isNumberedEntityType) {
+    if (this.isNewBcBusiness && !this.isNumberedEntityType && this.entity_type_cd) {
       return true
     }
 
