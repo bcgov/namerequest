@@ -82,7 +82,7 @@
       </template>
 
       <!-- Category tables - xpro (amalgamation only) -->
-      <template v-if="isAmalgamation">
+      <template v-if="isAmalgamation && !showSocietiesInfo">
         <v-row class="pt-4">
           <v-col cols="12">
             <span class="copy-small">Extraprovincial:</span>
@@ -156,6 +156,7 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
   @Action setEntityTypeAddToSelect!: ActionBindingIF
   @Action setPickEntityModalVisible!: ActionBindingIF
 
+  // Local variable
   showSocietiesInfo = false
 
   closeIconClicked () {
@@ -169,14 +170,6 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
     if (!newVal) {
       setTimeout(() => { this.showSocietiesInfo = false }, 500)
     }
-  }
-
-  get entity_type_cd (): EntityTypes {
-    return this.getEntityTypeCd
-  }
-
-  set entity_type_cd (value: EntityTypes) {
-    this.setEntityTypeCd(value)
   }
 
   get tableData (): any[] {
@@ -244,10 +237,6 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
     return this.getEntityBlurbs.find(type => type.value === entity_type_cd)?.blurbs || []
   }
 
-  clearEntitySelection (): void {
-    this.entity_type_cd = EntityTypes.INFO
-  }
-
   chooseConversion (conversion) {
     let index = this.getConversionTypeOptions.findIndex((conv: any) => conv.value === conversion.value)
     if (index === -1) {
@@ -265,7 +254,6 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
     // show an URL of creating society NR if Societies NR needs to be released AFTER the way of navigating changes
     if (!this.isSocietyEnabled() && (entity.value === EntityTypes.SO || entity.value === EntityTypes.XSO)) {
       this.showSocietiesInfo = true
-      this.clearEntitySelection()
       return
     }
     let index = this.getEntityTypeOptions.findIndex((ent: any) => ent.value === entity.value)

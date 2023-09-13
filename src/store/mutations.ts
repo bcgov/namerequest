@@ -139,12 +139,10 @@ export const mutateLocation = (state: StateIF, location: Location) => {
   if (location === state.stateModel.newRequestModel.location) {
     return
   }
-  // entity type needs to be reset when the location changes (options depend on location)
-  state.stateModel.newRequestModel.entity_type_cd = null
-  // special case for sub-menu
-  if (location === Location.INFO) {
-    state.stateModel.newRequestModel.location = location
-    return
+  // reset entity type on location changes (options depend on location)
+  // except amalgamation because entity type came before location
+  if (state.stateModel.newRequestModel.request_action_cd !== NrRequestActionCodes.AMALGAMATE) {
+    state.stateModel.newRequestModel.entity_type_cd = null
   }
   if (
     state.stateModel.newRequestModel.location === Location.CA ||

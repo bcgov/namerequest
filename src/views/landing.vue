@@ -22,6 +22,8 @@
         <div>getLocation={{ getLocation }}</div>
         <div>getEntityTypeCd={{ getEntityTypeCd }}</div>
         <div>isMrasJurisdiction={{ isMrasJurisdiction }}</div>
+        <div>isFederal={{ isFederal }}</div>
+        <div>getSearchCompanyType={{ getSearchCompanyType }}</div>
       </v-container>
     </v-row>
 
@@ -50,6 +52,7 @@ import Tabs from '@/components/tabs.vue'
 
 import NamexServices from '@/services/namex-services'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { CompanyTypes } from '@/enums' // FOR DEBUGGING
 
 @Component({
   components: {
@@ -70,9 +73,11 @@ export default class Landing extends Vue {
   @Getter getDisplayedComponent!: string
 
   // FOR DEBUGGING:
+  @Getter getSearchCompanyType!: CompanyTypes
   @Getter getEntityTypeCd!: any
   @Getter getLocation!: any
   @Getter getRequestActionCd!: any
+  @Getter isFederal!: boolean
   @Getter isMrasJurisdiction!: boolean
 
   // Global actions
