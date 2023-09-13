@@ -207,10 +207,10 @@ import NumberedCompanyBullets from '@/components/new-request/search-components/n
 import RequestAction from '@/components/new-request/search-components/request-action.vue'
 import XproFederalBullets from '@/components/new-request/search-components/xpro-federal-bullets.vue'
 
-import { CompanyTypes, EntityTypes } from '@/enums'
+import { EntityTypes } from '@/enums'
 import { CommonMixin, NrAffiliationMixin, SearchMixin } from '@/mixins'
 import { Designations } from '@/list-data'
-import { GetFeatureFlag, Navigate } from '@/plugins'
+import { Navigate } from '@/plugins'
 
 /**
  * This is the component that displays the new NR menus and flows.
@@ -297,9 +297,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   get showActionNowButton (): boolean {
+    // Conditional for Amalgamation Flow.
     if (
-
-    // If we're in Start a new BC based and the entity is supported, show incorporate now button.
       this.isAmalgamation &&
       this.isNumberedCompany &&
       this.isSupportedAmalgamation(this.getEntityTypeCd)
@@ -311,14 +310,21 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       this.isSupportedAlteration(this.getConversionType)
     ) return true
 
-    // *** TODO: add your logic here instead of the spaghetti below
-    // if (this.getEntityTypeCd || this.isFederal || this.isRestorable) {
+    if (
+      this.isConversion &&
+      this.isNumberedCompany &&
+      this.isSupportedAlteration(this.getConversionType)
+    ) return true
+
+    // Conditional for "New BC-based business" Flow.
+    // If we're in Start a new BC based and the entity is supported, show incorporate now button.
     if (this.isNewBcBusiness && this.isNumberedCompany && this.isNumberedEntityType) {
-      const isIncorporateEntity = this.isSupportedIncorporationRegistration(this.entity_type_cd)
+      const isIncorporateEntity = this.isSupportedIncorporationRegistration(this.getEntityTypeCd)
       return isIncorporateEntity
     }
 
-    // if (this.entity_type_cd || this.isFederal || this.isRestorable) {
+    // *** TODO: add your logic here instead of the spaghetti below
+    // if (this.getEntityTypeCd || this.isFederal || this.isRestorable) {
     //   if (this.isNumberedCompany || this.isFederal) {
     //     if (!this.isConversion || this.isAlterOnline(this.getConversionType)) {
     //       // Since Federal Reinstatement is a paper filing, we don't show any buttons.
@@ -335,6 +341,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
   /** Whether to show "Go to COLIN" button (otherwise will show `actionNowButtonText` button). */
   get showColinButton (): boolean {
+    // Conditional for Amalgamation Flow.
     if (
       this.isAmalgamation &&
       this.isNumberedCompany &&
@@ -349,12 +356,20 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       this.isAlterOnline(this.getConversionType)
     ) return true
 
-    // *** TODO: add your logic here instead of the spaghetti below
+    if (
+      this.isConversion &&
+      this.isNumberedCompany &&
+      !this.isSupportedAlteration(this.getConversionType) &&
+      this.isAlterOnline(this.getConversionType)
+    ) return true
+
+    // Conditional for "New BC-based business" Flow.
     // If we're in Start a new BC based and the entity is not supported, show go to Colin button.
     if (this.isNewBcBusiness && this.isNumberedCompany && this.isNumberedEntityType) {
-      return !this.showActionButton
+      return !this.showActionNowButton
     }
 
+    // *** TODO: add your logic here instead of the spaghetti below
     // if (this.getEntityTypeCd || this.isFederal || this.isRestorable) {
     //   if (this.isNumberedCompany || this.isFederal) {
     //     if (!this.isConversion || this.isAlterOnline(this.getConversionType)) {
@@ -414,11 +429,17 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   get showCheckNameButton (): boolean {
+    // Conditional for "New BC-based business" Flow.
     // Show button if we're in "Start a new BC-based business" and non-numbered entity is selected.
-    if (this.isNewBcBusiness && !this.isNumberedEntityType && this.entity_type_cd) {
-      return true
+    // Special Case for societies.
+    if (this.isNewBcBusiness) {
+      if (this.getEntityTypeCd && !this.isNumberedEntityType && !this.isSociety) return true
+      if (this.getEntityTypeCd === EntityTypes.SO) {
+        if (this.isSocietyEnabled) return true
+      }
     }
 
+    // Amalgamation Flow conditional.
     if (this.isAmalgamation) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
       if (this.getEntityTypeCd && this.isSociety) return true
