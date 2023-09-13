@@ -14,7 +14,7 @@
       <!-- New BC Business flow -->
       <template v-if="isNewBcBusiness">
         <EntityType v-if="getLocation" />
-        <CompanyType v-if="entity_type_cd" />
+        <CompanyType v-if="getEntityTypeCd" />
         <NumberedCompanyBullets v-if="isNumberedCompany" />
 
         <template v-if="isNamedCompany">
@@ -50,14 +50,44 @@
 
       <!-- Amalgamation flow -->
       <template v-else-if="isAmalgamation">
-        <EntityType v-if="getLocation && !isFederal" />
+        <EntityType v-if="getLocation" />
 
         <template v-if="isXproEntityType(getEntityTypeCd)">
-          <Jurisdiction />
+          <Jurisdiction md="4" />
+
+          <XproFederalBullets v-if="isFederal" />
+
+          <!-- not Federal -->
+          <template v-else-if="isXproFlow">
+            <v-col cols="12" md="8">
+              <NameInput
+                :is-mras-search="(isMrasJurisdiction && !getHasNoCorpNum)"
+                @emit-corp-num-validity="corpNumValid = $event"
+              />
+            </v-col>
+
+            <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
+              <CorpNumberCheckbox />
+            </v-col>
+          </template>
         </template>
 
+        <!-- not Xpro -->
         <template v-else>
-          <CompanyType v-if="showCompanyTypeRadioButtons" />
+          <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
+
+          <!-- named company -->
+          <template v-if="isNamedCompany || isSociety">
+            <v-col cols="12" :md="showDesignation ? '8' : '12'">
+              <NameInput @emit-corp-num-validity="corpNumValid = $event" />
+            </v-col>
+            <Designation v-if="showDesignation" cols="12" md="4" />
+          </template>
+
+          <!-- numbered company -->
+          <template v-if="isNumberedCompany">
+            <NumberedCompanyBullets />
+          </template>
         </template>
       </template>
 
@@ -79,49 +109,49 @@
 
     <!-- Xpro/Federal bullets -->
     <!-- *** TODO: move this into flows above -->
-    <!-- *** TODO: simplify this button's logic -->
-    <template v-if="entity_type_cd || isFederal || isRestorable">
-      <v-row v-if="isNamedCompany || isAmalgamation">
-        <XproFederalBullets v-if="isXproFlow && isFederal" cols="12" />
+    <!-- *** TODO: simplify logic -->
+    <!-- <template v-if="(getEntityTypeCd || isFederal || isRestorable) && (isNamedCompany || isAmalgamation)">
+      <v-row v-if="isXproFlow && isFederal">
+        <XproFederalBullets />
       </v-row>
-    </template>
+    </template> -->
 
     <!-- Corporate Number checkbox, only for Canadian MRAS jurisdictions -->
     <!-- *** TODO: move this into flows above -->
-    <!-- *** TODO: simplify this button's logic -->
-    <template v-if="entity_type_cd || isFederal || isRestorable">
-      <v-row v-if="isNamedCompany || isAmalgamation">
+    <!-- *** TODO: simplify logic -->
+    <!-- <template v-if="(getEntityTypeCd || isFederal || isRestorable) && (isNamedCompany || isAmalgamation)">
+      <v-row v-if="isCanadian && isMrasJurisdiction">
         <v-col cols="12" class="d-flex justify-end">
-          <CorpNumberCheckbox v-if="isCanadian && isMrasJurisdiction" />
+          <CorpNumberCheckbox />
         </v-col>
       </v-row>
-    </template>
+    </template> -->
 
-    <!-- Go to COLIN button -->
+    <!-- "Go to COLIN" button -->
     <template v-if="showColinButton">
       <v-row justify="center" class="mt-6">
         <v-col cols="auto">
-          <v-btn id="go-to-colin-button" class="px-9" :href="colinLink" target="_blank">
+          <v-btn id="colin-button" class="px-9" :href="colinLink" target="_blank">
             Go to Corporate Online to {{ isConversion ? 'Alter' : 'Register' }}
-            <v-icon small class="ml-1">mdi-open-in-new</v-icon>
+            <v-icon right small>mdi-open-in-new</v-icon>
           </v-btn>
         </v-col>
       </v-row>
     </template>
 
-    <!-- Incorporate Now button -->
-    <template v-if="showActionButton">
+    <!-- "Action Now" button -->
+    <template v-if="showActionNowButton">
       <v-row justify="center" class="mt-6">
         <v-col cols="auto">
-          <v-btn id="incorporate-now-button" class="px-9" @click="actionNowClicked()">
+          <v-btn id="action-now-button" class="px-9" @click="actionNowClicked()">
             {{ actionNowButtonText }}
           </v-btn>
         </v-col>
       </v-row>
     </template>
 
-    <!-- Check This Name button -->
-    <template v-if="isShowCheckNameButton">
+    <!-- "Check this Name" button -->
+    <template v-if="showCheckNameButton">
       <v-row justify="center" class="mt-6">
         <v-col cols="auto">
           <v-btn
@@ -131,7 +161,7 @@
             :disabled="!corpNumValid"
             @click="handleSubmit(true)"
           >
-            <v-icon left color="white" size="1.5rem">mdi-magnify</v-icon>
+            <v-icon left size="24px">mdi-magnify</v-icon>
             Check this Name
           </v-btn>
         </v-col>
@@ -189,10 +219,10 @@ import { GetFeatureFlag, Navigate } from '@/plugins'
   }
 })
 export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, SearchMixin) {
-  // Constants
+  // Constant
   readonly colinLink = sessionStorage.getItem('CORPORATE_ONLINE_URL')
 
-  // Variables
+  // Local variable
   corpNumValid = true
 
   private mounted () {
@@ -236,24 +266,33 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     return (Designations[this.getEntityTypeCd]?.end || false)
   }
 
-  get showCompanyTypeRadioButtons (): boolean {
-    if (!this.entity_type_cd && !this.getConversionType && !this.isFederal) return false
-    if (this.isConversion) {
-      return (!!this.getSearchBusiness && !!this.getConversionType)
-    }
-    const isSociety = (this.isSocietyEnabled() && this.getEntityTypeCd === EntityTypes.SO)
-    // check if numbered is not allowed or society NR name is required
-    if (!this.isNumberedEntityType || isSociety) {
-      this.setSearchCompanyType(CompanyTypes.NAMED_COMPANY)
-      return false
-    }
-    return true
+  get isSociety (): boolean {
+    return (this.isSocietyEnabled() && this.getEntityTypeCd === EntityTypes.SO)
   }
 
-  get showActionButton (): boolean {
-    // *** TODO: add your logic here
+  get showCompanyTypeRadioButtons (): boolean {
+    // *** TODO: add your logic in the template instead of the spaghetti below
+    // if (!this.getEntityTypeCd && !this.getConversionType && !this.isFederal) return false
+    // if (this.isConversion) {
+    //   return (!!this.getSearchBusiness && !!this.getConversionType)
+    // }
+    // // check if numbered is not allowed or society NR name is required
+    // if (!this.isNumberedEntityType || this.isSociety) {
+    //   this.setSearchCompanyType(CompanyTypes.NAMED_COMPANY)
+    //   return false
+    // }
+    return false
+  }
 
-    // if (this.entity_type_cd || this.isFederal || this.isRestorable) {
+  get showActionNowButton (): boolean {
+    if (
+      this.isAmalgamation &&
+      this.isNumberedCompany &&
+      this.isSupportedAmalgamation(this.getEntityTypeCd)
+    ) return true
+
+    // *** TODO: add your logic here instead of the spaghetti below
+    // if (this.getEntityTypeCd || this.isFederal || this.isRestorable) {
     //   if (this.isNumberedCompany || this.isFederal) {
     //     if (!this.isConversion || this.isAlterOnline(this.getConversionType)) {
     //       // Since Federal Reinstatement is a paper filing, we don't show any buttons.
@@ -270,9 +309,15 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
   /** Whether to show "Go to COLIN" button (otherwise will show `actionNowButtonText` button). */
   get showColinButton (): boolean {
-    // *** TODO: add your logic here
+    if (
+      this.isAmalgamation &&
+      this.isNumberedCompany &&
+      !this.isSupportedAmalgamation(this.getEntityTypeCd) &&
+      !this.isXproFlow
+    ) return true
 
-    // if (this.entity_type_cd || this.isFederal || this.isRestorable) {
+    // *** TODO: add your logic here instead of the spaghetti below
+    // if (this.getEntityTypeCd || this.isFederal || this.isRestorable) {
     //   if (this.isNumberedCompany || this.isFederal) {
     //     if (!this.isConversion || this.isAlterOnline(this.getConversionType)) {
     //       if (this.showContinueInButton) return true
@@ -287,19 +332,19 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     //       // don't show COLIN button for supported restoration entities
     //       if (this.isRestoration) {
     //         const supportedRestorationEntites = GetFeatureFlag('supported-restoration-entities')
-    //         const isRestorationEntity = supportedRestorationEntites.includes(this.entity_type_cd)
+    //         const isRestorationEntity = supportedRestorationEntites.includes(this.getEntityTypeCd)
     //         return !isRestorationEntity
     //       }
 
     //       if (this.isChangeName) {
     //         const supportedChnageNameEntites = GetFeatureFlag('supported-name-change-entities')
-    //         const isChangeNameEntity = supportedChnageNameEntites.includes(this.entity_type_cd)
+    //         const isChangeNameEntity = supportedChnageNameEntites.includes(this.getEntityTypeCd)
     //         return !isChangeNameEntity
     //       }
 
     //       // don't show COLIN button for supported entities
     //       const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
-    //       const isIncorporateEntity = supportedEntites.includes(this.entity_type_cd)
+    //       const isIncorporateEntity = supportedEntites.includes(this.getEntityTypeCd)
     //       return !isIncorporateEntity
     //     }
     //   }
@@ -315,24 +360,32 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     // *** FUTURE: use code below
     // if (!this.isContinuationIn) return false
     // const supportedContInEntites = GetFeatureFlag('supported-continuation-in-entities')
-    // const isContInEntity = supportedContInEntites.includes(this.entity_type_cd)
+    // const isContInEntity = supportedContInEntites.includes(this.getEntityTypeCd)
     // return !isContInEntity
   }
 
   /** Retrieve text based on selected action/flow */
   get actionNowButtonText (): string {
     if (this.isContinuationIn) return 'Continue In Now'
-    if (this.isAmalgamation) return 'Amalgamate Now'
+    if (this.isAmalgamation) return null // should never happen
     if (this.isConversion) return 'Alter Now'
     if (this.isRestoration) return 'Restore Now'
     if (this.isChangeName) return 'Change Name Now'
-    return 'Incorporate Now'
+    if (this.isNewBusiness) return 'Incorporate Now'
+    return null
   }
 
-  get isShowCheckNameButton (): boolean {
-    if (!this.isFederal && this.isNamedCompany && this.entity_type_cd) {
-      return true
+  get showCheckNameButton (): boolean {
+    if (this.isAmalgamation) {
+      if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
+      if (this.getEntityTypeCd && this.isSociety) return true
     }
+
+    // *** TODO: add your logic here instead of the spaghetti below
+    // if (!this.isFederal && this.isNamedCompany && this.getEntityTypeCd) {
+    //   return true
+    // }
+
     return false
   }
 
@@ -342,7 +395,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
    * If user is not authenticated, redirect to login screen then redirect back.
    */
   async actionNowClicked () {
-    const legalType = this.entityTypeToCorpType(this.entity_type_cd)
+    const legalType = this.entityTypeToCorpType(this.getEntityTypeCd)
     if (this.isAuthenticated) {
       if (this.isConversion || this.isRestoration || this.isChangeName) {
         this.goToEntityDashboard(this.getSearchBusiness.identifier)
@@ -398,8 +451,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   background-color: transparent !important;
 }
 
-#go-to-colin-button,
-#incorporate-now-button,
+#colin-button,
+#action-now-button,
 #search-name-btn {
   font-size: $px-14 !important;
   font-weight: bold;

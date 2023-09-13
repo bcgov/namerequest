@@ -42,7 +42,6 @@ export class SearchMixin extends Mixins(CommonMixin) {
   @Getter isAmalgamation!: boolean
   @Getter isAssumed!: boolean
   @Getter isAuthenticated!: boolean
-  @Getter isCanadian!: boolean
   @Getter isChangeName!: boolean
   @Getter isContinuationIn!: boolean
   @Getter isConversion!: boolean
@@ -115,9 +114,11 @@ export class SearchMixin extends Mixins(CommonMixin) {
   set entity_type_cd (type: EntityTypes) {
     // special case for sub-menu
     if (type === EntityTypes.INFO) {
-      // set empty value until user chooses a new one
+      // set empty values until user chooses a new one
       // (don't use null in case it's already null as we want reactivity)
       this.setEntityTypeCd('')
+      this.setSearchCompanyType('')
+      // this.setLocation(null) // *** TODO: fix bug (Severin)
       // show the "View all business types" modal
       this.setPickEntityModalVisible(true)
       return

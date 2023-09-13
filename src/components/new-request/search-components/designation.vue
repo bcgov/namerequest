@@ -7,7 +7,7 @@
       :error-messages="getErrors.includes('designation') ? 'Please enter a designation' : ''"
       :items="designationOptions"
       :menu-props="{ bottom: true, offsetY: true}"
-      :readonly="!entity_type_cd"
+      :readonly="!getEntityTypeCd"
       :value="getDesignation"
       @input="setDesignation($event)"
       @change="setClearErrors()"
