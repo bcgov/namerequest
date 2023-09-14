@@ -60,9 +60,12 @@
       <!-- Change Name flow -->
       <template v-else-if="isChangeName">
         <BusinessLookupFetch />
+
+        <!-- XPRO jurisdiction -->
         <Jurisdiction v-if="isChangeNameXpro" md="4"/>
         <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
-        <NumberedCompanyBullets v-if="isNumberedCompany" />
+
+        <!-- named company -->
         <template v-if="isNamedCompany && !isFederal">
           <v-col cols="12" :md="showDesignation || isChangeNameXpro ? '8' : '12'">
             <NameInput
@@ -72,7 +75,14 @@
           </v-col>
           <Designation v-if="showDesignation" cols="12" md="4" />
         </template>
+
+        <!-- numbered company -->
+        <NumberedCompanyBullets v-if="isNumberedCompany" />
+
+        <!-- XPRO federal bullet text -->
         <XproFederalBullets v-if="isXproFlow && isFederal" cols="12" />
+
+        <!-- checkbox for MRAS jurisdiction -->
         <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
           <CorpNumberCheckbox />
         </v-col>
