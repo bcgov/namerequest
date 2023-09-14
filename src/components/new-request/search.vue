@@ -408,13 +408,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       !this.isSupportedRestoration(this.getEntityTypeCd)
     ) return true
 
-    // Conditional for Restoration/Reinstatement Flow.
-    if (
-      this.isRestoration &&
-      this.isNumberedCompany &&
-      !this.isSupportedRestoration(this.getEntityTypeCd)
-    ) return true
-
     // Conditional for Continuation In Flow.
     if (
       this.isContinuationIn &&
