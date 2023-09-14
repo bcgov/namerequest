@@ -43,17 +43,17 @@
         <template v-if="getEntityTypeCd">
           <!-- named company -->
           <template v-if="isNamedCompany || !isNumberedEntityType">
-          <v-col cols="12" :md="showDesignation ? '8' : '12'">
-            <NameInput
-              :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
-              @emit-corp-num-validity="corpNumValid = $event"
-            />
-          </v-col>
-          <Designation v-if="showDesignation" cols="12" md="4" />
-        </template>
+            <v-col cols="12" :md="showDesignation ? '8' : '12'">
+              <NameInput
+                :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+                @emit-corp-num-validity="corpNumValid = $event"
+              />
+            </v-col>
+            <Designation v-if="showDesignation" cols="12" md="4" />
+          </template>
 
-        <!-- numbered company -->
-        <NumberedCompanyBullets v-else/>
+          <!-- numbered company -->
+          <NumberedCompanyBullets v-else/>
         </template>
       </template>
 
