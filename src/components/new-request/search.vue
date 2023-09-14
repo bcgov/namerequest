@@ -396,6 +396,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       !this.isSupportedChangeName(this.getEntityTypeCd)
     ) return true
 
+    // Conditional for Change Name XPRO Flow.
     if (this.isChangeName &&
       this.isChangeNameXpro &&
       this.isFederal
@@ -459,14 +460,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (this.isChangeName) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
       if (this.getEntityTypeCd && this.isSociety) return true
-    }
-
-    // Conditional for Restoration/Reinstatement.
-    if (this.isRestoration) {
-      if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
-      if (this.getEntityTypeCd && this.isSelectedXproAndRestorable) return true
-      if (this.getSearchBusiness && this.isBcRestorable &&
-        !this.isSupportedRestoration(this.getEntityTypeCd)) return true
     }
 
     // Conditional for Restoration/Reinstatement.
