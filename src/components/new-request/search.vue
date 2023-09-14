@@ -95,7 +95,7 @@
       <template v-else-if="isConversion">
         <BusinessLookupFetch />
         <EntityType v-if="getSearchBusiness && isAlterable" cols="12" md="12" />
-        <CompanyType v-if="showCompanyTypeRadioButtons" />
+        <CompanyType v-if="!!getSearchBusiness && !!getConversionType" />
 
         <template v-if="isNamedCompany">
           <v-col cols="12" :md="showDesignation ? '8' : '12'">
@@ -104,7 +104,7 @@
               @emit-corp-num-validity="corpNumValid = $event"
             />
           </v-col>
-          <Designation cols="12" md="4" />
+          <Designation v-if="showDesignation" cols="12" md="4" />
         </template>
 
         <template v-if="isNumberedCompany">
@@ -285,12 +285,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   get showCompanyTypeRadioButtons (): boolean {
-    if (
-      this.isConversion &&
-      !!this.getSearchBusiness &&
-      !!this.getConversionType
-    ) return true
-
     // *** TODO: add your logic in the template instead of the spaghetti below
     // if (!this.getEntityTypeCd && !this.getConversionType && !this.isFederal) return false
     // if (this.isConversion) {
