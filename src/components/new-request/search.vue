@@ -151,26 +151,26 @@
       <!-- Restoration / Reinstatement flow -->
       <template v-else-if="isRestoration">
         <BusinessLookupFetch />
-          <CompanyType v-if="getSearchBusiness && isBcRestorable && isSupportedRestoration(getEntityTypeCd)" />
-          <Jurisdiction v-if="isSelectedXproAndRestorable" cols="12" md="4" />
+        <CompanyType v-if="getSearchBusiness && isBcRestorable && isSupportedRestoration(getEntityTypeCd)" />
+        <Jurisdiction v-if="isSelectedXproAndRestorable" cols="12" md="4" />
 
-          <!-- federal sub-flow -->
-          <XproFederalBullets v-if="isFederal && getSearchBusiness" />
+        <!-- federal sub-flow -->
+        <XproFederalBullets v-if="isFederal && getSearchBusiness" />
 
-          <template v-if="(isNamedCompany || isRestorable) && !isFederal">
-            <v-col cols="12" :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'">
-              <NameInput
-                :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
-                @emit-corp-num-validity="corpNumValid = $event"
-              />
-            </v-col>
-            <Designation v-if="showDesignation" cols="12" md="4" />
-            <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
-              <CorpNumberCheckbox />
-            </v-col>
-          </template>
+        <template v-if="(isNamedCompany || isRestorable) && !isFederal">
+          <v-col cols="12" :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'">
+            <NameInput
+              :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+              @emit-corp-num-validity="corpNumValid = $event"
+            />
+          </v-col>
+          <Designation v-if="showDesignation" cols="12" md="4" />
+          <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
+            <CorpNumberCheckbox />
+          </v-col>
+        </template>
 
-          <NumberedCompanyBullets v-if="isNumberedCompany"/>
+        <NumberedCompanyBullets v-if="isNumberedCompany"/>
       </template>
     </v-row>
 
@@ -396,9 +396,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       !this.isSupportedChangeName(this.getEntityTypeCd)
     ) return true
 
-    // Conditional for Change Name XPRO Flow.
-    if (this.isChangeNameXpro &&
-      this.isChangeName &&
+    if (this.isChangeName &&
+      this.isChangeNameXpro &&
       this.isFederal
     ) return true
 
