@@ -109,9 +109,21 @@
 
       <!-- Conversion (aka Alteration) flow -->
       <template v-else-if="isConversion">
-        <EntityType v-if="getSearchBusiness && isAlterable" />
         <BusinessLookupFetch />
-        <CompanyType v-if="showCompanyTypeRadioButtons" />
+        <EntityType v-if="getSearchBusiness && isAlterable" cols="12" md="12" />
+        <CompanyType v-if="!!getSearchBusiness && !!getConversionType" />
+
+        <template v-if="isNamedCompany">
+          <v-col cols="12" :md="showDesignation ? '8' : '12'">
+            <NameInput
+              :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+              @emit-corp-num-validity="corpNumValid = $event"
+            />
+          </v-col>
+          <Designation v-if="showDesignation" cols="12" md="4" />
+        </template>
+
+        <NumberedCompanyBullets v-if="isNumberedCompany"/>
       </template>
 
       <!-- Restoration / Reinstatement flow -->
@@ -307,6 +319,12 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       this.isSupportedAmalgamation(this.getEntityTypeCd)
     ) return true
 
+    if (
+      this.isConversion &&
+      this.isNumberedCompany &&
+      this.isSupportedAlteration(this.getConversionType)
+    ) return true
+
     if (this.isChangeName && this.isNumberedCompany) return true
 
     // *** TODO: add your logic here instead of the spaghetti below
@@ -332,6 +350,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       this.isNumberedCompany &&
       !this.isSupportedAmalgamation(this.getEntityTypeCd) &&
       !this.isXproFlow
+    ) return true
+
+    if (
+      this.isConversion &&
+      this.isNumberedCompany &&
+      !this.isSupportedAlteration(this.getConversionType) &&
+      this.isAlterOnline(this.getConversionType)
     ) return true
 
     if (this.isChangeName &&
@@ -407,6 +432,10 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (this.isAmalgamation) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
       if (this.getEntityTypeCd && this.isSociety) return true
+    }
+
+    if (this.isConversion) {
+      if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
     }
 
     if (this.isChangeName) {
