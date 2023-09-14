@@ -204,7 +204,6 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
   }
 
   /** True if the Amalgamate Now button should be shown. */
-  // *** TODO: verify this logic and when we show this button vs external link
   get showAmalgamateNowButton (): boolean {
     return (
       this.isAmalgamate &&

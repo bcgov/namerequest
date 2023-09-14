@@ -66,8 +66,7 @@ export default class RequestAction extends Mixins(SearchMixin) {
     }
 
     // set default location for requests where there is only one location option
-    if (this.isNewBcBusiness || this.isContinuationIn || this.isConversion || this.isAmalgamation) {
-      // *** TODO: set location for amalgamation later (depending on entity type selected)
+    if (this.isNewBcBusiness || this.isContinuationIn || this.isConversion) {
       this.setLocation(Location.BC)
     } else if (this.isAssumed && this.getLocation === Location.BC) {
       this.setLocation(Location.CA)
