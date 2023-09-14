@@ -40,17 +40,16 @@
         <EntityType />
         <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
 
-        <!-- named company -->
-        <template v-if="isNamedCompany || isSociety">
+        <template v-if="(isNamedCompany || !isNumberedEntityType) && entity_type_cd">
           <v-col cols="12" :md="showDesignation ? '8' : '12'">
-            <NameInput @emit-corp-num-validity="corpNumValid = $event" />
+            <NameInput
+              :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+              @emit-corp-num-validity="corpNumValid = $event"
+            />
           </v-col>
-
           <Designation v-if="showDesignation" cols="12" md="4" />
         </template>
-
-        <!-- numbered company -->
-        <NumberedCompanyBullets v-if="isNumberedCompany" />
+        <NumberedCompanyBullets v-if="isNumberedCompany && isNumberedEntityType" />
       </template>
 
       <!-- Change Name flow -->
@@ -330,7 +329,15 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       return isIncorporateEntity
     }
 
+    // Conditional for Change Name Flow.
     if (this.isChangeName && this.isNumberedCompany) return true
+
+    // Conditional for Continuation In Flow.
+    if (
+      this.isContinuationIn &&
+        this.isNumberedCompany &&
+        this.isSupportedContinuationIn(this.getEntityTypeCd)
+    ) return true
 
     // *** TODO: add your logic here instead of the spaghetti below
     // if (this.getEntityTypeCd || this.isFederal || this.isRestorable) {
@@ -379,13 +386,22 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       return !this.showActionNowButton
     }
 
+    // Conditional for Change Name Flow.
     if (this.isChangeName &&
       this.isNumberedCompany &&
       !this.isSupportedChangeName(this.getEntityTypeCd)
     ) return true
 
+    // Conditional for Change Name XPRO Flow.
     if (this.isChangeNameXpro &&
       this.isFederal
+    ) return true
+
+    // Conditional for Continuation In Flow.
+    if (
+      this.isContinuationIn &&
+      this.isNumberedCompany &&
+      !this.isSupportedContinuationIn(this.getEntityTypeCd)
     ) return true
 
     // *** TODO: add your logic here instead of the spaghetti below
@@ -462,8 +478,15 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
     }
 
+    // Conditional for Change Name Flow.
     if (this.isChangeName) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
+      if (this.getEntityTypeCd && this.isSociety) return true
+    }
+
+    // Conditional for Continuation In Flow.
+    if (this.isContinuationIn) {
+      if (this.getEntityTypeCd && this.isNamedCompany) return true
       if (this.getEntityTypeCd && this.isSociety) return true
     }
 
