@@ -304,12 +304,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       this.isSupportedAmalgamation(this.getEntityTypeCd)
     ) return true
 
-    if (
-      this.isConversion &&
-      this.isNumberedCompany &&
-      this.isSupportedAlteration(this.getConversionType)
-    ) return true
-
+    // Conditional for Alteration Flow.
     if (
       this.isConversion &&
       this.isNumberedCompany &&
@@ -349,13 +344,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       !this.isXproFlow
     ) return true
 
-    if (
-      this.isConversion &&
-      this.isNumberedCompany &&
-      !this.isSupportedAlteration(this.getConversionType) &&
-      this.isAlterOnline(this.getConversionType)
-    ) return true
-
+    // Conditional for Alteration Flow.
     if (
       this.isConversion &&
       this.isNumberedCompany &&
@@ -439,12 +428,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       }
     }
 
-    // Amalgamation Flow conditional.
+    // Conditional for Amalgamation Flow.
     if (this.isAmalgamation) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
       if (this.getEntityTypeCd && this.isSociety) return true
     }
 
+    // Conditional for Alteration Flow.
     if (this.isConversion) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
     }

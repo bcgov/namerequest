@@ -252,7 +252,7 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
 
   chooseType (entity: SelectOptionsI) {
     // show an URL of creating society NR if Societies NR needs to be released AFTER the way of navigating changes
-    if (!this.isSocietyEnabled() && (entity.value === EntityTypes.SO || entity.value === EntityTypes.XSO)) {
+    if (this.isSocietyEnabled() && (entity.value === EntityTypes.SO || entity.value === EntityTypes.XSO)) {
       this.showSocietiesInfo = true
       return
     }
