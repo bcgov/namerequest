@@ -40,25 +40,32 @@
         <EntityType />
         <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
 
-        <!-- named company -->
-        <template v-if="isNamedCompany || isSociety">
-          <v-col cols="12" :md="showDesignation ? '8' : '12'">
-            <NameInput @emit-corp-num-validity="corpNumValid = $event" />
-          </v-col>
+        <template v-if="getEntityTypeCd">
+          <!-- named company -->
+          <template v-if="isNamedCompany || !isNumberedEntityType">
+            <v-col cols="12" :md="showDesignation ? '8' : '12'">
+              <NameInput
+                :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+                @emit-corp-num-validity="corpNumValid = $event"
+              />
+            </v-col>
+            <Designation v-if="showDesignation" cols="12" md="4" />
+          </template>
 
-          <Designation v-if="showDesignation" cols="12" md="4" />
+          <!-- numbered company -->
+          <NumberedCompanyBullets v-else/>
         </template>
-
-        <!-- numbered company -->
-        <NumberedCompanyBullets v-if="isNumberedCompany" />
       </template>
 
       <!-- Change Name flow -->
       <template v-else-if="isChangeName">
         <BusinessLookupFetch />
+
+        <!-- XPRO jurisdiction -->
         <Jurisdiction v-if="isChangeNameXpro" md="4"/>
         <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
-        <NumberedCompanyBullets v-if="isNumberedCompany" />
+
+        <!-- named company -->
         <template v-if="isNamedCompany && !isFederal">
           <v-col cols="12" :md="showDesignation || isChangeNameXpro ? '8' : '12'">
             <NameInput
@@ -68,7 +75,14 @@
           </v-col>
           <Designation v-if="showDesignation" cols="12" md="4" />
         </template>
+
+        <!-- numbered company -->
+        <NumberedCompanyBullets v-if="isNumberedCompany" />
+
+        <!-- XPRO federal bullet text -->
         <XproFederalBullets v-if="isXproFlow && isFederal" cols="12" />
+
+        <!-- checkbox for MRAS jurisdiction -->
         <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
           <CorpNumberCheckbox />
         </v-col>
@@ -365,6 +379,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       this.isFederal
     ) return true
 
+    // Conditional for Continuation In Flow.
+    if (
+      this.isContinuationIn &&
+      this.isNumberedCompany &&
+      !this.isSupportedContinuationIn(this.getEntityTypeCd)
+    ) return true
+
     return false
   }
 
@@ -409,6 +430,12 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (this.isChangeName) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
       if (this.getEntityTypeCd && this.isSociety) return true
+    }
+
+    // Conditional for Continuation In Flow.
+    if (this.isContinuationIn) {
+      if (this.getEntityTypeCd && this.isNamedCompany) return true
+      if (this.getEntityTypeCd && !this.isNumberedEntityType && this.isSociety) return true
     }
     return false
   }
