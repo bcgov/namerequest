@@ -57,11 +57,9 @@
           <Designation v-if="showDesignation" cols="12" md="4" />
         </template>
         <XproFederalBullets v-if="isXproFlow && isFederal" cols="12" />
-        <v-row>
-          <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
-            <CorpNumberCheckbox />
-          </v-col>
-        </v-row>
+        <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
+          <CorpNumberCheckbox />
+        </v-col>
       </template>
 
       <!-- Amalgamation flow -->
