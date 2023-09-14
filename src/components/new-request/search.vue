@@ -40,7 +40,8 @@
         <EntityType />
         <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
 
-        <template v-if="(isNamedCompany || !isNumberedEntityType) && entity_type_cd">
+        <template v-if="getEntityTypeCd">
+          <template v-if="isNamedCompany || !isNumberedEntityType">
           <v-col cols="12" :md="showDesignation ? '8' : '12'">
             <NameInput
               :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
@@ -49,7 +50,10 @@
           </v-col>
           <Designation v-if="showDesignation" cols="12" md="4" />
         </template>
-        <NumberedCompanyBullets v-if="isNumberedCompany && isNumberedEntityType" />
+        <NumberedCompanyBullets v-else/>
+
+        </template>
+
       </template>
 
       <!-- Change Name flow -->
@@ -335,8 +339,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     // Conditional for Continuation In Flow.
     if (
       this.isContinuationIn &&
-        this.isNumberedCompany &&
-        this.isSupportedContinuationIn(this.getEntityTypeCd)
+      this.isNumberedCompany &&
+      this.isSupportedContinuationIn(this.getEntityTypeCd)
     ) return true
 
     // *** TODO: add your logic here instead of the spaghetti below
@@ -487,7 +491,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     // Conditional for Continuation In Flow.
     if (this.isContinuationIn) {
       if (this.getEntityTypeCd && this.isNamedCompany) return true
-      if (this.getEntityTypeCd && this.isSociety) return true
+      if (this.getEntityTypeCd && !this.isNumberedEntityType && this.isSociety) return true
     }
 
     // *** TODO: add your logic here instead of the spaghetti below
