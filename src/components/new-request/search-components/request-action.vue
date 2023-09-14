@@ -48,7 +48,7 @@ export default class RequestAction extends Mixins(SearchMixin) {
 
     this.setRequestAction(this.getSearchRequest?.value || null)
 
-    // clear previous stat
+    // clear previous state
     this.setSearchBusiness(null)
     this.setSearchJurisdiction(null)
     this.setLocation(null)
