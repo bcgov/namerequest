@@ -37,8 +37,20 @@
 
       <!-- Continuation In flow -->
       <template v-else-if="isContinuationIn">
-        <EntityType v-if="getLocation" />
-        <CompanyType v-if="showCompanyTypeRadioButtons" />
+        <EntityType />
+        <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
+
+        <!-- named company -->
+        <template v-if="isNamedCompany || isSociety">
+          <v-col cols="12" :md="showDesignation ? '8' : '12'">
+            <NameInput @emit-corp-num-validity="corpNumValid = $event" />
+          </v-col>
+
+          <Designation v-if="showDesignation" cols="12" md="4" />
+        </template>
+
+        <!-- numbered company -->
+        <NumberedCompanyBullets v-if="isNumberedCompany" />
       </template>
 
       <!-- Change Name flow -->
@@ -64,14 +76,15 @@
 
       <!-- Amalgamation flow -->
       <template v-else-if="isAmalgamation">
-        <EntityType v-if="getLocation" />
+        <EntityType />
 
         <template v-if="isXproEntityType(getEntityTypeCd)">
           <Jurisdiction md="4" />
 
+          <!-- federal sub-flow -->
           <XproFederalBullets v-if="isFederal" />
 
-          <!-- not Federal -->
+          <!-- xpro sub-flow -->
           <template v-else-if="isXproFlow">
             <v-col cols="12" md="8">
               <NameInput
@@ -86,7 +99,7 @@
           </template>
         </template>
 
-        <!-- not Xpro -->
+        <!-- regular sub-flow -->
         <template v-else>
           <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
 
@@ -95,13 +108,12 @@
             <v-col cols="12" :md="showDesignation ? '8' : '12'">
               <NameInput @emit-corp-num-validity="corpNumValid = $event" />
             </v-col>
+
             <Designation v-if="showDesignation" cols="12" md="4" />
           </template>
 
           <!-- numbered company -->
-          <template v-if="isNumberedCompany">
-            <NumberedCompanyBullets />
-          </template>
+          <NumberedCompanyBullets v-if="isNumberedCompany" />
         </template>
       </template>
 
@@ -132,26 +144,6 @@
         <CompanyType v-if="showCompanyTypeRadioButtons" />
       </template>
     </v-row>
-
-    <!-- Xpro/Federal bullets -->
-    <!-- *** TODO: move this into flows above -->
-    <!-- *** TODO: simplify logic -->
-    <!-- <template v-if="(getEntityTypeCd || isFederal || isRestorable) && (isNamedCompany || isAmalgamation)">
-      <v-row v-if="isXproFlow && isFederal">
-        <XproFederalBullets />
-      </v-row>
-    </template> -->
-
-    <!-- Corporate Number checkbox, only for Canadian MRAS jurisdictions -->
-    <!-- *** TODO: move this into flows above -->
-    <!-- *** TODO: simplify logic -->
-    <!-- <template v-if="(getEntityTypeCd || isFederal || isRestorable) && (isNamedCompany || isAmalgamation)">
-      <v-row v-if="isCanadian && isMrasJurisdiction">
-        <v-col cols="12" class="d-flex justify-end">
-          <CorpNumberCheckbox />
-        </v-col>
-      </v-row>
-    </template> -->
 
     <!-- "Go to COLIN" button -->
     <template v-if="showColinButton">
@@ -288,7 +280,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   get showDesignation (): boolean {
-    // return (Designations[this.getEntityTypeCd]?.end && !this.isXproFlow) // *** TODO: delete
     return (Designations[this.getEntityTypeCd]?.end || false)
   }
 
@@ -311,6 +302,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   get showActionNowButton (): boolean {
+    // Conditional for Continuation In Flow.
+    if (
+      this.isContinuationIn &&
+      this.isNumberedCompany &&
+      this.isSupportedContinuationIn(this.getEntityTypeCd)
+    ) return true
+
     // Conditional for Amalgamation Flow.
     if (
       this.isAmalgamation &&
@@ -352,6 +350,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
   /** Whether to show "Go to COLIN" button (otherwise will show `actionNowButtonText` button). */
   get showColinButton (): boolean {
+    // Conditional for Continuation In Flow.
+    if (
+      this.isContinuationIn &&
+      this.isNumberedCompany &&
+      !this.isSupportedContinuationIn(this.getEntityTypeCd)
+    ) return true
+
     // Conditional for Amalgamation Flow.
     if (
       this.isAmalgamation &&
@@ -387,7 +392,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     // if (this.getEntityTypeCd || this.isFederal || this.isRestorable) {
     //   if (this.isNumberedCompany || this.isFederal) {
     //     if (!this.isConversion || this.isAlterOnline(this.getConversionType)) {
-    //       if (this.showContinueInButton) return true
+    //       if (this.isSupportedContinuationIn) return true
     //       if (this.isFederal && this.isRestoration) return false
     //       if (this.isFederal) return true
 
@@ -420,17 +425,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     return false
   }
 
-  get showContinueInButton (): boolean {
-    // for now, return True because Continuation In filings are not yet implemented
-    return this.isContinuationIn
-
-    // *** FUTURE: use code below
-    // if (!this.isContinuationIn) return false
-    // const supportedContInEntites = GetFeatureFlag('supported-continuation-in-entities')
-    // const isContInEntity = supportedContInEntites.includes(this.getEntityTypeCd)
-    // return !isContInEntity
-  }
-
   /** Retrieve text based on selected action/flow */
   get actionNowButtonText (): string {
     if (this.isContinuationIn) return 'Continue In Now'
@@ -443,6 +437,12 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   get showCheckNameButton (): boolean {
+    // Conditional for Continuation In Flow.
+    if (this.isContinuationIn) {
+      if (this.getEntityTypeCd && this.isNamedCompany) return true
+      if (this.getEntityTypeCd && this.isSociety) return true
+    }
+
     // Conditional for "New BC-based business" Flow.
     // Show button if we're in "Start a new BC-based business" and non-numbered entity is selected.
     if (this.isNewBcBusiness) {

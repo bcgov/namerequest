@@ -649,6 +649,8 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
       return x
     }
   })
+  // console.log('*** getEntityTypeOptions, location =', getLocation)
+  // console.log('*** getEntityTypeOptions, bcOptions =', bcOptions)
 
   const xproOptions: SelectOptionsI[] = getEntityTypesXPRO(state).filter(x => {
     if (
@@ -696,7 +698,11 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
     }
   })
 
-  let options: SelectOptionsI[] = (isLocationBC(state)) ? [...bcOptions] : [...xproOptions]
+  let options: SelectOptionsI[]
+  // special case for amalgamation - location may be CA or IN
+  if (isAmalgamation) options = [...bcOptions]
+  else if (isLocationBC(state)) options = [...bcOptions]
+  else options = [...xproOptions]
   let n = 4
 
   if (getEntityTypeAddToSelect(state)) {
@@ -723,6 +729,9 @@ export const getLocationOptions = (state: StateIF): Array<any> => {
     return Locations.filter(location => location.value !== Location.BC)
   }
   if (isContinuationIn(state)) {
+    return Locations.filter(location => location.value === Location.BC)
+  }
+  if (isAmalgamation(state)) {
     return Locations.filter(location => location.value === Location.BC)
   }
   return Locations.filter(() => true) // copy of Locations

@@ -58,7 +58,7 @@ export default class Jurisdiction extends Mixins(SearchMixin) {
     this.setLocation(jurisdiction.group === 0 ? Location.CA : Location.IN)
     this.setJurisdictionCd(jurisdiction.value)
 
-    // reset the entity type when a business is selected (after jurisdiction change)
+    // if a business was previously selected, reset the entity type
     if (this.getSearchBusiness) {
       this.setEntityTypeCd(this.getSearchBusiness.legalType)
     }
