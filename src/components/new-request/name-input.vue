@@ -1,6 +1,6 @@
 <template>
   <v-text-field
-    id="name-input-text-field"
+    id="name-input-component"
     ref="nameInputRef"
     :error-messages="message"
     autocomplete="chrome-off"
@@ -22,7 +22,6 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch, Emit } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
-import { Location, NrRequestActionCodes } from '@/enums'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { sanitizeName } from '@/plugins'
 import { MRAS_MAX_LENGTH } from '@/components/new-request/constants'
@@ -42,9 +41,7 @@ export default class NameInput extends Vue {
   @Getter getCorpSearch!: string
   @Getter getErrors!: string[]
   @Getter getHasNoCorpNum!: boolean
-  @Getter getLocation!: Location
   @Getter getName!: string
-  @Getter getRequestActionCd!: NrRequestActionCodes
   @Getter isMrasJurisdiction!: boolean
   @Getter isXproFlow!: boolean
 

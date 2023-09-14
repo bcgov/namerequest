@@ -9,14 +9,14 @@
         <ol>
           <li>
             <b>You are already Federally Incorporated.</b><br>
-            You do not require a name request. Please go to <a :href="corpOnlineLink" target="_blank">
+            You do not require a name request. Please go to <a :href="colinLink" target="_blank">
             Corporate Online</a> to extra-provincially register your business.
           </li>
           <li class="my-3">
             <b>You want a numbered company. The business does not need a name.</b><br>
             You do not require a name request. If you are incorporating a Benefit company go to
             <a :href="businessRegistryLink" target="_blank">BC Business Registry</a>, otherwise go to
-            <a :href="corpOnlineLink" target="_blank">Corporate Online</a>. A number will be assigned
+            <a :href="colinLink" target="_blank">Corporate Online</a>. A number will be assigned
             upon registering your business.
           </li>
           <li>
@@ -44,8 +44,8 @@ export default class NrNotRequiredDialog extends Vue {
   @Getter getNrRequiredModalVisible!: boolean
   @Action setNrRequiredModalVisible!: ActionBindingIF
 
-  private corpOnlineLink = 'https://www.corporateonline.gov.bc.ca/'
-  private businessRegistryLink = 'https://www.bcregistry.ca/business'
+  readonly colinLink = sessionStorage.getItem('CORPORATE_ONLINE_URL')
+  readonly businessRegistryLink = 'https://www.bcregistry.ca/business'
 
   get showModal () {
     return this.getNrRequiredModalVisible

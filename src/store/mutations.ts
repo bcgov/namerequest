@@ -1,10 +1,12 @@
 import Vue from 'vue'
 import {
   AnalysisJSONI,
+  BusinessSearchIF,
   ConditionalInstructionI,
   ConversionTypesI,
   NameRequestI,
   RefundParamsIF,
+  RequestActionsI,
   SelectOptionsI,
   StaffPaymentIF,
   StateIF,
@@ -13,13 +15,14 @@ import {
   WaitingAddressSearchI
 } from '@/interfaces'
 import {
+  CompanyTypes,
   EntityTypes,
   Location,
   NameCheckErrorType,
   NrAffiliationErrors,
-  PriorityCode,
   NrRequestActionCodes,
-  NrRequestTypeCodes
+  NrRequestTypeCodes,
+  PriorityCode
 } from '@/enums'
 
 export const clearErrors = (state: StateIF) => {
@@ -136,12 +139,10 @@ export const mutateLocation = (state: StateIF, location: Location) => {
   if (location === state.stateModel.newRequestModel.location) {
     return
   }
-  // entity type needs to be reset when the location changes (options depend on location)
-  state.stateModel.newRequestModel.entity_type_cd = null
-  // special case for sub-menu
-  if (location === Location.INFO) {
-    state.stateModel.newRequestModel.location = location
-    return
+  // reset entity type on location changes (options depend on location)
+  // except amalgamation because entity type came before location
+  if (state.stateModel.newRequestModel.request_action_cd !== NrRequestActionCodes.AMALGAMATE) {
+    state.stateModel.newRequestModel.entity_type_cd = null
   }
   if (
     state.stateModel.newRequestModel.location === Location.CA ||
@@ -563,4 +564,20 @@ export const mutateHotjarUserId = (state: StateIF, hotjarUserId: string) => {
 
 export const mutateIncorporateNowErrorStatus = (state: StateIF, incorporateNowError: boolean) => {
   state.stateModel.newRequestModel.incorporateNowError = incorporateNowError
+}
+
+export const mutateSearchBusiness = (state: StateIF, val: BusinessSearchIF) => {
+  state.stateModel.newRequestModel.search.business = val
+}
+
+export const mutateSearchCompanyType = (state: StateIF, val: CompanyTypes) => {
+  state.stateModel.newRequestModel.search.companyType = val
+}
+
+export const mutateSearchJurisdiction = (state: StateIF, val: any) => {
+  state.stateModel.newRequestModel.search.jurisdiction = val
+}
+
+export const mutateSearchRequest = (state: StateIF, val: RequestActionsI) => {
+  state.stateModel.newRequestModel.search.request = val
 }

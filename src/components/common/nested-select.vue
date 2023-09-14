@@ -1,6 +1,6 @@
 <template>
   <v-select
-    class="request-action-select"
+    class="nested-select"
     filled
     hide-details="auto"
     item-value="[group,value]"
@@ -69,7 +69,7 @@ export default class NestedSelect extends Vue {
   @Prop({ default: null }) readonly value!: any
   @Prop() readonly maxHeight!: string
 
-  // data
+  // variables
   activeActionGroup = NaN
 
   // computed
@@ -93,13 +93,13 @@ export default class NestedSelect extends Vue {
   }
 
   // methods
-  @Emit('change')
-  emitChangeEvent (item: any): void {}
-
   toggleActionGroup (group: number): void {
     // if current group is active, deactivate it, otherwise activate it
     this.activeActionGroup = (this.activeActionGroup === group) ? NaN : group
   }
+
+  @Emit('change')
+  emitChangeEvent (item: any): void {}
 }
 </script>
 

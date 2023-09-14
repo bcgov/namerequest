@@ -60,7 +60,7 @@ describe('Select Company Type block', () => {
   //   const wrapper = wrapperFactory()
   //   await wrapper.find('#numbered-company-radio').setChecked()
 
-  //   expect(wrapper.find('#incorporate-now-button').exists()).toBe(true)
+  //   expect(wrapper.find('#action-now-button').exists()).toBe(true)
   //   wrapper.destroy()
   // })
 
@@ -68,7 +68,7 @@ describe('Select Company Type block', () => {
   //   const wrapper = wrapperFactory()
   //   await wrapper.find('#named-company-radio').setChecked()
 
-  //   expect(wrapper.vm.selectedCompanyType).toBe('namedCompany')
+  //   expect(wrapper.vm.getSearchCompanyType).toBe('namedCompany')
   //   wrapper.destroy()
   // })
 })

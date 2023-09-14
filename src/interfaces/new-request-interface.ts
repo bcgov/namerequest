@@ -1,9 +1,8 @@
-import {
-  AnalysisJSONI, ApplicantI, ConversionTypesI, ExistingRequestSearchI, NameRequestI,
-  RequestNameI, SelectOptionsI, StatsI, SubmissionTypeT, WaitingAddressSearchI
-} from '@/interfaces/models'
-import { NameChoicesIF, NrDataIF, RequestOrConsentIF } from '@/interfaces'
-import { EntityTypes, Location, NrAffiliationErrors, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
+import { AnalysisJSONI, ApplicantI, ConversionTypesI, ExistingRequestSearchI, NameRequestI, RequestActionsI,
+  RequestNameI, SelectOptionsI, StatsI, SubmissionTypeT, WaitingAddressSearchI } from '@/interfaces/models'
+import { BusinessSearchIF, NameChoicesIF, NrDataIF, RequestOrConsentIF } from '@/interfaces'
+import { CompanyTypes, EntityTypes, Location, NrAffiliationErrors, NrRequestActionCodes, NrRequestTypeCodes }
+  from '@/enums'
 
 interface RequestNameMapI extends RequestNameI {}
 
@@ -61,6 +60,12 @@ export interface NewRequestIF {
   request_action_cd: NrRequestActionCodes
   request_jurisdiction_cd: string
   requestExaminationOrProvideConsent: RequestOrConsentIF
+  search: {
+    business: BusinessSearchIF
+    companyType: CompanyTypes
+    jurisdiction: any
+    request: RequestActionsI
+  }
   showActualInput: boolean
   stats: StatsI
   submissionTabNumber: number

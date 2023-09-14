@@ -16,10 +16,7 @@
         <p>{{ resultDesc  }}</p>
         <p>{{ resultAct }}</p>
 
-        <NameInput
-          id="name-input-component"
-          :is-mras-search="!isNameSearch"
-        />
+        <NameInput :is-mras-search="!isNameSearch" />
       </v-card-text>
 
       <v-card-actions class="justify-center">
