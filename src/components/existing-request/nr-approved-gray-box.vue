@@ -38,19 +38,19 @@
 
       <div v-else-if="showAmalgamateNowButton" class="d-flex justify-center my-1">
         <v-btn
-          class="alter-now-external-btn mt-30"
           v-if="showOpenExternalIcon"
+          class="amalgamate-now-external-btn mt-30"
           min-width="20rem"
           :disabled="disabled"
           @click="$emit('goToCorpOnline')"
         >
-          <strong>Alter Now</strong>
+          <strong>Amalgamate Now</strong>
           &nbsp;
           <v-icon small>mdi-open-in-new</v-icon>
         </v-btn>
         <v-btn
           v-else
-          class="alter-now-btn mt-30"
+          class="amalgamate-now-btn mt-30"
           min-width="20rem"
           :disabled="disabled"
           @click="$emit('goToEntityDashboard')"
@@ -62,8 +62,8 @@
       <div v-else-if="showAlterNowButton" class="my-1">
         <div v-if="isAllowAlterOnline" class="d-flex justify-center">
           <v-btn
-            class="alter-now-external-btn mt-30"
             v-if="showOpenExternalIcon"
+            class="alter-now-external-btn mt-30"
             min-width="20rem"
             :disabled="disabled"
             @click="$emit('goToCorpOnline')"
@@ -163,15 +163,19 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
     return (this.isConversion && this.isApprovedOrConsentUnRequired)
   }
 
+  /** True if the Amalgamate Now button should be shown. */
+  get showAmalgamateNowButton (): boolean {
+    return (this.isAmalgamate && this.isApprovedOrConsentUnRequired)
+  }
+
   get isAllowAlterOnline (): boolean {
     return this.isAlterOnline(this.getNr.requestTypeCd)
   }
 
   get showOpenExternalIcon (): boolean {
-    return (
-      this.showAlterNowButton &&
-      !this.isSupportedAlteration(this.getNr.requestTypeCd)
-    )
+    if (this.showAmalgamateNowButton && !this.isSupportedAmalgamation(this.getNr.requestTypeCd)) return true
+    if (this.showAlterNowButton && !this.isSupportedAlteration(this.getNr.requestTypeCd)) return true
+    return false
   }
 
   /** True if the Go To Societies Online button should be shown. */
@@ -199,15 +203,6 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
       this.isFirm(this.getNr) &&
       this.isNewBusiness &&
       this.isSupportedIncorporationRegistration(this.getNr.entity_type_cd) &&
-      this.isApprovedOrConsentUnRequired
-    )
-  }
-
-  /** True if the Amalgamate Now button should be shown. */
-  get showAmalgamateNowButton (): boolean {
-    return (
-      this.isAmalgamate &&
-      this.isSupportedAmalgamation(this.getNr.entity_type_cd) &&
       this.isApprovedOrConsentUnRequired
     )
   }
