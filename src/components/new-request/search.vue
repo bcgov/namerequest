@@ -420,12 +420,10 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   get showCheckNameButton (): boolean {
     // Conditional for "New BC-based business" Flow.
     // Show button if we're in "Start a new BC-based business" and non-numbered entity is selected.
-    // Special Case for societies.
     if (this.isNewBcBusiness) {
       if (this.getEntityTypeCd && !this.isNumberedEntityType && !this.isSociety) return true
-      if (this.getEntityTypeCd === EntityTypes.SO) {
-        if (this.isSocietyEnabled) return true
-      }
+      if (this.getEntityTypeCd && this.isNamedCompany) return true
+      if (this.getEntityTypeCd && this.isSociety) return true
     }
 
     // Conditional for Amalgamation Flow.
