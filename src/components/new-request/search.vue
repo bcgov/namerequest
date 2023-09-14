@@ -32,7 +32,7 @@
       <template v-else-if="isNewXproBusiness">
         <EntityType v-if="getLocation && !isFederal" cols="12" md="4" />
         <Jurisdiction />
-        <CompanyType v-if="showCompanyTypeRadioButtons" />
+        <CompanyType v-if="false" />
       </template>
 
       <!-- Continuation In flow -->
@@ -103,11 +103,11 @@
         </template>
 
         <!-- regular sub-flow -->
-        <template v-else>
-          <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
+        <template v-else-if="getEntityTypeCd">
+          <CompanyType v-if="isNumberedEntityType" />
 
           <!-- named company -->
-          <template v-if="isNamedCompany || isSociety">
+          <template v-if="isNamedCompany || !isNumberedEntityType">
             <v-col cols="12" :md="showDesignation ? '8' : '12'">
               <NameInput @emit-corp-num-validity="corpNumValid = $event" />
             </v-col>
@@ -144,7 +144,7 @@
         <EntityType cols="12" md="6" />
         <BusinessLookupFetch />
         <Jurisdiction v-if="isSelectedXproAndRestorable" cols="12" md="4" />
-        <CompanyType v-if="showCompanyTypeRadioButtons" />
+        <CompanyType v-if="false" />
       </template>
     </v-row>
 
@@ -290,20 +290,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     return (this.isSocietyEnabled() && this.getEntityTypeCd === EntityTypes.SO)
   }
 
-  get showCompanyTypeRadioButtons (): boolean {
-    // *** TODO: add your logic in the template instead of the spaghetti below
-    // if (!this.getEntityTypeCd && !this.getConversionType && !this.isFederal) return false
-    // if (this.isConversion) {
-    //   return (!!this.getSearchBusiness && !!this.getConversionType)
-    // }
-    // // check if numbered is not allowed or society NR name is required
-    // if (!this.isNumberedEntityType || this.isSociety) {
-    //   this.setSearchCompanyType(CompanyTypes.NAMED_COMPANY)
-    //   return false
-    // }
-    return false
-  }
-
   get showActionNowButton (): boolean {
     // Conditional for Continuation In Flow.
     if (
@@ -335,26 +321,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
     // Conditional for Change Name Flow.
     if (this.isChangeName && this.isNumberedCompany) return true
-
-    // Conditional for Continuation In Flow.
-    if (
-      this.isContinuationIn &&
-      this.isNumberedCompany &&
-      this.isSupportedContinuationIn(this.getEntityTypeCd)
-    ) return true
-
-    // *** TODO: add your logic here instead of the spaghetti below
-    // if (this.getEntityTypeCd || this.isFederal || this.isRestorable) {
-    //   if (this.isNumberedCompany || this.isFederal) {
-    //     if (!this.isConversion || this.isAlterOnline(this.getConversionType)) {
-    //       // Since Federal Reinstatement is a paper filing, we don't show any buttons.
-    //       // The same conditional is in showColinButton().
-    //       if (this.isFederal && this.isRestoration) return false
-    //       if (this.isConversion && !this.isAlterOnline(this.getConversionType)) return false
-    //       return true
-    //     }
-    //   }
-    // }
 
     return false
   }
@@ -391,7 +357,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     }
 
     // Conditional for Change Name Flow.
-    if (this.isChangeName &&
+    if (
+      this.isChangeName &&
       this.isNumberedCompany &&
       !this.isSupportedChangeName(this.getEntityTypeCd)
     ) return true
@@ -407,40 +374,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       this.isNumberedCompany &&
       !this.isSupportedContinuationIn(this.getEntityTypeCd)
     ) return true
-
-    // *** TODO: add your logic here instead of the spaghetti below
-    // if (this.getEntityTypeCd || this.isFederal || this.isRestorable) {
-    //   if (this.isNumberedCompany || this.isFederal) {
-    //     if (!this.isConversion || this.isAlterOnline(this.getConversionType)) {
-    //       if (this.isSupportedContinuationIn) return true
-    //       if (this.isFederal && this.isRestoration) return false
-    //       if (this.isFederal) return true
-
-    //       // don't show COLIN button for supported alteration entities
-    //       if (this.isConversion) {
-    //         return !this.isSupportedAlteration(this.getConversionType)
-    //       }
-
-    //       // don't show COLIN button for supported restoration entities
-    //       if (this.isRestoration) {
-    //         const supportedRestorationEntites = GetFeatureFlag('supported-restoration-entities')
-    //         const isRestorationEntity = supportedRestorationEntites.includes(this.getEntityTypeCd)
-    //         return !isRestorationEntity
-    //       }
-
-    //       if (this.isChangeName) {
-    //         const supportedChnageNameEntites = GetFeatureFlag('supported-name-change-entities')
-    //         const isChangeNameEntity = supportedChnageNameEntites.includes(this.getEntityTypeCd)
-    //         return !isChangeNameEntity
-    //       }
-
-    //       // don't show COLIN button for supported entities
-    //       const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
-    //       const isIncorporateEntity = supportedEntites.includes(this.getEntityTypeCd)
-    //       return !isIncorporateEntity
-    //     }
-    //   }
-    // }
 
     return false
   }
@@ -493,12 +426,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       if (this.getEntityTypeCd && this.isNamedCompany) return true
       if (this.getEntityTypeCd && !this.isNumberedEntityType && this.isSociety) return true
     }
-
-    // *** TODO: add your logic here instead of the spaghetti below
-    // if (!this.isFederal && this.isNamedCompany && this.getEntityTypeCd) {
-    //   return true
-    // }
-
     return false
   }
 
