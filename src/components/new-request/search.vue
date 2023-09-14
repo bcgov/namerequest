@@ -14,17 +14,17 @@
       <!-- New BC Business flow -->
       <template v-if="isNewBcBusiness">
         <EntityType v-if="getLocation" />
-        <CompanyType v-if="getEntityTypeCd" />
-        <NumberedCompanyBullets v-if="isNumberedCompany" />
+        <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
+        <NumberedCompanyBullets v-if="isNumberedCompany && isNumberedEntityType" />
 
-        <template v-if="isNamedCompany">
+        <template v-if="(isNamedCompany || !isNumberedEntityType) && entity_type_cd">
           <v-col cols="12" :md="showDesignation ? '8' : '12'">
             <NameInput
               :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
               @emit-corp-num-validity="corpNumValid = $event"
             />
           </v-col>
-          <Designation cols="12" md="4" />
+          <Designation v-if="showDesignation" cols="12" md="4" />
         </template>
       </template>
 
@@ -221,10 +221,10 @@ import NumberedCompanyBullets from '@/components/new-request/search-components/n
 import RequestAction from '@/components/new-request/search-components/request-action.vue'
 import XproFederalBullets from '@/components/new-request/search-components/xpro-federal-bullets.vue'
 
-import { CompanyTypes, EntityTypes } from '@/enums'
+import { EntityTypes } from '@/enums'
 import { CommonMixin, NrAffiliationMixin, SearchMixin } from '@/mixins'
 import { Designations } from '@/list-data'
-import { GetFeatureFlag, Navigate } from '@/plugins'
+import { Navigate } from '@/plugins'
 
 /**
  * This is the component that displays the new NR menus and flows.
@@ -311,17 +311,26 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   get showActionNowButton (): boolean {
+    // Conditional for Amalgamation Flow.
     if (
       this.isAmalgamation &&
       this.isNumberedCompany &&
       this.isSupportedAmalgamation(this.getEntityTypeCd)
     ) return true
 
+    // Conditional for Alteration Flow.
     if (
       this.isConversion &&
       this.isNumberedCompany &&
       this.isSupportedAlteration(this.getConversionType)
     ) return true
+
+    // Conditional for "New BC-based business" Flow.
+    // If we're in Start a new BC based and the entity is supported, show incorporate now button.
+    if (this.isNewBcBusiness && this.isNumberedCompany && this.isNumberedEntityType) {
+      const isIncorporateEntity = this.isSupportedIncorporationRegistration(this.getEntityTypeCd)
+      return isIncorporateEntity
+    }
 
     if (this.isChangeName && this.isNumberedCompany) return true
 
@@ -343,6 +352,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
   /** Whether to show "Go to COLIN" button (otherwise will show `actionNowButtonText` button). */
   get showColinButton (): boolean {
+    // Conditional for Amalgamation Flow.
     if (
       this.isAmalgamation &&
       this.isNumberedCompany &&
@@ -350,12 +360,19 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       !this.isXproFlow
     ) return true
 
+    // Conditional for Alteration Flow.
     if (
       this.isConversion &&
       this.isNumberedCompany &&
       !this.isSupportedAlteration(this.getConversionType) &&
       this.isAlterOnline(this.getConversionType)
     ) return true
+
+    // Conditional for "New BC-based business" Flow.
+    // If we're in Start a new BC based and the entity is not supported, show go to Colin button.
+    if (this.isNewBcBusiness && this.isNumberedCompany && this.isNumberedEntityType) {
+      return !this.showActionNowButton
+    }
 
     if (this.isChangeName &&
       this.isNumberedCompany &&
@@ -426,11 +443,21 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   get showCheckNameButton (): boolean {
+    // Conditional for "New BC-based business" Flow.
+    // Show button if we're in "Start a new BC-based business" and non-numbered entity is selected.
+    if (this.isNewBcBusiness) {
+      if (this.getEntityTypeCd && !this.isNumberedEntityType && !this.isSociety) return true
+      if (this.getEntityTypeCd && this.isNamedCompany) return true
+      if (this.getEntityTypeCd && this.isSociety) return true
+    }
+
+    // Conditional for Amalgamation Flow.
     if (this.isAmalgamation) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
       if (this.getEntityTypeCd && this.isSociety) return true
     }
 
+    // Conditional for Alteration Flow.
     if (this.isConversion) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
     }
