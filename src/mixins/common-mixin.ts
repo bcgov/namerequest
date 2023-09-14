@@ -156,6 +156,12 @@ export class CommonMixin extends Vue {
     return supportedAmalgamationEntities.includes(type)
   }
 
+  /** Returns true if the specified entity type is allowed for amalganation. */
+  isSupportedChangeName (type: EntityTypes): boolean {
+    const supportedChangeNameEntities = GetFeatureFlag('supported-name-change-entities')
+    return supportedChangeNameEntities.includes(type)
+  }
+
   /** Returns true if the specified entity type is for an Extraprovincial Company. */
   isXproEntityType (type: EntityTypes): boolean {
     return [

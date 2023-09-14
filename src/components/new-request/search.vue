@@ -44,8 +44,24 @@
       <!-- Change Name flow -->
       <template v-else-if="isChangeName">
         <BusinessLookupFetch />
-        <Jurisdiction v-if="isChangeNameXpro" />
-        <CompanyType v-if="showCompanyTypeRadioButtons" />
+        <Jurisdiction v-if="isChangeNameXpro" md="4"/>
+        <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
+        <NumberedCompanyBullets v-if="isNumberedCompany" />
+        <template v-if="isNamedCompany && !isFederal">
+          <v-col cols="12" :md="showDesignation || isChangeNameXpro ? '8' : '12'">
+            <NameInput
+              :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+              @emit-corp-num-validity="corpNumValid = $event"
+            />
+          </v-col>
+          <Designation v-if="showDesignation" cols="12" md="4" />
+        </template>
+        <XproFederalBullets v-if="isXproFlow && isFederal" cols="12" />
+        <v-row>
+          <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
+            <CorpNumberCheckbox />
+          </v-col>
+        </v-row>
       </template>
 
       <!-- Amalgamation flow -->
@@ -291,6 +307,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       this.isSupportedAmalgamation(this.getEntityTypeCd)
     ) return true
 
+    if (this.isChangeName && this.isNumberedCompany) return true
+
     // *** TODO: add your logic here instead of the spaghetti below
     // if (this.getEntityTypeCd || this.isFederal || this.isRestorable) {
     //   if (this.isNumberedCompany || this.isFederal) {
@@ -314,6 +332,16 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       this.isNumberedCompany &&
       !this.isSupportedAmalgamation(this.getEntityTypeCd) &&
       !this.isXproFlow
+    ) return true
+
+    if (this.isChangeName &&
+      this.isNumberedCompany &&
+      !this.isSupportedChangeName(this.getEntityTypeCd)
+    ) return true
+
+    if (this.isChangeNameXpro &&
+      this.isXproFlow &&
+      this.isFederal
     ) return true
 
     // *** TODO: add your logic here instead of the spaghetti below
@@ -377,6 +405,11 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
   get showCheckNameButton (): boolean {
     if (this.isAmalgamation) {
+      if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
+      if (this.getEntityTypeCd && this.isSociety) return true
+    }
+
+    if (this.isChangeName) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
       if (this.getEntityTypeCd && this.isSociety) return true
     }

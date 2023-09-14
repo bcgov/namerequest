@@ -32,8 +32,9 @@ import { Component, Mixins, Prop, Vue, Watch } from 'vue-property-decorator'
 import BusinessFetch from '@/components/new-request/business-fetch.vue'
 import BusinessLookup from '@/components/new-request/business-lookup.vue'
 import { BusinessSearchIF, FormType } from '@/interfaces'
-import { CorpTypeCd, EntityStates, EntityTypes, Location, NrRequestTypeCodes } from '@/enums'
+import { CorpTypeCd, CompanyTypes, EntityStates, EntityTypes, Location, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin, SearchMixin } from '@/mixins'
+import { logger } from '@sentry/utils'
 
 @Component({
   components: { BusinessFetch, BusinessLookup }
@@ -140,12 +141,14 @@ export default class BusinessLookupFetch extends Mixins(CommonMixin, SearchMixin
         const corpType = this.getSearchBusiness?.legalType as unknown as CorpTypeCd
         this.setEntityTypeCd(this.corpTypeToEntityType(corpType))
       } else {
-        this.setEntityTypeCd(this.getSearchBusiness.legalType)
+        this.setSearchCompanyType(CompanyTypes.NAMED_COMPANY)
+        this.setLocation(Location.BC)
+        this.setEntityTypeCd(this.getSearchBusiness?.legalType)
       }
 
       if (this.isChangeNameXpro) {
         this.setLocation(Location.CA)
-        this.setEntityTypeCd(this.getSearchBusiness.legalType)
+        this.setEntityTypeCd(this.getSearchBusiness?.legalType)
       }
     }
   }
