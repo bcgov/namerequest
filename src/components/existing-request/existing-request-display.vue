@@ -678,16 +678,16 @@ export default class ExistingRequestDisplay extends Mixins(
     }
   }
 
-  // redirect to Societies Online
+  /** Opens Societies Online in a new tab. */
   goToSocietiesOnline () {
-    const societyHomeUrl = sessionStorage.getItem('SOCIETIES_ONLINE_HOME_URL')
-    Navigate(`${societyHomeUrl}`)
+    const url = sessionStorage.getItem('SOCIETIES_ONLINE_HOME_URL')
+    window.open(url, '_blank')
   }
 
-  // redirect to Corporate Online
+  /** Opens Corporate Online in a new tab. */
   goToCorpOnline () {
-    const corporateHomeUrl = sessionStorage.getItem('CORPORATE_ONLINE_URL')
-    Navigate(`${corporateHomeUrl}`)
+    const url = sessionStorage.getItem('CORPORATE_ONLINE_URL')
+    window.open(url, '_blank')
   }
 
   private cancelledUpgrade (status: string, payments: any): string {
