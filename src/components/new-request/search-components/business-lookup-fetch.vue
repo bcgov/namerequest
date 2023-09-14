@@ -97,6 +97,7 @@ export default class BusinessLookupFetch extends Mixins(CommonMixin, SearchMixin
     this.setCorpNum(business?.identifier || null)
     this.setEntityTypeCd(this.getSearchBusiness?.legalType)
     this.setName('')
+    this.setSearchCompanyType('')
 
     // Waiting for DOM update to be able to access the Ref. Trigger form validation.
     // Need to do that because the ref is in a conditional.
@@ -136,19 +137,21 @@ export default class BusinessLookupFetch extends Mixins(CommonMixin, SearchMixin
     }
 
     if (this.isChangeName) {
-      if (this.isBcBenCccUlc) {
-        this.setLocation(Location.BC)
-        const corpType = this.getSearchBusiness?.legalType as unknown as CorpTypeCd
-        this.setEntityTypeCd(this.corpTypeToEntityType(corpType))
-      } else {
-        this.setSearchCompanyType(CompanyTypes.NAMED_COMPANY)
-        this.setLocation(Location.BC)
-        this.setEntityTypeCd(this.getSearchBusiness?.legalType || null)
-      }
+      if (this.getSearchBusiness) {
+        if (this.isBcBenCccUlc) {
+          this.setLocation(Location.BC)
+          const corpType = this.getSearchBusiness?.legalType as unknown as CorpTypeCd
+          this.setEntityTypeCd(this.corpTypeToEntityType(corpType))
+        } else {
+          this.setSearchCompanyType(CompanyTypes.NAMED_COMPANY)
+          this.setLocation(Location.BC)
+          this.setEntityTypeCd(this.getSearchBusiness?.legalType || null)
+        }
 
-      if (this.isChangeNameXpro) {
-        this.setLocation(Location.CA)
-        this.setEntityTypeCd(this.getSearchBusiness?.legalType || null)
+        if (this.isChangeNameXpro) {
+          this.setLocation(Location.CA)
+          this.setEntityTypeCd(this.getSearchBusiness?.legalType || null)
+        }
       }
     }
   }
