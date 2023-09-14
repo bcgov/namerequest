@@ -157,7 +157,7 @@
         <!-- federal sub-flow -->
         <XproFederalBullets v-if="isFederal && getSearchBusiness" />
 
-        <template v-if="(isNamedCompany || isRestorable) && !isFederal">
+        <template v-if="(isRestorable && !isFederal) && (isNamedCompany || !isSupportedRestoration(getEntityTypeCd))">
           <v-col cols="12" :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'">
             <NameInput
               :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
@@ -465,7 +465,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     // Conditional for Restoration/Reinstatement.
     if (this.isRestoration) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
-      if (this.getEntityTypeCd && this.isSelectedXproAndRestorable) return true
+      if (this.getEntityTypeCd && this.isSelectedXproAndRestorable && !this.isFederal) return true
       if (this.getSearchBusiness && this.isBcRestorable &&
         !this.isSupportedRestoration(this.getEntityTypeCd)) return true
     }
