@@ -109,7 +109,7 @@ export default class BusinessLookupFetch extends Mixins(CommonMixin, SearchMixin
         // set the from business for alteration (conversion)
         this.setOriginEntityTypeCd(this.getSearchBusiness.legalType)
         // special case if the from business is BEN
-        // set conversionType & entity_type_cd because there's only one alteration type for it
+        // set conversionType and entityTypeCd because there's only one alteration type for it
         if (this.isBenBusiness) {
           this.setConversionType(NrRequestTypeCodes.CONVERT_CORP)
           this.setEntityTypeCd(EntityTypes.BC)

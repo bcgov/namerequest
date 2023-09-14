@@ -220,10 +220,10 @@ export default class GreyBox extends Vue {
 
   get isAssumedNameEntityType () {
     return (
-      this.entity_type_cd !== EntityTypes.XLP &&
-      this.entity_type_cd !== EntityTypes.XLL &&
-      this.entity_type_cd !== EntityTypes.XCP &&
-      this.entity_type_cd !== EntityTypes.XSO
+      this.getEntityTypeCd !== EntityTypes.XLP &&
+      this.getEntityTypeCd !== EntityTypes.XLL &&
+      this.getEntityTypeCd !== EntityTypes.XCP &&
+      this.getEntityTypeCd !== EntityTypes.XSO
     )
   }
 
@@ -276,10 +276,6 @@ export default class GreyBox extends Vue {
       return this.issue.designations
     }
     return null
-  }
-
-  get entity_type_cd (): EntityTypes {
-    return this.getEntityTypeCd
   }
 
   get isDesignationIssueType () {
@@ -504,7 +500,7 @@ export default class GreyBox extends Vue {
   }
 
   extractInnerDesignation (name, designation = null) {
-    let { words } = Designations[this.entity_type_cd]
+    let { words } = Designations[this.getEntityTypeCd]
     if (!designation) {
       for (let word of words) {
         name = replaceWord(name, word)
