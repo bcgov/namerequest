@@ -107,9 +107,7 @@
           <Designation v-if="showDesignation" cols="12" md="4" />
         </template>
 
-        <template v-if="isNumberedCompany">
-          <NumberedCompanyBullets />
-        </template>
+        <NumberedCompanyBullets v-if="isNumberedCompany"/>
       </template>
 
       <!-- Restoration / Reinstatement flow -->
