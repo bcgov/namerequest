@@ -100,11 +100,11 @@
         </template>
 
         <!-- regular sub-flow -->
-        <template v-else>
-          <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
+        <template v-else-if="getEntityTypeCd">
+          <CompanyType v-if="isNumberedEntityType" />
 
           <!-- named company -->
-          <template v-if="isNamedCompany || isSociety">
+          <template v-if="isNamedCompany || !isNumberedEntityType">
             <v-col cols="12" :md="showDesignation ? '8' : '12'">
               <NameInput @emit-corp-num-validity="corpNumValid = $event" />
             </v-col>
