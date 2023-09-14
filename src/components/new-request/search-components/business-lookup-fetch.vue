@@ -143,12 +143,12 @@ export default class BusinessLookupFetch extends Mixins(CommonMixin, SearchMixin
       } else {
         this.setSearchCompanyType(CompanyTypes.NAMED_COMPANY)
         this.setLocation(Location.BC)
-        this.setEntityTypeCd(this.getSearchBusiness?.legalType)
+        this.setEntityTypeCd(this.getSearchBusiness?.legalType || null)
       }
 
       if (this.isChangeNameXpro) {
         this.setLocation(Location.CA)
-        this.setEntityTypeCd(this.getSearchBusiness?.legalType)
+        this.setEntityTypeCd(this.getSearchBusiness?.legalType || null)
       }
     }
   }

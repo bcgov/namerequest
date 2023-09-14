@@ -365,7 +365,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     ) return true
 
     if (this.isChangeNameXpro &&
-      this.isXproFlow &&
       this.isFederal
     ) return true
 
