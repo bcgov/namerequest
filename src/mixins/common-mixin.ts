@@ -168,6 +168,12 @@ export class CommonMixin extends Vue {
     return supportedContInEntites.includes(type)
   }
 
+  /** Returns true if the specified entity type is allowed for restoration/reinstatement. */
+  isSupportedRestoration (type: EntityTypes): boolean {
+    const supportedRestorationEntites = GetFeatureFlag('supported-restoration-entities')
+    return supportedRestorationEntites.includes(type)
+  }
+
   /** Returns true if the specified entity type is for an Extraprovincial Company. */
   isXproEntityType (type: EntityTypes): boolean {
     return [

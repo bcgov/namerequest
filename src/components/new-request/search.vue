@@ -1,7 +1,5 @@
 <template>
-  <v-container fluid id="search-container" class="copy-normal pt-10 px-10"
-    :class="(isFederal && isRestoration) ? 'pb-0' : 'pb-12'"
-  >
+  <v-container fluid id="search-container" class="copy-normal pt-10 px-10 pb-12">
     <header class="h6">Get started by selecting an action:</header>
 
     <v-row class="pt-6">
@@ -152,10 +150,27 @@
 
       <!-- Restoration / Reinstatement flow -->
       <template v-else-if="isRestoration">
-        <EntityType cols="12" md="6" />
         <BusinessLookupFetch />
+        <CompanyType v-if="getSearchBusiness && isBcRestorable && isSupportedRestoration(getEntityTypeCd)" />
         <Jurisdiction v-if="isSelectedXproAndRestorable" cols="12" md="4" />
-        <CompanyType v-if="false" />
+
+        <!-- federal sub-flow -->
+        <XproFederalBullets v-if="isFederal && getSearchBusiness" />
+
+        <template v-if="(isRestorable && !isFederal) && (isNamedCompany || !isSupportedRestoration(getEntityTypeCd))">
+          <v-col cols="12" :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'">
+            <NameInput
+              :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+              @emit-corp-num-validity="corpNumValid = $event"
+            />
+          </v-col>
+          <Designation v-if="showDesignation" cols="12" md="4" />
+          <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
+            <CorpNumberCheckbox />
+          </v-col>
+        </template>
+
+        <NumberedCompanyBullets v-if="isNumberedCompany"/>
       </template>
     </v-row>
 
@@ -337,6 +352,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     // Conditional for Change Name Flow.
     if (this.isChangeName && this.isNumberedCompany) return true
 
+    // Conditional for Restoration/Reinstatement Flow.
+    if (
+      this.isRestoration &&
+      this.isNumberedCompany &&
+      this.isSupportedRestoration(this.getEntityTypeCd)
+    ) return true
+
     return false
   }
 
@@ -379,8 +401,16 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     ) return true
 
     // Conditional for Change Name XPRO Flow.
-    if (this.isChangeNameXpro &&
+    if (this.isChangeName &&
+      this.isChangeNameXpro &&
       this.isFederal
+    ) return true
+
+    // Conditional for Restoration/Reinstatement Flow.
+    if (
+      this.isRestoration &&
+      this.isNumberedCompany &&
+      !this.isSupportedRestoration(this.getEntityTypeCd)
     ) return true
 
     // Conditional for Continuation In Flow.
@@ -440,6 +470,14 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (this.isChangeName) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
       if (this.getEntityTypeCd && this.isSociety) return true
+    }
+
+    // Conditional for Restoration/Reinstatement.
+    if (this.isRestoration) {
+      if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
+      if (this.getEntityTypeCd && this.isSelectedXproAndRestorable && !this.isFederal) return true
+      if (this.getSearchBusiness && this.isBcRestorable &&
+        !this.isSupportedRestoration(this.getEntityTypeCd)) return true
     }
 
     // Conditional for Continuation In Flow.
