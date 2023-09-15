@@ -364,13 +364,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
   /** Whether to show "Go to COLIN" button (otherwise will show `actionNowButtonText` button). */
   get showColinButton (): boolean {
-    // Conditional for Continuation In Flow.
-    if (
-      this.isContinuationIn &&
-      this.isNumberedCompany &&
-      !this.isSupportedContinuationIn(this.getEntityTypeCd)
-    ) return true
-
     // Conditional for Amalgamation Flow.
     if (
       this.isAmalgamation &&
@@ -420,6 +413,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       !this.isSupportedContinuationIn(this.getEntityTypeCd)
     ) return true
 
+    // Conditional for Continuation In Flow.
+    if (
+      this.isContinuationIn &&
+      this.isNumberedCompany &&
+      !this.isSupportedContinuationIn(this.getEntityTypeCd)
+    ) return true
+
     return false
   }
 
@@ -435,12 +435,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   get showCheckNameButton (): boolean {
-    // Conditional for Continuation In Flow.
-    if (this.isContinuationIn) {
-      if (this.getEntityTypeCd && this.isNamedCompany) return true
-      if (this.getEntityTypeCd && this.isSociety) return true
-    }
-
     // Conditional for "New BC-based business" Flow.
     // Show button if we're in "Start a new BC-based business" and non-numbered entity is selected.
     if (this.isNewBcBusiness) {
@@ -482,8 +476,9 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
     // Conditional for Continuation In Flow.
     if (this.isContinuationIn) {
-      if (this.getEntityTypeCd && this.isNamedCompany) return true
+      if (this.getEntityTypeCd && !this.isNumberedEntityType) return true
       if (this.getEntityTypeCd && !this.isNumberedEntityType && this.isSociety) return true
+      if (this.getEntityTypeCd && this.isNamedCompany) return true
     }
     return false
   }
