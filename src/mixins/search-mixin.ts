@@ -117,6 +117,7 @@ export class SearchMixin extends Mixins(CommonMixin) {
       this.setSearchJurisdiction(null)
       this.setLocation(null)
       this.setJurisdictionCd(null)
+      this.setSearchCompanyType(null)
     }
 
     // special case for sub-menu
