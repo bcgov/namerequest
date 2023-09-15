@@ -113,7 +113,7 @@ export const stateModel: StateModelIF = {
     priorityRequest: false,
     quickSearchNames: [],
     request_action_cd: null,
-    request_jurisdiction_cd: '',
+    request_jurisdiction_cd: null,
     requestExaminationOrProvideConsent: {
       0: {
         send_to_examiner: false,
@@ -139,6 +139,12 @@ export const stateModel: StateModelIF = {
         conflict_self_consent: false,
         assumed_name: false
       }
+    },
+    search: {
+      business: null,
+      companyType: null,
+      jurisdiction: null,
+      request: null
     },
     showActualInput: false,
     stats: null,

@@ -1,10 +1,12 @@
 import Vue from 'vue'
 import {
   AnalysisJSONI,
+  BusinessSearchIF,
   ConditionalInstructionI,
   ConversionTypesI,
   NameRequestI,
   RefundParamsIF,
+  RequestActionsI,
   SelectOptionsI,
   StaffPaymentIF,
   StateIF,
@@ -13,13 +15,14 @@ import {
   WaitingAddressSearchI
 } from '@/interfaces'
 import {
+  CompanyTypes,
   EntityTypes,
   Location,
   NameCheckErrorType,
   NrAffiliationErrors,
-  PriorityCode,
   NrRequestActionCodes,
-  NrRequestTypeCodes
+  NrRequestTypeCodes,
+  PriorityCode
 } from '@/enums'
 
 export const clearErrors = (state: StateIF) => {
@@ -133,16 +136,17 @@ export const mutateIsPersonsName = (state: StateIF, isPersonsName: boolean) => {
 }
 
 export const mutateLocation = (state: StateIF, location: Location) => {
+  // don't reset location if it hasn't changed
   if (location === state.stateModel.newRequestModel.location) {
     return
   }
-  // entity type needs to be reset when the location changes (options depend on location)
-  state.stateModel.newRequestModel.entity_type_cd = null
-  // special case for sub-menu
-  if (location === Location.INFO) {
-    state.stateModel.newRequestModel.location = location
-    return
+
+  // reset entity type on location changes (options depend on location)
+  // except amalgamation since entity type was set before location
+  if (state.stateModel.newRequestModel.request_action_cd !== NrRequestActionCodes.AMALGAMATE) {
+    state.stateModel.newRequestModel.entity_type_cd = null
   }
+
   if (
     state.stateModel.newRequestModel.location === Location.CA ||
     state.stateModel.newRequestModel.location === Location.IN
@@ -152,7 +156,14 @@ export const mutateLocation = (state: StateIF, location: Location) => {
       return
     }
   }
-  state.stateModel.newRequestModel.entityTypeAddToSelect = null
+
+  // reset recently-used entry on location changes
+  // except amalgamation since recently-used entry was set before location
+  if (state.stateModel.newRequestModel.request_action_cd !== NrRequestActionCodes.AMALGAMATE) {
+    state.stateModel.newRequestModel.entityTypeAddToSelect = null
+  }
+
+  // finally, set location
   state.stateModel.newRequestModel.location = location
 }
 
@@ -563,4 +574,20 @@ export const mutateHotjarUserId = (state: StateIF, hotjarUserId: string) => {
 
 export const mutateIncorporateNowErrorStatus = (state: StateIF, incorporateNowError: boolean) => {
   state.stateModel.newRequestModel.incorporateNowError = incorporateNowError
+}
+
+export const mutateSearchBusiness = (state: StateIF, val: BusinessSearchIF) => {
+  state.stateModel.newRequestModel.search.business = val
+}
+
+export const mutateSearchCompanyType = (state: StateIF, val: CompanyTypes) => {
+  state.stateModel.newRequestModel.search.companyType = val
+}
+
+export const mutateSearchJurisdiction = (state: StateIF, val: any) => {
+  state.stateModel.newRequestModel.search.jurisdiction = val
+}
+
+export const mutateSearchRequest = (state: StateIF, val: RequestActionsI) => {
+  state.stateModel.newRequestModel.search.request = val
 }

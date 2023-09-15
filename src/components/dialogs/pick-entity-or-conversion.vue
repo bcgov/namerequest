@@ -82,7 +82,7 @@
       </template>
 
       <!-- Category tables - xpro (amalgamation only) -->
-      <template v-if="isAmalgamation">
+      <template v-if="isAmalgamation && !showSocietiesInfo">
         <v-row class="pt-4">
           <v-col cols="12">
             <span class="copy-small">Extraprovincial:</span>
@@ -129,6 +129,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { EntityTypes, Location } from '@/enums'
 import { ConversionTypes } from '@/list-data'
 import { CommonMixin } from '@/mixins'
+import { isAmalgamation } from '@/store/getters'
 
 @Component({})
 export default class PickEntityOrConversionDialog extends CommonMixin {
@@ -156,6 +157,7 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
   @Action setEntityTypeAddToSelect!: ActionBindingIF
   @Action setPickEntityModalVisible!: ActionBindingIF
 
+  // Local variable
   showSocietiesInfo = false
 
   closeIconClicked () {
@@ -171,16 +173,9 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
     }
   }
 
-  get entity_type_cd (): EntityTypes {
-    return this.getEntityTypeCd
-  }
-
-  set entity_type_cd (value: EntityTypes) {
-    this.setEntityTypeCd(value)
-  }
-
   get tableData (): any[] {
-    if (this.getLocation === Location.BC) {
+    // default table data for amalgamation is always BC
+    if (this.getLocation === Location.BC || isAmalgamation) {
       return this.tableDataBC
     } else {
       return this.tableDataXPRO
@@ -244,10 +239,6 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
     return this.getEntityBlurbs.find(type => type.value === entity_type_cd)?.blurbs || []
   }
 
-  clearEntitySelection (): void {
-    this.entity_type_cd = EntityTypes.INFO
-  }
-
   chooseConversion (conversion) {
     let index = this.getConversionTypeOptions.findIndex((conv: any) => conv.value === conversion.value)
     if (index === -1) {
@@ -262,12 +253,12 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
   }
 
   chooseType (entity: SelectOptionsI) {
-    // show an URL of creating society NR if Societies NR needs to be released AFTER the way of navigating changes
+    // special case for Society: if FF is not enabled then show society info panel and don't set the type
     if (!this.isSocietyEnabled() && (entity.value === EntityTypes.SO || entity.value === EntityTypes.XSO)) {
       this.showSocietiesInfo = true
-      this.clearEntitySelection()
       return
     }
+    // if not already there, save selected entry for later addition to menu list
     let index = this.getEntityTypeOptions.findIndex((ent: any) => ent.value === entity.value)
     if (index === -1) {
       this.setEntityTypeAddToSelect(entity)

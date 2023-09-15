@@ -129,8 +129,8 @@ import { Component, Vue } from 'vue-property-decorator'
   components: { NameBuildInfo, NewAndBetterWay }
 })
 export default class LowerContainer extends Vue {
-  private needMoreInfo = 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business/' +
-                         'permits-licences/businesses-incorporated-companies/approval-business-name'
+  readonly needMoreInfo = 'https://www2.gov.bc.ca/gov/content/employment-business/business/managing-a-business/' +
+    'permits-licences/businesses-incorporated-companies/approval-business-name'
 }
 </script>
 

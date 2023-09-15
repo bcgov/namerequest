@@ -2,6 +2,7 @@ import { getVuetify } from '@/plugins'
 import {
   AnalysisJSONI,
   ApplicantI,
+  BusinessSearchIF,
   ConditionalInstructionI,
   ConditionalReqI,
   ConsentConflictI,
@@ -27,6 +28,7 @@ import {
   SubmissionTypeT
 } from '@/interfaces'
 import {
+  CompanyTypes,
   EntityTypes,
   Location,
   NrAffiliationErrors,
@@ -58,8 +60,10 @@ import {
 } from '@/list-data'
 
 export const isMobile = (state: StateIF): boolean => {
-  // Fallback to base window width if no window size changes have occurred.
-  return (state.stateModel.windowWidth || window.innerWidth) < getVuetify().framework.breakpoint.thresholds.sm
+  // fallback to base window width if no window size changes have occurred
+  const width = (state.stateModel.windowWidth || window.innerWidth)
+  const vuetifySm = getVuetify().framework.breakpoint.thresholds.sm
+  return (width < vuetifySm)
 }
 
 /** True if user is authenticated, else False. */
@@ -209,10 +213,12 @@ export const isRestoration = (state: StateIF): boolean => {
  */
 export const isXproFlow = (state: StateIF): boolean => {
   return (
-    ((getRequestActionCd(state) === NrRequestActionCodes.AMALGAMATE) ||
-    (getRequestActionCd(state) === NrRequestActionCodes.NEW_BUSINESS) ||
-    (getRequestActionCd(state) === NrRequestActionCodes.RESTORE) ||
-    (getRequestActionCd(state) === NrRequestActionCodes.CHANGE_NAME)) &&
+    (
+      (getRequestActionCd(state) === NrRequestActionCodes.AMALGAMATE) ||
+      (getRequestActionCd(state) === NrRequestActionCodes.NEW_BUSINESS) ||
+      (getRequestActionCd(state) === NrRequestActionCodes.RESTORE) ||
+      (getRequestActionCd(state) === NrRequestActionCodes.CHANGE_NAME)
+    ) &&
     [Location.CA, Location.IN].includes(getLocation(state))
   )
 }
@@ -488,7 +494,7 @@ export const getEntityBlurbs = (state: StateIF): Array<EntityI | ConversionTypes
 /** The BC Entity Types. */
 export const getEntityTypesBC = (state: StateIF): EntityI[] => {
   try {
-    let generateEntities = (entities) => {
+    const generateEntities = (entities) => {
       let output = []
       for (let entity of entities) {
         let obj = EntityTypesBcData.find(ent => ent.value === entity)
@@ -517,7 +523,7 @@ export const getEntityTypesBC = (state: StateIF): EntityI[] => {
     }
 
     // see 'src/list-data/request-action-mapping.ts'
-    let mapping: RequestActionMappingI = BcMapping
+    const mapping = BcMapping
     let cds = Object.keys(mapping)
     if (cds.includes(getRequestActionCd(state))) {
       return generateEntities(mapping[getRequestActionCd(state)])
@@ -538,7 +544,7 @@ export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
   }
 
   try {
-    let generateEntities = (entities) => {
+    const generateEntities = (entities) => {
       let output = []
       for (let entity of entities) {
         // use EntityTypesXproData instead of scoped _entityTypesXproData here so that RLC can be included
@@ -571,7 +577,7 @@ export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
     }
 
     // see 'src/list-data/request-action-mapping.ts'
-    let mapping: RequestActionMappingI = XproMapping
+    const mapping = XproMapping
     let cds = Object.keys(mapping)
 
     if (cds.includes(getRequestActionCd(state))) {
@@ -690,16 +696,21 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
     }
   })
 
-  let options: SelectOptionsI[] = (isLocationBC(state)) ? [...bcOptions] : [...xproOptions]
+  let options: SelectOptionsI[]
+  // special case for amalgamation - ignore location
+  if (isAmalgamation(state)) options = [...bcOptions]
+  else if (isLocationBC(state)) options = [...bcOptions]
+  else options = [...xproOptions]
   let n = 4
 
-  if (getEntityTypeAddToSelect(state)) {
-    getEntityTypeAddToSelect(state).rank = 4
-    options = options.concat(getEntityTypeAddToSelect(state))
+  // add recently-used entry to list
+  const entityTypeAddToSelect = getEntityTypeAddToSelect(state)
+  if (entityTypeAddToSelect) {
+    options.push({ ...entityTypeAddToSelect, rank: 4 })
     n = 5
   }
 
-  options = options.concat({ text: 'View all business types', value: 'INFO', rank: n })
+  options.push({ text: 'View all business types', value: 'INFO', rank: n })
 
   return options.sort((a, b) => {
     if (a.rank < b.rank) return -1
@@ -717,6 +728,9 @@ export const getLocationOptions = (state: StateIF): Array<any> => {
     return Locations.filter(location => location.value !== Location.BC)
   }
   if (isContinuationIn(state)) {
+    return Locations.filter(location => location.value === Location.BC)
+  }
+  if (isAmalgamation(state)) {
     return Locations.filter(location => location.value === Location.BC)
   }
   return Locations.filter(() => true) // copy of Locations
@@ -788,7 +802,9 @@ export const getShowPriorityRequest = (state: StateIF): boolean => {
     (!getEditMode(state) && getSubmissionType(state) === 'examination')
 }
 
-// MODAL GETTERS
+//
+// Modal Getters
+//
 export const getPickEntityModalVisible = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.pickEntityModalVisible
 }
@@ -886,7 +902,9 @@ export const getConsentConflicts = (state: StateIF): ConsentConflictI => {
   return output
 }
 
-// JSON Request constructors
+//
+// JSON Request Constructors
+//
 export const getNrRequestNames = (state: StateIF): RequestNameI[] => {
   const nameChoices = getNameChoices(state)
   const nrNames = getNrNames(state)
@@ -1126,11 +1144,11 @@ export const getFolioNumber = (state: StateIF): string => {
   return state.stateModel.newRequestModel.folioNumber
 }
 
-/**
- * Name Check Getters
- * FUTURE: move existing getters used only for name check above to here
- * FUTURE: eventually move this all out of vuex (if we refactor to composition api)
- */
+//
+// Name Check Getters
+// FUTURE: move existing getters used only for name check above to here
+// FUTURE: eventually move this all out of vuex (if we refactor to composition api)
+//
 export const getConflictsConditional = (state: StateIF): Array<string> => {
   return state.stateModel.nameCheckModel.conflictsConditional
 }
@@ -1234,4 +1252,23 @@ export const isBusinessLookupEntityType = (state: StateIF): boolean => {
 export const isMrasJurisdiction = (state: StateIF): boolean => {
   const xproJurisdiction = getJurisdictionText(state)
   return MrasJurisdictions.includes(xproJurisdiction?.toLowerCase())
+}
+
+//
+// Search Page Getters
+//
+export const getSearchBusiness = (state: StateIF): BusinessSearchIF => {
+  return state.stateModel.newRequestModel.search.business
+}
+
+export const getSearchCompanyType = (state: StateIF): CompanyTypes => {
+  return state.stateModel.newRequestModel.search.companyType
+}
+
+export const getSearchJurisdiction = (state: StateIF): any => {
+  return state.stateModel.newRequestModel.search.jurisdiction
+}
+
+export const getSearchRequest = (state: StateIF): RequestActionsI => {
+  return state.stateModel.newRequestModel.search.request
 }
