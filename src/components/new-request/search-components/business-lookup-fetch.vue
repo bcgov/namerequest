@@ -22,6 +22,7 @@
         :hint="hint"
         @click:append="onBusiness(null)"
         @keyup.delete="onBusiness(null)"
+        @keydown.enter.native.prevent
       />
     </v-form>
   </v-col>
