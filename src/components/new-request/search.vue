@@ -244,7 +244,7 @@ import XproFederalBullets from '@/components/new-request/search-components/xpro-
 
 import { EntityTypes } from '@/enums'
 import { CommonMixin, NrAffiliationMixin, SearchMixin } from '@/mixins'
-import { Designations } from '@/list-data'
+import { Designations, XproMapping } from '@/list-data'
 import { Navigate } from '@/plugins'
 
 /**
@@ -445,14 +445,20 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
     // Conditional for Amalgamation Flow.
     if (this.isAmalgamation) {
+      const isXpro = XproMapping.AML.includes(this.getEntityTypeCd)
+
       // named companies
       if (this.getEntityTypeCd && this.isNamedCompany) return true
-      // unknown companies except societies and federal xpro
-      if (this.getEntityTypeCd && !this.isNumberedEntityType && !this.isSociety && !this.isFederal) return true
-      // societies
+      // exclude numbered companies
+      if (this.getEntityTypeCd && this.isNumberedCompany) return false
+      // "unknown" companies except xpro and societies
+      if (this.getEntityTypeCd && !isXpro && !this.isSociety) return true
+      // societies (special case due to FF)
       if (this.getEntityTypeCd && this.isSociety) return true
-      // xpro except federal, once location is selected
-      if (this.getEntityTypeCd && this.getLocation && !this.isFederal) return true
+      // exclude federal
+      if (this.getEntityTypeCd && this.isFederal) return false
+      // xpro, once location is selected
+      if (this.getEntityTypeCd && (this.isLocationCA || this.isLocationIN)) return true
     }
 
     // Conditional for Alteration Flow.
@@ -480,6 +486,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       if (this.getEntityTypeCd && !this.isNumberedEntityType && this.isSociety) return true
       if (this.getEntityTypeCd && this.isNamedCompany) return true
     }
+
     return false
   }
 
