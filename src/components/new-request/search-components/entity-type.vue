@@ -84,7 +84,6 @@ export default class EntityType extends Mixins(SearchMixin) {
   }
 
   get entityTypeOptions () {
-    // console.log('*** EntityType, new entity type options =', this.getEntityTypeOptions)
     return (this.isConversion ? this.getConversionTypeOptions : this.getEntityTypeOptions)
   }
 

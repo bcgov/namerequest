@@ -1,7 +1,5 @@
 <template>
-  <v-container fluid id="search-container" class="copy-normal pt-10 px-10"
-    :class="(isFederal && isRestoration) ? 'pb-0' : 'pb-12'"
-  >
+  <v-container fluid id="search-container" class="copy-normal pt-10 px-10 pb-12">
     <header class="h6">Get started by selecting an action:</header>
 
     <v-row class="pt-6">
@@ -152,10 +150,27 @@
 
       <!-- Restoration / Reinstatement flow -->
       <template v-else-if="isRestoration">
-        <EntityType cols="12" md="6" />
         <BusinessLookupFetch />
+        <CompanyType v-if="getSearchBusiness && isBcRestorable && isSupportedRestoration(getEntityTypeCd)" />
         <Jurisdiction v-if="isSelectedXproAndRestorable" cols="12" md="4" />
-        <CompanyType v-if="false" />
+
+        <!-- federal sub-flow -->
+        <XproFederalBullets v-if="isFederal && getSearchBusiness" />
+
+        <template v-if="(isRestorable && !isFederal) && (isNamedCompany || !isSupportedRestoration(getEntityTypeCd))">
+          <v-col cols="12" :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'">
+            <NameInput
+              :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+              @emit-corp-num-validity="corpNumValid = $event"
+            />
+          </v-col>
+          <Designation v-if="showDesignation" cols="12" md="4" />
+          <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
+            <CorpNumberCheckbox />
+          </v-col>
+        </template>
+
+        <NumberedCompanyBullets v-if="isNumberedCompany"/>
       </template>
     </v-row>
 
@@ -297,6 +312,10 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     return (Designations[this.getEntityTypeCd]?.end || false)
   }
 
+  get isCooperative (): boolean {
+    return (this.getEntityTypeCd === EntityTypes.CP)
+  }
+
   get isSociety (): boolean {
     return (this.isSocietyEnabled() && this.getEntityTypeCd === EntityTypes.SO)
   }
@@ -333,6 +352,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     // Conditional for Change Name Flow.
     if (this.isChangeName && this.isNumberedCompany) return true
 
+    // Conditional for Restoration/Reinstatement Flow.
+    if (
+      this.isRestoration &&
+      this.isNumberedCompany &&
+      this.isSupportedRestoration(this.getEntityTypeCd)
+    ) return true
+
     return false
   }
 
@@ -368,8 +394,16 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     ) return true
 
     // Conditional for Change Name XPRO Flow.
-    if (this.isChangeNameXpro &&
+    if (this.isChangeName &&
+      this.isChangeNameXpro &&
       this.isFederal
+    ) return true
+
+    // Conditional for Restoration/Reinstatement Flow.
+    if (
+      this.isRestoration &&
+      this.isNumberedCompany &&
+      !this.isSupportedRestoration(this.getEntityTypeCd)
     ) return true
 
     // Conditional for Continuation In Flow.
@@ -411,8 +445,14 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
     // Conditional for Amalgamation Flow.
     if (this.isAmalgamation) {
-      if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
+      // named companies
+      if (this.getEntityTypeCd && this.isNamedCompany) return true
+      // unknown companies except societies and federal xpro
+      if (this.getEntityTypeCd && !this.isNumberedEntityType && !this.isSociety && !this.isFederal) return true
+      // societies
       if (this.getEntityTypeCd && this.isSociety) return true
+      // xpro except federal, once location is selected
+      if (this.getEntityTypeCd && this.getLocation && !this.isFederal) return true
     }
 
     // Conditional for Alteration Flow.
@@ -424,6 +464,14 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (this.isChangeName) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
       if (this.getEntityTypeCd && this.isSociety) return true
+    }
+
+    // Conditional for Restoration/Reinstatement.
+    if (this.isRestoration) {
+      if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
+      if (this.getEntityTypeCd && this.isSelectedXproAndRestorable && !this.isFederal) return true
+      if (this.getSearchBusiness && this.isBcRestorable &&
+        !this.isSupportedRestoration(this.getEntityTypeCd)) return true
     }
 
     // Conditional for Continuation In Flow.

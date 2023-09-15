@@ -112,15 +112,21 @@ export class SearchMixin extends Mixins(CommonMixin) {
   }
 
   set entity_type_cd (type: EntityTypes) {
-    // console.log('*** set entity_type_cd =', type)
+    // special case for amalgamation -- in case of changing entity type after changing xpro location
+    if (this.isAmalgamation) {
+      this.setSearchJurisdiction(null)
+      this.setLocation(null)
+      this.setJurisdictionCd(null)
+      this.setSearchCompanyType(null)
+    }
+
     // special case for sub-menu
     if (type === EntityTypes.INFO) {
       // set empty values until user chooses a new one
       // (don't use null in case it's already null as we want reactivity)
       this.setEntityTypeCd('')
       this.setSearchCompanyType('')
-      // special case for amalgamation -- in case of changing entity type after changing location
-      if (this.isAmalgamation) this.setLocation(null)
+
       // show the "View all business types" modal
       this.setPickEntityModalVisible(true)
       return
