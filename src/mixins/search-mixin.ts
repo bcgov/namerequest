@@ -115,7 +115,7 @@ export class SearchMixin extends Mixins(CommonMixin) {
     // special case for amalgamation -- in case of changing entity type after changing xpro location
     if (this.isAmalgamation) {
       this.setSearchJurisdiction(null)
-      this.setLocation(null)
+      this.setLocation(Location.BC)
       this.setJurisdictionCd(null)
       this.setSearchCompanyType(null)
     }
