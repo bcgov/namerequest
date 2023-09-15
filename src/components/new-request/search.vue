@@ -37,7 +37,7 @@
         <template v-else-if="isXproEntityType(getEntityTypeCd)">
           <v-col cols="12" md="8">
             <NameInput
-              :is-mras-search="(isMrasJurisdiction && !getHasNoCorpNum)"
+              :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
               @emit-corp-num-validity="corpNumValid = $event"
             />
           </v-col>
