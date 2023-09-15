@@ -318,7 +318,7 @@ export async function searchBusiness ({ getters }, corpNum: string): Promise<Bus
         if (data.directors === 'Not Available' && data.incorporated === 'Not Available') {
           return Promise.reject(error) // business not found
         }
-        // *** TODO: update this when new endpoint is available
+        // FUTURE: update this when new endpoint is available
         return {
           identifier: corpNum, // data['incorp #'],
           legalName: 'Future Name From COLIN',

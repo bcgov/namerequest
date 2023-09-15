@@ -297,6 +297,10 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     return (Designations[this.getEntityTypeCd]?.end || false)
   }
 
+  get isCooperative (): boolean {
+    return (this.getEntityTypeCd === EntityTypes.CP)
+  }
+
   get isSociety (): boolean {
     return (this.isSocietyEnabled() && this.getEntityTypeCd === EntityTypes.SO)
   }
@@ -417,8 +421,14 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
     // Conditional for Amalgamation Flow.
     if (this.isAmalgamation) {
-      if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
+      // named companies
+      if (this.getEntityTypeCd && this.isNamedCompany) return true
+      // unknown companies except societies and federal xpro
+      if (this.getEntityTypeCd && !this.isNumberedEntityType && !this.isSociety && !this.isFederal) return true
+      // societies
       if (this.getEntityTypeCd && this.isSociety) return true
+      // xpro except federal, once location is selected
+      if (this.getEntityTypeCd && this.getLocation && !this.isFederal) return true
     }
 
     // Conditional for Alteration Flow.

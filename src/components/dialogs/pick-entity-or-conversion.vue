@@ -258,6 +258,7 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
       this.showSocietiesInfo = true
       return
     }
+    // if not already there, save selected entry for later addition to menu list
     let index = this.getEntityTypeOptions.findIndex((ent: any) => ent.value === entity.value)
     if (index === -1) {
       this.setEntityTypeAddToSelect(entity)
