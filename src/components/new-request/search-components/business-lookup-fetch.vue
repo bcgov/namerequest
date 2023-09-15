@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 import BusinessFetch from '@/components/new-request/business-fetch.vue'
 import BusinessLookup from '@/components/new-request/business-lookup.vue'
 import { BusinessSearchIF, FormType } from '@/interfaces'
@@ -154,14 +154,6 @@ export default class BusinessLookupFetch extends Mixins(CommonMixin, SearchMixin
           this.setEntityTypeCd(this.getSearchBusiness?.legalType || null)
         }
       }
-    }
-  }
-
-  /** Resets fields when returned to the Tabs component */
-  @Watch('getDisplayedComponent')
-  watchDisplayedComponent (displayedComponent: string) {
-    if (displayedComponent === 'Tabs') {
-      this.onBusiness(null)
     }
   }
 }
