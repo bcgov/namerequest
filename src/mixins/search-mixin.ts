@@ -46,6 +46,8 @@ export class SearchMixin extends Mixins(CommonMixin) {
   @Getter isContinuationIn!: boolean
   @Getter isConversion!: boolean
   @Getter isFederal!: boolean
+  @Getter isLocationCA!: boolean
+  @Getter isLocationIN!: boolean
   @Getter isMobile!: boolean
   @Getter isMrasJurisdiction!: boolean
   @Getter isNewBusiness!: boolean
