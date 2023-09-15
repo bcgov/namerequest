@@ -136,14 +136,17 @@ export const mutateIsPersonsName = (state: StateIF, isPersonsName: boolean) => {
 }
 
 export const mutateLocation = (state: StateIF, location: Location) => {
+  // don't reset location if it hasn't changed
   if (location === state.stateModel.newRequestModel.location) {
     return
   }
+
   // reset entity type on location changes (options depend on location)
-  // except amalgamation because entity type came before location
+  // except amalgamation since entity type was set before location
   if (state.stateModel.newRequestModel.request_action_cd !== NrRequestActionCodes.AMALGAMATE) {
     state.stateModel.newRequestModel.entity_type_cd = null
   }
+
   if (
     state.stateModel.newRequestModel.location === Location.CA ||
     state.stateModel.newRequestModel.location === Location.IN
@@ -153,7 +156,14 @@ export const mutateLocation = (state: StateIF, location: Location) => {
       return
     }
   }
-  state.stateModel.newRequestModel.entityTypeAddToSelect = null
+
+  // reset recently-used entry on location changes
+  // except amalgamation since recently-used entry was set before location
+  if (state.stateModel.newRequestModel.request_action_cd !== NrRequestActionCodes.AMALGAMATE) {
+    state.stateModel.newRequestModel.entityTypeAddToSelect = null
+  }
+
+  // finally, set location
   state.stateModel.newRequestModel.location = location
 }
 
