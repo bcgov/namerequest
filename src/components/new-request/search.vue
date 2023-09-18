@@ -28,9 +28,24 @@
 
       <!-- New Xpro Business flow -->
       <template v-else-if="isNewXproBusiness">
-        <EntityType v-if="getLocation && !isFederal" cols="12" md="4" />
         <Jurisdiction />
-        <CompanyType v-if="false" />
+        <EntityType v-if="getLocation && !isFederal" md="4" />
+
+        <XproFederalBullets v-if="isFederal" />
+
+        <!-- not Federal -->
+        <template v-else-if="isXproEntityType(getEntityTypeCd)">
+          <v-col cols="12" md="8">
+            <NameInput
+              :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+              @emit-corp-num-validity="corpNumValid = $event"
+            />
+          </v-col>
+
+          <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
+            <CorpNumberCheckbox />
+          </v-col>
+        </template>
       </template>
 
       <!-- Continuation In flow -->
@@ -386,6 +401,9 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       return !this.showActionNowButton
     }
 
+    // Conditional for XPro Registration Flow
+    if (this.isNewXproBusiness && this.isFederal) return true
+
     // Conditional for Change Name Flow.
     if (
       this.isChangeName &&
@@ -441,6 +459,11 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       if (this.getEntityTypeCd && !this.isNumberedEntityType && !this.isSociety) return true
       if (this.getEntityTypeCd && this.isNamedCompany) return true
       if (this.getEntityTypeCd && this.isSociety) return true
+    }
+
+    // Conditional for XPro Registration Flow.
+    if (this.isNewXproBusiness) {
+      if (this.getEntityTypeCd && !this.isFederal) return true
     }
 
     // Conditional for Amalgamation Flow.

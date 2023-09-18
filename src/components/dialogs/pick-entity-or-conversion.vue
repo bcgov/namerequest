@@ -175,7 +175,7 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
 
   get tableData (): any[] {
     // default table data for amalgamation is always BC
-    if (this.getLocation === Location.BC || isAmalgamation) {
+    if (this.getLocation === Location.BC || this.isAmalgamation) {
       return this.tableDataBC
     } else {
       return this.tableDataXPRO
