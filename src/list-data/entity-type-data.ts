@@ -31,7 +31,7 @@ export const EntityTypesBcData: EntityI[] = [
   },
   {
     text: 'Limited Company',
-    value: EntityTypes.CR,
+    value: EntityTypes.BC,
     cat: 'Corporations',
     blurbs: [
       `A company that may have one or more people who own shares with some personal responsibility for debt and
@@ -164,7 +164,7 @@ export const EntityTypesBcData: EntityI[] = [
   },
   {
     text: 'Benefit Company',
-    value: EntityTypes.BC,
+    value: EntityTypes.CR,
     cat: 'Corporations',
     blurbs: [
       `A type of corporation with special commitments to conduct business in a responsible and sustainable way.`,
