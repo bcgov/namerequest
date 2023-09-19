@@ -1,7 +1,5 @@
 <template>
-  <v-container fluid id="search-container" class="copy-normal pt-10 px-10"
-    :class="(isFederal && isRestoration) ? 'pb-0' : 'pb-12'"
-  >
+  <v-container fluid id="search-container" class="copy-normal pt-10 px-10 pb-12">
     <header class="h6">Get started by selecting an action:</header>
 
     <v-row class="pt-6">
@@ -14,50 +12,106 @@
       <!-- New BC Business flow -->
       <template v-if="isNewBcBusiness">
         <EntityType v-if="getLocation" />
-        <CompanyType v-if="getEntityTypeCd" />
-        <NumberedCompanyBullets v-if="isNumberedCompany" />
+        <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
+        <NumberedCompanyBullets v-if="isNumberedCompany && isNumberedEntityType" />
 
-        <template v-if="isNamedCompany">
+        <template v-if="(isNamedCompany || !isNumberedEntityType) && entity_type_cd">
           <v-col cols="12" :md="showDesignation ? '8' : '12'">
             <NameInput
               :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
               @emit-corp-num-validity="corpNumValid = $event"
             />
           </v-col>
-          <Designation cols="12" md="4" />
+          <Designation v-if="showDesignation" cols="12" md="4" />
         </template>
       </template>
 
       <!-- New Xpro Business flow -->
       <template v-else-if="isNewXproBusiness">
-        <EntityType v-if="getLocation && !isFederal" cols="12" md="4" />
         <Jurisdiction />
-        <CompanyType v-if="showCompanyTypeRadioButtons" />
+        <EntityType v-if="getLocation && !isFederal" md="4" />
+
+        <XproFederalBullets v-if="isFederal" />
+
+        <!-- not Federal -->
+        <template v-else-if="isXproEntityType(getEntityTypeCd)">
+          <v-col cols="12" md="8">
+            <NameInput
+              :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+              @emit-corp-num-validity="corpNumValid = $event"
+            />
+          </v-col>
+
+          <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
+            <CorpNumberCheckbox />
+          </v-col>
+        </template>
       </template>
 
       <!-- Continuation In flow -->
       <template v-else-if="isContinuationIn">
-        <EntityType v-if="getLocation" />
-        <CompanyType v-if="showCompanyTypeRadioButtons" />
+        <EntityType />
+        <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
+
+        <template v-if="getEntityTypeCd">
+          <!-- named company -->
+          <template v-if="isNamedCompany || !isNumberedEntityType">
+            <v-col cols="12" :md="showDesignation ? '8' : '12'">
+              <NameInput
+                :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+                @emit-corp-num-validity="corpNumValid = $event"
+              />
+            </v-col>
+            <Designation v-if="showDesignation" cols="12" md="4" />
+          </template>
+
+          <!-- numbered company -->
+          <NumberedCompanyBullets v-else/>
+        </template>
       </template>
 
       <!-- Change Name flow -->
       <template v-else-if="isChangeName">
         <BusinessLookupFetch />
-        <Jurisdiction v-if="isChangeNameXpro" />
-        <CompanyType v-if="showCompanyTypeRadioButtons" />
+
+        <!-- XPRO jurisdiction -->
+        <Jurisdiction v-if="isChangeNameXpro" md="4"/>
+        <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
+
+        <!-- named company -->
+        <template v-if="isNamedCompany && !isFederal">
+          <v-col cols="12" :md="showDesignation || isChangeNameXpro ? '8' : '12'">
+            <NameInput
+              :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+              @emit-corp-num-validity="corpNumValid = $event"
+            />
+          </v-col>
+          <Designation v-if="showDesignation" cols="12" md="4" />
+        </template>
+
+        <!-- numbered company -->
+        <NumberedCompanyBullets v-if="isNumberedCompany" />
+
+        <!-- XPRO federal bullet text -->
+        <XproFederalBullets v-if="isXproFlow && isFederal" cols="12" />
+
+        <!-- checkbox for MRAS jurisdiction -->
+        <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
+          <CorpNumberCheckbox />
+        </v-col>
       </template>
 
       <!-- Amalgamation flow -->
       <template v-else-if="isAmalgamation">
-        <EntityType v-if="getLocation" />
+        <EntityType />
 
         <template v-if="isXproEntityType(getEntityTypeCd)">
           <Jurisdiction md="4" />
 
+          <!-- federal sub-flow -->
           <XproFederalBullets v-if="isFederal" />
 
-          <!-- not Federal -->
+          <!-- xpro sub-flow -->
           <template v-else-if="isXproFlow">
             <v-col cols="12" md="8">
               <NameInput
@@ -72,22 +126,21 @@
           </template>
         </template>
 
-        <!-- not Xpro -->
-        <template v-else>
-          <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
+        <!-- regular sub-flow -->
+        <template v-else-if="getEntityTypeCd">
+          <CompanyType v-if="isNumberedEntityType" />
 
           <!-- named company -->
-          <template v-if="isNamedCompany || isSociety">
+          <template v-if="isNamedCompany || !isNumberedEntityType">
             <v-col cols="12" :md="showDesignation ? '8' : '12'">
               <NameInput @emit-corp-num-validity="corpNumValid = $event" />
             </v-col>
+
             <Designation v-if="showDesignation" cols="12" md="4" />
           </template>
 
           <!-- numbered company -->
-          <template v-if="isNumberedCompany">
-            <NumberedCompanyBullets />
-          </template>
+          <NumberedCompanyBullets v-if="isNumberedCompany" />
         </template>
       </template>
 
@@ -112,32 +165,29 @@
 
       <!-- Restoration / Reinstatement flow -->
       <template v-else-if="isRestoration">
-        <EntityType cols="12" md="6" />
         <BusinessLookupFetch />
+        <CompanyType v-if="getSearchBusiness && isBcRestorable && isSupportedRestoration(getEntityTypeCd)" />
         <Jurisdiction v-if="isSelectedXproAndRestorable" cols="12" md="4" />
-        <CompanyType v-if="showCompanyTypeRadioButtons" />
+
+        <!-- federal sub-flow -->
+        <XproFederalBullets v-if="isFederal && getSearchBusiness" />
+
+        <template v-if="(isRestorable && !isFederal) && (isNamedCompany || !isSupportedRestoration(getEntityTypeCd))">
+          <v-col cols="12" :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'">
+            <NameInput
+              :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+              @emit-corp-num-validity="corpNumValid = $event"
+            />
+          </v-col>
+          <Designation v-if="showDesignation" cols="12" md="4" />
+          <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
+            <CorpNumberCheckbox />
+          </v-col>
+        </template>
+
+        <NumberedCompanyBullets v-if="isNumberedCompany"/>
       </template>
     </v-row>
-
-    <!-- Xpro/Federal bullets -->
-    <!-- *** TODO: move this into flows above -->
-    <!-- *** TODO: simplify logic -->
-    <!-- <template v-if="(getEntityTypeCd || isFederal || isRestorable) && (isNamedCompany || isAmalgamation)">
-      <v-row v-if="isXproFlow && isFederal">
-        <XproFederalBullets />
-      </v-row>
-    </template> -->
-
-    <!-- Corporate Number checkbox, only for Canadian MRAS jurisdictions -->
-    <!-- *** TODO: move this into flows above -->
-    <!-- *** TODO: simplify logic -->
-    <!-- <template v-if="(getEntityTypeCd || isFederal || isRestorable) && (isNamedCompany || isAmalgamation)">
-      <v-row v-if="isCanadian && isMrasJurisdiction">
-        <v-col cols="12" class="d-flex justify-end">
-          <CorpNumberCheckbox />
-        </v-col>
-      </v-row>
-    </template> -->
 
     <!-- "Go to COLIN" button -->
     <template v-if="showColinButton">
@@ -207,10 +257,10 @@ import NumberedCompanyBullets from '@/components/new-request/search-components/n
 import RequestAction from '@/components/new-request/search-components/request-action.vue'
 import XproFederalBullets from '@/components/new-request/search-components/xpro-federal-bullets.vue'
 
-import { CompanyTypes, EntityTypes } from '@/enums'
+import { EntityTypes } from '@/enums'
 import { CommonMixin, NrAffiliationMixin, SearchMixin } from '@/mixins'
-import { Designations } from '@/list-data'
-import { GetFeatureFlag, Navigate } from '@/plugins'
+import { Designations, XproMapping } from '@/list-data'
+import { Navigate } from '@/plugins'
 
 /**
  * This is the component that displays the new NR menus and flows.
@@ -274,59 +324,62 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   get showDesignation (): boolean {
-    // return (Designations[this.getEntityTypeCd]?.end && !this.isXproFlow) // *** TODO: delete
     return (Designations[this.getEntityTypeCd]?.end || false)
+  }
+
+  get isCooperative (): boolean {
+    return (this.getEntityTypeCd === EntityTypes.CP)
   }
 
   get isSociety (): boolean {
     return (this.isSocietyEnabled() && this.getEntityTypeCd === EntityTypes.SO)
   }
 
-  get showCompanyTypeRadioButtons (): boolean {
-    // *** TODO: add your logic in the template instead of the spaghetti below
-    // if (!this.getEntityTypeCd && !this.getConversionType && !this.isFederal) return false
-    // if (this.isConversion) {
-    //   return (!!this.getSearchBusiness && !!this.getConversionType)
-    // }
-    // // check if numbered is not allowed or society NR name is required
-    // if (!this.isNumberedEntityType || this.isSociety) {
-    //   this.setSearchCompanyType(CompanyTypes.NAMED_COMPANY)
-    //   return false
-    // }
-    return false
-  }
-
   get showActionNowButton (): boolean {
+    // Conditional for Continuation In Flow.
+    if (
+      this.isContinuationIn &&
+      this.isNumberedCompany &&
+      this.isSupportedContinuationIn(this.getEntityTypeCd)
+    ) return true
+
+    // Conditional for Amalgamation Flow.
     if (
       this.isAmalgamation &&
       this.isNumberedCompany &&
       this.isSupportedAmalgamation(this.getEntityTypeCd)
     ) return true
 
+    // Conditional for Alteration Flow.
     if (
       this.isConversion &&
       this.isNumberedCompany &&
       this.isSupportedAlteration(this.getConversionType)
     ) return true
 
-    // *** TODO: add your logic here instead of the spaghetti below
-    // if (this.getEntityTypeCd || this.isFederal || this.isRestorable) {
-    //   if (this.isNumberedCompany || this.isFederal) {
-    //     if (!this.isConversion || this.isAlterOnline(this.getConversionType)) {
-    //       // Since Federal Reinstatement is a paper filing, we don't show any buttons.
-    //       // The same conditional is in showColinButton().
-    //       if (this.isFederal && this.isRestoration) return false
-    //       if (this.isConversion && !this.isAlterOnline(this.getConversionType)) return false
-    //       return true
-    //     }
-    //   }
-    // }
+    // Conditional for "New BC-based business" Flow.
+    // If we're in Start a new BC based and the entity is supported, show incorporate now button.
+    if (this.isNewBcBusiness && this.isNumberedCompany && this.isNumberedEntityType) {
+      const isIncorporateEntity = this.isSupportedIncorporationRegistration(this.getEntityTypeCd)
+      return isIncorporateEntity
+    }
+
+    // Conditional for Change Name Flow.
+    if (this.isChangeName && this.isNumberedCompany) return true
+
+    // Conditional for Restoration/Reinstatement Flow.
+    if (
+      this.isRestoration &&
+      this.isNumberedCompany &&
+      this.isSupportedRestoration(this.getEntityTypeCd)
+    ) return true
 
     return false
   }
 
   /** Whether to show "Go to COLIN" button (otherwise will show `actionNowButtonText` button). */
   get showColinButton (): boolean {
+    // Conditional for Amalgamation Flow.
     if (
       this.isAmalgamation &&
       this.isNumberedCompany &&
@@ -334,6 +387,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       !this.isXproFlow
     ) return true
 
+    // Conditional for Alteration Flow.
     if (
       this.isConversion &&
       this.isNumberedCompany &&
@@ -341,52 +395,50 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       this.isAlterOnline(this.getConversionType)
     ) return true
 
-    // *** TODO: add your logic here instead of the spaghetti below
-    // if (this.getEntityTypeCd || this.isFederal || this.isRestorable) {
-    //   if (this.isNumberedCompany || this.isFederal) {
-    //     if (!this.isConversion || this.isAlterOnline(this.getConversionType)) {
-    //       if (this.showContinueInButton) return true
-    //       if (this.isFederal && this.isRestoration) return false
-    //       if (this.isFederal) return true
+    // Conditional for "New BC-based business" Flow.
+    // If we're in Start a new BC based and the entity is not supported, show go to Colin button.
+    if (this.isNewBcBusiness && this.isNumberedCompany && this.isNumberedEntityType) {
+      return !this.showActionNowButton
+    }
 
-    //       // don't show COLIN button for supported alteration entities
-    //       if (this.isConversion) {
-    //         return !this.isSupportedAlteration(this.getConversionType)
-    //       }
+    // Conditional for XPro Registration Flow
+    if (this.isNewXproBusiness && this.isFederal) return true
 
-    //       // don't show COLIN button for supported restoration entities
-    //       if (this.isRestoration) {
-    //         const supportedRestorationEntites = GetFeatureFlag('supported-restoration-entities')
-    //         const isRestorationEntity = supportedRestorationEntites.includes(this.getEntityTypeCd)
-    //         return !isRestorationEntity
-    //       }
+    // Conditional for Change Name Flow.
+    if (
+      this.isChangeName &&
+      this.isNumberedCompany &&
+      !this.isSupportedChangeName(this.getEntityTypeCd)
+    ) return true
 
-    //       if (this.isChangeName) {
-    //         const supportedChnageNameEntites = GetFeatureFlag('supported-name-change-entities')
-    //         const isChangeNameEntity = supportedChnageNameEntites.includes(this.getEntityTypeCd)
-    //         return !isChangeNameEntity
-    //       }
+    // Conditional for Change Name XPRO Flow.
+    if (this.isChangeName &&
+      this.isChangeNameXpro &&
+      this.isFederal
+    ) return true
 
-    //       // don't show COLIN button for supported entities
-    //       const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
-    //       const isIncorporateEntity = supportedEntites.includes(this.getEntityTypeCd)
-    //       return !isIncorporateEntity
-    //     }
-    //   }
-    // }
+    // Conditional for Restoration/Reinstatement Flow.
+    if (
+      this.isRestoration &&
+      this.isNumberedCompany &&
+      !this.isSupportedRestoration(this.getEntityTypeCd)
+    ) return true
+
+    // Conditional for Continuation In Flow.
+    if (
+      this.isContinuationIn &&
+      this.isNumberedCompany &&
+      !this.isSupportedContinuationIn(this.getEntityTypeCd)
+    ) return true
+
+    // Conditional for Continuation In Flow.
+    if (
+      this.isContinuationIn &&
+      this.isNumberedCompany &&
+      !this.isSupportedContinuationIn(this.getEntityTypeCd)
+    ) return true
 
     return false
-  }
-
-  get showContinueInButton (): boolean {
-    // for now, return True because Continuation In filings are not yet implemented
-    return this.isContinuationIn
-
-    // *** FUTURE: use code below
-    // if (!this.isContinuationIn) return false
-    // const supportedContInEntites = GetFeatureFlag('supported-continuation-in-entities')
-    // const isContInEntity = supportedContInEntites.includes(this.getEntityTypeCd)
-    // return !isContInEntity
   }
 
   /** Retrieve text based on selected action/flow */
@@ -401,19 +453,62 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   get showCheckNameButton (): boolean {
-    if (this.isAmalgamation) {
-      if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
+    // Conditional for "New BC-based business" Flow.
+    // Show button if we're in "Start a new BC-based business" and non-numbered entity is selected.
+    if (this.isNewBcBusiness) {
+      if (this.getEntityTypeCd && !this.isNumberedEntityType && !this.isSociety) return true
+      if (this.getEntityTypeCd && this.isNamedCompany) return true
       if (this.getEntityTypeCd && this.isSociety) return true
     }
 
+    // Conditional for XPro Registration Flow.
+    if (this.isNewXproBusiness) {
+      if (this.getEntityTypeCd && !this.isFederal) return true
+    }
+
+    // Conditional for Amalgamation Flow.
+    if (this.isAmalgamation) {
+      const isXpro = XproMapping.AML.includes(this.getEntityTypeCd)
+
+      // named companies
+      if (this.getEntityTypeCd && this.isNamedCompany) return true
+      // exclude numbered companies
+      if (this.getEntityTypeCd && this.isNumberedCompany) return false
+      // "unknown" companies except xpro and societies
+      if (this.getEntityTypeCd && !isXpro && !this.isSociety) return true
+      // societies (special case due to FF)
+      if (this.getEntityTypeCd && this.isSociety) return true
+      // exclude federal
+      if (this.getEntityTypeCd && this.isFederal) return false
+      // xpro, once location is selected
+      if (this.getEntityTypeCd && (this.isLocationCA || this.isLocationIN)) return true
+    }
+
+    // Conditional for Alteration Flow.
     if (this.isConversion) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
     }
 
-    // *** TODO: add your logic here instead of the spaghetti below
-    // if (!this.isFederal && this.isNamedCompany && this.getEntityTypeCd) {
-    //   return true
-    // }
+    // Conditional for Change Name Flow.
+    if (this.isChangeName) {
+      if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
+      if (this.getEntityTypeCd && this.isSociety) return true
+    }
+
+    // Conditional for Restoration/Reinstatement.
+    if (this.isRestoration) {
+      if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
+      if (this.getEntityTypeCd && this.isSelectedXproAndRestorable && !this.isFederal) return true
+      if (this.getSearchBusiness && this.isBcRestorable &&
+        !this.isSupportedRestoration(this.getEntityTypeCd)) return true
+    }
+
+    // Conditional for Continuation In Flow.
+    if (this.isContinuationIn) {
+      if (this.getEntityTypeCd && !this.isNumberedEntityType) return true
+      if (this.getEntityTypeCd && !this.isNumberedEntityType && this.isSociety) return true
+      if (this.getEntityTypeCd && this.isNamedCompany) return true
+    }
 
     return false
   }

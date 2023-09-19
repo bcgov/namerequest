@@ -46,6 +46,8 @@ export class SearchMixin extends Mixins(CommonMixin) {
   @Getter isContinuationIn!: boolean
   @Getter isConversion!: boolean
   @Getter isFederal!: boolean
+  @Getter isLocationCA!: boolean
+  @Getter isLocationIN!: boolean
   @Getter isMobile!: boolean
   @Getter isMrasJurisdiction!: boolean
   @Getter isNewBusiness!: boolean
@@ -112,13 +114,21 @@ export class SearchMixin extends Mixins(CommonMixin) {
   }
 
   set entity_type_cd (type: EntityTypes) {
+    // special case for amalgamation -- in case of changing entity type after changing xpro location
+    if (this.isAmalgamation) {
+      this.setSearchJurisdiction(null)
+      this.setLocation(Location.BC)
+      this.setJurisdictionCd(null)
+      this.setSearchCompanyType(null)
+    }
+
     // special case for sub-menu
     if (type === EntityTypes.INFO) {
       // set empty values until user chooses a new one
       // (don't use null in case it's already null as we want reactivity)
       this.setEntityTypeCd('')
       this.setSearchCompanyType('')
-      // this.setLocation(null) // *** TODO: fix bug (Severin)
+
       // show the "View all business types" modal
       this.setPickEntityModalVisible(true)
       return
@@ -126,9 +136,9 @@ export class SearchMixin extends Mixins(CommonMixin) {
 
     // special case for conversion
     if (this.getEntityTypeCd && this.isConversion && type) {
-      const value = type as unknown as NrRequestTypeCodes
-      const entity_type_cd = ConversionTypes.find(conv => conv.value === value)?.entity_type_cd || null
-      this.setEntityTypeCd(entity_type_cd)
+      const nrRequestType = type as unknown as NrRequestTypeCodes
+      const entityType = ConversionTypes.find(conv => conv.value === nrRequestType)?.entity_type_cd || null
+      this.setEntityTypeCd(entityType)
       this.setConversionType(type)
       this.setConversionType(type)
       return

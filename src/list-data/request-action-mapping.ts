@@ -1,5 +1,5 @@
 import { EntityTypes, NrRequestActionCodes } from '@/enums'
-import { RequestActionMappingI, MappingI } from '@/interfaces'
+import { RequestActionMappingI } from '@/interfaces'
 
 const EntityTypesBC = [
   EntityTypes.FR,
@@ -59,7 +59,7 @@ export const BcMapping: RequestActionMappingI = {
   ]
 }
 
-export const XproMapping: MappingI = {
+export const XproMapping: RequestActionMappingI = {
   AML: [
     EntityTypes.XCR,
     EntityTypes.XCP

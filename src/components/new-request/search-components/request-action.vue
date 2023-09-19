@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
+import { Component, Mixins, Prop, Vue, Watch } from 'vue-property-decorator'
 import NestedSelect from '@/components/common/nested-select.vue'
 import { SearchMixin } from '@/mixins'
 import { RequestActionsI } from '@/interfaces'
@@ -65,9 +65,11 @@ export default class RequestAction extends Mixins(SearchMixin) {
       this.setExtendedRequestType(this.getSearchRequest)
     }
 
-    // set default location for requests where there is only one location option
-    if (this.isNewBcBusiness || this.isContinuationIn || this.isConversion || this.isAmalgamation) {
-      // *** TODO: set location for amalgamation later (depending on entity type selected)
+    if (this.isNewBcBusiness || this.isContinuationIn || this.isConversion) {
+      // set default location for requests where there is only one location option
+      this.setLocation(Location.BC)
+    } else if (this.isAmalgamation) {
+      // set initial location for amalgamation - will be overridden later if xpro
       this.setLocation(Location.BC)
     } else if (this.isAssumed && this.getLocation === Location.BC) {
       this.setLocation(Location.CA)
@@ -80,6 +82,14 @@ export default class RequestAction extends Mixins(SearchMixin) {
     const offsetWidth = el?.offsetWidth as number
     const scrollWidth = el?.scrollWidth as number
     this.showRequestActionTooltip = (offsetWidth < scrollWidth)
+  }
+
+  /** Resets fields when returned to the Tabs component */
+  @Watch('getDisplayedComponent')
+  watchDisplayedComponent (displayedComponent: string) {
+    if (displayedComponent === 'Tabs') {
+      this.onRequestActionChange(null as RequestActionsI)
+    }
   }
 }
 </script>

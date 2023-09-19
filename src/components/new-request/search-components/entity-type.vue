@@ -64,7 +64,7 @@
 <script lang="ts">
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator'
 import { FormType } from '@/interfaces'
-import { EntityTypes } from '@/enums'
+import { EntityTypes, NrRequestTypeCodes } from '@/enums'
 import { ConversionTypes } from '@/list-data'
 import { SearchMixin } from '@/mixins'
 
@@ -79,8 +79,8 @@ export default class EntityType extends Mixins(SearchMixin) {
   }
 
   // FUTURE: clean up return type
-  entityBlurbs (entity_type_cd: string): string | string[] | string[][] {
-    return this.getEntityBlurbs.find(type => type.value === entity_type_cd)?.blurbs
+  entityBlurbs (entityType: EntityTypes | NrRequestTypeCodes): string | string[] | string[][] {
+    return this.getEntityBlurbs.find(type => type.value === entityType)?.blurbs
   }
 
   get entityTypeOptions () {
@@ -93,11 +93,11 @@ export default class EntityType extends Mixins(SearchMixin) {
   }
 
   // FUTURE: move this into setter?
-  @Watch('entity_type_cd')
+  @Watch('getEntityTypeCd')
   private clearDesignation () {
     this.setDesignation('')
-    // clear "Select a Business Type" field when "View all business types" or Society is selected
-    if (!this.entity_type_cd || this.entity_type_cd === EntityTypes.INFO) {
+    // clear "Select a Business Type" field when "View all business types" is selected
+    if (!this.getEntityTypeCd || this.getEntityTypeCd === EntityTypes.INFO) {
       this.$refs.selectBusinessTypeRef && this.$refs.selectBusinessTypeRef.reset()
     }
   }

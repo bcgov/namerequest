@@ -494,7 +494,7 @@ export const getEntityBlurbs = (state: StateIF): Array<EntityI | ConversionTypes
 /** The BC Entity Types. */
 export const getEntityTypesBC = (state: StateIF): EntityI[] => {
   try {
-    let generateEntities = (entities) => {
+    const generateEntities = (entities) => {
       let output = []
       for (let entity of entities) {
         let obj = EntityTypesBcData.find(ent => ent.value === entity)
@@ -523,7 +523,7 @@ export const getEntityTypesBC = (state: StateIF): EntityI[] => {
     }
 
     // see 'src/list-data/request-action-mapping.ts'
-    let mapping: RequestActionMappingI = BcMapping
+    const mapping = BcMapping
     let cds = Object.keys(mapping)
     if (cds.includes(getRequestActionCd(state))) {
       return generateEntities(mapping[getRequestActionCd(state)])
@@ -544,7 +544,7 @@ export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
   }
 
   try {
-    let generateEntities = (entities) => {
+    const generateEntities = (entities) => {
       let output = []
       for (let entity of entities) {
         // use EntityTypesXproData instead of scoped _entityTypesXproData here so that RLC can be included
@@ -577,7 +577,7 @@ export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
     }
 
     // see 'src/list-data/request-action-mapping.ts'
-    let mapping: RequestActionMappingI = XproMapping
+    const mapping = XproMapping
     let cds = Object.keys(mapping)
 
     if (cds.includes(getRequestActionCd(state))) {
@@ -696,16 +696,21 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
     }
   })
 
-  let options: SelectOptionsI[] = (isLocationBC(state)) ? [...bcOptions] : [...xproOptions]
+  let options: SelectOptionsI[]
+  // special case for amalgamation - ignore location
+  if (isAmalgamation(state)) options = [...bcOptions]
+  else if (isLocationBC(state)) options = [...bcOptions]
+  else options = [...xproOptions]
   let n = 4
 
-  if (getEntityTypeAddToSelect(state)) {
-    getEntityTypeAddToSelect(state).rank = 4
-    options = options.concat(getEntityTypeAddToSelect(state))
+  // add recently-used entry to list
+  const entityTypeAddToSelect = getEntityTypeAddToSelect(state)
+  if (entityTypeAddToSelect) {
+    options.push({ ...entityTypeAddToSelect, rank: 4 })
     n = 5
   }
 
-  options = options.concat({ text: 'View all business types', value: 'INFO', rank: n })
+  options.push({ text: 'View all business types', value: 'INFO', rank: n })
 
   return options.sort((a, b) => {
     if (a.rank < b.rank) return -1
@@ -723,6 +728,9 @@ export const getLocationOptions = (state: StateIF): Array<any> => {
     return Locations.filter(location => location.value !== Location.BC)
   }
   if (isContinuationIn(state)) {
+    return Locations.filter(location => location.value === Location.BC)
+  }
+  if (isAmalgamation(state)) {
     return Locations.filter(location => location.value === Location.BC)
   }
   return Locations.filter(() => true) // copy of Locations

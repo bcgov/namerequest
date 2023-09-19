@@ -22,18 +22,20 @@
         :hint="hint"
         @click:append="onBusiness(null)"
         @keyup.delete="onBusiness(null)"
+        @keydown.enter.native.prevent
       />
     </v-form>
   </v-col>
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 import BusinessFetch from '@/components/new-request/business-fetch.vue'
 import BusinessLookup from '@/components/new-request/business-lookup.vue'
 import { BusinessSearchIF, FormType } from '@/interfaces'
-import { CorpTypeCd, EntityStates, EntityTypes, Location, NrRequestTypeCodes } from '@/enums'
+import { CorpTypeCd, CompanyTypes, EntityStates, EntityTypes, Location, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin, SearchMixin } from '@/mixins'
+import { logger } from '@sentry/utils'
 
 @Component({
   components: { BusinessFetch, BusinessLookup }
@@ -96,6 +98,7 @@ export default class BusinessLookupFetch extends Mixins(CommonMixin, SearchMixin
     this.setCorpNum(business?.identifier || null)
     this.setEntityTypeCd(this.getSearchBusiness?.legalType)
     this.setName('')
+    this.setSearchCompanyType('')
 
     // Waiting for DOM update to be able to access the Ref. Trigger form validation.
     // Need to do that because the ref is in a conditional.
@@ -107,7 +110,7 @@ export default class BusinessLookupFetch extends Mixins(CommonMixin, SearchMixin
         // set the from business for alteration (conversion)
         this.setOriginEntityTypeCd(this.getSearchBusiness.legalType)
         // special case if the from business is BEN
-        // set conversionType & entity_type_cd because there's only one alteration type for it
+        // set conversionType and entityTypeCd because there's only one alteration type for it
         if (this.isBenBusiness) {
           this.setConversionType(NrRequestTypeCodes.CONVERT_CORP)
           this.setEntityTypeCd(EntityTypes.BC)
@@ -135,26 +138,22 @@ export default class BusinessLookupFetch extends Mixins(CommonMixin, SearchMixin
     }
 
     if (this.isChangeName) {
-      if (this.isBcBenCccUlc) {
-        this.setLocation(Location.BC)
-        const corpType = this.getSearchBusiness?.legalType as unknown as CorpTypeCd
-        this.setEntityTypeCd(this.corpTypeToEntityType(corpType))
-      } else {
-        this.setEntityTypeCd(this.getSearchBusiness.legalType)
-      }
+      if (this.getSearchBusiness) {
+        if (this.isBcBenCccUlc) {
+          this.setLocation(Location.BC)
+          const corpType = this.getSearchBusiness?.legalType as unknown as CorpTypeCd
+          this.setEntityTypeCd(this.corpTypeToEntityType(corpType))
+        } else {
+          this.setSearchCompanyType(CompanyTypes.NAMED_COMPANY)
+          this.setLocation(Location.BC)
+          this.setEntityTypeCd(this.getSearchBusiness?.legalType || null)
+        }
 
-      if (this.isChangeNameXpro) {
-        this.setLocation(Location.CA)
-        this.setEntityTypeCd(this.getSearchBusiness.legalType)
+        if (this.isChangeNameXpro) {
+          this.setLocation(Location.CA)
+          this.setEntityTypeCd(this.getSearchBusiness?.legalType || null)
+        }
       }
-    }
-  }
-
-  /** Resets fields when returned to the Tabs component */
-  @Watch('getDisplayedComponent')
-  watchDisplayedComponent (displayedComponent: string) {
-    if (displayedComponent === 'Tabs') {
-      this.onBusiness(null)
     }
   }
 }

@@ -74,11 +74,7 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
     }
   }
 
-  get nameAnalysisTimedOut () {
-    return this.getNameAnalysisTimeout
-  }
-
-  get boxes () {
+  get boxes (): any {
     let timeoutExplanation1 = {
       title: 'Option 1',
       class: 'square-card-x2',
@@ -108,41 +104,29 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
       button: 'examine',
       text: 'You can choose to submit this name to examination. Please check wait times at the top of the screen.'
     }
-    if (this.nameAnalysisTimedOut) {
+    if (this.getNameAnalysisTimeout) {
       return [timeoutExplanation1, timeoutExplanation2]
     }
     if (this.requestActionNotSupported) {
       return false
     }
     if (this.entityTypeNotAnalyzed) {
-      let edits = { title: 'Option 1', class: 'square-card-x2' }
+      // let edits = { title: 'Option 1', class: 'square-card-x2' }
       return false
     }
     if (this.isNameSlashed) {
       return [ slashEditExplanation, slashExamineExplanation ]
     }
-    if (this.isPersonsName || !this.isNameEnglish) {
+    if (this.getIsPersonsName || !this.isNameEnglish) {
       return []
     }
     return []
   }
-  get doNotAnalyzeEntities () {
-    return this.getDoNotAnalyzeEntities
-  }
-  get entityText () {
-    return this.getEntityTextFromValue
-  }
-  get entity_type_cd () {
-    return this.getEntityTypeCd
-  }
   get entityTypeNotAnalyzed () {
-    if (this.doNotAnalyzeEntities.includes(this.entity_type_cd)) {
+    if (this.getDoNotAnalyzeEntities.includes(this.getEntityTypeCd)) {
       return true
     }
     return false
-  }
-  get isPersonsName () {
-    return this.getIsPersonsName
   }
   get name () {
     return this.getName
@@ -164,7 +148,7 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
   }
 
   get title () {
-    if (this.nameAnalysisTimedOut) {
+    if (this.getNameAnalysisTimeout) {
       return 'Your name took too long to analyze'
     }
     if (this.requestActionNotSupported) {
@@ -172,14 +156,15 @@ export default class EntityCannotBeAutoAnalyzed extends Vue {
       examination for review`
     }
     if (this.entityTypeNotAnalyzed) {
-      return `Name Requests for the <b>${this.entityText}</b> entity type cannot be reserved immediately.`
+      const entityText = this.getEntityTextFromValue
+      return `Name Requests for the <b>${entityText}</b> entity type cannot be reserved immediately.`
     }
     if (this.isNameSlashed) {
       return 'The slash "/" followed by a number of words implies the name is an English name followed by a French' +
         ' (or other language) name.  Names of this type must be sent to examination.'
     }
     let output = ''
-    if (this.isPersonsName) {
+    if (this.getIsPersonsName) {
       output = '<p class="ma-0 pa-0">Name Requests that are personal name(s) cannot be reserved immediately.</p>'
     }
     if (!this.isNameEnglish) {
