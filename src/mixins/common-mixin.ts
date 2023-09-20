@@ -63,10 +63,9 @@ export class CommonMixin extends Vue {
       case EntityTypes.CC: return CorpTypeCd.BC_CCC
       case EntityTypes.CR: return CorpTypeCd.BC_COMPANY
       case EntityTypes.UL: return CorpTypeCd.BC_ULC_COMPANY
-      // case '': return CorpTypeCd.CONTINUE_IN           // CorpTypeCd.CONTINUE_IN = 'C'
       case EntityTypes.CP: return CorpTypeCd.COOP
-      case EntityTypes.XCR: return CorpTypeCd.EXTRA_PRO_A // CorpTypeCd.EXTRA_PRO_A = 'A'
-      // case '': return CorpTypeCd.LIMITED_CO            // CorpTypeCd.LIMITED_CO = 'LLC'
+      case EntityTypes.XUL: return CorpTypeCd.EXTRA_PRO_A
+      case EntityTypes.RLC: return CorpTypeCd.LIMITED_CO
       case EntityTypes.SO: return CorpTypeCd.SOCIETY
       case EntityTypes.FR: return CorpTypeCd.SOLE_PROP
       case EntityTypes.XLP: return CorpTypeCd.XPRO_LIM_PARTNR
@@ -86,10 +85,9 @@ export class CommonMixin extends Vue {
       case CorpTypeCd.BC_CCC: return EntityTypes.CC
       case CorpTypeCd.BC_COMPANY: return EntityTypes.CR
       case CorpTypeCd.BC_ULC_COMPANY: return EntityTypes.UL
-      // case CorpTypeCd.CONTINUE_IN: return ''           // CorpTypeCd.CONTINUE_IN = 'C'
       case CorpTypeCd.COOP: return EntityTypes.CP
-      case CorpTypeCd.EXTRA_PRO_A: return EntityTypes.XCR // CorpTypeCd.EXTRA_PRO_A = 'A'
-      // case CorpTypeCd.LIMITED_CO: return ''            // CorpTypeCd.LIMITED_CO = 'LLC'
+      case CorpTypeCd.EXTRA_PRO_A: return EntityTypes.XUL
+      case CorpTypeCd.LIMITED_CO: return EntityTypes.RLC
       case CorpTypeCd.SOCIETY: return EntityTypes.SO
       case CorpTypeCd.SOLE_PROP: return EntityTypes.FR
       case CorpTypeCd.XPRO_LIM_PARTNR: return EntityTypes.XLP
