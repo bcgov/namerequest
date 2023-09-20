@@ -324,6 +324,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   get showDesignation (): boolean {
+    if (this.isRestoration && this.isSelectedXproAndRestorable) return false
     return (Designations[this.getEntityTypeCd]?.end || false)
   }
 
