@@ -103,6 +103,7 @@ export const BusinessLookupEntityTypes = [
   EntityTypes.CR,
   EntityTypes.UL,
   EntityTypes.XCR,
+  EntityTypes.CP,
   EntityTypes.XUL
 ]
 
