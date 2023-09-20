@@ -127,13 +127,15 @@ export default class BusinessLookupFetch extends Mixins(CommonMixin, SearchMixin
       // Check if not XPRO and BC restorable
       if (!this.isSelectedXproAndRestorable && this.isBcRestorable) {
         this.setLocation(Location.BC)
+        const corpType = this.getSearchBusiness.legalType as unknown as CorpTypeCd
+        this.setEntityTypeCd(this.corpTypeToEntityType(corpType))
       } else if (this.isSelectedXproAndRestorable) { // Check if XPRO and restorable
         this.setLocation(Location.CA)
+        const corpType = this.getSearchBusiness.legalType as unknown as CorpTypeCd
+        this.setEntityTypeCd(this.corpTypeToEntityType(corpType) || this.getSearchBusiness.legalType)
       } else {
         this.setEntityTypeCd(null)
       }
-      const corpType = this.getSearchBusiness.legalType as unknown as CorpTypeCd
-      this.setEntityTypeCd(this.corpTypeToEntityType(corpType))
     }
 
     if (this.isChangeName) {

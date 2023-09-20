@@ -555,6 +555,7 @@ export const setCorpSearch = ({ commit }, corpSearch: string): void => {
 }
 
 export const setEntityTypeCd = ({ commit }, entityTypeCd: EntityTypes): void => {
+  console.log(entityTypeCd)
   commit('mutateEntityType', entityTypeCd)
 }
 
