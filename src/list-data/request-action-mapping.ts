@@ -81,10 +81,12 @@ export const XproMapping: RequestActionMappingI = {
   ],
   CHG: [
     EntityTypes.A,
-    EntityTypes.XLP,
-    EntityTypes.XLL,
     EntityTypes.LLC,
     EntityTypes.XCP,
+    EntityTypes.XL,
+    EntityTypes.XLL,
+    EntityTypes.XLP,
+    EntityTypes.XP,
     EntityTypes.XSO
   ]
 }
