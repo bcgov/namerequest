@@ -5,9 +5,12 @@ export enum EntityTypes {
   // BC Entity Types:
   BC = CorpTypeCd.BC_COMPANY,
   BEN = CorpTypeCd.BENEFIT_COMPANY,
+  C = CorpTypeCd.CONTINUE_IN,
   CC = CorpTypeCd.BC_CCC,
+  CCC = CorpTypeCd.CCC_CONTINUE_IN,
   CP = CorpTypeCd.COOP,
   CR = CorpTypeCd.CORPORATION,
+  CUL = CorpTypeCd.ULC_CONTINUE_IN,
   DBA = CorpTypeCd.DOING_BUSINESS_AS,
   FI = CorpTypeCd.FINANCIAL,
   FR = CorpTypeCd.SOLE_PROPRIETORSHIP,
