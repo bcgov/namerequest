@@ -136,7 +136,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
   private getBusinessRequest (accountId: number, nr: NameRequestI): BusinessRequest {
     let name = 'registration'
     let legalType = nr.legalType
-    if (this.isSupportedIncorporationRegistration(nr.entity_type_cd)) {
+    if (this.isSupportedIncorporationRegistration(nr.entity_type_cd) && !this.isFirm) {
       name = 'incorporationApplication'
       legalType = this.entityTypeToCorpType(nr.entity_type_cd)
     }
