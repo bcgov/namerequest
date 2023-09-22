@@ -13,7 +13,7 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import NestedSelect from '@/components/common/nested-select.vue'
-import { Location } from '@/enums'
+import { CorpTypeCd, Location } from '@/enums'
 import { SearchMixin } from '@/mixins'
 import { CanJurisdictions, IntlJurisdictions } from '@/list-data'
 
@@ -60,7 +60,8 @@ export default class Jurisdiction extends Mixins(SearchMixin) {
 
     // if a business was previously selected, reset the entity type
     if (this.getSearchBusiness) {
-      this.setEntityTypeCd(this.getSearchBusiness.legalType)
+      const corpType = this.getSearchBusiness.legalType as unknown as CorpTypeCd
+      this.setEntityTypeCd(this.corpTypeToEntityType(corpType) || this.getSearchBusiness.legalType)
     }
     this.setCorpSearch('')
   }
