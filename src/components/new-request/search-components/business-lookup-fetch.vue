@@ -96,7 +96,7 @@ export default class BusinessLookupFetch extends Mixins(CommonMixin, SearchMixin
     this.setSearchBusiness(business)
     this.entity_type_cd = this.getSearchBusiness?.legalType || null
     this.setCorpNum(business?.identifier || null)
-    this.setEntityTypeCd(this.getSearchBusiness?.legalType)
+    this.setEntityTypeCd(this.entity_type_cd)
     this.setName('')
     this.setSearchCompanyType('')
 
@@ -127,11 +127,11 @@ export default class BusinessLookupFetch extends Mixins(CommonMixin, SearchMixin
       // Check if not XPRO and BC restorable
       if (!this.isSelectedXproAndRestorable && this.isBcRestorable) {
         this.setLocation(Location.BC)
-        const corpType = this.getSearchBusiness?.legalType as unknown as CorpTypeCd
+        const corpType = this.getSearchBusiness?.legalType as unknown as CorpTypeCd || null
         this.setEntityTypeCd(this.corpTypeToEntityType(corpType))
       } else if (this.isSelectedXproAndRestorable) { // Check if XPRO and restorable
         this.setLocation(Location.CA)
-        const corpType = this.getSearchBusiness?.legalType as unknown as CorpTypeCd
+        const corpType = this.getSearchBusiness?.legalType as unknown as CorpTypeCd || null
         this.setEntityTypeCd(this.corpTypeToEntityType(corpType) || this.getSearchBusiness?.legalType || null)
       } else {
         this.setEntityTypeCd(null)
