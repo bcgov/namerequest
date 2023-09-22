@@ -61,16 +61,16 @@ export class CommonMixin extends Vue {
     switch (entityType) {
       case EntityTypes.BC: return CorpTypeCd.BENEFIT_COMPANY
       case EntityTypes.CC: return CorpTypeCd.BC_CCC
-      case EntityTypes.CR: return CorpTypeCd.BC_COMPANY
-      case EntityTypes.UL: return CorpTypeCd.BC_ULC_COMPANY
       case EntityTypes.CP: return CorpTypeCd.COOP
-      case EntityTypes.XUL: return CorpTypeCd.EXTRA_PRO_A
+      case EntityTypes.CR: return CorpTypeCd.BC_COMPANY
+      case EntityTypes.FR: return CorpTypeCd.SOLE_PROP
       case EntityTypes.RLC: return CorpTypeCd.LIMITED_CO
       case EntityTypes.SO: return CorpTypeCd.SOCIETY
-      case EntityTypes.FR: return CorpTypeCd.SOLE_PROP
-      case EntityTypes.XLP: return CorpTypeCd.XPRO_LIM_PARTNR
+      case EntityTypes.UL: return CorpTypeCd.BC_ULC_COMPANY
       case EntityTypes.XLL: return CorpTypeCd.XPRO_LL_PARTNR
+      case EntityTypes.XLP: return CorpTypeCd.XPRO_LIM_PARTNR
       case EntityTypes.XSO: return CorpTypeCd.XPRO_SOCIETY
+      case EntityTypes.XUL: return CorpTypeCd.EXTRA_PRO_A
       default: return null
     }
   }
