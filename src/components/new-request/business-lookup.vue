@@ -98,10 +98,10 @@ export default class BusinessLookup extends Vue {
   onStatuschanged (): void {
     if (this.searchStatus === EntityStates.HISTORICAL) {
       this.lookupLabel = 'Find a historical business'
-      this.lookupNoActiveText = 'No historical business found'
+      this.lookupNoActiveText = 'No eligible historical business found'
     } else {
       this.lookupLabel = 'Find an existing business'
-      this.lookupNoActiveText = 'No active B.C. business found'
+      this.lookupNoActiveText = 'No eligible active B.C. business found'
     }
   }
 
