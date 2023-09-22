@@ -62,6 +62,7 @@ export default class Jurisdiction extends Mixins(SearchMixin) {
     if (this.getSearchBusiness) {
       this.setEntityTypeCd(this.getSearchBusiness.legalType)
     }
+    this.setCorpSearch('')
   }
 }
 </script>

@@ -143,7 +143,7 @@ export default class NamexServices {
     // remove BC prefix as COLIN only supports base number with no prefix for BC's
     const cleanedCorpNum = corpNum.replace(/^BC+/i, '')
     const url = `${appBaseURL}/colin/${cleanedCorpNum}`
-    return this.axios.post(url).then(response => response.data)
+    return this.axios.get(url).then(response => response.data)
   }
 
   static async checkinNameRequest (nrId: number, nrState: NrState): Promise<boolean> {

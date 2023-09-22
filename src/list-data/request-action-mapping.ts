@@ -130,5 +130,6 @@ export const NumberedEntityTypes = [
   EntityTypes.BC,
   EntityTypes.CC,
   EntityTypes.CR,
-  EntityTypes.UL
+  EntityTypes.UL,
+  EntityTypes.C
 ]
