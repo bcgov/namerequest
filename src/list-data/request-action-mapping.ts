@@ -77,7 +77,7 @@ export const XproMapping: RequestActionMappingI = {
     EntityTypes.A,
     EntityTypes.LLC,
     EntityTypes.XCP,
-    EntityTypes.XS
+    EntityTypes.XSO
   ],
   CHG: [
     EntityTypes.A,
@@ -85,7 +85,7 @@ export const XproMapping: RequestActionMappingI = {
     EntityTypes.XL,
     EntityTypes.LLC,
     EntityTypes.XCP,
-    EntityTypes.XS
+    EntityTypes.XSO
   ]
 }
 
@@ -98,11 +98,28 @@ export const BusinessLookupRequestActions = [
 
 /** Entity types that require business lookup. */
 export const BusinessLookupEntityTypes = [
+  EntityTypes.A,
   EntityTypes.BC,
+  EntityTypes.BEN,
+  EntityTypes.C,
   EntityTypes.CC,
+  EntityTypes.CCC,
+  EntityTypes.CUL,
+  EntityTypes.CP,
   EntityTypes.CR,
-  EntityTypes.UL,
+  EntityTypes.GP,
+  EntityTypes.LLC,
+  EntityTypes.LP,
+  EntityTypes.PA,
+  EntityTypes.PAR,
+  EntityTypes.SO,
+  EntityTypes.SP,
+  EntityTypes.ULC,
+  EntityTypes.XCP,
   EntityTypes.XCR,
+  EntityTypes.XL,
+  EntityTypes.XP,
+  EntityTypes.XSO,
   EntityTypes.XUL
 ]
 

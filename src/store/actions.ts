@@ -1101,7 +1101,11 @@ export const startAnalyzeName = async ({ commit, getters }) => {
   // xpro get name call
   if (getters.isXproFlow) {
     commit('mutateXproJurisdiction', getters.getJurisdictionText)
-    commit('mutateHomeJurisNum', getters.getCorpSearch)
+    // set home juris num only if we have a corp num
+    // (don't set if we entered a corp name instead)
+    if (!getters.getHasNoCorpNum) {
+      commit('mutateHomeJurisNum', getters.getCorpSearch)
+    }
     // only make MRAS call for MRAS jurisdictions and if we have a corp num
     if (getters.isMrasJurisdiction && !getters.getHasNoCorpNum) {
       const profile = await fetchMRASProfile({ commit, getters })
