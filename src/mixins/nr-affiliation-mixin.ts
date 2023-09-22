@@ -134,31 +134,35 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
 
   /** Returns business request object. */
   private getBusinessRequest (accountId: number, nr: NameRequestI): BusinessRequest {
-    let name = 'registration'
-    let legalType = nr.legalType
-    if (this.isSupportedIncorporationRegistration(nr.entity_type_cd)) {
-      name = 'incorporationApplication'
-      legalType = this.entityTypeToCorpType(nr.entity_type_cd)
-    }
+    let name = ''
+    let legalType = ''
+    let businessRequest = {} as BusinessRequest
     const nrNumber = nr.nrNum
 
-    const businessRequest = {
-      filing: {
-        business: { legalType },
-        header: { accountId, name }
-      }
-    } as BusinessRequest
-
     if (!this.isFirm(nr)) {
-      businessRequest.filing.incorporationApplication = {
-        nameRequest: { legalType, nrNumber }
+      name = 'incorporationApplication'
+      legalType = this.entityTypeToCorpType(nr.entity_type_cd)
+      businessRequest = {
+        filing: {
+          business: { legalType },
+          header: { accountId, name },
+          incorporationApplication: {
+            nameRequest: { legalType, nrNumber }
+          }
+        }
       }
-    }
-
-    if (this.isFirm(nr)) {
-      businessRequest.filing.registration = {
-        business: { natureOfBusiness: nr.natureOfBusiness },
-        nameRequest: { legalType, nrNumber }
+    } else {
+      name = 'registration'
+      legalType = nr.legalType
+      businessRequest = {
+        filing: {
+          business: { legalType },
+          header: { accountId, name },
+          registration: {
+            business: { natureOfBusiness: nr.natureOfBusiness },
+            nameRequest: { legalType, nrNumber }
+          }
+        }
       }
     }
 
