@@ -316,7 +316,7 @@ export async function searchBusiness ({ getters }, corpNum: string): Promise<Bus
       try {
         const data = await NamexServices.searchColin(corpNum)
         return {
-          identifier: data.identifier,
+          identifier: corpNum,
           legalName: data.legalName,
           legalType: data.legalType,
           state: data.state

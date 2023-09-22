@@ -141,7 +141,8 @@ export default class NamexServices {
    */
   static async searchColin (corpNum: string): Promise<any> {
     // remove BC prefix as COLIN only supports base number with no prefix for BC's
-    const url = `${appBaseURL}/colin/${corpNum}`
+    const cleanedCorpNum = corpNum.replace(/^BC+/i, '')
+    const url = `${appBaseURL}/colin/${cleanedCorpNum}`
     return this.axios.get(url).then(response => response.data)
   }
 
