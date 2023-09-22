@@ -150,7 +150,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
             nameRequest: { legalType, nrNumber }
           }
         }
-      } as BusinessRequest
+      }
     } else {
       name = 'registration'
       legalType = nr.legalType
@@ -163,7 +163,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
             nameRequest: { legalType, nrNumber }
           }
         }
-      } as BusinessRequest
+      }
     }
 
     return businessRequest
