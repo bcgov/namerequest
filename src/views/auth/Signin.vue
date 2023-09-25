@@ -23,8 +23,7 @@ import { LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin } from '@/m
 })
 export default class Signin extends Mixins(LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin) {
   /** The login method, which is passed in the signin route by the SBC Header. */
-  @Prop({ default: 'bcsc' })
-  readonly idpHint: string
+  @Prop({ default: 'bcsc' }) readonly idpHint!: string
 
   /** The URL to redirect to if signin failed: the NR URL. */
   get redirectUrlLoginFail (): string {

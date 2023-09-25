@@ -170,7 +170,7 @@ export default class App extends Mixins(
   @Getter getDisplayedComponent!: string
   @Getter getIncorporateNowErrorStatus!: boolean
   @Getter getNrId!: number
-  @Getter isRoleStaff: boolean
+  @Getter isRoleStaff!: boolean
   @Getter isMobile!: boolean
 
   // Global actions
@@ -289,6 +289,9 @@ export default class App extends Mixins(
 
   /** Fetches and stores the current JS date. */
   private async updateCurrentJsDate (): Promise<void> {
+    // don't run in Jest tests
+    if (process.env.JEST_WORKER_ID) return
+
     const jsDate = await this.getServerDate()
     this.setCurrentJsDate(jsDate)
   }

@@ -95,30 +95,19 @@ import { Getter } from 'vuex-class'
   }
 })
 export default class PaymentConfirm extends Vue {
-  @Prop(String)
-  readonly nrNum: string
-
-  @Prop(Object)
-  readonly summary: any
-
-  @Prop(Object)
-  readonly receipt: any
-
-  @Prop(Object)
-  readonly applicant: ApplicantI
-
-  @Prop(Object)
-  readonly nameChoices: {
+  @Prop(String) readonly nrNum!: string
+  @Prop(Object) readonly summary!: any
+  @Prop(Object) readonly receipt!: any
+  @Prop(Object) readonly applicant!: ApplicantI
+  @Prop(Object) readonly nameChoices!: {
     type: any[]
     required: false
   }
-
-  @Prop(String)
-  readonly name: string
+  @Prop(String) readonly name!: string
 
   @Getter getNameChoices!: NameChoicesIF
 
-  protected fetchError = ''
+  fetchError = ''
 }
 </script>
 

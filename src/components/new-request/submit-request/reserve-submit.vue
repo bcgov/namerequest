@@ -50,7 +50,7 @@ export default class ReserveSubmit extends Vue {
   @Action setSubmissionType!: ActionBindingIF
   @Action setSubmissionTabComponent!: ActionBindingIF
 
-  @Prop(String) readonly setup: string
+  @Prop(String) readonly setup!: string
 
   // Local variable
   isContinue = true

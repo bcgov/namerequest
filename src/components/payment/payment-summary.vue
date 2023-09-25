@@ -41,34 +41,33 @@ import { PaymentMixin } from '@/mixins'
 
 @Component({})
 export default class PaymentSummary extends Mixins(PaymentMixin) {
-  @Prop(Object)
-  readonly summary: any
+  @Prop(Object) readonly summary!: any
 
   /** Used to show loading state on button. */
-  private loading = false
+  loading = false
 
-  private get receiptNumber (): string {
+  get receiptNumber (): string {
     const receiptNumber = this.summary?.receipt.receiptNumber || 'UNK'
     return `Receipt No. ${receiptNumber}`
   }
 
-  private get receiptDate (): string {
+  get receiptDate (): string {
     return this.summary?.receipt.receiptDate || 'UNK'
   }
 
-  private get receiptDescription (): string {
+  get receiptDescription (): string {
     const lineItem = this.summary?.payment.sbcPayment.lineItems[0] // just look at first one
     return lineItem?.description
   }
 
-  private get receiptAmount (): string {
+  get receiptAmount (): string {
     if (this.summary?.receipt?.receiptAmount) {
       return `$${this.summary?.receipt.receiptAmount.toFixed(2)} CAD`
     }
     return null
   }
 
-  private async downloadReceipt () {
+  async downloadReceipt () {
     const id = this.summary?.id
     this.loading = true
     await this.downloadReceiptPdf(id)

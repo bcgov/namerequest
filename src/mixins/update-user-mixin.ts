@@ -6,6 +6,9 @@ import AuthServices from '@/services/auth-services'
 export class UpdateUserMixin extends Vue {
   /** Fetches the user's info and updates LaunchDarkly. */
   async updateUser (): Promise<any> {
+    // don't run in Jest tests
+    if (process.env.JEST_WORKER_ID) return
+
     try {
       const userInfo = await AuthServices.fetchUserInfo()
       if (userInfo) {

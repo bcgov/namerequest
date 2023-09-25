@@ -1,8 +1,6 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
 import Vuetify from 'vuetify'
 import VueRouter from 'vue-router'
-import { getVuexStore } from '@/store'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import App from '@/App.vue'
 import {
@@ -14,14 +12,11 @@ import {
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 // import mockRouter from './MockRouter'
+import { getVuexStore } from '@/store/'
 
 const vuetify = new Vuetify({})
 
-const store = new Vuex.Store<any>({
-  getters: {
-    isMobile (): any {}
-  }
-})
+const store = getVuexStore()
 
 const KEYCLOAK_TOKEN = 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJUbWdtZUk0MnVsdUZ0N3' +
   'FQbmUtcTEzdDUwa0JDbjF3bHF6dHN0UGdUM1dFIn0.eyJqdGkiOiIzZDQ3YjgwYy01MTAzLTRjMTYtOGNhZC0yMjU4NDMwZGYwZTciLCJle' +
@@ -58,6 +53,7 @@ describe('App component', () => {
     const localVue = createLocalVue()
     localVue.use(VueRouter)
     wrapper = shallowMount(App, { localVue, store, vuetify, stubs: { Affix: true } })
+    await Vue.nextTick()
   })
 
   afterEach(() => {
@@ -99,7 +95,7 @@ describe('App component', () => {
     expect(vm.saveWarnings).toEqual([])
   })
 
-  it('redirects to dashboard if exiting after saving changes', async () => {
+  it('redirects to dashboard if exiting after saving changes', () => {
     // verify sessionStorage items
     expect(sessionStorage.getItem('KEYCLOAK_TOKEN')).toBe(KEYCLOAK_TOKEN)
     expect(JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT')).id).toBe(668)

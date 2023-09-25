@@ -63,8 +63,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component({})
 export default class RefundSummary extends Vue {
-  @Prop({ default: () => [] })
-  readonly payments: any[]
+  @Prop({ default: () => [] }) readonly payments!: any[]
 
   /** The array of line items in all completed SBC payments. */
   get lineItems (): any[] {

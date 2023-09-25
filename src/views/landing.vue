@@ -83,8 +83,7 @@ export default class Landing extends Vue {
   @Action setDisplayedComponent!: ActionBindingIF
 
   /** ID parameter passed in on "/nr" route. */
-  @Prop(String)
-  readonly id: string
+  @Prop(String) readonly id!: string
 
   async mounted () {
     const { id } = this

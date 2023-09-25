@@ -133,25 +133,24 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 
 @Component({})
 export default class FeeSummary extends Vue {
-  @Prop({ default: () => [] })
-  readonly fees: any[]
+  @Prop({ default: () => [] }) readonly fees!: any[]
 
-  protected fetchError = ''
+  fetchError = ''
 
-  protected get totalFees (): number {
+  get totalFees (): number {
     return this.fees instanceof Array ? this.fees.reduce((feeTotal: number, item: any) => {
       return feeTotal + item.filingFees + item.futureEffectiveFees + item.priorityFees + item.serviceFees
     }, 0) : 0
   }
 
-  protected get totalTax (): number {
+  get totalTax (): number {
     return this.fees instanceof Array ? this.fees.reduce((taxTotal: number, item: any) => {
       const { gst = 0.00, pst = 0.00 } = item.tax
       return taxTotal + gst + pst
     }, 0) : 0
   }
 
-  protected get total (): number {
+  get total (): number {
     return this.fees instanceof Array ? this.fees.reduce((feeTotal: number, item: any) => {
       return feeTotal + item.total
     }, 0) : 0

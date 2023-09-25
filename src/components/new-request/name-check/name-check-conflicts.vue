@@ -364,7 +364,7 @@ import { NameCheckErrorType, NameCheckItemType } from '@/enums'
   components: { QuickSearchNames }
 })
 export default class NameCheckConflicts extends Vue {
-  @Prop() readonly items: Array<NameCheckItemIF>
+  @Prop() readonly items!: Array<NameCheckItemIF>
 
   // Global getter
   @Getter isMobile!: boolean

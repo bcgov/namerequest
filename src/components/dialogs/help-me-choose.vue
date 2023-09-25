@@ -31,10 +31,13 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 @Component({})
 export default class HelpMeChooseDialog extends Vue {
   @Getter getHelpMeChooseModalVisible!: boolean
+
   @Action setHelpMeChooseModalVisible!: ActionBindingIF
+
   get showModal () {
     return this.getHelpMeChooseModalVisible
   }
+
   set showModal (value: boolean) {
     this.setHelpMeChooseModalVisible(value)
   }
