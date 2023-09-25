@@ -1,14 +1,29 @@
 <template>
-  <v-dialog v-model="showModal" max-width="40%">
+  <v-dialog
+    v-model="showModal"
+    max-width="40%"
+  >
     <v-card class="pa-9">
-      <v-card-text class="h4">{{ nameObject.name }}</v-card-text>
-      <v-card-text class="h5 my-n2">Has been approved, subject to the following conditions:</v-card-text>
+      <v-card-text class="h4">
+        {{ nameObject.name }}
+      </v-card-text>
+      <v-card-text class="h5 my-n2">
+        Has been approved, subject to the following conditions:
+      </v-card-text>
       <v-card-text class="copy-normal">
-        <div class="pre-line px-2 pt-2 mb-n6">{{ nameObject.decision_text }}</div>
+        <div class="pre-line px-2 pt-2 mb-n6">
+          {{ nameObject.decision_text }}
+        </div>
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn text id="nr-required-close-btn" @click="showModal = false">Close</v-btn>
+        <v-spacer />
+        <v-btn
+          id="nr-required-close-btn"
+          text
+          @click="showModal = false"
+        >
+          Close
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

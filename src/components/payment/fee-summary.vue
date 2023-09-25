@@ -1,42 +1,80 @@
 <template>
   <div id="fee-summary">
-    <v-row no-gutters align="center" justify="center">
+    <v-row
+      no-gutters
+      align="center"
+      justify="center"
+    >
       <v-col cols="10">
-        <div class="font-weight-bold header pt-10 pb-4">Payment Details</div>
-        <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
-        <v-row no-gutters class="fee-list py-4">
+        <div class="font-weight-bold header pt-10 pb-4">
+          Payment Details
+        </div>
+        <v-alert
+          v-if="fetchError"
+          color="error"
+          icon="mdi-alert"
+          outlined
+          class="my-0"
+          v-html="fetchError"
+        />
+        <v-row
+          no-gutters
+          class="fee-list py-4"
+        >
           <v-col v-show="!fetchError">
-            <v-row v-for="lineItem, index in fees"
-                    :key="index"
-                    no-gutters
-                    v-show="(totalFees > 0 && lineItem.filingFees) || (totalFees === 0)">
+            <v-row
+              v-for="lineItem, index in fees"
+              v-show="(totalFees > 0 && lineItem.filingFees) || (totalFees === 0)"
+              :key="index"
+              no-gutters
+            >
               <v-col>
                 <v-row no-gutters>
                   <v-col cols="8">
-                    <div>{{lineItem.filingType}}</div>
+                    <div>{{ lineItem.filingType }}</div>
                   </v-col>
                   <v-col cols="4">
-                    <div v-if="lineItem.filingFees > 0" class="float-right">${{lineItem.filingFees.toFixed(2)}}</div>
-                    <div v-else class="float-right">No Fee</div>
+                    <div
+                      v-if="lineItem.filingFees > 0"
+                      class="float-right"
+                    >
+                      ${{ lineItem.filingFees.toFixed(2) }}
+                    </div>
+                    <div
+                      v-else
+                      class="float-right"
+                    >
+                      No Fee
+                    </div>
                   </v-col>
                 </v-row>
                 <v-expand-transition>
-                  <v-row v-if="lineItem.priorityFees" no-gutters>
+                  <v-row
+                    v-if="lineItem.priorityFees"
+                    no-gutters
+                  >
                     <v-col cols="8">
                       <div>Priority Request fee</div>
                     </v-col>
                     <v-col cols="4">
-                      <div class="float-right">${{lineItem.priorityFees.toFixed(2)}}</div>
+                      <div class="float-right">
+                        ${{ lineItem.priorityFees.toFixed(2) }}
+                      </div>
                     </v-col>
                   </v-row>
                 </v-expand-transition>
                 <v-expand-transition>
-                  <v-row v-if="lineItem.serviceFees" no-gutters>
+                  <v-row
+                    v-if="lineItem.serviceFees"
+                    no-gutters
+                  >
                     <v-col cols="8">
                       <div>Service fee</div>
                     </v-col>
                     <v-col cols="4">
-                      <div class="float-right">${{lineItem.serviceFees.toFixed(2)}}</div>
+                      <div class="float-right">
+                        ${{ lineItem.serviceFees.toFixed(2) }}
+                      </div>
                     </v-col>
                   </v-row>
                 </v-expand-transition>
@@ -62,16 +100,25 @@
             </v-slide-y-reverse-transition>
           </div>
         </div> -->
-        <v-row no-gutters class="pt-4 pb-10">
+        <v-row
+          no-gutters
+          class="pt-4 pb-10"
+        >
           <v-col cols="8">
-            <div class="payment-total" v-show="!fetchError">
+            <div
+              v-show="!fetchError"
+              class="payment-total"
+            >
               Total Amount (CAD)
             </div>
           </v-col>
           <v-col cols="4">
             <div class="payment-total float-right">
-              <v-slide-y-reverse-transition name="slide" mode="out-in">
-                <div><b>${{total.toFixed(2)}}</b></div>
+              <v-slide-y-reverse-transition
+                name="slide"
+                mode="out-in"
+              >
+                <div><b>${{ total.toFixed(2) }}</b></div>
               </v-slide-y-reverse-transition>
             </div>
           </v-col>

@@ -1,39 +1,76 @@
 <template>
-  <v-container fluid class="pa-0">
+  <v-container
+    fluid
+    class="pa-0"
+  >
     <v-row v-if="isNameSlashed">
       <NameInput />
     </v-row>
     <v-row class="text-center">
-      <v-col cols="12" class="h5 text-center py-0 mt-3">Further Information</v-col>
+      <v-col
+        cols="12"
+        class="h5 text-center py-0 mt-3"
+      >
+        Further Information
+      </v-col>
     </v-row>
     <v-row class="text-center">
-      <v-col cols="12"
-             class="text-center pb-0"
-             v-html="title" />
-      <v-col v-for="(box, i) in boxes" :key="'box-'+i" class="pb-0">
-        <v-container class="copy-small text-left" :class="box.class">
-          <v-row align-content="space-between" style="height: 100%">
-            <v-col class="h5 py-0">{{ box.title }}</v-col>
-            <v-col cols="12" v-html="box.text" />
-             <v-col class="text-center">
-              <v-btn x-large
-                     id="examine-btn"
-                     v-if="box.button === 'examine'"
-                     @click="showNextTab">Send For Examination</v-btn>
-              <v-btn x-large
-                     id="restart-btn"
-                     v-if="box.button === 'restart'"
-                     @click="localCancelAnalyzeName()">Start Search Over</v-btn>
-               <v-btn x-large
-                      id="english-btn"
-                      v-if="box.button === 'english'"
-                      @click="newSearch()">Search Again</v-btn>
+      <v-col
+        cols="12"
+        class="text-center pb-0"
+        v-html="title"
+      />
+      <v-col
+        v-for="(box, i) in boxes"
+        :key="'box-'+i"
+        class="pb-0"
+      >
+        <v-container
+          class="copy-small text-left"
+          :class="box.class"
+        >
+          <v-row
+            align-content="space-between"
+            style="height: 100%"
+          >
+            <v-col class="h5 py-0">
+              {{ box.title }}
+            </v-col>
+            <v-col
+              cols="12"
+              v-html="box.text"
+            />
+            <v-col class="text-center">
+              <v-btn
+                v-if="box.button === 'examine'"
+                id="examine-btn"
+                x-large
+                @click="showNextTab"
+              >
+                Send For Examination
+              </v-btn>
+              <v-btn
+                v-if="box.button === 'restart'"
+                id="restart-btn"
+                x-large
+                @click="localCancelAnalyzeName()"
+              >
+                Start Search Over
+              </v-btn>
+              <v-btn
+                v-if="box.button === 'english'"
+                id="english-btn"
+                x-large
+                @click="newSearch()"
+              >
+                Search Again
+              </v-btn>
             </v-col>
           </v-row>
         </v-container>
       </v-col>
     </v-row>
- </v-container>
+  </v-container>
 </template>
 
 <script lang="ts">

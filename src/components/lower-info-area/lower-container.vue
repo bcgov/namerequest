@@ -1,32 +1,60 @@
 <template>
-  <v-container fluid id="lower-container">
-
+  <v-container
+    id="lower-container"
+    fluid
+  >
     <!--- Build a Name Info Container -->
     <name-build-info />
 
     <new-and-better-way />
 
-    <v-row no-gutters class="bg-grey-1 px-9 py-6 pt-14 content-container" justify="center">
-      <v-col cols="auto" class="h3 mt-9 mb-2">Helpful Tips</v-col>
+    <v-row
+      no-gutters
+      class="bg-grey-1 px-9 py-6 pt-14 content-container"
+      justify="center"
+    >
+      <v-col
+        cols="auto"
+        class="h3 mt-9 mb-2"
+      >
+        Helpful Tips
+      </v-col>
       <v-col cols="12">
-        <v-row no-gutters justify="center" class="mb-5 pb-6">
-          <v-col cols="auto" class="my-4">
+        <v-row
+          no-gutters
+          justify="center"
+          class="mb-5 pb-6"
+        >
+          <v-col
+            cols="auto"
+            class="my-4"
+          >
             <v-container class="square-card">
               <v-row justify="center">
-                <v-col class="h5" cols="auto">TRADEMARKS</v-col>
+                <v-col
+                  class="h5"
+                  cols="auto"
+                >
+                  TRADEMARKS
+                </v-col>
               </v-row>
               <v-row justify="center">
                 <v-col cols="auto">
-                  <v-img src="@/assets/images/lc-tm-search-icon.png"
-                         height="60"
-                         width="60"
-                         contain/>
+                  <v-img
+                    src="@/assets/images/lc-tm-search-icon.png"
+                    height="60"
+                    width="60"
+                    contain
+                  />
                 </v-col>
               </v-row>
               <v-row justify="end">
                 <v-col class="text-center copy-small">
                   See if your name may be in use outside of BC,
-                  <a href="https://www.ic.gc.ca/app/opic-cipo/trdmrks/srch/home?lang=eng" target="_blank">
+                  <a
+                    href="https://www.ic.gc.ca/app/opic-cipo/trdmrks/srch/home?lang=eng"
+                    target="_blank"
+                  >
                     search for Canadian trademarked names.
                     <v-icon class="launch-icon">mdi-launch</v-icon>
                   </a>
@@ -35,17 +63,27 @@
             </v-container>
           </v-col>
 
-          <v-col cols="auto" class="mx-7 my-4">
+          <v-col
+            cols="auto"
+            class="mx-7 my-4"
+          >
             <v-container class="square-card">
               <v-row justify="center">
-                <v-col class="h5" cols="auto">DOMAIN NAMES</v-col>
+                <v-col
+                  class="h5"
+                  cols="auto"
+                >
+                  DOMAIN NAMES
+                </v-col>
               </v-row>
               <v-row justify="center">
                 <v-col cols="auto">
-                  <v-img src="@/assets/images/domainicon_x1.png"
-                         height="60"
-                         width="60"
-                         contain />
+                  <v-img
+                    src="@/assets/images/domainicon_x1.png"
+                    height="60"
+                    width="60"
+                    contain
+                  />
                 </v-col>
               </v-row>
               <v-row>
@@ -58,17 +96,27 @@
             </v-container>
           </v-col>
 
-          <v-col cols="auto" class="my-4">
+          <v-col
+            cols="auto"
+            class="my-4"
+          >
             <v-container class="square-card">
               <v-row justify="center">
-                <v-col class="h5" cols="auto">SOCIAL MEDIA</v-col>
+                <v-col
+                  class="h5"
+                  cols="auto"
+                >
+                  SOCIAL MEDIA
+                </v-col>
               </v-row>
               <v-row justify="center">
                 <v-col cols="auto">
-                  <v-img src="@/assets/images/socialicon_x1.png"
-                         height="60"
-                         width="60"
-                         contain />
+                  <v-img
+                    src="@/assets/images/socialicon_x1.png"
+                    height="60"
+                    width="60"
+                    contain
+                  />
                 </v-col>
               </v-row>
               <v-row>
@@ -85,39 +133,98 @@
     </v-row>
 
     <div class="contact-section">
-      <v-row no-gutters class="content-container">
-        <v-col cols="12" md="6" lg="6">
+      <v-row
+        no-gutters
+        class="content-container"
+      >
+        <v-col
+          cols="12"
+          md="6"
+          lg="6"
+        >
           <v-container class="pa-9">
             <v-row>
-              <v-col cols="12" class="h3 info-underline px-0">Need more information?</v-col>
-              <v-col cols="12" class="px-0">
-                <a :href="needMoreInfo" target="_blank" class="white--text">
+              <v-col
+                cols="12"
+                class="h3 info-underline px-0"
+              >
+                Need more information?
+              </v-col>
+              <v-col
+                cols="12"
+                class="px-0"
+              >
+                <a
+                  :href="needMoreInfo"
+                  target="_blank"
+                  class="white--text"
+                >
                   Learn more about requesting a name
                 </a>
               </v-col>
             </v-row>
           </v-container>
         </v-col>
-        <v-col cols="12" md="6" lg="6">
+        <v-col
+          cols="12"
+          md="6"
+          lg="6"
+        >
           <v-container class="pa-9">
-            <v-row alinn="start" align-content="start" align-items="start">
-              <v-col cols="12" class="h3 info-underline px-0">Contact Us</v-col>
-              <v-col cols="12" class="px-0">
+            <v-row
+              class="alinn align-items"
+              align-content="start"
+            >
+              <v-col
+                cols="12"
+                class="h3 info-underline px-0"
+              >
+                Contact Us
+              </v-col>
+              <v-col
+                cols="12"
+                class="px-0"
+              >
                 For support or questions about this application contact us at:
               </v-col>
               <ul class="contact-info-list">
-                <li>Toll Free: <a href="tel:1-877-370-1033" class="white--text">1-877-370-1033</a></li>
-                <li>Victoria Office: <a href="tel:250-370-1033" class="white--text">250-370-1033</a></li>
-                <li>Email: <a href="mailto:bcregistries@gov.bc.ca" class="white--text">BCRegistries@gov.bc.ca</a></li>
+                <li>
+                  Toll Free: <a
+                    href="tel:1-877-370-1033"
+                    class="white--text"
+                  >1-877-370-1033</a>
+                </li>
+                <li>
+                  Victoria Office: <a
+                    href="tel:250-370-1033"
+                    class="white--text"
+                  >250-370-1033</a>
+                </li>
+                <li>
+                  Email: <a
+                    href="mailto:bcregistries@gov.bc.ca"
+                    class="white--text"
+                  >BCRegistries@gov.bc.ca</a>
+                </li>
               </ul>
-              <v-col cols="12" class="pb-0 px-0 font-weight-bold">Hours of Operation:</v-col>
-              <v-col cols="12" class="pt-0 px-0">Monday to Friday, 8:30am - 4:30pm Pacific time</v-col>
+              <v-col
+                cols="12"
+                class="pb-0 px-0 font-weight-bold"
+              >
+                Hours of Operation:
+              </v-col>
+              <v-col
+                cols="12"
+                class="pt-0 px-0"
+              >
+                Monday to Friday, 8:30am - 4:30pm Pacific time
+              </v-col>
             </v-row>
           </v-container>
         </v-col>
       </v-row>
     </div>
- </v-container>
+  </v-container>
 </template>
 
 <script lang="ts">

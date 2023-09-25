@@ -1,5 +1,8 @@
 <template>
-  <div id="staff-payment" :class="{'invalid-section': showStaffPaymentInvalidSection}">
+  <div
+    id="staff-payment"
+    :class="{'invalid-section': showStaffPaymentInvalidSection}"
+  >
     <StaffPaymentShared
       :staffPaymentData="getStaffPayment"
       :validate="validate"

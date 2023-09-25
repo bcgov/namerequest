@@ -1,13 +1,23 @@
 <template>
-  <v-dialog v-model="showModal" max-width="40%">
+  <v-dialog
+    v-model="showModal"
+    max-width="40%"
+  >
     <v-card class="pa-6">
-      <v-card-text class="h3">Which Entity Type?</v-card-text>
+      <v-card-text class="h3">
+        Which Entity Type?
+      </v-card-text>
       <v-card-text class="copy-normal">
-       Media Presentation to display here when it is completed (by way of another initiative not related to NRO)
+        Media Presentation to display here when it is completed (by way of another initiative not related to NRO)
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn text @click="showModal = false">Close</v-btn>
+        <v-spacer />
+        <v-btn
+          text
+          @click="showModal = false"
+        >
+          Close
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

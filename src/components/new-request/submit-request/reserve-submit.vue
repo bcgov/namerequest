@@ -1,14 +1,20 @@
 <template>
-  <v-tooltip bottom
-             content-class="bottom-tooltip"
-             transition="fade-transition"
-             :disabled="isContinue || isMobile">
-    <template v-slot:activator="scope">
-      <v-btn @click="handleSubmit()"
-             :class="isContinue ? 'button-normal' : 'button-blue'"
-             class="mt-auto"
-             v-on="scope.on"
-             id="reserve-submit-btn">{{ text }}</v-btn>
+  <v-tooltip
+    bottom
+    content-class="bottom-tooltip"
+    transition="fade-transition"
+    :disabled="isContinue || isMobile"
+  >
+    <template #activator="scope">
+      <v-btn
+        id="reserve-submit-btn"
+        :class="isContinue ? 'button-normal' : 'button-blue'"
+        class="mt-auto"
+        @click="handleSubmit()"
+        v-on="scope.on"
+      >
+        {{ text }}
+      </v-btn>
     </template>
     Stop the analysis of this name and submit it for review. Please check wait times at the top of the screen.
   </v-tooltip>
@@ -125,18 +131,16 @@ export default class ReserveSubmit extends Vue {
 
     let data: any
     let request: NameRequestI
-    switch (setup) {
+    switch (setup as any) {
       case 'assumed':
         this.setAssumedNameOriginal(null)
         goToNames()
         return
 
-      // @ts-ignore - typescript knows setup can only === 'assumed' at this point and gives error
       case 'examine':
         goToNames()
         return
 
-      // @ts-ignore - typescript knows setup can only === 'assumed' at this point and gives error
       case 'consent':
         data = this.getData(NrType.CONDITIONAL)
         request = await NamexServices.postNameRequest(this.getRequestActionCd, data)

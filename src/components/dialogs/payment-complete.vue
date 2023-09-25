@@ -1,9 +1,18 @@
 <template>
-  <v-dialog max-width="45rem" :value="showModal" persistent>
+  <v-dialog
+    max-width="45rem"
+    :value="showModal"
+    persistent
+  >
     <v-card>
       <v-card-title class="d-flex justify-space-between mt-n3">
         <div>Payment Successful</div>
-        <v-btn icon large class="dialog-close" @click="hideModal()">
+        <v-btn
+          icon
+          large
+          class="dialog-close"
+          @click="hideModal()"
+        >
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -20,10 +29,19 @@
       </v-card-text>
 
       <v-card-actions class="pt-1 justify-center">
-        <v-btn id="receipt-download-btn" class="primary px-4" :loading="loading" @click="downloadReceipt()">
+        <v-btn
+          id="receipt-download-btn"
+          class="primary px-4"
+          :loading="loading"
+          @click="downloadReceipt()"
+        >
           <span>Download Receipt</span>
         </v-btn>
-        <v-btn id="receipt-close-btn" class="button-blue px-4" @click="hideModal()">
+        <v-btn
+          id="receipt-close-btn"
+          class="button-blue px-4"
+          @click="hideModal()"
+        >
           <span>Done</span>
         </v-btn>
       </v-card-actions>
@@ -114,7 +132,7 @@ export default class PaymentCompleteDialog extends Mixins(
   async fetchPaymentData (paymentId: number, nameReqId: number) {
     if (nameReqId && paymentId) {
       await this.fetchNrPayment(nameReqId, paymentId)
-      const { getNrId, paymentStatus, sbcPaymentStatus } = this
+      const { paymentStatus, sbcPaymentStatus } = this
       if (sbcPaymentStatus === SbcPaymentStatus.COMPLETED && paymentStatus === PaymentStatus.CREATED) {
         await this.setCompletePayment(nameReqId, paymentId, this.sessionPaymentAction)
       }

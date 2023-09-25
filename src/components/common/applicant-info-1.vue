@@ -1,133 +1,190 @@
 <template>
-  <v-form v-model="isValid" ref="step1" id="applicant-info-1-form">
-    <v-container fluid class="pa-0 mt-6" id="applicant-info-1">
+  <v-form
+    id="applicant-info-1-form"
+    ref="step1"
+    v-model="isValid"
+  >
+    <v-container
+      id="applicant-info-1"
+      fluid
+      class="pa-0 mt-6"
+    >
       <v-row>
-        <v-col cols="2" class="h6 align-self-start">Applicant</v-col>
+        <v-col
+          cols="2"
+          class="h6 align-self-start"
+        >
+          Applicant
+        </v-col>
 
-        <v-col cols="12" md="10" lg="10">
+        <v-col
+          cols="12"
+          md="10"
+          lg="10"
+        >
           <!--FIRST NAME, MIDDLE NAME, LAST NAME-->
           <v-row class="mt-0 mb-n3">
-            <v-col cols="12" md="4" lg="4" class="pt-0">
-              <label for="firstname" class="hidden">First Name</label>
+            <v-col
+              cols="12"
+              md="4"
+              lg="4"
+              class="pt-0"
+            >
+              <label
+                for="firstname"
+                class="hidden"
+              >First Name</label>
               <v-text-field
+                id="firstname"
                 :messages="messages['firstName']"
                 :rules="firstMiddleNameRules"
                 :value="applicant.firstName"
-                @blur="handleNameBlur('firstName', $event)"
-                @input="updateApplicant('firstName', $event)"
                 dense
                 filled
                 height="50"
                 hide-details="auto"
-                id="firstname"
                 :name="Math.random()"
                 autocomplete="chrome-off"
                 label="First Name"
+                @blur="handleNameBlur('firstName', $event)"
+                @input="updateApplicant('firstName', $event)"
               />
             </v-col>
 
-            <v-col cols="12" md="4" lg="4" class="pt-0">
-              <label for="middlename" class="hidden">Middle Name (Optional)</label>
+            <v-col
+              cols="12"
+              md="4"
+              lg="4"
+              class="pt-0"
+            >
+              <label
+                for="middlename"
+                class="hidden"
+              >Middle Name (Optional)</label>
               <v-text-field
+                id="middlename"
                 :messages="messages['middleName']"
                 :value="applicant.middleName"
                 :rules="firstMiddleNameRules"
-                @blur="handleNameBlur('middleName', $event)"
-                @input="updateApplicant('middleName', $event)"
                 dense
                 filled
                 height="50"
                 hide-details="auto"
-                id="middlename"
                 :name="Math.random()"
                 autocomplete="chrome-off"
                 label="Middle Name (Optional)"
+                @blur="handleNameBlur('middleName', $event)"
+                @input="updateApplicant('middleName', $event)"
               />
             </v-col>
 
-            <v-col cols="12" md="4" lg="4" class="pt-0">
-              <label for="lastname" class="hidden">Last Name</label>
+            <v-col
+              cols="12"
+              md="4"
+              lg="4"
+              class="pt-0"
+            >
+              <label
+                for="lastname"
+                class="hidden"
+              >Last Name</label>
               <v-text-field
+                id="lastname"
                 :messages="messages['lastName']"
                 :rules="lastNameRules"
                 :value="applicant.lastName"
-                @blur="handleNameBlur('lastName', $event)"
-                @input="updateApplicant('lastName', $event)"
                 dense
                 filled
                 height="50"
                 hide-details="auto"
-                id="lastname"
                 :name="Math.random()"
                 autocomplete="chrome-off"
                 label="Last Name"
+                @blur="handleNameBlur('lastName', $event)"
+                @input="updateApplicant('lastName', $event)"
               />
             </v-col>
           </v-row>
 
           <!--ADDDRESS MENU / STREET ADDRESS-->
           <v-row class="mt-2 mb-0">
-            <v-col cols="12" class="py-0 my-0">
+            <v-col
+              cols="12"
+              class="py-0 my-0"
+            >
               <v-menu
+                v-model="showAddressMenu"
                 bottom
                 class="pa-2"
                 dense
                 max-width="600"
                 offset-y
-                v-model="showAddressMenu"
               >
-                <!-- Using activator slot to avoid having to absoluetly position v-menu. Visibility is controlled by
-                "showAddressMenu" field, "on" function provided by slot is used only to supress error message-->
-                <template v-slot:activator="{ on }">
+                <!-- Using activator slot to avoid having to absolutely position v-menu. Visibility is controlled by
+                "showAddressMenu" field, "on" function provided by slot is used only to supress error message. -->
+                <!-- eslint-disable-next-line vue/no-unused-vars -->
+                <template #activator="{ on }">
                   <v-text-field
+                    id="line1"
+                    ref="Line1"
                     :messages="messages['Line1']"
                     :rules="requiredRules"
                     :value="applicant.addrLine1"
-                    @blur="blurAddress1"
-                    @input="updateApplicant('addrLine1', $event)"
                     dense
                     filled
                     height="50"
                     hide-details="auto"
-                    id="line1"
                     :name="Math.random()"
                     autocomplete="chrome-off"
                     label="Street Address"
-                    ref="Line1"
+                    @blur="blurAddress1"
+                    @input="updateApplicant('addrLine1', $event)"
                   />
                 </template>
-                <v-list class="ma-0 pa-0" style="border-radius: 0">
-                  <v-list-item dense v-if="!getAddressSuggestions && applicant.addrLine1" class="pa-2">
-                    <v-progress-circular color="orange" id="address-suggest-spinner" indeterminate size="25" />
+                <v-list
+                  class="ma-0 pa-0"
+                  style="border-radius: 0"
+                >
+                  <v-list-item
+                    v-if="!getAddressSuggestions && applicant.addrLine1"
+                    dense
+                    class="pa-2"
+                  >
+                    <v-progress-circular
+                      id="address-suggest-spinner"
+                      color="orange"
+                      indeterminate
+                      size="25"
+                    />
                     <span class="pl-2">Searching...</span>
                   </v-list-item>
                   <v-list-item
+                    v-if="!getAddressSuggestions && !applicant.addrLine1"
                     class="pa-2"
                     dense
-                    v-if="!getAddressSuggestions && !applicant.addrLine1"
                   >
                     Start typing an address to get suggestions
                   </v-list-item>
                   <v-list-item
-                    :class="getClass(address.Id)"
+                    v-for="(address, i) of getAddressSuggestions"
                     :id="address.Id"
                     :key="address.Text + '-' + i"
+                    :class="getClass(address.Id)"
                     dense
                     style="cursor: pointer"
-                    v-for="(address, i) of getAddressSuggestions"
                   >
                     <a
                       :ref="address.Id"
-                      @click.prevent="fetchAddressDetails(address.Id)"
-                      @focus="highlightedSuggestion = address.Id"
                       class="link-sm-dk-text"
                       href="#"
+                      @click.prevent="fetchAddressDetails(address.Id)"
+                      @focus="highlightedSuggestion = address.Id"
                     >
                       {{ address.Text + ', ' + address.Description }}
                     </a>
                   </v-list-item>
 
-                  <v-divider class="mb-2"/>
+                  <v-divider class="mb-2" />
 
                   <v-list-item>
                     <v-container class="ma-0 pa-0 copy-small">
@@ -136,23 +193,29 @@
                           class="ma-0 px-6 pb-4 text-right"
                           align-self="center"
                         >
-                          <label class="h5" for="country2">Country</label>
+                          <label
+                            class="h5"
+                            for="country2"
+                          >Country</label>
                         </v-col>
-                        <v-col cols="5" class="ma-0 pa-0">
+                        <v-col
+                          cols="5"
+                          class="ma-0 pa-0"
+                        >
                           <v-select
+                            id="country2"
+                            ref="Country2"
                             :items="countryOptions"
                             :menu-props="{ auto: true, eager: true }"
                             :value="applicant.countryTypeCd"
-                            @click.capture.stop
-                            @input="updateApplicant('countryTypeCd', $event)"
                             class="mb-1 copy-small mr-2"
                             dense
                             eager
                             filled
                             hide-details
-                            id="country2"
                             name="country2"
-                            ref="Country2"
+                            @click.capture.stop
+                            @input="updateApplicant('countryTypeCd', $event)"
                           />
                         </v-col>
                       </v-row>
@@ -165,223 +228,303 @@
 
           <!--ADDDRESS LINE 2-->
           <v-row class="mt-2 mb-0">
-            <v-col cols="12" class="py-0 my-0">
-              <label for="line2" class="hidden">Additional Street Address (Optional)</label>
+            <v-col
+              cols="12"
+              class="py-0 my-0"
+            >
+              <label
+                for="line2"
+                class="hidden"
+              >Additional Street Address (Optional)</label>
               <v-text-field
+                id="1ine2"
+                ref="Line2"
                 :messages="messages['Line2']"
                 :value="applicant.addrLine2"
-                @blur="messages = {}"
-                @focus="handleFocus('Line2', 'Street Address 2 (Optional)')"
-                @input="updateApplicant('addrLine2', $event)"
                 dense
                 filled
                 height="50"
                 hide-details="auto"
-                id="1ine2"
                 :name="Math.random()"
                 autocomplete="chrome-off"
                 label="Additional Street Address (Optional)"
-                ref="Line2"
+                @blur="messages = {}"
+                @focus="handleFocus('Line2', 'Street Address 2 (Optional)')"
+                @input="updateApplicant('addrLine2', $event)"
               />
             </v-col>
           </v-row>
 
           <!--ADDDRESS LINE 3-->
-          <v-row v-if="(applicant.addrLine2 || applicant.addrLine3) && !showAddressMenu" class="mt-2 mb-0">
-            <v-col cols="12" class="py-0 my-0">
-              <label for="line3" class="hidden">Additional Street Address (Optional)</label>
+          <v-row
+            v-if="(applicant.addrLine2 || applicant.addrLine3) && !showAddressMenu"
+            class="mt-2 mb-0"
+          >
+            <v-col
+              cols="12"
+              class="py-0 my-0"
+            >
+              <label
+                for="line3"
+                class="hidden"
+              >Additional Street Address (Optional)</label>
               <v-text-field
+                id="line3"
+                ref="Line3"
                 :messages="messages['Line3']"
                 :value="applicant.addrLine3"
-                @blur="messages = {}"
-                @focus="handleFocus('Line2', 'Street Address 3 (Optional)')"
-                @input="updateApplicant('addrLine3', $event)"
                 dense
                 filled
                 height="50"
                 hide-details="auto"
-                id="line3"
                 :name="Math.random()"
                 autocomplete="chrome-off"
                 label="Additional Street Address (Optional)"
-                ref="Line3"
+                @blur="messages = {}"
+                @focus="handleFocus('Line2', 'Street Address 3 (Optional)')"
+                @input="updateApplicant('addrLine3', $event)"
               />
             </v-col>
           </v-row>
 
           <!--CITY, PROVINCE/STATE-->
           <v-row class="mt-2 mb-0">
-            <v-col cols="12" md="6" lg="6" class="py-0 my-0">
-              <label for="city" class="hidden">City</label>
+            <v-col
+              cols="12"
+              md="6"
+              lg="6"
+              class="py-0 my-0"
+            >
+              <label
+                for="city"
+                class="hidden"
+              >City</label>
               <v-text-field
+                id="city"
+                ref="City"
                 :messages="messages['City']"
                 :rules="requiredRules"
                 :value="applicant.city"
-                @blur="messages = {}"
-                @focus="handleFocus('City', 'City')"
-                @input="updateApplicant('city', $event)"
                 dense
                 filled
                 height="50"
                 hide-details="auto"
-                id="city"
                 :name="Math.random()"
                 autocomplete="chrome-off"
                 label="City"
-                ref="City"
+                @blur="messages = {}"
+                @focus="handleFocus('City', 'City')"
+                @input="updateApplicant('city', $event)"
               />
             </v-col>
 
             <v-col
               v-if="applicant.countryTypeCd === Location.CA"
-              cols="12" md="6" lg="6" class="py-0 my-0"
+              cols="12"
+              md="6"
+              lg="6"
+              class="py-0 my-0"
               :class="{ 'pt-2': isMobile }"
             >
-              <label for="province" class="hidden">Province</label>
+              <label
+                for="province"
+                class="hidden"
+              >Province</label>
               <v-select
+                id="province"
+                ref="Province"
                 :items="provinceOptions"
                 :messages="messages['Province']"
                 :rules="requiredRules"
                 :value="applicant.stateProvinceCd"
-                @input="updateApplicant('stateProvinceCd', $event)"
-                @blur="messages = {}"
-                @focus="handleFocus('Province', 'Province')"
                 dense
                 filled
                 height="50"
                 hide-details="auto"
-                id="province"
                 :name="Math.random()"
                 autocomplete="chrome-off"
                 label="Province"
-                ref="Province"
+                @input="updateApplicant('stateProvinceCd', $event)"
+                @blur="messages = {}"
+                @focus="handleFocus('Province', 'Province')"
               />
             </v-col>
 
             <v-col
               v-else-if="applicant.countryTypeCd === Location.US"
-              cols="12" md="6" lg="6" class="py-0 my-0"
+              cols="12"
+              md="6"
+              lg="6"
+              class="py-0 my-0"
               :class="{ 'pt-2': isMobile }"
             >
-              <label for="state" class="hidden">State</label>
+              <label
+                for="state"
+                class="hidden"
+              >State</label>
               <v-select
+                id="state"
+                ref="state"
                 :items="UsaStateCodes"
                 :messages="messages['State']"
                 :rules="requiredRules"
                 :value="applicant.stateProvinceCd"
-                @input="updateApplicant('stateProvinceCd', $event)"
-                @blur="messages = {}"
-                @focus="handleFocus('State', 'State')"
                 dense
                 filled
                 height="50"
                 hide-details="auto"
-                id="state"
                 name="state"
                 placeholder="State"
-                ref="state"
+                @input="updateApplicant('stateProvinceCd', $event)"
+                @blur="messages = {}"
+                @focus="handleFocus('State', 'State')"
               />
             </v-col>
 
-            <v-col cols="12" md="6" lg="6" class="py-0 my-0" v-else>
-              <label for="state" class="hidden">Province/State</label>
+            <v-col
+              v-else
+              cols="12"
+              md="6"
+              lg="6"
+              class="py-0 my-0"
+            >
+              <label
+                for="state"
+                class="hidden"
+              >Province/State</label>
               <v-text-field
+                id="state"
+                ref="state"
                 disabled
                 :messages="messages['Province']"
                 :rules="provStateRules"
                 :value="applicant.stateProvinceCd"
-                @blur="messages = {}"
-                @input="updateApplicant('stateProvinceCd', $event)"
                 dense
                 filled
                 height="50"
                 hide-details="auto"
-                id="state"
                 :name="Math.random()"
                 autocomplete="chrome-off"
                 label="N/A"
-                ref="state"
+                @blur="messages = {}"
+                @input="updateApplicant('stateProvinceCd', $event)"
               />
             </v-col>
           </v-row>
 
           <!--COUNTRY, POSTAL/ZIP CODE-->
           <v-row class="mt-2 mb-0">
-            <v-col cols="12" md="6" lg="6" class="py-0 my-0">
-              <label for="country" class="hidden">Country</label>
+            <v-col
+              cols="12"
+              md="6"
+              lg="6"
+              class="py-0 my-0"
+            >
+              <label
+                for="country"
+                class="hidden"
+              >Country</label>
               <v-select
+                id="country"
+                ref="Country"
                 :items="countryOptions"
                 :menu-props="{eager: true, auto: true}"
                 :rules="requiredRules"
                 :value="applicant.countryTypeCd"
-                @input="updateApplicant('countryTypeCd', $event)"
                 cache-items
                 dense
                 eager
                 filled
                 height="50"
                 hide-details="auto"
-                id="country"
                 name="country"
                 placeholder="Country"
-                ref="Country"
+                @input="updateApplicant('countryTypeCd', $event)"
               />
             </v-col>
 
-            <v-col cols="12" md="6" lg="6" class="py-0 my-0" :class="{ 'pt-2': isMobile }">
-              <label for="postalcode" class="hidden">Postal/Zip Code</label>
+            <v-col
+              cols="12"
+              md="6"
+              lg="6"
+              class="py-0 my-0"
+              :class="{ 'pt-2': isMobile }"
+            >
+              <label
+                for="postalcode"
+                class="hidden"
+              >Postal/Zip Code</label>
               <v-text-field
+                id="postalcode"
                 :messages="messages['PostalCode']"
                 :rules="requiredRules"
                 :value="applicant.postalCd"
-                @blur="messages = {}"
-                @focus="handleFocus('PostalCode', 'Postal / Zip Code')"
-                @input="updateApplicant('postalCd', $event)"
                 dense
                 filled
                 height="50"
                 hide-details="auto"
-                id="postalcode"
                 :name="Math.random()"
                 autocomplete="chrome-off"
                 label="Postal/Zip Code"
+                @blur="messages = {}"
+                @focus="handleFocus('PostalCode', 'Postal / Zip Code')"
+                @input="updateApplicant('postalCd', $event)"
               />
             </v-col>
           </v-row>
 
           <!--BUSINESS JURISDICTION-->
-          <v-row v-if="(getLocation !== Location.BC) && showAllFields && getEditMode" class="mt-2 mb-0">
-            <v-col cols="12" md="6" lg="6" class="py-0 my-0">
-              <label for="xprojurisdiction" class="hidden">Business Jurisdiction</label>
+          <v-row
+            v-if="(getLocation !== Location.BC) && showAllFields && getEditMode"
+            class="mt-2 mb-0"
+          >
+            <v-col
+              cols="12"
+              md="6"
+              lg="6"
+              class="py-0 my-0"
+            >
+              <label
+                for="xprojurisdiction"
+                class="hidden"
+              >Business Jurisdiction</label>
               <v-select
+                id="xprojurisdiction"
                 :messages="messages['xproJurisdiction']"
                 :items="jurisdictionOptions"
                 :rules="requiredRules"
                 :value="xproJurisdiction"
-                @blur="messages = {}"
-                @focus="handleFocus('xproJurisdiction', 'Business xproJurisdiction')"
-                @input="updateNrData('xproJurisdiction', $event)"
                 dense
                 eager
                 filled
                 height="50"
                 hide-details="auto"
-                id="xprojurisdiction"
                 name="xprojurisdiction"
                 placeholder="Business Jurisdiction"
+                @blur="messages = {}"
+                @focus="handleFocus('xproJurisdiction', 'Business xproJurisdiction')"
+                @input="updateNrData('xproJurisdiction', $event)"
               />
             </v-col>
 
-            <v-col cols="6" class="py-0 my-0" />
+            <v-col
+              cols="6"
+              class="py-0 my-0"
+            />
           </v-row>
 
           <!--ACTING ON OWN BEHALF-->
           <v-row class="mt-5 mb-0">
-            <v-col cols="12" md="7" lg="7" class="py-0">
+            <v-col
+              cols="12"
+              md="7"
+              lg="7"
+              class="py-0"
+            >
               <v-checkbox
+                v-model="actingOnOwnBehalf"
                 hide-details
                 label="I am completing this reservation on my own behalf"
-                v-model="actingOnOwnBehalf"
                 class="mt-2 pt-0"
               />
             </v-col>

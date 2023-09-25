@@ -1,14 +1,32 @@
 <template>
   <v-expand-transition>
     <!-- check for valid receipt, as the payment may exist but not be completed -->
-    <section class="payment-summary" v-if="summary.receipt">
-      <v-row class="py-5" no-gutters>
-        <div class="col1 align-self-center">{{receiptNumber}}</div>
-        <div class="col2 align-self-center">{{receiptDate}}</div>
-        <div class="col3 align-self-center">{{receiptDescription}}</div>
-        <div class="col4 align-self-center">{{receiptAmount}}</div>
+    <section
+      v-if="summary.receipt"
+      class="payment-summary"
+    >
+      <v-row
+        class="py-5"
+        no-gutters
+      >
+        <div class="col1 align-self-center">
+          {{ receiptNumber }}
+        </div>
+        <div class="col2 align-self-center">
+          {{ receiptDate }}
+        </div>
+        <div class="col3 align-self-center">
+          {{ receiptDescription }}
+        </div>
+        <div class="col4 align-self-center">
+          {{ receiptAmount }}
+        </div>
         <div class="col5 align-self-center">
-          <v-btn class="download-receipt-btn float-right" :loading="loading" @click="downloadReceipt()">
+          <v-btn
+            class="download-receipt-btn float-right"
+            :loading="loading"
+            @click="downloadReceipt()"
+          >
             <span>Download PDF</span>
           </v-btn>
         </div>

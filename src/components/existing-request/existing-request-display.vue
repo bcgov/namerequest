@@ -1,22 +1,46 @@
 <template>
-  <MainContainer id="existing-request-display" class="pa-10">
+  <MainContainer
+    id="existing-request-display"
+    class="pa-10"
+  >
     <template #container-header>
       <v-col cols="auto">
-        <span v-if="!isIncompletePayment" class="h3 user-select-all">{{ nr.nrNum }}</span>
+        <span
+          v-if="!isIncompletePayment"
+          class="h3 user-select-all"
+        >{{ nr.nrNum }}</span>
         <span class="ml-4 h6">{{ entityTypeCdToText(nr.entity_type_cd) }}</span>
       </v-col>
     </template>
 
     <template #content>
-      <div v-if="isIncompletePayment" class="pt-6 pb-4">
-        <v-row class="warning-message px-5 py-4 rounded-sm" no-gutters>
-          <v-col cols="auto" class="pt-1 mr-2">
-            <v-icon color="error" size="20" class="mt-n1 ml-1">mdi-alert</v-icon>
+      <div
+        v-if="isIncompletePayment"
+        class="pt-6 pb-4"
+      >
+        <v-row
+          class="warning-message px-5 py-4 rounded-sm"
+          no-gutters
+        >
+          <v-col
+            cols="auto"
+            class="pt-1 mr-2"
+          >
+            <v-icon
+              color="error"
+              size="20"
+              class="mt-n1 ml-1"
+            >
+              mdi-alert
+            </v-icon>
           </v-col>
-          <v-col cols="11" class="pt-1 pb-1">
-          <strong>Payment Incomplete:</strong> Keep this page open and retry your payment;
-          leaving this page will result in this Name Request being deleted from BC Registries.
-          If your Name Request is deleted you will need to resubmit your name(s) with a new Name Request.
+          <v-col
+            cols="11"
+            class="pt-1 pb-1"
+          >
+            <strong>Payment Incomplete:</strong> Keep this page open and retry your payment;
+            leaving this page will result in this Name Request being deleted from BC Registries.
+            If your Name Request is deleted you will need to resubmit your name(s) with a new Name Request.
           </v-col>
         </v-row>
       </div>
@@ -27,34 +51,70 @@
         :names="names"
       />
 
-      <transition mode="out-in" name="fade">
-        <v-row v-if="disableUnfurnished" class="mx-0 mt-5 bg-light-blue" :key="furnished">
-          <v-col cols="12" class="font-italic px-4" key="initial-msg">
+      <transition
+        mode="out-in"
+        name="fade"
+      >
+        <v-row
+          v-if="disableUnfurnished"
+          :key="furnished"
+          class="mx-0 mt-5 bg-light-blue"
+        >
+          <v-col
+            key="initial-msg"
+            cols="12"
+            class="font-italic px-4"
+          >
             We are currently processing your request.
-            Click<a class="link" href="#" @click.prevent="refresh()">&nbsp;Refresh&nbsp;</a>
+            Click<a
+              class="link"
+              href="#"
+              @click.prevent="refresh()"
+            >&nbsp;Refresh&nbsp;</a>
             {{ $route.query && $route.query.paymentId ? '' : 'or retry your search ' }}
             after 5 minutes to enable all the buttons.
           </v-col>
         </v-row>
       </transition>
 
-      <transition mode="out-in" name="fade">
+      <transition
+        mode="out-in"
+        name="fade"
+      >
         <div class="nr-data">
-          <v-row class="mt-6 mb-0" :key="refreshCount">
+          <v-row
+            :key="refreshCount"
+            class="mt-6 mb-0"
+          >
             <!-- labels and values -->
-            <v-col cols="12" md="9" lg="9" class="py-0">
+            <v-col
+              cols="12"
+              md="9"
+              lg="9"
+              class="py-0"
+            >
               <v-row dense>
-                <v-col  v-if="!isIncompletePayment" cols="12" class="submitted-date">
+                <v-col
+                  v-if="!isIncompletePayment"
+                  cols="12"
+                  class="submitted-date"
+                >
                   <span>Submitted Date:</span>
-                  &nbsp;{{ submittedDate  }}
+                  &nbsp;{{ submittedDate }}
                 </v-col>
 
-                <v-col cols="12" class="request-type">
+                <v-col
+                  cols="12"
+                  class="request-type"
+                >
                   <span>Request Type:</span>
-                  &nbsp;{{ requestType  }}
+                  &nbsp;{{ requestType }}
                 </v-col>
 
-                <v-col cols="12" class="request-status">
+                <v-col
+                  cols="12"
+                  class="request-status"
+                >
                   <span>Request Status:</span>
                   &nbsp;
                   <span :class="requestStatusTextClass">
@@ -62,47 +122,71 @@
                     <span v-if="isRefundRequested">
                       <v-tooltip
                         content-class="top-tooltip"
-                        top nudge-top
+                        top
+                        nudge-top
                         min-width="24rem"
                         :disabled="isMobile"
                       >
-                        <template v-slot:activator="{ on, attrs }">
-                          <span v-bind="attrs" v-on="on">
-                            <span  class="refund-label">{{ getRefundParams.refundLabel }}</span>
-                            <v-icon v-if="getRefundParams.showAlertIcon" icon color="error">
+                        <template #activator="{ on, attrs }">
+                          <span
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                            <span class="refund-label">{{ getRefundParams.refundLabel }}</span>
+                            <v-icon
+                              v-if="getRefundParams.showAlertIcon"
+                              icon
+                              color="error"
+                            >
                               mdi-alert
                             </v-icon>
                           </span>
                         </template>
                         <div v-html="getRefundParams.refundMessageText1" />
-                        <br v-if="getRefundParams.refundMessageText2" />
-                        <div v-if="getRefundParams.refundMessageText2"
-                          v-html="getRefundParams.refundMessageText2" />
+                        <br v-if="getRefundParams.refundMessageText2">
+                        <div
+                          v-if="getRefundParams.refundMessageText2"
+                          v-html="getRefundParams.refundMessageText2"
+                        />
                         <div v-if="getRefundParams.showStaffContact">
-                          <br/>
+                          <br>
                           <ContactInfo
                             id="tooltip-contact-info"
-                            direction="col" />
+                            direction="col"
+                          />
                         </div>
                       </v-tooltip>
                     </span>
                   </span>
-                  <v-icon v-if="isAlertState && !isIncompletePayment" color="error" size="20" class="mt-n1 ml-1">
+                  <v-icon
+                    v-if="isAlertState && !isIncompletePayment"
+                    color="error"
+                    size="20"
+                    class="mt-n1 ml-1"
+                  >
                     mdi-alert
                   </v-icon>
-                  <a href="#"
-                    class="link-sm ml-1"
+                  <a
                     v-if="showConditionsLink"
+                    href="#"
+                    class="link-sm ml-1"
                     @click.prevent="showConditionsModal()"
                   >Conditions</a>
                 </v-col>
 
-                <v-col cols="12" class="priority-request">
+                <v-col
+                  cols="12"
+                  class="priority-request"
+                >
                   <span>Priority Request:</span>
                   &nbsp;{{ isPriorityReq(nr) ? 'Yes' : 'No' }}
                 </v-col>
 
-                <v-col cols="12" v-if="showEstimatedDateNotPriority" class="estimated-review-date">
+                <v-col
+                  v-if="showEstimatedDateNotPriority"
+                  cols="12"
+                  class="estimated-review-date"
+                >
                   <span>Estimated Review Date:</span>
                   &nbsp;
                   <v-tooltip
@@ -111,11 +195,11 @@
                     content-class="tooltip"
                     :disabled="isMobile"
                   >
-                    <template v-slot:activator="{ on, attrs }">
+                    <template #activator="{ on, attrs }">
                       <span
                         v-bind="attrs"
-                        v-on="on"
                         class="dotted-underline app-blue font-weight-regular cursor-default"
+                        v-on="on"
                       >{{ reviewDate }}</span>
                     </template>
                     This is an estimate only, actual review date may vary. Staff are
@@ -123,27 +207,45 @@
                   </v-tooltip>
                 </v-col>
 
-                <v-col cols="12" v-if="showEstimatedDatePriority" class="font-italic priority-requests-blurb">
+                <v-col
+                  v-if="showEstimatedDatePriority"
+                  cols="12"
+                  class="font-italic priority-requests-blurb"
+                >
                   Priority Requests are usually reviewed within 1 to 2 business days
                 </v-col>
 
-                <v-col cols="12" v-if="expiryDate" class="expiry-date">
+                <v-col
+                  v-if="expiryDate"
+                  cols="12"
+                  class="expiry-date"
+                >
                   <span>Expiry Date:</span>
                   &nbsp;{{ expiryDate }}
                 </v-col>
 
-                <v-col cols="12" v-if="consentDate" class="consent-status">
+                <v-col
+                  v-if="consentDate"
+                  cols="12"
+                  class="consent-status"
+                >
                   <span>Consent Status:</span>
                   &nbsp;{{ consentDate }}
                 </v-col>
 
-                <v-col cols="12" class="applicant-name">
+                <v-col
+                  cols="12"
+                  class="applicant-name"
+                >
                   <span>Applicant Name:</span>
                   &nbsp;{{ nr && nr.applicants && nr.applicants.lastName }},
                   &nbsp;{{ nr && nr.applicants && nr.applicants.firstName }}
                 </v-col>
 
-                <v-col cols="12" class="applicant-address">
+                <v-col
+                  cols="12"
+                  class="applicant-address"
+                >
                   <span>Address:</span>
                   &nbsp;{{ address }}
                 </v-col>
@@ -151,26 +253,42 @@
             </v-col>
 
             <!-- action buttons -->
-            <v-col cols="12" md="3" lg="3" class="py-0" :class="{ 'mt-6': isMobile }">
+            <v-col
+              cols="12"
+              md="3"
+              lg="3"
+              class="py-0"
+              :class="{ 'mt-6': isMobile }"
+            >
               <v-row dense>
                 <template v-for="action of actions">
                   <!-- incorporate action is a distinct button below -->
                   <template v-if="action !== NrAction.INCORPORATE">
-                    <v-col cols="12" :key="action+'-button'">
-                      <v-tooltip top
+                    <v-col
+                      :key="action+'-button'"
+                      cols="12"
+                    >
+                      <v-tooltip
+                        top
                         content-class="top-tooltip"
                         transition="fade-transition"
                         :disabled="isMobile || !actionTooltip(action)"
                       >
-                        <template v-slot:activator="{ on }">
-                          <div v-on="on" class="width-fit-content">
-                            <v-btn block
-                              class="button"
+                        <template #activator="{ on }">
+                          <div
+                            class="width-fit-content"
+                            v-on="on"
+                          >
+                            <v-btn
                               :id="action+'-btn'"
+                              block
+                              class="button"
                               :class="isRedButton(action) ? 'button-red' : 'button-blue'"
                               :disabled="isDisabledButton(action)"
                               @click="handleButtonClick(action)"
-                            >{{ actionText(action) }}</v-btn>
+                            >
+                              {{ actionText(action) }}
+                            </v-btn>
                           </div>
                         </template>
                         <span>{{ actionTooltip(action) }}</span>
@@ -183,14 +301,14 @@
           </v-row>
 
           <CheckStatusGrayBox
-            class="mt-5"
             v-if="showCheckStatusGrayBox"
+            class="mt-5"
             :nrNum="nr.nrNum"
           />
 
           <NrApprovedGrayBox
-            class="mt-5"
             v-if="showNrApprovedGrayBox"
+            class="mt-5"
             :nrNum="nr && nr.nrNum"
             :approvedName="approvedName && approvedName.name"
             :emailAddress="nr && nr.applicants && nr.applicants.emailAddress"
@@ -202,8 +320,8 @@
           />
 
           <NrNotApprovedGrayBox
-            class="mt-5"
             v-if="showNrNotApprovedGrayBox"
+            class="mt-5"
             :nrNum="nr.nrNum"
           />
         </div>
@@ -569,7 +687,6 @@ export default class ExistingRequestDisplay extends Mixins(
           const doCheckout = ([NrState.DRAFT, NrState.INPROGRESS].indexOf(this.getNrState) > -1)
           let success = false
           if (doCheckout) {
-            const { dispatch } = this.$store
             // Check out the NR - this sets the INPROGRESS lock on the NR
             // and needs to be done before you can edit the Name Request
             success = await NamexServices.checkoutNameRequest(this.getNrId)

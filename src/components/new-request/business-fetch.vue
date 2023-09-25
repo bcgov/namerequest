@@ -1,7 +1,11 @@
 <template>
   <!-- once in Summary state, need to re-mount to reuse this component -->
-  <div id="business-fetch" v-if="state !== States.SUMMARY">
+  <div
+    v-if="state !== States.SUMMARY"
+    id="business-fetch"
+  >
     <v-text-field
+      v-model.trim="searchField"
       append-icon="mdi-magnify"
       autocomplete="chrome-off"
       autofocus
@@ -10,15 +14,14 @@
       :hint="hint"
       label="Find an existing business"
       persistent-hint
-      v-model.trim="searchField"
-      @click:append="search()"
-      @input="reset()"
-      @keydown.tab.exact="search()"
-      @keyup.enter="search()"
       :error-messages="errorMessages"
       :loading="state === States.SEARCHING"
       :name="Math.random()"
       :readonly="state === States.SEARCHING"
+      @click:append="search()"
+      @input="reset()"
+      @keydown.tab.exact="search()"
+      @keyup.enter="search()"
     />
   </div>
 </template>
@@ -28,12 +31,7 @@ import Vue from 'vue'
 import { Component, Emit } from 'vue-property-decorator'
 import { Action } from 'vuex-class'
 import { BusinessSearchIF } from '@/interfaces'
-
-enum States {
-  INITIAL = 'initial',
-  SEARCHING = 'searching',
-  SUMMARY = 'summary'
-}
+import { SearchStates as States } from '@/enums'
 
 /*
  * See PPR's BusinessSearchAutocomplete.vue for a Composition API example.

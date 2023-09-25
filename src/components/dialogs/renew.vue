@@ -1,13 +1,25 @@
 <template>
-  <v-dialog min-width="32rem" max-width="45rem" :value="isVisible" persistent>
+  <v-dialog
+    min-width="32rem"
+    max-width="45rem"
+    :value="isVisible"
+    persistent
+  >
     <v-card>
       <v-tabs id="renew-tabs">
-        <v-tabs-items v-model="currentTab" touchless>
-
+        <v-tabs-items
+          v-model="currentTab"
+          touchless
+        >
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
               <div>Staff Payment for Request Renewal</div>
-              <v-btn icon large class="dialog-close float-right" @click="hideModal()">
+              <v-btn
+                icon
+                large
+                class="dialog-close float-right"
+                @click="hideModal()"
+              >
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </v-card-title>
@@ -21,28 +33,42 @@
 
             <v-card-actions class="justify-center pt-6">
               <v-btn
-                @click="goBack()"
                 id="renew-back-btn"
                 class="button-blue px-10"
-                :disabled="isLoadingPayment">Back</v-btn>
+                :disabled="isLoadingPayment"
+                @click="goBack()"
+              >
+                Back
+              </v-btn>
               <v-btn
-                @click="confirmPayment()"
                 id="renew-submit-button"
                 class="primary px-5"
-                :loading="isLoadingPayment">Submit Renewal</v-btn>
+                :loading="isLoadingPayment"
+                @click="confirmPayment()"
+              >
+                Submit Renewal
+              </v-btn>
             </v-card-actions>
           </v-tab-item>
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
               <div>Renew Name Request</div>
-              <v-btn icon large class="dialog-close float-right pa-0" @click="hideModal()">
+              <v-btn
+                icon
+                large
+                class="dialog-close float-right pa-0"
+                @click="hideModal()"
+              >
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </v-card-title>
 
             <v-card-text class="copy-normal">
-              <p v-if="!isRoleStaff" class="mb-8">
+              <p
+                v-if="!isRoleStaff"
+                class="mb-8"
+              >
                 If you are within 14 days of expiry, you can renew your Name Request and extend
                 the expiry date for an additional 56 days, for a fee.
               </p>
@@ -54,17 +80,22 @@
 
             <v-card-actions class="pt-8 justify-center">
               <v-btn
-                @click="hideModal()"
                 id="renew-cancel-btn"
-                class="button button-blue px-5">Cancel</v-btn>
+                class="button button-blue px-5"
+                @click="hideModal()"
+              >
+                Cancel
+              </v-btn>
               <v-btn
-                @click="confirmPayment()"
                 id="renew-continue-btn"
                 class="primary px-5"
-                :loading="isLoadingPayment">Continue to Payment</v-btn>
+                :loading="isLoadingPayment"
+                @click="confirmPayment()"
+              >
+                Continue to Payment
+              </v-btn>
             </v-card-actions>
           </v-tab-item>
-
         </v-tabs-items>
       </v-tabs>
     </v-card>

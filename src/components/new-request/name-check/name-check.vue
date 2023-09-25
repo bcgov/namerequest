@@ -1,29 +1,60 @@
 <template>
-  <v-container id="name-check-main-container" class="white pa-0 rounded">
-    <name-check-issues-dialog attach="#app"
-                              :display="showNameCheckIssuesDialog"
-                              :options="dialogOptions"
-                              @proceed="dialogSubmit($event)"/>
-    <v-row class="pl-10 pt-6" no-gutters>
-      <v-col cols="11" class="h6 py-0 mt-1">
+  <v-container
+    id="name-check-main-container"
+    class="white pa-0 rounded"
+  >
+    <name-check-issues-dialog
+      attach="#app"
+      :display="showNameCheckIssuesDialog"
+      :options="dialogOptions"
+      @proceed="dialogSubmit($event)"
+    />
+    <v-row
+      class="pl-10 pt-6"
+      no-gutters
+    >
+      <v-col
+        cols="11"
+        class="h6 py-0 mt-1"
+      >
         You are searching for a name for a
         {{ entityText === ' BC Corporation' && location === ' BC' ? '' : ' ' + location }}
         {{ entityText }}
       </v-col>
     </v-row>
-    <v-row class="px-10 pt-6" no-gutters>
-      <v-col :class="{'pr-8': isXproFlow}" cols="12" lg="7">
-        <NameInput :hint="nameInputHint" :isReadOnly="isXproFlow"/>
+    <v-row
+      class="px-10 pt-6"
+      no-gutters
+    >
+      <v-col
+        :class="{'pr-8': isXproFlow}"
+        cols="12"
+        lg="7"
+      >
+        <NameInput
+          :hint="nameInputHint"
+          :isReadOnly="isXproFlow"
+        />
       </v-col>
-      <v-col v-if="showDesignationSelect" :class="{'pl-3': !isMobile}" cols="12" lg="3">
-        <v-select filled
-                  :items="designationOptions"
-                  label="Select a Designation"
-                  style="line-height: 20px;"
-                  v-model="designation">
-        </v-select>
+      <v-col
+        v-if="showDesignationSelect"
+        :class="{'pl-3': !isMobile}"
+        cols="12"
+        lg="3"
+      >
+        <v-select
+          v-model="designation"
+          filled
+          :items="designationOptions"
+          label="Select a Designation"
+          style="line-height: 20px;"
+        />
       </v-col>
-      <v-col v-if="!isXproFlow" class="pl-3 pt-3" cols="1">
+      <v-col
+        v-if="!isXproFlow"
+        class="pl-3 pt-3"
+        cols="1"
+      >
         <v-btn
           id="search-name-btn"
           class="outlined px-5 py-4"
@@ -31,82 +62,142 @@
           outlined
           @click="checkAgain()"
         >
-          <v-icon left size="1.5rem">mdi-magnify</v-icon>
+          <v-icon
+            left
+            size="1.5rem"
+          >
+            mdi-magnify
+          </v-icon>
           Check this Name
         </v-btn>
       </v-col>
     </v-row>
-    <v-container id="name-check-lower-container" class="rounded copy-normal mt-5 pa-0 name-check">
-      <v-row no-gutters justify="center" class="pt-8" v-if="hasNameLengthError">
-        <v-col cols="auto" id="name-check-header">
+    <v-container
+      id="name-check-lower-container"
+      class="rounded copy-normal mt-5 pa-0 name-check"
+    >
+      <v-row
+        v-if="hasNameLengthError"
+        no-gutters
+        justify="center"
+        class="pt-8"
+      >
+        <v-col
+          id="name-check-header"
+          cols="auto"
+        >
           <b>Showing Results for:</b>
         </v-col>
       </v-row>
-      <v-row no-gutters justify="center" v-if="hasNameLengthError">
-        <v-col cols="auto" id="name-check-title">
+      <v-row
+        v-if="hasNameLengthError"
+        no-gutters
+        justify="center"
+      >
+        <v-col
+          id="name-check-title"
+          cols="auto"
+        >
           <b>{{ originalName }}</b>
         </v-col>
       </v-row>
-      <v-row id="name-check-verdict" class="white mt-7 pa-2" no-gutters align="center" v-if="hasNameLengthError">
-        <v-progress-circular v-if="loadingStructureCheck"
-                             color="primary"
-                             indeterminate
-                             size="30"
-                             width="3"/>
-        <v-icon v-else class="check-tab-icon pl-2" :color="tabIconVerdict.color" size="2rem">
+      <v-row
+        v-if="hasNameLengthError"
+        id="name-check-verdict"
+        class="white mt-7 pa-2"
+        no-gutters
+        align="center"
+      >
+        <v-progress-circular
+          v-if="loadingStructureCheck"
+          color="primary"
+          indeterminate
+          size="30"
+          width="3"
+        />
+        <v-icon
+          v-else
+          class="check-tab-icon pl-2"
+          :color="tabIconVerdict.color"
+          size="2rem"
+        >
           {{ tabIconVerdict.icon }}
         </v-icon>
         <span class="pl-2">
           {{ nameCheckVerdict }}
         </span>
       </v-row>
-      <v-container v-if="(hasIssuesConflictAlert || hasIssuesConflictCaution ||
-                         hasIssuesStructureAlert || hasIssuesStructureCaution ||
-                         loadingStructureCheck) && hasNameLengthError"
-                   id="name-check-tabs-container"
-                   class="ma-0 pt-7">
-        <v-tabs no-gutters
-                id="name-check-tabs"
-                :active-class="isXproFlow? 'active-tab no-border-top' : 'active-tab'"
-                centered
-                grow
-                height="7rem"
-                hide-slider
-                style="border-radius: 4px 4px 0 0;"
-                v-model="checks">
-          <v-tab href="#structure-check"
-                 v-if="!isXproFlow"
-                 id="structure-tab"
-                 class="upper-border px-0 pt-3"
-                 :ripple="false">
+      <v-container
+        v-if="(hasIssuesConflictAlert || hasIssuesConflictCaution ||
+          hasIssuesStructureAlert || hasIssuesStructureCaution ||
+          loadingStructureCheck) && hasNameLengthError"
+        id="name-check-tabs-container"
+        class="ma-0 pt-7"
+      >
+        <v-tabs
+          id="name-check-tabs"
+          v-model="checks"
+          no-gutters
+          :active-class="isXproFlow? 'active-tab no-border-top' : 'active-tab'"
+          centered
+          grow
+          height="7rem"
+          hide-slider
+          style="border-radius: 4px 4px 0 0;"
+        >
+          <v-tab
+            v-if="!isXproFlow"
+            id="structure-tab"
+            href="#structure-check"
+            class="upper-border px-0 pt-3"
+            :ripple="false"
+          >
             <div style="width: 100%;">
-              <name-check-tab-content :loading="loadingStructureCheck"
-                                      :subtitle="subTitleStructure"
-                                      :tabIcon="tabIconStructure.icon"
-                                      :title="'Name Structure Check'"/>
-              <div v-if="checks === 'conflicts-check'" id="box-shadow-filler-unactive-tab"/>
+              <name-check-tab-content
+                :loading="loadingStructureCheck"
+                :subtitle="subTitleStructure"
+                :tabIcon="tabIconStructure.icon"
+                :title="'Name Structure Check'"
+              />
+              <div
+                v-if="checks === 'conflicts-check'"
+                id="box-shadow-filler-unactive-tab"
+              />
             </div>
           </v-tab>
-          <v-tab href="#conflicts-check"
-                 id="conflicts-tab"
-                 class="upper-border px-0 pt-3"
-                 :ripple="false">
+          <v-tab
+            id="conflicts-tab"
+            href="#conflicts-check"
+            class="upper-border px-0 pt-3"
+            :ripple="false"
+          >
             <div style="width: 100%;">
-              <name-check-tab-content :loading="isAnalyzeConflictsPending"
-                                      :subtitle="subTitleConflict"
-                                      :tabIcon="tabIconConflict.icon"
-                                      :title="'Similar Name Check'"/>
-              <div v-if="checks === 'structure-check'" id="box-shadow-filler-unactive-tab"/>
+              <name-check-tab-content
+                :loading="isAnalyzeConflictsPending"
+                :subtitle="subTitleConflict"
+                :tabIcon="tabIconConflict.icon"
+                :title="'Similar Name Check'"
+              />
+              <div
+                v-if="checks === 'structure-check'"
+                id="box-shadow-filler-unactive-tab"
+              />
             </div>
           </v-tab>
         </v-tabs>
-        <div id="box-shadow-filler-tab-item"/>
-        <v-tabs-items class="rounded-b tab-items pa-5 pt-6"
-                      :class="checks === 'structure-check' ? 'rounded-top-right' : 'rounded-top-left'"
-                      v-model="checks"
-                      touchless>
+        <div id="box-shadow-filler-tab-item" />
+        <v-tabs-items
+          v-model="checks"
+          class="rounded-b tab-items pa-5 pt-6"
+          :class="checks === 'structure-check' ? 'rounded-top-right' : 'rounded-top-left'"
+          touchless
+        >
           <v-tab-item value="structure-check">
-            <v-row no-gutters class="pr-16 pb-6 name-check-info-text" :class="{'pl-12': !isMobile}">
+            <v-row
+              no-gutters
+              class="pr-16 pb-6 name-check-info-text"
+              :class="{'pl-12': !isMobile}"
+            >
               <v-col cols="auto">
                 <v-icon>mdi-information-outline</v-icon>
               </v-col>
@@ -114,18 +205,33 @@
                 <span v-html="infoTextTab" />
               </v-col>
             </v-row>
-            <NameCheckConflicts :items="itemsStructure" @clear-error="clearError" @retry="retry"/>
+            <NameCheckConflicts
+              :items="itemsStructure"
+              @clear-error="clearError"
+              @retry="retry"
+            />
           </v-tab-item>
           <v-tab-item value="conflicts-check">
-            <v-row no-gutters class="pr-16 pb-7 name-check-info-text" :class="{'pl-12': !isMobile}">
+            <v-row
+              no-gutters
+              class="pr-16 pb-7 name-check-info-text"
+              :class="{'pl-12': !isMobile}"
+            >
               <v-col cols="auto">
                 <v-icon>mdi-information-outline</v-icon>
               </v-col>
               <v-col class="pl-2">
-                <p class="ma-0" v-html="infoTextTab" />
+                <p
+                  class="ma-0"
+                  v-html="infoTextTab"
+                />
                 <div v-if="!isXproFlow">
                   <p class="ma-0 pt-2">
-                    <a class="txt-link" text @click="expandHelpTxt = !expandHelpTxt">
+                    <a
+                      class="txt-link"
+                      text
+                      @click="expandHelpTxt = !expandHelpTxt"
+                    >
                       {{ expandBtnTxt }}
                     </a>
                   </p>
@@ -144,12 +250,23 @@
                     <p class="ma-0 pt-7">
                       If you want to ensure your name is not used outside of British
                       Columbia, you could also access the Trademarks database at
-                      <a class="txt-link" :href="tradeMarkDBLink" target="_blank">
+                      <a
+                        class="txt-link"
+                        :href="tradeMarkDBLink"
+                        target="_blank"
+                      >
                         <span>www.strategis.ic.gc.ca</span>
                       </a>
                       &nbsp;
-                      <a :href="tradeMarkDBLink" style="text-decoration: none;" target="_blank">
-                        <v-icon color="primary" small>mdi-open-in-new</v-icon>
+                      <a
+                        :href="tradeMarkDBLink"
+                        style="text-decoration: none;"
+                        target="_blank"
+                      >
+                        <v-icon
+                          color="primary"
+                          small
+                        >mdi-open-in-new</v-icon>
                       </a>
                       , or you may wish to search other
                       jurisdictions in Canada. Most public business and trademark
@@ -165,11 +282,19 @@
                 </div>
               </v-col>
             </v-row>
-            <NameCheckConflicts :items="itemsConflict" @clear-error="clearError" @retry="retry"/>
+            <NameCheckConflicts
+              :items="itemsConflict"
+              @clear-error="clearError"
+              @retry="retry"
+            />
           </v-tab-item>
         </v-tabs-items>
       </v-container>
-      <v-row no-gutters class="pt-3 name-check-info-text-no-border" v-if="hasNameLengthError">
+      <v-row
+        v-if="hasNameLengthError"
+        no-gutters
+        class="pt-3 name-check-info-text-no-border"
+      >
         <v-col cols="auto">
           <v-icon>mdi-information-outline</v-icon>
         </v-col>
@@ -177,14 +302,27 @@
           <span>{{ bottomText }}</span>
         </v-col>
       </v-row>
-      <v-row no-gutters class="pa-10 pt-5">
+      <v-row
+        no-gutters
+        class="pa-10 pt-5"
+      >
         <v-col>
-          <v-btn id="name-check-start-over-btn" @click="back()" class="outlined" outlined>
+          <v-btn
+            id="name-check-start-over-btn"
+            class="outlined"
+            outlined
+            @click="back()"
+          >
             Start Over
           </v-btn>
         </v-col>
         <v-col>
-          <v-btn id="name-check-submit-btn" class="float-right" @click="dialogCheck()" v-if="hasNameLengthError">
+          <v-btn
+            v-if="hasNameLengthError"
+            id="name-check-submit-btn"
+            class="float-right"
+            @click="dialogCheck()"
+          >
             Submit this Name for Review
             <v-icon>mdi-chevron-right</v-icon>
           </v-btn>

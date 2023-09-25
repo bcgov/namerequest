@@ -1,13 +1,19 @@
 <template>
   <div id="name-request-details">
     <v-row class="my-0">
-      <v-col cols="auto" class="font-weight-bold h4 py-0">
+      <v-col
+        cols="auto"
+        class="font-weight-bold h4 py-0"
+      >
         Name Request Details
       </v-col>
     </v-row>
 
     <v-row class="pt-8 my-0">
-      <v-col cols="12" class="py-0">
+      <v-col
+        cols="12"
+        class="py-0"
+      >
         <dl class="pa-6 bg-light-gray">
           <dt>Request Type:</dt>
           <dd>{{ requestType }}</dd>

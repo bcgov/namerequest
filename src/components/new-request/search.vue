@@ -1,6 +1,12 @@
 <template>
-  <v-container fluid id="search-container" class="copy-normal pt-10 px-10 pb-12">
-    <header class="h6">Get started by selecting an action:</header>
+  <v-container
+    id="search-container"
+    fluid
+    class="copy-normal pt-10 px-10 pb-12"
+  >
+    <header class="h6">
+      Get started by selecting an action:
+    </header>
 
     <v-row class="pt-6">
       <!-- Request Action -->
@@ -16,33 +22,50 @@
         <NumberedCompanyBullets v-if="isNumberedCompany && isNumberedEntityType" />
 
         <template v-if="(isNamedCompany || !isNumberedEntityType) && entity_type_cd">
-          <v-col cols="12" :md="showDesignation ? '8' : '12'">
+          <v-col
+            cols="12"
+            :md="showDesignation ? '8' : '12'"
+          >
             <NameInput
               :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
               @emit-corp-num-validity="corpNumValid = $event"
             />
           </v-col>
-          <Designation v-if="showDesignation" cols="12" md="4" />
+          <Designation
+            v-if="showDesignation"
+            cols="12"
+            md="4"
+          />
         </template>
       </template>
 
       <!-- New Xpro Business flow -->
       <template v-else-if="isNewXproBusiness">
         <Jurisdiction />
-        <EntityType v-if="getLocation && !isFederal" md="4" />
+        <EntityType
+          v-if="getLocation && !isFederal"
+          md="4"
+        />
 
         <XproFederalBullets v-if="isFederal" />
 
         <!-- not Federal -->
         <template v-else-if="isXproEntityType(getEntityTypeCd)">
-          <v-col cols="12" md="8">
+          <v-col
+            cols="12"
+            md="8"
+          >
             <NameInput
               :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
               @emit-corp-num-validity="corpNumValid = $event"
             />
           </v-col>
 
-          <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
+          <v-col
+            v-if="isMrasJurisdiction"
+            cols="12"
+            class="d-flex justify-end"
+          >
             <CorpNumberCheckbox />
           </v-col>
         </template>
@@ -56,17 +79,24 @@
         <template v-if="getEntityTypeCd">
           <!-- named company -->
           <template v-if="isNamedCompany || !isNumberedEntityType">
-            <v-col cols="12" :md="showDesignation ? '8' : '12'">
+            <v-col
+              cols="12"
+              :md="showDesignation ? '8' : '12'"
+            >
               <NameInput
                 :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
                 @emit-corp-num-validity="corpNumValid = $event"
               />
             </v-col>
-            <Designation v-if="showDesignation" cols="12" md="4" />
+            <Designation
+              v-if="showDesignation"
+              cols="12"
+              md="4"
+            />
           </template>
 
           <!-- numbered company -->
-          <NumberedCompanyBullets v-else/>
+          <NumberedCompanyBullets v-else />
         </template>
       </template>
 
@@ -75,28 +105,45 @@
         <BusinessLookupFetch />
 
         <!-- XPRO jurisdiction -->
-        <Jurisdiction v-if="isChangeNameXpro" md="4"/>
+        <Jurisdiction
+          v-if="isChangeNameXpro"
+          md="4"
+        />
         <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
 
         <!-- named company -->
         <template v-if="isNamedCompany && !isFederal">
-          <v-col cols="12" :md="showDesignation || isChangeNameXpro ? '8' : '12'">
+          <v-col
+            cols="12"
+            :md="showDesignation || isChangeNameXpro ? '8' : '12'"
+          >
             <NameInput
               :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
               @emit-corp-num-validity="corpNumValid = $event"
             />
           </v-col>
-          <Designation v-if="showDesignation" cols="12" md="4" />
+          <Designation
+            v-if="showDesignation"
+            cols="12"
+            md="4"
+          />
         </template>
 
         <!-- numbered company -->
         <NumberedCompanyBullets v-if="isNumberedCompany" />
 
         <!-- XPRO federal bullet text -->
-        <XproFederalBullets v-if="isXproFlow && isFederal" cols="12" />
+        <XproFederalBullets
+          v-if="isXproFlow && isFederal"
+          cols="12"
+        />
 
         <!-- checkbox for MRAS jurisdiction -->
-        <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
+        <v-col
+          v-if="isMrasJurisdiction"
+          cols="12"
+          class="d-flex justify-end"
+        >
           <CorpNumberCheckbox />
         </v-col>
       </template>
@@ -113,14 +160,21 @@
 
           <!-- xpro sub-flow -->
           <template v-else-if="isXproFlow">
-            <v-col cols="12" md="8">
+            <v-col
+              cols="12"
+              md="8"
+            >
               <NameInput
                 :is-mras-search="(isMrasJurisdiction && !getHasNoCorpNum)"
                 @emit-corp-num-validity="corpNumValid = $event"
               />
             </v-col>
 
-            <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
+            <v-col
+              v-if="isMrasJurisdiction"
+              cols="12"
+              class="d-flex justify-end"
+            >
               <CorpNumberCheckbox />
             </v-col>
           </template>
@@ -132,11 +186,18 @@
 
           <!-- named company -->
           <template v-if="isNamedCompany || !isNumberedEntityType">
-            <v-col cols="12" :md="showDesignation ? '8' : '12'">
+            <v-col
+              cols="12"
+              :md="showDesignation ? '8' : '12'"
+            >
               <NameInput @emit-corp-num-validity="corpNumValid = $event" />
             </v-col>
 
-            <Designation v-if="showDesignation" cols="12" md="4" />
+            <Designation
+              v-if="showDesignation"
+              cols="12"
+              md="4"
+            />
           </template>
 
           <!-- numbered company -->
@@ -147,55 +208,94 @@
       <!-- Conversion (aka Alteration) flow -->
       <template v-else-if="isConversion">
         <BusinessLookupFetch />
-        <EntityType v-if="getSearchBusiness && isAlterable" cols="12" md="12" />
+        <EntityType
+          v-if="getSearchBusiness && isAlterable"
+          cols="12"
+          md="12"
+        />
         <CompanyType v-if="!!getSearchBusiness && !!getConversionType" />
 
         <template v-if="isNamedCompany">
-          <v-col cols="12" :md="showDesignation ? '8' : '12'">
+          <v-col
+            cols="12"
+            :md="showDesignation ? '8' : '12'"
+          >
             <NameInput
               :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
               @emit-corp-num-validity="corpNumValid = $event"
             />
           </v-col>
-          <Designation v-if="showDesignation" cols="12" md="4" />
+          <Designation
+            v-if="showDesignation"
+            cols="12"
+            md="4"
+          />
         </template>
 
-        <NumberedCompanyBullets v-if="isNumberedCompany"/>
+        <NumberedCompanyBullets v-if="isNumberedCompany" />
       </template>
 
       <!-- Restoration / Reinstatement flow -->
       <template v-else-if="isRestoration">
         <BusinessLookupFetch />
         <CompanyType v-if="getSearchBusiness && isBcRestorable && isSupportedRestoration(getEntityTypeCd)" />
-        <Jurisdiction v-if="isSelectedXproAndRestorable" cols="12" md="4" />
+        <Jurisdiction
+          v-if="isSelectedXproAndRestorable"
+          cols="12"
+          md="4"
+        />
 
         <!-- federal sub-flow -->
         <XproFederalBullets v-if="isFederal && getSearchBusiness" />
 
         <template v-if="(isRestorable && !isFederal) && (isNamedCompany || !isSupportedRestoration(getEntityTypeCd))">
-          <v-col cols="12" :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'">
+          <v-col
+            cols="12"
+            :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'"
+          >
             <NameInput
               :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
               @emit-corp-num-validity="corpNumValid = $event"
             />
           </v-col>
-          <Designation v-if="showDesignation" cols="12" md="4" />
-          <v-col v-if="isMrasJurisdiction" cols="12" class="d-flex justify-end">
+          <Designation
+            v-if="showDesignation"
+            cols="12"
+            md="4"
+          />
+          <v-col
+            v-if="isMrasJurisdiction"
+            cols="12"
+            class="d-flex justify-end"
+          >
             <CorpNumberCheckbox />
           </v-col>
         </template>
 
-        <NumberedCompanyBullets v-if="isNumberedCompany"/>
+        <NumberedCompanyBullets v-if="isNumberedCompany" />
       </template>
     </v-row>
 
     <!-- "Go to COLIN" button -->
     <template v-if="showColinButton">
-      <v-row justify="center" class="mt-6">
+      <v-row
+        justify="center"
+        class="mt-6"
+      >
         <v-col cols="auto">
-          <v-btn id="colin-button" class="px-9" :href="colinLink" target="_blank">
+          <v-btn
+            id="colin-button"
+            class="px-9"
+            :href="colinLink"
+            target="_blank"
+          >
             Go to Corporate Online to {{ isConversion ? 'Alter' : 'Register' }}
-            <v-icon right small>mdi-open-in-new</v-icon>
+            <v-icon
+              right
+              small
+            >
+              mdi-open-in-new
+            </v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -203,9 +303,16 @@
 
     <!-- "Action Now" button -->
     <template v-if="showActionNowButton">
-      <v-row justify="center" class="mt-6">
+      <v-row
+        justify="center"
+        class="mt-6"
+      >
         <v-col cols="auto">
-          <v-btn id="action-now-button" class="px-9" @click="actionNowClicked()">
+          <v-btn
+            id="action-now-button"
+            class="px-9"
+            @click="actionNowClicked()"
+          >
             {{ actionNowButtonText }}
           </v-btn>
         </v-col>
@@ -214,7 +321,10 @@
 
     <!-- "Check this Name" button -->
     <template v-if="showCheckNameButton">
-      <v-row justify="center" class="mt-6">
+      <v-row
+        justify="center"
+        class="mt-6"
+      >
         <v-col cols="auto">
           <v-btn
             id="search-name-btn"
@@ -223,15 +333,29 @@
             :disabled="!corpNumValid"
             @click="handleSubmit(true)"
           >
-            <v-icon left size="24px">mdi-magnify</v-icon>
+            <v-icon
+              left
+              size="24px"
+            >
+              mdi-magnify
+            </v-icon>
             Check this Name
           </v-btn>
         </v-col>
       </v-row>
 
-      <v-row v-if="isPremiumOrStaff" justify="center">
+      <v-row
+        v-if="isPremiumOrStaff"
+        justify="center"
+      >
         <v-col cols="auto">
-          <v-btn id="name-check-skip-btn" class="outlined pa-0" :ripple="false" text @click="handleSubmit(false)">
+          <v-btn
+            id="name-check-skip-btn"
+            class="outlined pa-0"
+            :ripple="false"
+            text
+            @click="handleSubmit(false)"
+          >
             <span>Submit this Name without checking</span>
             <v-icon>mdi-chevron-right</v-icon>
           </v-btn>

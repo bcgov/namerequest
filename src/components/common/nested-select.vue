@@ -26,8 +26,17 @@
       >
         <div class="d-flex justify-space-between align-center">
           <div>
-            <v-icon v-if="item.icon" color="primary" class="mr-2">{{ item.icon }}</v-icon>
-            <span class="mb-0 mr-4 font-weight-bold" :class="{'app-blue': item.group === activeActionGroup}">
+            <v-icon
+              v-if="item.icon"
+              color="primary"
+              class="mr-2"
+            >
+              {{ item.icon }}
+            </v-icon>
+            <span
+              class="mb-0 mr-4 font-weight-bold"
+              :class="{'app-blue': item.group === activeActionGroup}"
+            >
               {{ item.text }}
             </span>
           </div>
@@ -45,11 +54,17 @@
         :class="{ 'hide-me': item.disabled, 'border-top': item.separator }"
       >
         <template v-if="!item.subtext">
-          <div class="font-size-16">{{ item.text }}</div>
+          <div class="font-size-16">
+            {{ item.text }}
+          </div>
         </template>
         <template v-else>
-          <div class="font-size-16 font-weight-bold">{{ item.text }}</div>
-          <div class="font-size-14">{{ item.subtext }}</div>
+          <div class="font-size-16 font-weight-bold">
+            {{ item.text }}
+          </div>
+          <div class="font-size-14">
+            {{ item.subtext }}
+          </div>
         </template>
       </v-list-item-content>
     </template>

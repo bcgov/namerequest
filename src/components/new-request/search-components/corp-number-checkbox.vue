@@ -1,21 +1,25 @@
 <template>
   <div id="corp-number-checkbox">
     <v-tooltip
-      top min-width="390"
+      top
+      min-width="390"
       content-class="top-tooltip"
       transition="fade-transition"
       :disabled="isMobile"
     >
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <v-checkbox
-          v-model="noCorpNum"
           id="corp-num-checkbox"
+          #label
+          v-model="noCorpNum"
           class="copy-small mt-0 pt-0"
           hide-details
-          v-slot:label
           v-on="on"
         >
-          <span v-on="on" class="copy-small">I don't have a corporate number</span>
+          <span
+            class="copy-small"
+            v-on="on"
+          >I don't have a corporate number</span>
         </v-checkbox>
       </template>
 

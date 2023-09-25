@@ -1,22 +1,45 @@
 <template>
-  <v-row class="check-tab-content" justify="center" no-gutters>
+  <v-row
+    class="check-tab-content"
+    justify="center"
+    no-gutters
+  >
     <v-col>
       <span class="check-tab-title">{{ title }}</span>
-      <div v-if="loading" class="pt-2">
-        <v-progress-circular class="check-tab-spinner"
-                              indeterminate
-                              size="25"
-                              width="2"/>
+      <div
+        v-if="loading"
+        class="pt-2"
+      >
+        <v-progress-circular
+          class="check-tab-spinner"
+          indeterminate
+          size="25"
+          width="2"
+        />
       </div>
-      <v-row v-else justify="center" no-gutters>
-        <v-col v-if="!isXproFlow" cols="auto">
-          <v-icon class="check-tab-icon pt-2" size="1.3rem">
+      <v-row
+        v-else
+        justify="center"
+        no-gutters
+      >
+        <v-col
+          v-if="!isXproFlow"
+          cols="auto"
+        >
+          <v-icon
+            class="check-tab-icon pt-2"
+            size="1.3rem"
+          >
             {{ tabIcon }}
           </v-icon>
         </v-col>
         <v-col cols="auto">
-          <p :class="contentClass"
-             v-html="subtitle">{{ subtitle }}</p>
+          <p
+            :class="contentClass"
+            v-html="subtitle"
+          >
+            {{ subtitle }}
+          </p>
         </v-col>
       </v-row>
     </v-col>

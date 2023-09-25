@@ -1,10 +1,18 @@
 <template>
-  <v-dialog v-model="showModal" max-width="45rem">
+  <v-dialog
+    v-model="showModal"
+    max-width="45rem"
+  >
     <v-card>
       <v-card-title class="d-flex justify-space-between">
         <div>Payment Not Received</div>
         <div class="mt-3">
-          <v-btn icon large class="dialog-close" @click="hideModal()">
+          <v-btn
+            icon
+            large
+            class="dialog-close"
+            @click="hideModal()"
+          >
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </div>
@@ -22,7 +30,12 @@
       </v-card-text>
 
       <v-card-actions class="justify-center pt-6">
-        <v-btn class="px-12" @click="exit()">OK</v-btn>
+        <v-btn
+          class="px-12"
+          @click="exit()"
+        >
+          OK
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

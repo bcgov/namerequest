@@ -1,13 +1,25 @@
 <template>
-  <v-dialog min-width="32rem" max-width="45rem" :value="isVisible" persistent>
+  <v-dialog
+    min-width="32rem"
+    max-width="45rem"
+    :value="isVisible"
+    persistent
+  >
     <v-card>
       <v-tabs id="confirm-nr-tabs">
-        <v-tabs-items v-model="currentTab" touchless>
-
+        <v-tabs-items
+          v-model="currentTab"
+          touchless
+        >
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
               <div>Staff Payment</div>
-              <v-btn icon large class="dialog-close float-right" @click="hideModal()">
+              <v-btn
+                icon
+                large
+                class="dialog-close float-right"
+                @click="hideModal()"
+              >
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </v-card-title>
@@ -21,15 +33,21 @@
 
             <v-card-actions class="justify-center pt-6">
               <v-btn
-                @click="goBack()"
                 id="confirm-nr-back-btn"
                 class="button-blue px-10"
-                :disabled="isLoadingPayment">Back</v-btn>
+                :disabled="isLoadingPayment"
+                @click="goBack()"
+              >
+                Back
+              </v-btn>
               <v-btn
-                @click="confirmPayment()"
                 id="confirm-nr-submit-btn"
                 class="primary px-5"
-                :loading="isLoadingPayment">Submit Name Request</v-btn>
+                :loading="isLoadingPayment"
+                @click="confirmPayment()"
+              >
+                Submit Name Request
+              </v-btn>
             </v-card-actions>
           </v-tab-item>
 
@@ -40,7 +58,12 @@
                   <span>Confirm Name Request</span>
                 </v-col>
                 <v-col>
-                  <v-btn icon large class="dialog-close" @click="hideModal()">
+                  <v-btn
+                    icon
+                    large
+                    class="dialog-close"
+                    @click="hideModal()"
+                  >
                     <v-icon>mdi-close</v-icon>
                   </v-btn>
                 </v-col>
@@ -61,35 +84,58 @@
 
             <v-card-actions class="pt-8">
               <v-row no-gutters>
-                <v-col cols="12" md="6" lg="6" :class="{ 'col-align-center': isMobile}">
+                <v-col
+                  cols="12"
+                  md="6"
+                  lg="6"
+                  :class="{ 'col-align-center': isMobile}"
+                >
                   <v-btn
                     v-if="allowCancel"
-                    @click="cancelPayment()"
                     id="confirm-nr-cancel-btn"
                     class="button-red"
                     :class="{ 'mobile-btn' : isMobile }"
-                    :disabled="isLoadingPayment">Cancel Name Request</v-btn>
+                    :disabled="isLoadingPayment"
+                    @click="cancelPayment()"
+                  >
+                    Cancel Name Request
+                  </v-btn>
                 </v-col>
-                <v-col cols="12" md="2" lg="2" :class="[isMobile ? 'col-align-center' : 'col-align-end']">
+                <v-col
+                  cols="12"
+                  md="2"
+                  lg="2"
+                  :class="[isMobile ? 'col-align-center' : 'col-align-end']"
+                >
                   <v-btn
-                    @click="hideModal()"
                     id="confirm-nr-close-btn"
                     class="button-blue"
                     :class="[isMobile ? 'mobile-btn' : 'mr-n6']"
-                    :disabled="isLoadingPayment">Close</v-btn>
+                    :disabled="isLoadingPayment"
+                    @click="hideModal()"
+                  >
+                    Close
+                  </v-btn>
                 </v-col>
-                <v-col cols="12" md="4" lg="4" :class="[isMobile ? 'col-align-center' : 'col-align-end']">
+                <v-col
+                  cols="12"
+                  md="4"
+                  lg="4"
+                  :class="[isMobile ? 'col-align-center' : 'col-align-end']"
+                >
                   <v-btn
-                    @click="confirmPayment()"
                     id="confirm-nr-continue-btn"
                     class="primary"
                     :class="{ 'mobile-btn' : isMobile }"
-                    :loading="isLoadingPayment">Continue to Payment</v-btn>
+                    :loading="isLoadingPayment"
+                    @click="confirmPayment()"
+                  >
+                    Continue to Payment
+                  </v-btn>
                 </v-col>
               </v-row>
             </v-card-actions>
           </v-tab-item>
-
         </v-tabs-items>
       </v-tabs>
     </v-card>

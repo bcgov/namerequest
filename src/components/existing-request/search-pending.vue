@@ -7,7 +7,10 @@
     </template>
 
     <template #content>
-      <v-row justify="center" class="mt-3">
+      <v-row
+        justify="center"
+        class="mt-3"
+      >
         <v-col cols="auto">
           <b>Please wait a moment</b>
         </v-col>
@@ -15,15 +18,18 @@
       <v-row justify="center">
         <v-col cols="auto">
           <v-progress-circular
-            color="orange"
             id="analyze-pending-spinner"
+            color="orange"
             size="50"
             indeterminate
           />
         </v-col>
       </v-row>
       <v-row justify="center">
-        <v-col cols="auto" class="copy-small pb-0">
+        <v-col
+          cols="auto"
+          class="copy-small pb-0"
+        >
           Search Status: Searching
         </v-col>
       </v-row>

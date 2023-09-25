@@ -3,59 +3,77 @@
     <section>
       <h4>Requested Name <span v-if="nameChoices.name2">Choices</span></h4>
       <ul class="pl-0">
-        <li v-if="!nameChoices.name2">{{nameChoices.name1}} {{nameChoices.designation1}}</li>
+        <li v-if="!nameChoices.name2">
+          {{ nameChoices.name1 }} {{ nameChoices.designation1 }}
+        </li>
         <template v-else>
-          <li v-if="nameChoices.name1">1. {{nameChoices.name1}} {{nameChoices.designation1}}</li>
-          <li v-if="nameChoices.name2">2. {{nameChoices.name2}} {{nameChoices.designation2}}</li>
-          <li v-if="nameChoices.name3">3. {{nameChoices.name3}} {{nameChoices.designation3}}</li>
+          <li v-if="nameChoices.name1">
+            1. {{ nameChoices.name1 }} {{ nameChoices.designation1 }}
+          </li>
+          <li v-if="nameChoices.name2">
+            2. {{ nameChoices.name2 }} {{ nameChoices.designation2 }}
+          </li>
+          <li v-if="nameChoices.name3">
+            3. {{ nameChoices.name3 }} {{ nameChoices.designation3 }}
+          </li>
         </template>
       </ul>
     </section>
 
     <v-row>
-      <v-col col="6">
+      <v-col cols="6">
         <h4>Applicant Information</h4>
         <ul class="pl-0">
           <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
-          <li>{{`${applicantName}`}}</li>
+          <li>{{ `${applicantName}` }}</li>
           <li>
-            {{`${applicant.addrLine1 ? applicant.addrLine1 : ''} ${applicant.addrLine2 ? applicant.addrLine2 : ''}`}}
+            {{ `${applicant.addrLine1 ? applicant.addrLine1 : ''} ${applicant.addrLine2 ? applicant.addrLine2 : ''}` }}
           </li>
           <li>
-            {{`${applicant.city ? applicant.city : ''}, ${applicant.stateProvinceCd ? applicant.stateProvinceCd : ''}`}}
+            {{ `${applicant.city ? applicant.city : ''}, ${applicant.stateProvinceCd ? applicant.stateProvinceCd : ''}` }}
           </li>
           <li>
-            {{`${applicant.countryTypeCd === Location.CA ? 'Canada' : applicant.countryTypeCd},
-             ${applicant.postalCd ? applicant.postalCd : ''}`}}
+            {{ `${applicant.countryTypeCd === Location.CA ? 'Canada' : applicant.countryTypeCd},
+             ${applicant.postalCd ? applicant.postalCd : ''}` }}
           </li>
         </ul>
       </v-col>
 
-      <v-col col="6">
+      <v-col cols="6">
         <ul class="pl-0">
           <li v-if="client">
             <h4>Client Name</h4>
             <ul class="pl-0">
-              <li>{{`${client}`}}</li>
+              <li>{{ `${client}` }}</li>
             </ul>
           </li>
           <li v-if="contactPerson">
             <h4>Primary Contact</h4>
             <ul class="pl-0">
-              <li>{{`${contactPerson}`}}</li>
-              <li>{{applicant.emailAddress}}</li>
-              <li>{{applicant.phoneNumber}}</li>
-              <li><span class="title-bold-16" v-if="getFolioNumber">Folio: </span>{{getFolioNumber}}</li>
+              <li>{{ `${contactPerson}` }}</li>
+              <li>{{ applicant.emailAddress }}</li>
+              <li>{{ applicant.phoneNumber }}</li>
+              <li>
+                <span
+                  v-if="getFolioNumber"
+                  class="title-bold-16"
+                >Folio: </span>{{ getFolioNumber }}
+              </li>
             </ul>
           </li>
           <li v-if="!contactPerson">
             <h4>Primary Contact</h4>
             <ul class="pl-0">
               <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
-              <li>{{`${applicantName}`}}</li>
-              <li>{{applicant.emailAddress}}</li>
-              <li>{{applicant.phoneNumber}}</li>
-              <li><span class="title-bold-16" v-if="getFolioNumber">Folio: </span>{{getFolioNumber}}</li>
+              <li>{{ `${applicantName}` }}</li>
+              <li>{{ applicant.emailAddress }}</li>
+              <li>{{ applicant.phoneNumber }}</li>
+              <li>
+                <span
+                  v-if="getFolioNumber"
+                  class="title-bold-16"
+                >Folio: </span>{{ getFolioNumber }}
+              </li>
             </ul>
           </li>
         </ul>

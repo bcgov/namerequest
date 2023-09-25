@@ -1,13 +1,25 @@
 <template>
-  <v-dialog min-width="32rem" max-width="45rem" :value="isVisible" persistent>
+  <v-dialog
+    min-width="32rem"
+    max-width="45rem"
+    :value="isVisible"
+    persistent
+  >
     <v-card>
       <v-tabs id="resubmit-tabs">
-        <v-tabs-items v-model="currentTab" touchless>
-
+        <v-tabs-items
+          v-model="currentTab"
+          touchless
+        >
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
               <div>Staff Payment for Name Request Resubmission</div>
-              <v-btn icon large class="dialog-close float-right" @click="hideModal()">
+              <v-btn
+                icon
+                large
+                class="dialog-close float-right"
+                @click="hideModal()"
+              >
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </v-card-title>
@@ -21,28 +33,42 @@
 
             <v-card-actions class="justify-center pt-6">
               <v-btn
-                @click="goBack()"
                 id="resubmit-back-btn"
                 class="button-blue px-10"
-                :disabled="isLoadingPayment">Back</v-btn>
+                :disabled="isLoadingPayment"
+                @click="goBack()"
+              >
+                Back
+              </v-btn>
               <v-btn
-                @click="confirmPayment()"
                 id="resubmit-submit-btn"
                 class="primary px-5"
-                :loading="isLoadingPayment">Submit Name Request</v-btn>
+                :loading="isLoadingPayment"
+                @click="confirmPayment()"
+              >
+                Submit Name Request
+              </v-btn>
             </v-card-actions>
           </v-tab-item>
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
               <div>Resubmit Name Request</div>
-              <v-btn icon large class="dialog-close float-right" @click="hideModal()">
+              <v-btn
+                icon
+                large
+                class="dialog-close float-right"
+                @click="hideModal()"
+              >
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </v-card-title>
 
             <v-card-text class="copy-normal">
-              <p v-if="!isRoleStaff" class="mb-8">
+              <p
+                v-if="!isRoleStaff"
+                class="mb-8"
+              >
                 If your Name Request has expired, you can resubmit the same name request, for a
                 fee. This will generate a new Name Request Number. Resubmissions follow the same
                 process for new submissions using the email and phone number on the Name Request.
@@ -52,20 +78,26 @@
                 :fees="[...paymentFees]"
               />
 
-              <v-tooltip top
+              <v-tooltip
+                top
                 content-class="top-tooltip"
                 transition="fade-transition"
                 :disabled="isMobile || enablePriorityCheckbox"
               >
-                <template v-slot:activator="{ on }">
-                  <div v-on="on" class="width-fit-content">
+                <template #activator="{ on }">
+                  <div
+                    class="width-fit-content"
+                    v-on="on"
+                  >
                     <v-checkbox
-                      hide-details
                       v-model="isPriorityRequest"
+                      hide-details
                       class="pre-wrap mt-8 pt-0 pl-2"
                       :disabled="!enablePriorityCheckbox"
                     >
-                      <template v-slot:label>Make this a Priority Request <b>($100)</b></template>
+                      <template #label>
+                        Make this a Priority Request <b>($100)</b>
+                      </template>
                     </v-checkbox>
                   </div>
                 </template>
@@ -78,17 +110,22 @@
 
             <v-card-actions class="pt-8 justify-center">
               <v-btn
-                @click="hideModal()"
                 id="resubmit-cancel-btn"
-                class="button button-blue px-5">Cancel</v-btn>
+                class="button button-blue px-5"
+                @click="hideModal()"
+              >
+                Cancel
+              </v-btn>
               <v-btn
-                @click="confirmPayment()"
                 id="resubmit-continue-btn"
                 class="primary px-5"
-                :loading="isLoadingPayment">Continue to Payment</v-btn>
+                :loading="isLoadingPayment"
+                @click="confirmPayment()"
+              >
+                Continue to Payment
+              </v-btn>
             </v-card-actions>
           </v-tab-item>
-
         </v-tabs-items>
       </v-tabs>
     </v-card>

@@ -2,14 +2,26 @@
   <MainContainer id="existing-request-edit">
     <template #container-header>
       <v-col cols="auto">
-        <span v-if="submissionTabNumber === 1" class="h3 user-select-all">{{ getNrNum }}</span>
-        <span v-else class="font-weight-bold h4 py-0">Application Details</span>
+        <span
+          v-if="submissionTabNumber === 1"
+          class="h3 user-select-all"
+        >{{ getNrNum }}</span>
+        <span
+          v-else
+          class="font-weight-bold h4 py-0"
+        >Application Details</span>
       </v-col>
     </template>
 
     <template #content>
-      <v-tabs v-model="submissionTabNumber" id="applicant-info-slider">
-        <v-tabs-items v-model="submissionTabNumber" touchless>
+      <v-tabs
+        id="applicant-info-slider"
+        v-model="submissionTabNumber"
+      >
+        <v-tabs-items
+          v-model="submissionTabNumber"
+          touchless
+        >
           <v-tab-item>
             <keep-alive>
               <EntityCannotBeAutoAnalyzed />

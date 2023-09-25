@@ -1,14 +1,26 @@
 <template>
-  <v-dialog id="advanced-search-dialog" v-model="dialog" max-width="55rem" persistent :attach="attach">
-
+  <v-dialog
+    id="advanced-search-dialog"
+    v-model="dialog"
+    max-width="55rem"
+    persistent
+    :attach="attach"
+  >
     <v-card :class="{'retrieve-card-height': isTabRetrieve, 'tab-card-height': !isTabRetrieve}">
-      <v-btn icon large class="dialog-close" @click="emitClose()">
+      <v-btn
+        icon
+        large
+        class="dialog-close"
+        @click="emitClose()"
+      >
         <v-icon>mdi-close</v-icon>
       </v-btn>
 
       <v-tabs id="advanced-search-tabs">
-        <v-tabs-items v-model="advSearchTab" touchless>
-
+        <v-tabs-items
+          v-model="advSearchTab"
+          touchless
+        >
           <!-- Advanced Search Form -->
           <v-tab-item class="set-height-tab mb-2">
             <v-card-title>
@@ -21,7 +33,10 @@
 
             <!-- Validation error message -->
             <div class="my-n2">
-              <span v-if="invalidSearch" class="copy-small error-message">Enter at least one search criteria</span>
+              <span
+                v-if="invalidSearch"
+                class="copy-small error-message"
+              >Enter at least one search criteria</span>
               <br v-else> <!-- Preserve Spacing when no errors present -->
             </div>
 
@@ -62,7 +77,7 @@
 
             <v-card-text class="copy-normal pt-5">
               To view the details and status of this Name Request, please enter the <strong>email address or phone
-              number</strong> of the Applicant.
+                number</strong> of the Applicant.
             </v-card-text>
 
             <AdvancedSearchRetrieve
@@ -79,7 +94,7 @@
               <h3>Too Many Name Requests Found</h3>
               <span class="my-6">Your search returned more than 1000 results.</span>
               <span class="mb-4">Please return to the previous screen and narrow your search by selecting more than
-                  one search criteria and/or reducing your date range.</span>
+                one search criteria and/or reducing your date range.</span>
             </v-card-text>
           </v-tab-item>
 
@@ -91,11 +106,13 @@
               <span class="mb-4">Please return to the previous screen and try your search again.</span>
             </v-card-text>
           </v-tab-item>
-
         </v-tabs-items>
       </v-tabs>
 
-      <v-card-actions id="advanced-search-actions" class="justify-center pa-0">
+      <v-card-actions
+        id="advanced-search-actions"
+        class="justify-center pa-0"
+      >
         <v-row no-gutters>
           <v-col>
             <v-btn
@@ -106,11 +123,11 @@
               outlined
               @click="advSearchBtn1Actions()"
             >
-          <span :class="isTabSearchForm ? 'pl-2' : 'pr-2'">
-            <v-icon v-if="!isTabSearchForm">mdi-chevron-left</v-icon>
-            {{ advSearchBtn1Text }}
-            <v-icon v-if="isTabSearchForm">mdi-chevron-right</v-icon>
-          </span>
+              <span :class="isTabSearchForm ? 'pl-2' : 'pr-2'">
+                <v-icon v-if="!isTabSearchForm">mdi-chevron-left</v-icon>
+                {{ advSearchBtn1Text }}
+                <v-icon v-if="isTabSearchForm">mdi-chevron-right</v-icon>
+              </span>
             </v-btn>
           </v-col>
           <v-col>
@@ -121,15 +138,14 @@
               outlined
               @click="advSearchBtn2Actions()"
             >
-          <span class="px-3">
-            {{ advSearchBtn2Text }}<v-icon v-if="isTabRetrieve">mdi-chevron-right</v-icon>
-          </span>
+              <span class="px-3">
+                {{ advSearchBtn2Text }}<v-icon v-if="isTabRetrieve">mdi-chevron-right</v-icon>
+              </span>
             </v-btn>
           </v-col>
         </v-row>
       </v-card-actions>
     </v-card>
-
   </v-dialog>
 </template>
 

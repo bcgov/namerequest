@@ -1,9 +1,20 @@
 <template>
-  <v-container fluid class="white rounded copy-normal pa-10">
-    <v-row justify="space-between" class="submission-tabs-top" no-gutters>
+  <v-container
+    fluid
+    class="white rounded copy-normal pa-10"
+  >
+    <v-row
+      justify="space-between"
+      class="submission-tabs-top"
+      no-gutters
+    >
       <slot name="container-header" />
 
-      <v-col cols="auto" class="py-0" v-if="displayedComponent !== 'Success'">
+      <v-col
+        v-if="displayedComponent !== 'Success'"
+        cols="auto"
+        class="py-0"
+      >
         <button
           id="back-to-search-btn"
           class="modal-activator link-std-sans-ul"

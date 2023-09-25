@@ -1,16 +1,28 @@
 <template>
-  <v-col id="numbered-company-bullets" :cols="cols" :md="md">
+  <v-col
+    id="numbered-company-bullets"
+    :cols="cols"
+    :md="md"
+  >
     <template v-if="isConversion && !isAlterOnline(getConversionType)">
       <div class="contact-registries">
         <p>To complete this alteration, please contact us at:</p>
         <p>
-          <v-icon small>mdi-phone</v-icon>&nbsp;Canada and U.S. Toll Free:
+          <v-icon small>
+            mdi-phone
+          </v-icon>&nbsp;Canada and U.S. Toll Free:
           <a href="tel:+1877-370-1033">1-877-370-1033</a>
         </p>
-        <p><v-icon small>mdi-phone</v-icon>&nbsp;Victoria Office:
+        <p>
+          <v-icon small>
+            mdi-phone
+          </v-icon>&nbsp;Victoria Office:
           <a href="tel:250-370-1033">250-370-1033</a>
         </p>
-        <p><v-icon small>mdi-email</v-icon>&nbsp;Email:
+        <p>
+          <v-icon small>
+            mdi-email
+          </v-icon>&nbsp;Email:
           <a href="mailto:BCRegistries@gov.bc.ca">BCRegistries@gov.bc.ca</a>
         </p>
       </div>

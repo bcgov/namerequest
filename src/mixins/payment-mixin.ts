@@ -437,7 +437,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
    * and optionally staff payment properties.
    */
   private buildHeaders (populateStaffPayment = true) {
-    let headers = {}
+    const headers = {}
 
     if (populateStaffPayment) {
       // Populate Staff Payment according to payment option

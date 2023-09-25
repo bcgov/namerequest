@@ -47,7 +47,7 @@ export const mutateAnalysisJSON = (state: StateIF, analysisJSON: AnalysisJSONI) 
 
 export const mutateApplicant = (state: StateIF, appKV: any) => {
   if (Array.isArray(appKV)) {
-    for (let element of appKV) {
+    for (const element of appKV) {
       state.stateModel.newRequestModel.applicant[element.name] = element.value
     }
   }
@@ -305,7 +305,7 @@ export const mutateSubmissionTabComponent = (state: StateIF, component: string) 
     ApplicantInfo1,
     ApplicantInfo2
   }
-  let tab = parseInt(Components[component])
+  const tab = parseInt(Components[component])
   state.stateModel.newRequestModel.submissionTabNumber = tab
 }
 
@@ -326,7 +326,7 @@ export const mutateWaitingAddressSearch = (state: StateIF, appKV: WaitingAddress
 }
 
 export const populateApplicantData = (state: StateIF) => {
-  for (let key in state.stateModel.newRequestModel.nr.applicants) {
+  for (const key in state.stateModel.newRequestModel.nr.applicants) {
     Vue.set(
       state.stateModel.newRequestModel.applicant,
       key,
@@ -339,7 +339,7 @@ export const populateApplicantData = (state: StateIF) => {
 }
 
 export const populateNrData = (state: StateIF) => {
-  for (let key in state.stateModel.newRequestModel.nrData) {
+  for (const key in state.stateModel.newRequestModel.nrData) {
     if (state.stateModel.newRequestModel.nr[key]) {
       Vue.set(
         state.stateModel.newRequestModel.nrData,
@@ -356,7 +356,7 @@ export const resetEditFormValues = (state: StateIF) => {
 }
 
 export const resetApplicantDetails = (state: StateIF) => {
-  for (let key in state.stateModel.newRequestModel.applicant) {
+  for (const key in state.stateModel.newRequestModel.applicant) {
     if (key === 'countryTypeCd') {
       state.stateModel.newRequestModel.applicant[key] = Location.CA
       continue
@@ -366,7 +366,7 @@ export const resetApplicantDetails = (state: StateIF) => {
 }
 
 export const resetNrData = (state: StateIF) => {
-  for (let key in state.stateModel.newRequestModel.nrData) {
+  for (const key in state.stateModel.newRequestModel.nrData) {
     Vue.set(
       state.stateModel.newRequestModel.nrData,
       key,
@@ -376,8 +376,8 @@ export const resetNrData = (state: StateIF) => {
 }
 
 export const resetRequestExaminationOrProvideConsent = (state: StateIF) => {
-  for (let n of [0, 1, 2]) {
-    for (let type of ['send_to_examiner', 'obtain_consent', 'conflict_self_consent']) {
+  for (const n of [0, 1, 2]) {
+    for (const type of ['send_to_examiner', 'obtain_consent', 'conflict_self_consent']) {
       state.stateModel.newRequestModel.requestExaminationOrProvideConsent[n][type] = false
     }
   }
@@ -425,7 +425,7 @@ export const mutateAssumedNameOriginal = (state: StateIF) => {
 }
 
 export const resetNameChoices = (state: StateIF) => {
-  for (let key in state.stateModel.newRequestModel.nameChoices) {
+  for (const key in state.stateModel.newRequestModel.nameChoices) {
     Vue.set(
       state.stateModel.newRequestModel.nameChoices,
       key,

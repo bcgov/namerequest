@@ -1,28 +1,31 @@
 <template>
   <!-- once in Summary state, need to re-mount to reuse this component -->
-  <div id="business-lookup" v-if="state !== States.SUMMARY">
+  <div
+    v-if="state !== States.SUMMARY"
+    id="business-lookup"
+  >
     <v-autocomplete
+      v-model="searchField"
       :hide-no-data="state != States.NO_RESULTS"
       :items="searchResults"
       :loading="state === States.SEARCHING"
       :name="Math.random()"
-      :search-input.sync="searchField"
       append-icon="mdi-magnify"
       autocomplete="chrome-off"
       autofocus
-      filled
       hint="Search by name, incorporation or registration number of an existing business"
       item-text="name"
       item-value="identifier"
       :label="lookupLabel"
       hide-details="auto"
+      filled
       no-filter
       persistent-hint
       return-object
-      @input="onItemSelected($event)"
+      @update:search-input="onItemSelected($event)"
       @keydown.enter.native.prevent
     >
-      <template v-slot:append>
+      <template #append>
         <v-progress-circular
           v-if="state === States.SEARCHING"
           color="primary"
@@ -32,7 +35,7 @@
         />
       </template>
 
-      <template v-slot:no-data>
+      <template #no-data>
         <p class="pl-5 font-weight-bold">
           {{ lookupNoActiveText }}
         </p>
@@ -50,15 +53,7 @@ import { Component, Emit, Prop, Watch } from 'vue-property-decorator'
 import { debounce } from 'lodash'
 import { BusinessLookupResultIF, BusinessSearchIF } from '@/interfaces'
 import BusinessLookupServices from '@/services/business-lookup-services'
-import { EntityStates, EntityTypes } from '@/enums'
-
-enum States {
-  INITIAL = 'initial',
-  SEARCHING = 'searching',
-  SHOW_RESULTS = 'show results',
-  NO_RESULTS = 'no results',
-  SUMMARY = 'summary'
-}
+import { EntityStates, EntityTypes, SearchStates as States } from '@/enums'
 
 /*
  * See PPR's BusinessSearchAutocomplete.vue for a Composition API example.

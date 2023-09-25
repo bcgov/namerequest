@@ -87,7 +87,7 @@ export class ActionMixin extends Vue {
           Line2: 'addrLine2'
         }
 
-        for (let ln of ['2', '3']) {
+        for (const ln of ['2', '3']) {
           if (!addressData[`Line${ln}`]) {
             this.setApplicantDetails({ key: `addrLine${ln}`, value: '' })
           }
@@ -112,7 +112,7 @@ export class ActionMixin extends Vue {
         }
 
         const fields = Object.keys(canadaPostFieldsMapping)
-        for (let field of fields) {
+        for (const field of fields) {
           if (addressData[field]) {
             const value = addressData[field]
             const mappedField = canadaPostFieldsMapping[field]
@@ -147,7 +147,7 @@ export class ActionMixin extends Vue {
       // FUTURE: add error handling in case post() failed
 
       if (Array.isArray(resp.data.Items)) {
-        let filteredItems = resp.data.Items.filter(item => item.Next === 'Retrieve')
+        const filteredItems = resp.data.Items.filter(item => item.Next === 'Retrieve')
         if (this.getApplicant.addrLine1) {
           // this.setApplicantDetails(filteredItems)
           this.setAddressSuggestions(filteredItems)

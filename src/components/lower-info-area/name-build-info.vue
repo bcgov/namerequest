@@ -1,9 +1,25 @@
 <template>
-  <v-container id="name-build-info" class="content-container">
+  <v-container
+    id="name-build-info"
+    class="content-container"
+  >
     <v-row no-gutters>
-      <v-col cols="12" class="h3" align="center">How to Build Your Name</v-col>
-      <v-col cols="12" md="6" lg="6" class="my-9">
-        <v-card class="my-9" flat>
+      <v-col
+        cols="12"
+        class="h3 align"
+      >
+        How to Build Your Name
+      </v-col>
+      <v-col
+        cols="12"
+        md="6"
+        lg="6"
+        class="my-9"
+      >
+        <v-card
+          class="my-9"
+          flat
+        >
           <v-list class="name-build-list">
             <v-list-item-group color="primary">
               <v-list-item
@@ -14,32 +30,61 @@
                 :ripple="false"
                 @mouseover="itemIndex = i"
               >
-                <v-icon v-if="isActiveTab(i)" color="primary" left>mdi-check-circle</v-icon>
-                <v-icon v-else color="primary" left>mdi-check</v-icon>
+                <v-icon
+                  v-if="isActiveTab(i)"
+                  color="primary"
+                  left
+                >
+                  mdi-check-circle
+                </v-icon>
+                <v-icon
+                  v-else
+                  color="primary"
+                  left
+                >
+                  mdi-check
+                </v-icon>
                 <v-list-item-content>
                   <v-list-item-title
                     class="name-build-list-item-title"
                     :class="{'name-build-list-item-active': isActiveTab(i)}"
                     v-html="item.title"
-                  >
-                  </v-list-item-title>
+                  />
                 </v-list-item-content>
               </v-list-item>
             </v-list-item-group>
           </v-list>
 
           <div class="bg-light-gray pl-4">
-            <p class="copy-small pt-7 mb-2">If you require consent from an existing business to use a name:</p>
-            <a :href="consentLetterSampleUrl" target="_blank" class="link-std-sans-ul">
+            <p class="copy-small pt-7 mb-2">
+              If you require consent from an existing business to use a name:
+            </p>
+            <a
+              :href="consentLetterSampleUrl"
+              target="_blank"
+              class="link-std-sans-ul"
+            >
               <v-icon color="primary">mdi-file-pdf-outline</v-icon>
               Download Sample Consent Letter
             </a>
           </div>
         </v-card>
       </v-col>
-      <v-divider v-if="!isMobile" class="mt-9 divider" vertical></v-divider>
-      <v-col cols="12" md="6" lg="6" class="my-9 px-6">
-        <component :is="getDisplayedComponent(itemIndex)" :key="itemIndex" />
+      <v-divider
+        v-if="!isMobile"
+        class="mt-9 divider"
+        vertical
+      />
+      <v-col
+        cols="12"
+        md="6"
+        lg="6"
+        class="my-9 px-6"
+      >
+        <component
+          :is="getDisplayedComponent(itemIndex)"
+          :key="itemIndex"
+        />
       </v-col>
     </v-row>
   </v-container>

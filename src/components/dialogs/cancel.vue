@@ -1,10 +1,19 @@
 <template>
-  <v-dialog width="40rem" :value="isVisible" persistent v-if="payments">
+  <v-dialog
+    v-if="payments"
+    width="40rem"
+    :value="isVisible"
+    persistent
+  >
     <v-card>
-
       <v-card-title class="d-flex justify-space-between">
         <div>Cancel Name Request</div>
-        <v-btn icon large class="dialog-close" @click="hideModal()">
+        <v-btn
+          icon
+          large
+          class="dialog-close"
+          @click="hideModal()"
+        >
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -21,16 +30,21 @@
 
       <v-card-actions class="justify-center">
         <v-btn
-          class="px-6 button-normal"
           id="cancel-nr-btn"
+          class="px-6 button-normal"
           :loading="loading"
-          @click="confirmCancel()">Cancel this Name Request</v-btn>
+          @click="confirmCancel()"
+        >
+          Cancel this Name Request
+        </v-btn>
         <v-btn
-          class="px-6 button-blue"
           id="keep-nr-btn"
-          @click="hideModal()">Keep this Name Request</v-btn>
+          class="px-6 button-blue"
+          @click="hideModal()"
+        >
+          Keep this Name Request
+        </v-btn>
       </v-card-actions>
-
     </v-card>
   </v-dialog>
 </template>

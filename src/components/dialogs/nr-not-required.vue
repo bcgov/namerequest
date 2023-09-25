@@ -1,6 +1,10 @@
 <template>
   <!-- NB: dummy modal attach point so unit tests can see it -->
-  <v-dialog v-model="showModal" width="50rem" attach="">
+  <v-dialog
+    v-model="showModal"
+    width="50rem"
+    attach=""
+  >
     <v-card>
       <v-card-title class="d-flex justify-space-between">
         <div>You don't need a Name Request if...</div>
@@ -9,14 +13,23 @@
         <ol>
           <li>
             <b>You are already Federally Incorporated.</b><br>
-            You do not require a name request. Please go to <a :href="colinLink" target="_blank">
-            Corporate Online</a> to extra-provincially register your business.
+            You do not require a name request. Please go to <a
+              :href="colinLink"
+              target="_blank"
+            >
+              Corporate Online</a> to extra-provincially register your business.
           </li>
           <li class="my-3">
             <b>You want a numbered company. The business does not need a name.</b><br>
             You do not require a name request. If you are incorporating a Benefit company go to
-            <a :href="businessRegistryLink" target="_blank">BC Business Registry</a>, otherwise go to
-            <a :href="colinLink" target="_blank">Corporate Online</a>. A number will be assigned
+            <a
+              :href="businessRegistryLink"
+              target="_blank"
+            >BC Business Registry</a>, otherwise go to
+            <a
+              :href="colinLink"
+              target="_blank"
+            >Corporate Online</a>. A number will be assigned
             upon registering your business.
           </li>
           <li>
@@ -28,7 +41,13 @@
         </ol>
       </v-card-text>
       <v-card-actions class="justify-center">
-        <v-btn text id="nr-required-close-btn" @click="showModal = false">Close</v-btn>
+        <v-btn
+          id="nr-required-close-btn"
+          text
+          @click="showModal = false"
+        >
+          Close
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

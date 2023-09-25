@@ -1,18 +1,42 @@
 <template>
-  <v-container class="mt-1" fluid>
-    <v-row class="stats-v-row" no-gutters>
-      <v-col v-if="!isMobile" cols="4"></v-col>
-      <v-col cols="6" md="4" lg="4" class="pr-4">
-        <v-tooltip bottom nudge-left="45"
-                   content-class="bottom-tooltip wait-time-tooltip"
-                   transition="fade-transition"
-                   :disabled="isMobile"
+  <v-container
+    class="mt-1"
+    fluid
+  >
+    <v-row
+      class="stats-v-row"
+      no-gutters
+    >
+      <v-col
+        v-if="!isMobile"
+        cols="4"
+      />
+      <v-col
+        cols="6"
+        md="4"
+        lg="4"
+        class="pr-4"
+      >
+        <v-tooltip
+          bottom
+          nudge-left="45"
+          content-class="bottom-tooltip wait-time-tooltip"
+          transition="fade-transition"
+          :disabled="isMobile"
         >
-          <template v-slot:activator="{ on }">
-            <div class="stats-content-outer py-0" v-on="on" :class="{'float-right': !isMobile}">
+          <template #activator="{ on }">
+            <div
+              class="stats-content-outer py-0"
+              :class="{'float-right': !isMobile}"
+              v-on="on"
+            >
               <div class="stats-content-inner-1 pa-1 text-center">
-                <div class="stats-value h3-lt">{{ priorityWaitTime }}</div>
-                <div class="stats-unit">Hours</div>
+                <div class="stats-value h3-lt">
+                  {{ priorityWaitTime }}
+                </div>
+                <div class="stats-unit">
+                  Hours
+                </div>
               </div>
               <div class="stats-content-inner-2">
                 <span :class="{'dotted-underline': !isMobile}">Priority Request</span><br>
@@ -21,23 +45,37 @@
             </div>
           </template>
           <span>
-          If you need your name reviewed as quickly as possible, Priority requests
-          are available for a fee ($100.00). Priority name requests are usually
-          reviewed within 1 to 2 business days.
-        </span>
+            If you need your name reviewed as quickly as possible, Priority requests
+            are available for a fee ($100.00). Priority name requests are usually
+            reviewed within 1 to 2 business days.
+          </span>
         </v-tooltip>
       </v-col>
-      <v-col cols="6" md="4" lg="4">
-        <v-tooltip bottom nudge-left="45"
-                   content-class="bottom-tooltip new-submission-wait-time-tooltip"
-                   transition="fade-transition"
-                   :disabled="isMobile"
+      <v-col
+        cols="6"
+        md="4"
+        lg="4"
+      >
+        <v-tooltip
+          bottom
+          nudge-left="45"
+          content-class="bottom-tooltip new-submission-wait-time-tooltip"
+          transition="fade-transition"
+          :disabled="isMobile"
         >
-          <template v-slot:activator="{ on }">
-            <div id="stats-content-outer-3" :class="[{'float-right': !isMobile}, 'stats-content-outer py-0']" v-on="on">
+          <template #activator="{ on }">
+            <div
+              id="stats-content-outer-3"
+              :class="[{'float-right': !isMobile}, 'stats-content-outer py-0']"
+              v-on="on"
+            >
               <div class="stats-content-inner-1 pa-1 text-center">
-                <div class="stats-value h3-lt">{{ regularWaitTime }}</div>
-                <div class="stats-unit">Days</div>
+                <div class="stats-value h3-lt">
+                  {{ regularWaitTime }}
+                </div>
+                <div class="stats-unit">
+                  Days
+                </div>
               </div>
               <div class="stats-content-inner-2">
                 <span :class="{'dotted-underline': !isMobile}">New Submission</span><br>
@@ -46,9 +84,9 @@
             </div>
           </template>
           <span>
-          This is the estimated review wait time when submitting a new name request
-          <strong>today</strong>. Wait times are approximate and subject to change.
-        </span>
+            This is the estimated review wait time when submitting a new name request
+            <strong>today</strong>. Wait times are approximate and subject to change.
+          </span>
         </v-tooltip>
       </v-col>
     </v-row>

@@ -1,5 +1,9 @@
 <template>
-  <v-col id="jurisdiction" :cols="cols" :md="md">
+  <v-col
+    id="jurisdiction"
+    :cols="cols"
+    :md="md"
+  >
     <NestedSelect
       label="Select your home jurisdiction"
       :menuItems="jurisdictionOptions"

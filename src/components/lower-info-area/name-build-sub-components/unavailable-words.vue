@@ -4,22 +4,34 @@
 
     <v-list class="unavailable-words-list">
       <v-row>
-        <v-col cols="12" sm="6">
+        <v-col
+          cols="12"
+          sm="6"
+        >
           <v-list-item
-                  v-for="(item, i) in listItems1"
-                  :key="'list1-' + i"
-                  class="unavailable-words-list-item"
+            v-for="(item, i) in listItems1"
+            :key="'list1-' + i"
+            class="unavailable-words-list-item"
           >
-            <p class="mb-0" v-html="item"></p>
+            <p
+              class="mb-0"
+              v-html="item"
+            />
           </v-list-item>
         </v-col>
-        <v-col cols="12" sm="6">
+        <v-col
+          cols="12"
+          sm="6"
+        >
           <v-list-item
-                  v-for="(item, i) in listItems2"
-                  :key="'list2-' + i"
-                  class="unavailable-words-list-item"
+            v-for="(item, i) in listItems2"
+            :key="'list2-' + i"
+            class="unavailable-words-list-item"
           >
-            <p class="mb-0" v-html="item"></p>
+            <p
+              class="mb-0"
+              v-html="item"
+            />
           </v-list-item>
         </v-col>
       </v-row>

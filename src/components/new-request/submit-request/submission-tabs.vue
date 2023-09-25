@@ -1,14 +1,24 @@
 <template>
   <MainContainer id="submission-tabs">
     <template #container-header>
-      <v-col cols="8" class="font-weight-bold h5 py-0">
+      <v-col
+        cols="8"
+        class="font-weight-bold h5 py-0"
+      >
         {{ submissionModeHeader }}
       </v-col>
     </template>
 
     <template #content>
-      <v-tabs v-model="submissionTabNumber" id="applicant-info-slider" class="mt-2">
-        <v-tabs-items v-model="submissionTabNumber" touchless>
+      <v-tabs
+        id="applicant-info-slider"
+        v-model="submissionTabNumber"
+        class="mt-2"
+      >
+        <v-tabs-items
+          v-model="submissionTabNumber"
+          touchless
+        >
           <v-tab-item>
             <keep-alive>
               <EntityCannotBeAutoAnalyzed />

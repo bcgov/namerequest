@@ -1,10 +1,20 @@
 <template>
   <span>
-    <v-dialog width="40rem" :value="isConfirmModalVisible" persistent v-if="payments">
+    <v-dialog
+      v-if="payments"
+      width="40rem"
+      :value="isConfirmModalVisible"
+      persistent
+    >
       <v-card>
         <v-card-title class="d-flex justify-space-between">
           <div>Cancel and Refund</div>
-          <v-btn icon large class="dialog-close" @click="hideConfirmModal()">
+          <v-btn
+            icon
+            large
+            class="dialog-close"
+            @click="hideConfirmModal()"
+          >
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -15,48 +25,69 @@
         </v-card-text>
 
         <v-card-text>
-          <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
-          <refund-summary v-else :payments="payments" />
+          <v-alert
+            v-if="fetchError"
+            color="error"
+            icon="mdi-alert"
+            outlined
+            class="my-0"
+            v-html="fetchError"
+          />
+          <refund-summary
+            v-else
+            :payments="payments"
+          />
         </v-card-text>
 
         <v-card-text class="text-body-2">
           The refund will be applied to your original payment method and the requested name will not be
           examined for use. <template v-if="emailAddress">An email confirming the cancellation and
-          refund of this Name Request will be sent to <strong>{{emailAddress}}</strong>.</template>
+            refund of this Name Request will be sent to <strong>{{ emailAddress }}</strong>.</template>
         </v-card-text>
 
         <v-card-actions class="justify-center">
           <v-btn
-            class="px-6 button-normal"
             id="cancel-nr-btn"
+            class="px-6 button-normal"
             :loading="loading"
-            @click="confirmRefund()">Cancel this Name Request</v-btn>
+            @click="confirmRefund()"
+          >Cancel this Name Request</v-btn>
           <v-btn
-            class="px-6 button-blue"
             id="keep-nr-btn"
-            @click="hideConfirmModal()">Keep this Name Request</v-btn>
+            class="px-6 button-blue"
+            @click="hideConfirmModal()"
+          >Keep this Name Request</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <v-dialog width="40rem" :value="isResponseModalVisible" persistent>
+    <v-dialog
+      width="40rem"
+      :value="isResponseModalVisible"
+      persistent
+    >
       <v-card>
         <v-card-title class="d-flex justify-space-between">
           <div>Cancel and Refund</div>
-          <v-btn icon large class="dialog-close" @click="hideResponseModal()">
+          <v-btn
+            icon
+            large
+            class="dialog-close"
+            @click="hideResponseModal()"
+          >
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
 
         <v-card-text class="text-body-1">
-          <span v-html="getRefundParams.refundMessageText1"></span>
+          <span v-html="getRefundParams.refundMessageText1" />
         </v-card-text>
 
         <v-card-text
           v-if="getRefundParams.refundMessageText2"
           class="text-body-1"
         >
-          <span v-html="getRefundParams.refundMessageText2"></span>
+          <span v-html="getRefundParams.refundMessageText2" />
         </v-card-text>
 
         <v-card-text
@@ -71,9 +102,10 @@
 
         <v-card-actions class="justify-center">
           <v-btn
-            class="px-6 button-normal"
             id="keep-nr-btn"
-            @click="hideResponseModal()">OK</v-btn>
+            class="px-6 button-normal"
+            @click="hideResponseModal()"
+          >OK</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

@@ -1,6 +1,12 @@
 <template>
-  <v-col id="company-type" :cols="cols" :md="md">
-    <header class="h6">Select a company type:</header>
+  <v-col
+    id="company-type"
+    :cols="cols"
+    :md="md"
+  >
+    <header class="h6">
+      Select a company type:
+    </header>
 
     <v-radio-group
       class="mt-0 pt-6"

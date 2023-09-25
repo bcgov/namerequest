@@ -1,6 +1,5 @@
 <template>
   <div id="existing-request-search">
-
     <!-- Advanced Search Dialog -->
     <advanced-search
       attach="#existing-request-search"
@@ -9,95 +8,175 @@
     />
 
     <v-row no-gutters>
-
       <!-- Help Content -->
-      <v-col v-if="!isMobile" cols="12" md="3" lg="3" class="existing-request-info copy-small">
+      <v-col
+        v-if="!isMobile"
+        cols="12"
+        md="3"
+        lg="3"
+        class="existing-request-info copy-small"
+      >
         <SearchHelpContent />
       </v-col>
 
       <!-- Existing Request Search -->
-      <v-col cols="12" md="9" lg="9">
-        <v-form v-model="isValid" lazy-validation @submit="handleSubmit()" class="pa-10" ref="existingNrForm">
-
+      <v-col
+        cols="12"
+        md="9"
+        lg="9"
+      >
+        <v-form
+          ref="existingNrForm"
+          v-model="isValid"
+          lazy-validation
+          class="pa-10"
+          @submit="handleSubmit()"
+        >
           <!-- FIRST LINE -->
           <v-row no-gutters>
-            <v-col v-if="!isMobile" cols="1" class="max-width" />
-            <v-col cols="11" class="h6">
+            <v-col
+              v-if="!isMobile"
+              cols="1"
+              class="max-width"
+            />
+            <v-col
+              cols="11"
+              class="h6"
+            >
               To manage an existing Name Request, enter your NR Number and either the Applicant’s Phone Number or Email:
             </v-col>
           </v-row>
 
           <!-- SECOND LINE -->
-          <v-row class="mt-4" no-gutters v-if="errorMessage">
-            <v-col v-if="!isMobile" cols="1" class="max-width" />
-            <v-col cols="11" class="error-message copy-small" v-html="errorMessage" />
+          <v-row
+            v-if="errorMessage"
+            class="mt-4"
+            no-gutters
+          >
+            <v-col
+              v-if="!isMobile"
+              cols="1"
+              class="max-width"
+            />
+            <v-col
+              cols="11"
+              class="error-message copy-small"
+              v-html="errorMessage"
+            />
           </v-row>
 
           <!-- THIRD LINE -->
-          <v-row class="mt-4" no-gutters align="center">
-            <v-col v-if="!isMobile" cols="1" class="max-width">
-              <v-img src="@/assets/images/number1.svg" contain width="34" height="34" />
+          <v-row
+            class="mt-4"
+            no-gutters
+            align="center"
+          >
+            <v-col
+              v-if="!isMobile"
+              cols="1"
+              class="max-width"
+            >
+              <v-img
+                src="@/assets/images/number1.svg"
+                contain
+                width="34"
+                height="34"
+              />
             </v-col>
             <v-col class="max-height">
-              <v-text-field :rules="nrRules"
-                            :value="getExistingRequestSearch.nrNum"
-                            @input="handleExistingRequestSearch('nrNum', $event)"
-                            class="copy-normal"
-                            filled
-                            id="nr-num-text-field"
-                            label="NR Number"
-                            hint="Example: NR 1234567"
-                            persistent-hint
-                            validate-on-blur
+              <v-text-field
+                id="nr-num-text-field"
+                :rules="nrRules"
+                :value="getExistingRequestSearch.nrNum"
+                class="copy-normal"
+                filled
+                label="NR Number"
+                hint="Example: NR 1234567"
+                persistent-hint
+                validate-on-blur
+                @input="handleExistingRequestSearch('nrNum', $event)"
               />
             </v-col>
           </v-row>
 
           <!-- FOURTH LINE -->
-          <v-row class="mt-6" no-gutters align="center">
-            <v-col v-if="!isMobile" cols="1" class="max-width">
-              <v-img src="@/assets/images/number2.svg" contain width="34" height="34" />
-            </v-col>
-            <v-col class="max-height">
-              <v-text-field :rules="phoneRules"
-                            :value="getExistingRequestSearch.phoneNumber"
-                            @input="handleExistingRequestSearch('phoneNumber', $event)"
-                            class="copy-normal"
-                            filled
-                            id="phone-number-text-field"
-                            label="Applicant's Phone Number"
-                            hint="Example: 555-555-5555"
-                            persistent-hint
-                            validate-on-blur
+          <v-row
+            class="mt-6"
+            no-gutters
+            align="center"
+          >
+            <v-col
+              v-if="!isMobile"
+              cols="1"
+              class="max-width"
+            >
+              <v-img
+                src="@/assets/images/number2.svg"
+                contain
+                width="34"
+                height="34"
               />
             </v-col>
-            <v-col cols="12" md="auto" lg="auto" class="copy-normal text-center shrink mx-4 mt-6 mb-4"> or </v-col>
             <v-col class="max-height">
-              <v-text-field :rules="emailRules"
-                            :value="getExistingRequestSearch.emailAddress"
-                            @input="handleExistingRequestSearch('emailAddress', $event)"
-                            class="copy-normal"
-                            filled
-                            id="email-address-text-field"
-                            label="Applicant's Notification Email"
-                            hint="Example: name@email.com"
-                            persistent-hint
-                            validate-on-blur
+              <v-text-field
+                id="phone-number-text-field"
+                :rules="phoneRules"
+                :value="getExistingRequestSearch.phoneNumber"
+                class="copy-normal"
+                filled
+                label="Applicant's Phone Number"
+                hint="Example: 555-555-5555"
+                persistent-hint
+                validate-on-blur
+                @input="handleExistingRequestSearch('phoneNumber', $event)"
+              />
+            </v-col>
+            <v-col
+              cols="12"
+              md="auto"
+              lg="auto"
+              class="copy-normal text-center shrink mx-4 mt-6 mb-4"
+            >
+              or
+            </v-col>
+            <v-col class="max-height">
+              <v-text-field
+                id="email-address-text-field"
+                :rules="emailRules"
+                :value="getExistingRequestSearch.emailAddress"
+                class="copy-normal"
+                filled
+                label="Applicant's Notification Email"
+                hint="Example: name@email.com"
+                persistent-hint
+                validate-on-blur
+                @input="handleExistingRequestSearch('emailAddress', $event)"
               />
             </v-col>
           </v-row>
 
           <!-- FIFTH LINE -->
-          <v-row class="mt-9" no-gutters>
+          <v-row
+            class="mt-9"
+            no-gutters
+          >
             <v-col class="text-center">
-              <v-btn id="retrieve-name-btn" :class="{ 'mobile-btn' : isMobile }" @click="handleSubmit()">
+              <v-btn
+                id="retrieve-name-btn"
+                :class="{ 'mobile-btn' : isMobile }"
+                @click="handleSubmit()"
+              >
                 Retrieve Name Request
               </v-btn>
             </v-col>
           </v-row>
 
           <!-- SIXTH LINE - show this only when a user has a token -->
-          <v-row v-if="isAuthenticated" class="mt-3" no-gutters>
+          <v-row
+            v-if="isAuthenticated"
+            class="mt-3"
+            no-gutters
+          >
             <v-col class="text-center">
               <v-btn
                 id="advanced-search-btn"
@@ -109,15 +188,19 @@
               </v-btn>
             </v-col>
           </v-row>
-
         </v-form>
       </v-col>
 
       <!-- Help Content -->
-      <v-col v-if="isMobile" cols="12" md="3" lg="3" class="existing-request-info copy-small">
+      <v-col
+        v-if="isMobile"
+        cols="12"
+        md="3"
+        lg="3"
+        class="existing-request-info copy-small"
+      >
         <SearchHelpContent />
       </v-col>
-
     </v-row>
   </div>
 </template>

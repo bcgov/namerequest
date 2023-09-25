@@ -9,21 +9,34 @@
     height="20rem"
     hide-default-footer
   >
-    <template v-slot:item="{ item }">
+    <template #item="{ item }">
       <tr @click="setNrNum(item.nrNum)">
-        <td class="copy-normal">{{apiToDateString(item.submittedDate)}}</td>
         <td class="copy-normal">
-          <span v-for="(name, index) in item.names" :key="`business-name-${index}`">{{name.name}}<br></span>
+          {{ apiToDateString(item.submittedDate) }}
         </td>
-        <td class="copy-normal" v-if="isApplicantNameSearch">
-        <span v-for="(applicant, index) in item.applicants" :key="`applicant-${index}`">
-          {{ applicant.lastName }}, {{ applicant.firstName }}
-        </span>
+        <td class="copy-normal">
+          <span
+            v-for="(name, index) in item.names"
+            :key="`business-name-${index}`"
+          >{{ name.name }}<br></span>
+        </td>
+        <td
+          v-if="isApplicantNameSearch"
+          class="copy-normal"
+        >
+          <span
+            v-for="(applicant, index) in item.applicants"
+            :key="`applicant-${index}`"
+          >
+            {{ applicant.lastName }}, {{ applicant.firstName }}
+          </span>
         </td>
         <td>
           <v-btn class="button-text retrieve-nr-btn my-n3 pr-0">
             Retrieve
-            <v-icon class="retrieve-nr-icon ml-3">mdi-chevron-right</v-icon>
+            <v-icon class="retrieve-nr-icon ml-3">
+              mdi-chevron-right
+            </v-icon>
           </v-btn>
         </td>
       </tr>
