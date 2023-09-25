@@ -5,24 +5,24 @@
     id="business-lookup"
   >
     <v-autocomplete
-      v-model="searchField"
       :hide-no-data="state != States.NO_RESULTS"
       :items="searchResults"
       :loading="state === States.SEARCHING"
       :name="Math.random()"
+      :search-input.sync="searchField"
       append-icon="mdi-magnify"
       autocomplete="chrome-off"
       autofocus
+      filled
       hint="Search by name, incorporation or registration number of an existing business"
       item-text="name"
       item-value="identifier"
       :label="lookupLabel"
       hide-details="auto"
-      filled
       no-filter
       persistent-hint
       return-object
-      @update:search-input="onItemSelected($event)"
+      @input="onItemSelected($event)"
       @keydown.enter.native.prevent
     >
       <template #append>
