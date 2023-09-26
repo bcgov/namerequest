@@ -207,7 +207,12 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not checkout name request')
       console.error('checkoutNameRequest() =', msg) // eslint-disable-line no-console
-      await errorModule.setAppError({ id: 'checkout-name-requests-error', error: msg } as ErrorI)
+
+      let error_id = 'checkout-name-requests-error'
+      if (err instanceof AxiosError && err.response.status === 423) {
+        error_id = 'edit-lock-error'
+      }
+      await errorModule.setAppError({ id: error_id, error: msg } as ErrorI)
       return false
     }
   }
@@ -466,7 +471,13 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not patch name requests by action')
       console.error('patchNameRequestsByAction() =', msg) // eslint-disable-line no-console
-      await errorModule.setAppError({ id: 'patch-name-requests-by-action-error', error: msg } as ErrorI)
+
+      let error_id = 'patch-name-requests-by-action-error'
+      if (err instanceof AxiosError && err.response.status === 423) {
+        // cannot be cancelled if the NR is not DRAFT state
+        error_id = 'edit-lock-error'
+      }
+      await errorModule.setAppError({ id: error_id, error: msg } as ErrorI)
       return null
     }
   }
