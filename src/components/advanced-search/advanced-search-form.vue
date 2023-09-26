@@ -1,7 +1,11 @@
 <template>
   <!-- Advanced Search Form -->
-  <v-form id="advanced-nr-search-form" ref="advancedSearchForm" v-model="isValid" lazy-validation>
-
+  <v-form
+    id="advanced-nr-search-form"
+    ref="advancedSearchForm"
+    v-model="isValid"
+    lazy-validation
+  >
     <AdvancedSearchDates
       :dialog="dateDialog"
       @addDates="addDates($event)"
@@ -12,30 +16,41 @@
       <v-col>
         <span class="title-bold-16">Requested Business Name</span>
         <v-text-field
+          v-model="compName"
           filled
           class="mt-2"
           label="Requested Business Name"
-          v-model="compName"
         />
       </v-col>
     </v-row>
 
-    <v-row no-gutters class="mt-n2">
+    <v-row
+      no-gutters
+      class="mt-n2"
+    >
       <v-col>
         <span class="title-bold-16">Applicant Name</span>
         <v-row class="my-1">
-          <v-col cols="12" md="6" lg="6">
+          <v-col
+            cols="12"
+            md="6"
+            lg="6"
+          >
             <v-text-field
+              v-model="applicantFirstName"
               filled
               label="First Name"
-              v-model="applicantFirstName"
             />
           </v-col>
-          <v-col cols="12" md="6" lg="6">
+          <v-col
+            cols="12"
+            md="6"
+            lg="6"
+          >
             <v-text-field
+              v-model="applicantLastName"
               filled
               label="Last Name"
-              v-model="applicantLastName"
               :rules="applicantLastNameRules"
             />
           </v-col>
@@ -43,43 +58,58 @@
       </v-col>
     </v-row>
 
-    <v-row no-gutters class="mt-n4">
+    <v-row
+      no-gutters
+      class="mt-n4"
+    >
       <v-col>
         <span class="title-bold-16 mr-4">Submitted Date Range</span>
-        <span v-if="hasAppliedDates" id="clear-date-btn" class="text-body-3 app-blue" @click="clearDates()">
+        <span
+          v-if="hasAppliedDates"
+          id="clear-date-btn"
+          class="text-body-3 app-blue"
+          @click="clearDates()"
+        >
           Clear <v-icon small>mdi-close</v-icon>
         </span>
         <v-row class="my-1">
-          <v-col cols="12" md="6" lg="6">
+          <v-col
+            cols="12"
+            md="6"
+            lg="6"
+          >
             <v-text-field
+              v-model="startDate"
               filled
               label="Start Date"
               hint="YYYY-MM-DD"
               persistent-hint
               append-icon="mdi-calendar"
-              v-model="startDate"
               @click="dateDialog = true"
               @click:append="dateDialog = true"
-              v-on:keydown="$event.preventDefault()"
+              @keydown="$event.preventDefault()"
             />
           </v-col>
-          <v-col cols="12" md="6" lg="6">
+          <v-col
+            cols="12"
+            md="6"
+            lg="6"
+          >
             <v-text-field
+              v-model="endDate"
               filled
               label="End Date"
               hint="YYYY-MM-DD"
               persistent-hint
               append-icon="mdi-calendar"
-              v-model="endDate"
               @click="dateDialog = true"
               @click:append="dateDialog = true"
-              v-on:keydown="$event.preventDefault()"
+              @keydown="$event.preventDefault()"
             />
           </v-col>
         </v-row>
       </v-col>
     </v-row>
-
   </v-form>
 </template>
 

@@ -11,12 +11,6 @@ import {
 
 export type SubmissionTypeT = 'examination' | 'consent' | 'normal'
 
-export interface AnalysisJSONI {
-  header?: string
-  issues: IssueI[]
-  status: 'fa' | 'rc' | 'ar'
-}
-
 export interface ApplicantI {
   addrLine1: string
   addrLine2?: string
@@ -48,6 +42,18 @@ export const EmptyApplicant: ApplicantI = {
   lastName: null,
   postalCd: null,
   stateProvinceCd: null
+}
+
+export interface RequestNameI {
+  id?: number
+  choice: number
+  name: string
+  name_type_cd: string
+  designation: string
+  consent_words: '' | string[]
+  conflict1: string
+  conflict1_num: string
+  request_type_cd?: string
 }
 
 export interface ConditionalReqI {
@@ -133,6 +139,14 @@ export interface ExistingRequestSearchI {
   phoneNumber?: string
 }
 
+export interface SetupI {
+  button?: 'examine' | 'reserve' | 'consent-body' | 'consent-corp' | 'restart' | 'next'
+  checkbox?: 'examine' | 'consent-corp' | 'consent-body'
+  header: string
+  text1: string
+  text2?: string
+}
+
 export interface IssueI {
   conflicts?: {
     name: string
@@ -158,6 +172,12 @@ export interface IssueI {
   setup: SetupI[]
   show_examination_button: boolean
   show_reservxe_button: boolean
+}
+
+export interface AnalysisJSONI {
+  header?: string
+  issues: IssueI[]
+  status: 'fa' | 'rc' | 'ar'
 }
 
 export interface NameDesignationI {
@@ -214,18 +234,6 @@ export interface RequestActionsI {
   icon?: string // headers only (not items)
 }
 
-export interface RequestNameI {
-  id?: number
-  choice: number
-  name: string
-  name_type_cd: string
-  designation: string
-  consent_words: '' | string[]
-  conflict1: string
-  conflict1_num: string
-  request_type_cd?: string
-}
-
 export interface ReservedReqI {
   id?: number
   additionalInfo: string
@@ -265,14 +273,6 @@ export interface SelectOptionsI {
   [propName: string]: any // excess properties
 }
 
-export interface SetupI {
-  button?: 'examine' | 'reserve' | 'consent-body' | 'consent-corp' | 'restart' | 'next'
-  checkbox?: 'examine' | 'consent-corp' | 'consent-body'
-  header: string
-  text1: string
-  text2?: string
-}
-
 export interface StatsI {
   auto_approved_count: number
   priority_wait_time: number
@@ -293,12 +293,6 @@ export interface AdvancedSearchI {
   submittedEndDate: string
 }
 
-// The complete results from advanced nr search
-export interface AdvancedSearchResultsI {
-  nameRequests: NameRequestI
-  response: AdvancedSearchResponseI
-}
-
 // Meta data on the advanced search results
 export interface AdvancedSearchResponseI {
   numFound: number
@@ -308,6 +302,12 @@ export interface AdvancedSearchResponseI {
   queue: number
   rows: number
   start: number
+}
+
+// The complete results from advanced nr search
+export interface AdvancedSearchResultsI {
+  nameRequests: NameRequestI
+  response: AdvancedSearchResponseI
 }
 
 // Used for Date collection subcomponent. Both are required when collecting dates.

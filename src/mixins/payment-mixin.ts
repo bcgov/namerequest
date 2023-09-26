@@ -33,7 +33,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
   @Getter getStaffPayment!: StaffPaymentIF
   @Getter getFolioNumber!: string
   @Getter getNr!: Partial<NameRequestI>
-  @Getter getRefundParams: RefundParamsIF
+  @Getter getRefundParams!: RefundParamsIF
 
   get sbcPayment () {
     return this.$store.getters[paymentTypes.GET_SBC_PAYMENT]
@@ -71,8 +71,9 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     return this.$store.getters[paymentTypes.GET_PAYMENT_RECEIPT]
   }
 
-  get paymentFees () {
-    return this.$store.getters[paymentTypes.GET_PAYMENT_FEES]
+  get paymentFees (): any[] {
+    const fees = this.$store.getters[paymentTypes.GET_PAYMENT_FEES]
+    return [fees]
   }
 
   get payments () {
@@ -437,7 +438,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
    * and optionally staff payment properties.
    */
   private buildHeaders (populateStaffPayment = true) {
-    let headers = {}
+    const headers = {}
 
     if (populateStaffPayment) {
       // Populate Staff Payment according to payment option

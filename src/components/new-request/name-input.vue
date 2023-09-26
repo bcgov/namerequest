@@ -2,6 +2,7 @@
   <v-text-field
     id="name-input-component"
     ref="nameInputRef"
+    v-model="searchValue"
     :error-messages="message"
     autocomplete="chrome-off"
     :filled="!isReadOnly"
@@ -12,7 +13,6 @@
     :hint="hint"
     hide-details="auto"
     persistent-hint
-    v-model="searchValue"
     @input="setClearErrors()"
     @blur="handleBlur()"
     @keydown.enter="handleSubmit($event)"

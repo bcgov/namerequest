@@ -1,13 +1,24 @@
 <template>
   <v-row>
-    <v-col cols="12" class="text-center h4">
+    <v-col
+      cols="12"
+      class="text-center h4"
+    >
       Request Timed Out
     </v-col>
-    <v-col cols="12" class="text-center mt-n3">
+    <v-col
+      cols="12"
+      class="text-center mt-n3"
+    >
       Unfortunately you took too long to complete your submission. Please try again from the beginning.
     </v-col>
-    <v-col cols="12" class="text-center">
-      <v-btn @click="restart">Search Again</v-btn>
+    <v-col
+      cols="12"
+      class="text-center"
+    >
+      <v-btn @click="restart">
+        Search Again
+      </v-btn>
     </v-col>
   </v-row>
 </template>

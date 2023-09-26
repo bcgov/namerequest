@@ -36,12 +36,12 @@ export function matchWord (name: string, word: string): string[] | string {
   if (containsLongAndShortDesignation(name, word)) {
     return null
   }
-  let { length } = word
-  let output = []
+  const { length } = word
+  const output = []
   while (matchWrd()) {
-    let match = matchWrd()
+    const match = matchWrd()
     output.push(match[0].trim())
-    let newStartIndex = match.index + length - 1
+    const newStartIndex = match.index + length - 1
     name = name.substring(newStartIndex)
   }
   if (output.length > 0) {
@@ -83,24 +83,24 @@ export function containsLongAndShortDesignation (name: string, word: string): bo
   if (name) name = name.toUpperCase()
 
   if (word === 'LIMITED') {
-    let designationsContainingWord = [
+    const designationsContainingWord = [
       ' LIMITED LIABILITY CO.',
       ' LIMITED LIABILITY COMPANY',
       ' LIMITED LIABILITY PARTNERSHIP',
       ' LIMITED PARTNERSHIP'
     ]
-    for (let designation of designationsContainingWord) {
+    for (const designation of designationsContainingWord) {
       if (name.includes(designation)) {
         return true
       }
     }
   }
   if (word === 'LIMITEE') {
-    let designationsContainingWord = [
+    const designationsContainingWord = [
       ' SOCIETE A RESPONSABILITE LIMITEE',
       ' SOCIETE EN NOM COLLECTIF A RESPONSABILITE LIMITEE'
     ]
-    for (let designation of designationsContainingWord) {
+    for (const designation of designationsContainingWord) {
       if (name.includes(designation)) {
         return true
       }

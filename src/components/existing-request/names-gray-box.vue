@@ -1,5 +1,8 @@
 <template>
-  <div id="names-container" class="bg-light-gray mt-5">
+  <div
+    id="names-container"
+    class="bg-light-gray mt-5"
+  >
     <div class="px-5 py-4 text-name">
       <v-tooltip
         v-for="name of names"
@@ -9,11 +12,20 @@
         content-class="tooltip"
         :disabled="isMobile"
       >
-        <template v-slot:activator="{ on, attrs }">
-          <div v-bind="attrs" v-on="on" :class="getClass(name)" class="cursor-default">
-            <span>{{name.choice}}.</span>&nbsp;
-            <span class="dotted-underline">{{name.name}}</span>&nbsp;
-            <v-icon v-if="getIcon(name)" class="mt-n1" :class="getClass(name)">
+        <template #activator="{ on, attrs }">
+          <div
+            v-bind="attrs"
+            :class="getClass(name)"
+            class="cursor-default"
+            v-on="on"
+          >
+            <span>{{ name.choice }}.</span>&nbsp;
+            <span class="dotted-underline">{{ name.name }}</span>&nbsp;
+            <v-icon
+              v-if="getIcon(name)"
+              class="mt-n1"
+              :class="getClass(name)"
+            >
               {{ getIcon(name) }}
             </v-icon>
           </div>

@@ -1,23 +1,46 @@
 <template>
-  <v-dialog id="affiliation-error-dialog" :value="isShowModal" max-width="45rem" persistent>
+  <v-dialog
+    id="affiliation-error-dialog"
+    :value="isShowModal"
+    max-width="45rem"
+    persistent
+  >
     <v-card>
       <v-card-title class="d-flex justify-space-between">
-        <div v-if="isUnableToStartRegistration">Unable to start registration</div>
-        <div v-if="isAssociatedOtherAccount">Name Request associated with another account</div>
+        <div v-if="isUnableToStartRegistration">
+          Unable to start registration
+        </div>
+        <div v-if="isAssociatedOtherAccount">
+          Name Request associated with another account
+        </div>
         <div class="mt-3">
-          <v-btn icon large class="dialog-close" @click="hideModal()">
+          <v-btn
+            icon
+            large
+            class="dialog-close"
+            @click="hideModal()"
+          >
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </div>
       </v-card-title>
 
       <v-card-text class="copy-normal pt-8">
-        <p v-if="isUnableToStartRegistration" class="mb-0">
+        <p
+          v-if="isUnableToStartRegistration"
+          class="mb-0"
+        >
           We encountered an error starting your registration. Try again later, or go to
-          <a :href="businessRegistryUrl" target="_blank">My Business Registry</a> and manually
+          <a
+            :href="businessRegistryUrl"
+            target="_blank"
+          >My Business Registry</a> and manually
           add this Name Request to your list to register this business name.
         </p>
-        <p v-if="isAssociatedOtherAccount" class="mb-0">
+        <p
+          v-if="isAssociatedOtherAccount"
+          class="mb-0"
+        >
           This Name Request has already been linked to a different BC Registries account. It
           must be removed from that account before it can be used.
         </p>
@@ -30,7 +53,13 @@
       </v-card-text>
 
       <v-card-actions class="justify-center pt-8">
-        <v-btn text class="px-12" @click="hideModal()">OK</v-btn>
+        <v-btn
+          text
+          class="px-12"
+          @click="hideModal()"
+        >
+          OK
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

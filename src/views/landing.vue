@@ -1,16 +1,28 @@
 <template>
-  <v-container id="landing-container" class="ma-0 pa-0" fluid>
-    <v-row id="upper-row" no-gutters align-content="start">
+  <v-container
+    id="landing-container"
+    class="ma-0 pa-0"
+    fluid
+  >
+    <v-row
+      id="upper-row"
+      no-gutters
+      align-content="start"
+    >
       <v-container class="landing-content-container">
         <AppTitleCols />
 
         <div class="main-container-style mt-7">
-          <transition name="fade" mode="out-in" :duration="{ enter: 100, leave: 100 }">
+          <transition
+            name="fade"
+            mode="out-in"
+            :duration="{ enter: 100, leave: 100 }"
+          >
             <keep-alive :include="['Tabs']">
               <component
-                class="mb-3"
                 :is="getDisplayedComponent"
                 :key="getDisplayedComponent"
+                class="mb-3"
                 transition="fade-transition"
               />
             </keep-alive>
@@ -19,10 +31,13 @@
       </v-container>
     </v-row>
 
-    <v-row id="lower-row" no-gutters>
+    <v-row
+      id="lower-row"
+      no-gutters
+    >
       <LowerContainer />
     </v-row>
- </v-container>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -68,8 +83,7 @@ export default class Landing extends Vue {
   @Action setDisplayedComponent!: ActionBindingIF
 
   /** ID parameter passed in on "/nr" route. */
-  @Prop(String)
-  readonly id: string
+  @Prop(String) readonly id!: string
 
   async mounted () {
     const { id } = this

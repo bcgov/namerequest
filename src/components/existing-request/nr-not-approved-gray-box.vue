@@ -1,7 +1,10 @@
 <template>
-  <v-row no-gutters class="bg-light-gray">
+  <v-row
+    no-gutters
+    class="bg-light-gray"
+  >
     <v-col class="text-body-4 px-5 py-4">
-      Your Name Request <b>{{nrNum}}</b> has not been approved for use. Please contact
+      Your Name Request <b>{{ nrNum }}</b> has not been approved for use. Please contact
       BC Registry staff to obtain an assumed name for an extraprovincial business:
       <ContactInfo class="mt-2" />
     </v-col>

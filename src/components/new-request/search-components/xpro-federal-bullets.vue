@@ -1,22 +1,38 @@
 <template>
-  <v-col id="xpro-federal-bullets" :cols="cols" :md="md">
+  <v-col
+    id="xpro-federal-bullets"
+    :cols="cols"
+    :md="md"
+  >
     <ul class="bullet-points">
       <li>Federally incorporated businesses do not need a Name Request.</li>
 
       <li v-if="isAmalgamation">
         To register your extraprovincial amalgamation, download and complete
         <a :href="federalAmalgamationFormLink">
-          this form <v-icon small class="ml-1" color="primary">mdi-open-in-new</v-icon>
+          this form <v-icon
+            small
+            class="ml-1"
+            color="primary"
+          >mdi-open-in-new</v-icon>
         </a>.
       </li>
 
       <li v-else-if="isRestoration && isSelectedXproAndRestorable">
         To reinstate your business, complete
         <a :href="fullReinstatementFormLink">
-          this form <v-icon small class="ml-1" color="primary">mdi-open-in-new</v-icon>
+          this form <v-icon
+            small
+            class="ml-1"
+            color="primary"
+          >mdi-open-in-new</v-icon>
         </a> for a full reinstatement or
         <a :href="limitedReinstatementFormLink">
-          this form  <v-icon small class="ml-1" color="primary">mdi-open-in-new</v-icon>
+          this form  <v-icon
+            small
+            class="ml-1"
+            color="primary"
+          >mdi-open-in-new</v-icon>
         </a> for a limited reinstatement.
       </li>
 

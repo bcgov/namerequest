@@ -21,6 +21,7 @@ export * from './payment-status'
 export * from './priority-code'
 export * from './routes'
 export * from './rollback-actions'
+export * from './search-states'
 export * from './sbc-payment-status'
 export * from './xpro-name-type'
 

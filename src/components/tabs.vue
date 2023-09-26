@@ -1,42 +1,59 @@
 <template>
   <v-container id="tabs-landing-comp">
-    <v-tabs v-model="tabNumber"
-            active-class="active-tab"
-            style="border-radius: 4px 4px 0 0"
-            hide-slider
-            height="64"
-            centered
-            grow
+    <v-tabs
+      v-model="tabNumber"
+      active-class="active-tab"
+      style="border-radius: 4px 4px 0 0"
+      hide-slider
+      height="64"
+      centered
+      grow
     >
-      <v-tab :ripple="false"
-              id="new-tab"
-              class="upper-border"
-              :class="{ 'mt-1': tabNumber === 1 }"
-              tabindex="0"
+      <v-tab
+        id="new-tab"
+        :ripple="false"
+        class="upper-border"
+        :class="{ 'mt-1': tabNumber === 1 }"
+        tabindex="0"
       >
-        <v-icon v-if="!isMobile" class="mr-3">mdi-domain</v-icon>
+        <v-icon
+          v-if="!isMobile"
+          class="mr-3"
+        >
+          mdi-domain
+        </v-icon>
         <span :class="[tabNumber === 0 ? 'h5' : 'h5-lt', { 'mobile-font' : isMobile }]">Get a Business Name or Start a
           Numbered Business</span>
       </v-tab>
 
-      <v-tab :ripple="false"
-              id="existing-tab"
-              class="upper-border"
-             :class="{ 'mt-1': tabNumber === 0 }"
-              tabindex="1"
+      <v-tab
+        id="existing-tab"
+        :ripple="false"
+        class="upper-border"
+        :class="{ 'mt-1': tabNumber === 0 }"
+        tabindex="1"
       >
-        <v-icon v-if="!isMobile" class="mr-3">mdi-file-document-edit-outline</v-icon>
+        <v-icon
+          v-if="!isMobile"
+          class="mr-3"
+        >
+          mdi-file-document-edit-outline
+        </v-icon>
         <span :class="[tabNumber === 1 ? 'h5' : 'h5-lt', { 'mobile-font' : isMobile }]">Manage My Name Request</span>
       </v-tab>
 
-      <v-tabs-items class="rounded-b tab-items" v-model="tabNumber" touchless>
+      <v-tabs-items
+        v-model="tabNumber"
+        class="rounded-b tab-items"
+        touchless
+      >
         <v-tab-item>
           <Search />
           <LinkRow />
         </v-tab-item>
 
         <v-tab-item>
-          <ExistingRequestSearch/>
+          <ExistingRequestSearch />
         </v-tab-item>
       </v-tabs-items>
     </v-tabs>

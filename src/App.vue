@@ -1,13 +1,14 @@
 <template>
   <v-app id="app">
     <div id="main-column">
-      <ChatPopup v-if="enableOldWebchat"
-                 :openTooltipMessage = "openTooltipMessage"
-                 :axios = "axios"
-                 :isMobile = "isMobile"
-                 :webChatReason = "window['webChatReason']"
-                 :webChatUrl = "window['webChatUrl']"
-                 :webChatStatusUrl = "window['webChatStatusUrl']"
+      <ChatPopup
+        v-if="enableOldWebchat"
+        :openTooltipMessage="openTooltipMessage"
+        :axios="axios"
+        :isMobile="isMobile"
+        :webChatReason="window['webChatReason']"
+        :webChatUrl="window['webChatUrl']"
+        :webChatStatusUrl="window['webChatStatusUrl']"
       />
 
       <!-- Display the Genesys WebMessage -->
@@ -20,9 +21,16 @@
 
       <!-- Loading spinner -->
       <v-fade-transition>
-        <div class="loading-container grayed-out" v-show="showSpinner">
+        <div
+          v-show="showSpinner"
+          class="loading-container grayed-out"
+        >
           <div class="loading__content">
-            <v-progress-circular color="primary" size="50" indeterminate />
+            <v-progress-circular
+              color="primary"
+              size="50"
+              indeterminate
+            />
           </div>
         </div>
       </v-fade-transition>
@@ -37,10 +45,11 @@
 
       <!-- Alert banner -->
       <v-alert
-        tile dense
+        v-if="bannerText"
+        tile
+        dense
         type="warning"
         class="mb-0 text-center colour-dk-text"
-        v-if="bannerText"
         v-html="bannerText"
       />
 
@@ -54,7 +63,7 @@
       <router-view />
 
       <!-- SBC Common Components footer -->
-      <SbcFooter :aboutText=aboutText />
+      <SbcFooter :aboutText="aboutText" />
     </div>
 
     <!-- All dialogs app-wide -->
@@ -161,7 +170,7 @@ export default class App extends Mixins(
   @Getter getDisplayedComponent!: string
   @Getter getIncorporateNowErrorStatus!: boolean
   @Getter getNrId!: number
-  @Getter isRoleStaff: boolean
+  @Getter isRoleStaff!: boolean
   @Getter isMobile!: boolean
 
   // Global actions
@@ -190,7 +199,7 @@ export default class App extends Mixins(
   /** The Update Current JS Date timer id. */
   private updateCurrentJsDateId = 0
 
-  get openTooltipMessage (): String {
+  get openTooltipMessage (): string {
     return 'Click here to chat live with Helpdesk staff about Name Requests.'
   }
 
@@ -280,6 +289,9 @@ export default class App extends Mixins(
 
   /** Fetches and stores the current JS date. */
   private async updateCurrentJsDate (): Promise<void> {
+    // don't run in Jest tests
+    if (process.env.JEST_WORKER_ID) return
+
     const jsDate = await this.getServerDate()
     this.setCurrentJsDate(jsDate)
   }

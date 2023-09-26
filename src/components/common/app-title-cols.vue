@@ -1,10 +1,23 @@
 <template>
   <v-row no-gutters>
-    <v-col cols="12" md="6" lg="6" class="mt-4" :class="{'pt-10': !isMobile}">
-      <span class="h2 colour-white" id="app-title">Name Request
+    <v-col
+      cols="12"
+      md="6"
+      lg="6"
+      class="mt-4"
+      :class="{'pt-10': !isMobile}"
+    >
+      <span
+        id="app-title"
+        class="h2 colour-white"
+      >Name Request
       </span>
     </v-col>
-    <v-col cols="12" md="6" lg="6">
+    <v-col
+      cols="12"
+      md="6"
+      lg="6"
+    >
       <Stats />
     </v-col>
   </v-row>

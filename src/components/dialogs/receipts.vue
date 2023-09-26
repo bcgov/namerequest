@@ -1,22 +1,37 @@
 <template>
-  <v-dialog :value="isVisible" persistent>
+  <v-dialog
+    :value="isVisible"
+    persistent
+  >
     <v-card>
-
       <v-card-title class="d-flex justify-space-between">
         <div>Receipts</div>
-        <v-btn icon large class="dialog-close" @click="hideModal()">
+        <v-btn
+          icon
+          large
+          class="dialog-close"
+          @click="hideModal()"
+        >
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
 
       <v-card-text>
-        <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
-        <payment-summary v-else v-for="summary in paymentSummaries"
+        <v-alert
+          v-if="fetchError"
+          color="error"
+          icon="mdi-alert"
+          outlined
+          class="my-0"
+          v-html="fetchError"
+        />
+        <payment-summary
+          v-for="summary in paymentSummaries"
+          v-else
           :key="summary.id"
           :summary="summary"
         />
       </v-card-text>
-
     </v-card>
   </v-dialog>
 </template>

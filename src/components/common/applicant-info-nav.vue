@@ -1,17 +1,27 @@
 <template>
-  <v-col cols="12" md="5" lg="5" class="py-0" :class="isMobile ? 'mt-6 text-center' : 'text-right'">
-    <v-btn x-large
-           id="submit-back-btn"
-           :class="isMobile ? 'mobile-btn' : 'mr-3'"
-           v-if="showBack"
-           @click="back()">
+  <v-col
+    cols="12"
+    md="5"
+    lg="5"
+    class="py-0"
+    :class="isMobile ? 'mt-6 text-center' : 'text-right'"
+  >
+    <v-btn
+      v-if="showBack"
+      id="submit-back-btn"
+      x-large
+      :class="isMobile ? 'mobile-btn' : 'mr-3'"
+      @click="back()"
+    >
       {{ backText }}
     </v-btn>
-    <v-btn x-large
-           :class="{ 'mobile-btn' : isMobile }"
-           @click="nextAction()"
-           :loading="getIsLoadingSubmission"
-           class="submit-continue-btn">
+    <v-btn
+      x-large
+      :class="{ 'mobile-btn' : isMobile }"
+      :loading="getIsLoadingSubmission"
+      class="submit-continue-btn"
+      @click="nextAction()"
+    >
       {{ nextText }}
     </v-btn>
   </v-col>

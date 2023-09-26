@@ -19,7 +19,13 @@
       </v-card-text>
 
       <v-card-actions class="justify-center pt-8">
-        <v-btn text class="px-8" @click="hideModal()">Close</v-btn>
+        <v-btn
+          text
+          class="px-8"
+          @click="hideModal()"
+        >
+          Close
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

@@ -1,10 +1,14 @@
 <template>
-  <v-col id="dummy-input-box" :cols="cols" :md="md">
+  <v-col
+    id="dummy-input-box"
+    :cols="cols"
+    :md="md"
+  >
     <v-text-field
       filled
       disabled
       hide-details
-      :label=label
+      :label="label"
     />
   </v-col>
 </template>

@@ -1,6 +1,9 @@
 <template>
   <!-- once in Summary state, need to re-mount to reuse this component -->
-  <div id="business-lookup" v-if="state !== States.SUMMARY">
+  <div
+    v-if="state !== States.SUMMARY"
+    id="business-lookup"
+  >
     <v-autocomplete
       :hide-no-data="state != States.NO_RESULTS"
       :items="searchResults"
@@ -22,7 +25,7 @@
       @input="onItemSelected($event)"
       @keydown.enter.native.prevent
     >
-      <template v-slot:append>
+      <template #append>
         <v-progress-circular
           v-if="state === States.SEARCHING"
           color="primary"
@@ -32,7 +35,7 @@
         />
       </template>
 
-      <template v-slot:no-data>
+      <template #no-data>
         <p class="pl-5 font-weight-bold">
           {{ lookupNoActiveText }}
         </p>
@@ -50,15 +53,7 @@ import { Component, Emit, Prop, Watch } from 'vue-property-decorator'
 import { debounce } from 'lodash'
 import { BusinessLookupResultIF, BusinessSearchIF } from '@/interfaces'
 import BusinessLookupServices from '@/services/business-lookup-services'
-import { EntityStates, EntityTypes } from '@/enums'
-
-enum States {
-  INITIAL = 'initial',
-  SEARCHING = 'searching',
-  SHOW_RESULTS = 'show results',
-  NO_RESULTS = 'no results',
-  SUMMARY = 'summary'
-}
+import { EntityStates, EntityTypes, SearchStates as States } from '@/enums'
 
 /*
  * See PPR's BusinessSearchAutocomplete.vue for a Composition API example.

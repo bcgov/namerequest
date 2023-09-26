@@ -1,98 +1,161 @@
 <template>
-  <v-form @keydown="validate" id="send-to-examination-form">
-    <v-container fluid class="pa-0" id="send-to-examination-container">
+  <v-form
+    id="send-to-examination-form"
+    @keydown="validate"
+  >
+    <v-container
+      id="send-to-examination-container"
+      fluid
+      class="pa-0"
+    >
       <NameRequestDetails v-if="getEditMode" />
 
-      <v-row class="pt-8 my-0" v-if="getEditMode || isAssumedName">
-        <v-col cols="auto" class="font-weight-bold h4 py-0" v-if="getEditMode">
+      <v-row
+        v-if="getEditMode || isAssumedName"
+        class="pt-8 my-0"
+      >
+        <v-col
+          v-if="getEditMode"
+          cols="auto"
+          class="font-weight-bold h4 py-0"
+        >
           Name Choices
         </v-col>
-        <v-col cols="auto" class="text-body-3 py-0" v-else-if="isAssumedName">
-          Name in Home Jurisdiction: {{getName}}
+        <v-col
+          v-else-if="isAssumedName"
+          cols="auto"
+          class="text-body-3 py-0"
+        >
+          Name in Home Jurisdiction: {{ getName }}
         </v-col>
       </v-row>
 
       <v-row class="pt-8 my-0">
-        <v-col cols="12" md="2" lg="2" class="label-style align-self-start pt-0" key="static-1">
-          {{choicesLabelsAndHints[0].label}}
+        <v-col
+          key="static-1"
+          cols="12"
+          md="2"
+          lg="2"
+          class="label-style align-self-start pt-0"
+        >
+          {{ choicesLabelsAndHints[0].label }}
         </v-col>
-        <transition name="fade" mode="out-in">
-          <v-col :key="transitionKey(1)" class="ma-0 pa-0" :cols="isMobile ? 12 : 10">
-            <v-row class="ma-0 pa-0" v-if="getLocation === Location.BC">
-              <v-col :cols="(designationAtEnd && !isMobile) ? 8 : 12" :class="{ 'py-0' : !isMobile }" >
-                <v-text-field :error-messages="messages.name1"
-                              :hide-details="hideDetails"
-                              :value="nameChoices.name1"
-                              @blur="handleBlur()"
-                              @input="editChoices('name1', $event, true)"
-                              filled
-                              id="choice-1-text-field"
-                              :label="choicesLabelsAndHints[0].hint"
-                              :name="Math.random()"/>
+        <transition
+          name="fade"
+          mode="out-in"
+        >
+          <v-col
+            :key="transitionKey(1)"
+            class="ma-0 pa-0"
+            :cols="isMobile ? 12 : 10"
+          >
+            <v-row
+              v-if="getLocation === Location.BC"
+              class="ma-0 pa-0"
+            >
+              <v-col
+                :cols="(designationAtEnd && !isMobile) ? 8 : 12"
+                :class="{ 'py-0' : !isMobile }"
+              >
+                <v-text-field
+                  id="choice-1-text-field"
+                  :error-messages="messages.name1"
+                  :hide-details="hideDetails"
+                  :value="nameChoices.name1"
+                  filled
+                  :label="choicesLabelsAndHints[0].hint"
+                  :name="Math.random()"
+                  @blur="handleBlur()"
+                  @input="editChoices('name1', $event, true)"
+                />
               </v-col>
-              <v-col cols="12" md="4" lg="4" v-if="designationAtEnd" :class="{ 'py-0' : !isMobile }">
-                <v-tooltip top
+              <v-col
+                v-if="designationAtEnd"
+                cols="12"
+                md="4"
+                lg="4"
+                :class="{ 'py-0' : !isMobile }"
+              >
+                <v-tooltip
+                  top
                   transition="fade-transition"
                   content-class="top-tooltip"
                   :disabled="isMobile"
                 >
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <div v-on="on">
-                      <v-select :error-messages="des1Message"
-                                :hide-details="hideDetails"
-                                :items="items"
-                                :menu-props="menuProps"
-                                :value="nameChoices.designation1"
-                                @blur="handleBlur(); showDesignationErrors.des1 = true"
-                                @input="editChoices('designation1', $event, true)"
-                                filled
-                                id="designation-1-select"
-                                label="Designation" />
+                      <v-select
+                        id="designation-1-select"
+                        :error-messages="des1Message"
+                        :hide-details="hideDetails"
+                        :items="items"
+                        :menu-props="menuProps"
+                        :value="nameChoices.designation1"
+                        filled
+                        label="Designation"
+                        @blur="handleBlur(); showDesignationErrors.des1 = true"
+                        @input="editChoices('designation1', $event, true)"
+                      />
                     </div>
                   </template>
                   <span>Your company name must include a designation.
-                  There are no legal differences between these designations.
-                  You can choose whichever you prefer.</span>
+                    There are no legal differences between these designations.
+                    You can choose whichever you prefer.</span>
                 </v-tooltip>
               </v-col>
             </v-row>
-            <v-row class="ma-0 pa-0" v-else>
-              <v-col :cols="isAssumedName ? 8 : 12" class="py-0" >
-                <v-text-field :error-messages="messages.name1"
-                              :hide-details="hideDetails"
-                              :value="xproNameWithoutConflict"
-                              @blur="handleBlur()"
-                              @input="editChoices('name1', $event, true)"
-                              :filled="isAssumedName"
-                              :class="{ 'read-only-mode': !isAssumedName }"
-                              id="choice-1-text-field"
-                              :label="choicesLabelsAndHints[0].hint"
-                              :disabled="!isAssumedName"
-                              :name="Math.random()"/>
+            <v-row
+              v-else
+              class="ma-0 pa-0"
+            >
+              <v-col
+                :cols="isAssumedName ? 8 : 12"
+                class="py-0"
+              >
+                <v-text-field
+                  id="choice-1-text-field"
+                  :error-messages="messages.name1"
+                  :hide-details="hideDetails"
+                  :value="xproNameWithoutConflict"
+                  :filled="isAssumedName"
+                  :class="{ 'read-only-mode': !isAssumedName }"
+                  :label="choicesLabelsAndHints[0].hint"
+                  :disabled="!isAssumedName"
+                  :name="Math.random()"
+                  @blur="handleBlur()"
+                  @input="editChoices('name1', $event, true)"
+                />
               </v-col>
-              <v-col cols="4" class="py-0" v-if="isAssumedName">
-                <v-tooltip top
+              <v-col
+                v-if="isAssumedName"
+                cols="4"
+                class="py-0"
+              >
+                <v-tooltip
+                  top
                   transition="fade-transition"
                   content-class="top-tooltip"
                   :disabled="isMobile"
                 >
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <div v-on="on">
-                      <v-select :error-messages="des1Message"
-                                :hide-details="hideDetails"
-                                :items="items"
-                                :menu-props="menuProps"
-                                :value="nameChoices.designation1"
-                                @blur="handleBlur(); showDesignationErrors.des1 = true"
-                                @input="editChoices('designation1', $event, true)"
-                                filled
-                                id="designation-1-select"
-                                label="Designation" />
+                      <v-select
+                        id="designation-1-select"
+                        :error-messages="des1Message"
+                        :hide-details="hideDetails"
+                        :items="items"
+                        :menu-props="menuProps"
+                        :value="nameChoices.designation1"
+                        filled
+                        label="Designation"
+                        @blur="handleBlur(); showDesignationErrors.des1 = true"
+                        @input="editChoices('designation1', $event, true)"
+                      />
                     </div>
                   </template>
                   <span>Your company name must include a designation.
-                  There are no legal differences between these designations.
-                  You can choose whichever you prefer.</span>
+                    There are no legal differences between these designations.
+                    You can choose whichever you prefer.</span>
                 </v-tooltip>
               </v-col>
             </v-row>
@@ -100,14 +163,26 @@
         </transition>
       </v-row>
 
-      <v-row v-if="!getEditMode" class="pt-6 my-0 colour-text">
-        <v-col :cols="isMobile ? 0 : 2" class="py-0"></v-col>
-        <v-col :cols="isMobile ? 12 : 10" class="py-0 text-body-3">
+      <v-row
+        v-if="!getEditMode"
+        class="pt-6 my-0 colour-text"
+      >
+        <v-col
+          :cols="isMobile ? 0 : 2"
+          class="py-0"
+        />
+        <v-col
+          :cols="isMobile ? 12 : 10"
+          class="py-0 text-body-3"
+        >
           <span v-if="getLocation !== Location.BC">
             <span v-if="isAssumedName">
               You may provide up to two additional assumed names which will be considered at no further
               cost, in the order provided, if your first choice cannot be approved. Be sure to follow all
-              <a :href="buildNameURL" target="_blank">
+              <a
+                :href="buildNameURL"
+                target="_blank"
+              >
                 guidelines for how to build a name.
                 <v-icon class="launch-icon">mdi-launch</v-icon>
               </a>
@@ -124,7 +199,10 @@
             <span v-else>
               You may provide up to two additional assumed names which will be considered at no further cost, in
               the order provided, if the name in the home jurisdiction cannot be approved. Be sure to follow all
-              <a :href="buildNameURL" target="_blank">
+              <a
+                :href="buildNameURL"
+                target="_blank"
+              >
                 guidelines for how to build a name.
                 <v-icon class="launch-icon">mdi-launch</v-icon>
               </a>
@@ -133,7 +211,10 @@
           <span v-else>
             You may provide up to two additional names which will be considered at no further cost, in
             the order provided, only if your first choice cannot be approved. Be sure to follow all
-            <a :href="buildNameURL" target="_blank">
+            <a
+              :href="buildNameURL"
+              target="_blank"
+            >
               guidelines for how to build a name.
               <v-icon class="launch-icon">mdi-launch</v-icon>
             </a>
@@ -141,47 +222,77 @@
         </v-col>
       </v-row>
 
-      <v-row v-if="showSecondAndThirdNameChoices" class="pt-8 my-0">
-        <v-col cols="12" md="2" lg="2" class="label-style align-self-start pt-0" key="static-2">
-          {{choicesLabelsAndHints[1].label}}
+      <v-row
+        v-if="showSecondAndThirdNameChoices"
+        class="pt-8 my-0"
+      >
+        <v-col
+          key="static-2"
+          cols="12"
+          md="2"
+          lg="2"
+          class="label-style align-self-start pt-0"
+        >
+          {{ choicesLabelsAndHints[1].label }}
         </v-col>
-        <transition name="fade" mode="out-in">
-          <v-col :key="transitionKey(2)" class="ma-0 pa-0" :cols="isMobile ? 12 : 10">
+        <transition
+          name="fade"
+          mode="out-in"
+        >
+          <v-col
+            :key="transitionKey(2)"
+            class="ma-0 pa-0"
+            :cols="isMobile ? 12 : 10"
+          >
             <v-row class="ma-0 pa-0">
-              <v-col :cols="(designationAtEnd && !isMobile) ? 8: 12" :class="{'py-0' : !isMobile }">
-                <v-text-field :error-messages="messages.name2"
-                              :hide-details="hideDetails"
-                              :value="nameChoices.name2"
-                              @blur="handleBlur()"
-                              @input="editChoices('name2', $event, true)"
-                              filled
-                              id="choice-2-text-field"
-                              :label="choicesLabelsAndHints[1].hint"
-                              :name="Math.random()" />
+              <v-col
+                :cols="(designationAtEnd && !isMobile) ? 8: 12"
+                :class="{'py-0' : !isMobile }"
+              >
+                <v-text-field
+                  id="choice-2-text-field"
+                  :error-messages="messages.name2"
+                  :hide-details="hideDetails"
+                  :value="nameChoices.name2"
+                  filled
+                  :label="choicesLabelsAndHints[1].hint"
+                  :name="Math.random()"
+                  @blur="handleBlur()"
+                  @input="editChoices('name2', $event, true)"
+                />
               </v-col>
-              <v-col cols="12" md="4" lg="4" :class="{'py-0' : !isMobile }" v-if="designationAtEnd">
-                <v-tooltip top
+              <v-col
+                v-if="designationAtEnd"
+                cols="12"
+                md="4"
+                lg="4"
+                :class="{'py-0' : !isMobile }"
+              >
+                <v-tooltip
+                  top
                   transition="fade-transition"
                   content-class="top-tooltip"
                   :disabled="isMobile"
                 >
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <div v-on="on">
-                      <v-select :error-messages="des2Message"
-                                :hide-details="hideDetails"
-                                :items="items"
-                                :menu-props="menuProps"
-                                :value="nameChoices.designation2"
-                                @blur="handleBlur(); showDesignationErrors.des2 = true"
-                                @input="editChoices('designation2', $event, true)"
-                                filled
-                                id="designation-2-select"
-                                label="Designation" />
+                      <v-select
+                        id="designation-2-select"
+                        :error-messages="des2Message"
+                        :hide-details="hideDetails"
+                        :items="items"
+                        :menu-props="menuProps"
+                        :value="nameChoices.designation2"
+                        filled
+                        label="Designation"
+                        @blur="handleBlur(); showDesignationErrors.des2 = true"
+                        @input="editChoices('designation2', $event, true)"
+                      />
                     </div>
                   </template>
                   <span>Your company name must include a designation.
-                  There are no legal differences between these designations.
-                  You can choose whichever you prefer.</span>
+                    There are no legal differences between these designations.
+                    You can choose whichever you prefer.</span>
                 </v-tooltip>
               </v-col>
             </v-row>
@@ -189,49 +300,76 @@
         </transition>
       </v-row>
 
-      <v-row v-if="showSecondAndThirdNameChoices" class="pt-8 my-0" key="static-3">
-        <v-col cols="12" md="2" lg="2" class="label-style align-self-start pt-0">
-          {{choicesLabelsAndHints[2].label}}
+      <v-row
+        v-if="showSecondAndThirdNameChoices"
+        key="static-3"
+        class="pt-8 my-0"
+      >
+        <v-col
+          cols="12"
+          md="2"
+          lg="2"
+          class="label-style align-self-start pt-0"
+        >
+          {{ choicesLabelsAndHints[2].label }}
         </v-col>
-        <transition name="fade" mode="out-in">
-          <v-col :key="transitionKey(3)" class="ma-0 pa-0" :cols="isMobile ? 12 : 10">
+        <transition
+          name="fade"
+          mode="out-in"
+        >
+          <v-col
+            :key="transitionKey(3)"
+            class="ma-0 pa-0"
+            :cols="isMobile ? 12 : 10"
+          >
             <v-row class="ma-0 pa-0">
-              <v-col :cols="(designationAtEnd && !isMobile) ? 8: 12" :class="{'py-0' : !isMobile }">
-                <v-text-field :error-messages="messages.name3"
-                              :hide-details="hideDetails"
-                              :value="nameChoices.name3"
-                              @blur="handleBlur()"
-                              @input="editChoices('name3', $event)"
-                              filled
-                              id="choice-3-text-field"
-                              :label="choicesLabelsAndHints[2].hint"
-                              :name="Math.random()" />
-              </v-col>
-              <v-col v-if="designationAtEnd"
-                     cols="12" md="4" lg="4"
-                     :class="{'py-0' : !isMobile }"
+              <v-col
+                :cols="(designationAtEnd && !isMobile) ? 8: 12"
+                :class="{'py-0' : !isMobile }"
               >
-                <v-tooltip top
+                <v-text-field
+                  id="choice-3-text-field"
+                  :error-messages="messages.name3"
+                  :hide-details="hideDetails"
+                  :value="nameChoices.name3"
+                  filled
+                  :label="choicesLabelsAndHints[2].hint"
+                  :name="Math.random()"
+                  @blur="handleBlur()"
+                  @input="editChoices('name3', $event)"
+                />
+              </v-col>
+              <v-col
+                v-if="designationAtEnd"
+                cols="12"
+                md="4"
+                lg="4"
+                :class="{'py-0' : !isMobile }"
+              >
+                <v-tooltip
+                  top
                   transition="fade-transition"
                   content-class="top-tooltip"
                   :disabled="isMobile"
                 >
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <div v-on="on">
-                      <v-select :error-messages="des3Message"
-                                :hide-details="hideDetails"
-                                :items="items"
-                                :value="nameChoices.designation3"
-                                @blur="handleBlur(); showDesignationErrors.des3 = true"
-                                @input="editChoices('designation3', $event, true)"
-                                filled
-                                id="designation-3-select"
-                                label="Designation" />
+                      <v-select
+                        id="designation-3-select"
+                        :error-messages="des3Message"
+                        :hide-details="hideDetails"
+                        :items="items"
+                        :value="nameChoices.designation3"
+                        filled
+                        label="Designation"
+                        @blur="handleBlur(); showDesignationErrors.des3 = true"
+                        @input="editChoices('designation3', $event, true)"
+                      />
                     </div>
                   </template>
                   <span>Your company name must include a designation.
-                  There are no legal differences between these designations.
-                  You can choose whichever you prefer.</span>
+                    There are no legal differences between these designations.
+                    You can choose whichever you prefer.</span>
                 </v-tooltip>
               </v-col>
             </v-row>
@@ -240,7 +378,10 @@
       </v-row>
 
       <v-row class="pt-8 my-0">
-        <v-col cols="7" class="py-0" />
+        <v-col
+          cols="7"
+          class="py-0"
+        />
         <ApplicantInfoNav @nextAction="validateButton()" />
       </v-row>
     </v-container>

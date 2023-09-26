@@ -72,9 +72,9 @@ export default class NamexServices {
       // but it does not contain the exact msg we must add
       // so we check if there is a previous request_action message
       // which no longer matches msg because we are editing
-      let allShortDesc = RequestActions.map(request => `*** ${request.shortDesc} ***`)
+      const allShortDesc = RequestActions.map(request => `*** ${request.shortDesc} ***`)
       if (allShortDesc.some(desc => data['additionalInfo'].includes(desc))) {
-        let desc = allShortDesc.find(sd => data['additionalInfo'].includes(sd))
+        const desc = allShortDesc.find(sd => data['additionalInfo'].includes(sd))
         data['additionalInfo'] = data['additionalInfo'].replace(desc, msg)
         return data
       }
@@ -284,7 +284,7 @@ export default class NamexServices {
 
   static async fetchStats (): Promise<StatsI> {
     try {
-      let response = await this.axios.get(`${appBaseURL}/statistics`)
+      const response = await this.axios.get(`${appBaseURL}/statistics`)
       if (response?.status === OK && response?.data) return response.data
       throw new Error(`Invalid response = ${response}`)
     } catch (err) {
@@ -359,7 +359,7 @@ export default class NamexServices {
 
       // Integer to determine the amount of NR selections for the query to return.
       // Is 0 when we only want the NR count.
-      let rowCount = isCountCheck ? 0 : 1000
+      const rowCount = isCountCheck ? 0 : 1000
 
       const response = await this.axios.get(`${appBaseURL}/requests?rows=${rowCount}`, {
         params,

@@ -1,31 +1,53 @@
 <template>
-  <v-row id="link-row" class="links-row text-body-4 px-2 my-0" :class="{ 'links-row-mobile' : isMobile }">
-    <v-col cols="12" md="4" lg="4">
-      <a class="nr-required-activator"
-         :class="{ 'no-selector-link' : !entitySelectorUrl }"
-         @click="activateNRRModal()"
+  <v-row
+    id="link-row"
+    class="links-row text-body-4 px-2 my-0"
+    :class="{ 'links-row-mobile' : isMobile }"
+  >
+    <v-col
+      cols="12"
+      md="4"
+      lg="4"
+    >
+      <a
+        class="nr-required-activator"
+        :class="{ 'no-selector-link' : !entitySelectorUrl }"
+        @click="activateNRRModal()"
       >
         <v-icon color="primary">mdi-help-circle-outline</v-icon>&nbsp;Check if you need a Name Request
       </a>
     </v-col>
-    <v-col cols="12" md="4" lg="4">
-      <a class="name-build-link"
-         :class="{ 'no-selector-link' : !entitySelectorUrl }"
-         href="#"
-         onclick="return false;"
-         @click="scrollTo('name-build-info')"
+    <v-col
+      cols="12"
+      md="4"
+      lg="4"
+    >
+      <a
+        class="name-build-link"
+        :class="{ 'no-selector-link' : !entitySelectorUrl }"
+        href="#"
+        onclick="return false;"
+        @click="scrollTo('name-build-info')"
       >
         <v-icon color="primary">mdi-help-circle-outline</v-icon>&nbsp;Learn how to build a name
       </a>
     </v-col>
-    <v-col cols="12" md="4" lg="4">
-      <a v-if="entitySelectorUrl"
-         class="entity-selector-link"
-         :href="entitySelectorUrl"
-         target="_blank"
+    <v-col
+      cols="12"
+      md="4"
+      lg="4"
+    >
+      <a
+        v-if="entitySelectorUrl"
+        class="entity-selector-link"
+        :href="entitySelectorUrl"
+        target="_blank"
       >
         <v-icon color="primary">mdi-help-circle-outline</v-icon>&nbsp;Help me choose a business type
-        <v-icon color="primary" x-small>mdi-open-in-new</v-icon>
+        <v-icon
+          color="primary"
+          x-small
+        >mdi-open-in-new</v-icon>
       </a>
     </v-col>
   </v-row>

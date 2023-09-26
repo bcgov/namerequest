@@ -4,28 +4,33 @@
 
     <v-list class="business-designation-list">
       <v-row>
-        <v-col cols="12" sm="6">
+        <v-col
+          cols="12"
+          sm="6"
+        >
           <v-list-item-group color="primary">
             <v-list-item
-                    v-for="(item, i) in items"
-                    :key="i"
-                    class="business-designation-list-item py-0"
-                    :ripple="false"
-                    @mouseover="itemIndex = i"
+              v-for="(item, i) in items"
+              :key="i"
+              class="business-designation-list-item py-0"
+              :ripple="false"
+              @mouseover="itemIndex = i"
             >
               <v-list-item-content class="py-2">
                 <v-list-item-title
-                        class="business-designation-list-item-title py-0"
-                        :class="{ 'business-designation-list-item-title-active': isActiveTab(i) }"
-                        v-html="item.title"
-                >
-                </v-list-item-title>
+                  class="business-designation-list-item-title py-0"
+                  :class="{ 'business-designation-list-item-title-active': isActiveTab(i) }"
+                  v-html="item.title"
+                />
               </v-list-item-content>
             </v-list-item>
           </v-list-item-group>
         </v-col>
-        <v-col cols="12" sm="6">
-          <p>{{items[itemIndex].content}}</p>
+        <v-col
+          cols="12"
+          sm="6"
+        >
+          <p>{{ items[itemIndex].content }}</p>
         </v-col>
       </v-row>
     </v-list>

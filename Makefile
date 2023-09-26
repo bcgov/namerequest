@@ -25,7 +25,7 @@ lint:  ## Run linting ofcode.
 	npm run lint
 
 test:  ## Unit testing
-	npm run test
+	npm run test:unit
 
 #################################################################################
 # COMMANDS - CD

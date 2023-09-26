@@ -1,36 +1,59 @@
 <template>
-  <v-dialog id="advanced-search-dates" v-model="dialog" persistent max-width="44rem">
+  <v-dialog
+    id="advanced-search-dates"
+    v-model="dialog"
+    persistent
+    max-width="44rem"
+  >
     <v-card class="advanced-search-dates-card">
       <v-row>
         <v-col>
-          <span class="title-bold-16" :class="{ 'error-message': validate && !hasStartDate }">Select Start Date:</span>
+          <span
+            class="title-bold-16"
+            :class="{ 'error-message': validate && !hasStartDate }"
+          >Select Start Date:</span>
           <v-date-picker
             id="start-date-calendar"
-            class="mt-2"
             v-model="startDateText"
+            class="mt-2"
             :max="currentDateString"
             elevation="5"
             @input="validateDates()"
-          >
-          </v-date-picker>
+          />
         </v-col>
         <v-col>
-          <span class="title-bold-16" :class="{ 'error-message': validate && !hasEndDate }">Select End Date:</span>
+          <span
+            class="title-bold-16"
+            :class="{ 'error-message': validate && !hasEndDate }"
+          >Select End Date:</span>
           <v-date-picker
             id="end-date-calendar"
-            class="mt-2"
             v-model="endDateText"
+            class="mt-2"
             :min="startDateText"
             :max="currentDateString"
             elevation="5"
             @input="validateDates()"
-          >
-          </v-date-picker>
+          />
         </v-col>
       </v-row>
       <v-card-actions class="my-0 pt-2 float-right">
-          <v-btn id="btn-done" text color="primary" @click="submitDates()"><strong>OK</strong></v-btn>
-          <v-btn id="btn-cancel" text color="primary" @click="emitClose()">Cancel</v-btn>
+        <v-btn
+          id="btn-done"
+          text
+          color="primary"
+          @click="submitDates()"
+        >
+          <strong>OK</strong>
+        </v-btn>
+        <v-btn
+          id="btn-cancel"
+          text
+          color="primary"
+          @click="emitClose()"
+        >
+          Cancel
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

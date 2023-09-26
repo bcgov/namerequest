@@ -1,10 +1,6 @@
 import { NewRequestIF } from '@/interfaces/new-request-interface'
 import { NameCheckModelIF, StaffPaymentIF, RefundParamsIF } from '@/interfaces'
 
-export interface StateIF {
-  stateModel: StateModelIF
-}
-
 export interface StateModelIF {
   common: {
     currentJsDate: Date,
@@ -17,4 +13,8 @@ export interface StateModelIF {
   nameCheckModel: NameCheckModelIF
   refundParams: RefundParamsIF
   windowWidth: number
+}
+
+export interface StateIF {
+  stateModel: StateModelIF
 }

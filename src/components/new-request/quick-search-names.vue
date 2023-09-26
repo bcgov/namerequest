@@ -1,9 +1,13 @@
 <template>
   <v-col id="quick-search-names">
-      <v-row class="quickSearchNames" v-for="name of getQuickSearchNames" :key="name.name">
-        <b v-if="name.type==='exact'">{{name.name}}</b>
-        <span v-else>{{name.name}}</span>
-      </v-row>
+    <v-row
+      v-for="name of getQuickSearchNames"
+      :key="name.name"
+      class="quickSearchNames"
+    >
+      <b v-if="name.type==='exact'">{{ name.name }}</b>
+      <span v-else>{{ name.name }}</span>
+    </v-row>
   </v-col>
 </template>
 

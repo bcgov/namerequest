@@ -1,13 +1,25 @@
 <template>
-  <v-dialog min-width="32rem" max-width="45rem" :value="isVisible" persistent>
+  <v-dialog
+    min-width="32rem"
+    max-width="45rem"
+    :value="isVisible"
+    persistent
+  >
     <v-card>
       <v-tabs id="upgrade-tabs">
-        <v-tabs-items v-model="currentTab" touchless>
-
+        <v-tabs-items
+          v-model="currentTab"
+          touchless
+        >
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
               <div>Staff Payment for Priority Upgrade</div>
-              <v-btn icon large class="dialog-close float-right" @click="hideModal()">
+              <v-btn
+                icon
+                large
+                class="dialog-close float-right"
+                @click="hideModal()"
+              >
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </v-card-title>
@@ -21,28 +33,42 @@
 
             <v-card-actions class="justify-center pt-6">
               <v-btn
-                @click="goBack()"
                 id="upgrade-back-btn"
                 class="button-blue px-10"
-                :disabled="isLoadingPayment">Back</v-btn>
+                :disabled="isLoadingPayment"
+                @click="goBack()"
+              >
+                Back
+              </v-btn>
               <v-btn
-                @click="confirmPayment()"
                 id="upgrade-submit-btn"
                 class="primary px-5"
-                :loading="isLoadingPayment">Submit Priority Upgrade</v-btn>
+                :loading="isLoadingPayment"
+                @click="confirmPayment()"
+              >
+                Submit Priority Upgrade
+              </v-btn>
             </v-card-actions>
           </v-tab-item>
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
               <div>Upgrade Priority</div>
-              <v-btn icon large class="dialog-close float-right" @click="hideModal()">
+              <v-btn
+                icon
+                large
+                class="dialog-close float-right"
+                @click="hideModal()"
+              >
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </v-card-title>
 
             <v-card-text class="copy-normal">
-              <p v-if="!isRoleStaff" class="mb-8">
+              <p
+                v-if="!isRoleStaff"
+                class="mb-8"
+              >
                 If you need your name reviewed as quickly as possible, upgrade to a Priority
                 request. Priority name requests are usually reviewed within 1 to 2 business days.
               </p>
@@ -54,17 +80,22 @@
 
             <v-card-actions class="pt-8 justify-center">
               <v-btn
-                @click="hideModal()"
                 id="upgrade-cancel-btn"
-                class="button button-blue px-5">Cancel</v-btn>
+                class="button button-blue px-5"
+                @click="hideModal()"
+              >
+                Cancel
+              </v-btn>
               <v-btn
-                @click="confirmPayment()"
                 id="upgrade-continue-btn"
                 class="primary px-5"
-                :loading="isLoadingPayment">Continue to Payment</v-btn>
+                :loading="isLoadingPayment"
+                @click="confirmPayment()"
+              >
+                Continue to Payment
+              </v-btn>
             </v-card-actions>
           </v-tab-item>
-
         </v-tabs-items>
       </v-tabs>
     </v-card>

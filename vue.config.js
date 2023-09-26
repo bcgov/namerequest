@@ -1,6 +1,5 @@
-const path = require('path')
-const webpack = require('webpack')
-const fs = require('fs')
+const webpack = require('webpack') // eslint-disable-line @typescript-eslint/no-var-requires
+const fs = require('fs') // eslint-disable-line @typescript-eslint/no-var-requires
 const packageJson = fs.readFileSync('./package.json')
 const name = JSON.parse(packageJson).name
 const appName = JSON.parse(packageJson).appName

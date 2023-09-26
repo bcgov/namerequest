@@ -1,12 +1,26 @@
 <template>
-  <v-dialog :value="getPickEntityModalVisible" :max-width="maxWidth" persistent>
+  <v-dialog
+    :value="getPickEntityModalVisible"
+    :max-width="maxWidth"
+    persistent
+  >
     <v-card class="no-border pick-entity-card">
       <v-row>
         <v-col cols="10">
-          <span class="copy-small" v-if="!showSocietiesInfo">{{ getLocationText }}</span>
+          <span
+            v-if="!showSocietiesInfo"
+            class="copy-small"
+          >{{ getLocationText }}</span>
         </v-col>
         <v-col cols="2">
-          <v-icon class="float-right" md color="primary" @click="closeIconClicked()">mdi-close</v-icon>
+          <v-icon
+            class="float-right"
+            md
+            color="primary"
+            @click="closeIconClicked()"
+          >
+            mdi-close
+          </v-icon>
         </v-col>
       </v-row>
 
@@ -14,18 +28,41 @@
         <v-card-text>
           <v-container>
             <v-row class="category-bg">
-              <v-col cols="12" class="font-weight-bold">Alterations</v-col>
-            </v-row>
-            <v-row v-for="(conversion, i) in ConversionTypes" :key="`conv-${i}`">
-              <v-col cols="12" class="clickable-cell"
-                     :id="conversion.value"
-                     @click="chooseConversion(conversion)"
+              <v-col
+                cols="12"
+                class="font-weight-bold"
               >
-                <v-tooltip bottom content-class="bottom-tooltip" transition="fade-transition" :disabled="isMobile">
-                  <template v-slot:activator="scope">
-                    <button v-on="scope.on" class="link-sm-sans-ul entity-link">{{ conversion.desc }}</button>
+                Alterations
+              </v-col>
+            </v-row>
+            <v-row
+              v-for="(conversion, i) in ConversionTypes"
+              :key="`conv-${i}`"
+            >
+              <v-col
+                :id="conversion.value"
+                cols="12"
+                class="clickable-cell"
+                @click="chooseConversion(conversion)"
+              >
+                <v-tooltip
+                  bottom
+                  content-class="bottom-tooltip"
+                  transition="fade-transition"
+                  :disabled="isMobile"
+                >
+                  <template #activator="scope">
+                    <button
+                      class="link-sm-sans-ul entity-link"
+                      v-on="scope.on"
+                    >
+                      {{ conversion.desc }}
+                    </button>
                   </template>
-                  <div v-for="(blurb, i) in entityBlurbs(conversion.value)" :key="`blurb-${i}`">
+                  <div
+                    v-for="(blurb, i) in entityBlurbs(conversion.value)"
+                    :key="`blurb-${i}`"
+                  >
                     <span>{{ blurb }}</span>
                   </div>
                 </v-tooltip>
@@ -39,9 +76,16 @@
       <template v-if="showSocietiesInfo">
         <v-card-text class="mt-n12">
           <v-container fluid>
-            <v-row no-gutters class="text-center">
-              <v-col cols="12">To request a name for a Society</v-col>
-              <v-col cols="12">please use the Societies Online website</v-col>
+            <v-row
+              no-gutters
+              class="text-center"
+            >
+              <v-col cols="12">
+                To request a name for a Society
+              </v-col>
+              <v-col cols="12">
+                please use the Societies Online website
+              </v-col>
               <v-col cols="12">
                 <a href="https://www.bcregistry.ca/societies/">https://www.bcregistry.ca/societies/</a>
               </v-col>
@@ -54,21 +98,44 @@
       <template v-else>
         <v-card-text class="pt-4">
           <v-row no-gutters>
-            <v-col v-for="(category, i) in tableData" :key="`cat-${i}`">
+            <v-col
+              v-for="(category, i) in tableData"
+              :key="`cat-${i}`"
+            >
               <v-simple-table>
                 <tr class="category-bg cell">
                   <th>
                     <span class="font-weight-bold">{{ category.text }}</span>
                   </th>
                 </tr>
-                <tr v-for="(entity, n) in category.entities" :key="`ent-${n}`">
-                  <td class="clickable-cell" :id="entity.value" @click="chooseType(entity)">
-                    <v-tooltip bottom content-class="bottom-tooltip" transition="fade-transition" :disabled="isMobile">
-                      <template v-slot:activator="scope">
-                        <button v-on="scope.on" class="link-sm-sans-ul entity-link">{{ entity.text }}</button>
+                <tr
+                  v-for="(entity, n) in category.entities"
+                  :key="`ent-${n}`"
+                >
+                  <td
+                    :id="entity.value"
+                    class="clickable-cell"
+                    @click="chooseType(entity)"
+                  >
+                    <v-tooltip
+                      bottom
+                      content-class="bottom-tooltip"
+                      transition="fade-transition"
+                      :disabled="isMobile"
+                    >
+                      <template #activator="scope">
+                        <button
+                          class="link-sm-sans-ul entity-link"
+                          v-on="scope.on"
+                        >
+                          {{ entity.text }}
+                        </button>
                       </template>
                       <template>
-                        <div v-for="(blurb, index) in entityBlurbs(entity.value)" :key="`blurb-${index}`">
+                        <div
+                          v-for="(blurb, index) in entityBlurbs(entity.value)"
+                          :key="`blurb-${index}`"
+                        >
                           <span :class="{ 'tooltip-bullet': index !== 0}">{{ blurb }}</span>
                         </div>
                       </template>
@@ -91,21 +158,44 @@
 
         <v-card-text class="pt-4">
           <v-row no-gutters>
-            <v-col v-for="(category, i) in tableDataXPRO" :key="`cat-xpro-${i}`">
+            <v-col
+              v-for="(category, i) in tableDataXPRO"
+              :key="`cat-xpro-${i}`"
+            >
               <v-simple-table>
                 <tr class="category-bg cell">
                   <th>
                     <span class="font-weight-bold">{{ category.text }}</span>
                   </th>
                 </tr>
-                <tr v-for="(entity, n) in category.entities" :key="`ent-xpro-${n}`">
-                  <td class="clickable-cell" :id="entity.value" @click="chooseType(entity)">
-                    <v-tooltip bottom content-class="bottom-tooltip" transition="fade-transition" :disabled="isMobile">
-                      <template v-slot:activator="scope">
-                        <button v-on="scope.on" class="link-sm-sans-ul entity-link">{{ entity.text }}</button>
+                <tr
+                  v-for="(entity, n) in category.entities"
+                  :key="`ent-xpro-${n}`"
+                >
+                  <td
+                    :id="entity.value"
+                    class="clickable-cell"
+                    @click="chooseType(entity)"
+                  >
+                    <v-tooltip
+                      bottom
+                      content-class="bottom-tooltip"
+                      transition="fade-transition"
+                      :disabled="isMobile"
+                    >
+                      <template #activator="scope">
+                        <button
+                          class="link-sm-sans-ul entity-link"
+                          v-on="scope.on"
+                        >
+                          {{ entity.text }}
+                        </button>
                       </template>
                       <template>
-                        <div v-for="(blurb, index) in entityBlurbs(entity.value)" :key="`blurb-xpro-${index}`">
+                        <div
+                          v-for="(blurb, index) in entityBlurbs(entity.value)"
+                          :key="`blurb-xpro-${index}`"
+                        >
                           <span :class="{ 'tooltip-bullet': index !== 0}">{{ blurb }}</span>
                         </div>
                       </template>
@@ -129,7 +219,6 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { EntityTypes, Location } from '@/enums'
 import { ConversionTypes } from '@/list-data'
 import { CommonMixin } from '@/mixins'
-import { isAmalgamation } from '@/store/getters'
 
 @Component({})
 export default class PickEntityOrConversionDialog extends CommonMixin {

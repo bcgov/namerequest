@@ -1,5 +1,9 @@
 <template>
-  <v-col id="business-lookup-fetch" :cols="cols" :md="md">
+  <v-col
+    id="business-lookup-fetch"
+    :cols="cols"
+    :md="md"
+  >
     <template v-if="!getSearchBusiness">
       <BusinessLookup
         v-if="isAuthenticated"
@@ -11,7 +15,10 @@
         @business="onBusiness($event)"
       />
     </template>
-    <v-form v-else ref="businessLookupTextFieldForm">
+    <v-form
+      v-else
+      ref="businessLookupTextFieldForm"
+    >
       <v-text-field
         append-icon="mdi-close"
         readonly
@@ -35,7 +42,6 @@ import BusinessLookup from '@/components/new-request/business-lookup.vue'
 import { BusinessSearchIF, FormType } from '@/interfaces'
 import { CorpTypeCd, CompanyTypes, EntityStates, EntityTypes, Location, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin, SearchMixin } from '@/mixins'
-import { logger } from '@sentry/utils'
 
 @Component({
   components: { BusinessFetch, BusinessLookup }
@@ -87,7 +93,7 @@ export default class BusinessLookupFetch extends Mixins(CommonMixin, SearchMixin
   }
 
   /** Search businesses with business lookup depending on the Action selected. */
-  get lookupActiveOrHistorical (): String {
+  get lookupActiveOrHistorical (): string {
     return this.isRestoration ? EntityStates.HISTORICAL : EntityStates.ACTIVE
   }
 

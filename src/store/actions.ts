@@ -231,13 +231,13 @@ const commitExistingData = ({ commit, getters }): void => {
   if (['clientFirstName', 'clientLastName', 'contact'].some(field => !!getters.getNr.applicants[field])) {
     commit('mutateActingOnOwnBehalf', false)
   }
-  let { entity_type_cd } = getters.getNr
+  const { entity_type_cd } = getters.getNr
   if (getters.getEntityTypesBC.some(type => type.value === entity_type_cd)) {
     commit('mutateLocation', Location.BC)
   } else if (getters.getNr.xproJurisdiction) {
-    let { xproJurisdiction } = getters.getNr
+    const { xproJurisdiction } = getters.getNr
     let location: Location
-    for (let key of ['value', 'text']) {
+    for (const key of ['value', 'text']) {
       if (CanJurisdictions.some(j => j[key].toUpperCase() === xproJurisdiction.toUpperCase())) {
         location = Location.CA
         break
@@ -251,12 +251,13 @@ const commitExistingData = ({ commit, getters }): void => {
   }
   commit('mutateEntityType', entity_type_cd)
   if (!getters.getEntityTypeOptions.some(option => option.value === entity_type_cd)) {
-    let obj = getters.getEntityTypesBC.find(entity => entity.value === entity_type_cd)
+    const obj = getters.getEntityTypesBC.find(entity => entity.value === entity_type_cd)
       ? getters.getEntityTypesBC.find(entity => entity.value === entity_type_cd)
       : getters.getEntityTypesXPRO.find(entity => entity.value === entity_type_cd)
     commit('mutateEntityTypeAddToSelect', obj)
   }
-  let { requestTypeCd, request_action_cd } = getters.getNr
+  const { requestTypeCd } = getters.getNr
+  let { request_action_cd } = getters.getNr
   if (
     [XproNameType.AS, XproNameType.AL, XproNameType.XASO, XproNameType.XCASO, XproNameType.UA].includes(requestTypeCd)
   ) {
@@ -264,7 +265,7 @@ const commitExistingData = ({ commit, getters }): void => {
   }
   commit('mutateRequestAction', request_action_cd)
   if (request_action_cd !== NrRequestActionCodes.NEW_BUSINESS) {
-    let reqObj = RequestActions.find(type => type.value === request_action_cd)
+    const reqObj = RequestActions.find(type => type.value === request_action_cd)
     commit('mutateExtendedRequestType', reqObj)
   }
   if (getters.getNr.corpNum) {
@@ -333,7 +334,7 @@ export async function searchBusiness ({ getters }, corpNum: string): Promise<Bus
 export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
   if (getters.getCorpSearch) {
     try {
-      let url = `mras-profile/${getters.getJurisdictionCd}/${getters.getCorpSearch}`
+      const url = `mras-profile/${getters.getJurisdictionCd}/${getters.getCorpSearch}`
       const response = await axios.get(url)
       if (response?.status === OK) {
         return response.data
@@ -500,7 +501,7 @@ export const resubmit = async ({ commit, getters }): Promise<boolean> => {
   }))
 
   // clean applicants partyIds
-  for (let [key, value] of Object.entries(nrTypeData['applicants'])) {
+  for (const [key, value] of Object.entries(nrTypeData['applicants'])) {
     value['partyId'] = ''
   }
 
@@ -943,8 +944,8 @@ export const nameCheckClearError = ({ commit }, key: NameCheckErrorType): void =
 }
 
 const parseExactNames = (json: { names: [string] }): Array<ConflictListItemI> => {
-  let nameObjs = json?.names || []
-  let names = []
+  const nameObjs = json?.names || []
+  const names = []
   for (let i = 0; i < nameObjs.length; i++) {
     names.push({ name: `${nameObjs[i]['name']}`, type: NameCheckConflictType.EXACT })
   }
@@ -953,7 +954,7 @@ const parseExactNames = (json: { names: [string] }): Array<ConflictListItemI> =>
 
 const parseRestrictedWords = ({ getters }, resp: RestrictedResponseIF): ParsedRestrictedResponseIF => {
   const phrases = resp.restricted_words_conditions
-  let parsedResp: ParsedRestrictedResponseIF = {
+  const parsedResp: ParsedRestrictedResponseIF = {
     conditionalInstructions: [],
     conditionalWords: [],
     restrictedWords: []
@@ -971,7 +972,7 @@ const parseRestrictedWords = ({ getters }, resp: RestrictedResponseIF): ParsedRe
     // split into restricted vs conditional
     let restricted = false
     // there can be multiple conditions per word / phrase
-    for (let k in phrases[i].cnd_info) {
+    for (const k in phrases[i].cnd_info) {
       if (phrases[i].cnd_info[k].allow_use === 'N') {
         restricted = true
         break
@@ -982,7 +983,7 @@ const parseRestrictedWords = ({ getters }, resp: RestrictedResponseIF): ParsedRe
     if (restricted) parsedResp.restrictedWords.push(phrase)
     else {
       parsedResp.conditionalWords.push(phrase)
-      for (let k in phrases[i].cnd_info) {
+      for (const k in phrases[i].cnd_info) {
         let info = phrases[i].cnd_info[k].text ? phrases[i].cnd_info[k].text?.trim() : ''
         if (info && !info.endsWith('.')) info = info + '.'
         const instructions = phrases[i].cnd_info[k].instructions
@@ -1003,15 +1004,15 @@ const parseSynonymNames = (
     names: Array<string>,
     exactNames: Array<ConflictListItemI>
   }): Array<ConflictListItemI> => {
-  let duplicateNames = []
+  const duplicateNames = []
   for (let i = 0; i < json.exactNames.length; i++) {
     duplicateNames.push(json.exactNames[i].name)
   }
-  let nameObjs = json.names
-  let names = []
+  const nameObjs = json.names
+  const names = []
   for (let i = 0; i < nameObjs.length; i++) {
     if (nameObjs[i]['name_info']['id']) {
-      let name = nameObjs[i]['name_info']['name']
+      const name = nameObjs[i]['name_info']['name']
       if (!duplicateNames.includes(name)) {
         names.push({ name: name, type: NameCheckConflictType.SIMILAR })
       }
@@ -1155,13 +1156,13 @@ export const startAnalyzeName = async ({ commit, getters }) => {
       const entity_type_cd = getters.getEntityTypeCd
       if ([EntityTypes.CP, EntityTypes.XCP, EntityTypes.CC].includes(entity_type_cd)) {
         let entityPhraseChoices = []
-        let basePhrases = Designations[entity_type_cd].words
+        const basePhrases = Designations[entity_type_cd].words
         // these are the inner phrases for the CCC and CP types.  Filtering out CR designations from CPs has no effect
         // and CCC designations are a mix of CR-type ending designations and CCC specific inner phrases so filter out
         // the CR designations for the purposes of this getter
         entityPhraseChoices = basePhrases.filter(phrase => !Designations[EntityTypes.CR].words.includes(phrase))
         if (entityPhraseChoices.some(phrase => name.startsWith(phrase))) {
-          let phrase = name.split(' ')[0].replace('COMMUNITY', 'COMMUNITY CONTRIBUTION COMPANY')
+          const phrase = name.split(' ')[0].replace('COMMUNITY', 'COMMUNITY CONTRIBUTION COMPANY')
           commit('mutateDesignationsCheckUse', [phrase])
         } else if (entityPhraseChoices.every(phrase => {
           phrase = phrase.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')

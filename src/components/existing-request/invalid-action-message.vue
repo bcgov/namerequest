@@ -1,11 +1,23 @@
 <template>
   <v-row class="my-3 py-3">
-    <v-col cols="12" class="text-center h4">
+    <v-col
+      cols="12"
+      class="text-center h4"
+    >
       {{ details.heading }}
     </v-col>
-    <v-col cols="12" class="text-center copy-normal mt-n2 mb-2" v-html="details.details" />
-    <v-col cols="12" class="text-center">
-      <v-btn @click="goBack()">Return to NR Summary</v-btn>
+    <v-col
+      cols="12"
+      class="text-center copy-normal mt-n2 mb-2"
+      v-html="details.details"
+    />
+    <v-col
+      cols="12"
+      class="text-center"
+    >
+      <v-btn @click="goBack()">
+        Return to NR Summary
+      </v-btn>
     </v-col>
   </v-row>
 </template>

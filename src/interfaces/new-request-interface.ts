@@ -4,7 +4,7 @@ import { BusinessSearchIF, NameChoicesIF, NrDataIF, RequestOrConsentIF } from '@
 import { CompanyTypes, EntityTypes, Location, NrAffiliationErrors, NrRequestActionCodes, NrRequestTypeCodes }
   from '@/enums'
 
-interface RequestNameMapI extends RequestNameI {}
+type RequestNameMapI = RequestNameI
 
 export interface NewRequestIF {
   actingOnOwnBehalf: boolean

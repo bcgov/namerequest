@@ -1,14 +1,32 @@
 <template>
   <v-expand-transition>
     <!-- check for valid receipt, as the payment may exist but not be completed -->
-    <section class="payment-summary" v-if="summary.receipt">
-      <v-row class="py-5" no-gutters>
-        <div class="col1 align-self-center">{{receiptNumber}}</div>
-        <div class="col2 align-self-center">{{receiptDate}}</div>
-        <div class="col3 align-self-center">{{receiptDescription}}</div>
-        <div class="col4 align-self-center">{{receiptAmount}}</div>
+    <section
+      v-if="summary.receipt"
+      class="payment-summary"
+    >
+      <v-row
+        class="py-5"
+        no-gutters
+      >
+        <div class="col1 align-self-center">
+          {{ receiptNumber }}
+        </div>
+        <div class="col2 align-self-center">
+          {{ receiptDate }}
+        </div>
+        <div class="col3 align-self-center">
+          {{ receiptDescription }}
+        </div>
+        <div class="col4 align-self-center">
+          {{ receiptAmount }}
+        </div>
         <div class="col5 align-self-center">
-          <v-btn class="download-receipt-btn float-right" :loading="loading" @click="downloadReceipt()">
+          <v-btn
+            class="download-receipt-btn float-right"
+            :loading="loading"
+            @click="downloadReceipt()"
+          >
             <span>Download PDF</span>
           </v-btn>
         </div>
@@ -23,34 +41,33 @@ import { PaymentMixin } from '@/mixins'
 
 @Component({})
 export default class PaymentSummary extends Mixins(PaymentMixin) {
-  @Prop(Object)
-  readonly summary: any
+  @Prop(Object) readonly summary!: any
 
   /** Used to show loading state on button. */
-  private loading = false
+  loading = false
 
-  private get receiptNumber (): string {
+  get receiptNumber (): string {
     const receiptNumber = this.summary?.receipt.receiptNumber || 'UNK'
     return `Receipt No. ${receiptNumber}`
   }
 
-  private get receiptDate (): string {
+  get receiptDate (): string {
     return this.summary?.receipt.receiptDate || 'UNK'
   }
 
-  private get receiptDescription (): string {
+  get receiptDescription (): string {
     const lineItem = this.summary?.payment.sbcPayment.lineItems[0] // just look at first one
     return lineItem?.description
   }
 
-  private get receiptAmount (): string {
+  get receiptAmount (): string {
     if (this.summary?.receipt?.receiptAmount) {
       return `$${this.summary?.receipt.receiptAmount.toFixed(2)} CAD`
     }
     return null
   }
 
-  private async downloadReceipt () {
+  async downloadReceipt () {
     const id = this.summary?.id
     this.loading = true
     await this.downloadReceiptPdf(id)

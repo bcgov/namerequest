@@ -1,5 +1,9 @@
 <template>
-  <v-col id="entity-type" :cols="cols" :md="md">
+  <v-col
+    id="entity-type"
+    :cols="cols"
+    :md="md"
+  >
     <v-text-field
       v-if="isConversion && isBenBusiness"
       filled
@@ -15,21 +19,21 @@
       :disabled="!isConversion || !entityConversionText || isMobile"
       transition="fade-transition"
     >
-      <template v-slot:activator="scope">
+      <template #activator="scope">
         <div v-on="scope.on">
           <v-select
             id="entity-type-options-select"
+            ref="selectBusinessTypeRef"
             :label="isConversion ? 'Select type of business to alter into' : 'Select type of business in B.C.'"
             :error-messages="getErrors.includes('entity_type_cd') ? 'Please select a business type' : ''"
             :items="entityTypeOptions"
             :menu-props="{ bottom: true, offsetY: true}"
-            ref="selectBusinessTypeRef"
             hide-details="auto"
             filled
             :value="isConversion ? getOriginEntityTypeCd : entity_type_cd"
             @change="setClearErrors(); entity_type_cd = $event"
           >
-            <template v-slot:item="{ item }">
+            <template #item="{ item }">
               <v-tooltip
                 :right="isScreenLg"
                 :left="!isScreenLg"
@@ -37,15 +41,18 @@
                 :content-class="!isScreenLg ? 'left-tooltip' : ''"
                 transition="fade-transition"
               >
-                <template v-slot:activator="scope">
+                <template #activator="scope">
                   <span
-                    v-on="scope.on"
                     class="list-item"
                     :class="{ 'last-select-item': item.value === 'INFO' }"
+                    v-on="scope.on"
                   >{{ item.text }}</span>
                 </template>
 
-                <div v-for="(blurb, index) in entityBlurbs(item.value)" :key="`blurb-${index}`">
+                <div
+                  v-for="(blurb, index) in entityBlurbs(item.value)"
+                  :key="`blurb-${index}`"
+                >
                   <span :class="{ 'tooltip-bullet': index !== 0}">
                     {{ blurb }}
                   </span>

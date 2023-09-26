@@ -1,12 +1,16 @@
 <template>
-  <v-col id="request-action" :cols="cols" :md="md">
+  <v-col
+    id="request-action"
+    :cols="cols"
+    :md="md"
+  >
     <v-tooltip
       top
       content-class="top-tooltip"
       transition="fade-transition"
       :disabled="!showRequestActionTooltip || isMobile"
     >
-      <template v-slot:activator="scope">
+      <template #activator="scope">
         <div v-on="scope.on">
           <NestedSelect
             id="request-action-select"

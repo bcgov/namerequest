@@ -2,9 +2,11 @@
   <v-container id="unknown-words">
     <h4>Unknown words</h4>
 
-    <p class="my-6">There are some coined words that have never been examined. When a name includes one of these words
+    <p class="my-6">
+      There are some coined words that have never been examined. When a name includes one of these words
       it will not be available for auto approval. You can choose to change your name or you can submit the name as is
-      for examination.</p>
+      for examination.
+    </p>
   </v-container>
 </template>
 

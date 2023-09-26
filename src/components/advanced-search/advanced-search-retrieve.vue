@@ -1,19 +1,31 @@
 <template>
   <!-- Advanced Search Retrieve Form -->
-  <v-form id="advanced-nr-search-form" ref="advancedSearchRetrieveForm" v-model="isValid">
+  <v-form
+    id="advanced-nr-search-form"
+    ref="advancedSearchRetrieveForm"
+    v-model="isValid"
+  >
     <!-- Error Message -->
-    <div v-if="errorMessage" class="copy-normal error-message mt-n2" v-html="errorMessage"></div>
+    <div
+      v-if="errorMessage"
+      class="copy-normal error-message mt-n2"
+      v-html="errorMessage"
+    />
 
     <!-- Phone input -->
-    <v-row class="mt-6" no-gutters>
+    <v-row
+      class="mt-6"
+      no-gutters
+    >
       <v-col>
         <v-text-field
-          filled persistent-hint
           id="phone-number-text-field"
+          v-model="phoneNumber"
+          filled
+          persistent-hint
           class="copy-normal"
           label="Applicant's Phone Number"
           hint="Example: 555-555-5555"
-          v-model="phoneNumber"
           :rules="phoneRules"
           @input="handleExistingRequestSearch('phoneNumber', $event)"
         />
@@ -21,25 +33,27 @@
     </v-row>
 
     <v-row>
-      <v-col class="copy-normal font-weight-bold ml-4 py-0"> or </v-col>
+      <v-col class="copy-normal font-weight-bold ml-4 py-0">
+        or
+      </v-col>
     </v-row>
 
     <!-- Email input -->
     <v-row>
       <v-col>
         <v-text-field
-          filled persistent-hint
           id="email-address-text-field"
+          v-model="emailAddress"
+          filled
+          persistent-hint
           class="copy-normal"
           label="Applicant's Notification Email"
           hint="Example: name@email.com"
-          v-model="emailAddress"
           :rules="emailRules"
           @input="handleExistingRequestSearch('emailAddress', $event)"
         />
       </v-col>
     </v-row>
-
   </v-form>
 </template>
 

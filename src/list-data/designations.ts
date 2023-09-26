@@ -117,9 +117,9 @@ export const Designations = {
 }
 
 function getAllDesignations () {
-  let output = []
-  for (let entity in Designations) {
-    for (let word of Designations[entity].words) {
+  const output = []
+  for (const entity in Designations) {
+    for (const word of Designations[entity].words) {
       if (!output.includes(word)) {
         output.push(word)
       }

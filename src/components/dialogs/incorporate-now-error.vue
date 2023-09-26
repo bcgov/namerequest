@@ -1,7 +1,14 @@
 <template>
-  <v-dialog v-model="dialog" width="45rem" persistent :attach="attach">
+  <v-dialog
+    v-model="dialog"
+    width="45rem"
+    persistent
+    :attach="attach"
+  >
     <v-card>
-      <v-card-title id="dialog-title">Unable to Incorporate Now</v-card-title>
+      <v-card-title id="dialog-title">
+        Unable to Incorporate Now
+      </v-card-title>
 
       <v-card-text id="dialog-text">
         <!-- display message -->
@@ -10,12 +17,26 @@
         </div>
       </v-card-text>
 
-      <v-divider class="my-0"></v-divider>
+      <v-divider class="my-0" />
 
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn id="dialog-cancel-button" class="dialog-close" text @click="close()">Cancel</v-btn>
-        <v-btn id="dialog-try-again-button" class="dialog-close" text @click="tryAgain()">Try Again</v-btn>
+        <v-spacer />
+        <v-btn
+          id="dialog-cancel-button"
+          class="dialog-close"
+          text
+          @click="close()"
+        >
+          Cancel
+        </v-btn>
+        <v-btn
+          id="dialog-try-again-button"
+          class="dialog-close"
+          text
+          @click="tryAgain()"
+        >
+          Try Again
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

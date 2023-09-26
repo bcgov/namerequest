@@ -252,16 +252,16 @@ export const getExtendedRequestType = (state: StateIF): SelectOptionsI => {
 }
 
 export const getRequestTypeOptions = (state: StateIF): RequestActionsI[] => {
-  let option = RequestActions.find(type => type.value === NrRequestActionCodes.NEW_BUSINESS)
+  const option = RequestActions.find(type => type.value === NrRequestActionCodes.NEW_BUSINESS)
   option.rank = 1
-  let options = [option]
+  const options = [option]
   let n = 2
   if (getExtendedRequestType(state)) {
     getExtendedRequestType(state).rank = 2
     options.push(getExtendedRequestType(state))
     n = 3
   }
-  let { requestTypeCd } = getNr(state)
+  const { requestTypeCd } = getNr(state)
   if (
     getEditMode(state) &&
     [XproNameType.AS, XproNameType.AL, XproNameType.XASO, XproNameType.XCASO, XproNameType.UA].includes(requestTypeCd)
@@ -387,8 +387,8 @@ export const getRequestExaminationOrProvideConsent = (state: StateIF): RequestOr
 
 export const getEntityTextFromValue = (state: StateIF): string => {
   if (getEntityTypeCd(state)) {
-    let list = [...getEntityTypesBC(state), ...getEntityTypesXPRO(state)]
-    let type = list.find(t => t.value === getEntityTypeCd(state))
+    const list = [...getEntityTypesBC(state), ...getEntityTypesXPRO(state)]
+    const type = list.find(t => t.value === getEntityTypeCd(state))
     return type?.text
   }
   return ''
@@ -495,17 +495,17 @@ export const getEntityBlurbs = (state: StateIF): Array<EntityI | ConversionTypes
 export const getEntityTypesBC = (state: StateIF): EntityI[] => {
   try {
     const generateEntities = (entities) => {
-      let output = []
-      for (let entity of entities) {
-        let obj = EntityTypesBcData.find(ent => ent.value === entity)
+      const output = []
+      for (const entity of entities) {
+        const obj = EntityTypesBcData.find(ent => ent.value === entity)
         // "CR" type is shortlisted
         // if CR exists in filtered entity_types, preserve its rank and shortlist keys
         if (entity === EntityTypes.CR) {
           output.push(obj)
           continue
         }
-        let objSansRankAndShortlist = {}
-        for (let key in obj) {
+        const objSansRankAndShortlist = {}
+        for (const key in obj) {
           if (!['shortlist', 'rank'].includes(key)) {
             objSansRankAndShortlist[key] = obj[key]
           }
@@ -524,7 +524,7 @@ export const getEntityTypesBC = (state: StateIF): EntityI[] => {
 
     // see 'src/list-data/request-action-mapping.ts'
     const mapping = BcMapping
-    let cds = Object.keys(mapping)
+    const cds = Object.keys(mapping)
     if (cds.includes(getRequestActionCd(state))) {
       return generateEntities(mapping[getRequestActionCd(state)])
     }
@@ -545,10 +545,10 @@ export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
 
   try {
     const generateEntities = (entities) => {
-      let output = []
-      for (let entity of entities) {
+      const output = []
+      for (const entity of entities) {
         // use EntityTypesXproData instead of scoped _entityTypesXproData here so that RLC can be included
-        let obj = EntityTypesXproData.find(ent => ent.value === entity)
+        const obj = EntityTypesXproData.find(ent => ent.value === entity)
         // "CR" type is shortlisted
         // if XCR exists in filtered entity_types, preserve its rank and shortlist keys
         if (entity === EntityTypes.XCR) {
@@ -558,8 +558,8 @@ export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
         if (isLocationCA(state) && entity === EntityTypes.RLC) {
           continue
         }
-        let objSansRankAndShortlist = {}
-        for (let key in obj) {
+        const objSansRankAndShortlist = {}
+        for (const key in obj) {
           if (!['shortlist', 'rank'].includes(key)) {
             objSansRankAndShortlist[key] = obj[key]
           }
@@ -578,7 +578,7 @@ export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
 
     // see 'src/list-data/request-action-mapping.ts'
     const mapping = XproMapping
-    let cds = Object.keys(mapping)
+    const cds = Object.keys(mapping)
 
     if (cds.includes(getRequestActionCd(state))) {
       return generateEntities(mapping[getRequestActionCd(state)])
@@ -742,8 +742,8 @@ export const isNameSlashed = (state: StateIF): boolean => {
     let name = getName(state)
     if (name.includes('/') && name.split('/').length === 2) {
       name = name.replace(/(\s+|(?=.))\/(\s+|(?=.))/g, '/')
-      let leftSideWords = name.split('/')[0].split(' ')
-      let rightSideWords = name.split('/')[1].split(' ')
+      const leftSideWords = name.split('/')[0].split(' ')
+      const rightSideWords = name.split('/')[1].split(' ')
       if (leftSideWords.length >= 2 && rightSideWords.length >= 2) {
         return true
       }
@@ -773,15 +773,15 @@ export const getCorpNumForReservation = (state: StateIF): any => {
 }
 
 export const getEditNameReservation = (state: StateIF): NameRequestI => {
-  let nrData = {}
-  for (let key in getNrData(state)) {
+  const nrData = {}
+  for (const key in getNrData(state)) {
     // only set truthy keys
     if (getNrData(state)[key]) {
       nrData[key] = getNrData(state)[key]
     }
   }
 
-  let data: NameRequestI = {
+  const data: NameRequestI = {
     applicants: [getApplicant(state)],
     request_action_cd: getRequestActionCd(state),
     entity_type_cd: getEntityTypeCd(state),
@@ -854,10 +854,10 @@ export const getDesignationObject = (state: StateIF): any => {
 
 export const getSplitNameDesignation = (state: StateIF): NameDesignationI => {
   if (getName(state) && getDesignationObject(state)?.end) {
-    let { words } = getDesignationObject(state)
-    for (let word of words) {
+    const { words } = getDesignationObject(state)
+    for (const word of words) {
       if (getName(state).endsWith(word)) {
-        let designation = word
+        const designation = word
         let name = getName(state).replace(word, '')
         name = name.trim()
         return ({ name, designation })
@@ -875,9 +875,9 @@ export const getConsentWords = (state: StateIF): any => {
 
   if (!getAnalysisJSON(state)) return consentWords
 
-  for (let step in getRequestExaminationOrProvideConsent(state)) {
+  for (const step in getRequestExaminationOrProvideConsent(state)) {
     if (getRequestExaminationOrProvideConsent(state)[step].obtain_consent) {
-      let words = getAnalysisJSON(state).issues[step].name_actions.map(action => action.word)
+      const words = getAnalysisJSON(state).issues[step].name_actions.map(action => action.word)
       consentWords = consentWords.concat(words)
     }
   }
@@ -885,13 +885,13 @@ export const getConsentWords = (state: StateIF): any => {
 }
 
 export const getConsentConflicts = (state: StateIF): ConsentConflictI => {
-  let output: ConsentConflictI = {
+  const output: ConsentConflictI = {
     name: ''
   }
 
   if (!getAnalysisJSON(state)) return output
 
-  for (let key in getRequestExaminationOrProvideConsent(state)) {
+  for (const key in getRequestExaminationOrProvideConsent(state)) {
     if (getRequestExaminationOrProvideConsent(state)[key].conflict_self_consent) {
       output.name = getAnalysisJSON(state).issues[key].conflicts[0].name
       if (getAnalysisJSON(state).issues[key].conflicts[0].id) {
@@ -927,7 +927,7 @@ export const getNrRequestNames = (state: StateIF): RequestNameI[] => {
       if (nameChoices[`name${choiceIdx}`] as boolean) {
         let combinedName = nameChoices[`name${choiceIdx}`]
         if (getEntityTypeCd(state) && Designations[getEntityTypeCd(state)]?.end) {
-          let des = nameChoices[`designation${choiceIdx}`]
+          const des = nameChoices[`designation${choiceIdx}`]
           if (des && !combinedName.endsWith(des)) {
             combinedName = combinedName + ' ' + des
           }
@@ -996,8 +996,8 @@ export const getDraftNameReservation = (state: StateIF): DraftReqI => {
   const nrRequestNames = getNrRequestNames(state)
   const applicant = getApplicant(state)
 
-  let nrData = {}
-  for (let key in getNrData(state)) {
+  const nrData = {}
+  for (const key in getNrData(state)) {
     if (getNrData(state)[key]) {
       nrData[key] = getNrData(state)[key]
     }
@@ -1028,11 +1028,11 @@ export const getDraftNameReservation = (state: StateIF): DraftReqI => {
       data['additionalInfo'] += '\n\n'
     }
     if (!data['additionalInfo'].includes('*** Registered Name:')) {
-      let notice = `*** Registered Name: ${getAssumedName(state)} ***`
+      const notice = `*** Registered Name: ${getAssumedName(state)} ***`
       data['additionalInfo'] += ' ' + notice
     }
   }
-  for (let step in getRequestExaminationOrProvideConsent(state)) {
+  for (const step in getRequestExaminationOrProvideConsent(state)) {
     if (getRequestExaminationOrProvideConsent(state)[step].obtain_consent ||
       getRequestExaminationOrProvideConsent(state)[step].conflict_self_consent) {
       if (!data['additionalInfo']) {
@@ -1040,7 +1040,7 @@ export const getDraftNameReservation = (state: StateIF): DraftReqI => {
       }
       if (!data['additionalInfo'].includes('*** Consent will be supplied')) {
         data['additionalInfo'] += '\n\n'
-        let notice = `*** Consent will be supplied ***`
+        const notice = `*** Consent will be supplied ***`
         data['additionalInfo'] += ' ' + notice
       }
     }
@@ -1052,7 +1052,7 @@ export const getDraftNameReservation = (state: StateIF): DraftReqI => {
         }
         if (!data['additionalInfo'].includes('*** Legal Name:')) {
           data['additionalInfo'] += '\n\n'
-          let notice = `*** Legal Name: ${getNameChoices(state)?.name1} ***`
+          const notice = `*** Legal Name: ${getNameChoices(state)?.name1} ***`
           data['additionalInfo'] += ' ' + notice
         }
       }

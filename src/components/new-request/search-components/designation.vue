@@ -1,5 +1,9 @@
 <template>
-  <v-col id="designation" :cols="cols" :md="md">
+  <v-col
+    id="designation"
+    :cols="cols"
+    :md="md"
+  >
     <v-select
       filled
       hide-details="auto"

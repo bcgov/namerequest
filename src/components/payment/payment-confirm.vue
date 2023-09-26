@@ -1,10 +1,22 @@
 <template>
   <div>
-    <v-alert v-if="fetchError" color="error" icon="mdi-alert" outlined class="my-0" v-html="fetchError" />
+    <v-alert
+      v-if="fetchError"
+      color="error"
+      icon="mdi-alert"
+      outlined
+      class="my-0"
+      v-html="fetchError"
+    />
 
-    <ul class="fee-list pl-0 mb-n1" v-show="!fetchError">
+    <ul
+      v-show="!fetchError"
+      class="fee-list pl-0 mb-n1"
+    >
       <li>
-        <div class="font-weight-bold nr-num">Your Name Request Number is {{nrNum}}</div>
+        <div class="font-weight-bold nr-num">
+          Your Name Request Number is {{ nrNum }}
+        </div>
       </li>
       <li>
         Use this number to check the status of your Name Request
@@ -19,22 +31,50 @@
     />
 
     <v-container>
-      <v-row align="center" justify="center" class="receipt-summary" v-show="!fetchError">
+      <v-row
+        v-show="!fetchError"
+        align="center"
+        justify="center"
+        class="receipt-summary"
+      >
         <v-col cols="10">
-          <div class="font-weight-bold pb-3 header">Receipt No. {{receipt.receiptNumber}}</div>
+          <div class="font-weight-bold pb-3 header">
+            Receipt No. {{ receipt.receiptNumber }}
+          </div>
 
           <ul class="fee-list pt-3 px-0">
-            <li class="container fee-list__item px-0" v-if="receipt">
-              <div class="fee-list__item-name">Payment Date</div>
-              <div class="fee-list__item-value">{{receipt.receiptDate}}</div>
+            <li
+              v-if="receipt"
+              class="container fee-list__item px-0"
+            >
+              <div class="fee-list__item-name">
+                Payment Date
+              </div>
+              <div class="fee-list__item-value">
+                {{ receipt.receiptDate }}
+              </div>
             </li>
-            <li class="container fee-list__item px-0" v-if="receipt">
-              <div class="fee-list__item-name">Amount</div>
-              <div class="fee-list__item-value">${{receipt.receiptAmount.toFixed(2)}} CAD</div>
+            <li
+              v-if="receipt"
+              class="container fee-list__item px-0"
+            >
+              <div class="fee-list__item-name">
+                Amount
+              </div>
+              <div class="fee-list__item-value">
+                ${{ receipt.receiptAmount.toFixed(2) }} CAD
+              </div>
             </li>
-            <li class="container fee-list__item px-0" v-if="summary">
-              <div class="fee-list__item-name">Status</div>
-              <div class="fee-list__item-value">{{summary.statusCode}}</div>
+            <li
+              v-if="summary"
+              class="container fee-list__item px-0"
+            >
+              <div class="fee-list__item-name">
+                Status
+              </div>
+              <div class="fee-list__item-value">
+                {{ summary.statusCode }}
+              </div>
             </li>
           </ul>
         </v-col>
@@ -55,30 +95,19 @@ import { Getter } from 'vuex-class'
   }
 })
 export default class PaymentConfirm extends Vue {
-  @Prop(String)
-  readonly nrNum: string
-
-  @Prop(Object)
-  readonly summary: any
-
-  @Prop(Object)
-  readonly receipt: any
-
-  @Prop(Object)
-  readonly applicant: ApplicantI
-
-  @Prop(Object)
-  readonly nameChoices: {
+  @Prop(String) readonly nrNum!: string
+  @Prop(Object) readonly summary!: any
+  @Prop(Object) readonly receipt!: any
+  @Prop(Object) readonly applicant!: ApplicantI
+  @Prop(Object) readonly nameChoices!: {
     type: any[]
     required: false
   }
-
-  @Prop(String)
-  readonly name: string
+  @Prop(String) readonly name!: string
 
   @Getter getNameChoices!: NameChoicesIF
 
-  protected fetchError = ''
+  fetchError = ''
 }
 </script>
 

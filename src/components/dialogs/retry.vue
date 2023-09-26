@@ -1,13 +1,25 @@
 <template>
-  <v-dialog min-width="32rem" max-width="45rem" :value="isVisible" persistent>
+  <v-dialog
+    min-width="32rem"
+    max-width="45rem"
+    :value="isVisible"
+    persistent
+  >
     <v-card>
       <v-tabs id="retry-tabs">
-        <v-tabs-items v-model="currentTab" touchless>
-
+        <v-tabs-items
+          v-model="currentTab"
+          touchless
+        >
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
               <div>Staff Payment for Name Request</div>
-              <v-btn icon large class="dialog-close float-right" @click="hideModal()">
+              <v-btn
+                icon
+                large
+                class="dialog-close float-right"
+                @click="hideModal()"
+              >
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </v-card-title>
@@ -21,28 +33,42 @@
 
             <v-card-actions class="justify-center pt-6">
               <v-btn
-                @click="goBack()"
                 id="retry-back-btn"
                 class="button-blue px-10"
-                :disabled="isLoadingPayment">Back</v-btn>
+                :disabled="isLoadingPayment"
+                @click="goBack()"
+              >
+                Back
+              </v-btn>
               <v-btn
-                @click="confirmPayment()"
                 id="retry-submit-btn"
                 class="primary px-5"
-                :loading="isLoadingPayment">Submit Name Request</v-btn>
+                :loading="isLoadingPayment"
+                @click="confirmPayment()"
+              >
+                Submit Name Request
+              </v-btn>
             </v-card-actions>
           </v-tab-item>
 
           <v-tab-item>
             <v-card-title class="d-flex justify-space-between">
               <div>Retry Payment for Name Request</div>
-              <v-btn icon large class="dialog-close float-right" @click="hideModal()">
+              <v-btn
+                icon
+                large
+                class="dialog-close float-right"
+                @click="hideModal()"
+              >
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </v-card-title>
 
             <v-card-text class="copy-normal">
-              <p v-if="!isRoleStaff" class="mb-8">
+              <p
+                v-if="!isRoleStaff"
+                class="mb-8"
+              >
                 If your Name Request payment was previously cancelled or did not go through, you
                 can retry payment.
               </p>
@@ -54,17 +80,22 @@
 
             <v-card-actions class="pt-8 justify-center">
               <v-btn
-                @click="hideModal()"
                 id="retry-cancel-btn"
-                class="button button-blue px-5">Cancel</v-btn>
+                class="button button-blue px-5"
+                @click="hideModal()"
+              >
+                Cancel
+              </v-btn>
               <v-btn
-                @click="confirmPayment()"
                 id="retry-continue-btn"
                 class="primary px-5"
-                :loading="isLoadingPayment">Continue to Payment</v-btn>
+                :loading="isLoadingPayment"
+                @click="confirmPayment()"
+              >
+                Continue to Payment
+              </v-btn>
             </v-card-actions>
           </v-tab-item>
-
         </v-tabs-items>
       </v-tabs>
     </v-card>

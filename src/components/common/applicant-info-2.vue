@@ -1,86 +1,141 @@
 <template>
-  <v-form v-model="isValid" ref="step2" id="applicant-info-2-form">
-    <v-container fluid class="pa-0 mt-6" id="applicant-info-2">
+  <v-form
+    id="applicant-info-2-form"
+    ref="step2"
+    v-model="isValid"
+  >
+    <v-container
+      id="applicant-info-2"
+      fluid
+      class="pa-0 mt-6"
+    >
       <v-row>
-        <v-col cols="12" md="2" lg="2" class="h6 align-self-start">Contact Info</v-col>
+        <v-col
+          cols="12"
+          md="2"
+          lg="2"
+          class="h6 align-self-start"
+        >
+          Contact Info
+        </v-col>
 
         <!--EMAIL ADDRESS-->
-        <v-col cols="12" md="5" lg="5">
-          <v-text-field :messages="messages['email']"
-                        :rules="emailRules"
-                        :validate-on-blur="true"
-                        :value="getApplicant.emailAddress"
-                        @blur="messages = {}"
-                        @input="updateApplicant('emailAddress', $event)"
-                        id="emailAddress"
-                        filled
-                        hide-details="auto"
-                        :name="Math.random()"
-                        autocomplete="chrome-off"
-                        label="Email Address (for notifications)" />
+        <v-col
+          cols="12"
+          md="5"
+          lg="5"
+        >
+          <v-text-field
+            id="emailAddress"
+            :messages="messages['email']"
+            :rules="emailRules"
+            :validate-on-blur="true"
+            :value="getApplicant.emailAddress"
+            filled
+            hide-details="auto"
+            :name="Math.random()"
+            autocomplete="chrome-off"
+            label="Email Address (for notifications)"
+            @blur="messages = {}"
+            @input="updateApplicant('emailAddress', $event)"
+          />
         </v-col>
-        <v-col cols="5" class="py-0" />
+        <v-col
+          cols="5"
+          class="py-0"
+        />
       </v-row>
 
       <v-row class="mt-0">
-        <v-col cols="12" md="2" lg="2" />
+        <v-col
+          cols="12"
+          md="2"
+          lg="2"
+        />
 
         <!--PHONE NUMBER-->
-        <v-col cols="12" md="5" lg="5">
-          <v-text-field :messages="messages['phone']"
-                        :value="getApplicant.phoneNumber"
-                        type="tel"
-                        :rules="phoneRules"
-                        @blur="messages = {}"
-                        @input="updateApplicant('phoneNumber', $event.trim())"
-                        id="phoneNumber"
-                        :name="Math.random()"
-                        autocomplete="chrome-off"
-                        filled
-                        hide-details="auto"
-                        label="Phone Number" />
+        <v-col
+          cols="12"
+          md="5"
+          lg="5"
+        >
+          <v-text-field
+            id="phoneNumber"
+            :messages="messages['phone']"
+            :value="getApplicant.phoneNumber"
+            type="tel"
+            :rules="phoneRules"
+            :name="Math.random()"
+            autocomplete="chrome-off"
+            filled
+            hide-details="auto"
+            label="Phone Number"
+            @blur="messages = {}"
+            @input="updateApplicant('phoneNumber', $event.trim())"
+          />
         </v-col>
 
         <!--FAX NUMBER-->
-        <v-col cols="12" md="5" lg="5">
-          <v-text-field :messages="messages['fax']"
-                        :value="getApplicant.faxNumber"
-                        :rules="faxRules"
-                        @blur="messages = {}"
-                        @input="updateApplicant('faxNumber', $event)"
-                        id="faxNumber"
-                        :name="Math.random()"
-                        autocomplete="chrome-off"
-                        filled
-                        hide-details="auto"
-                        label="Fax Number (Optional)" />
+        <v-col
+          cols="12"
+          md="5"
+          lg="5"
+        >
+          <v-text-field
+            id="faxNumber"
+            :messages="messages['fax']"
+            :value="getApplicant.faxNumber"
+            :rules="faxRules"
+            :name="Math.random()"
+            autocomplete="chrome-off"
+            filled
+            hide-details="auto"
+            label="Fax Number (Optional)"
+            @blur="messages = {}"
+            @input="updateApplicant('faxNumber', $event)"
+          />
         </v-col>
       </v-row>
 
       <v-row v-if="showAllFields">
-        <v-col cols="12" md="2" lg="2" class="h6">About Your Business</v-col>
+        <v-col
+          cols="12"
+          md="2"
+          lg="2"
+          class="h6"
+        >
+          About Your Business
+        </v-col>
 
         <!--NATURE OF BUSINESS-->
-        <v-col cols="12" md="5" lg="5" align-self="start">
-          <v-tooltip top
+        <v-col
+          cols="12"
+          md="5"
+          lg="5"
+          align-self="start"
+        >
+          <v-tooltip
+            top
             content-class="top-tooltip"
             transition="fade-transition"
             :disabled="isMobile"
           >
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <div v-on="on">
-                <v-textarea :messages="messages['nature']"
-                            :rules="businessNatureRules"
-                            :value="getNrData.natureBusinessInfo"
-                            @blur="messages = {}"
-                            @input="updateNrData('natureBusinessInfo', $event)"
-                            id="natureBusinessInfo"
-                            name="natureBusinessInfo"
-                            filled
-                            hide-details="auto"
-                            label="Nature of Business"
-                            no-resize
-                            rows="3" />
+                <v-textarea
+                  id="natureBusinessInfo"
+                  :messages="messages['nature']"
+                  :rules="businessNatureRules"
+                  :value="getNrData.natureBusinessInfo"
+                  name="natureBusinessInfo"
+                  filled
+                  hide-details="auto"
+                  label="Nature of Business"
+                  no-resize
+                  rows="3"
+                  @blur="messages = {}"
+                  @input="updateNrData('natureBusinessInfo', $event)"
+                />
               </div>
             </template>
             <span>
@@ -91,26 +146,34 @@
         </v-col>
 
         <!--ADDITIONAL INFORMATION-->
-        <v-col cols="12" md="5" lg="5" align-self="start">
-          <v-tooltip top
+        <v-col
+          cols="12"
+          md="5"
+          lg="5"
+          align-self="start"
+        >
+          <v-tooltip
+            top
             content-class="top-tooltip"
             transition="fade-transition"
             :disabled="isMobile"
           >
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <div v-on="on">
-                <v-textarea :messages="messages['additional']"
-                            :value="getNrData.additionalInfo"
-                            :rules="additionalInfoRules"
-                            @blur="messages = {}"
-                            @input="updateNrData('additionalInfo', $event)"
-                            id="additionalInfo"
-                            name="additionalInfo"
-                            filled
-                            hide-details="auto"
-                            label="Additional Information (Optional)"
-                            no-resize
-                            rows="3" />
+                <v-textarea
+                  id="additionalInfo"
+                  :messages="messages['additional']"
+                  :value="getNrData.additionalInfo"
+                  :rules="additionalInfoRules"
+                  name="additionalInfo"
+                  filled
+                  hide-details="auto"
+                  label="Additional Information (Optional)"
+                  no-resize
+                  rows="3"
+                  @blur="messages = {}"
+                  @input="updateNrData('additionalInfo', $event)"
+                />
               </div>
             </template>
             <span>
@@ -119,28 +182,39 @@
             </span>
           </v-tooltip>
         </v-col>
-        <v-col cols="12" md="2" lg="2" />
+        <v-col
+          cols="12"
+          md="2"
+          lg="2"
+        />
 
         <!--TRADEMARK-->
-        <v-col cols="12" md="5" lg="5">
-          <v-tooltip top
+        <v-col
+          cols="12"
+          md="5"
+          lg="5"
+        >
+          <v-tooltip
+            top
             content-class="top-tooltip"
             transition="fade-transition"
             :disabled="isMobile"
           >
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <div v-on="on">
-                <v-text-field :messages="messages['tradeMark']"
-                              :value="getNrData.tradeMark"
-                              :rules="trademarkRules"
-                              @blur="messages = {}"
-                              @input="updateNrData('tradeMark', $event)"
-                              id="tradeMark"
-                              :name="Math.random()"
-                              autocomplete="chrome-off"
-                              filled
-                              hide-details="auto"
-                              label="Registered Canadian Trademark (Optional)" />
+                <v-text-field
+                  id="tradeMark"
+                  :messages="messages['tradeMark']"
+                  :value="getNrData.tradeMark"
+                  :rules="trademarkRules"
+                  :name="Math.random()"
+                  autocomplete="chrome-off"
+                  filled
+                  hide-details="auto"
+                  label="Registered Canadian Trademark (Optional)"
+                  @blur="messages = {}"
+                  @input="updateNrData('tradeMark', $event)"
+                />
               </div>
             </template>
             <span>
@@ -151,25 +225,36 @@
       </v-row>
 
       <v-row class="align-center mt-2 mb-0">
-        <v-col cols="12" md="2" lg="2" />
+        <v-col
+          cols="12"
+          md="2"
+          lg="2"
+        />
 
         <!--PRIORITY REQUEST-->
-        <v-col cols="12" md="5" lg="5">
-          <v-tooltip top
+        <v-col
+          cols="12"
+          md="5"
+          lg="5"
+        >
+          <v-tooltip
+            top
             content-class="top-tooltip"
             transition="fade-transition"
             :disabled="isMobile"
           >
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <div v-on="on">
                 <v-checkbox
                   v-if="getShowPriorityRequest"
-                  hide-details
                   v-model="priorityRequest"
+                  hide-details
                   class="pre-wrap mt-0 pt-0"
                   :disabled="!enablePriorityCheckbox"
                 >
-                  <template v-slot:label>Make this a Priority Request <b>($100.00)</b></template>
+                  <template #label>
+                    Make this a Priority Request <b>($100.00)</b>
+                  </template>
                 </v-checkbox>
               </div>
             </template>
