@@ -155,4 +155,12 @@ export default class NestedSelect extends Vue {
 ::v-deep .v-list-item:has(.v-list-item__content.hide-me) {
   display: none;
 }
+::v-deep .v-list-item {
+  min-height: auto;
+}
+/* Hide and remove space for disabled list items */
+//Makes the nested select work for firefox.
+.v-list-item.v-list-item--disabled.theme--light .v-list-item__content.hide-me {
+  display: none;
+}
 </style>
