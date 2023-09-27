@@ -161,6 +161,15 @@ export class SearchMixin extends Mixins(CommonMixin) {
     return XproMapping.CHG.includes(this.getSearchBusiness?.legalType)
   }
 
+  /** Whether company can change name. */
+  get isNameChangeable (): boolean {
+    const corpType = this.getSearchBusiness?.legalType as unknown as CorpTypeCd
+    return (
+      BcMapping.REH.includes(this.corpTypeToEntityType(corpType)) ||
+      XproMapping.REH.includes(this.corpTypeToEntityType(corpType))
+    )
+  }
+
   /** Whether the selected XPRO is restorable. */
   get isSelectedXproAndRestorable (): boolean {
     return XproMapping.REH.includes(this.getSearchBusiness?.legalType)

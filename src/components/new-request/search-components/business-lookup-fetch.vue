@@ -62,7 +62,9 @@ export default class BusinessLookupFetch extends Mixins(CommonMixin, SearchMixin
         if (this.isConversion) {
           return this.isAlterable || 'This business cannot alter their business type'
         } else if (this.isRestoration) {
-          return this.isRestorable || 'This business cannot be restored.'
+          return this.isRestorable || 'This business cannot be restored'
+        } else if (this.isChangeName) {
+          return this.isNameChangeable || 'This business cannot change their name'
         }
         return true
       }]
