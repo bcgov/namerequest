@@ -210,7 +210,7 @@ export default class NamexServices {
 
       let error_id = 'checkout-name-requests-error'
       if (err instanceof AxiosError && err.response.status === 423) {
-        // Editing is not allowed when the request is being edited by another user 
+        // Editing is not allowed when the request is being edited by another user
         // or is in a state other than 'DRAFT'
         error_id = 'edit-lock-error'
       }
