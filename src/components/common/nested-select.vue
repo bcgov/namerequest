@@ -155,11 +155,11 @@ export default class NestedSelect extends Vue {
 ::v-deep .v-list-item:has(.v-list-item__content.hide-me) {
   display: none;
 }
-//Removes empty spaces on nested select when the list is collapsed
+// Removes empty spaces on nested select when the list is collapsed
 ::v-deep .v-list-item {
   min-height: auto;
 }
-//Hide and remove space for disabled list items and makes the nested select work for firefox
+// Hide and remove space for disabled list items and makes the nested select work for firefox
 .v-list-item.v-list-item--disabled.theme--light .v-list-item__content.hide-me {
   display: none;
 }
