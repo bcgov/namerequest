@@ -1,9 +1,9 @@
 <template>
   <!-- once in Summary state, need to re-mount to reuse this component -->
   <div
-  v-if="state !== States.SUMMARY"
-  id="business-lookup"
->
+    v-if="state !== States.SUMMARY"
+    id="business-lookup"
+  >
     <v-autocomplete
       filled
       no-filter
@@ -55,10 +55,8 @@
               {{ item.name }}
             </div>
           </v-col>
-          <v-col cols="2">
-            <div class="result-btn">
-                Select
-            </div>
+          <v-col cols="2" class="result-btn">
+              Select
           </v-col>
         </v-row>
       </template>
@@ -197,7 +195,7 @@ p {
   }
 }
 .result-btn {
-  color: rgb(0, 162, 255)
+  color: $app-blue
 }
 // prevent Magnify icon from being rotated when list is displayed
 ::v-deep .v-input__icon .mdi-magnify {
