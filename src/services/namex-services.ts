@@ -519,7 +519,11 @@ export default class NamexServices {
       err?.response && console.log('postNameRequest(), response =', err.response) // eslint-disable-line no-console
       const msg = await this.handleApiError(err, 'Could not post name requests')
       console.error('postNameRequest() =', msg) // eslint-disable-line no-console
-      await errorModule.setAppError({ id: 'post-name-requests-error', error: msg } as ErrorI)
+      let error_id = 'post-name-requests-error'
+      if (err instanceof AxiosError && err.response.data.message === 'The request with same name is already in process.') {
+        error_id = 'entry-already-exists'
+      }
+      await errorModule.setAppError({ id: error_id, error: msg } as ErrorI)
       return null
     }
   }
