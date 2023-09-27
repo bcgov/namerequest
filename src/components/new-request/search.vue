@@ -323,7 +323,7 @@
     <template v-if="showCheckNameButton">
       <v-row
         justify="center"
-        class="mt-6"
+        class="mt-10"
       >
         <v-col cols="auto">
           <v-btn
