@@ -165,8 +165,8 @@ export class SearchMixin extends Mixins(CommonMixin) {
   get isNameChangeable (): boolean {
     const corpType = this.getSearchBusiness?.legalType as unknown as CorpTypeCd
     return (
-      BcMapping.REH.includes(this.corpTypeToEntityType(corpType)) ||
-      XproMapping.REH.includes(this.corpTypeToEntityType(corpType))
+      BcMapping.CHG.includes(this.corpTypeToEntityType(corpType)) ||
+      XproMapping.CHG.includes(this.corpTypeToEntityType(corpType))
     )
   }
 
