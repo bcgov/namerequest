@@ -5,6 +5,8 @@
     id="business-lookup"
   >
     <v-autocomplete
+      filled
+      no-filter
       :hide-no-data="state != States.NO_RESULTS"
       :items="searchResults"
       :loading="state === States.SEARCHING"
@@ -13,15 +15,12 @@
       append-icon="mdi-magnify"
       autocomplete="chrome-off"
       autofocus
-      filled
       hint="Search by name, incorporation or registration number of an existing business"
-      item-text="name"
-      item-value="identifier"
-      :label="lookupLabel"
+      item-text="identifier"
       hide-details="auto"
-      no-filter
       persistent-hint
       return-object
+      :label="lookupLabel"
       @input="onItemSelected($event)"
       @keydown.enter.native.prevent
     >
@@ -42,6 +41,20 @@
         <p class="pl-5">
           Ensure you have entered the correct business name or number.
         </p>
+      </template>
+      <!-- Customize the results template -->
+      <template #item="{ item }">
+        <v-row class="business-lookup-result pt-1">
+          <v-col cols="3" class="result-identifier">
+              {{ item.identifier }}
+          </v-col>
+          <v-col cols="7" class="result-name">
+              {{ item.name }}
+          </v-col>
+          <v-col cols="2" class="result-btn">
+              Select
+          </v-col>
+        </v-row>
       </template>
     </v-autocomplete>
   </div>
@@ -177,7 +190,9 @@ p {
     color: $app-green;
   }
 }
-
+.result-btn {
+  color: $app-blue
+}
 // prevent Magnify icon from being rotated when list is displayed
 ::v-deep .v-input__icon .mdi-magnify {
   -webkit-transform: none !important;
