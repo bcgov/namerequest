@@ -14,10 +14,9 @@
           For assistance, please contact BC Registries staff:
         </v-card-text>
       </div>
-      <div v-if="isExists">
+      <div v-else-if="isExists">
         <v-card-text class="copy-normal pt-8">
-          You Have Already created a request with same name.
-          Please go back and change the names , or in order to edit please use manage my request tab.
+          You have already created a request with same name. Please go back and change the names or in order to edit please use manage my request tab.
           <br>
           <br>
           For assistance, please contact BC Registries staff:
@@ -67,6 +66,7 @@ export default class ErrorDialog extends Vue {
   async hideModal () {
     await ErrorModule.clearAppErrors()
   }
+  
   get isExists () {
     const errors = ErrorModule[ErrorTypes.GET_ERRORS]
     return errors[0] && errors[0].id === 'entry-already-exists'
