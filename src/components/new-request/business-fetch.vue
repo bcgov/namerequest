@@ -91,7 +91,6 @@ export default class BusinessFetch extends Vue {
     // return result
     if (result) {
       this.state = States.SUMMARY
-      result.legalType = 'PA'
       return result
     }
 
