@@ -59,8 +59,8 @@ export default class BusinessFetch extends Vue {
   private validate (): boolean {
     if (!this.searchField) {
       this.errorMessages = ['Required field']
-    } else if (!/^(A|BC|C|CP|FM|LLC|LP|PA|PAR|S|XCP|XL|XP|XS)( |)\d{7}$/i.test(this.searchField)) {
-      this.errorMessages = [this.hint]
+    } else if (!/^[a-zA-Z]+( |)\d{7}$/i.test(this.searchField)) {
+      this.errorMessages = ['Invalid format for incorporation or registration number']
     } else {
       this.errorMessages = []
     }
