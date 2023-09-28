@@ -480,6 +480,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (
       this.isConversion &&
       this.isNumberedCompany &&
+      this.isAlterOnline(this.getConversionType) &&
       this.isSupportedAlteration(this.getConversionType)
     ) return true
 
