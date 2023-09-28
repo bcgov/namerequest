@@ -59,7 +59,7 @@ export default class BusinessFetch extends Vue {
   private validate (): boolean {
     if (!this.searchField) {
       this.errorMessages = ['Required field']
-    } else if (!/^(A|BC|C|CP|FM|LLC|LP|S|XCP|XL|XP|XS)( |)\d{7}$/i.test(this.searchField)) {
+    } else if (!/^(A|BC|C|CP|FM|LLC|LP|PA|PAR|S|XCP|XL|XP|XS)( |)\d{7}$/i.test(this.searchField)) {
       this.errorMessages = [this.hint]
     } else {
       this.errorMessages = []
@@ -91,6 +91,7 @@ export default class BusinessFetch extends Vue {
     // return result
     if (result) {
       this.state = States.SUMMARY
+      result.legalType = 'PA'
       return result
     }
 
