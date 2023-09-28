@@ -2,7 +2,7 @@
   <v-container
     id="search-container"
     fluid
-    class="copy-normal pt-10 px-10 pb-12"
+    class="copy-normal pt-10 px-10 pb-10"
   >
     <header class="h6">
       Get started by selecting an action:
@@ -323,7 +323,7 @@
     <template v-if="showCheckNameButton">
       <v-row
         justify="center"
-        class="mt-10"
+        class="mt-7"
       >
         <v-col cols="auto">
           <v-btn
