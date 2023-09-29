@@ -59,7 +59,7 @@ export default class BusinessFetch extends Vue {
   private validate (): boolean {
     if (!this.searchField) {
       this.errorMessages = ['Required field']
-    } else if (!/^[a-zA-Z]+( |)\d{7}$/i.test(this.searchField)) {
+    } else if (!/^[a-zA-Z]{1,3}( |)\d{7}$/i.test(this.searchField)) {
       this.errorMessages = ['Invalid format for incorporation or registration number']
     } else {
       this.errorMessages = []
@@ -86,7 +86,7 @@ export default class BusinessFetch extends Vue {
     // perform search
     this.state = States.SEARCHING
     this.searchField = this.searchField.replace(' ', '').toUpperCase()
-    const result = await this.searchBusiness(this.searchField).catch(e => null)
+    const result = await this.searchBusiness(this.searchField).catch(() => {})
 
     // return result
     if (result) {
