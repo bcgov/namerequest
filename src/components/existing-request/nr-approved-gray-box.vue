@@ -119,13 +119,13 @@
             <v-icon small>
               mdi-phone
             </v-icon>&nbsp;Canada and U.S. Toll Free:
-            <a href="tel:+1877-370-1033">1-877-370-1033</a>
+            <a href="tel:+1877-526-1526">1-877-526-1526</a>
           </p>
           <p>
             <v-icon small>
               mdi-phone
             </v-icon>&nbsp;Victoria Office:
-            <a href="tel:250-370-1033">250-370-1033</a>
+            <a href="tel:250-387-7848">250-387-7848</a>
           </p>
           <p>
             <v-icon small>
