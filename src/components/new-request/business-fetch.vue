@@ -44,7 +44,7 @@ export default class BusinessFetch extends Vue {
   // Store action
   @Action searchBusiness!: (corpNum: string) => Promise<BusinessSearchIF>
 
-  readonly hint = 'Enter the incorporation or registration number of the existing business'
+  readonly hint = 'Enter the incorporation or registration number (e.g. BC1234567)'
 
   /** V-model for search field. */
   searchField = ''
