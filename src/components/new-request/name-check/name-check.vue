@@ -1013,6 +1013,11 @@ export default class NameCheck extends Vue {
   transition: none !important;
 }
 
+::v-deep .theme--light.v-input--is-disabled input, .theme--light.v-input--is-disabled textarea {
+  background-color: #ffffff;
+  color: $gray9;
+}
+
 ::v-deep .theme--light.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) > .v-icon {
   color: white;
   transition: none !important;
