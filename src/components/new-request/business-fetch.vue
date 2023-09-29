@@ -44,7 +44,7 @@ export default class BusinessFetch extends Vue {
   // Store action
   @Action searchBusiness!: (corpNum: string) => Promise<BusinessSearchIF>
 
-  readonly hint = 'Enter the incorporation or registration number of the existing business'
+  readonly hint = 'Enter the incorporation or registration number (e.g. BC1234567)'
 
   /** V-model for search field. */
   searchField = ''
@@ -59,8 +59,8 @@ export default class BusinessFetch extends Vue {
   private validate (): boolean {
     if (!this.searchField) {
       this.errorMessages = ['Required field']
-    } else if (!/^(A|BC|C|CP|FM|LLC|LP|S|XCP|XL|XP|XS)( |)\d{7}$/i.test(this.searchField)) {
-      this.errorMessages = [this.hint]
+    } else if (!/^[a-zA-Z]{1,3}( |)\d{7}$/i.test(this.searchField)) {
+      this.errorMessages = ['Invalid format for incorporation or registration number']
     } else {
       this.errorMessages = []
     }
@@ -86,7 +86,7 @@ export default class BusinessFetch extends Vue {
     // perform search
     this.state = States.SEARCHING
     this.searchField = this.searchField.replace(' ', '').toUpperCase()
-    const result = await this.searchBusiness(this.searchField).catch(e => null)
+    const result = await this.searchBusiness(this.searchField).catch(() => {})
 
     // return result
     if (result) {
