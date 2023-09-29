@@ -1013,8 +1013,9 @@ export default class NameCheck extends Vue {
   transition: none !important;
 }
 
+/* override the grayed out text to make it accessiable */
 ::v-deep .theme--light.v-input--is-disabled input, .theme--light.v-input--is-disabled textarea {
-  background-color: #ffffff;
+  background-color: white;
   color: $gray9;
 }
 
