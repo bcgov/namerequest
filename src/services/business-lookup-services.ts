@@ -57,10 +57,6 @@ export default class BusinessLookupServices {
       // filter out results without a valid identifier
       return results.filter(result => {
         const pattern = /^[A-Z]{1,3}\d{7}$/
-        // Check if status is HISTORICAL and result.status is active, exclude it
-        if (!status && result.status === 'ACTIVE') {
-          return false
-        }
         return pattern.test(result.identifier)
       })
     })
