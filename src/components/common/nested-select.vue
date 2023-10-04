@@ -19,7 +19,7 @@
     </template> -->
 
     <template #item="{ item }">
-      <v-list-item-content
+      <v-list-item
         v-if="item.isHeader"
         class="group-header border-top mx-4 py-4"
         @click.stop="toggleActionGroup(item.group)"
@@ -44,7 +44,7 @@
             {{ item.group === activeActionGroup ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
           </v-icon>
         </div>
-      </v-list-item-content>
+      </v-list-item>
 
       <!-- render but conditionally hide disabled list items, so that the v-select
       continues to display the current selection even when a different group is active -->
@@ -158,6 +158,8 @@ export default class NestedSelect extends Vue {
 // Removes empty spaces on nested select when the list is collapsed
 ::v-deep .v-list-item {
   min-height: auto;
+  display: list-item;
+  list-style:none;
 }
 // Hide and remove space for disabled list items and makes the nested select work for firefox
 .v-list-item.v-list-item--disabled.theme--light .v-list-item__content.hide-me {
