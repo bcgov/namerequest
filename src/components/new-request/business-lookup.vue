@@ -117,7 +117,7 @@ export default class BusinessLookup extends Vue {
     // safety check
     if (that.searchField && that.searchField.length > 2) {
       that.state = States.SEARCHING
-      that.searchResults = await BusinessLookupServices.search(that.searchField, this.searchStatus).catch(() => [])
+      that.searchResults = await BusinessLookupServices.search(that.searchField, that.searchStatus).catch(() => [])
 
       // display appropriate section
       that.state = (that.searchResults.length > 0) ? States.SHOW_RESULTS : States.NO_RESULTS
