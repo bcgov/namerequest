@@ -111,7 +111,8 @@ import { Routes } from '@/enums'
 import { BreadcrumbIF } from '@/interfaces'
 import {
   getRegistryDashboardBreadcrumb,
-  getStaffDashboardBreadcrumb
+  getStaffDashboardBreadcrumb,
+  getUserDashboardBreadcrumb
 } from '@/resources'
 import axios from 'axios'
 
@@ -172,6 +173,8 @@ export default class App extends Mixins(
   @Getter getNrId!: number
   @Getter isRoleStaff!: boolean
   @Getter isMobile!: boolean
+  @Getter getFolioNumber!: string
+  @Getter isAuthenticated!: boolean
 
   // Global actions
   @Action resetAnalyzeName!: ActionBindingIF
@@ -225,9 +228,13 @@ export default class App extends Mixins(
 
     // Set base crumbs based on user role
     // Staff don't want the home landing page and they can't access the Manage Business Dashboard
-    if (this.isRoleStaff) {
-      // If staff, set StaffDashboard as home crumb
-      crumbs.unshift(getStaffDashboardBreadcrumb())
+    console.log(this.isAuthenticated)
+    if (this.isAuthenticated) {
+      if (this.isRoleStaff) {
+        crumbs.unshift(getStaffDashboardBreadcrumb())
+      } else {
+        crumbs.unshift(getUserDashboardBreadcrumb())
+      }
     } else {
       // For non-staff, set Home crumb
       crumbs.unshift(getRegistryDashboardBreadcrumb())

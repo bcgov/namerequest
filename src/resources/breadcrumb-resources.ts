@@ -13,7 +13,13 @@ export function getRegistryDashboardBreadcrumb (): BreadcrumbIF {
     href: `${registryHomeUrl}dashboard/${getParams()}`
   }
 }
-
+export function getUserDashboardBreadcrumb (): BreadcrumbIF {
+  const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
+  return {
+    text: 'BC Registries Dashboard',
+    href: `${registryHomeUrl}dashboard/${getParams()}`
+  }
+}
 export function getStaffDashboardBreadcrumb (): BreadcrumbIF {
   const businessUrl = sessionStorage.getItem('BUSINESSES_URL')
   return {
