@@ -173,7 +173,6 @@ export default class App extends Mixins(
   @Getter getNrId!: number
   @Getter isRoleStaff!: boolean
   @Getter isMobile!: boolean
-  @Getter getFolioNumber!: string
   @Getter isAuthenticated!: boolean
 
   // Global actions
