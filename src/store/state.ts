@@ -10,7 +10,8 @@ import {
 export const stateModel: StateModelIF = {
   common: {
     currentJsDate: null,
-    keycloakRoles: []
+    keycloakRoles: [],
+    isAuthenticated: false
   },
   newRequestModel: {
     actingOnOwnBehalf: false,

@@ -3,8 +3,9 @@ import { NameCheckModelIF, StaffPaymentIF, RefundParamsIF } from '@/interfaces'
 
 export interface StateModelIF {
   common: {
-    currentJsDate: Date,
+    currentJsDate: Date
     keycloakRoles: Array<string>
+    isAuthenticated: boolean
   }
   newRequestModel: NewRequestIF
   staffPayment: StaffPaymentIF

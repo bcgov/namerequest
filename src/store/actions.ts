@@ -2,7 +2,6 @@ import querystring from 'qs'
 import axios from 'axios'
 import {
   CompanyTypes,
-  EntityStates,
   EntityTypes,
   Location,
   NameCheckAnalysisJurisdiction,
@@ -718,6 +717,10 @@ export const setNrRequiredModalVisible = ({ commit }, isVisible: boolean): void 
 
 export const setRequestExaminationOrProvideConsent = ({ commit }, requestExamOrConsent: any): void => {
   commit('mutateRequestExaminationOrProvideConsent', requestExamOrConsent)
+}
+
+export const setIsAuthenticated = ({ commit }, val: boolean): void => {
+  commit('mutateIsAuthenticated', val)
 }
 
 export const setKeycloakRoles = ({ commit }, keycloakRoles: string[]): void => {

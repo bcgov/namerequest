@@ -16,7 +16,6 @@ import {
   NameDesignationI,
   NameRequestI,
   RefundParamsIF,
-  RequestActionMappingI,
   RequestActionsI,
   RequestNameI,
   RequestOrConsentIF,
@@ -38,7 +37,6 @@ import {
   PriorityCode,
   XproNameType
 } from '@/enums'
-import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 // List Data
 // NB: can't use `this.$xxx` because we don't have `this` (ie, Vue)
@@ -64,11 +62,6 @@ export const isMobile = (state: StateIF): boolean => {
   const width = (state.stateModel.windowWidth || window.innerWidth)
   const vuetifySm = getVuetify().framework.breakpoint.thresholds.sm
   return (width < vuetifySm)
-}
-
-/** True if user is authenticated, else False. */
-export const isAuthenticated = (): boolean => {
-  return Boolean(sessionStorage.getItem(SessionStorageKeys.KeyCloakToken))
 }
 
 export const getCurrentJsDate = (state: StateIF): Date => {
@@ -1122,6 +1115,11 @@ export const getConditionalNameReservation = (state: StateIF): ConditionalReqI =
     ...getCorpNumForReservation(state) // must be last
   }
   return data
+}
+
+/** Whether user is authenticated. */
+export const isAuthenticated = (state: StateIF): boolean => {
+  return state.stateModel.common.isAuthenticated
 }
 
 /** The user's keycloak roles. */

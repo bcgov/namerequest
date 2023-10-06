@@ -454,6 +454,10 @@ export const mutateUserCancelledAnalysis = (state: StateIF, userCancelledAnalysi
   state.stateModel.newRequestModel.userCancelledAnalysis = userCancelledAnalysis
 }
 
+export const mutateIsAuthenticated = (state: StateIF, val: boolean) => {
+  state.stateModel.common.isAuthenticated = val
+}
+
 export const mutateKeycloakRoles = (state: StateIF, keyCloakRoles: Array<string>) => {
   state.stateModel.common.keycloakRoles = keyCloakRoles
 }
