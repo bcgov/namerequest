@@ -14,7 +14,7 @@ export function getRegistryDashboardBreadcrumb (): BreadcrumbIF {
   }
 }
 
-export function getUserDashboardBreadcrumb (): BreadcrumbIF {
+export function getRegistryHomeBreadcrumb (): BreadcrumbIF {
   const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
   return {
     text: 'BC Registries Dashboard',

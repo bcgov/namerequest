@@ -1134,6 +1134,11 @@ export const isRoleStaff = (state: StateIF): boolean => {
   return state.stateModel.common.keycloakRoles.includes('staff')
 }
 
+/** Whether the user has "staff" keycloak role. */
+export const isRoleBasic = (state: StateIF): boolean => {
+  return state.stateModel.common.keycloakRoles.includes('basic') || state.stateModel.common.keycloakRoles.includes('premium')
+}
+
 /** The staff payment. */
 export const getStaffPayment = (state: StateIF): StaffPaymentIF => {
   return state.stateModel.staffPayment
