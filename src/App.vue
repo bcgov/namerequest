@@ -171,10 +171,10 @@ export default class App extends Mixins(
   @Getter getDisplayedComponent!: string
   @Getter getIncorporateNowErrorStatus!: boolean
   @Getter getNrId!: number
+  @Getter isAuthenticated!: boolean
   @Getter isRoleStaff!: boolean
   @Getter isMobile!: boolean
-  @Getter isRoleBasic!: boolean
-
+  
   // Global actions
   @Action resetAnalyzeName!: ActionBindingIF
   @Action setName!: ActionBindingIF
@@ -230,10 +230,9 @@ export default class App extends Mixins(
 
     if (this.isRoleStaff) {
       crumbs.unshift(getStaffDashboardBreadcrumb())
-    } else if (this.isRoleBasic) {
+    } else if (this.isAuthenticated) {
       crumbs.unshift(getRegistryHomeBreadcrumb())
     } else {
-      // If not logged in, set Registry Home Breadcrumb
       crumbs.unshift(getRegistryDashboardBreadcrumb())
     }
     return crumbs
