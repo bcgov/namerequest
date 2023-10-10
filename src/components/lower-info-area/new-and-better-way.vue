@@ -32,10 +32,9 @@
           </v-col>
           <v-col cols="12">
             <ul>
-              <li><span>Find out if you can have your name right away (<i>Coming soon</i>)</span></li>
               <li><span>Interactive help building a name</span></li>
               <li><span>Get alternatives when your name is not available</span></li>
-              <li><span>Guidance picking the most appropriate business structure (<i>Coming soon</i>)</span></li>
+              <li><span>Guidance picking the most appropriate business structure</span></li>
               <li><span>Know how long it will take to get results for your name request</span></li>
               <li><span>Self-serve options to help track and manage your name request</span></li>
             </ul>
