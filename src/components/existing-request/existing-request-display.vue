@@ -862,7 +862,7 @@ export default class ExistingRequestDisplay extends Mixins(
   }
 
   protected created (): void {
-    this.$root.$on('paymentComplete', (flag = false) => { this.pendingPayment = null })
+    this.$root.$on('paymentComplete', () => { this.pendingPayment = null })
   }
 
   protected destroyed (): void {

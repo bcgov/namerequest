@@ -114,6 +114,7 @@ export default class NestedSelect extends Vue {
   }
 
   @Emit('change')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   emitChangeEvent (item: any): void {}
 }
 </script>

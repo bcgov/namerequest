@@ -97,11 +97,14 @@ export default class NameInput extends Vue {
 
   get message (): string[] {
     if (this.getErrors.includes('name')) {
-      if (this.isMrasSearch) {
-        return ['Please enter a corporation number to search for']
-      } else {
-        return ['Please enter the business\'s full legal name in home jurisdiction']
+      if (this.isXproFlow) {
+        if (this.isMrasJurisdiction && !this.getHasNoCorpNum) {
+          return ['Please enter a corporation number to search for']
+        } else {
+          return ['Please enter the business\'s full legal name in home jurisdiction']
+        }
       }
+      return ['Please enter a name for the business']
     }
 
     if (this.getErrors.includes('length')) {
