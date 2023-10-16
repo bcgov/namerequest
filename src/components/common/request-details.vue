@@ -27,14 +27,14 @@
           <!-- If there's no contact person (agent / lawyer / etc.) the applicant is the contact -->
           <li>{{ `${applicantName}` }}</li>
           <li>
-            {{ `${applicant.addrLine1 ? applicant.addrLine1 : ''} ${applicant.addrLine2 ? applicant.addrLine2 : ''}` }}
+            {{ `${applicant.addrLine1 || ''} ${applicant.addrLine2 || ''}` }}
           </li>
           <li>
-            {{ `${applicant.city ? applicant.city : ''}, ${applicant.stateProvinceCd ? applicant.stateProvinceCd : ''}` }}
+            {{ `${applicant.city || ''}, ${applicant.stateProvinceCd || ''}` }}
           </li>
           <li>
             {{ `${applicant.countryTypeCd === Location.CA ? 'Canada' : applicant.countryTypeCd},
-             ${applicant.postalCd ? applicant.postalCd : ''}` }}
+             ${applicant.postalCd || ''}` }}
           </li>
         </ul>
       </v-col>

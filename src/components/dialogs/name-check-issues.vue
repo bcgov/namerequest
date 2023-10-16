@@ -100,6 +100,7 @@ export default class NameCheckIssuesDialog extends Vue {
   // Global getter
   @Getter isMobile!: boolean
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   @Emit() proceed (val: boolean) { }
 }
 </script>

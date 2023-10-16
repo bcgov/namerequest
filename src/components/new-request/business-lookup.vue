@@ -45,14 +45,23 @@
       <!-- Customize the results template -->
       <template #item="{ item }">
         <v-row class="business-lookup-result pt-1">
-          <v-col cols="3" class="result-identifier">
-              {{ item.identifier }}
+          <v-col
+            cols="3"
+            class="result-identifier"
+          >
+            {{ item.identifier }}
           </v-col>
-          <v-col cols="7" class="result-name">
-              {{ item.name }}
+          <v-col
+            cols="7"
+            class="result-name"
+          >
+            {{ item.name }}
           </v-col>
-          <v-col cols="2" class="result-btn">
-              Select
+          <v-col
+            cols="2"
+            class="result-btn"
+          >
+            Select
           </v-col>
         </v-row>
       </template>
