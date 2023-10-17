@@ -19,7 +19,8 @@ import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-cod
 import removeAccents from 'remove-accents'
 import { GetFeatureFlag, Sleep, sanitizeName } from '@/plugins'
 import NamexServices from '@/services/namex-services'
-import { MRAS_MIN_LENGTH, MRAS_MAX_LENGTH } from '@/components/new-request/constants'
+import { DFLT_MIN_LENGTH, DFLT_MAX_LENGTH, MRAS_MIN_LENGTH, MRAS_MAX_LENGTH }
+  from '@/components/new-request/constants'
 
 // List Data
 import { CanJurisdictions, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
@@ -1062,15 +1063,20 @@ export const startAnalyzeName = async ({ commit, getters }) => {
       commit('setErrors', 'name')
       return
     }
-    if (getters.getName.length < MRAS_MIN_LENGTH) {
-      commit('setErrors', 'length')
+
+    const min = getters.isXproFlow ? MRAS_MIN_LENGTH : DFLT_MIN_LENGTH
+    const max = getters.isXproFlow ? MRAS_MAX_LENGTH : DFLT_MAX_LENGTH
+
+    if (getters.getName.length < min) {
+      commit('setErrors', 'min_length')
       return
     }
-    if (getters.getName.length > MRAS_MAX_LENGTH) {
-      commit('setErrors', 'mras_length_exceeded')
+    if (getters.getName.length > max) {
+      commit('setErrors', 'max_length')
       return
     }
   }
+
   if (getters.getErrors.length > 0) {
     return
   }
