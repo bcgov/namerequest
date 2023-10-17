@@ -100,22 +100,22 @@ export const BusinessLookupRequestActions = [
 /** Entity types that require business lookup. */
 export const BusinessLookupEntityTypes = [
   EntityTypes.A,
-  EntityTypes.BC,
-  EntityTypes.BEN,
+  EntityTypes.BC, // Benefit Company
+  EntityTypes.BEN, // invalid?
   EntityTypes.C,
   EntityTypes.CC,
   EntityTypes.CCC,
   EntityTypes.CUL,
   EntityTypes.CP,
-  EntityTypes.CR,
+  EntityTypes.CR, // BC Limited Company
+  EntityTypes.FR, // Sole Proprietorship
   EntityTypes.GP,
   EntityTypes.LLC,
   EntityTypes.LP,
   EntityTypes.PA,
   EntityTypes.PAR,
   EntityTypes.SO,
-  EntityTypes.SP,
-  EntityTypes.ULC,
+  EntityTypes.UL,
   EntityTypes.XCP,
   EntityTypes.XCR,
   EntityTypes.XL,
