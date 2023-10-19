@@ -16,7 +16,7 @@
       </div>
       <div v-else-if="isExists">
         <v-card-text class="copy-normal pt-8">
-          You have already created a request with same name. Please go back and change the names or in order to edit please use "Manage My Name Request" tab.
+          You have already created an identical name request. To request a different name, please go back and change the name to request and try again.
           <br>
           <br>
           For assistance, please contact BC Registries staff:
