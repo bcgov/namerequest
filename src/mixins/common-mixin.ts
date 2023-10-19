@@ -156,12 +156,6 @@ export class CommonMixin extends Vue {
     return (nr?.priorityCd === PriorityCode.YES)
   }
 
-  /** Returns true if the specified entity type is allowed for Incorporation / Registration. */
-  isSupportedIncorporationRegistration (type: EntityTypes): boolean {
-    const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
-    return supportedEntites.includes(type)
-  }
-
   /**
    * Returns true if society NRs are enabled -- in case societies NRs need to be released
    * separately from the Way of Navigating feature changes.
@@ -177,6 +171,12 @@ export class CommonMixin extends Vue {
       EntityTypes.DBA,
       EntityTypes.GP
     ].includes(nr?.legalType)
+  }
+
+  /** Returns true if the specified entity type is allowed for incorporation / registration. */
+  isSupportedIncorporationRegistration (type: EntityTypes): boolean {
+    const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
+    return supportedEntites.includes(type)
   }
 
   /** Returns true if the specified request type is allowed for alteration (conversion). */

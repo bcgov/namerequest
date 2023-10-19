@@ -560,13 +560,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       !this.isSupportedContinuationIn(this.getEntityTypeCd)
     ) return true
 
-    // Conditional for Continuation In Flow.
-    if (
-      this.isContinuationIn &&
-      this.isNumberedCompany &&
-      !this.isSupportedContinuationIn(this.getEntityTypeCd)
-    ) return true
-
     return false
   }
 
