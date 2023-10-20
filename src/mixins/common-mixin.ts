@@ -59,16 +59,29 @@ export class CommonMixin extends Vue {
    */
   entityTypeToCorpType (entityType: EntityTypes): CorpTypeCd {
     switch (entityType) {
+      case EntityTypes.A: return CorpTypeCd.EXTRA_PRO_A // same as XUL
       case EntityTypes.BC: return CorpTypeCd.BENEFIT_COMPANY
       case EntityTypes.CC: return CorpTypeCd.BC_CCC
       case EntityTypes.CP: return CorpTypeCd.COOP
       case EntityTypes.CR: return CorpTypeCd.BC_COMPANY
+      case EntityTypes.DBA: return CorpTypeCd.SOLE_PROP // same as FR
+      case EntityTypes.FI: return CorpTypeCd.FINANCIAL
       case EntityTypes.FR: return CorpTypeCd.SOLE_PROP
+      case EntityTypes.GP: return CorpTypeCd.PARTNERSHIP
+      case EntityTypes.LL: return CorpTypeCd.LL_PARTNERSHIP
+      case EntityTypes.LLC: return CorpTypeCd.LIMITED_CO // same as RLC
+      case EntityTypes.LP: return CorpTypeCd.LIM_PARTNERSHIP
+      case EntityTypes.PA: return CorpTypeCd.PRIVATE_ACT
+      case EntityTypes.PAR: return CorpTypeCd.PARISHES
       case EntityTypes.RLC: return CorpTypeCd.LIMITED_CO
       case EntityTypes.SO: return CorpTypeCd.SOCIETY
       case EntityTypes.UL: return CorpTypeCd.BC_ULC_COMPANY
+      case EntityTypes.XCP: return CorpTypeCd.XPRO_COOP
+      case EntityTypes.XCR: return CorpTypeCd.XPRO_CORPORATION
+      case EntityTypes.XL: return CorpTypeCd.XPRO_LL_PARTNR // same as XLL
       case EntityTypes.XLL: return CorpTypeCd.XPRO_LL_PARTNR
       case EntityTypes.XLP: return CorpTypeCd.XPRO_LIM_PARTNR
+      case EntityTypes.XP: return CorpTypeCd.XPRO_LIM_PARTNR // same as XLP
       case EntityTypes.XSO: return CorpTypeCd.XPRO_SOCIETY
       case EntityTypes.XUL: return CorpTypeCd.EXTRA_PRO_A
       default: return null
@@ -76,7 +89,7 @@ export class CommonMixin extends Vue {
   }
 
   /**
-   * Entities UI codes to Name Request Code
+   * Entities UI codes to Name Request Code.
    * @example ULC --> UL
    */
   corpTypeToEntityType (entityType: CorpTypeCd): EntityTypes {
@@ -87,9 +100,17 @@ export class CommonMixin extends Vue {
       case CorpTypeCd.BC_ULC_COMPANY: return EntityTypes.UL
       case CorpTypeCd.COOP: return EntityTypes.CP
       case CorpTypeCd.EXTRA_PRO_A: return EntityTypes.XUL
+      case CorpTypeCd.FINANCIAL: return EntityTypes.FI
+      case CorpTypeCd.PARTNERSHIP: return EntityTypes.GP
       case CorpTypeCd.LIMITED_CO: return EntityTypes.RLC
+      case CorpTypeCd.LIM_PARTNERSHIP: return EntityTypes.LP
+      case CorpTypeCd.LL_PARTNERSHIP: return EntityTypes.LL
+      case CorpTypeCd.PRIVATE_ACT: return EntityTypes.PA
+      case CorpTypeCd.PARISHES: return EntityTypes.PAR
       case CorpTypeCd.SOCIETY: return EntityTypes.SO
       case CorpTypeCd.SOLE_PROP: return EntityTypes.FR
+      case CorpTypeCd.XPRO_COOP: return EntityTypes.XCP
+      case CorpTypeCd.XPRO_CORPORATION: return EntityTypes.XCR
       case CorpTypeCd.XPRO_LIM_PARTNR: return EntityTypes.XLP
       case CorpTypeCd.XPRO_LL_PARTNR: return EntityTypes.XLL
       case CorpTypeCd.XPRO_SOCIETY: return EntityTypes.XSO
@@ -135,12 +156,6 @@ export class CommonMixin extends Vue {
     return (nr?.priorityCd === PriorityCode.YES)
   }
 
-  /** Returns true if the specified entity type is allowed for Incorporation / Registration. */
-  isSupportedIncorporationRegistration (type: EntityTypes): boolean {
-    const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
-    return supportedEntites.includes(type)
-  }
-
   /**
    * Returns true if society NRs are enabled -- in case societies NRs need to be released
    * separately from the Way of Navigating feature changes.
@@ -156,6 +171,12 @@ export class CommonMixin extends Vue {
       EntityTypes.DBA,
       EntityTypes.GP
     ].includes(nr?.legalType)
+  }
+
+  /** Returns true if the specified entity type is allowed for incorporation / registration. */
+  isSupportedIncorporationRegistration (type: EntityTypes): boolean {
+    const supportedEntites = GetFeatureFlag('supported-incorporation-registration-entities')
+    return supportedEntites.includes(type)
   }
 
   /** Returns true if the specified request type is allowed for alteration (conversion). */

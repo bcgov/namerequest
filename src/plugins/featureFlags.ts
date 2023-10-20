@@ -8,15 +8,21 @@ declare const window: any
  * Uses "namerequest" project (per LD client id in config).
  */
 const defaultFlagSet: LDFlagSet = {
-  'enable-priority-checkbox': false, // by default, priority is disabled
-  'disable-analysis': true, // by default, analysis is disabled
-  'hardcoded_regular_wait_time': 0, // by default, use actual wait time
-  'hardcoded_priority_wait_time': 0, // by default, use actual wait time
-  'sentry-enable': false, // by default, no sentry logs
   'banner-text': '', // by default, there is no banner text
-  'enable-web-chat': false, // by default, old webchat is disabled
+  'disable-analysis': true, // by default, analysis is disabled
   'enable-genesys-web-message': false, // by default, genesys web message is disabled
-  'enable-society': false // by default society is disabled
+  'enable-priority-checkbox': false, // by default, priority is disabled
+  'enable-society': false, // by default society is disabled
+  'enable-web-chat': false, // by default, old webchat is disabled
+  'hardcoded_priority_wait_time': 0, // by default, use actual wait time
+  'hardcoded_regular_wait_time': 0, // by default, use actual wait time
+  'sentry-enable': false, // by default, no sentry logs
+  'supported-alteration-types': [],
+  'supported-amalgamation-entities': [],
+  'supported-continuation-in-entities': [],
+  'supported-incorporation-registration-entities': [],
+  'supported-name-change-entities': [],
+  'supported-restoration-entities': []
 }
 
 /**

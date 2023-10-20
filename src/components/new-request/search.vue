@@ -2,7 +2,7 @@
   <v-container
     id="search-container"
     fluid
-    class="copy-normal pt-10 px-10 pb-12"
+    class="copy-normal pt-10 px-10 pb-10"
   >
     <header class="h6">
       Get started by selecting an action:
@@ -104,48 +104,50 @@
       <template v-else-if="isChangeName">
         <BusinessLookupFetch />
 
-        <!-- XPRO jurisdiction -->
-        <Jurisdiction
-          v-if="isChangeNameXpro"
-          md="4"
-        />
-        <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
-
-        <!-- named company -->
-        <template v-if="isNamedCompany && !isFederal">
-          <v-col
-            cols="12"
-            :md="showDesignation || isChangeNameXpro ? '8' : '12'"
-          >
-            <NameInput
-              :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
-              @emit-corp-num-validity="corpNumValid = $event"
-            />
-          </v-col>
-          <Designation
-            v-if="showDesignation"
-            cols="12"
+        <template v-if="isNameChangeable">
+          <!-- XPRO jurisdiction -->
+          <Jurisdiction
+            v-if="isChangeNameXpro"
             md="4"
           />
+          <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
+
+          <!-- named company -->
+          <template v-if="isNamedCompany && !isFederal">
+            <v-col
+              cols="12"
+              :md="showDesignation || isChangeNameXpro ? '8' : '12'"
+            >
+              <NameInput
+                :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+                @emit-corp-num-validity="corpNumValid = $event"
+              />
+            </v-col>
+            <Designation
+              v-if="showDesignation"
+              cols="12"
+              md="4"
+            />
+          </template>
+
+          <!-- numbered company -->
+          <NumberedCompanyBullets v-if="isNumberedCompany" />
+
+          <!-- XPRO federal bullet text -->
+          <XproFederalBullets
+            v-if="isXproFlow && isFederal"
+            cols="12"
+          />
+
+          <!-- checkbox for MRAS jurisdiction -->
+          <v-col
+            v-if="isMrasJurisdiction"
+            cols="12"
+            class="d-flex justify-end"
+          >
+            <CorpNumberCheckbox />
+          </v-col>
         </template>
-
-        <!-- numbered company -->
-        <NumberedCompanyBullets v-if="isNumberedCompany" />
-
-        <!-- XPRO federal bullet text -->
-        <XproFederalBullets
-          v-if="isXproFlow && isFederal"
-          cols="12"
-        />
-
-        <!-- checkbox for MRAS jurisdiction -->
-        <v-col
-          v-if="isMrasJurisdiction"
-          cols="12"
-          class="d-flex justify-end"
-        >
-          <CorpNumberCheckbox />
-        </v-col>
       </template>
 
       <!-- Amalgamation flow -->
@@ -323,7 +325,7 @@
     <template v-if="showCheckNameButton">
       <v-row
         justify="center"
-        class="mt-10"
+        class="mt-7"
       >
         <v-col cols="auto">
           <v-btn
@@ -480,6 +482,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (
       this.isConversion &&
       this.isNumberedCompany &&
+      this.isAlterOnline(this.getConversionType) &&
       this.isSupportedAlteration(this.getConversionType)
     ) return true
 
@@ -557,13 +560,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       !this.isSupportedContinuationIn(this.getEntityTypeCd)
     ) return true
 
-    // Conditional for Continuation In Flow.
-    if (
-      this.isContinuationIn &&
-      this.isNumberedCompany &&
-      !this.isSupportedContinuationIn(this.getEntityTypeCd)
-    ) return true
-
     return false
   }
 
@@ -617,6 +613,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
     // Conditional for Change Name Flow.
     if (this.isChangeName) {
+      if (!this.isNameChangeable) return false
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
       if (this.getEntityTypeCd && this.isSociety) return true
     }

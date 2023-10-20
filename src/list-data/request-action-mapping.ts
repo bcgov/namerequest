@@ -61,33 +61,31 @@ export const BcMapping: RequestActionMappingI = {
 
 export const XproMapping: RequestActionMappingI = {
   AML: [
-    EntityTypes.XCR,
-    EntityTypes.XCP
+    EntityTypes.XCP, // maps to Corp Type "XCP"
+    EntityTypes.XCR // maps to Corp Type "XCR"
   ],
   ASSUMED: [
-    EntityTypes.XCR,
-    EntityTypes.RLC
+    EntityTypes.RLC, // maps to Corp Type "LLC"
+    EntityTypes.XCR // maps to Corp Type "XCR"
   ],
   REN: [
-    EntityTypes.XCR,
-    EntityTypes.XCP,
-    EntityTypes.RLC
+    EntityTypes.RLC, // maps to Corp Type "LLC"
+    EntityTypes.XCP, // maps to Corp Type "XCP"
+    EntityTypes.XCR // maps to Corp Type "XCR"
   ],
   REH: [
-    EntityTypes.A,
-    EntityTypes.LLC,
-    EntityTypes.XCP,
-    EntityTypes.XSO
+    EntityTypes.RLC, // maps to Corp Type "LLC"
+    EntityTypes.XCP, // maps to Corp Type "XCP"
+    EntityTypes.XSO, // maps to Corp Type "XS"
+    EntityTypes.XUL // maps to Corp Type "A"
   ],
   CHG: [
-    EntityTypes.A,
-    EntityTypes.LLC,
-    EntityTypes.XCP,
-    EntityTypes.XL,
-    EntityTypes.XLL,
-    EntityTypes.XLP,
-    EntityTypes.XP,
-    EntityTypes.XSO
+    EntityTypes.RLC, // maps to Corp Type "LLC"
+    EntityTypes.XCP, // maps to Corp Type "XCP"
+    EntityTypes.XLL, // maps to Corp Type "XL"
+    EntityTypes.XLP, // maps to Corp Type "XP"
+    EntityTypes.XSO, // maps to Corp Type "XS"
+    EntityTypes.XUL // maps to Corp Type "A"
   ]
 }
 
@@ -101,22 +99,22 @@ export const BusinessLookupRequestActions = [
 /** Entity types that require business lookup. */
 export const BusinessLookupEntityTypes = [
   EntityTypes.A,
-  EntityTypes.BC,
-  EntityTypes.BEN,
+  EntityTypes.BC, // Benefit Company
+  EntityTypes.BEN, // invalid?
   EntityTypes.C,
   EntityTypes.CC,
   EntityTypes.CCC,
   EntityTypes.CUL,
   EntityTypes.CP,
-  EntityTypes.CR,
+  EntityTypes.CR, // BC Limited Company
+  EntityTypes.FR, // Sole Proprietorship
   EntityTypes.GP,
   EntityTypes.LLC,
   EntityTypes.LP,
   EntityTypes.PA,
   EntityTypes.PAR,
   EntityTypes.SO,
-  EntityTypes.SP,
-  EntityTypes.ULC,
+  EntityTypes.UL,
   EntityTypes.XCP,
   EntityTypes.XCR,
   EntityTypes.XL,

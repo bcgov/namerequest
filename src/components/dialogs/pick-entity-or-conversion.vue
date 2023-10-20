@@ -60,8 +60,8 @@
                     </button>
                   </template>
                   <div
-                    v-for="(blurb, i) in entityBlurbs(conversion.value)"
-                    :key="`blurb-${i}`"
+                    v-for="(blurb, j) in entityBlurbs(conversion.value)"
+                    :key="`blurb-${j}`"
                   >
                     <span>{{ blurb }}</span>
                   </div>
@@ -131,14 +131,12 @@
                           {{ entity.text }}
                         </button>
                       </template>
-                      <template>
-                        <div
-                          v-for="(blurb, index) in entityBlurbs(entity.value)"
-                          :key="`blurb-${index}`"
-                        >
-                          <span :class="{ 'tooltip-bullet': index !== 0}">{{ blurb }}</span>
-                        </div>
-                      </template>
+                      <div
+                        v-for="(blurb, index) in entityBlurbs(entity.value)"
+                        :key="`blurb-${index}`"
+                      >
+                        <span :class="{ 'tooltip-bullet': index !== 0}">{{ blurb }}</span>
+                      </div>
                     </v-tooltip>
                   </td>
                 </tr>
@@ -191,14 +189,12 @@
                           {{ entity.text }}
                         </button>
                       </template>
-                      <template>
-                        <div
-                          v-for="(blurb, index) in entityBlurbs(entity.value)"
-                          :key="`blurb-xpro-${index}`"
-                        >
-                          <span :class="{ 'tooltip-bullet': index !== 0}">{{ blurb }}</span>
-                        </div>
-                      </template>
+                      <div
+                        v-for="(blurb, index) in entityBlurbs(entity.value)"
+                        :key="`blurb-xpro-${index}`"
+                      >
+                        <span :class="{ 'tooltip-bullet': index !== 0}">{{ blurb }}</span>
+                      </div>
                     </v-tooltip>
                   </td>
                 </tr>

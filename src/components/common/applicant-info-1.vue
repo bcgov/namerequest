@@ -608,7 +608,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
     // proceed only if we have any roles (ie, logged in), and not staff
     if (this.getKeycloakRoles.length > 0 && !this.isRoleStaff) {
       // pre-populate submitting party name
-      const userInfo = await AuthServices.fetchUserInfo().catch(e => null)
+      const userInfo = await AuthServices.fetchUserInfo().catch(() => null)
       if (userInfo) {
         this.setApplicantDetails([
           { name: 'firstName', value: userInfo.firstname || '' },
@@ -621,7 +621,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
       if (currentAccount) {
         const accountId = JSON.parse(currentAccount)?.id
         if (accountId) {
-          const orgInfo = await AuthServices.fetchOrgInfo(accountId).catch(e => null)
+          const orgInfo = await AuthServices.fetchOrgInfo(accountId).catch(() => null)
           if (orgInfo) {
             const mailingAddress = orgInfo.mailingAddress
             if (mailingAddress.street) {

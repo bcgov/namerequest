@@ -24,7 +24,8 @@ import { Component, Prop, Vue, Watch, Emit } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { sanitizeName } from '@/plugins'
-import { MRAS_MAX_LENGTH } from '@/components/new-request/constants'
+import { DFLT_MIN_LENGTH, DFLT_MAX_LENGTH, MRAS_MIN_LENGTH, MRAS_MAX_LENGTH }
+  from '@/components/new-request/constants'
 
 @Component({})
 export default class NameInput extends Vue {
@@ -52,10 +53,9 @@ export default class NameInput extends Vue {
   @Action setMrasSearchInfoModalVisible!: ActionBindingIF
   @Action startAnalyzeName!: ActionBindingIF
 
-  readonly err_msg = 'Cannot exceed ' + MRAS_MAX_LENGTH + ' characters'
-
   readonly defaultRules = [
-    v => (!v || v.length <= MRAS_MAX_LENGTH) || this.err_msg
+    v => (!v || v.length >= DFLT_MIN_LENGTH) || `Must be at least ${DFLT_MIN_LENGTH} characters`,
+    v => (!v || v.length <= DFLT_MAX_LENGTH) || `Cannot exceed ${DFLT_MAX_LENGTH} characters`
   ]
 
   nameInputComponent = null
@@ -66,10 +66,11 @@ export default class NameInput extends Vue {
   }
 
   /** The array of validation rules for the MRAS corp num. */
-  get mrasRules (): Function[] {
+  get mrasRules (): any[] {
     return [
       v => (/^[0-9a-zA-Z-]+$/.test(v) || 'A corporate number is required'),
-      v => (!v || v.length <= 40) || 'Cannot exceed 40 characters' // maximum character count
+      v => (!v || v.length >= MRAS_MIN_LENGTH) || `Must be at least ${MRAS_MIN_LENGTH} characters`,
+      v => (!v || v.length <= MRAS_MAX_LENGTH) || `Cannot exceed ${MRAS_MAX_LENGTH} characters`
     ]
   }
 
@@ -97,19 +98,22 @@ export default class NameInput extends Vue {
 
   get message (): string[] {
     if (this.getErrors.includes('name')) {
-      if (this.isMrasSearch) {
-        return ['Please enter a corporation number to search for']
-      } else {
-        return ['Please enter the business\'s full legal name in home jurisdiction']
+      if (this.isXproFlow) {
+        if (this.isMrasJurisdiction && !this.getHasNoCorpNum) {
+          return ['Please enter a corporation number to search for']
+        } else {
+          return ['Please enter the business\'s full legal name in home jurisdiction']
+        }
       }
+      return ['Please enter a name for the business']
     }
 
-    if (this.getErrors.includes('length')) {
+    if (this.getErrors.includes('min_length')) {
       return ['Please enter a longer name']
     }
 
-    if (this.getErrors.includes('mras_length_exceeded')) {
-      return [this.err_msg]
+    if (this.getErrors.includes('max_length')) {
+      return ['Please enter a shorter name']
     }
 
     return null
