@@ -2,13 +2,24 @@
   <v-dialog v-model="showModal">
     <v-card>
       <v-card-title class="d-flex justify-space-between">
-        <div>Name Request encountered an error</div>
+        <div v-if="isEditLockError">
+          Changes Temporarily Unavailable
+        </div>
+        <div v-else>
+          Name Request encountered an error
+        </div>
       </v-card-title>
-
       <div v-if="isEditLockError">
         <v-card-text class="copy-normal pt-8">
-          The Name Request is presently undergoing examination or editing by another user
-          and cannot be modified or canceled at this time.
+          Another user may be making updates to this Name Request and this action is unavailable at this time.
+          Please try again later. Typical reasons are as follows:
+          <br>
+          <br>
+          <ul>
+            <li>Another user may be editing this name request</li>
+            <li>BC Registries staff may be currently reviewing this Name Request</li>
+            <li>Status of this Name Request has changed</li>
+          </ul>
           <br>
           <br>
           For assistance, please contact BC Registries staff:
