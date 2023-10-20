@@ -25,6 +25,14 @@
           For assistance, please contact BC Registries staff:
         </v-card-text>
       </div>
+      <div v-else-if="isExists">
+        <v-card-text class="copy-normal pt-8">
+          You have already created an identical name request. To request a different name, please go back and change the name to request and try again.
+          <br>
+          <br>
+          For assistance, please contact BC Registries staff:
+        </v-card-text>
+      </div>
       <div v-else>
         <v-card-text class="copy-normal pt-8">
           If you have paid for a new NR, please do not try submitting your payment again.
@@ -68,6 +76,11 @@ export default class ErrorDialog extends Vue {
 
   async hideModal () {
     await ErrorModule.clearAppErrors()
+  }
+
+  get isExists () {
+    const errors = ErrorModule[ErrorTypes.GET_ERRORS]
+    return errors[0] && errors[0].id === 'entry-already-exists'
   }
 
   get isEditLockError () {
