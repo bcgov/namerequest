@@ -291,7 +291,7 @@
             :href="colinLink"
             target="_blank"
           >
-            Go to Corporate Online to {{ isConversion ? 'Alter' : 'Register' }}
+            Go to Corporate Online to {{ isConversion ? 'Alter' : isRestoration ? 'Restore' : 'Register'}}
             <v-icon
               right
               small
