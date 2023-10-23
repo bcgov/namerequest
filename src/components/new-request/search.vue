@@ -291,7 +291,7 @@
             :href="colinLink"
             target="_blank"
           >
-            Go to Corporate Online to {{ isConversion ? 'Alter' : isRestoration ? 'Restore' : 'Register'}}
+            {{ colinButtonText }}
             <v-icon
               right
               small
@@ -561,6 +561,20 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     ) return true
 
     return false
+  }
+
+  /** Retrieve text for COLIN button based on selected action/flow */
+  get colinButtonText (): string {
+    var colinText = ''
+    if (this.isConversion) {
+      colinText = 'Alter'
+    } else if (this.isRestoration) {
+      colinText = 'Restore'
+    } else if (this.isChangeName) {
+      colinText = 'Change Name'
+    } else {
+      colinText = 'Register'
+    } return 'Go to Corporate Online to ' + colinText
   }
 
   /** Retrieve text based on selected action/flow */
