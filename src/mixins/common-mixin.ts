@@ -59,7 +59,6 @@ export class CommonMixin extends Vue {
    */
   entityTypeToCorpType (entityType: EntityTypes): CorpTypeCd {
     switch (entityType) {
-      case EntityTypes.A: return CorpTypeCd.EXTRA_PRO_A // same as XUL
       case EntityTypes.BC: return CorpTypeCd.BENEFIT_COMPANY
       case EntityTypes.CC: return CorpTypeCd.BC_CCC
       case EntityTypes.CP: return CorpTypeCd.COOP
@@ -77,13 +76,13 @@ export class CommonMixin extends Vue {
       case EntityTypes.SO: return CorpTypeCd.SOCIETY
       case EntityTypes.UL: return CorpTypeCd.BC_ULC_COMPANY
       case EntityTypes.XCP: return CorpTypeCd.XPRO_COOP
-      case EntityTypes.XCR: return CorpTypeCd.XPRO_CORPORATION
+      case EntityTypes.XCR: return CorpTypeCd.EXTRA_PRO_A
       case EntityTypes.XL: return CorpTypeCd.XPRO_LL_PARTNR // same as XLL
       case EntityTypes.XLL: return CorpTypeCd.XPRO_LL_PARTNR
       case EntityTypes.XLP: return CorpTypeCd.XPRO_LIM_PARTNR
       case EntityTypes.XP: return CorpTypeCd.XPRO_LIM_PARTNR // same as XLP
       case EntityTypes.XSO: return CorpTypeCd.XPRO_SOCIETY
-      case EntityTypes.XUL: return CorpTypeCd.EXTRA_PRO_A
+      case EntityTypes.XUL: return CorpTypeCd.XPRO_UNLIMITED_LIABILITY_COMPANY
       default: return null
     }
   }
@@ -99,7 +98,7 @@ export class CommonMixin extends Vue {
       case CorpTypeCd.BC_COMPANY: return EntityTypes.CR
       case CorpTypeCd.BC_ULC_COMPANY: return EntityTypes.UL
       case CorpTypeCd.COOP: return EntityTypes.CP
-      case CorpTypeCd.EXTRA_PRO_A: return EntityTypes.XUL
+      case CorpTypeCd.EXTRA_PRO_A: return EntityTypes.XCR
       case CorpTypeCd.FINANCIAL: return EntityTypes.FI
       case CorpTypeCd.PARTNERSHIP: return EntityTypes.GP
       case CorpTypeCd.LIMITED_CO: return EntityTypes.RLC
@@ -114,6 +113,7 @@ export class CommonMixin extends Vue {
       case CorpTypeCd.XPRO_LIM_PARTNR: return EntityTypes.XLP
       case CorpTypeCd.XPRO_LL_PARTNR: return EntityTypes.XLL
       case CorpTypeCd.XPRO_SOCIETY: return EntityTypes.XSO
+      case CorpTypeCd.XPRO_UNLIMITED_LIABILITY_COMPANY: return EntityTypes.XUL
       default: return null
     }
   }
@@ -212,13 +212,13 @@ export class CommonMixin extends Vue {
   /** Returns true if the specified entity type is for an Extraprovincial Company. */
   isXproEntityType (type: EntityTypes): boolean {
     return [
-      EntityTypes.XCR,
-      EntityTypes.XUL,
       EntityTypes.RLC,
-      EntityTypes.XLP,
-      EntityTypes.XLL,
       EntityTypes.XCP,
-      EntityTypes.XSO
+      EntityTypes.XCR,
+      EntityTypes.XLL,
+      EntityTypes.XLP,
+      EntityTypes.XSO,
+      EntityTypes.XUL
     ].includes(type)
   }
 
