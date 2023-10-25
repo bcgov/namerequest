@@ -250,7 +250,7 @@
         <!-- federal sub-flow -->
         <XproFederalBullets v-if="isFederal && getSearchBusiness" />
 
-        <template v-if="(isRestorable && !isFederal) && (isNamedCompany || !isSupportedRestoration(getEntityTypeCd))">
+        <template v-if="(isRestorable && !isFederal) && (isNamedCompany || isCooperative || isCreditUnion || isSelectedCompanyXPro)">
           <v-col
             cols="12"
             :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'"
@@ -459,6 +459,10 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     return (this.getEntityTypeCd === EntityTypes.CP)
   }
 
+  get isCreditUnion (): boolean {
+    return (this.getEntityTypeCd === EntityTypes.FI)
+  }
+
   get isSociety (): boolean {
     return (this.isSocietyEnabled() && this.getEntityTypeCd === EntityTypes.SO)
   }
@@ -636,8 +640,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (this.isRestoration) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
       if (this.getEntityTypeCd && this.isSelectedXproAndRestorable && !this.isFederal) return true
-      if (this.getSearchBusiness && this.isBcRestorable &&
-        !this.isSupportedRestoration(this.getEntityTypeCd)) return true
+      if (this.getSearchBusiness && this.isBcRestorable && (this.isNamedCompany || this.isCooperative || this.isCreditUnion)) return true
     }
 
     // Conditional for Continuation In Flow.
