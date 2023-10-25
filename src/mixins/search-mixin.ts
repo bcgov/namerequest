@@ -140,7 +140,6 @@ export class SearchMixin extends Mixins(CommonMixin) {
       const entityType = ConversionTypes.find(conv => conv.value === nrRequestType)?.entity_type_cd || null
       this.setEntityTypeCd(entityType)
       this.setConversionType(type)
-      this.setConversionType(type)
       return
     }
 
