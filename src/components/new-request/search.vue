@@ -250,7 +250,7 @@
         <!-- federal sub-flow -->
         <XproFederalBullets v-if="isFederal && getSearchBusiness" />
 
-        <template v-if="(isRestorable && !isFederal) && (isNamedCompany || isCooperative || isCreditUnion || isSelectedCompanyXPro)">
+        <template v-if="showRestoreNameInput">
           <v-col
             cols="12"
             :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'"
@@ -465,6 +465,14 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
   get isSociety (): boolean {
     return (this.isSocietyEnabled() && this.getEntityTypeCd === EntityTypes.SO)
+  }
+
+  /** Whether to show the name input field when trying to restore a historical company. */
+  get showRestoreNameInput (): boolean {
+    const isPromptNameInput = (this.isNamedCompany || this.isCooperative || this.isCreditUnion || this.isSelectedXproAndRestorable)
+    return (
+      this.isRestorable && isPromptNameInput && !this.isFederal
+    )
   }
 
   get showActionNowButton (): boolean {
