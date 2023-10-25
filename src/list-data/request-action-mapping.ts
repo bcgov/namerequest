@@ -76,16 +76,16 @@ export const XproMapping: RequestActionMappingI = {
   REH: [
     EntityTypes.RLC, // maps to Corp Type "LLC"
     EntityTypes.XCP, // maps to Corp Type "XCP"
-    EntityTypes.XSO, // maps to Corp Type "XS"
-    EntityTypes.XUL // maps to Corp Type "A"
+    EntityTypes.XCR, // maps to Corp Type "EXTRA_PRO_A"
+    EntityTypes.XSO // maps to Corp Type "XS"
   ],
   CHG: [
     EntityTypes.RLC, // maps to Corp Type "LLC"
     EntityTypes.XCP, // maps to Corp Type "XCP"
+    EntityTypes.XCR, // maps to Corp Type "EXTRA_PRO_A"
     EntityTypes.XLL, // maps to Corp Type "XL"
     EntityTypes.XLP, // maps to Corp Type "XP"
-    EntityTypes.XSO, // maps to Corp Type "XS"
-    EntityTypes.XUL // maps to Corp Type "A"
+    EntityTypes.XSO // maps to Corp Type "XS"
   ]
 }
 
