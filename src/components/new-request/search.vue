@@ -589,7 +589,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       colinText = 'Change Name'
     } else {
       colinText = 'Register'
-    } 
+    }
     return 'Go to Corporate Online to ' + colinText
   }
 
