@@ -103,11 +103,44 @@
       <!-- Change Name flow -->
       <template v-else-if="isChangeName">
         <BusinessLookupFetch />
-
+        <v-dialog  v-if="isSocietyDisabled" v-model="showSocietiesInfo"
+          :max-width="maxWidth"
+          persistent>
+          <v-card>
+              <v-icon
+                class="float-right"
+                md
+                color="primary"
+                @click="closeSocietyDialog()"
+              >
+              mdi-close
+              </v-icon>
+              <template>
+                <v-card-text class="mt-n12">
+                  <v-container fluid>
+                    <v-row
+                      no-gutters
+                      class="text-center"
+                    >
+                      <v-col cols="12">
+                        To change a name for a Society
+                      </v-col>
+                      <v-col cols="12">
+                        please use the Societies Online website
+                      </v-col>
+                      <v-col cols="12">
+                        <a href="https://www.bcregistry.ca/societies/">https://www.bcregistry.ca/societies/</a>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+              </template>
+          </v-card>
+        </v-dialog>
         <template v-if="isNameChangeable">
           <!-- XPRO jurisdiction -->
           <Jurisdiction
-            v-if="isChangeNameXpro"
+            v-if="isChangeNameXpro && !isSocietyDisabled"
             md="4"
           />
           <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
@@ -119,6 +152,7 @@
               :md="showDesignation || isChangeNameXpro ? '8' : '12'"
             >
               <NameInput
+                v-if="!isSocietyDisabled"
                 :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
                 @emit-corp-num-validity="corpNumValid = $event"
               />
@@ -239,10 +273,44 @@
 
       <!-- Restoration / Reinstatement flow -->
       <template v-else-if="isRestoration">
-        <BusinessLookupFetch />
-        <CompanyType v-if="getSearchBusiness && isBcRestorable && isNumberedEntityType" />
+        <BusinessLookupFetch ref="MyBusinessLookup"/>
+        <v-dialog  v-if="isSocietyDisabled" v-model="showSocietiesInfo"
+          :max-width="maxWidth"
+          persistent>
+          <v-card>
+              <v-icon
+                class="float-right"
+                md
+                color="primary"
+                @click="closeSocietyDialog()"
+              >
+              mdi-close
+              </v-icon>
+              <template>
+                <v-card-text class="mt-n12">
+                  <v-container fluid>
+                    <v-row
+                      no-gutters
+                      class="text-center"
+                    >
+                      <v-col cols="12">
+                        To request a restoration for a Society
+                      </v-col>
+                      <v-col cols="12">
+                        please use the Societies Online website
+                      </v-col>
+                      <v-col cols="12">
+                        <a href="https://www.bcregistry.ca/societies/">https://www.bcregistry.ca/societies/</a>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+              </template>
+          </v-card>
+        </v-dialog>
+        <CompanyType v-if="getSearchBusiness && isBcRestorable && isSupportedRestoration(getEntityTypeCd) && !isSocietyDisabled" />
         <Jurisdiction
-          v-if="isSelectedXproAndRestorable"
+          v-if="isSelectedXproAndRestorable && !isSocietyDisabled"
           cols="12"
           md="4"
         />
@@ -250,7 +318,7 @@
         <!-- federal sub-flow -->
         <XproFederalBullets v-if="isFederal && getSearchBusiness" />
 
-        <template v-if="showRestoreNameInput">
+        <template v-if="showRestoreNameInput && !isSocietyDisabled">
           <v-col
             cols="12"
             :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'"
@@ -412,6 +480,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
   // Local variable
   corpNumValid = true
+  showSocietiesInfo = false
 
   private mounted () {
     this.$nextTick(() => {
@@ -426,6 +495,26 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   /** Called when switching between request and manage tabs (which are cached). */
   private activated () {
     this.scrollTo('namerequest-sbc-header')
+  }
+
+  openSocietyDialog () {
+    this.showSocietiesInfo = true
+  }
+
+  closeSocietyDialog () {
+    this.showSocietiesInfo = false
+    this.setSearchBusiness(null)
+  }
+
+  get maxWidth (): string {
+    if (this.showSocietiesInfo || this.isConversion || this.isAmalgamation) {
+      return '550px'
+    }
+    // 210 per column with a max threshold of 960px (sm)
+    const cols = 2
+    const maxThreshold = this.$vuetify.breakpoint.thresholds.sm
+    const val = (210 * cols > maxThreshold) ? maxThreshold : (210 * cols)
+    return `${val}px`
   }
 
   get showJurisdiction (): boolean {
@@ -465,6 +554,14 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
   get isSociety (): boolean {
     return (this.isSocietyEnabled() && this.getEntityTypeCd === EntityTypes.SO)
+  }
+
+  get isSocietyDisabled (): boolean {
+    this.openSocietyDialog()
+    return (
+      !this.isSocietyEnabled() &&
+      (this.getEntityTypeCd === EntityTypes.SO || this.getEntityTypeCd === EntityTypes.XSO)
+    )
   }
 
   /** Whether to show the name input field when trying to restore a historical company. */
