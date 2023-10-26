@@ -240,7 +240,7 @@
       <!-- Restoration / Reinstatement flow -->
       <template v-else-if="isRestoration">
         <BusinessLookupFetch />
-        <CompanyType v-if="getSearchBusiness && isBcRestorable && isSupportedRestoration(getEntityTypeCd)" />
+        <CompanyType v-if="getSearchBusiness && isBcRestorable && isNumberedEntityType" />
         <Jurisdiction
           v-if="isSelectedXproAndRestorable"
           cols="12"
@@ -250,7 +250,7 @@
         <!-- federal sub-flow -->
         <XproFederalBullets v-if="isFederal && getSearchBusiness" />
 
-        <template v-if="(isRestorable && !isFederal) && (isNamedCompany || !isSupportedRestoration(getEntityTypeCd))">
+        <template v-if="showRestoreNameInput">
           <v-col
             cols="12"
             :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'"
@@ -291,7 +291,7 @@
             :href="colinLink"
             target="_blank"
           >
-            Go to Corporate Online to {{ isConversion ? 'Alter' : 'Register' }}
+            {{ colinButtonText }}
             <v-icon
               right
               small
@@ -459,8 +459,23 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     return (this.getEntityTypeCd === EntityTypes.CP)
   }
 
+  get isCreditUnion (): boolean {
+    return (this.getEntityTypeCd === EntityTypes.FI)
+  }
+
   get isSociety (): boolean {
     return (this.isSocietyEnabled() && this.getEntityTypeCd === EntityTypes.SO)
+  }
+
+  /** Whether to show the name input field when trying to restore a historical company. */
+  get showRestoreNameInput (): boolean {
+    // We should show the name input field if the named radio button was used,
+    // or with some special cases that if it is a coop(CP), or a credit union(FI).
+    // Also, if it is a extrapros company, we should also have name input field when it is not a Canada Federal.
+    const isPromptNameInput = (this.isNamedCompany || this.isCooperative || this.isCreditUnion || this.isSelectedXproAndRestorable)
+    return (
+      this.isRestorable && isPromptNameInput && !this.isFederal
+    )
   }
 
   get showActionNowButton (): boolean {
@@ -563,6 +578,21 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     return false
   }
 
+  /** Retrieve text for COLIN button based on selected action/flow */
+  get colinButtonText (): string {
+    var colinText = 'use this NR'
+    if (this.isConversion) {
+      colinText = 'Alter'
+    } else if (this.isRestoration) {
+      colinText = 'Restore'
+    } else if (this.isChangeName) {
+      colinText = 'Change Name'
+    } else {
+      colinText = 'Register'
+    }
+    return 'Go to Corporate Online to ' + colinText
+  }
+
   /** Retrieve text based on selected action/flow */
   get actionNowButtonText (): string {
     if (this.isContinuationIn) return 'Continue In Now'
@@ -622,8 +652,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (this.isRestoration) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
       if (this.getEntityTypeCd && this.isSelectedXproAndRestorable && !this.isFederal) return true
-      if (this.getSearchBusiness && this.isBcRestorable &&
-        !this.isSupportedRestoration(this.getEntityTypeCd)) return true
+      if (this.getSearchBusiness && this.isBcRestorable && (this.isNamedCompany || this.isCooperative || this.isCreditUnion)) return true
     }
 
     // Conditional for Continuation In Flow.
