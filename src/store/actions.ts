@@ -525,6 +525,7 @@ function getNameDesignation (name: any): string {
   if (name.designation) return name.designation
   const words = name.name.split(' ')
   const len = words.length
+  if (EntityTypes.FR || EntityTypes.GP || EntityTypes.DBA || EntityTypes.FI || EntityTypes.PA || EntityTypes.PAR) return ''
   return words[len - 1]
 }
 
