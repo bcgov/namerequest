@@ -469,6 +469,9 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
   /** Whether to show the name input field when trying to restore a historical company. */
   get showRestoreNameInput (): boolean {
+    // We should show the name input field if the named radio button was used,
+    // or with some special cases that if it is a coop(CP), or a credit union(FI).
+    // Also, if it is a extrapros company, we should also have name input field when it is not a Canada Federal.
     const isPromptNameInput = (this.isNamedCompany || this.isCooperative || this.isCreditUnion || this.isSelectedXproAndRestorable)
     return (
       this.isRestorable && isPromptNameInput && !this.isFederal
