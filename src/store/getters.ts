@@ -21,12 +21,12 @@ import {
   RequestNameI,
   RequestOrConsentIF,
   ReservedReqI,
+  RootStateIF,
   SelectOptionsI,
   StaffPaymentIF,
   StateIF,
   StatsI,
-  SubmissionTypeT,
-  RootStateIF
+  SubmissionTypeT
 } from '@/interfaces'
 import {
   CompanyTypes,
@@ -69,7 +69,7 @@ export const isMobile = (state: StateIF): boolean => {
 
 /** True if user is authenticated, else False. */
 export const isAuthenticated = (rootState: RootStateIF): boolean => {
-  return Boolean(rootState.auth && rootState.auth.token)
+  return Boolean(rootState.auth?.token)
 }
 
 export const getCurrentJsDate = (state: StateIF): Date => {
