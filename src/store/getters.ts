@@ -25,7 +25,8 @@ import {
   StaffPaymentIF,
   StateIF,
   StatsI,
-  SubmissionTypeT
+  SubmissionTypeT,
+  RootStateIF
 } from '@/interfaces'
 import {
   CompanyTypes,
@@ -67,8 +68,8 @@ export const isMobile = (state: StateIF): boolean => {
 }
 
 /** True if user is authenticated, else False. */
-export const isAuthenticated = (): boolean => {
-  return Boolean(sessionStorage.getItem(SessionStorageKeys.KeyCloakToken))
+export const isAuthenticated = (rootState: RootStateIF): boolean => {
+  return Boolean(rootState.auth && rootState.auth.token)
 }
 
 export const getCurrentJsDate = (state: StateIF): Date => {

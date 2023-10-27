@@ -12,6 +12,9 @@ export * from './models'
 export * from './name-check-interfaces'
 export * from './dialog-options'
 export * from './refund-params-interface'
+export * from './current-user-interface'
+export * from './current-account-interface'
+export * from './root-state-interface'
 
 // external interfaces
 export type {
