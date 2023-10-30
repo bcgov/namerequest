@@ -147,6 +147,7 @@ export const stateModel: StateModelIF = {
       request: null
     },
     showActualInput: false,
+    societiesModalVisible: false,
     stats: null,
     submissionTabNumber: 0,
     submissionType: null,

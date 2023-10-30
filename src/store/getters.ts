@@ -825,6 +825,10 @@ export const getConditionsModalVisible = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.conditionsModalVisible
 }
 
+export const getSocietiesModalVisible = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.societiesModalVisible
+}
+
 export const getHelpMeChooseModalVisible = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.helpMeChooseModalVisible
 }

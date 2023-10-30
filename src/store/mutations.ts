@@ -438,6 +438,10 @@ export const mutateConditionsModalVisible = (state: StateIF, conditionsModalVisi
   state.stateModel.newRequestModel.conditionsModalVisible = conditionsModalVisible
 }
 
+export const mutateSocietiesModalVisible = (state: StateIF, societiesModalVisible: boolean) => {
+  state.stateModel.newRequestModel.societiesModalVisible = societiesModalVisible
+}
+
 export const mutateExitModalVisible = (state: StateIF, exitModalVisible: boolean) => {
   state.stateModel.newRequestModel.exitModalVisible = exitModalVisible
 }

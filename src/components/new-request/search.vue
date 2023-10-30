@@ -20,7 +20,6 @@
         <EntityType v-if="getLocation" />
         <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
         <NumberedCompanyBullets v-if="isNumberedCompany && isNumberedEntityType" />
-
         <template v-if="(isNamedCompany || !isNumberedEntityType) && entity_type_cd">
           <v-col
             cols="12"
@@ -103,40 +102,9 @@
       <!-- Change Name flow -->
       <template v-else-if="isChangeName">
         <BusinessLookupFetch />
-        <v-dialog  v-if="isSocietyDisabled" v-model="showSocietiesInfo"
-          :max-width="maxWidth"
-          persistent>
-          <v-card>
-              <v-icon
-                class="float-right"
-                md
-                color="primary"
-                @click="closeSocietyDialog()"
-              >
-              mdi-close
-              </v-icon>
-              <template>
-                <v-card-text class="mt-n12">
-                  <v-container fluid>
-                    <v-row
-                      no-gutters
-                      class="text-center"
-                    >
-                      <v-col cols="12">
-                        To change a name for a Society
-                      </v-col>
-                      <v-col cols="12">
-                        please use the Societies Online website
-                      </v-col>
-                      <v-col cols="12">
-                        <a href="https://www.bcregistry.ca/societies/">https://www.bcregistry.ca/societies/</a>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
-              </template>
-          </v-card>
-        </v-dialog>
+        {{ isSocietyDisabled }}{{ showSocietiesInfo }}
+        <!--  :show-modal="isSocietyDisabled && showSocietiesInfo"-->
+        <SocietiesInfo type='name' />
         <template v-if="isNameChangeable">
           <!-- XPRO jurisdiction -->
           <Jurisdiction
@@ -274,40 +242,7 @@
       <!-- Restoration / Reinstatement flow -->
       <template v-else-if="isRestoration">
         <BusinessLookupFetch ref="MyBusinessLookup"/>
-        <v-dialog  v-if="isSocietyDisabled" v-model="showSocietiesInfo"
-          :max-width="maxWidth"
-          persistent>
-          <v-card>
-              <v-icon
-                class="float-right"
-                md
-                color="primary"
-                @click="closeSocietyDialog()"
-              >
-              mdi-close
-              </v-icon>
-              <template>
-                <v-card-text class="mt-n12">
-                  <v-container fluid>
-                    <v-row
-                      no-gutters
-                      class="text-center"
-                    >
-                      <v-col cols="12">
-                        To request a restoration for a Society
-                      </v-col>
-                      <v-col cols="12">
-                        please use the Societies Online website
-                      </v-col>
-                      <v-col cols="12">
-                        <a href="https://www.bcregistry.ca/societies/">https://www.bcregistry.ca/societies/</a>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
-              </template>
-          </v-card>
-        </v-dialog>
+        <SocietiesInfo type='restoration' />
         <CompanyType v-if="getSearchBusiness && isBcRestorable && isSupportedRestoration(getEntityTypeCd) && !isSocietyDisabled" />
         <Jurisdiction
           v-if="isSelectedXproAndRestorable && !isSocietyDisabled"
@@ -450,11 +385,14 @@ import Jurisdiction from '@/components/new-request/search-components/jurisdictio
 import NumberedCompanyBullets from '@/components/new-request/search-components/numbered-company-bullets.vue'
 import RequestAction from '@/components/new-request/search-components/request-action.vue'
 import XproFederalBullets from '@/components/new-request/search-components/xpro-federal-bullets.vue'
+import SocietiesInfo from '@/components/dialogs/societies-info-dialog.vue'
 
 import { EntityTypes } from '@/enums'
 import { CommonMixin, NrAffiliationMixin, SearchMixin } from '@/mixins'
 import { Designations, XproMapping } from '@/list-data'
 import { Navigate } from '@/plugins'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { Action } from 'vuex-class'
 
 /**
  * This is the component that displays the new NR menus and flows.
@@ -471,10 +409,13 @@ import { Navigate } from '@/plugins'
     NameInput,
     NumberedCompanyBullets,
     RequestAction,
+    SocietiesInfo,
     XproFederalBullets
   }
 })
 export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, SearchMixin) {
+  @Action setSocietiesModalVisible!: ActionBindingIF
+
   // Constant
   readonly colinLink = sessionStorage.getItem('CORPORATE_ONLINE_URL')
 
@@ -502,6 +443,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   closeSocietyDialog () {
+    this.setSocietiesModalVisible(true)
+    this.setEntityTypeCd(null)
     this.showSocietiesInfo = false
     this.setSearchBusiness(null)
   }
@@ -558,10 +501,15 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
   get isSocietyDisabled (): boolean {
     this.openSocietyDialog()
-    return (
+
+    let isSocietyDisabled = (
       !this.isSocietyEnabled() &&
       (this.getEntityTypeCd === EntityTypes.SO || this.getEntityTypeCd === EntityTypes.XSO)
     )
+
+    this.setSocietiesModalVisible(isSocietyDisabled)
+
+    return isSocietyDisabled
   }
 
   /** Whether to show the name input field when trying to restore a historical company. */

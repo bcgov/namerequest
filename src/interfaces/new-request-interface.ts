@@ -67,6 +67,7 @@ export interface NewRequestIF {
     request: RequestActionsI
   }
   showActualInput: boolean
+  societiesModalVisible: boolean
   stats: StatsI
   submissionTabNumber: number
   submissionType: SubmissionTypeT
