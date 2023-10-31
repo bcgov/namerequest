@@ -102,7 +102,11 @@
       <!-- Change Name flow -->
       <template v-else-if="isChangeName">
         <BusinessLookupFetch />
-        <SocietiesInfo v-if="isSocietyDisabled && showSocietiesInfo" :type="'request a name for'" :showDialog="showSocietiesInfo"/>
+        <SocietiesInfo
+          v-if="isSocietyDisabled && showSocietiesInfo"
+          :type="'request a name for'"
+          :showDialog="showSocietiesInfo"
+        />
         <template v-if="isNameChangeable">
           <!-- XPRO jurisdiction -->
           <Jurisdiction
@@ -240,7 +244,11 @@
       <!-- Restoration / Reinstatement flow -->
       <template v-else-if="isRestoration">
         <BusinessLookupFetch ref="MyBusinessLookup"/>
-        <SocietiesInfo v-if="isSocietyDisabled && showSocietiesInfo" :type="'restore'" :showDialog="showSocietiesInfo"/>
+        <SocietiesInfo
+           v-if="isSocietyDisabled && showSocietiesInfo"
+           :type="'restore'"
+          :showDialog="showSocietiesInfo"
+        />
         <CompanyType v-if="getSearchBusiness && isBcRestorable && isSupportedRestoration(getEntityTypeCd) && !isSocietyDisabled" />
         <Jurisdiction
           v-if="isSelectedXproAndRestorable && !isSocietyDisabled"
@@ -437,10 +445,10 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   @Watch('isSocietyDisabled')
-  onIsSocietyDisabledChanged (newVal: boolean, oldVal: boolean) {
-    this.setSocietiesModalVisible(newVal)
-    this.showSocietiesInfo = newVal
-    if (newVal) {
+  onIsSocietyDisabledChanged (disabled: boolean) {
+    this.setSocietiesModalVisible(disabled)
+    this.showSocietiesInfo = disabled
+    if (disabled) {
       this.setSearchBusiness(null)
     }
   }

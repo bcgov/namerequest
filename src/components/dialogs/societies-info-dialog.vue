@@ -44,7 +44,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class SocietiesInfo extends Vue {
-  @Prop() readonly type: string
+  @Prop({ required: true }) readonly type: string
   @Getter getSocietiesModalVisible!: boolean
   @Action setSocietiesModalVisible!: ActionBindingIF
 
