@@ -107,7 +107,7 @@
           :type="'request a name for'"
           :showDialog="showSocietiesInfo"
         />
-        <template v-if="isNameChangeable && !isSocietyDisabled">
+        <template v-else-if="isNameChangeable">
           <!-- XPRO jurisdiction -->
           <Jurisdiction
             v-if="isChangeNameXpro"
@@ -244,45 +244,46 @@
       <template v-else-if="isRestoration">
         <BusinessLookupFetch ref="MyBusinessLookup"/>
         <SocietiesInfo
-           v-if="isSocietyDisabled && showSocietiesInfo"
-           :type="'restore'"
+          v-if="isSocietyDisabled && showSocietiesInfo"
+          :type="'restore'"
           :showDialog="showSocietiesInfo"
         />
-        <CompanyType v-if="getSearchBusiness && isBcRestorable && isSupportedRestoration(getEntityTypeCd) && !isSocietyDisabled" />
-        <Jurisdiction
-          v-if="isSelectedXproAndRestorable && !isSocietyDisabled"
-          cols="12"
-          md="4"
-        />
-
-        <!-- federal sub-flow -->
-        <XproFederalBullets v-if="isFederal && getSearchBusiness" />
-
-        <template v-if="showRestoreNameInput && !isSocietyDisabled">
-          <v-col
-            cols="12"
-            :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'"
-          >
-            <NameInput
-              :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
-              @emit-corp-num-validity="corpNumValid = $event"
-            />
-          </v-col>
-          <Designation
-            v-if="showDesignation"
+        <template v-else>
+          <CompanyType v-if="getSearchBusiness && isBcRestorable && isSupportedRestoration(getEntityTypeCd)" />
+          <Jurisdiction
+            v-if="isSelectedXproAndRestorable"
             cols="12"
             md="4"
           />
-          <v-col
-            v-if="isMrasJurisdiction"
-            cols="12"
-            class="d-flex justify-end"
-          >
-            <CorpNumberCheckbox />
-          </v-col>
-        </template>
 
-        <NumberedCompanyBullets v-if="isNumberedCompany" />
+          <!-- federal sub-flow -->
+          <XproFederalBullets v-if="isFederal && getSearchBusiness" />
+
+          <template v-if="showRestoreNameInput">
+            <v-col
+              cols="12"
+              :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'"
+            >
+              <NameInput
+                :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+                @emit-corp-num-validity="corpNumValid = $event"
+              />
+            </v-col>
+            <Designation
+              v-if="showDesignation"
+              cols="12"
+              md="4"
+            />
+            <v-col
+              v-if="isMrasJurisdiction"
+              cols="12"
+              class="d-flex justify-end"
+            >
+              <CorpNumberCheckbox />
+            </v-col>
+          </template>
+          <NumberedCompanyBullets v-if="isNumberedCompany" />
+        </template>
       </template>
     </v-row>
 
