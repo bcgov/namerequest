@@ -489,14 +489,15 @@ export const resubmit = async ({ commit, getters }): Promise<boolean> => {
 
   // add resubmit NR number (for internal use only - API ignores it)
   nrTypeData['resubmitNrNum'] = nrData['nrNum']
-
+  // check against entity types if it should have designation or not : if length returns to be 0 then NR should not have any designation otherwise work as getNameDesignation
+  const checkEntityType = Designations[nrData['entity_type_cd']].words.length === 0
   // clean names data
   nrTypeData['names'] = nrData.names.map(name => ({
     choice: name.choice,
     consent_words: '',
     conflict1: '',
     conflict1_num: '',
-    designation: getNameDesignation(name),
+    designation: !checkEntityType ? getNameDesignation(name) : '',
     name: name.name,
     name_type_cd: name.name_type_cd
   }))
