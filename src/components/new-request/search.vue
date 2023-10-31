@@ -107,10 +107,10 @@
           :type="'request a name for'"
           :showDialog="showSocietiesInfo"
         />
-        <template v-if="isNameChangeable">
+        <template v-if="isNameChangeable && !isSocietyDisabled">
           <!-- XPRO jurisdiction -->
           <Jurisdiction
-            v-if="isChangeNameXpro && !isSocietyDisabled"
+            v-if="isChangeNameXpro"
             md="4"
           />
           <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
@@ -122,7 +122,6 @@
               :md="showDesignation || isChangeNameXpro ? '8' : '12'"
             >
               <NameInput
-                v-if="!isSocietyDisabled"
                 :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
                 @emit-corp-num-validity="corpNumValid = $event"
               />
@@ -458,17 +457,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       !this.isSocietyEnabled() &&
       (this.getEntityTypeCd === EntityTypes.SO || this.getEntityTypeCd === EntityTypes.XSO)
     )
-  }
-
-  get maxWidth (): string {
-    if (this.showSocietiesInfo || this.isConversion || this.isAmalgamation) {
-      return '550px'
-    }
-    // 210 per column with a max threshold of 960px (sm)
-    const cols = 2
-    const maxThreshold = this.$vuetify.breakpoint.thresholds.sm
-    const val = (210 * cols > maxThreshold) ? maxThreshold : (210 * cols)
-    return `${val}px`
   }
 
   get showJurisdiction (): boolean {
