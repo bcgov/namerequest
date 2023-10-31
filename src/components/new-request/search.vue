@@ -102,9 +102,7 @@
       <!-- Change Name flow -->
       <template v-else-if="isChangeName">
         <BusinessLookupFetch />
-        {{ isSocietyDisabled }}{{ showSocietiesInfo }}
-        <!--  :show-modal="isSocietyDisabled && showSocietiesInfo"-->
-        <SocietiesInfo type='name' />
+        <SocietiesInfo v-if="isSocietyDisabled && showSocietiesInfo" :type="'request a name for'" :showDialog="showSocietiesInfo"/>
         <template v-if="isNameChangeable">
           <!-- XPRO jurisdiction -->
           <Jurisdiction
@@ -242,7 +240,7 @@
       <!-- Restoration / Reinstatement flow -->
       <template v-else-if="isRestoration">
         <BusinessLookupFetch ref="MyBusinessLookup"/>
-        <SocietiesInfo type='restoration' />
+        <SocietiesInfo v-if="isSocietyDisabled && showSocietiesInfo" :type="'restore'" :showDialog="showSocietiesInfo"/>
         <CompanyType v-if="getSearchBusiness && isBcRestorable && isSupportedRestoration(getEntityTypeCd) && !isSocietyDisabled" />
         <Jurisdiction
           v-if="isSelectedXproAndRestorable && !isSocietyDisabled"
@@ -371,7 +369,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator'
+import { Component, Mixins, Watch } from 'vue-property-decorator'
 
 import NameInput from './name-input.vue'
 
@@ -438,15 +436,20 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     this.scrollTo('namerequest-sbc-header')
   }
 
-  openSocietyDialog () {
-    this.showSocietiesInfo = true
+  @Watch('isSocietyDisabled')
+  onIsSocietyDisabledChanged (newVal: boolean, oldVal: boolean) {
+    this.setSocietiesModalVisible(newVal)
+    this.showSocietiesInfo = newVal
+    if (newVal) {
+      this.setSearchBusiness(null)
+    }
   }
 
-  closeSocietyDialog () {
-    this.setSocietiesModalVisible(true)
-    this.setEntityTypeCd(null)
-    this.showSocietiesInfo = false
-    this.setSearchBusiness(null)
+  get isSocietyDisabled (): boolean {
+    return (
+      !this.isSocietyEnabled() &&
+      (this.getEntityTypeCd === EntityTypes.SO || this.getEntityTypeCd === EntityTypes.XSO)
+    )
   }
 
   get maxWidth (): string {
@@ -497,19 +500,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
   get isSociety (): boolean {
     return (this.isSocietyEnabled() && this.getEntityTypeCd === EntityTypes.SO)
-  }
-
-  get isSocietyDisabled (): boolean {
-    this.openSocietyDialog()
-
-    let isSocietyDisabled = (
-      !this.isSocietyEnabled() &&
-      (this.getEntityTypeCd === EntityTypes.SO || this.getEntityTypeCd === EntityTypes.XSO)
-    )
-
-    this.setSocietiesModalVisible(isSocietyDisabled)
-
-    return isSocietyDisabled
   }
 
   /** Whether to show the name input field when trying to restore a historical company. */

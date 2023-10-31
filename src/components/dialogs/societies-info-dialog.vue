@@ -20,7 +20,7 @@
           <v-container fluid>
             <v-row no-gutters class="text-center">
               <v-col cols="12">
-                To request a {{ type }} for a Society
+                To {{ type }} a Society
               </v-col>
               <v-col cols="12">
                 please use the Societies Online website
@@ -44,7 +44,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class SocietiesInfo extends Vue {
-  @Prop() readonly type: boolean
+  @Prop() readonly type: string
   @Getter getSocietiesModalVisible!: boolean
   @Action setSocietiesModalVisible!: ActionBindingIF
 
@@ -57,7 +57,6 @@ export default class SocietiesInfo extends Vue {
 
   emitClose (): void {
     this.showModal = false
-    this.$parent.closeSocietyDialog()
   }
 }
 </script>
