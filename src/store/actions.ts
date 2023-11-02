@@ -718,6 +718,10 @@ export const setNrRequiredModalVisible = ({ commit }, isVisible: boolean): void 
   commit('mutateNrRequiredModalVisible', isVisible)
 }
 
+export const setSocietiesModalVisible = ({ commit }, isVisible: boolean): void => {
+  commit('mutateSocietiesModalVisible', isVisible)
+}
+
 export const setRequestExaminationOrProvideConsent = ({ commit }, requestExamOrConsent: any): void => {
   commit('mutateRequestExaminationOrProvideConsent', requestExamOrConsent)
 }

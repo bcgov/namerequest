@@ -39,12 +39,13 @@
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 import BusinessFetch from '@/components/new-request/business-fetch.vue'
 import BusinessLookup from '@/components/new-request/business-lookup.vue'
+import SocietiesInfo from '@/components/dialogs/societies-info-dialog.vue'
 import { BusinessSearchIF, FormType } from '@/interfaces'
 import { CorpTypeCd, CompanyTypes, EntityStates, EntityTypes, Location, NrRequestTypeCodes } from '@/enums'
 import { CommonMixin, SearchMixin } from '@/mixins'
 
 @Component({
-  components: { BusinessFetch, BusinessLookup }
+  components: { BusinessFetch, BusinessLookup, SocietiesInfo }
 })
 export default class BusinessLookupFetch extends Mixins(CommonMixin, SearchMixin) {
   @Prop({ default: '12' }) readonly cols!: string

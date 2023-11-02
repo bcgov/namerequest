@@ -20,7 +20,6 @@
         <EntityType v-if="getLocation" />
         <CompanyType v-if="getEntityTypeCd && isNumberedEntityType" />
         <NumberedCompanyBullets v-if="isNumberedCompany && isNumberedEntityType" />
-
         <template v-if="(isNamedCompany || !isNumberedEntityType) && entity_type_cd">
           <v-col
             cols="12"
@@ -103,8 +102,12 @@
       <!-- Change Name flow -->
       <template v-else-if="isChangeName">
         <BusinessLookupFetch />
-
-        <template v-if="isNameChangeable">
+        <SocietiesInfo
+          v-if="isSocietyDisabled && showSocietiesInfo"
+          :type="'request a name for'"
+          :showDialog="showSocietiesInfo"
+        />
+        <template v-else-if="isNameChangeable">
           <!-- XPRO jurisdiction -->
           <Jurisdiction
             v-if="isChangeNameXpro"
@@ -239,42 +242,48 @@
 
       <!-- Restoration / Reinstatement flow -->
       <template v-else-if="isRestoration">
-        <BusinessLookupFetch />
-        <CompanyType v-if="getSearchBusiness && isBcRestorable && isNumberedEntityType" />
-        <Jurisdiction
-          v-if="isSelectedXproAndRestorable"
-          cols="12"
-          md="4"
+        <BusinessLookupFetch ref="MyBusinessLookup"/>
+        <SocietiesInfo
+          v-if="isSocietyDisabled && showSocietiesInfo"
+          :type="'restore'"
+          :showDialog="showSocietiesInfo"
         />
-
-        <!-- federal sub-flow -->
-        <XproFederalBullets v-if="isFederal && getSearchBusiness" />
-
-        <template v-if="showRestoreNameInput">
-          <v-col
-            cols="12"
-            :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'"
-          >
-            <NameInput
-              :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
-              @emit-corp-num-validity="corpNumValid = $event"
-            />
-          </v-col>
-          <Designation
-            v-if="showDesignation"
+        <template v-else>
+          <CompanyType v-if="getSearchBusiness && isBcRestorable && isSupportedRestoration(getEntityTypeCd)" />
+          <Jurisdiction
+            v-if="isSelectedXproAndRestorable"
             cols="12"
             md="4"
           />
-          <v-col
-            v-if="isMrasJurisdiction"
-            cols="12"
-            class="d-flex justify-end"
-          >
-            <CorpNumberCheckbox />
-          </v-col>
-        </template>
 
-        <NumberedCompanyBullets v-if="isNumberedCompany" />
+          <!-- federal sub-flow -->
+          <XproFederalBullets v-if="isFederal && getSearchBusiness" />
+
+          <template v-if="showRestoreNameInput">
+            <v-col
+              cols="12"
+              :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'"
+            >
+              <NameInput
+                :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+                @emit-corp-num-validity="corpNumValid = $event"
+              />
+            </v-col>
+            <Designation
+              v-if="showDesignation"
+              cols="12"
+              md="4"
+            />
+            <v-col
+              v-if="isMrasJurisdiction"
+              cols="12"
+              class="d-flex justify-end"
+            >
+              <CorpNumberCheckbox />
+            </v-col>
+          </template>
+          <NumberedCompanyBullets v-if="isNumberedCompany" />
+        </template>
       </template>
     </v-row>
 
@@ -368,7 +377,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator'
+import { Component, Mixins, Watch } from 'vue-property-decorator'
 
 import NameInput from './name-input.vue'
 
@@ -382,11 +391,14 @@ import Jurisdiction from '@/components/new-request/search-components/jurisdictio
 import NumberedCompanyBullets from '@/components/new-request/search-components/numbered-company-bullets.vue'
 import RequestAction from '@/components/new-request/search-components/request-action.vue'
 import XproFederalBullets from '@/components/new-request/search-components/xpro-federal-bullets.vue'
+import SocietiesInfo from '@/components/dialogs/societies-info-dialog.vue'
 
 import { EntityTypes } from '@/enums'
 import { CommonMixin, NrAffiliationMixin, SearchMixin } from '@/mixins'
 import { Designations, XproMapping } from '@/list-data'
 import { Navigate } from '@/plugins'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { Action } from 'vuex-class'
 
 /**
  * This is the component that displays the new NR menus and flows.
@@ -403,15 +415,19 @@ import { Navigate } from '@/plugins'
     NameInput,
     NumberedCompanyBullets,
     RequestAction,
+    SocietiesInfo,
     XproFederalBullets
   }
 })
 export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, SearchMixin) {
+  @Action setSocietiesModalVisible!: ActionBindingIF
+
   // Constant
   readonly colinLink = sessionStorage.getItem('CORPORATE_ONLINE_URL')
 
   // Local variable
   corpNumValid = true
+  showSocietiesInfo = false
 
   private mounted () {
     this.$nextTick(() => {
@@ -426,6 +442,22 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   /** Called when switching between request and manage tabs (which are cached). */
   private activated () {
     this.scrollTo('namerequest-sbc-header')
+  }
+
+  @Watch('isSocietyDisabled')
+  onIsSocietyDisabledChanged (disabled: boolean) {
+    this.setSocietiesModalVisible(disabled)
+    this.showSocietiesInfo = disabled
+    if (disabled) {
+      this.setSearchBusiness(null)
+    }
+  }
+
+  get isSocietyDisabled (): boolean {
+    return (
+      !this.isSocietyEnabled() &&
+      (this.getEntityTypeCd === EntityTypes.SO || this.getEntityTypeCd === EntityTypes.XSO)
+    )
   }
 
   get showJurisdiction (): boolean {
