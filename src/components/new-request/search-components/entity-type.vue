@@ -102,7 +102,6 @@ export default class EntityType extends Mixins(SearchMixin) {
   // FUTURE: move this into setter?
   @Watch('getEntityTypeCd')
   private clearDesignation () {
-    console.log('Cleared')
     this.setDesignation('')
     this.setSearchCompanyType('')
     // clear "Select a Business Type" field when "View all business types" is selected
