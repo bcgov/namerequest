@@ -103,6 +103,7 @@ export default class EntityType extends Mixins(SearchMixin) {
   @Watch('getEntityTypeCd')
   private clearDesignation () {
     this.setDesignation('')
+    this.setSearchCompanyType('')
     // clear "Select a Business Type" field when "View all business types" is selected
     if (!this.getEntityTypeCd || this.getEntityTypeCd === EntityTypes.INFO) {
       this.$refs.selectBusinessTypeRef && this.$refs.selectBusinessTypeRef.reset()
