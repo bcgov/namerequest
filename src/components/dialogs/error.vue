@@ -27,7 +27,8 @@
       </div>
       <div v-else-if="isExists">
         <v-card-text class="copy-normal pt-8">
-          You have already created an identical name request. To request a different name, please go back and change the name to request and try again.
+          You have already created an identical name request. Please wait for the system to complete processing the submission.
+          If you are requesting identical names for DBA purposes, please wait 2 minutes between each submission.
           <br>
           <br>
           For assistance, please contact BC Registries staff:
