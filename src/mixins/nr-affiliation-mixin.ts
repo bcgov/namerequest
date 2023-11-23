@@ -9,6 +9,7 @@ import { CommonMixin } from '@/mixins'
 import { NrAffiliationErrors } from '@/enums'
 import { CREATED, BAD_REQUEST } from 'http-status-codes'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
+import { AmalgamationTypes } from '@bcrs-shared-components/enums'
 
 @Component({})
 export class NrAffiliationMixin extends Mixins(CommonMixin) {
@@ -196,6 +197,59 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
       this.setIncorporateNowErrorStatus(true)
       throw new Error('Unable to Incorporate Now ' + error)
     }
+  }
+
+  /**
+ * Handle "Amalgamate Now" button.
+ * Submit an amalgamation draft depending on business type.
+ * Redirect to Dashboard.
+ * @param legalType The legal type of the IA that's being incorporated.
+ */
+  async amalgamateNow (legalType: CorpTypeCd): Promise<any> {
+    try {
+      // show spinner since this is a network call
+      this.$root.$emit('showSpinner', true)
+      const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || 0
+      const businessId = await this.createBusinessAA(accountId, legalType)
+      this.goToEntityDashboard(businessId)
+      return
+    } catch (error) {
+      this.$root.$emit('showSpinner', false)
+      this.setIncorporateNowErrorStatus(true)
+      throw new Error('Unable to Amalgamate Now ' + error)
+    }
+  }
+
+  /**
+   * Create a draft amalgamate application based on selected business type (If applicable).
+   * @param accountId Account ID of logged in user.
+   * @param legalType The legal type of the IA that's being incorporated.
+   */
+  async createBusinessAA (accountId: number, legalType: CorpTypeCd): Promise<string> {
+    const businessRequest = {
+      filing: {
+        header: {
+          name: 'amalgamation',
+          accountId: accountId
+        },
+        business: {
+          legalType: legalType
+        },
+        amalgamation: {
+          nameRequest: {
+            legalType: legalType
+          },
+          type: AmalgamationTypes.REGULAR
+        }
+      }
+    } as BusinessRequest
+
+    const createBusinessResponse =
+      await BusinessServices.createBusiness(businessRequest).catch(error => {
+        throw new Error('Unable to create new Amalgamation Draft ' + error)
+      })
+
+    return createBusinessResponse.data?.filing?.business?.identifier as string
   }
 
   /**

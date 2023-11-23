@@ -1,4 +1,5 @@
 import { EntityStates, EntityTypes } from '@/enums'
+import { AmalgamationTypes } from '@bcrs-shared-components/enums'
 
 export interface BusinessRequest {
   filing: {
@@ -14,6 +15,13 @@ export interface BusinessRequest {
         legalType: string
         nrNumber?: string
       }
+    },
+    amalgamation?: {
+      nameRequest: {
+        legalType: string
+        nrNumber?: string
+      },
+      type: AmalgamationTypes
     },
     registration?: {
       business: {

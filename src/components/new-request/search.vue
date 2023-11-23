@@ -628,7 +628,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   /** Retrieve text based on selected action/flow */
   get actionNowButtonText (): string {
     if (this.isContinuationIn) return 'Continue In Now'
-    if (this.isAmalgamation) return null // should never happen
+    if (this.isAmalgamation) return 'Amalgamate Now'
     if (this.isConversion) return 'Alter Now'
     if (this.isRestoration) return 'Restore Now'
     if (this.isChangeName) return 'Change Name Now'
@@ -708,7 +708,11 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       if (this.isConversion || this.isRestoration || this.isChangeName) {
         this.goToEntityDashboard(this.getSearchBusiness.identifier)
       } else {
-        await this.incorporateNow(legalType)
+        if (this.isAmalgamation) {
+          await this.amalgamateNow(legalType)
+        } else {
+          await this.incorporateNow(legalType)
+        }
       }
     } else {
       // persist legal type of incorporate now in session upon authentication via Signin component
