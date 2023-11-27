@@ -55,7 +55,6 @@
         class="d-flex justify-center my-1"
       >
         <v-btn
-          v-if="showOpenExternalIcon && !isSupportedAmalgamation"
           class="amalgamate-now-external-btn mt-30"
           min-width="20rem"
           :disabled="disabled"
@@ -63,18 +62,12 @@
         >
           <strong>Amalgamate Now</strong>
           &nbsp;
-          <v-icon small>
+          <v-icon
+            v-if="showOpenExternalIcon"
+            small
+          >
             mdi-open-in-new
           </v-icon>
-        </v-btn>
-        <v-btn
-          v-else
-          class="amalgamate-now-btn mt-30"
-          min-width="20rem"
-          :disabled="disabled"
-          @click="amalgamateNowClicked()"
-        >
-          <strong>Amalgamate Now</strong>
         </v-btn>
       </div>
 
@@ -174,19 +167,28 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
-import { CommonMixin, SearchMixin, NrAffiliationMixin } from '@/mixins'
+import { CommonMixin, NrAffiliationMixin } from '@/mixins'
 import { NameRequestI } from '@/interfaces'
 import { EntityTypes, NrRequestActionCodes, NrState } from '@/enums'
 import { Navigate } from '@/plugins'
 
 @Component({})
-export default class NrApprovedGrayBox extends Mixins(CommonMixin, SearchMixin, NrAffiliationMixin) {
+export default class NrApprovedGrayBox extends Mixins(CommonMixin, NrAffiliationMixin) {
   @Prop({ default: 'TBD' }) readonly nrNum!: string
   @Prop({ default: 'TBD' }) readonly approvedName!: string
   @Prop({ default: 'TBD' }) readonly emailAddress!: string
   @Prop({ default: false }) readonly disabled!: boolean
 
   @Getter getNr!: Partial<NameRequestI>
+  @Getter isAuthenticated!: boolean
+
+  get isConversion (): boolean {
+    return (this.getNr.request_action_cd === NrRequestActionCodes.CONVERSION)
+  }
+
+  get isNewBusiness (): boolean {
+    return (this.getNr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS)
+  }
 
   get isAmalgamate (): boolean {
     return (this.getNr.request_action_cd === NrRequestActionCodes.AMALGAMATE)
@@ -253,13 +255,11 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin, SearchMixin, 
   }
 
   async amalgamateNowClicked () {
-    const legalType = this.entityTypeToCorpType(this.getEntityTypeCd)
+    const legalType = this.getNr.requestTypeCd
     if (this.isAuthenticated) {
-      if (this.isSupportedAmalgamation) {
-        console.log('1')
+      if (this.isSupportedAmalgamation(legalType)) {
         await this.amalgamateNow(legalType)
       } else {
-        console.log('2')
         this.$emit('goToCorpOnline')
       }
     } else {
