@@ -11,6 +11,7 @@ export interface NewRequestIF {
   addressSuggestions: any[]
   affiliationErrorModalValue: NrAffiliationErrors
   allowAutoApprove: boolean
+  amalgamateNowError: boolean
   analysisJSON: AnalysisJSONI
   applicant: ApplicantI
   assumedNameOriginal: string
@@ -36,7 +37,6 @@ export interface NewRequestIF {
   helpMeChooseModalVisible: boolean
   hotjarUserId: string,
   incorporateNowError: boolean
-  amalgamateNowError: boolean
   isLoadingSubmission: boolean
   isPersonsName: boolean
   issueIndex: number
