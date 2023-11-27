@@ -15,8 +15,8 @@ import { AmalgamationTypes, FilingTypes } from '@bcrs-shared-components/enums'
 export class NrAffiliationMixin extends Mixins(CommonMixin) {
   // Global action
   @Action setAffiliationErrorModalValue!: ActionBindingIF
-  @Action setIncorporateNowErrorStatus!: ActionBindingIF
   @Action setAmalgamateNowErrorStatus!: ActionBindingIF
+  @Action setIncorporateNowErrorStatus!: ActionBindingIF
 
   /**
    * Affiliates a NR to the current account, creates a temporary business, and then navigates
