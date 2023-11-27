@@ -580,6 +580,10 @@ export const mutateIncorporateNowErrorStatus = (state: StateIF, incorporateNowEr
   state.stateModel.newRequestModel.incorporateNowError = incorporateNowError
 }
 
+export const mutateAmalgamateNowErrorStatus = (state: StateIF, amalgamateNowError: boolean) => {
+  state.stateModel.newRequestModel.amalgamateNowError = amalgamateNowError
+}
+
 export const mutateSearchBusiness = (state: StateIF, val: BusinessSearchIF) => {
   state.stateModel.newRequestModel.search.business = val
 }

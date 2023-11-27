@@ -1253,6 +1253,10 @@ export const setIncorporateNowErrorStatus = ({ commit }, incorporateNowError: bo
   commit('mutateIncorporateNowErrorStatus', incorporateNowError)
 }
 
+export const setAmalgamateNowErrorStatus = ({ commit }, amalgamateNowError: boolean): void => {
+  commit('mutateAmalgamateNowErrorStatus', amalgamateNowError)
+}
+
 export const setSearchBusiness = ({ commit }, val: BusinessSearchIF): void => {
   commit('mutateSearchBusiness', val)
 }

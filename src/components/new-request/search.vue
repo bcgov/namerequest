@@ -707,12 +707,10 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (this.isAuthenticated) {
       if (this.isConversion || this.isRestoration || this.isChangeName) {
         this.goToEntityDashboard(this.getSearchBusiness.identifier)
+      } else if (this.isAmalgamation) {
+        await this.amalgamateNow(legalType)
       } else {
-        if (this.isAmalgamation) {
-          await this.amalgamateNow(legalType)
-        } else {
-          await this.incorporateNow(legalType)
-        }
+        await this.incorporateNow(legalType)
       }
     } else {
       // persist legal type of incorporate now in session upon authentication via Signin component

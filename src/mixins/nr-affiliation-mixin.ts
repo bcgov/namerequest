@@ -9,13 +9,14 @@ import { CommonMixin } from '@/mixins'
 import { NrAffiliationErrors } from '@/enums'
 import { CREATED, BAD_REQUEST } from 'http-status-codes'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
-import { AmalgamationTypes } from '@bcrs-shared-components/enums'
+import { AmalgamationTypes, FilingTypes } from '@bcrs-shared-components/enums'
 
 @Component({})
 export class NrAffiliationMixin extends Mixins(CommonMixin) {
   // Global action
   @Action setAffiliationErrorModalValue!: ActionBindingIF
   @Action setIncorporateNowErrorStatus!: ActionBindingIF
+  @Action setAmalgamateNowErrorStatus!: ActionBindingIF
 
   /**
    * Affiliates a NR to the current account, creates a temporary business, and then navigates
@@ -141,7 +142,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
     const nrNumber = nr.nrNum
 
     if (!this.isFirm(nr)) {
-      name = 'incorporationApplication'
+      name = FilingTypes.INCORPORATION_APPLICATION
       legalType = this.entityTypeToCorpType(nr.entity_type_cd)
       businessRequest = {
         filing: {
@@ -153,7 +154,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
         }
       }
     } else {
-      name = 'registration'
+      name = FilingTypes.REGISTRATION
       legalType = nr.legalType
       businessRequest = {
         filing: {
@@ -200,11 +201,11 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
   }
 
   /**
- * Handle "Amalgamate Now" button.
- * Submit an amalgamation draft depending on business type.
- * Redirect to Dashboard.
- * @param legalType The legal type of the IA that's being incorporated.
- */
+   * Handle "Amalgamate Now" button.
+   * Submit an amalgamation draft depending on business type.
+   * Redirect to Dashboard.
+   * @param legalType The legal type of the amalgamated business
+   */
   async amalgamateNow (legalType: CorpTypeCd): Promise<any> {
     try {
       // show spinner since this is a network call
@@ -215,21 +216,21 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
       return
     } catch (error) {
       this.$root.$emit('showSpinner', false)
-      this.setIncorporateNowErrorStatus(true)
+      this.setAmalgamateNowErrorStatus(true)
       throw new Error('Unable to Amalgamate Now ' + error)
     }
   }
 
   /**
-   * Create a draft amalgamate application based on selected business type (If applicable).
+   * Create a draft amalgamation application based on selected business type.
    * @param accountId Account ID of logged in user.
-   * @param legalType The legal type of the IA that's being incorporated.
+   * @param legalType The legal type of the amalgamated business
    */
   async createBusinessAA (accountId: number, legalType: CorpTypeCd): Promise<string> {
     const businessRequest = {
       filing: {
         header: {
-          name: 'amalgamation',
+          name: FilingTypes.AMALGAMATION,
           accountId: accountId
         },
         business: {

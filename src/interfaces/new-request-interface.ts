@@ -36,6 +36,7 @@ export interface NewRequestIF {
   helpMeChooseModalVisible: boolean
   hotjarUserId: string,
   incorporateNowError: boolean
+  amalgamateNowError: boolean
   isLoadingSubmission: boolean
   isPersonsName: boolean
   issueIndex: number

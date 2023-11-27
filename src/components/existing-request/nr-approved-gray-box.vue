@@ -55,11 +55,11 @@
         class="d-flex justify-center my-1"
       >
         <v-btn
-          v-if="showOpenExternalIcon"
+          v-if="showOpenExternalIcon && !isSupportedAmalgamation"
           class="amalgamate-now-external-btn mt-30"
           min-width="20rem"
           :disabled="disabled"
-          @click="$emit('goToCorpOnline')"
+          @click="amalgamateNowClicked()"
         >
           <strong>Amalgamate Now</strong>
           &nbsp;
@@ -174,26 +174,19 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
-import { CommonMixin } from '@/mixins'
+import { CommonMixin, SearchMixin, NrAffiliationMixin } from '@/mixins'
 import { NameRequestI } from '@/interfaces'
 import { EntityTypes, NrRequestActionCodes, NrState } from '@/enums'
+import { Navigate } from '@/plugins'
 
 @Component({})
-export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
+export default class NrApprovedGrayBox extends Mixins(CommonMixin, SearchMixin, NrAffiliationMixin) {
   @Prop({ default: 'TBD' }) readonly nrNum!: string
   @Prop({ default: 'TBD' }) readonly approvedName!: string
   @Prop({ default: 'TBD' }) readonly emailAddress!: string
   @Prop({ default: false }) readonly disabled!: boolean
 
   @Getter getNr!: Partial<NameRequestI>
-
-  get isConversion (): boolean {
-    return (this.getNr.request_action_cd === NrRequestActionCodes.CONVERSION)
-  }
-
-  get isNewBusiness (): boolean {
-    return (this.getNr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS)
-  }
 
   get isAmalgamate (): boolean {
     return (this.getNr.request_action_cd === NrRequestActionCodes.AMALGAMATE)
@@ -257,6 +250,24 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
       this.isSupportedIncorporationRegistration(this.getNr.entity_type_cd) &&
       this.isApprovedOrConsentUnRequired
     )
+  }
+
+  async amalgamateNowClicked () {
+    const legalType = this.entityTypeToCorpType(this.getEntityTypeCd)
+    if (this.isAuthenticated) {
+      if (this.isSupportedAmalgamation) {
+        await this.amalgamateNow(legalType)
+      } else {
+        this.$emit('goToCorpOnline')
+      }
+    } else {
+      // persist legal type of incorporate now in session upon authentication via Signin component
+      sessionStorage.setItem('LEGAL_TYPE', legalType)
+      // navigate to BC Registry login page with return parameter
+      const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
+      const nameRequestUrl = `${window.location.origin}`
+      Navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
+    }
   }
 }
 </script>

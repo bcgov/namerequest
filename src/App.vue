@@ -81,6 +81,11 @@
       :dialog="getIncorporateNowErrorStatus"
       @close="closeIncorporateNowErrorDialog()"
     />
+    <AmalgamateNowErrorDialog
+      attach="#app"
+      :dialog="getAmalgamateNowErrorStatus"
+      @close="closeAmalgamateNowErrorDialog()"
+    />
     <MrasSearchInfoDialog />
     <NrNotRequiredDialog />
     <PaymentCompleteDialog />
@@ -122,7 +127,7 @@ import GenesysWebMessage from '@bcrs-shared-components/genesys-web-message/Genes
 import { WebChat as ChatPopup } from '@bcrs-shared-components/web-chat'
 import {
   AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
-  IncorporateNowErrorDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog,
+  IncorporateNowErrorDialog, AmalgamateNowErrorDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog,
   PaymentCompleteDialog, PickEntityOrConversionDialog, RenewDialog, ReceiptsDialog,
   RefundDialog, ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
 } from '@/components/dialogs'
@@ -149,6 +154,7 @@ import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
     GenesysWebMessage,
     HelpMeChooseDialog,
     IncorporateNowErrorDialog,
+    AmalgamateNowErrorDialog,
     MrasSearchInfoDialog,
     NrNotRequiredDialog,
     PaymentCompleteDialog,
@@ -170,10 +176,12 @@ export default class App extends Mixins(
   // Global getters
   @Getter getDisplayedComponent!: string
   @Getter getIncorporateNowErrorStatus!: boolean
+  @Getter getAmalgamateNowErrorStatus!: boolean
   @Getter getNrId!: number
   @Getter isAuthenticated!: boolean
   @Getter isRoleStaff!: boolean
   @Getter isMobile!: boolean
+  @Getter isNewBusiness!: boolean
 
   // Global actions
   @Action resetAnalyzeName!: ActionBindingIF
@@ -267,13 +275,22 @@ export default class App extends Mixins(
 
     // if there is stored legal type for an IA then incorporate/register it now
     const legaltype = sessionStorage.getItem('LEGAL_TYPE')
+
     if (legaltype) {
       try {
-        await this.incorporateNow(legaltype as CorpTypeCd)
+        if (this.isNewBusiness) {
+          await this.incorporateNow(legaltype as CorpTypeCd)
+        } else {
+          await this.amalgamateNow(legaltype as CorpTypeCd)
+        }
         // clear the legal type data
         sessionStorage.removeItem('LEGAL_TYPE')
       } catch (error) {
-        this.setIncorporateNowErrorStatus(true)
+        if (this.isNewBusiness) {
+          this.setIncorporateNowErrorStatus(true)
+        } else {
+          this.setAmalgamateNowErrorStatus(true)
+        }
         console.error(error)
       }
     }
@@ -347,6 +364,12 @@ export default class App extends Mixins(
   closeIncorporateNowErrorDialog (): void {
     sessionStorage.removeItem('LEGAL_TYPE')
     this.setIncorporateNowErrorStatus(false)
+  }
+
+  /** Close AmalgamateNowErrorDialog and clear session storage. */
+  closeAmalgamateNowErrorDialog (): void {
+    sessionStorage.removeItem('LEGAL_TYPE')
+    this.setAmalgamateNowErrorStatus(false)
   }
 }
 </script>
