@@ -72,7 +72,7 @@
           class="amalgamate-now-btn mt-30"
           min-width="20rem"
           :disabled="disabled"
-          @click="$emit('goToEntityDashboard')"
+          @click="amalgamateNowClicked()"
         >
           <strong>Amalgamate Now</strong>
         </v-btn>
@@ -256,8 +256,10 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin, SearchMixin, 
     const legalType = this.entityTypeToCorpType(this.getEntityTypeCd)
     if (this.isAuthenticated) {
       if (this.isSupportedAmalgamation) {
+        console.log('1')
         await this.amalgamateNow(legalType)
       } else {
+        console.log('2')
         this.$emit('goToCorpOnline')
       }
     } else {
