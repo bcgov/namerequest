@@ -174,19 +174,18 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
-import { CommonMixin, NrAffiliationMixin } from '@/mixins'
+import { CommonMixin } from '@/mixins'
 import { NameRequestI } from '@/interfaces'
 import { EntityTypes, NrRequestActionCodes, NrState } from '@/enums'
 
 @Component({})
-export default class NrApprovedGrayBox extends Mixins(CommonMixin, NrAffiliationMixin) {
+export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
   @Prop({ default: 'TBD' }) readonly nrNum!: string
   @Prop({ default: 'TBD' }) readonly approvedName!: string
   @Prop({ default: 'TBD' }) readonly emailAddress!: string
   @Prop({ default: false }) readonly disabled!: boolean
 
   @Getter getNr!: Partial<NameRequestI>
-  @Getter isAuthenticated!: boolean
 
   get isConversion (): boolean {
     return (this.getNr.request_action_cd === NrRequestActionCodes.CONVERSION)

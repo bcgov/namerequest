@@ -346,6 +346,7 @@ import { Sleep, GetFeatureFlag, Navigate } from '@/plugins'
 import NamexServices from '@/services/namex-services'
 import ContactInfo from '@/components/common/contact-info.vue'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { isAmalgamation } from '@/store/getters'
 
 @Component({
   components: {
@@ -785,15 +786,17 @@ export default class ExistingRequestDisplay extends Mixins(
   async amalgamateYourBusiness (): Promise<void> {
     // safety check
     if (!this.isNrApprovedOrConditional) return
-    await this.amalgamateNow(this.nr.entity_type_cd)
+
     return this.affiliateOrLogin()
   }
 
-  /** Check if current NR  */
   /** Affiliates the current NR if authenticated, or prompts login if unauthenticated. */
   private async affiliateOrLogin (): Promise<any> {
     if (this.isAuthenticated) {
       await this.createAffiliation(this.nr)
+      if (isAmalgamation) {
+        await this.amalgamateNow(this.nr.entity_type_cd)
+      }
     } else {
       // persist NR in session for affiliation upon authentication via Signin component
       sessionStorage.setItem('NR_DATA', JSON.stringify(this.nr))
