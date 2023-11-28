@@ -793,7 +793,7 @@ export default class ExistingRequestDisplay extends Mixins(
   private async affiliateOrLogin (): Promise<any> {
     if (this.isAuthenticated) {
       await this.createAffiliation(this.nr)
-      if (isAmalgamation) {
+      if (this.isAmalgamation) {
         await this.amalgamateNow(this.nr.entity_type_cd)
       }
     } else {
