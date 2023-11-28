@@ -346,7 +346,6 @@ import { Sleep, GetFeatureFlag, Navigate } from '@/plugins'
 import NamexServices from '@/services/namex-services'
 import ContactInfo from '@/components/common/contact-info.vue'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { isAmalgamation } from '@/store/getters'
 
 @Component({
   components: {
@@ -370,7 +369,7 @@ export default class ExistingRequestDisplay extends Mixins(
   @Getter getNrId!: number
   @Getter getNrState!: NrState
   @Getter isMobile!: boolean
-
+  @Getter isAmalgamation!: boolean
   // Global actions
   @Action editExistingRequest!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
