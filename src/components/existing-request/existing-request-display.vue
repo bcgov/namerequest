@@ -314,6 +314,7 @@
             :emailAddress="nr && nr.applicants && nr.applicants.emailAddress"
             :disabled="disableUnfurnished"
             @incorporateRegisterYourBusiness="incorporateRegisterYourBusiness()"
+            @amalgamateYourBusiness="amalgamateYourBusiness()"
             @goToSocietiesOnline="goToSocietiesOnline()"
             @goToCorpOnline="goToCorpOnline()"
             @goToEntityDashboard="goToEntityDashboard(nr.corpNum)"
@@ -781,6 +782,14 @@ export default class ExistingRequestDisplay extends Mixins(
     return this.affiliateOrLogin()
   }
 
+  async amalgamateYourBusiness (): Promise<void> {
+    // safety check
+    if (!this.isNrApprovedOrConditional) return
+    await this.amalgamateNow(this.nr.entity_type_cd)
+    return this.affiliateOrLogin()
+  }
+
+  /** Check if current NR  */
   /** Affiliates the current NR if authenticated, or prompts login if unauthenticated. */
   private async affiliateOrLogin (): Promise<any> {
     if (this.isAuthenticated) {

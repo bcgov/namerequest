@@ -55,19 +55,26 @@
         class="d-flex justify-center my-1"
       >
         <v-btn
+          v-if="showOpenExternalIcon"
           class="amalgamate-now-external-btn mt-30"
           min-width="20rem"
           :disabled="disabled"
-          @click="amalgamateNowClicked()"
+          @click="$emit('goToCorpOnline')"
         >
           <strong>Amalgamate Now</strong>
           &nbsp;
-          <v-icon
-            v-if="showOpenExternalIcon"
-            small
-          >
+          <v-icon small>
             mdi-open-in-new
           </v-icon>
+        </v-btn>
+        <v-btn
+          v-else
+          class="amalgamate-now-btn mt-30"
+          min-width="20rem"
+          :disabled="disabled"
+          @click="$emit('amalgamateYourBusiness')"
+        >
+          <strong>Amalgamate Now</strong>
         </v-btn>
       </div>
 
@@ -170,7 +177,6 @@ import { Getter } from 'vuex-class'
 import { CommonMixin, NrAffiliationMixin } from '@/mixins'
 import { NameRequestI } from '@/interfaces'
 import { EntityTypes, NrRequestActionCodes, NrState } from '@/enums'
-import { Navigate } from '@/plugins'
 
 @Component({})
 export default class NrApprovedGrayBox extends Mixins(CommonMixin, NrAffiliationMixin) {
@@ -252,24 +258,6 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin, NrAffiliation
       this.isSupportedIncorporationRegistration(this.getNr.entity_type_cd) &&
       this.isApprovedOrConsentUnRequired
     )
-  }
-
-  async amalgamateNowClicked () {
-    const legalType = this.getNr.requestTypeCd
-    if (this.isAuthenticated) {
-      if (this.isSupportedAmalgamation(legalType)) {
-        await this.amalgamateNow(legalType)
-      } else {
-        this.$emit('goToCorpOnline')
-      }
-    } else {
-      // persist legal type of incorporate now in session upon authentication via Signin component
-      sessionStorage.setItem('LEGAL_TYPE', legalType)
-      // navigate to BC Registry login page with return parameter
-      const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
-      const nameRequestUrl = `${window.location.origin}`
-      Navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
-    }
   }
 }
 </script>
