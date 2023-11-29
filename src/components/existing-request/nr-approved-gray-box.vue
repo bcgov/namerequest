@@ -12,7 +12,7 @@
           class="register-btn mt-30"
           min-width="20rem"
           :disabled="disabled"
-          @click="$emit('incorporateRegisterYourBusiness')"
+          @click="$emit('affiliateYourBusiness')"
         >
           <strong>Register Your Business</strong>
         </v-btn>
@@ -26,7 +26,7 @@
           class="incorporate-now-btn mt-30"
           min-width="20rem"
           :disabled="disabled"
-          @click="$emit('incorporateRegisterYourBusiness')"
+          @click="$emit('affiliateYourBusiness')"
         >
           <strong>Incorporate Your Business</strong>
         </v-btn>
@@ -72,7 +72,7 @@
           class="amalgamate-now-btn mt-30"
           min-width="20rem"
           :disabled="disabled"
-          @click="$emit('amalgamateYourBusiness')"
+          @click="$emit('affiliateYourBusiness')"
         >
           <strong>Amalgamate Now</strong>
         </v-btn>
@@ -225,7 +225,7 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
   }
 
   get showOpenExternalIcon (): boolean {
-    if (this.showAmalgamateNowButton && !this.isSupportedAmalgamation(this.getNr.requestTypeCd)) return true
+    if (this.showAmalgamateNowButton && !this.isSupportedAmalgamation(this.getNr.entity_type_cd)) return true
     if (this.showAlterNowButton && !this.isSupportedAlteration(this.getNr.requestTypeCd)) return true
     return false
   }

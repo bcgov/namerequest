@@ -141,27 +141,29 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
     let businessRequest = {} as BusinessRequest
     const nrNumber = nr.nrNum
     if (!this.isFirm(nr)) {
-      name = FilingTypes.INCORPORATION_APPLICATION
-      legalType = this.entityTypeToCorpType(nr.entity_type_cd)
-      businessRequest = {
-        filing: {
-          business: { legalType },
-          header: { accountId, name },
-          incorporationApplication: {
-            nameRequest: { legalType, nrNumber }
+      if (nr.request_action_cd === 'AML') {
+        name = FilingTypes.AMALGAMATION
+        legalType = nr.legalType
+        businessRequest = {
+          filing: {
+            business: { legalType },
+            header: { accountId, name },
+            amalgamation: {
+              type: AmalgamationTypes.REGULAR,
+              nameRequest: { legalType, nrNumber }
+            }
           }
         }
-      }
-    } else if (nr.request_action_cd === 'AML') {
-      name = FilingTypes.AMALGAMATION
-      legalType = nr.legalType
-      businessRequest = {
-        filing: {
-          business: { legalType },
-          header: { accountId, name },
-          amalgamation: {
-            type: AmalgamationTypes.REGULAR,
-            nameRequest: { legalType, nrNumber }
+      } else {
+        name = FilingTypes.INCORPORATION_APPLICATION
+        legalType = this.entityTypeToCorpType(nr.entity_type_cd)
+        businessRequest = {
+          filing: {
+            business: { legalType },
+            header: { accountId, name },
+            incorporationApplication: {
+              nameRequest: { legalType, nrNumber }
+            }
           }
         }
       }
