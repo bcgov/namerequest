@@ -188,8 +188,13 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
       // show spinner since this is a network call
       this.$root.$emit('showSpinner', true)
       const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || 0
-      const businessId = await this.createBusinessIA(accountId, legalType)
-      this.goToEntityDashboard(businessId)
+      // incorp requires user login, ignore if user is not logged in and return to NR page
+      if (accountId === 0) {
+        this.$root.$emit('showSpinner', false)
+      } else {
+        const businessId = await this.createBusinessIA(accountId, legalType)
+        this.goToEntityDashboard(businessId)
+      }
       return
     } catch (error) {
       this.$root.$emit('showSpinner', false)
