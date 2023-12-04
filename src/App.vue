@@ -267,7 +267,7 @@ export default class App extends Mixins(
 
     // if there is stored legal type for an IA then incorporate/register it now
     const legaltype = sessionStorage.getItem('LEGAL_TYPE')
-    if (legaltype) {
+    if (legaltype && this.isAuthenticated) {
       try {
         await this.incorporateNow(legaltype as CorpTypeCd)
         // clear the legal type data
