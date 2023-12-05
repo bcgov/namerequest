@@ -313,7 +313,7 @@
             :approvedName="approvedName && approvedName.name"
             :emailAddress="nr && nr.applicants && nr.applicants.emailAddress"
             :disabled="disableUnfurnished"
-            @incorporateRegisterYourBusiness="incorporateRegisterYourBusiness()"
+            @affiliateYourBusiness="affiliateYourBusiness()"
             @goToSocietiesOnline="goToSocietiesOnline()"
             @goToCorpOnline="goToCorpOnline()"
             @goToEntityDashboard="goToEntityDashboard(nr.corpNum)"
@@ -368,7 +368,6 @@ export default class ExistingRequestDisplay extends Mixins(
   @Getter getNrId!: number
   @Getter getNrState!: NrState
   @Getter isMobile!: boolean
-
   // Global actions
   @Action editExistingRequest!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
@@ -773,8 +772,8 @@ export default class ExistingRequestDisplay extends Mixins(
     this.setConditionsModalVisible(true)
   }
 
-  /** Called to incorporate/register the business. */
-  async incorporateRegisterYourBusiness (): Promise<void> {
+  /** Called to incorporate/register/amalgamate the business. */
+  async affiliateYourBusiness (): Promise<void> {
     // safety check
     if (!this.isNrApprovedOrConditional) return
 

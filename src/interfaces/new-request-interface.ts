@@ -11,6 +11,7 @@ export interface NewRequestIF {
   addressSuggestions: any[]
   affiliationErrorModalValue: NrAffiliationErrors
   allowAutoApprove: boolean
+  amalgamateNowError: boolean
   analysisJSON: AnalysisJSONI
   applicant: ApplicantI
   assumedNameOriginal: string

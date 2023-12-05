@@ -77,6 +77,7 @@ export const stateModel: StateModelIF = {
     helpMeChooseModalVisible: false,
     affiliationErrorModalValue: NrAffiliationErrors.NONE, // initially hidden
     incorporateNowError: false,
+    amalgamateNowError: false,
     isPersonsName: false,
     issueIndex: 0,
     location: null,
