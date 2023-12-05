@@ -9,11 +9,13 @@ import { CommonMixin } from '@/mixins'
 import { NrAffiliationErrors } from '@/enums'
 import { CREATED, BAD_REQUEST } from 'http-status-codes'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
+import { AmalgamationTypes, FilingTypes } from '@bcrs-shared-components/enums'
 
 @Component({})
 export class NrAffiliationMixin extends Mixins(CommonMixin) {
   // Global action
   @Action setAffiliationErrorModalValue!: ActionBindingIF
+  @Action setAmalgamateNowErrorStatus!: ActionBindingIF
   @Action setIncorporateNowErrorStatus!: ActionBindingIF
 
   /**
@@ -138,21 +140,35 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
     let legalType = ''
     let businessRequest = {} as BusinessRequest
     const nrNumber = nr.nrNum
-
     if (!this.isFirm(nr)) {
-      name = 'incorporationApplication'
-      legalType = this.entityTypeToCorpType(nr.entity_type_cd)
-      businessRequest = {
-        filing: {
-          business: { legalType },
-          header: { accountId, name },
-          incorporationApplication: {
-            nameRequest: { legalType, nrNumber }
+      if (nr.request_action_cd === 'AML') {
+        name = FilingTypes.AMALGAMATION
+        legalType = nr.legalType
+        businessRequest = {
+          filing: {
+            business: { legalType },
+            header: { accountId, name },
+            amalgamation: {
+              type: AmalgamationTypes.REGULAR,
+              nameRequest: { legalType, nrNumber }
+            }
+          }
+        }
+      } else {
+        name = FilingTypes.INCORPORATION_APPLICATION
+        legalType = this.entityTypeToCorpType(nr.entity_type_cd)
+        businessRequest = {
+          filing: {
+            business: { legalType },
+            header: { accountId, name },
+            incorporationApplication: {
+              nameRequest: { legalType, nrNumber }
+            }
           }
         }
       }
     } else {
-      name = 'registration'
+      name = FilingTypes.REGISTRATION
       legalType = nr.legalType
       businessRequest = {
         filing: {
@@ -196,6 +212,59 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
       this.setIncorporateNowErrorStatus(true)
       throw new Error('Unable to Incorporate Now ' + error)
     }
+  }
+
+  /**
+   * Handle "Amalgamate Now" button.
+   * Submit an amalgamation draft depending on business type.
+   * Redirect to Dashboard.
+   * @param legalType The legal type of the amalgamated business
+   */
+  async amalgamateNow (legalType: CorpTypeCd): Promise<any> {
+    try {
+      // show spinner since this is a network call
+      this.$root.$emit('showSpinner', true)
+      const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || 0
+      const businessId = await this.createBusinessAA(accountId, legalType)
+      this.goToEntityDashboard(businessId)
+      return
+    } catch (error) {
+      this.$root.$emit('showSpinner', false)
+      this.setAmalgamateNowErrorStatus(true)
+      throw new Error('Unable to Amalgamate Now ' + error)
+    }
+  }
+
+  /**
+   * Create a draft amalgamation application based on selected business type.
+   * @param accountId Account ID of logged in user.
+   * @param legalType The legal type of the amalgamated business
+   */
+  async createBusinessAA (accountId: number, legalType: CorpTypeCd): Promise<string> {
+    const businessRequest = {
+      filing: {
+        header: {
+          name: FilingTypes.AMALGAMATION,
+          accountId: accountId
+        },
+        business: {
+          legalType: legalType
+        },
+        amalgamation: {
+          nameRequest: {
+            legalType: legalType
+          },
+          type: AmalgamationTypes.REGULAR
+        }
+      }
+    } as BusinessRequest
+
+    const createBusinessResponse =
+      await BusinessServices.createBusiness(businessRequest).catch(error => {
+        throw new Error('Unable to create new Amalgamation Draft ' + error)
+      })
+
+    return createBusinessResponse.data?.filing?.business?.identifier as string
   }
 
   /**

@@ -1,4 +1,5 @@
 export { default as AffiliationErrorDialog } from './affiliation-error.vue'
+export { default as AmalgamateNowErrorDialog } from './amalgamate-now-error.vue'
 export { default as CancelDialog } from './cancel.vue'
 export { default as ConditionsDialog } from './conditions.vue'
 export { default as ConfirmNrDialog } from './confirm-name-request.vue'

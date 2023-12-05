@@ -1243,6 +1243,10 @@ export const getIncorporateNowErrorStatus = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.incorporateNowError
 }
 
+export const getAmalgamateNowErrorStatus = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.amalgamateNowError
+}
+
 /** True if current request action requires business lookup. */
 export const isBusinessLookupRequestAction = (state: StateIF): boolean => {
   return BusinessLookupRequestActions.includes(getRequestActionCd(state))
