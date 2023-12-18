@@ -242,7 +242,7 @@
 
       <!-- Restoration / Reinstatement flow -->
       <template v-else-if="isRestoration">
-        <BusinessLookupFetch ref="MyBusinessLookup" />
+        <BusinessLookupFetch ref="MyBusinessLookup"/>
         <SocietiesInfo
           v-if="isSocietyDisabled && showSocietiesInfo"
           :type="'restore'"
