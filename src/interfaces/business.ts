@@ -16,7 +16,7 @@ export interface BusinessRequest {
         nrNumber?: string
       }
     },
-    amalgamation?: {
+    amalgamationApplication?: {
       nameRequest: {
         legalType: string
         nrNumber?: string
