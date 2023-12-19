@@ -142,13 +142,13 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
     const nrNumber = nr.nrNum
     if (!this.isFirm(nr)) {
       if (nr.request_action_cd === 'AML') {
-        name = FilingTypes.AMALGAMATION
+        name = FilingTypes.AMALGAMATION_APPLICATION
         legalType = nr.legalType
         businessRequest = {
           filing: {
             business: { legalType },
             header: { accountId, name },
-            amalgamation: {
+            amalgamationApplication: {
               type: AmalgamationTypes.REGULAR,
               nameRequest: { legalType, nrNumber }
             }
@@ -244,13 +244,13 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
     const businessRequest = {
       filing: {
         header: {
-          name: FilingTypes.AMALGAMATION,
+          name: FilingTypes.AMALGAMATION_APPLICATION,
           accountId: accountId
         },
         business: {
           legalType: legalType
         },
-        amalgamation: {
+        amalgamationApplication: {
           nameRequest: {
             legalType: legalType
           },
