@@ -373,18 +373,21 @@ export default class App extends Mixins(
   /** Close IncorporateNowErrorDialog and clear session storage. */
   closeIncorporateNowErrorDialog (): void {
     sessionStorage.removeItem('LEGAL_TYPE')
+    sessionStorage.removeItem('REQUEST_ACTION_CD')
     this.setIncorporateNowErrorStatus(false)
   }
 
   /** Close AmalgamateNowErrorDialog and clear session storage. */
   closeAmalgamateNowErrorDialog (): void {
     sessionStorage.removeItem('LEGAL_TYPE')
+    sessionStorage.removeItem('REQUEST_ACTION_CD')
     this.setAmalgamateNowErrorStatus(false)
   }
 
   /** Close ContinuationInErrorDialog and clear session storage. */
   closeContinuationInErrorDialog (): void {
     sessionStorage.removeItem('LEGAL_TYPE')
+    sessionStorage.removeItem('REQUEST_ACTION_CD')
     this.setContinuationInErrorStatus(false)
   }
 }
