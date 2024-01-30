@@ -284,15 +284,15 @@ export default class App extends Mixins(
     // if there is stored legal type and request action cd, try to continue
     const legaltype = sessionStorage.getItem('LEGAL_TYPE')
     const requestActionCd = sessionStorage.getItem('REQUEST_ACTION_CD')
-
     if (legaltype && requestActionCd && this.isAuthenticated) {
       try {
         this.setRequestAction(requestActionCd)
         if (this.isNewBusiness || this.isAmalgamation || this.isContinuationIn) {
           await this.actionNumberedEntity(legaltype as CorpTypeCd)
         }
-        // clear the legal type data
+        // clear the legal type and request action data
         sessionStorage.removeItem('LEGAL_TYPE')
+        sessionStorage.removeItem('REQUEST_ACTION_CD')
       } catch (error) {
         if (this.isNewBusiness) {
           this.setIncorporateNowErrorStatus(true)
