@@ -1257,6 +1257,10 @@ export const setAmalgamateNowErrorStatus = ({ commit }, amalgamateNowError: bool
   commit('mutateAmalgamateNowErrorStatus', amalgamateNowError)
 }
 
+export const setContinuationInErrorStatus = ({ commit }, continuationInError: boolean): void => {
+  commit('mutateContinuationInErrorStatus', continuationInError)
+}
+
 export const setSearchBusiness = ({ commit }, val: BusinessSearchIF): void => {
   commit('mutateSearchBusiness', val)
 }

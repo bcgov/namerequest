@@ -1,5 +1,5 @@
 import { Component, Mixins } from 'vue-property-decorator'
-import { Action } from 'vuex-class'
+import { Action, Getter } from 'vuex-class'
 import AuthServices from '@/services/auth-services'
 import BusinessServices from '@/services/business-services'
 import { BusinessRequest, NameRequestI } from '@/interfaces'
@@ -9,13 +9,17 @@ import { CommonMixin } from '@/mixins'
 import { NrAffiliationErrors } from '@/enums'
 import { CREATED, BAD_REQUEST } from 'http-status-codes'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
-import { AmalgamationTypes, FilingTypes } from '@bcrs-shared-components/enums'
+import { AmalgamationTypes, FilingTypes, NrRequestActionCodes } from '@bcrs-shared-components/enums'
 
 @Component({})
 export class NrAffiliationMixin extends Mixins(CommonMixin) {
+  @Getter isAmalgamation!: boolean
+  @Getter isContinuationIn!: boolean
+
   // Global action
   @Action setAffiliationErrorModalValue!: ActionBindingIF
   @Action setAmalgamateNowErrorStatus!: ActionBindingIF
+  @Action setContinuationInErrorStatus!: ActionBindingIF
   @Action setIncorporateNowErrorStatus!: ActionBindingIF
 
   /**
@@ -141,7 +145,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
     let businessRequest = {} as BusinessRequest
     const nrNumber = nr.nrNum
     if (!this.isFirm(nr)) {
-      if (nr.request_action_cd === 'AML') {
+      if (nr.request_action_cd === NrRequestActionCodes.AMALGAMATE) {
         name = FilingTypes.AMALGAMATION_APPLICATION
         legalType = nr.legalType
         businessRequest = {
@@ -150,6 +154,18 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
             header: { accountId, name },
             amalgamationApplication: {
               type: AmalgamationTypes.REGULAR,
+              nameRequest: { legalType, nrNumber }
+            }
+          }
+        }
+      } else if (nr.request_action_cd === NrRequestActionCodes.MOVE) {
+        name = FilingTypes.CONTINUATION_IN
+        legalType = nr.legalType
+        businessRequest = {
+          filing: {
+            business: { legalType },
+            header: { accountId, name },
+            continuationIn: {
               nameRequest: { legalType, nrNumber }
             }
           }
@@ -194,101 +210,64 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
   }
 
   /**
-   * Handle "Incorporate Now" button.
+   * Handle the action buttons (numbered selection).
    * Create draft business depending on business type.
    * Redirect to Dashboard.
-   * @param legalType The legal type of the IA that's being incorporated.
+   * @param legalType The legal type of the business
    */
-  async incorporateNow (legalType: CorpTypeCd): Promise<any> {
+  async actionNumberedEntity (legalType: CorpTypeCd): Promise<any> {
+    // show spinner since this is a network call
+    this.$root.$emit('showSpinner', true)
+    const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || 0
     try {
-      // show spinner since this is a network call
-      this.$root.$emit('showSpinner', true)
-      const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || 0
-      const businessId = await this.createBusinessIA(accountId, legalType)
+      const businessId = await this.createNumberedBusiness(accountId, legalType)
       this.goToEntityDashboard(businessId)
       return
     } catch (error) {
       this.$root.$emit('showSpinner', false)
-      this.setIncorporateNowErrorStatus(true)
-      throw new Error('Unable to Incorporate Now ' + error)
+      if (this.isAmalgamation) {
+        this.setAmalgamateNowErrorStatus(true)
+        throw new Error('Unable to Amalgamate Now ' + error)
+      } else if (this.isContinuationIn) {
+        this.setContinuationInErrorStatus(true)
+        throw new Error('Unable to Continue In Now ' + error)
+      } else {
+        this.setIncorporateNowErrorStatus(true)
+        throw new Error('Unable to Incorporate Now ' + error)
+      }
     }
   }
 
   /**
-   * Handle "Amalgamate Now" button.
-   * Submit an amalgamation draft depending on business type.
-   * Redirect to Dashboard.
-   * @param legalType The legal type of the amalgamated business
+   * Create a draft numbered business based on selected business type (If applicable).
+   * @param accountId Account ID of logged in user.
+   * @param legalType The legal type of the business that's being created.
    */
-  async amalgamateNow (legalType: CorpTypeCd): Promise<any> {
-    try {
-      // show spinner since this is a network call
-      this.$root.$emit('showSpinner', true)
-      const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || 0
-      const businessId = await this.createBusinessAA(accountId, legalType)
-      this.goToEntityDashboard(businessId)
-      return
-    } catch (error) {
-      this.$root.$emit('showSpinner', false)
-      this.setAmalgamateNowErrorStatus(true)
-      throw new Error('Unable to Amalgamate Now ' + error)
+  async createNumberedBusiness (accountId: number, legalType: CorpTypeCd): Promise<string> {
+    const businessRequest = {
+      filing: {
+        header: {
+          accountId: accountId
+        },
+        business: {
+          legalType: legalType
+        }
+      }
+    } as BusinessRequest
+
+    if (this.isAmalgamation) {
+      businessRequest.filing.header.name = FilingTypes.AMALGAMATION_APPLICATION
+      businessRequest.filing.amalgamationApplication = {
+        nameRequest: { legalType },
+        type: AmalgamationTypes.REGULAR
+      }
+    } else if (this.isContinuationIn) {
+      businessRequest.filing.header.name = FilingTypes.CONTINUATION_IN
+      businessRequest.filing.continuationIn = { nameRequest: { legalType } }
+    } else {
+      businessRequest.filing.header.name = FilingTypes.INCORPORATION_APPLICATION
+      businessRequest.filing.incorporationApplication = { nameRequest: { legalType } }
     }
-  }
-
-  /**
-   * Create a draft amalgamation application based on selected business type.
-   * @param accountId Account ID of logged in user.
-   * @param legalType The legal type of the amalgamated business
-   */
-  async createBusinessAA (accountId: number, legalType: CorpTypeCd): Promise<string> {
-    const businessRequest = {
-      filing: {
-        header: {
-          name: FilingTypes.AMALGAMATION_APPLICATION,
-          accountId: accountId
-        },
-        business: {
-          legalType: legalType
-        },
-        amalgamationApplication: {
-          nameRequest: {
-            legalType: legalType
-          },
-          type: AmalgamationTypes.REGULAR
-        }
-      }
-    } as BusinessRequest
-
-    const createBusinessResponse =
-      await BusinessServices.createBusiness(businessRequest).catch(error => {
-        throw new Error('Unable to create new Amalgamation Draft ' + error)
-      })
-
-    return createBusinessResponse.data?.filing?.business?.identifier as string
-  }
-
-  /**
-   * Create a draft business based on selected business type (If applicable).
-   * @param accountId Account ID of logged in user.
-   * @param legalType The legal type of the IA that's being incorporated.
-   */
-  async createBusinessIA (accountId: number, legalType: CorpTypeCd): Promise<string> {
-    const businessRequest = {
-      filing: {
-        header: {
-          name: 'incorporationApplication',
-          accountId: accountId
-        },
-        business: {
-          legalType: legalType
-        },
-        incorporationApplication: {
-          nameRequest: {
-            legalType: legalType
-          }
-        }
-      }
-    } as BusinessRequest
 
     const createBusinessResponse =
       await BusinessServices.createBusiness(businessRequest).catch(error => {

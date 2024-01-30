@@ -584,6 +584,10 @@ export const mutateAmalgamateNowErrorStatus = (state: StateIF, amalgamateNowErro
   state.stateModel.newRequestModel.amalgamateNowError = amalgamateNowError
 }
 
+export const mutateContinuationInErrorStatus = (state: StateIF, continuationInError: boolean) => {
+  state.stateModel.newRequestModel.continuationInError = continuationInError
+}
+
 export const mutateSearchBusiness = (state: StateIF, val: BusinessSearchIF) => {
   state.stateModel.newRequestModel.search.business = val
 }

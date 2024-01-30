@@ -17,6 +17,7 @@ export interface NewRequestIF {
   assumedNameOriginal: string
   conditionsModalVisible: boolean
   conflictId: string
+  continuationInError: boolean
   conversionType: NrRequestTypeCodes
   conversionTypeAddToSelect: ConversionTypesI
   corpNum: string

@@ -23,6 +23,12 @@ export interface BusinessRequest {
       },
       type: AmalgamationTypes
     },
+    continuationIn?: {
+      nameRequest: {
+        legalType: string
+        nrNumber?: string
+      }
+    },
     registration?: {
       business: {
         natureOfBusiness: string

@@ -707,14 +707,13 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (this.isAuthenticated) {
       if (this.isConversion || this.isRestoration || this.isChangeName) {
         this.goToEntityDashboard(this.getSearchBusiness.identifier)
-      } else if (this.isAmalgamation) {
-        await this.amalgamateNow(legalType)
       } else {
-        await this.incorporateNow(legalType)
+        await this.actionNumberedEntity(legalType)
       }
     } else {
-      // persist legal type of incorporate now in session upon authentication via Signin component
+      // persist legal type and request type of the action in session upon authentication via Signin component
       sessionStorage.setItem('LEGAL_TYPE', legalType)
+      sessionStorage.setItem('REQUEST_ACTION_CD', this.getRequestActionCd)
       // navigate to BC Registry login page with return parameter
       const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
       const nameRequestUrl = `${window.location.origin}`

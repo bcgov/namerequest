@@ -86,6 +86,11 @@
       :dialog="getAmalgamateNowErrorStatus"
       @close="closeAmalgamateNowErrorDialog()"
     />
+    <ContinuationInErrorDialog
+      attach="#app"
+      :dialog="getContinuationInErrorStatus"
+      @close="closeContinuationInErrorDialog()"
+    />
     <MrasSearchInfoDialog />
     <NrNotRequiredDialog />
     <PaymentCompleteDialog />
@@ -126,9 +131,9 @@ import { Breadcrumb } from '@/components/common'
 import GenesysWebMessage from '@bcrs-shared-components/genesys-web-message/GenesysWebMessage.vue'
 import { WebChat as ChatPopup } from '@bcrs-shared-components/web-chat'
 import {
-  AffiliationErrorDialog, AmalgamateNowErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog,
-  HelpMeChooseDialog, IncorporateNowErrorDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog,
-  PaymentCompleteDialog, PickEntityOrConversionDialog, RenewDialog, ReceiptsDialog,
+  AffiliationErrorDialog, AmalgamateNowErrorDialog, CancelDialog, ConditionsDialog, ContinuationInErrorDialog,
+  ErrorDialog, ExitDialog, HelpMeChooseDialog, IncorporateNowErrorDialog, MrasSearchInfoDialog, NrNotRequiredDialog,
+  ConfirmNrDialog, PaymentCompleteDialog, PickEntityOrConversionDialog, RenewDialog, ReceiptsDialog,
   RefundDialog, ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
 } from '@/components/dialogs'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
@@ -149,6 +154,7 @@ import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
     ChatPopup,
     ConditionsDialog,
     ConfirmNrDialog,
+    ContinuationInErrorDialog,
     ErrorDialog,
     ExitDialog,
     ExitIncompletePaymentDialog,
@@ -175,6 +181,7 @@ export default class App extends Mixins(
 ) {
   // Global getters
   @Getter getAmalgamateNowErrorStatus!: boolean
+  @Getter getContinuationInErrorStatus!: boolean
   @Getter getDisplayedComponent!: string
   @Getter getIncorporateNowErrorStatus!: boolean
   @Getter getNrId!: number
@@ -189,6 +196,7 @@ export default class App extends Mixins(
   @Action setDisplayedComponent!: ActionBindingIF
   @Action toggleConfirmNrModal!: ActionBindingIF
   @Action setCurrentJsDate!: ActionBindingIF
+  @Action setRequestAction!: ActionBindingIF
   @Action setWindowWidth!: ActionBindingIF
 
   readonly axios = axios
@@ -273,22 +281,25 @@ export default class App extends Mixins(
       sessionStorage.removeItem('NR_DATA')
     }
 
-    // if there is stored legal type for an IA then incorporate/register it now
+    // if there is stored legal type and request action cd, try to continue
     const legaltype = sessionStorage.getItem('LEGAL_TYPE')
-    if (legaltype && this.isAuthenticated) {
+    const requestActionCd = sessionStorage.getItem('REQUEST_ACTION_CD')
+
+    if (legaltype && requestActionCd && this.isAuthenticated) {
       try {
-        if (this.isNewBusiness) {
-          await this.incorporateNow(legaltype as CorpTypeCd)
-        } else {
-          await this.amalgamateNow(legaltype as CorpTypeCd)
+        this.setRequestAction(requestActionCd)
+        if (this.isNewBusiness || this.isAmalgamation || this.isContinuationIn) {
+          await this.actionNumberedEntity(legaltype as CorpTypeCd)
         }
         // clear the legal type data
         sessionStorage.removeItem('LEGAL_TYPE')
       } catch (error) {
         if (this.isNewBusiness) {
           this.setIncorporateNowErrorStatus(true)
-        } else {
+        } else if (this.isAmalgamation) {
           this.setAmalgamateNowErrorStatus(true)
+        } else if (this.isContinuationIn) {
+          this.setContinuationInErrorStatus(true)
         }
         console.error(error)
       }
@@ -369,6 +380,12 @@ export default class App extends Mixins(
   closeAmalgamateNowErrorDialog (): void {
     sessionStorage.removeItem('LEGAL_TYPE')
     this.setAmalgamateNowErrorStatus(false)
+  }
+
+  /** Close ContinuationInErrorDialog and clear session storage. */
+  closeContinuationInErrorDialog (): void {
+    sessionStorage.removeItem('LEGAL_TYPE')
+    this.setContinuationInErrorStatus(false)
   }
 }
 </script>

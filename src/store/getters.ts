@@ -1247,6 +1247,10 @@ export const getAmalgamateNowErrorStatus = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.amalgamateNowError
 }
 
+export const getContinuationInErrorStatus = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.continuationInError
+}
+
 /** True if current request action requires business lookup. */
 export const isBusinessLookupRequestAction = (state: StateIF): boolean => {
   return BusinessLookupRequestActions.includes(getRequestActionCd(state))
