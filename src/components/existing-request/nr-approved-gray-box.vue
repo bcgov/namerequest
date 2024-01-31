@@ -79,6 +79,34 @@
       </div>
 
       <div
+        v-else-if="showContinueInNowButton"
+        class="d-flex justify-center my-1"
+      >
+        <v-btn
+          v-if="showOpenExternalIcon"
+          class="amalgamate-now-external-btn mt-30"
+          min-width="20rem"
+          :disabled="disabled"
+          @click="$emit('goToCorpOnline')"
+        >
+          <strong>Continue In Now</strong>
+          &nbsp;
+          <v-icon small>
+            mdi-open-in-new
+          </v-icon>
+        </v-btn>
+        <v-btn
+          v-else
+          class="amalgamate-now-btn mt-30"
+          min-width="20rem"
+          :disabled="disabled"
+          @click="$emit('affiliateYourBusiness')"
+        >
+          <strong>Continue In Now</strong>
+        </v-btn>
+      </div>
+
+      <div
         v-else-if="showAlterNowButton"
         class="my-1"
       >
@@ -199,6 +227,10 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
     return (this.getNr.request_action_cd === NrRequestActionCodes.AMALGAMATE)
   }
 
+  get isContinuationIn (): boolean {
+    return (this.getNr.request_action_cd === NrRequestActionCodes.MOVE)
+  }
+
   get isApprovedOrConsentUnRequired (): boolean {
     return (NrState.APPROVED === this.getNr.state || this.isConsentUnRequired)
   }
@@ -220,6 +252,11 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
     return (this.isAmalgamate && this.isApprovedOrConsentUnRequired)
   }
 
+  /** True if the Continue In button should be shown. */
+  get showContinueInNowButton (): boolean {
+    return (this.isContinuationIn && this.isApprovedOrConsentUnRequired)
+  }
+
   get isAllowAlterOnline (): boolean {
     return this.isAlterOnline(this.getNr.requestTypeCd)
   }
@@ -227,6 +264,7 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
   get showOpenExternalIcon (): boolean {
     if (this.showAmalgamateNowButton && !this.isSupportedAmalgamation(this.getNr.entity_type_cd)) return true
     if (this.showAlterNowButton && !this.isSupportedAlteration(this.getNr.requestTypeCd)) return true
+    if (this.showContinueInNowButton && !this.isSupportedContinuationIn(this.getNr.entity_type_cd)) return true
     return false
   }
 

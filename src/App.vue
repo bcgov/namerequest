@@ -76,15 +76,10 @@
     <ExitDialog />
     <ExitIncompletePaymentDialog />
     <HelpMeChooseDialog />
-    <IncorporateNowErrorDialog
+    <CreateBusinessErrorDialog
       attach="#app"
-      :dialog="getIncorporateNowErrorStatus"
-      @close="closeIncorporateNowErrorDialog()"
-    />
-    <AmalgamateNowErrorDialog
-      attach="#app"
-      :dialog="getAmalgamateNowErrorStatus"
-      @close="closeAmalgamateNowErrorDialog()"
+      :dialog="getAmalgamateNowErrorStatus || getContinuationInErrorStatus || getIncorporateNowErrorStatus"
+      @tryAgain="closeBusinessErrorDialog()"
     />
     <MrasSearchInfoDialog />
     <NrNotRequiredDialog />
@@ -126,10 +121,10 @@ import { Breadcrumb } from '@/components/common'
 import GenesysWebMessage from '@bcrs-shared-components/genesys-web-message/GenesysWebMessage.vue'
 import { WebChat as ChatPopup } from '@bcrs-shared-components/web-chat'
 import {
-  AffiliationErrorDialog, AmalgamateNowErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog,
-  HelpMeChooseDialog, IncorporateNowErrorDialog, MrasSearchInfoDialog, NrNotRequiredDialog, ConfirmNrDialog,
-  PaymentCompleteDialog, PickEntityOrConversionDialog, RenewDialog, ReceiptsDialog,
-  RefundDialog, ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
+  AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
+  MrasSearchInfoDialog, NrNotRequiredDialog, CreateBusinessErrorDialog, ConfirmNrDialog,
+  PaymentCompleteDialog, PickEntityOrConversionDialog, RenewDialog, ReceiptsDialog, RefundDialog,
+  ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
 } from '@/components/dialogs'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
@@ -143,18 +138,17 @@ import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 @Component({
   components: {
     AffiliationErrorDialog,
-    AmalgamateNowErrorDialog,
     Breadcrumb,
     CancelDialog,
     ChatPopup,
     ConditionsDialog,
     ConfirmNrDialog,
+    CreateBusinessErrorDialog,
     ErrorDialog,
     ExitDialog,
     ExitIncompletePaymentDialog,
     GenesysWebMessage,
     HelpMeChooseDialog,
-    IncorporateNowErrorDialog,
     MrasSearchInfoDialog,
     NrNotRequiredDialog,
     PaymentCompleteDialog,
@@ -175,6 +169,7 @@ export default class App extends Mixins(
 ) {
   // Global getters
   @Getter getAmalgamateNowErrorStatus!: boolean
+  @Getter getContinuationInErrorStatus!: boolean
   @Getter getDisplayedComponent!: string
   @Getter getIncorporateNowErrorStatus!: boolean
   @Getter getNrId!: number
@@ -189,6 +184,7 @@ export default class App extends Mixins(
   @Action setDisplayedComponent!: ActionBindingIF
   @Action toggleConfirmNrModal!: ActionBindingIF
   @Action setCurrentJsDate!: ActionBindingIF
+  @Action setRequestAction!: ActionBindingIF
   @Action setWindowWidth!: ActionBindingIF
 
   readonly axios = axios
@@ -273,22 +269,26 @@ export default class App extends Mixins(
       sessionStorage.removeItem('NR_DATA')
     }
 
-    // if there is stored legal type for an IA then incorporate/register it now
+    // if there is stored legal type and request action cd, try to continue
     const legaltype = sessionStorage.getItem('LEGAL_TYPE')
-    if (legaltype && this.isAuthenticated) {
+    const requestActionCd = sessionStorage.getItem('REQUEST_ACTION_CD')
+    if (legaltype && requestActionCd && this.isAuthenticated) {
       try {
-        if (this.isNewBusiness) {
-          await this.incorporateNow(legaltype as CorpTypeCd)
-        } else {
-          await this.amalgamateNow(legaltype as CorpTypeCd)
+        this.setRequestAction(requestActionCd)
+        if (this.isNewBusiness || this.isAmalgamation || this.isContinuationIn) {
+          await this.actionNumberedEntity(legaltype as CorpTypeCd)
         }
-        // clear the legal type data
+        // clear the legal type and request action data
         sessionStorage.removeItem('LEGAL_TYPE')
+        sessionStorage.removeItem('REQUEST_ACTION_CD')
       } catch (error) {
+        sessionStorage.removeItem('REQUEST_ACTION_CD')
         if (this.isNewBusiness) {
           this.setIncorporateNowErrorStatus(true)
-        } else {
+        } else if (this.isAmalgamation) {
           this.setAmalgamateNowErrorStatus(true)
+        } else if (this.isContinuationIn) {
+          this.setContinuationInErrorStatus(true)
         }
         console.error(error)
       }
@@ -359,16 +359,13 @@ export default class App extends Mixins(
     return !!GetFeatureFlag('enable-genesys-web-message')
   }
 
-  /** Close IncorporateNowErrorDialog and clear session storage. */
-  closeIncorporateNowErrorDialog (): void {
+  /** Closes the Business Error Dialog and clear session storage. */
+  closeBusinessErrorDialog (): void {
     sessionStorage.removeItem('LEGAL_TYPE')
-    this.setIncorporateNowErrorStatus(false)
-  }
-
-  /** Close AmalgamateNowErrorDialog and clear session storage. */
-  closeAmalgamateNowErrorDialog (): void {
-    sessionStorage.removeItem('LEGAL_TYPE')
-    this.setAmalgamateNowErrorStatus(false)
+    sessionStorage.removeItem('REQUEST_ACTION_CD')
+    if (this.getAmalgamateNowErrorStatus) this.setAmalgamateNowErrorStatus(false)
+    if (this.getContinuationInErrorStatus) this.setContinuationInErrorStatus(false)
+    if (this.getIncorporateNowErrorStatus) this.setIncorporateNowErrorStatus(false)
   }
 }
 </script>

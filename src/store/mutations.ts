@@ -576,12 +576,16 @@ export const mutateHotjarUserId = (state: StateIF, hotjarUserId: string) => {
   state.stateModel.newRequestModel.hotjarUserId = hotjarUserId
 }
 
-export const mutateIncorporateNowErrorStatus = (state: StateIF, incorporateNowError: boolean) => {
-  state.stateModel.newRequestModel.incorporateNowError = incorporateNowError
+export const mutateIncorporateNowErrorStatus = (state: StateIF, errorIncorporateNow: boolean) => {
+  state.stateModel.newRequestModel.errorIncorporateNow = errorIncorporateNow
 }
 
-export const mutateAmalgamateNowErrorStatus = (state: StateIF, amalgamateNowError: boolean) => {
-  state.stateModel.newRequestModel.amalgamateNowError = amalgamateNowError
+export const mutateAmalgamateNowErrorStatus = (state: StateIF, errorAmalgamateNow: boolean) => {
+  state.stateModel.newRequestModel.errorAmalgamateNow = errorAmalgamateNow
+}
+
+export const mutateContinuationInErrorStatus = (state: StateIF, errorContinuationIn: boolean) => {
+  state.stateModel.newRequestModel.errorContinuationIn = errorContinuationIn
 }
 
 export const mutateSearchBusiness = (state: StateIF, val: BusinessSearchIF) => {

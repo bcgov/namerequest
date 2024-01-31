@@ -1249,12 +1249,16 @@ export const setRefundParams = ({ commit }, refundParams: RefundParamsIF): void 
   commit('mutateRefundParams', refundParams)
 }
 
-export const setIncorporateNowErrorStatus = ({ commit }, incorporateNowError: boolean): void => {
-  commit('mutateIncorporateNowErrorStatus', incorporateNowError)
+export const setIncorporateNowErrorStatus = ({ commit }, errorIncorporateNow: boolean): void => {
+  commit('mutateIncorporateNowErrorStatus', errorIncorporateNow)
 }
 
-export const setAmalgamateNowErrorStatus = ({ commit }, amalgamateNowError: boolean): void => {
-  commit('mutateAmalgamateNowErrorStatus', amalgamateNowError)
+export const setAmalgamateNowErrorStatus = ({ commit }, errorAmalgamateNow: boolean): void => {
+  commit('mutateAmalgamateNowErrorStatus', errorAmalgamateNow)
+}
+
+export const setContinuationInErrorStatus = ({ commit }, errorContinuationIn: boolean): void => {
+  commit('mutateContinuationInErrorStatus', errorContinuationIn)
 }
 
 export const setSearchBusiness = ({ commit }, val: BusinessSearchIF): void => {

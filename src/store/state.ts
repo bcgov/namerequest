@@ -66,6 +66,9 @@ export const stateModel: StateModelIF = {
     editMode: false,
     entity_type_cd: null,
     entityTypeAddToSelect: null,
+    errorAmalgamateNow: false,
+    errorContinuationIn: false,
+    errorIncorporateNow: false,
     errors: [],
     existingRequestSearch: {
       emailAddress: '',
@@ -76,8 +79,6 @@ export const stateModel: StateModelIF = {
     getNameReservationFailed: false,
     helpMeChooseModalVisible: false,
     affiliationErrorModalValue: NrAffiliationErrors.NONE, // initially hidden
-    incorporateNowError: false,
-    amalgamateNowError: false,
     isPersonsName: false,
     issueIndex: 0,
     location: null,
