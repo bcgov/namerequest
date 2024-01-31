@@ -230,15 +230,15 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
       this.$root.$emit('showSpinner', false)
       if (this.isAmalgamation) {
         this.setAmalgamateNowErrorStatus(true)
-        throw new Error('Unable to Amalgamate Now ' + error)
+        throw new Error('Unable to Amalgamate Now = ' + error)
       } else if (this.isContinuationIn) {
         this.setContinuationInErrorStatus(true)
-        throw new Error('Unable to Continue In Now ' + error)
+        throw new Error('Unable to Continue In Now = ' + error)
       } else if (this.isNewBusiness) {
         this.setIncorporateNowErrorStatus(true)
-        throw new Error('Unable to Incorporate Now ' + error)
+        throw new Error('Unable to Incorporate Now = ' + error)
       }
-      throw new Error('Unable to do action ' + error)
+      throw new Error('Error in actionNumberedEntity() = ' + error)
     }
   }
 
@@ -271,12 +271,11 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
     } else if (this.isNewBusiness) {
       businessRequest.filing.header.name = FilingTypes.INCORPORATION_APPLICATION
       businessRequest.filing.incorporationApplication = { nameRequest: { legalType } }
+    } else {
+      throw new Error('Invalid Request Type')
     }
 
-    const createBusinessResponse =
-      await BusinessServices.createBusiness(businessRequest).catch(error => {
-        throw new Error('Unable to create new Business ' + error)
-      })
+    const createBusinessResponse = await BusinessServices.createBusiness(businessRequest)
 
     return createBusinessResponse.data?.filing?.business?.identifier as string
   }
