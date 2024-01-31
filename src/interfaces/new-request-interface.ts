@@ -11,13 +11,11 @@ export interface NewRequestIF {
   addressSuggestions: any[]
   affiliationErrorModalValue: NrAffiliationErrors
   allowAutoApprove: boolean
-  amalgamateNowError: boolean
   analysisJSON: AnalysisJSONI
   applicant: ApplicantI
   assumedNameOriginal: string
   conditionsModalVisible: boolean
   conflictId: string
-  continuationInError: boolean
   conversionType: NrRequestTypeCodes
   conversionTypeAddToSelect: ConversionTypesI
   corpNum: string
@@ -28,6 +26,9 @@ export interface NewRequestIF {
   editMode: boolean
   entity_type_cd: EntityTypes
   entityTypeAddToSelect: SelectOptionsI
+  errorAmalgamateNow: boolean,
+  errorContinuationIn: boolean,
+  errorIncorporateNow: boolean,
   errors: string[]
   exitIncompletePaymentVisible: boolean
   exitModalVisible: boolean
@@ -37,7 +38,6 @@ export interface NewRequestIF {
   getNameReservationFailed: boolean
   helpMeChooseModalVisible: boolean
   hotjarUserId: string,
-  incorporateNowError: boolean
   isLoadingSubmission: boolean
   isPersonsName: boolean
   issueIndex: number

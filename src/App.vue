@@ -76,20 +76,10 @@
     <ExitDialog />
     <ExitIncompletePaymentDialog />
     <HelpMeChooseDialog />
-    <IncorporateNowErrorDialog
+    <CreateBusinessErrorDialog
       attach="#app"
-      :dialog="getIncorporateNowErrorStatus"
-      @close="closeIncorporateNowErrorDialog()"
-    />
-    <AmalgamateNowErrorDialog
-      attach="#app"
-      :dialog="getAmalgamateNowErrorStatus"
-      @close="closeAmalgamateNowErrorDialog()"
-    />
-    <ContinuationInErrorDialog
-      attach="#app"
-      :dialog="getContinuationInErrorStatus"
-      @close="closeContinuationInErrorDialog()"
+      :dialog="getAmalgamateNowErrorStatus || getContinuationInErrorStatus || getIncorporateNowErrorStatus"
+      @tryAgain="closeBusinessErrorDialog()"
     />
     <MrasSearchInfoDialog />
     <NrNotRequiredDialog />
@@ -131,10 +121,10 @@ import { Breadcrumb } from '@/components/common'
 import GenesysWebMessage from '@bcrs-shared-components/genesys-web-message/GenesysWebMessage.vue'
 import { WebChat as ChatPopup } from '@bcrs-shared-components/web-chat'
 import {
-  AffiliationErrorDialog, AmalgamateNowErrorDialog, CancelDialog, ConditionsDialog, ContinuationInErrorDialog,
-  ErrorDialog, ExitDialog, HelpMeChooseDialog, IncorporateNowErrorDialog, MrasSearchInfoDialog, NrNotRequiredDialog,
-  ConfirmNrDialog, PaymentCompleteDialog, PickEntityOrConversionDialog, RenewDialog, ReceiptsDialog,
-  RefundDialog, ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
+  AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
+  MrasSearchInfoDialog, NrNotRequiredDialog, CreateBusinessErrorDialog, ConfirmNrDialog,
+  PaymentCompleteDialog, PickEntityOrConversionDialog, RenewDialog, ReceiptsDialog, RefundDialog,
+  ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
 } from '@/components/dialogs'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
@@ -148,19 +138,17 @@ import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 @Component({
   components: {
     AffiliationErrorDialog,
-    AmalgamateNowErrorDialog,
     Breadcrumb,
     CancelDialog,
     ChatPopup,
     ConditionsDialog,
     ConfirmNrDialog,
-    ContinuationInErrorDialog,
+    CreateBusinessErrorDialog,
     ErrorDialog,
     ExitDialog,
     ExitIncompletePaymentDialog,
     GenesysWebMessage,
     HelpMeChooseDialog,
-    IncorporateNowErrorDialog,
     MrasSearchInfoDialog,
     NrNotRequiredDialog,
     PaymentCompleteDialog,
@@ -294,6 +282,7 @@ export default class App extends Mixins(
         sessionStorage.removeItem('LEGAL_TYPE')
         sessionStorage.removeItem('REQUEST_ACTION_CD')
       } catch (error) {
+        sessionStorage.removeItem('REQUEST_ACTION_CD')
         if (this.isNewBusiness) {
           this.setIncorporateNowErrorStatus(true)
         } else if (this.isAmalgamation) {
@@ -370,25 +359,13 @@ export default class App extends Mixins(
     return !!GetFeatureFlag('enable-genesys-web-message')
   }
 
-  /** Close IncorporateNowErrorDialog and clear session storage. */
-  closeIncorporateNowErrorDialog (): void {
+  /** Closes the Business Error Dialog and clear session storage. */
+  closeBusinessErrorDialog (): void {
     sessionStorage.removeItem('LEGAL_TYPE')
     sessionStorage.removeItem('REQUEST_ACTION_CD')
-    this.setIncorporateNowErrorStatus(false)
-  }
-
-  /** Close AmalgamateNowErrorDialog and clear session storage. */
-  closeAmalgamateNowErrorDialog (): void {
-    sessionStorage.removeItem('LEGAL_TYPE')
-    sessionStorage.removeItem('REQUEST_ACTION_CD')
-    this.setAmalgamateNowErrorStatus(false)
-  }
-
-  /** Close ContinuationInErrorDialog and clear session storage. */
-  closeContinuationInErrorDialog (): void {
-    sessionStorage.removeItem('LEGAL_TYPE')
-    sessionStorage.removeItem('REQUEST_ACTION_CD')
-    this.setContinuationInErrorStatus(false)
+    if (this.getAmalgamateNowErrorStatus) this.setAmalgamateNowErrorStatus(false)
+    if (this.getContinuationInErrorStatus) this.setContinuationInErrorStatus(false)
+    if (this.getIncorporateNowErrorStatus) this.setIncorporateNowErrorStatus(false)
   }
 }
 </script>

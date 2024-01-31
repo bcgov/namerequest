@@ -20,14 +20,20 @@
 
       <li v-else-if="isRestoration && isSelectedXproAndRestorable">
         To reinstate your business, complete
-        <a :href="fullReinstatementFormLink" target="_blank">
+        <a
+          :href="fullReinstatementFormLink"
+          target="_blank"
+        >
           this form <v-icon
             small
             class="ml-1"
             color="primary"
           >mdi-open-in-new</v-icon>
         </a> for a full reinstatement or
-        <a :href="limitedReinstatementFormLink" target="_blank">
+        <a
+          :href="limitedReinstatementFormLink"
+          target="_blank"
+        >
           this form  <v-icon
             small
             class="ml-1"

@@ -1240,15 +1240,15 @@ export const getRefundParams = (state: StateIF): RefundParamsIF => {
 }
 
 export const getIncorporateNowErrorStatus = (state: StateIF): boolean => {
-  return state.stateModel.newRequestModel.incorporateNowError
+  return state.stateModel.newRequestModel.errorIncorporateNow
 }
 
 export const getAmalgamateNowErrorStatus = (state: StateIF): boolean => {
-  return state.stateModel.newRequestModel.amalgamateNowError
+  return state.stateModel.newRequestModel.errorAmalgamateNow
 }
 
 export const getContinuationInErrorStatus = (state: StateIF): boolean => {
-  return state.stateModel.newRequestModel.continuationInError
+  return state.stateModel.newRequestModel.errorContinuationIn
 }
 
 /** True if current request action requires business lookup. */

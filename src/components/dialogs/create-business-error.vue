@@ -7,13 +7,13 @@
   >
     <v-card>
       <v-card-title id="dialog-title">
-        Unable to Continue in
+        {{ title }}
       </v-card-title>
 
       <v-card-text id="dialog-text">
         <!-- display message -->
         <div class="general-error">
-          <p>Unable to continue in. Please cancel or try again.</p>
+          <p>{{ dialogText }}</p>
         </div>
       </v-card-text>
 
@@ -44,20 +44,42 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Emit } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
 
 @Component({})
-export default class ContinuationInErrorDialog extends Vue {
+export default class CreateBusinessErrorDialog extends Vue {
   /** Prop to display the dialog. */
   @Prop() readonly dialog: boolean
 
   /** Prop to provide attachment selector. */
   @Prop() readonly attach: string
 
-  /** Pass click event to parent. */
-  @Emit() close () { }
+  @Getter getAmalgamateNowErrorStatus!: boolean
+  @Getter getContinuationInErrorStatus!: boolean
+  @Getter getIncorporateNowErrorStatus!: boolean
 
-  /** Try again button clicked. Refresh the page. */
-  tryAgain () {
+  // The title depending on the action that was done.
+  get title (): string {
+    if (this.getAmalgamateNowErrorStatus) return 'Unable to Amalgamate Now'
+    if (this.getContinuationInErrorStatus) return 'Unable to Continue in'
+    if (this.getIncorporateNowErrorStatus) return 'Unable to Incorporate Now'
+    return ''
+  }
+
+  // The dialog text depending on the action that was done.
+  get dialogText (): string {
+    if (this.getAmalgamateNowErrorStatus) return 'Unable to amalgamate now. Please cancel or try again.'
+    if (this.getContinuationInErrorStatus) return 'Unable to continue in. Please cancel or try again.'
+    if (this.getIncorporateNowErrorStatus) return 'Unable to incorporate now. Please cancel or try again.'
+    return ''
+  }
+
+  /** Try again button clicked. Pass click event to parent. */
+  @Emit('tryAgain')
+  tryAgain () { }
+
+  /** Close button clicked. Refresh the page. */
+  @Emit() close () {
     window.location.reload()
   }
 }

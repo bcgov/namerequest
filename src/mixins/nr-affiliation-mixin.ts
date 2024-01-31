@@ -15,6 +15,7 @@ import { AmalgamationTypes, FilingTypes, NrRequestActionCodes } from '@bcrs-shar
 export class NrAffiliationMixin extends Mixins(CommonMixin) {
   @Getter isAmalgamation!: boolean
   @Getter isContinuationIn!: boolean
+  @Getter isNewBusiness!: boolean
 
   // Global action
   @Action setAffiliationErrorModalValue!: ActionBindingIF
@@ -183,7 +184,9 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
           }
         }
       }
-    } else {
+    }
+
+    if (this.isFirm(nr)) {
       name = FilingTypes.REGISTRATION
       legalType = nr.legalType
       businessRequest = {
@@ -231,10 +234,11 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
       } else if (this.isContinuationIn) {
         this.setContinuationInErrorStatus(true)
         throw new Error('Unable to Continue In Now ' + error)
-      } else {
+      } else if (this.isNewBusiness) {
         this.setIncorporateNowErrorStatus(true)
         throw new Error('Unable to Incorporate Now ' + error)
       }
+      throw new Error('Unable to do action ' + error)
     }
   }
 
@@ -264,7 +268,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
     } else if (this.isContinuationIn) {
       businessRequest.filing.header.name = FilingTypes.CONTINUATION_IN
       businessRequest.filing.continuationIn = { nameRequest: { legalType } }
-    } else {
+    } else if (this.isNewBusiness) {
       businessRequest.filing.header.name = FilingTypes.INCORPORATION_APPLICATION
       businessRequest.filing.incorporationApplication = { nameRequest: { legalType } }
     }
