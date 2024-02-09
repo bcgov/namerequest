@@ -682,13 +682,6 @@ export default class NamesCapture extends Mixins(CommonMixin) {
       messages.des1 = ''
 
       validatePhrases('name1')
-      if (!nameChoices.name1) {
-        if (nameChoices.name2 || nameChoices.name3) {
-          messages.name1 = 'Please enter a first choice before any subsequent choices'
-        } else {
-          messages.name1 = 'Please enter at least one name'
-        }
-      }
       if (location === Location.BC) {
         if (designationAtEnd && !nameChoices.designation1) {
           messages.des1 = 'Please choose a designation'
@@ -726,10 +719,6 @@ export default class NamesCapture extends Mixins(CommonMixin) {
       if (!nameChoices.name3) {
         return true
       }
-      if (!nameChoices.name2) {
-        messages.name3 = 'Please choose a second name before entering a third name'
-        return false
-      }
       validatePhrases('name3')
       if (nameChoices.name3 === nameChoices.name1) {
         messages.name3 = 'This is identical to your first name choice. Please enter a unique name.'
@@ -744,6 +733,27 @@ export default class NamesCapture extends Mixins(CommonMixin) {
         return false
       }
       return true
+    }
+
+    function validateNamesInputOrder () {
+      if (!nameChoices.name1) {
+        if (nameChoices.name2 || nameChoices.name3) {
+          messages.name1 = 'Please enter a first choice before any subsequent choices'
+          return false
+        } else {
+          messages.name1 = 'Please enter at least one name'
+          return false
+        }
+      }
+      if (nameChoices.name3 && !nameChoices.name2) {
+        messages.name3 = 'Please choose a second name before entering a third name'
+        return false
+      }
+      return true
+    }
+
+    if (!validateNamesInputOrder()) {
+      return false
     }
 
     if (this.getEditMode) {
