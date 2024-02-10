@@ -736,6 +736,14 @@ export default class NamesCapture extends Mixins(CommonMixin) {
     }
 
     function validateNamesInputOrder () {
+      // clean up messages
+      messages.name1 = ''
+      messages.des1 = ''
+      messages.name2 = ''
+      messages.des2 = ''
+      messages.name3 = ''
+      messages.des3 = ''
+
       if (!nameChoices.name1) {
         if (nameChoices.name2 || nameChoices.name3) {
           messages.name1 = 'Please enter a first choice before any subsequent choices'
