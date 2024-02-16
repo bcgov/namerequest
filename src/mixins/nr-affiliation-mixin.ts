@@ -9,7 +9,8 @@ import { CommonMixin } from '@/mixins'
 import { NrAffiliationErrors } from '@/enums'
 import { CREATED, BAD_REQUEST } from 'http-status-codes'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
-import { AmalgamationTypes, FilingTypes, NrRequestActionCodes } from '@bcrs-shared-components/enums'
+import { AmalgamationTypes, CorrectNameOptions, FilingTypes, NrRequestActionCodes }
+  from '@bcrs-shared-components/enums'
 
 @Component({})
 export class NrAffiliationMixin extends Mixins(CommonMixin) {
@@ -262,7 +263,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
     if (this.isAmalgamation) {
       businessRequest.filing.header.name = FilingTypes.AMALGAMATION_APPLICATION
       businessRequest.filing.amalgamationApplication = {
-        nameRequest: { legalType },
+        nameRequest: { legalType, correctNameOption: CorrectNameOptions.CORRECT_AML_NUMBERED },
         type: AmalgamationTypes.REGULAR
       }
     } else if (this.isContinuationIn) {
