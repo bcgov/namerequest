@@ -242,46 +242,44 @@
 
       <!-- Restoration / Reinstatement flow -->
       <template v-else-if="isRestoration">
-        <BusinessLookupFetch ref="MyBusinessLookup" />
+        <BusinessLookupFetch />
         <SocietiesInfo
           v-if="isSocietyDisabled && showSocietiesInfo"
           :type="'restore'"
           :showDialog="showSocietiesInfo"
         />
-        <template v-else>
-          <CompanyType v-if="getSearchBusiness && isBcRestorable && isSupportedRestoration(getEntityTypeCd)" />
-          <Jurisdiction
-            v-if="isSelectedXproAndRestorable"
+        <CompanyType v-if="getSearchBusiness && isBcRestorable" />
+        <Jurisdiction
+          v-if="isSelectedXproAndRestorable"
+          cols="12"
+          md="4"
+        />
+
+        <!-- federal sub-flow -->
+        <XproFederalBullets v-if="isFederal && getSearchBusiness" />
+        <template v-if="showRestoreNameInput">
+          <v-col
+            cols="12"
+            :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'"
+          >
+            <NameInput
+              :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
+              @emit-corp-num-validity="corpNumValid = $event"
+            />
+          </v-col>
+          <Designation
+            v-if="showDesignation"
             cols="12"
             md="4"
           />
+          <v-col
+            v-if="isMrasJurisdiction"
+            cols="12"
+            class="d-flex justify-end"
+          >
+            <CorpNumberCheckbox />
+          </v-col>
 
-          <!-- federal sub-flow -->
-          <XproFederalBullets v-if="isFederal && getSearchBusiness" />
-
-          <template v-if="showRestoreNameInput">
-            <v-col
-              cols="12"
-              :md="(showDesignation || isSelectedXproAndRestorable) ? '8' : '12'"
-            >
-              <NameInput
-                :is-mras-search="(isXproFlow && isMrasJurisdiction && !getHasNoCorpNum)"
-                @emit-corp-num-validity="corpNumValid = $event"
-              />
-            </v-col>
-            <Designation
-              v-if="showDesignation"
-              cols="12"
-              md="4"
-            />
-            <v-col
-              v-if="isMrasJurisdiction"
-              cols="12"
-              class="d-flex justify-end"
-            >
-              <CorpNumberCheckbox />
-            </v-col>
-          </template>
           <NumberedCompanyBullets v-if="isNumberedCompany" />
         </template>
       </template>
@@ -504,7 +502,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     // We should show the name input field if the named radio button was used,
     // or with some special cases that if it is a coop(CP), or a credit union(FI).
     // Also, if it is a extrapros company, we should also have name input field when it is not a Canada Federal.
-    const isPromptNameInput = (this.isNamedCompany || this.isCooperative || this.isCreditUnion || this.isSelectedXproAndRestorable)
+    const isPromptNameInput = (this.isNamedCompany || this.isCooperative || this.isCreditUnion ||
+      this.isSelectedXproAndRestorable)
     return (
       this.isRestorable && isPromptNameInput && !this.isFederal
     )
@@ -684,7 +683,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (this.isRestoration) {
       if (this.getEntityTypeCd && this.isNamedCompany && !this.isFederal) return true
       if (this.getEntityTypeCd && this.isSelectedXproAndRestorable && !this.isFederal) return true
-      if (this.getSearchBusiness && this.isBcRestorable && (this.isNamedCompany || this.isCooperative || this.isCreditUnion)) return true
+      if (this.getSearchBusiness && this.isBcRestorable &&
+        (this.isNamedCompany || this.isCooperative || this.isCreditUnion)) return true
     }
 
     // Conditional for Continuation In Flow.

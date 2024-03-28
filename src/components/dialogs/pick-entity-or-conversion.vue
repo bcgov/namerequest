@@ -224,7 +224,6 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
   // Global getters
   @Getter getConversionTypeOptions!: ConversionTypesI[]
   @Getter getEntityBlurbs!: Array<EntityI | ConversionTypesI>
-  @Getter getEntityTypeCd!: EntityTypes
   @Getter getEntityTypeOptions!: Array<EntityI>
   @Getter getEntityTypesBC!: Array<EntityI>
   @Getter getEntityTypesXPRO!: Array<EntityI>

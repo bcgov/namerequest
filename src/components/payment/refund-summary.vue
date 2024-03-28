@@ -9,11 +9,11 @@
 
       <!-- iterate over line items -->
       <!-- NB: each line item can contain several fees -->
-      <template v-for="item in lineItems">
-        <ul
-          :key="item.id"
-          class="fee-list"
-        >
+      <div
+        v-for="item in lineItems"
+        :key="item.id"
+      >
+        <ul class="fee-list">
           <li
             v-if="item.filingFees > 0"
             class="fee-list__item text-body-1"
@@ -48,7 +48,7 @@
             </div>
           </li>
         </ul>
-      </template>
+      </div>
 
       <footer class="d-flex justify-space-between">
         <div>Total Refund Amount (CAD)</div>

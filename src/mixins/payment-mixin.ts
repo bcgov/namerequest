@@ -392,6 +392,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
         sessionStorage.setItem('BCREG-nrNum', paymentResponse.nrNum)
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { payment, sbcPayment = { receipts: [] } } = paymentResponse
 
       await this.setPayment(payment)
@@ -534,8 +535,8 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       const paymentResponse = await this.getNameRequestPayment(nrId, paymentId, headers)
       if (!paymentResponse) throw new Error('Got error from getNameRequestPayment()')
 
-      const { payment, sbcPayment =
-      { receipts: [], status_code: '' }, statusCode, completionDate } = paymentResponse
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { payment, sbcPayment = { receipts: [], status_code: '' }, statusCode, completionDate } = paymentResponse
 
       await this.setPayment(payment)
       await this.setSbcPayment(sbcPayment)

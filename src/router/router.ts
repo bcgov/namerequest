@@ -13,6 +13,7 @@ export function getVueRouter () {
     mode: 'history',
     base: '',
     routes,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     scrollBehavior (to, from, savedPosition) {
       // see https://router.vuejs.org/guide/advanced/scroll-behavior.html
       return { x: 0, y: 0 }
