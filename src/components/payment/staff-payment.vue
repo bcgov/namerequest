@@ -39,10 +39,10 @@ export default class StaffPayment extends Vue {
   @Action setStaffPayment!: ActionBindingIF
 
   /** Whether to validate the data. */
-  private validate = false
+  validate = false
 
   /** Whether to show the staff payment invalid section styling. */
-  private get showStaffPaymentInvalidSection (): boolean {
+  get showStaffPaymentInvalidSection (): boolean {
     const option = this.getStaffPayment.option ?? StaffPaymentOptions.NONE
     // True if no option is selected
     return this.validate && (option === StaffPaymentOptions.NONE)
@@ -54,7 +54,7 @@ export default class StaffPayment extends Vue {
   }
 
   /** Called when component's staff payment data has been updated. */
-  private onStaffPaymentDataUpdate (val: StaffPaymentIF) {
+  onStaffPaymentDataUpdate (val: StaffPaymentIF) {
     let staffPaymentData: StaffPaymentIF = { ...this.getStaffPayment, ...val }
 
     // disable validation
@@ -103,7 +103,8 @@ export default class StaffPayment extends Vue {
 
   /** Called when component's validity has changed. */
   @Emit('isValid')
-  private onStaffPaymentValidity (val: boolean): void {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onStaffPaymentValidity (val: boolean): void {}
 }
 </script>
 

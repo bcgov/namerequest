@@ -41,11 +41,11 @@
                 :content-class="!isScreenLg ? 'left-tooltip' : ''"
                 transition="fade-transition"
               >
-                <template #activator="scope">
+                <template #activator="scope2">
                   <span
                     class="list-item"
                     :class="{ 'last-select-item': item.value === 'INFO' }"
-                    v-on="scope.on"
+                    v-on="scope2.on"
                   >{{ item.text }}</span>
                 </template>
 

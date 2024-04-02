@@ -181,8 +181,7 @@ export default class ConfirmNrDialog extends Mixins(
     staffPaymentComponent: StaffPayment
   }
 
-  @Prop({ default: async () => {} })
-  readonly onCancel: Function
+  @Prop({ default: async () => {} }) readonly onCancel: () => void
 
   // Global getters
   @Getter getName!: string

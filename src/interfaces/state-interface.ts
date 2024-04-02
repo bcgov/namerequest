@@ -8,8 +8,8 @@ export interface StateModelIF {
   }
   newRequestModel: NewRequestIF
   staffPayment: StaffPaymentIF
-  errorModel?: {}
-  paymentModel?: {}
+  errorModel?: object
+  paymentModel?: object
   nameCheckModel: NameCheckModelIF
   refundParams: RefundParamsIF
   windowWidth: number

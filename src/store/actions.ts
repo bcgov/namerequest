@@ -2,7 +2,6 @@ import querystring from 'qs'
 import axios from 'axios'
 import {
   CompanyTypes,
-  EntityStates,
   EntityTypes,
   Location,
   NameCheckAnalysisJurisdiction,
@@ -45,7 +44,7 @@ import {
   SubmissionTypeT
 } from '@/interfaces'
 
-const qs: any = querystring
+const qs: any = querystring // eslint-disable-line @typescript-eslint/no-unused-vars
 let source: any
 
 export const setActiveComponent = ({ commit }, component): void => {
@@ -302,6 +301,7 @@ export const setAddressSuggestions = ({ commit }, addressSuggestions: any[]): vo
  * @returns a resolved promise on success or a rejected promise on failure
  */
 // FUTURE: not an action - move it to another module?
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function searchBusiness ({ getters }, corpNum: string): Promise<BusinessSearchIF> {
   try {
     // first try to find business in Entities (Legal API)
@@ -489,8 +489,9 @@ export const resubmit = async ({ commit, getters }): Promise<boolean> => {
 
   // add resubmit NR number (for internal use only - API ignores it)
   nrTypeData['resubmitNrNum'] = nrData['nrNum']
-  // check against entity types if it should have designation or not : if length returns to be 0 then NR should not have any designation otherwise work as getNameDesignation
-  const checkEntityType = Designations[nrData['entity_type_cd']].words.length === 0
+  // check against entity types if it should have designation or not : if length returns to be 0
+  // then NR should not have any designation otherwise work as getNameDesignation
+  const checkEntityType = (Designations[nrData['entity_type_cd']].words.length === 0)
   // clean names data
   nrTypeData['names'] = nrData.names.map(name => ({
     choice: name.choice,
@@ -503,6 +504,7 @@ export const resubmit = async ({ commit, getters }): Promise<boolean> => {
   }))
 
   // clean applicants partyIds
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   for (const [key, value] of Object.entries(nrTypeData['applicants'])) {
     value['partyId'] = ''
   }

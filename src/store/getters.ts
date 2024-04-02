@@ -16,7 +16,6 @@ import {
   NameDesignationI,
   NameRequestI,
   RefundParamsIF,
-  RequestActionMappingI,
   RequestActionsI,
   RequestNameI,
   RequestOrConsentIF,
@@ -39,7 +38,6 @@ import {
   PriorityCode,
   XproNameType
 } from '@/enums'
-import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 // List Data
 // NB: can't use `this.$xxx` because we don't have `this` (ie, Vue)
@@ -407,7 +405,7 @@ export const getConversionTypeOptions = (state: StateIF): ConversionTypesI[] => 
   if (getConversionTypeAddToSelect(state)) {
     getConversionTypeAddToSelect(state).rank = 4
     options = options.concat(getConversionTypeAddToSelect(state))
-    n = 4
+    n = 4 // eslint-disable-line @typescript-eslint/no-unused-vars
   }
   return options.sort((a, b) => {
     if (a.rank < b.rank) {
@@ -971,6 +969,7 @@ export const getNrRequestNames = (state: StateIF): RequestNameI[] => {
       })
     }
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requestNames = requestNames.map((requestName, idx) => {
     if (nrNames) {
       const existingName = nrNames.find(nrName => nrName.choice === requestName.choice)
@@ -1141,7 +1140,10 @@ export const isRoleStaff = (state: StateIF): boolean => {
 
 /** Whether the user has "staff" keycloak role. */
 export const isRoleBasic = (state: StateIF): boolean => {
-  return state.stateModel.common.keycloakRoles.includes('basic') || state.stateModel.common.keycloakRoles.includes('premium')
+  return (
+    state.stateModel.common.keycloakRoles.includes('basic') ||
+    state.stateModel.common.keycloakRoles.includes('premium')
+  )
 }
 
 /** The staff payment. */

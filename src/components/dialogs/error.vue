@@ -11,8 +11,8 @@
       </v-card-title>
       <div v-if="isEditLockError">
         <v-card-text class="copy-normal pt-8">
-          Another user may be making updates to this Name Request and this action is unavailable at this time.
-          Please try again later. Typical reasons are as follows:
+          Another user may be making updates to this Name Request and this action is unavailable
+          at this time. Please try again later. Typical reasons are as follows:
           <br>
           <br>
           <ul>
@@ -27,8 +27,9 @@
       </div>
       <div v-else-if="isExists">
         <v-card-text class="copy-normal pt-8">
-          You have already created an identical name request. Please wait for the system to complete processing the submission.
-          If you are requesting identical names for DBA purposes, please wait 2 minutes between each submission.
+          You have already created an identical name request. Please wait for the system to complete
+          processing the submission. If you are requesting identical names for DBA purposes, please
+          wait 2 minutes between each submission.
           <br>
           <br>
           For assistance, please contact BC Registries staff:
