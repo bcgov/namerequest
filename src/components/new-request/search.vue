@@ -540,7 +540,10 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     }
 
     // Conditional for Change Name Flow.
-    if (this.isChangeName && this.isNumberedCompany) return true
+    if (this.isChangeName &&
+        this.isNumberedCompany &&
+        this.isSupportedChangeName(this.getEntityTypeCd)
+    ) return true
 
     // Conditional for Restoration/Reinstatement Flow.
     if (
