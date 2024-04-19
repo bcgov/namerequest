@@ -9,8 +9,8 @@ DOCKER_NAME=namerequest
 # expects the terminal to be openshift login
 # expects export OPENSHIFT_REPOSITORY=""
 #################################################################################
-setup: ## Clean and Install npm dependencies
-	npm ci
+setup:
+	pnpm install --frozen-lockfile
 
 create-env: ## create the configration files from dev
 	@oc get configmap $(DOCKER_NAME)-dev-ui-configuration  -n "$(OPENSHIFT_REPOSITORY)-dev" \
@@ -22,10 +22,10 @@ create-env: ## create the configration files from dev
 ci: lint test
 
 lint:  ## Run linting ofcode.
-	npm run lint
+	pnpm run lint
 
 test:  ## Unit testing
-	npm run test:unit
+	pnpm run test:unit
 
 #################################################################################
 # COMMANDS - CD
