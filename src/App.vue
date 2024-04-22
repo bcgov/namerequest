@@ -176,7 +176,7 @@ export default class App extends Mixins(
   @Getter isAuthenticated!: boolean
   @Getter isRoleStaff!: boolean
   @Getter isMobile!: boolean
-  @Getter isNewBusiness!: boolean
+  // @Getter isNewBusiness!: boolean
 
   // Global actions
   @Action resetAnalyzeName!: ActionBindingIF
