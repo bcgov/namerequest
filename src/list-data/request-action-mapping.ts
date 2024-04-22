@@ -49,6 +49,8 @@ export const BcMapping: RequestActionMappingI = {
   ],
   // every entity type except Parishes and Private Act
   CHG: EntityTypesBC.filter(ent => ent !== EntityTypes.PAR && ent !== EntityTypes.PA),
+  // when a MVE (continuation in) NR is created, the resultant company will have a
+  // different entity type in LEAR, as per comments below
   MVE: [
     EntityTypes.CR, // will become CorpTypeCd.CONTINUE_IN
     EntityTypes.CC, // will become CorpTypeCd.CCC_CONTINUE_IN
