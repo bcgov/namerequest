@@ -40,6 +40,12 @@ export class CommonMixin extends Vue {
       case EntityTypes.SP: return 'BC Sole Proprietorship'
       case EntityTypes.UL: return 'BC Unlimited Liability Company'
 
+      // Continuation In Entity Types:
+      case EntityTypes.C: return 'Continuation In (BC Limited Company)'
+      case EntityTypes.CBEN: return 'Continuation In (Benefit Company)'
+      case EntityTypes.CCC: return 'Continuation In (BC Community Contribution Company)'
+      case EntityTypes.CUL: return 'Continuation In (BC Unlimited Liability Company)'
+
       // XPRO Entity Types:
       case EntityTypes.XCR: return 'Extraprovincial Limited Company'
       case EntityTypes.XUL: return 'Extraprovincial Unlimited Liability Company'
@@ -60,9 +66,13 @@ export class CommonMixin extends Vue {
   entityTypeToCorpType (entityType: EntityTypes): CorpTypeCd {
     switch (entityType) {
       case EntityTypes.BC: return CorpTypeCd.BENEFIT_COMPANY
+      case EntityTypes.C: return CorpTypeCd.CONTINUE_IN
+      case EntityTypes.CBEN: return CorpTypeCd.BEN_CONTINUE_IN
       case EntityTypes.CC: return CorpTypeCd.BC_CCC
+      case EntityTypes.CCC: return CorpTypeCd.CCC_CONTINUE_IN
       case EntityTypes.CP: return CorpTypeCd.COOP
       case EntityTypes.CR: return CorpTypeCd.BC_COMPANY
+      case EntityTypes.CUL: return CorpTypeCd.ULC_CONTINUE_IN
       case EntityTypes.DBA: return CorpTypeCd.SOLE_PROP // same as FR
       case EntityTypes.FI: return CorpTypeCd.FINANCIAL
       case EntityTypes.FR: return CorpTypeCd.SOLE_PROP
@@ -93,11 +103,14 @@ export class CommonMixin extends Vue {
    */
   corpTypeToEntityType (entityType: CorpTypeCd): EntityTypes {
     switch (entityType) {
+      case CorpTypeCd.BEN_CONTINUE_IN: return EntityTypes.CBEN
       case CorpTypeCd.BENEFIT_COMPANY: return EntityTypes.BC
       case CorpTypeCd.BC_CCC: return EntityTypes.CC
       case CorpTypeCd.BC_COMPANY: return EntityTypes.CR
       case CorpTypeCd.BC_ULC_COMPANY: return EntityTypes.UL
+      case CorpTypeCd.CCC_CONTINUE_IN: return EntityTypes.CCC
       case CorpTypeCd.COOP: return EntityTypes.CP
+      case CorpTypeCd.CONTINUE_IN: return EntityTypes.C
       case CorpTypeCd.EXTRA_PRO_A: return EntityTypes.XCR
       case CorpTypeCd.FINANCIAL: return EntityTypes.FI
       case CorpTypeCd.PARTNERSHIP: return EntityTypes.GP
@@ -108,6 +121,7 @@ export class CommonMixin extends Vue {
       case CorpTypeCd.PARISHES: return EntityTypes.PAR
       case CorpTypeCd.SOCIETY: return EntityTypes.SO
       case CorpTypeCd.SOLE_PROP: return EntityTypes.FR
+      case CorpTypeCd.ULC_CONTINUE_IN: return EntityTypes.CUL
       case CorpTypeCd.XPRO_COOP: return EntityTypes.XCP
       case CorpTypeCd.XPRO_CORPORATION: return EntityTypes.XCR
       case CorpTypeCd.XPRO_LIM_PARTNR: return EntityTypes.XLP
