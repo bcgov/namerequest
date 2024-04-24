@@ -2,8 +2,6 @@ name: NAMEREQUEST UI CI
 
 on:
   pull_request:
-    types: [assigned, synchronize]
-  workflow_dispatch:
 
 defaults:
   run:
