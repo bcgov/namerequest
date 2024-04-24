@@ -6,6 +6,7 @@ export enum EntityTypes {
   BC = CorpTypeCd.BC_COMPANY,
   BEN = CorpTypeCd.BENEFIT_COMPANY,
   C = CorpTypeCd.CONTINUE_IN,
+  CBEN = CorpTypeCd.BEN_CONTINUE_IN,
   CC = CorpTypeCd.BC_CCC,
   CCC = CorpTypeCd.CCC_CONTINUE_IN,
   CP = CorpTypeCd.COOP,
