@@ -16,3 +16,4 @@ jobs:
     with:
       app_name: "namerequest"
       working_directory: "./"
+      codecov_flag: ""
