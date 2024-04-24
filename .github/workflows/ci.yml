@@ -1,7 +1,12 @@
 name: NAMEREQUEST UI CI
 
 on:
+  push:
+    branches:
+      - "test-eves-branch"
   pull_request:
+    branches:
+      - "main" 
 
 defaults:
   run:
