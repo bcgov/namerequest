@@ -10,8 +10,8 @@
     "test": "vue-cli-service test:unit --verbose --coverage",
     "test:unit": "vue-cli-service test:unit --testPathPattern --coverage",
     "lint": "vue-cli-service lint",
-    "lint:nofix": "vue-cli-service lint --no-fix"
-  },
+    "lint:nofix": "vue-cli-service lint --no-fix",
+    "build-check": "node --max_old_space_size=8000 node_modules/@vue/cli-service/bin/vue-cli-service.js build"},
   "dependencies": {
     "@babel/compat-data": "^7.21.5",
     "@bcrs-shared-components/breadcrumb": "2.1.24",
