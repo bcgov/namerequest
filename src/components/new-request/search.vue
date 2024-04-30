@@ -454,7 +454,10 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   get isSocietyDisabled (): boolean {
     return (
       !this.isSocietyEnabled() &&
-      (this.getEntityTypeCd === EntityTypes.SO || this.getEntityTypeCd === EntityTypes.XSO)
+      (
+        this.getEntityTypeCd === EntityTypes.SO ||
+        this.getEntityTypeCd === EntityTypes.XSO ||
+        this.getEntityTypeCd === EntityTypes.CS)
     )
   }
 

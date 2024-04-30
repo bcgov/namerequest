@@ -270,8 +270,13 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
 
   /** True if the Go To Societies Online button should be shown. */
   get showGoToSocietiesButton (): boolean {
+    const isSociety = (
+      this.getNr.entity_type_cd === EntityTypes.SO ||
+      this.getNr.entity_type_cd === EntityTypes.XSO ||
+      this.getNr.entity_type_cd === EntityTypes.CS
+    )
     return (
-      this.getNr.entity_type_cd === EntityTypes.SO &&
+      isSociety &&
       this.getNr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS &&
       (NrState.APPROVED === this.getNr.state || this.isConsentUnRequired)
     )

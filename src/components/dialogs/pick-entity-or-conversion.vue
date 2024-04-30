@@ -338,7 +338,14 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
 
   chooseType (entity: SelectOptionsI) {
     // special case for Society: if FF is not enabled then show society info panel and don't set the type
-    if (!this.isSocietyEnabled() && (entity.value === EntityTypes.SO || entity.value === EntityTypes.XSO)) {
+    if (
+      !this.isSocietyEnabled() &&
+      (
+        entity.value === EntityTypes.SO ||
+        entity.value === EntityTypes.XSO ||
+        entity.value === EntityTypes.CS
+      )
+    ) {
       this.showSocietiesInfo = true
       return
     }
