@@ -506,7 +506,7 @@ export const getEntityTypesBC = (state: StateIF): EntityI[] => {
         }
         // "CR" type is shortlisted
         // if CR exists in filtered entity_types, preserve its rank and shortlist keys
-        if (entity === EntityTypes.CR) {
+        if (entity === EntityTypes.CR || entity === EntityTypes.C) {
           output.push(obj)
           continue
         }
