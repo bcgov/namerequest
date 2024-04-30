@@ -281,6 +281,177 @@ export const EntityTypesBcData: EntityI[] = [
   }
 ]
 
+/** List of entity types for Continuation In NRs. */
+export const EntityTypesContInData: EntityI[] = [
+  {
+    text: 'Limited Company',
+    value: EntityTypes.C,
+    cat: 'Corporations',
+    blurbs: [
+      `A company that may have one or more people who own shares with some personal responsibility for debt and
+        liabilities.`,
+      `Has many of the same rights of an individual`,
+      `Reported separately as Corporate tax`,
+      `Has name protection in BC`
+    ],
+    mveBlurbs: [
+      `A company that may have one or more people who own shares with some personal responsibility for
+        debts and liabilities.`,
+      'Has many of the same rights of an individual',
+      'Reported separately as Corporate tax',
+      'Has name protection in BC'
+    ],
+    rehBlurbs: [
+      'Restore a limited company that is no longer active with BC Registries.'
+    ],
+    amlBlurbs: [
+      'An amalgamation of two or more corporations to form a new limited company.'
+    ],
+    chgBlurbs: [
+      'Change/Correct the name of an existing limited company.'
+    ],
+    shortlist: true,
+    rank: 1
+  },
+  {
+    text: 'Unlimited Liability Company',
+    value: EntityTypes.CUL,
+    cat: 'Corporations',
+    blurbs: [
+      `A type of corporation that is often used by American corporations as a Canadian subsidiary or to hold Canadian
+         assets.`,
+      'Shareholders liable for debts and liabilities',
+      'Reported separately as Canadian Corporate tax',
+      'Has name protection in BC'
+    ],
+    mveBlurbs: [
+      `A type of corporation that is often used by American corporations as a Canadian subsidiary or
+        to hold Canadian assets.`,
+      'Shareholders liable for debts and liabilities',
+      'Reported separately as Canadian Corporate tax',
+      'Has name protection in BC'
+    ],
+    rehBlurbs: [
+      'Restore an unlimited liability company (ULC) that is no longer active with BC Registries.'
+    ],
+    amlBlurbs: [
+      'An amalgamation of two or more corporations to form a new unlimited liability company.'
+    ],
+    chgBlurbs: [
+      'Change/Correct the name of an existing unlimited liability company.'
+    ]
+  },
+  {
+    text: 'Cooperative Association',
+    value: EntityTypes.CP, // FUTURE: update this? see also request-action-mapping.ts
+    cat: 'Social Enterprises',
+    blurbs: [
+      'Membership-based organization, owned and operated by the people who use its services.',
+      'Has independent legal status separate from its members',
+      'Members take on shares and have limited liability',
+      'Reported as Corporate tax',
+      'Has name protection in BC'
+    ],
+    mveBlurbs: [
+      'Membership-based organization, owned and operated by the people who use its services.',
+      'Has independent legal status separate from its members',
+      'Members take on shares and have limited liability',
+      'Reported as Corporate tax',
+      'Has name protection in BC'
+    ],
+    rehBlurbs: [
+      'Restore a cooperative association that is no longer active with BC Registries.'
+    ],
+    amlBlurbs: [
+      `An amalgamation of two or more cooperative associations to form a new cooperative
+        association.`
+    ],
+    chgBlurbs: [
+      'Change/correct the name of an existing cooperative association.'
+    ]
+  },
+  {
+    text: 'Benefit Company',
+    value: EntityTypes.CBEN,
+    cat: 'Corporations',
+    blurbs: [
+      `A type of corporation with special commitments to conduct business in a responsible and sustainable way.`,
+      'Must publish and post an audited annual benefit report',
+      'Reported as Corporate tax',
+      'Has name protection in BC'
+    ],
+    mveBlurbs: [
+      'A type of corporation with special commitments to conduct business in a responsible and sustainable way.',
+      'Must publish and post an audited annual benefit report',
+      'Reported as Corporate tax',
+      'Has name protection in BC'
+    ],
+    rehBlurbs: [
+      'Restore a benefit company that is no longer active with BC Registries.'
+    ],
+    amlBlurbs: [
+      'An amalgamation of two or more corporations to form a new benefit company.'
+    ],
+    chgBlurbs: [
+      'Change/Correct the name of an existing benefit company.'
+    ]
+  },
+  {
+    text: 'Community Contribution Company',
+    value: EntityTypes.CCC,
+    cat: 'Social Enterprises',
+    blurbs: [
+      `A type of corporation that has a benefit to the community. It is intended to bridge the gap between
+        for-profit and non-profit companies.`,
+      'Reported as Corporate tax',
+      'Has name protection in BC'
+    ],
+    mveBlurbs: [
+      'A type of corporation that has a benefit to the community. It is intended to bridge the gap between ' +
+      'for-profit and non-profit companies.',
+      'Reported as Corporate tax',
+      'Has name protection in BC'
+    ],
+    rehBlurbs: [
+      'Restore a community contribution company (CCC) that is no longer active with BC Registries.'
+    ],
+    amlBlurbs: [
+      `An amalgamation of two or more corporations to form a new community contribution
+        company.`
+    ],
+    chgBlurbs: [
+      'Change/correct the name of an existing community contribution company.'
+    ]
+  },
+  {
+    text: 'Society',
+    value: EntityTypes.CS,
+    cat: 'Social Enterprises',
+    blurbs: [
+      `A non-profit organization that is also known as a non-share corporation.`,
+      'Any funds or profits must be used only for social or community benefit',
+      'When incorporated, has independent legal status separate from its members',
+      'Members, staff and directors protected from personal liability',
+      'Has name protection in BC',
+      'Must use Societies Online to register a name and incorporate'
+    ],
+    mveBlurbs: [
+      `A non-profit organization that is also known as a non-share corporation.`,
+      'Any funds or profits must be used only for social or community benefit',
+      'When incorporated, has independent legal status separate from its members',
+      'Members, staff and directors protected from personal liability',
+      'Has name protection in BC',
+      'Must use Societies Online to register a name and incorporate'
+    ],
+    amlBlurbs: [
+      'Society amalgamation'
+    ],
+    chgBlurbs: [
+      'Societies must use Societies Online to get their name.'
+    ]
+  }
+]
+
 export const EntityTypesXproData: EntityI[] = [
   {
     text: 'Extraprovincial Limited Company',

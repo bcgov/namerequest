@@ -2,25 +2,31 @@ import { EntityTypes, NrRequestActionCodes } from '@/enums'
 import { RequestActionMappingI } from '@/interfaces'
 
 const EntityTypesBC = [
-  EntityTypes.FR,
-  EntityTypes.DBA,
-  EntityTypes.CR,
-  EntityTypes.UL,
-  EntityTypes.GP,
-  EntityTypes.LP,
-  EntityTypes.LL,
-  EntityTypes.CP,
   EntityTypes.BC,
+  EntityTypes.C,
+  EntityTypes.CBEN,
   EntityTypes.CC,
-  EntityTypes.SO,
-  EntityTypes.PA,
+  EntityTypes.CCC,
+  EntityTypes.CP,
+  EntityTypes.CR,
+  EntityTypes.CS,
+  EntityTypes.CUL,
+  EntityTypes.DBA,
   EntityTypes.FI,
-  EntityTypes.PAR
+  EntityTypes.FR,
+  EntityTypes.GP,
+  EntityTypes.LL,
+  EntityTypes.LP,
+  EntityTypes.PA,
+  EntityTypes.PAR,
+  EntityTypes.SO,
+  EntityTypes.UL
 ]
 
 // maps request_action_cd (key) to array of allowable entities (value)
 // { [request_action_cd]: entity_type_cd[] }
 export const BcMapping: RequestActionMappingI = {
+  // Amalgamate
   AML: [
     EntityTypes.CR,
     EntityTypes.UL,
@@ -29,6 +35,7 @@ export const BcMapping: RequestActionMappingI = {
     EntityTypes.BC,
     EntityTypes.SO
   ],
+  // Renew
   REN: [
     EntityTypes.CR,
     EntityTypes.CP,
@@ -38,6 +45,7 @@ export const BcMapping: RequestActionMappingI = {
     EntityTypes.BC,
     EntityTypes.SO
   ],
+  // Restore
   REH: [
     EntityTypes.CR,
     EntityTypes.CP,
@@ -47,17 +55,17 @@ export const BcMapping: RequestActionMappingI = {
     EntityTypes.BC,
     EntityTypes.SO
   ],
-  // every entity type except Parishes and Private Act
+  // Change Name
+  // (every entity type except Parishes and Private Act)
   CHG: EntityTypesBC.filter(ent => ent !== EntityTypes.PAR && ent !== EntityTypes.PA),
-  // when a MVE (continuation in) NR is created, the resultant company will have a
-  // different entity type in LEAR, as per comments below
+  // MVE = Continuation In
   MVE: [
-    EntityTypes.CR, // will become CorpTypeCd.CONTINUE_IN
-    EntityTypes.CC, // will become CorpTypeCd.CCC_CONTINUE_IN
-    EntityTypes.CP,
-    EntityTypes.UL, // will become CorpTypeCd.ULC_CONTINUE_IN
-    EntityTypes.SO,
-    EntityTypes.BC // will become CorpTypeCd.BEN_CONTINUE_IN
+    EntityTypes.C,
+    EntityTypes.CCC,
+    EntityTypes.CP, // FUTURE: update this? see also entity-type-data.ts
+    EntityTypes.CUL,
+    EntityTypes.CS,
+    EntityTypes.CBEN
   ]
 }
 

@@ -49,6 +49,7 @@ import {
   ConversionTypes,
   Designations,
   EntityTypesBcData,
+  EntityTypesContInData,
   EntityTypesXproData,
   IntlJurisdictions,
   Locations,
@@ -449,7 +450,7 @@ export const getEntityBlurbs = (state: StateIF): Array<EntityI | ConversionTypes
 
   if (isContinuationIn(state)) {
     if (isLocationBC(state)) {
-      return EntityTypesBcData.map(x => ({ ...x, blurbs: x.mveBlurbs }))
+      return EntityTypesContInData.map(x => ({ ...x, blurbs: x.mveBlurbs }))
     }
   }
 
@@ -496,7 +497,13 @@ export const getEntityTypesBC = (state: StateIF): EntityI[] => {
     const generateEntities = (entities) => {
       const output = []
       for (const entity of entities) {
-        const obj = EntityTypesBcData.find(ent => ent.value === entity)
+        let obj = null as EntityI
+        // continuation in uses a different list than the others
+        if (isContinuationIn(state) && isLocationBC(state)) {
+          obj = EntityTypesContInData.find(ent => ent.value === entity)
+        } else {
+          obj = EntityTypesBcData.find(ent => ent.value === entity)
+        }
         // "CR" type is shortlisted
         // if CR exists in filtered entity_types, preserve its rank and shortlist keys
         if (entity === EntityTypes.CR) {
@@ -528,10 +535,13 @@ export const getEntityTypesBC = (state: StateIF): EntityI[] => {
       return generateEntities(mapping[getRequestActionCd(state)])
     }
 
-    return EntityTypesBcData
+    // safe fallback
+    // continuation in uses a different list than the others
+    if (isContinuationIn(state) && isLocationBC(state)) return EntityTypesContInData
+    else return EntityTypesBcData
   } catch (err) {
     console.error('entityTypesBC() =', err) // eslint-disable-line no-console
-    return EntityTypesBcData
+    return []
   }
 }
 
@@ -606,18 +616,17 @@ export const getXproRequestTypeCd = (state: StateIF): XproNameType => {
 /** Get entity type options (short list only). */
 export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
   const bcOptions: SelectOptionsI[] = getEntityTypesBC(state)?.filter(x => {
-    // Set shortlisted entity types for BC Move and Restoration requests.
-    if (
-      (isContinuationIn(state) || isRestoration(state)) &&
-      isLocationBC(state)
-    ) {
+    if (isContinuationIn(state) && isLocationBC(state)) {
+      // Shortlist order: Limited Company, ULC
+      if (x.value === EntityTypes.CUL) {
+        x.shortlist = true
+        x.rank = 2
+      }
+    } else if (isRestoration(state) && isLocationBC(state)) {
       // Shortlist order: Limited Company, Cooperative Association
       if (x.value === EntityTypes.CP) {
         x.shortlist = true
         x.rank = 2
-      } else if ([EntityTypes.FR, EntityTypes.GP, EntityTypes.UL].includes(x.value)) {
-        x.shortlist = null
-        x.rank = null
       }
     } else if (isAmalgamation(state)) {
       // Shortlist order: Limited Company, Unlimited Liability Company
@@ -630,7 +639,7 @@ export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
       }
     } else {
       // Shortlist order: Limited Company, Sole Proprietorship, DBA, General Partnership
-      if ([EntityTypes.UL, EntityTypes.CP].includes(x.value)) {
+      if ([EntityTypes.UL, EntityTypes.CP, EntityTypes.CUL].includes(x.value)) {
         x.shortlist = null
         x.rank = null
       } else if (x.value === EntityTypes.FR) {
