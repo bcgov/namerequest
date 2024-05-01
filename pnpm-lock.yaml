@@ -72,8 +72,8 @@ importers:
         specifier: ^0.4.2
         version: 0.4.4
       sbc-common-components:
-        specifier: 3.0.8
-        version: 3.0.8
+        specifier: 3.0.12
+        version: 3.0.12
       style-loader:
         specifier: ^1.3.0
         version: 1.3.0(webpack@5.78.0)
@@ -5453,8 +5453,8 @@ packages:
     resolution: {integrity: sha512-5LBh1Tls8c9xgGjw3QrMwETmTMVk0oFgvrFSvWx62llR2hcEInrKNZ2GZCCuuy2lvWrdl5jhbpeqc5hRYKFOcw==}
     engines: {node: '>=10'}
 
-  sbc-common-components@3.0.8:
-    resolution: {integrity: sha512-TjZA8xRxtwrynI/EXLbGKr68+NFBlFPXDs1n7Uc+EaGD+zwmi8flSi6FEQNbrfb01YfVmlZ8GNghU7f1YP41rw==}
+  sbc-common-components@3.0.12:
+    resolution: {integrity: sha512-xi+zRXCyhnlKQgqbDoPd64Mrs/peB3+TwBv8H3VoEAVkVVr+z6mxfn+ej4WIlGv8KPQkL30LGBQRuZ0TG/JwxQ==}
 
   schema-utils@2.7.0:
     resolution: {integrity: sha512-0ilKFI6QQF5nxDZLFn2dMjvc4hjg/Wkg7rHd3jK6/A4a1Hl9VFdQWvgB1UMGoU94pad1P/8N7fMcEnLnSiju8A==}
@@ -12915,7 +12915,7 @@ snapshots:
     dependencies:
       xmlchars: 2.2.0
 
-  sbc-common-components@3.0.8:
+  sbc-common-components@3.0.12:
     dependencies:
       '@mdi/font': 4.9.95
       axios: 0.21.4

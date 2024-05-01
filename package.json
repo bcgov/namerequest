@@ -1,6 +1,6 @@
 {
   "name": "name-request",
-  "version": "5.4.8",
+  "version": "5.4.9",
   "private": true,
   "appName": "Name Request UI",
   "sbcName": "SBC Common Components",
@@ -11,7 +11,8 @@
     "test:unit": "vue-cli-service test:unit --testPathPattern --coverage",
     "lint": "vue-cli-service lint",
     "lint:nofix": "vue-cli-service lint --no-fix",
-    "build-check": "node --max_old_space_size=8000 node_modules/@vue/cli-service/bin/vue-cli-service.js build"},
+    "build-check": "node --max_old_space_size=8000 node_modules/@vue/cli-service/bin/vue-cli-service.js build"
+  },
   "dependencies": {
     "@babel/compat-data": "^7.21.5",
     "@bcrs-shared-components/breadcrumb": "2.1.24",
