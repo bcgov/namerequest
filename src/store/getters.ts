@@ -531,7 +531,7 @@ export const getEntityTypesBC = (state: StateIF): EntityI[] => {
     return EntityTypesBcData
   } catch (err) {
     console.error('entityTypesBC() =', err) // eslint-disable-line no-console
-    return EntityTypesBcData
+    return []
   }
 }
 
@@ -606,11 +606,16 @@ export const getXproRequestTypeCd = (state: StateIF): XproNameType => {
 /** Get entity type options (short list only). */
 export const getEntityTypeOptions = (state: StateIF): Array<EntityI> => {
   const bcOptions: SelectOptionsI[] = getEntityTypesBC(state)?.filter(x => {
-    // Set shortlisted entity types for BC Move and Restoration requests.
-    if (
-      (isContinuationIn(state) || isRestoration(state)) &&
-      isLocationBC(state)
-    ) {
+    if (isContinuationIn(state) && isLocationBC(state)) {
+      // Shortlist order: Limited Company, Unlimited Liability Company
+      if (x.value === EntityTypes.UL) {
+        x.shortlist = true
+        x.rank = 2
+      } else if ([EntityTypes.FR, EntityTypes.GP, EntityTypes.UL].includes(x.value)) {
+        x.shortlist = null
+        x.rank = null
+      }
+    } else if (isRestoration(state) && isLocationBC(state)) {
       // Shortlist order: Limited Company, Cooperative Association
       if (x.value === EntityTypes.CP) {
         x.shortlist = true

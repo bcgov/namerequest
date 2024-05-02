@@ -21,6 +21,7 @@ const EntityTypesBC = [
 // maps request_action_cd (key) to array of allowable entities (value)
 // { [request_action_cd]: entity_type_cd[] }
 export const BcMapping: RequestActionMappingI = {
+  // Amalgamate
   AML: [
     EntityTypes.CR,
     EntityTypes.UL,
@@ -29,6 +30,7 @@ export const BcMapping: RequestActionMappingI = {
     EntityTypes.BC,
     EntityTypes.SO
   ],
+  // Renew
   REN: [
     EntityTypes.CR,
     EntityTypes.CP,
@@ -38,6 +40,7 @@ export const BcMapping: RequestActionMappingI = {
     EntityTypes.BC,
     EntityTypes.SO
   ],
+  // Restore
   REH: [
     EntityTypes.CR,
     EntityTypes.CP,
@@ -47,16 +50,16 @@ export const BcMapping: RequestActionMappingI = {
     EntityTypes.BC,
     EntityTypes.SO
   ],
-  // every entity type except Parishes and Private Act
+  // Change Name
+  // (every entity type except Parishes and Private Act)
   CHG: EntityTypesBC.filter(ent => ent !== EntityTypes.PAR && ent !== EntityTypes.PA),
-  // when a MVE (continuation in) NR is created, the resultant company will have a
-  // different entity type in LEAR, as per comments below
+  // MVE = Continuation In
   MVE: [
     EntityTypes.CR, // will become CorpTypeCd.CONTINUE_IN
     EntityTypes.CC, // will become CorpTypeCd.CCC_CONTINUE_IN
     EntityTypes.CP,
     EntityTypes.UL, // will become CorpTypeCd.ULC_CONTINUE_IN
-    EntityTypes.SO,
+    EntityTypes.SO, // will becomes CorpTypeCd.CONT_IN_SOCIETY
     EntityTypes.BC // will become CorpTypeCd.BEN_CONTINUE_IN
   ]
 }

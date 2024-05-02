@@ -27,7 +27,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
   /**
    * Affiliates a NR to the current account, creates a temporary business, and then navigates
    * to the entity dashboard page.
-   * @param nr the NR to affiliate
+   * @param nr The NR to affiliate.
    */
   async createAffiliation (nr: NameRequestI): Promise<any> {
     try {
@@ -214,10 +214,10 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
   }
 
   /**
-   * Handle the action buttons (numbered selection).
-   * Create draft business depending on business type.
-   * Redirect to Dashboard.
-   * @param legalType The legal type of the business
+   * 1. Handles the action buttons (numbered selection).
+   * 2. Creates draft business depending on legal type.
+   * 3. Redirects to entity dashboard.
+   * @param legalType The legal type of the business.
    */
   async actionNumberedEntity (legalType: CorpTypeCd): Promise<any> {
     // show spinner since this is a network call
@@ -244,19 +244,26 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
   }
 
   /**
-   * Create a draft numbered business based on selected business type (If applicable).
+   * Creates a draft numbered business based on specified legal type.
    * @param accountId Account ID of logged in user.
    * @param legalType The legal type of the business that's being created.
    */
   async createNumberedBusiness (accountId: number, legalType: CorpTypeCd): Promise<string> {
+    if (this.isContinuationIn) {
+      // convert regular legal type to continuation in legal type
+      switch (legalType) {
+        case CorpTypeCd.BC_COMPANY: legalType = CorpTypeCd.CONTINUE_IN; break
+        case CorpTypeCd.BENEFIT_COMPANY: legalType = CorpTypeCd.BEN_CONTINUE_IN; break
+        case CorpTypeCd.BC_CCC: legalType = CorpTypeCd.CCC_CONTINUE_IN; break
+        case CorpTypeCd.BC_ULC_COMPANY: legalType = CorpTypeCd.ULC_CONTINUE_IN; break
+        case CorpTypeCd.SOCIETY: legalType = CorpTypeCd.CONT_IN_SOCIETY; break
+      }
+    }
+
     const businessRequest = {
       filing: {
-        header: {
-          accountId: accountId
-        },
-        business: {
-          legalType: legalType
-        }
+        header: { accountId },
+        business: { legalType }
       }
     } as BusinessRequest
 

@@ -19,11 +19,11 @@ export class CommonMixin extends Vue {
       .join(' ')
   }
 
-  /** Returns entity type text for the the specified code. */
+  /** Returns the description for the given entity type code. */
   // FUTURE: use GetCorpFullDescription() instead
   entityTypeCdToText (cd: EntityTypes): string {
     switch (cd) {
-      // BC Entity Types:
+      // BC entity types:
       case EntityTypes.BC: return 'BC Benefit Company'
       case EntityTypes.CC: return 'BC Community Contribution Company'
       case EntityTypes.CP: return 'BC Cooperative Association'
@@ -40,13 +40,14 @@ export class CommonMixin extends Vue {
       case EntityTypes.SP: return 'BC Sole Proprietorship'
       case EntityTypes.UL: return 'BC Unlimited Liability Company'
 
-      // Continuation In Entity Types:
-      case EntityTypes.C: return 'Continuation In (BC Limited Company)'
-      case EntityTypes.CBEN: return 'Continuation In (Benefit Company)'
-      case EntityTypes.CCC: return 'Continuation In (BC Community Contribution Company)'
-      case EntityTypes.CUL: return 'Continuation In (BC Unlimited Liability Company)'
+      // Continuation In entity types:
+      case EntityTypes.C: return 'BC Limited Company (Continuation In)'
+      case EntityTypes.CBEN: return 'Benefit Company (Continuation In)'
+      case EntityTypes.CCC: return 'BC Community Contribution Company (Continuation In)'
+      case EntityTypes.CS: return 'BC Social Enterprise (Continuation In)'
+      case EntityTypes.CUL: return 'BC Unlimited Liability Company (Continuation In)'
 
-      // XPRO Entity Types:
+      // XPRO entity types:
       case EntityTypes.XCR: return 'Extraprovincial Limited Company'
       case EntityTypes.XUL: return 'Extraprovincial Unlimited Liability Company'
       case EntityTypes.RLC: return 'Extraprovincial Limited Liability Company'
@@ -60,8 +61,8 @@ export class CommonMixin extends Vue {
   }
 
   /**
-   * The alternate codes for entity types.
-   * Alternate codes are used in Entities UIs.
+   * Returns the Corp Type Code (used by LEAR) for the given Entity Type (used by Namex).
+   * @example UL --> ULC
    */
   entityTypeToCorpType (entityType: EntityTypes): CorpTypeCd {
     switch (entityType) {
@@ -72,6 +73,7 @@ export class CommonMixin extends Vue {
       case EntityTypes.CCC: return CorpTypeCd.CCC_CONTINUE_IN
       case EntityTypes.CP: return CorpTypeCd.COOP
       case EntityTypes.CR: return CorpTypeCd.BC_COMPANY
+      case EntityTypes.CS: return CorpTypeCd.CONT_IN_SOCIETY
       case EntityTypes.CUL: return CorpTypeCd.ULC_CONTINUE_IN
       case EntityTypes.DBA: return CorpTypeCd.SOLE_PROP // same as FR
       case EntityTypes.FI: return CorpTypeCd.FINANCIAL
@@ -98,7 +100,7 @@ export class CommonMixin extends Vue {
   }
 
   /**
-   * Entities UI codes to Name Request Code.
+   * Returns the Entity Type (used by Namex) for the given Corp Type Code (used by LEAR).
    * @example ULC --> UL
    */
   corpTypeToEntityType (entityType: CorpTypeCd): EntityTypes {
@@ -110,6 +112,7 @@ export class CommonMixin extends Vue {
       case CorpTypeCd.BC_ULC_COMPANY: return EntityTypes.UL
       case CorpTypeCd.CCC_CONTINUE_IN: return EntityTypes.CCC
       case CorpTypeCd.COOP: return EntityTypes.CP
+      case CorpTypeCd.CONT_IN_SOCIETY: return EntityTypes.CS
       case CorpTypeCd.CONTINUE_IN: return EntityTypes.C
       case CorpTypeCd.EXTRA_PRO_A: return EntityTypes.XCR
       case CorpTypeCd.FINANCIAL: return EntityTypes.FI

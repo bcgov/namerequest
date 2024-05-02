@@ -11,6 +11,7 @@ export enum EntityTypes {
   CCC = CorpTypeCd.CCC_CONTINUE_IN,
   CP = CorpTypeCd.COOP,
   CR = CorpTypeCd.CORPORATION,
+  CS = CorpTypeCd.CONT_IN_SOCIETY,
   CUL = CorpTypeCd.ULC_CONTINUE_IN,
   DBA = CorpTypeCd.DOING_BUSINESS_AS,
   FI = CorpTypeCd.FINANCIAL,
