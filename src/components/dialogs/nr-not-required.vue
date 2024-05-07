@@ -7,35 +7,26 @@
   >
     <v-card>
       <v-card-title class="d-flex justify-space-between">
-        <div>You don't need a Name Request if...</div>
+        <div>You don't need to request a business name if...</div>
       </v-card-title>
       <v-card-text class="copy-normal">
         <ol>
           <li>
-            <b>You are already Federally Incorporated.</b><br>
-            You do not require a name request. Please go to <a
+            <b>Your business is already Federally Incorporated.</b><br>
+            Please go to <a
               :href="colinLink"
               target="_blank"
             >
               Corporate Online</a> to extra-provincially register your business.
           </li>
           <li class="my-3">
-            <b>You want a numbered company. The business does not need a name.</b><br>
-            You do not require a name request. If you are incorporating a Benefit company go to
-            <a
-              :href="businessRegistryLink"
-              target="_blank"
-            >BC Business Registry</a>, otherwise go to
-            <a
-              :href="colinLink"
-              target="_blank"
-            >Corporate Online</a>. A number will be assigned
-            upon registering your business.
+            <b>You want to incorporate a numbered company.</b><br>
+            Select the action and the company type you want in the Name Request application and follow the instructions to complete your incorporation.
           </li>
           <li>
-            <b>You are using your own name as the business name.</b><br>
-            If you wish to use your own legal name for a sole proprietorship or general partnership, you do
-            not need to submit a name request or register your business with us. However, you should inquire
+            <b>You are using your own legal name as the business name.</b><br>
+            If you are operating a sole proprietorship or general partnership under your own legal name, you do
+            not need to submit a name request or register your business with BC Registries. However, you should inquire
             with the municipality to ensure you have the appropriate business licence(s), if required.
           </li>
         </ol>
@@ -46,7 +37,7 @@
           text
           @click="showModal = false"
         >
-          Close
+          Okay
         </v-btn>
       </v-card-actions>
     </v-card>
