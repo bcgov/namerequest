@@ -240,6 +240,7 @@
                   <span>Applicant Name:</span>
                   &nbsp;{{ nr && nr.applicants && nr.applicants.lastName }},
                   &nbsp;{{ nr && nr.applicants && nr.applicants.firstName }}
+                  &nbsp;{{ nr && nr.applicants && nr.applicants.middleName }}
                 </v-col>
 
                 <v-col
