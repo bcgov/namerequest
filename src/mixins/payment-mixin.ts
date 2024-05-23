@@ -536,7 +536,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       if (!paymentResponse) throw new Error('Got error from getNameRequestPayment()')
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { payment, sbcPayment = { receipts: [], status_code: '' }, statusCode, completionDate } = paymentResponse
+      const { payment, sbcPayment = { receipts: [], status_code: '' }, statusCode, completionDate } = paymentResponse[0]
 
       await this.setPayment(payment)
       await this.setSbcPayment(sbcPayment)
