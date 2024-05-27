@@ -53,9 +53,7 @@
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import PaymentConfirm from '@/components/payment/payment-confirm.vue'
-import { NameRequestPayment } from '@/modules/payment/models'
-import errorModule from '@/modules/error'
-import { PaymentStatus, SbcPaymentStatus } from '@/enums'
+import { NrState } from '@/enums'
 import { CommonMixin, PaymentMixin, PaymentSessionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { NameChoicesIF } from '@/interfaces'
@@ -85,6 +83,8 @@ export default class PaymentCompleteDialog extends Mixins(
 
   /** Used to show loading state on button. */
   loading = false
+  incompletePaymentRetries = 5
+  isRetrying = false
 
   /** Whether this modal should be shown (per store property). */
   get showModal (): boolean {
@@ -109,7 +109,20 @@ export default class PaymentCompleteDialog extends Mixins(
   }
 
   async fetchNr (): Promise<void> {
-    const nrData = await NamexServices.getNameRequest(true)
+    let nrData = await NamexServices.getNameRequest(true)
+    if (nrData.state === NrState.PENDING_PAYMENT && this.incompletePaymentRetries > 0) {
+      this.incompletePaymentRetries--
+      this.isRetrying = true
+      setTimeout(async () => {
+        await this.fetchData()
+      }, 2000)
+      // Retry at least once before showing pending payment, this should cover most of the cases.
+      if (this.incompletePaymentRetries === 4) {
+        nrData = null
+      }
+    } else {
+      this.isRetrying = false
+    }
     if (nrData) {
       await this.loadExistingNameRequest(nrData)
     }
@@ -122,33 +135,18 @@ export default class PaymentCompleteDialog extends Mixins(
     const { sessionPaymentId, sessionNrId } = this
     await this.fetchNr()
     await this.fetchPaymentData(sessionPaymentId, +sessionNrId)
-    sessionStorage.removeItem('payment')
-    sessionStorage.removeItem('paymentInProgress')
-    sessionStorage.removeItem('paymentId')
-    sessionStorage.removeItem('paymentToken')
-    sessionStorage.removeItem('nrId')
+    if (!this.isRetrying) {
+      this.cleanUpSessionStorage()
+    }
+  }
+
+  cleanUpSessionStorage () {
+    ['payment', 'paymentInProgress', 'paymentId', 'paymentToken', 'nrId'].forEach(key => sessionStorage.removeItem(key))
   }
 
   async fetchPaymentData (paymentId: number, nameReqId: number) {
     if (nameReqId && paymentId) {
       await this.fetchNrPayment(nameReqId, paymentId)
-      const { paymentStatus, sbcPaymentStatus } = this
-      if (sbcPaymentStatus === SbcPaymentStatus.COMPLETED && paymentStatus === PaymentStatus.CREATED) {
-        await this.setCompletePayment(nameReqId, paymentId, this.sessionPaymentAction)
-      }
-    }
-  }
-
-  async setCompletePayment (nrId: number, paymentId: number, action: string) {
-    const result: NameRequestPayment = await NamexServices.completePayment(nrId, paymentId, action)
-    const paymentSuccess = result?.paymentSuccess
-
-    if (paymentSuccess) {
-      this.$root.$emit('paymentComplete', true)
-      await this.toggleReceiptModal(true)
-    } else if (!paymentSuccess && result?.paymentErrors) {
-      // Setting the errors to state will update any subscribing components, like the main ErrorModal
-      await errorModule.setAppErrors(result.paymentErrors)
     }
   }
 
