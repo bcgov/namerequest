@@ -149,23 +149,6 @@ export default class PaymentCompleteDialog extends Mixins(
   async fetchPaymentData (paymentId: number, nameReqId: number) {
     if (nameReqId && paymentId) {
       await this.fetchNrPayment(nameReqId, paymentId)
-      const { paymentStatus, sbcPaymentStatus } = this
-      if (sbcPaymentStatus === SbcPaymentStatus.COMPLETED && paymentStatus === PaymentStatus.CREATED) {
-        await this.setCompletePayment(nameReqId, paymentId, this.sessionPaymentAction)
-      }
-    }
-  }
-
-  async setCompletePayment (nrId: number, paymentId: number, action: string) {
-    const result: NameRequestPayment = await NamexServices.completePayment(nrId, paymentId, action)
-    const paymentSuccess = result?.paymentSuccess
-
-    if (paymentSuccess) {
-      this.$root.$emit('paymentComplete', true)
-      await this.toggleReceiptModal(true)
-    } else if (!paymentSuccess && result?.paymentErrors) {
-      // Setting the errors to state will update any subscribing components, like the main ErrorModal
-      await errorModule.setAppErrors(result.paymentErrors)
     }
   }
 
