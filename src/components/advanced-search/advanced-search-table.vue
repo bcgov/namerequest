@@ -28,7 +28,7 @@
             v-for="(applicant, index) in item.applicants"
             :key="`applicant-${index}`"
           >
-            {{ applicant.lastName }}, {{ applicant.firstName }} {{applicant.middleName}}
+            {{ applicant.lastName }}, {{ applicant.firstName }} {{ applicant.middleName }}
           </span>
         </td>
         <td>
