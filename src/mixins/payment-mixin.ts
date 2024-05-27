@@ -537,7 +537,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       // Note this is broken the true response should be paymentResponse[0]
-      // but this is called by many differnet pathways will need to fix in the future.
+      // but this is called by many different pathways will need to fix in the future.
       const { payment, sbcPayment = { receipts: [], status_code: '' }, statusCode, completionDate } = paymentResponse
 
       await this.setPayment(payment)
