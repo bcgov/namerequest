@@ -1,10 +1,8 @@
-import { createLocalVue, mount } from '@vue/test-utils'
+import { createLocalVue } from '@vue/test-utils'
 import Vuetify from 'vuetify'
-import AnalyzePending from '@/components/new-request/analyze-pending.vue'
 // import newReqModule from '@/store/new-request-module'
 
 const localVue = createLocalVue()
-const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
