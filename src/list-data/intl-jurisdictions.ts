@@ -682,8 +682,8 @@ const Other: JurisdictionI[] = [
   },
   {
     value: 'IR',
-    SHORT_DESC: 'Iran',
-    text: 'Iran'
+    SHORT_DESC: 'Iran, Islamic R',
+    text: 'Iran, Islamic Republic Of'
   },
   {
     value: 'IQ',
@@ -1262,8 +1262,8 @@ const Other: JurisdictionI[] = [
   },
   {
     value: 'TR',
-    SHORT_DESC: 'Turkey',
-    text: 'Turkey'
+    SHORT_DESC: 'Türkiye',
+    text: 'Türkiye, Republic Of'
   }
 ]
 

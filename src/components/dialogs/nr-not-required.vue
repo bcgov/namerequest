@@ -22,7 +22,7 @@
           <li class="my-3">
             <b>You want to incorporate a numbered company.</b><br>
             Select the action and the company type you want in the Name Request application and follow the instructions
-             to complete your incorporation.
+            to complete your incorporation.
           </li>
           <li>
             <b>You are using your own legal name as the business name.</b><br>
