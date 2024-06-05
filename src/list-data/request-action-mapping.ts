@@ -25,12 +25,12 @@ export const BcMapping: RequestActionMappingI = {
   ],
   // Restore
   REH: [
-    EntityTypes.CR, // maps to BC
+    EntityTypes.CR, // maps to BC Limited Company
     EntityTypes.CP,
     EntityTypes.CC,
     EntityTypes.UL, // maps to ULC
     EntityTypes.FI,
-    EntityTypes.BC, // maps to BEN
+    EntityTypes.BC, // maps to Benefit Company
     EntityTypes.SO,
     EntityTypes.C,
     EntityTypes.CBEN,
@@ -112,6 +112,7 @@ export const BusinessLookupEntityTypes = [
   EntityTypes.BC, // Benefit Company
   EntityTypes.BEN, // invalid?
   EntityTypes.C,
+  EntityTypes.CBEN,
   EntityTypes.CC,
   EntityTypes.CCC,
   EntityTypes.CUL,
@@ -135,9 +136,12 @@ export const BusinessLookupEntityTypes = [
 
 /** Entity types that support the numbered company option. */
 export const NumberedEntityTypes = [
-  EntityTypes.BC,
+  EntityTypes.BC, // Benefit Company
   EntityTypes.CC,
-  EntityTypes.CR,
+  EntityTypes.CR, // BC Limited Company
   EntityTypes.UL,
-  EntityTypes.C
+  EntityTypes.C,
+  EntityTypes.CBEN,
+  EntityTypes.CCC,
+  EntityTypes.CUL
 ]
