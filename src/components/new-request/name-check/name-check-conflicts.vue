@@ -369,8 +369,11 @@ export default class NameCheckConflicts extends Vue {
   // Global getter
   @Getter isMobile!: boolean
 
-  @Emit() clearError (value: string) { }
-  @Emit() retry (value: string) { }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  @Emit() clearError (value: string) {}
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  @Emit() retry (value: string) {}
 
   expanded: Array<NameCheckItemIF> = []
   headers = [
