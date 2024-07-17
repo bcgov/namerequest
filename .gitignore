@@ -11,3 +11,17 @@ public/config/configuration.json
 .firebase
 *.firebaserc
 *.log
+
+# Cypress related files
+**/cypress.env.json
+**/node_modules
+**/videos/
+**/screenshots/
+**/results/**
+**/downloads/**
+**/mochawesome-report/**
+**/client.json
+**/token.json
+**/local-dev/**
+**/*copy.json
+testing/cypress.config copy.ts
