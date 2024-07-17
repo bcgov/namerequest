@@ -15,5 +15,5 @@ jobs:
     uses: bcgov/bcregistry-sre/.github/workflows/frontend-ci.yaml@main
     with:
       app_name: "namerequest"
-      working_directory: "./"
+      working_directory: "./app"
       codecov_flag: ""
