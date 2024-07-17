@@ -3,9 +3,11 @@ steps:
   - name: node:20.5.1
     entrypoint: npm
     args: ['install']
+    dir: app
 
   # setup .env
   - name: 'bash'
+    dir: app
     script: |
       #!/usr/bin/env bash
       cp .env.example .env
@@ -25,6 +27,7 @@ steps:
       - 'VUE_APP_WEBCHAT_REASON=$_VUE_APP_WEBCHAT_REASON'
       - 'VUE_APP_WEBCHAT_STATUS_URL=$_VUE_APP_WEBCHAT_STATUS_URL'
     args: ['--openssl-legacy-provider', 'run', 'build']
+    dir: app
 
   #
   # Deploy to firebase channel, using the PR #
@@ -33,6 +36,7 @@ steps:
   - name: gcr.io/yfthig-dev/firebase
     entrypoint: bash
     args: ['-c', 'firebase hosting:channel:deploy --project=yfthig-dev PR-$_PR_NUMBER > /workspace/firebase-deploy.txt']
+    dir: app
 
   #
   # Update the PR with the temporary URL
