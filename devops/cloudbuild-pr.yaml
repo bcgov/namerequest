@@ -1,9 +1,9 @@
 steps:
   # pnpm 
-  - name: 'bash'
+  - name: node:20.5.1
+    entrypoint: npm
     dir: app
-    script: |
-      npm install -g pnpm
+    args: ['install', '-g', 'pnpm']
 
   # install / setup ci
   - name: node:20.5.1
