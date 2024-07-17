@@ -1,7 +1,7 @@
 steps:
   # install / setup ci
   - name: node:20.5.1
-    entrypoint: npm
+    entrypoint: pnpm
     args: ['install']
     dir: app
 
@@ -16,7 +16,7 @@ steps:
   # Generate the static site
   #
   - name: node:20.5.1
-    entrypoint: npm
+    entrypoint: pnpm
     env:
       - 'VUE_APP_NAMEREQUEST_LD_CLIENT_ID=$_VUE_APP_NAMEREQUEST_LD_CLIENT_ID'
       - 'VUE_APP_GENESYS_ENV=$_VUE_APP_GENESYS_ENV'
