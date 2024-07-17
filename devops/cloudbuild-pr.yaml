@@ -1,4 +1,10 @@
 steps:
+  # pnpm 
+  - name: 'bash'
+    dir: app
+    script: |
+    curl -fsSL https://get.pnpm.io/install.sh | sh -
+
   # install / setup ci
   - name: node:20.5.1
     entrypoint: pnpm
