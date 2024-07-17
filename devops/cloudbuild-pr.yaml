@@ -16,7 +16,8 @@ steps:
       pnpm install
       #!/usr/bin/env bash
       cp .env.example .env
-      pnpm --openssl-legacy-provider run build
+      export NODE_OPTIONS=--openssl-legacy-provider 
+      pnpm run build
 
 
 
