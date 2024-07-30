@@ -19,7 +19,6 @@ steps:
 
   # Generate the static site
   - name: node:20.5.1
-    entrypoint: pnpm
     dir: app
     env:
       - 'VUE_APP_NAMEREQUEST_LD_CLIENT_ID=$_VUE_APP_NAMEREQUEST_LD_CLIENT_ID'
