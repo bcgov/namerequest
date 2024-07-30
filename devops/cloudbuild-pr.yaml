@@ -42,7 +42,7 @@ steps:
 
         curl -X POST \
 
-        https://api.github.com/repos/bcgov/business-ar/issues/$_PR_NUMBER/comments
+        https://api.github.com/repos/bcgov/namerequest/issues/$_PR_NUMBER/comments
         \
 
         --header "Authorization: Token $$TOKEN" \
