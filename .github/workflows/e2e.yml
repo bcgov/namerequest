@@ -49,6 +49,7 @@ jobs:
           working-directory: testing
           spec: |
             cypress/e2e/smoke/smoke-*-*.cy.ts
+            cypress/e2e/name-*-*.cy.ts
           browser: chrome
           # project: ./e2e
           ci-build-id: ${{ github.event.number }}

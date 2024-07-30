@@ -7,7 +7,7 @@ const customFaker = new Faker({
 describe('names-20-create', () => {
     beforeEach(() => {
         customFaker.seed(Date.now() ^ (Math.random() * 0x100000000));
-        cy.visit('https://test.names.bcregistry.gov.bc.ca');
+        cy.visit('');
     });
 
     afterEach(() => {

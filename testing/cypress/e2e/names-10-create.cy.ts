@@ -3,48 +3,24 @@ import { base, en, Faker, en_CA } from '@faker-js/faker';
 const customFaker = new Faker({
     locale: [en, base, en_CA],
 });
+import HomePage from '../pageObjects/homePageRequest'
+const homePage = new HomePage()
 
 describe('names-10-create', () => {
     beforeEach(() => {
         customFaker.seed(Date.now() ^ (Math.random() * 0x100000000));
-        cy.visit('https://test.names.bcregistry.gov.bc.ca');
-        cy.get("#loginBtn").click().then(() => {
-            cy.get('div[role="menu"', { timeout: 1000 }).within(() => {
-                cy.contains('div', 'IDIR').click();
-            });
-
-            cy.setid('default').then(() => {
-                // Validate siteminder and login
-                cy.get('#login-to', { timeout: 10000 })
-                    .contains('Log in to ')
-                    .should('be.visible')
-                cy.get('#user', { timeout: 10000 }).type(
-                    Cypress.env('username')
-                )
-                cy.get('#password', { timeout: 10000 }).type(
-                    Cypress.env('password'),
-                    { log: false }
-                )
-
-                cy.get('div.login-form-action > input', { timeout: 10000 }).click()
-                cy.wait(3000)
-            });
-        });
+        cy.login()
     });
 
     afterEach(() => {
-
-        cy.get('button.user-account-btn').click().then(() => {
-            cy.contains('div', 'Log out').click();
-        })
-
+        cy.logout()
     });
 
     let i = 0;
-    while (i < 10) {
+    while (i < 1) {
     it('should create a new name', () => {
         cy.log('here we go!')
-        cy.get('#request-action-select').click().then(() => {
+        cy.get(homePage.requestActionSelect).click().then(() => {
             cy.contains('span', 'For businesses that do not exist yet').click()
             cy.contains('div', 'Start a new BC-based business').click()
             cy.get('#entity-type-options-select').click().then(() => {

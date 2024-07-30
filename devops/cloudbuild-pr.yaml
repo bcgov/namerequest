@@ -1,6 +1,25 @@
 steps:
-  # pnpm 
+  # install pnpm
   - name: node:20.5.1
+    entrypoint: npm
+    args: ['install', '-g', 'pnpm']
+  
+  # install dependencies
+  - name: node:20.5.1
+    entrypoint: pnpm
+    args: ['install']
+    dir: app
+
+  # setup .env
+  - name: 'bash'
+    dir: app
+    script: |
+      #!/usr/bin/env bash
+      cp .env.example .env
+
+  # Generate the static site
+  - name: node:20.5.1
+    entrypoint: pnpm
     dir: app
     env:
       - 'VUE_APP_NAMEREQUEST_LD_CLIENT_ID=$_VUE_APP_NAMEREQUEST_LD_CLIENT_ID'
@@ -12,38 +31,8 @@ steps:
       - 'VUE_APP_WEBCHAT_REASON=$_VUE_APP_WEBCHAT_REASON'
       - 'VUE_APP_WEBCHAT_STATUS_URL=$_VUE_APP_WEBCHAT_STATUS_URL'
     script: |
-      npm install -g pnpm
-      pnpm install
-      #!/usr/bin/env bash
-      cp .env.example .env
       export NODE_OPTIONS=--openssl-legacy-provider 
-      pnpm run build
-
-
-
-  # setup .env
-  # - name: 'bash'
-  #   dir: app
-  #   script: |
-  #     #!/usr/bin/env bash
-  #     cp .env.example .env
-
-  #
-  # Generate the static site
-  #
-  # - name: node:20.5.1
-  #   entrypoint: pnpm
-  #   env:
-  #     - 'VUE_APP_NAMEREQUEST_LD_CLIENT_ID=$_VUE_APP_NAMEREQUEST_LD_CLIENT_ID'
-  #     - 'VUE_APP_GENESYS_ENV=$_VUE_APP_GENESYS_ENV'
-  #     - 'VUE_APP_GENESYS_URL=$_VUE_APP_GENESYS_URL'
-  #     - 'VUE_APP_GENESYS_ID=$_VUE_APP_GENESYS_ID'
-  #     - 'VUE_APP_REGISTRIES_SEARCH_API_KEY=$_VUE_APP_REGISTRIES_SEARCH_API_KEY'
-  #     - 'VUE_APP_WEBCHAT_URL=$_VUE_APP_WEBCHAT_URL'
-  #     - 'VUE_APP_WEBCHAT_REASON=$_VUE_APP_WEBCHAT_REASON'
-  #     - 'VUE_APP_WEBCHAT_STATUS_URL=$_VUE_APP_WEBCHAT_STATUS_URL'
-  #   args: ['--openssl-legacy-provider', 'run', 'build']
-  #   dir: app
+      pnpm build
 
   #
   # Deploy to firebase channel, using the PR #
