@@ -11,7 +11,10 @@ public/config/configuration.json
 .firebase
 *.firebaserc
 *.log
+<<<<<<< HEAD
 !vaults.env
+=======
+>>>>>>> EPortman-20291-move-app-to-app-directory
 
 # Cypress related files
 **/cypress.env.json
