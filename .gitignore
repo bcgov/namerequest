@@ -11,6 +11,7 @@ public/config/configuration.json
 .firebase
 *.firebaserc
 *.log
+!vaults.env
 
 # Cypress related files
 **/cypress.env.json
