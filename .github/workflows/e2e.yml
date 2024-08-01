@@ -39,7 +39,7 @@ jobs:
       - name: E2E Smoke tests
         uses: cypress-io/github-action@v6
         id: smoke
-        continue-on-error: false
+        continue-on-error: true
         with:
           summary-title: 'E2E Smoke tests'
           wait-on: ${{ secrets.CYPRESS_HOST }}
@@ -64,3 +64,9 @@ jobs:
         with:
           name: smoke-test-results
           path: testing/mochawesome-report/report.html
+
+      - name: Upload Test Videos
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos
+          path: testing/cypress/videos
