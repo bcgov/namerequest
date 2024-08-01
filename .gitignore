@@ -13,8 +13,6 @@ public/config/configuration.json
 *.log
 <<<<<<< HEAD
 !vaults.env
-=======
->>>>>>> EPortman-20291-move-app-to-app-directory
 
 # Cypress related files
 **/cypress.env.json
