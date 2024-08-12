@@ -16,6 +16,16 @@ const CanUsa: JurisdictionI[] = [
 
 const Other: JurisdictionI[] = [
   {
+    value: 'CD',
+    SHORT_DESC: 'CONGO, THE DEMO',
+    text: 'CONGO, THE DEMOCRATIC REPUBLIC OF THE'
+  },
+  {
+    value: 'FX',
+    SHORT_DESC: 'FRANCE, METROPO',
+    text: 'FRANCE, METROPOLITAN',
+  },
+  {
     value: 'TM',
     SHORT_DESC: 'Turkmenistan',
     text: 'Turkmenistan'
@@ -153,12 +163,12 @@ const Other: JurisdictionI[] = [
   {
     value: 'VI',
     text: 'Virgin Islands, U.S.',
-    SHORT_DESC: 'Virgin Islands, U.S.'
+    SHORT_DESC: 'USVI'
   },
   {
     value: 'VG',
     text: 'Virgin Islands, British',
-    SHORT_DESC: 'Virgin Islands, British'
+    SHORT_DESC: 'BVI'
   },
   {
     value: 'WF',
@@ -1262,8 +1272,8 @@ const Other: JurisdictionI[] = [
   },
   {
     value: 'TR',
-    SHORT_DESC: 'Türkiye',
-    text: 'Türkiye, Republic Of'
+    SHORT_DESC: 'Turkiye',
+    text: 'Turkiye, Republic Of'
   }
 ]
 
