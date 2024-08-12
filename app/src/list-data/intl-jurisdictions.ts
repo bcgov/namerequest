@@ -17,13 +17,13 @@ const CanUsa: JurisdictionI[] = [
 const Other: JurisdictionI[] = [
   {
     value: 'CD',
-    SHORT_DESC: 'CONGO, THE DEMO',
-    text: 'CONGO, THE DEMOCRATIC REPUBLIC OF THE'
+    SHORT_DESC: 'Congo, The Demo',
+    text: 'Congo, The Democratic Republic of The'
   },
   {
     value: 'FX',
-    SHORT_DESC: 'FRANCE, METROPO',
-    text: 'FRANCE, METROPOLITAN'
+    SHORT_DESC: 'France, Metropo',
+    text: 'France, Metropolitan'
   },
   {
     value: 'TM',
