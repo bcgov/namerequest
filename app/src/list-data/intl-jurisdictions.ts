@@ -23,7 +23,7 @@ const Other: JurisdictionI[] = [
   {
     value: 'FX',
     SHORT_DESC: 'FRANCE, METROPO',
-    text: 'FRANCE, METROPOLITAN',
+    text: 'FRANCE, METROPOLITAN'
   },
   {
     value: 'TM',
