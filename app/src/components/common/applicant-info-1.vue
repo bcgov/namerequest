@@ -240,6 +240,7 @@
                 id="1ine2"
                 ref="Line2"
                 :messages="messages['Line2']"
+                :rules="maxCharRules"
                 :value="applicant.addrLine2"
                 dense
                 filled
@@ -272,6 +273,7 @@
                 id="line3"
                 ref="Line3"
                 :messages="messages['Line3']"
+                :rules="maxCharRules"
                 :value="applicant.addrLine3"
                 dense
                 filled
@@ -596,7 +598,11 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
     v => (!v || v.length <= 50) || 'Cannot exceed 50 characters'
   ]
   requiredRules = [
-    v => !!v || 'Required field'
+    v => !!v || 'Required field',
+    v => (v.length <= 50) || 'Cannot exceed 50 characters'
+  ]
+  maxCharRules = [
+    v => (v.length <= 50) || 'Cannot exceed 50 characters'
   ]
   showAddressMenu = false
 
