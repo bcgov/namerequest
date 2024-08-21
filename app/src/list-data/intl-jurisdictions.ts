@@ -98,7 +98,7 @@ const Other: JurisdictionI[] = [
   {
     value: 'BQ',
     SHORT_DESC: 'Bonaire',
-    text: 'Bonaire'
+    text: 'BONAIRE, ST EUSTATIUS AND SABA'
   },
   {
     value: 'CW',
@@ -747,13 +747,13 @@ const Other: JurisdictionI[] = [
   },
   {
     value: 'KP',
-    SHORT_DESC: 'Korea',
-    text: "Democratic People's Republic Of Korea"
+    SHORT_DESC: 'Korea, Democrat',
+    text: "Korea, Democratic People's Republic of"
   },
   {
     value: 'KR',
-    SHORT_DESC: 'Korea',
-    text: 'South Korea'
+    SHORT_DESC: 'Korea, Republic',
+    text: 'Korea, Republic of'
   },
   {
     value: 'KW',
@@ -817,9 +817,9 @@ const Other: JurisdictionI[] = [
   },
   {
     value: 'MK',
-    SHORT_DESC: 'Macedonia',
-    text: 'Macedonia'
-  },
+    SHORT_DESC: 'THE Macedonia',
+    text: 'Macedonia, The Former Yugoslav Republic'
+  },  
   {
     value: 'MG',
     SHORT_DESC: 'Madagascar',
@@ -882,13 +882,13 @@ const Other: JurisdictionI[] = [
   },
   {
     value: 'FM',
-    SHORT_DESC: 'Micronesia',
-    text: 'Micronesia'
+    SHORT_DESC: 'Micronesia, FED',
+    text: 'Micronesia, Federated States of'
   },
   {
     value: 'MD',
-    SHORT_DESC: 'Moldova',
-    text: 'Moldova'
+    SHORT_DESC: 'REPUBL Moldova',
+    text: 'Moldova, Republic of'
   },
   {
     value: 'MC',
@@ -1008,7 +1008,7 @@ const Other: JurisdictionI[] = [
   {
     value: 'PS',
     SHORT_DESC: 'Palestinian Ter',
-    text: 'Palestinian Territory'
+    text: 'Palestinian Territory, OCCUPIED'
   },
   {
     value: 'PA',
@@ -1232,7 +1232,7 @@ const Other: JurisdictionI[] = [
   },
   {
     value: 'TZ',
-    SHORT_DESC: 'Tanzania',
+    SHORT_DESC: 'Unite Tanzania',
     text: 'Tanzania, United Republic Of'
   },
   {
@@ -1272,8 +1272,8 @@ const Other: JurisdictionI[] = [
   },
   {
     value: 'TR',
-    SHORT_DESC: 'Turkiye',
-    text: 'Turkiye, Republic Of'
+    SHORT_DESC: 'Turkey',
+    text: 'Turkey, Republic Of'
   }
 ]
 
