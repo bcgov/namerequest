@@ -819,7 +819,7 @@ const Other: JurisdictionI[] = [
     value: 'MK',
     SHORT_DESC: 'THE Macedonia',
     text: 'Macedonia, The Former Yugoslav Republic'
-  },  
+  },
   {
     value: 'MG',
     SHORT_DESC: 'Madagascar',
