@@ -28,6 +28,7 @@
         <v-icon
           color="red"
           left
+          small
         >
           mdi-cancel
         </v-icon>
@@ -39,6 +40,7 @@
         <v-icon
           color="green"
           left
+          small
         >
           mdi-check
         </v-icon>
@@ -53,6 +55,7 @@
         <v-icon
           color="red"
           left
+          small
         >
           mdi-cancel
         </v-icon>
@@ -64,6 +67,7 @@
         <v-icon
           color="green"
           left
+          small
         >
           mdi-check
         </v-icon>
