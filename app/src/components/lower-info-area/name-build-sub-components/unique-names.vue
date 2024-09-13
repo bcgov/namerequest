@@ -23,11 +23,12 @@
       <h5>Similar name examples</h5>
     </v-row>
 
-    <v-row class="ml-1">
-      <p>
+    <v-row class="ml-1 mb-4">
+      <p class="mb-1">
         <v-icon
           color="red"
           left
+          small
         >
           mdi-cancel
         </v-icon>
@@ -35,19 +36,44 @@
         is too similar to
         <strong>Sarah's Renovation Ltd.</strong>
       </p>
+      <p class="mb-1">
+        <v-icon
+          color="green"
+          left
+          small
+        >
+          mdi-check
+        </v-icon>
+        <strong>Sarah's Contracting Ltd.</strong>
+        is different from
+        <strong>Sarah's Home Renovation Ltd.</strong>
+      </p>
     </v-row>
 
-    <v-row class="ml-1">
-      <p>
+    <v-row class="ml-1 mb-4">
+      <p class="mb-1">
         <v-icon
           color="red"
           left
+          small
         >
           mdi-cancel
         </v-icon>
         <strong>Westcoast Hair Salon Inc.</strong>
         is too similar to
         <strong>Westcoast Barbers Inc.</strong>
+      </p>
+      <p class="mb-1">
+        <v-icon
+          color="green"
+          left
+          small
+        >
+          mdi-check
+        </v-icon>
+        <strong>Westcoast Hair Salon Inc.</strong>
+        is different from
+        <strong>Westcoast Barbers Collective Inc.</strong>
       </p>
     </v-row>
 
