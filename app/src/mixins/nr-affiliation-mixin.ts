@@ -234,7 +234,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
         throw new Error('Unable to Amalgamate Now = ' + error)
       } else if (this.isContinuationIn) {
         this.setContinuationInErrorStatus(true)
-        throw new Error('Unable to Continue In Now = ' + error)
+        throw new Error('Unable to Begin Continuation = ' + error)
       } else if (this.isNewBusiness) {
         this.setIncorporateNowErrorStatus(true)
         throw new Error('Unable to Incorporate Now = ' + error)

@@ -629,7 +629,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
   /** Retrieve text based on selected action/flow */
   get actionNowButtonText (): string {
-    if (this.isContinuationIn) return 'Continue In Now'
+    if (this.isContinuationIn) return 'Begin Continuation'
     if (this.isAmalgamation) return 'Amalgamate Now'
     if (this.isConversion) return 'Alter Now'
     if (this.isRestoration) return 'Restore Now'

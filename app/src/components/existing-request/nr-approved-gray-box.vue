@@ -79,7 +79,7 @@
       </div>
 
       <div
-        v-else-if="showContinueInNowButton"
+        v-else-if="showBeginContinuationButton"
         class="d-flex justify-center my-1"
       >
         <v-btn
@@ -89,7 +89,7 @@
           :disabled="disabled"
           @click="$emit('goToCorpOnline')"
         >
-          <strong>Continue In Now</strong>
+          <strong>Begin Continuation</strong>
           &nbsp;
           <v-icon small>
             mdi-open-in-new
@@ -102,7 +102,7 @@
           :disabled="disabled"
           @click="$emit('affiliateYourBusiness')"
         >
-          <strong>Continue In Now</strong>
+          <strong>Begin Continuation</strong>
         </v-btn>
       </div>
 
@@ -252,8 +252,8 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
     return (this.isAmalgamate && this.isApprovedOrConsentUnRequired)
   }
 
-  /** True if the Continue In button should be shown. */
-  get showContinueInNowButton (): boolean {
+  /** True if the Begin Continuation button should be shown. */
+  get showBeginContinuationButton (): boolean {
     return (this.isContinuationIn && this.isApprovedOrConsentUnRequired)
   }
 
@@ -264,7 +264,7 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
   get showOpenExternalIcon (): boolean {
     if (this.showAmalgamateNowButton && !this.isSupportedAmalgamation(this.getNr.entity_type_cd)) return true
     if (this.showAlterNowButton && !this.isSupportedAlteration(this.getNr.requestTypeCd)) return true
-    if (this.showContinueInNowButton && !this.isSupportedContinuationIn(this.getNr.entity_type_cd)) return true
+    if (this.showBeginContinuationButton && !this.isSupportedContinuationIn(this.getNr.entity_type_cd)) return true
     return false
   }
 

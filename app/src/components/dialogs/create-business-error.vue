@@ -61,7 +61,7 @@ export default class CreateBusinessErrorDialog extends Vue {
   // The title depending on the action that was done.
   get title (): string {
     if (this.getAmalgamateNowErrorStatus) return 'Unable to Amalgamate Now'
-    if (this.getContinuationInErrorStatus) return 'Unable to Continue in'
+    if (this.getContinuationInErrorStatus) return 'Unable to Begin Continuation'
     if (this.getIncorporateNowErrorStatus) return 'Unable to Incorporate Now'
     return ''
   }
@@ -69,7 +69,7 @@ export default class CreateBusinessErrorDialog extends Vue {
   // The dialog text depending on the action that was done.
   get dialogText (): string {
     if (this.getAmalgamateNowErrorStatus) return 'Unable to amalgamate now. Please cancel or try again.'
-    if (this.getContinuationInErrorStatus) return 'Unable to continue in. Please cancel or try again.'
+    if (this.getContinuationInErrorStatus) return 'Unable to begin continuation. Please cancel or try again.'
     if (this.getIncorporateNowErrorStatus) return 'Unable to incorporate now. Please cancel or try again.'
     return ''
   }
