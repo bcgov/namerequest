@@ -18,8 +18,8 @@ importers:
         specifier: 1.0.15
         version: 1.0.15
       '@bcrs-shared-components/enums':
-        specifier: 1.1.7
-        version: 1.1.7
+        specifier: 1.1.13
+        version: 1.1.13
       '@bcrs-shared-components/folio-number-input':
         specifier: ^1.1.44
         version: 1.1.44
@@ -925,11 +925,11 @@ packages:
   '@bcrs-shared-components/corp-type-module@1.0.15':
     resolution: {integrity: sha512-g/TcNSR7zJsG2lBjn/NnM+/+k7dJzhAiy5PiPj0ObN56bUV1PrUWVVlg5lz4/JZUEAZetWhwnyAzPVGsn7kr1w==}
 
-  '@bcrs-shared-components/enums@1.1.7':
-    resolution: {integrity: sha512-WORgcK1YS/AssOI6sbuSQv4f13wZTQR6td7+gcghgAl34WNyO5HT0Mu2VfVGbD2zXfIYDm5jXTj2Dg6dkxpouA==}
+  '@bcrs-shared-components/corp-type-module@1.0.16':
+    resolution: {integrity: sha512-3MumJZ/0Urfnp1AGJpnUifk5DMrLcjDD+8YiGXy1WXjvpVLwA0S4bNPuvFUf0w4My+0HyXWZ/XsZWiQydVGYHw==}
 
-  '@bcrs-shared-components/enums@1.1.9':
-    resolution: {integrity: sha512-rYmRG0QH9hMWXRJNrxzNQhM3tT/b6mubfLBREx2ICzUtSIDc9UvQ0VqmyX/q84xQdzAOYqh0Nth9vXYm7Ypdxg==}
+  '@bcrs-shared-components/enums@1.1.13':
+    resolution: {integrity: sha512-3kAFt9BvdSs1O8b0MIp4ysqt/QK1BzvkYEyju+0aI/fKeywFYOst8MOfmM47M3z4LKExOrmayj6M/S+5F+KkGw==}
 
   '@bcrs-shared-components/folio-number-input@1.1.44':
     resolution: {integrity: sha512-CWQmST9C5DplVu+ArHPeetRruZhAyHZ5wfR49XFZCi4y2AnQ+9LjTvTXmiK66OK6aRyn0bQ5DU8wSXV9W4dcaA==}
@@ -7541,13 +7541,11 @@ snapshots:
 
   '@bcrs-shared-components/corp-type-module@1.0.15': {}
 
-  '@bcrs-shared-components/enums@1.1.7':
-    dependencies:
-      '@bcrs-shared-components/corp-type-module': 1.0.15
+  '@bcrs-shared-components/corp-type-module@1.0.16': {}
 
-  '@bcrs-shared-components/enums@1.1.9':
+  '@bcrs-shared-components/enums@1.1.13':
     dependencies:
-      '@bcrs-shared-components/corp-type-module': 1.0.15
+      '@bcrs-shared-components/corp-type-module': 1.0.16
 
   '@bcrs-shared-components/folio-number-input@1.1.44':
     dependencies:
@@ -7563,18 +7561,18 @@ snapshots:
 
   '@bcrs-shared-components/interfaces@1.0.67':
     dependencies:
-      '@bcrs-shared-components/enums': 1.1.7
+      '@bcrs-shared-components/enums': 1.1.13
       vue: 2.7.16
 
   '@bcrs-shared-components/interfaces@1.1.10':
     dependencies:
       '@bcrs-shared-components/corp-type-module': 1.0.15
-      '@bcrs-shared-components/enums': 1.1.9
+      '@bcrs-shared-components/enums': 1.1.13
       vue: 2.7.16
 
   '@bcrs-shared-components/staff-payment@1.0.29(vue@2.7.10)':
     dependencies:
-      '@bcrs-shared-components/enums': 1.1.7
+      '@bcrs-shared-components/enums': 1.1.13
       '@bcrs-shared-components/folio-number-input': 1.1.44
       '@bcrs-shared-components/interfaces': 1.0.67
       vue-property-decorator: 8.5.1(vue@2.7.10)
