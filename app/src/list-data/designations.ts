@@ -27,7 +27,17 @@ const CooperativeDesignations: DesignationI = {
 
 export const Designations = {
   BC: CorporateDesignations,
+  C: CorporateDesignations, // continued in BC Limited Company
+  CBEN: CorporateDesignations, // continued in Benefit Company
   CC: {
+    words: [
+      'CCC',
+      'COMMUNITY CONTRIBUTION COMPANY',
+      ...CorporateDesignations.words
+    ],
+    end: true
+  },
+  CCC: { // continued in Community Contribution Company
     words: [
       'CCC',
       'COMMUNITY CONTRIBUTION COMPANY',
@@ -37,6 +47,13 @@ export const Designations = {
   },
   CP: CooperativeDesignations,
   CR: CorporateDesignations,
+  CUL: { // continued in Unlimited Liability Company
+    words: [
+      'ULC',
+      'UNLIMITED LIABILITY COMPANY'
+    ],
+    end: true
+  },
   DBA: {
     words: [],
     end: false
