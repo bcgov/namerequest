@@ -105,7 +105,10 @@ export class SearchMixin extends Mixins(CommonMixin) {
     return (
       corpType === CorpTypeCd.BC_COMPANY ||
       corpType === CorpTypeCd.BENEFIT_COMPANY ||
-      corpType === CorpTypeCd.BC_ULC_COMPANY
+      corpType === CorpTypeCd.BC_ULC_COMPANY ||
+      corpType === CorpTypeCd.CONTINUE_IN ||
+      corpType === CorpTypeCd.BEN_CONTINUE_IN ||
+      corpType === CorpTypeCd.ULC_CONTINUE_IN
     )
   }
 
