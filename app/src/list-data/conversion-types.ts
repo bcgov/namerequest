@@ -2,7 +2,9 @@ import { EntityTypes, NrRequestTypeCodes } from '@/enums'
 import { ConversionTypesI } from '@/interfaces/models'
 
 export const ConversionTypes: ConversionTypesI[] = [
+  //
   // Regular Businesses
+  //
   {
     desc: 'Limited Company to a Benefit Company',
     text: 'Limited Company to a Benefit Company',
@@ -82,8 +84,9 @@ export const ConversionTypes: ConversionTypesI[] = [
     value: NrRequestTypeCodes.CONVERT_ULC_TO_BEN,
     shortlist: false
   },
-
+  //
   // Continued-in Businesses
+  //
   {
     desc: 'Limited Company to a Benefit Company',
     text: 'Limited Company to a Benefit Company',
