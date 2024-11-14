@@ -4,16 +4,7 @@
     :cols="cols"
     :md="md"
   >
-    <v-text-field
-      v-if="isConversion && isBenBusiness"
-      filled
-      disabled
-      hide-details
-      label="Benefit Company to Limited Company"
-    />
-
     <v-tooltip
-      v-else
       top
       content-class="top-tooltip"
       :disabled="!isConversion || !entityConversionText || isMobile"

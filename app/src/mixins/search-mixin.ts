@@ -105,8 +105,15 @@ export class SearchMixin extends Mixins(CommonMixin) {
     return (
       corpType === CorpTypeCd.BC_COMPANY ||
       corpType === CorpTypeCd.BENEFIT_COMPANY ||
-      corpType === CorpTypeCd.BC_ULC_COMPANY
+      corpType === CorpTypeCd.BC_ULC_COMPANY ||
+      corpType === CorpTypeCd.CONTINUE_IN ||
+      corpType === CorpTypeCd.BEN_CONTINUE_IN ||
+      corpType === CorpTypeCd.ULC_CONTINUE_IN
     )
+  }
+
+  get origin_entity_type_cd (): EntityTypes {
+    return this.getOriginEntityTypeCd
   }
 
   get entity_type_cd (): EntityTypes {
@@ -137,7 +144,10 @@ export class SearchMixin extends Mixins(CommonMixin) {
     // special case for conversion
     if (this.getEntityTypeCd && this.isConversion && type) {
       const nrRequestType = type as unknown as NrRequestTypeCodes
-      const entityType = ConversionTypes.find(conv => conv.value === nrRequestType)?.entity_type_cd || null
+      const entityType = ConversionTypes.find(conv =>
+        conv.value === nrRequestType && conv.origin_entity_type_cd === this.origin_entity_type_cd
+      )?.entity_type_cd || null
+
       this.setEntityTypeCd(entityType)
       this.setConversionType(type)
       return

@@ -41,7 +41,7 @@ import BusinessFetch from '@/components/new-request/business-fetch.vue'
 import BusinessLookup from '@/components/new-request/business-lookup.vue'
 import SocietiesInfo from '@/components/dialogs/societies-info-dialog.vue'
 import { BusinessSearchIF, FormType } from '@/interfaces'
-import { CorpTypeCd, CompanyTypes, EntityStates, EntityTypes, Location, NrRequestTypeCodes } from '@/enums'
+import { CorpTypeCd, CompanyTypes, EntityStates, Location } from '@/enums'
 import { CommonMixin, SearchMixin } from '@/mixins'
 
 @Component({
@@ -118,12 +118,6 @@ export default class BusinessLookupFetch extends Mixins(CommonMixin, SearchMixin
       if (this.getSearchBusiness) {
         // set the from business for alteration (conversion)
         this.setOriginEntityTypeCd(this.getSearchBusiness.legalType)
-        // special case if the from business is BEN
-        // set conversionType and entityTypeCd because there's only one alteration type for it
-        if (this.isBenBusiness) {
-          this.setConversionType(NrRequestTypeCodes.CONVERT_CORP)
-          this.setEntityTypeCd(EntityTypes.CR)
-        }
       } else {
         // clear all related fields when clearing business search/fetch for alter
         this.setConversionType(null)

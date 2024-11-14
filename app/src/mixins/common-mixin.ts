@@ -162,9 +162,10 @@ export class CommonMixin extends Vue {
   /** Returns true if the specified alteration NR is allowed to be done online. */
   isAlterOnline (type: NrRequestTypeCodes): boolean {
     return !(
-      type === NrRequestTypeCodes.CONVERT_BEN ||
-      type === NrRequestTypeCodes.CONVERT_CORP ||
-      type === NrRequestTypeCodes.CONVERT_ULBE
+      type === NrRequestTypeCodes.CONVERT_BC_TO_BEN ||
+      type === NrRequestTypeCodes.CONVERT_BEN_TO_BC ||
+      type === NrRequestTypeCodes.CONVERT_BEN_TO_CCC ||
+      type === NrRequestTypeCodes.CONVERT_ULC_TO_BEN
     )
   }
 
