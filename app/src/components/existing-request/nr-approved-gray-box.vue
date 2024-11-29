@@ -165,32 +165,32 @@
       </div>
 
       <div
-          v-else-if="showNameChangeButton"
-          class="d-flex justify-center my-1"
+        v-else-if="showNameChangeButton"
+        class="d-flex justify-center my-1"
+      >
+        <v-btn
+          v-if="showOpenExternalIcon"
+          class="change-name-now-external-btn mt-30"
+          min-width="20rem"
+          :disabled="disabled"
+          @click="$emit('goToCorpOnline')"
         >
-          <v-btn
-            v-if="showOpenExternalIcon"
-            class="change-name-now-external-btn mt-30"
-            min-width="20rem"
-            :disabled="disabled"
-            @click="$emit('goToCorpOnline')"
-          >
-            <strong>Change Name Now</strong>
+          <strong>Change Name Now</strong>
           &nbsp;
-            <v-icon small>
-              mdi-open-in-new
-            </v-icon>
-          </v-btn>
-          <v-btn
-            v-else
-            class="change-name-now-btn mt-30"
-            min-width="20rem"
-            :disabled="disabled"
-            @click="$emit('goToEntityDashboard')"
-          >
-            <strong>Change Name Now</strong>
-          </v-btn>
-        </div>
+          <v-icon small>
+            mdi-open-in-new
+          </v-icon>
+        </v-btn>
+        <v-btn
+          v-else
+          class="change-name-now-btn mt-30"
+          min-width="20rem"
+          :disabled="disabled"
+          @click="$emit('goToEntityDashboard')"
+        >
+          <strong>Change Name Now</strong>
+        </v-btn>
+      </div>
 
       <p
         v-else
