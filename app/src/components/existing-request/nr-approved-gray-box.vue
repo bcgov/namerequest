@@ -19,6 +19,20 @@
       </div>
 
       <div
+        v-else-if="showNameChangeButton"
+        class="d-flex justify-center my-1"
+      >
+        <v-btn
+          class="change-name-now-btn mt-30"
+          min-width="20rem"
+          :disabled="disabled"
+          @click="$emit('goToEntityDashboard')"
+        >
+          <strong>Change Name Now</strong>
+        </v-btn>
+      </div>
+
+      <div
         v-else-if="showIncorporateButton"
         class="d-flex justify-center my-1"
       >
@@ -219,6 +233,10 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
     return (this.getNr.request_action_cd === NrRequestActionCodes.CONVERSION)
   }
 
+  get isNameChange (): boolean {
+    return (this.getNr.request_action_cd === NrRequestActionCodes.CHANGE_NAME)
+  }
+
   get isNewBusiness (): boolean {
     return (this.getNr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS)
   }
@@ -255,6 +273,11 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
   /** True if the Begin Continuation button should be shown. */
   get showBeginContinuationButton (): boolean {
     return (this.isContinuationIn && this.isApprovedOrConsentUnRequired)
+  }
+
+  /** True if the Change Name Now button should be shown. */
+  get showNameChangeButton (): boolean {
+    return (this.isNameChange && this.isApprovedOrConsentUnRequired)
   }
 
   get isAllowAlterOnline (): boolean {
