@@ -164,6 +164,34 @@
         </div>
       </div>
 
+      <div
+        v-else-if="showNameChangeButton"
+        class="d-flex justify-center my-1"
+      >
+        <v-btn
+          v-if="showOpenExternalIcon"
+          class="change-name-now-external-btn mt-30"
+          min-width="20rem"
+          :disabled="disabled"
+          @click="$emit('goToCorpOnline')"
+        >
+          <strong>Change Name Now</strong>
+          &nbsp;
+          <v-icon small>
+            mdi-open-in-new
+          </v-icon>
+        </v-btn>
+        <v-btn
+          v-else
+          class="change-name-now-btn mt-30"
+          min-width="20rem"
+          :disabled="disabled"
+          @click="$emit('goToEntityDashboard')"
+        >
+          <strong>Change Name Now</strong>
+        </v-btn>
+      </div>
+
       <p
         v-else
         class="mt-30"
@@ -219,6 +247,10 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
     return (this.getNr.request_action_cd === NrRequestActionCodes.CONVERSION)
   }
 
+  get isNameChange (): boolean {
+    return (this.getNr.request_action_cd === NrRequestActionCodes.CHANGE_NAME)
+  }
+
   get isNewBusiness (): boolean {
     return (this.getNr.request_action_cd === NrRequestActionCodes.NEW_BUSINESS)
   }
@@ -257,6 +289,11 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
     return (this.isContinuationIn && this.isApprovedOrConsentUnRequired)
   }
 
+  /** True if the Change Name Now button should be shown. */
+  get showNameChangeButton (): boolean {
+    return (this.isNameChange && this.isApprovedOrConsentUnRequired)
+  }
+
   get isAllowAlterOnline (): boolean {
     return this.isAlterOnline(this.getNr.requestTypeCd)
   }
@@ -265,6 +302,7 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
     if (this.showAmalgamateNowButton && !this.isSupportedAmalgamation(this.getNr.entity_type_cd)) return true
     if (this.showAlterNowButton && !this.isSupportedAlteration(this.getNr.requestTypeCd)) return true
     if (this.showBeginContinuationButton && !this.isSupportedContinuationIn(this.getNr.entity_type_cd)) return true
+    if (this.showNameChangeButton && !this.isSupportedChangeName(this.getNr.entity_type_cd)) return true
     return false
   }
 
