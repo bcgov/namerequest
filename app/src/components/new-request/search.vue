@@ -396,7 +396,7 @@ import { CommonMixin, NrAffiliationMixin, SearchMixin } from '@/mixins'
 import { Designations, XproMapping } from '@/list-data'
 import { Navigate } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { Action } from 'vuex-class'
+import { Action, Getter } from 'vuex-class'
 
 /**
  * This is the component that displays the new NR menus and flows.
@@ -419,6 +419,8 @@ import { Action } from 'vuex-class'
 })
 export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, SearchMixin) {
   @Action setSocietiesModalVisible!: ActionBindingIF
+
+  @Getter getIsLearBusiness!: boolean
 
   // Constant
   readonly colinLink = sessionStorage.getItem('CORPORATE_ONLINE_URL')
@@ -529,7 +531,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       this.isConversion &&
       this.isNumberedCompany &&
       this.isAlterOnline(this.getConversionType) &&
-      this.isSupportedAlteration(this.getConversionType)
+      this.getIsLearBusiness
     ) return true
 
     // Conditional for "New BC-based business" Flow.
@@ -542,7 +544,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     // Conditional for Change Name Flow.
     if (this.isChangeName &&
         this.isNumberedCompany &&
-        this.isSupportedChangeName(this.getEntityTypeCd)
+        this.getIsLearBusiness
     ) return true
 
     // Conditional for Restoration/Reinstatement Flow.
@@ -569,7 +571,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (
       this.isConversion &&
       this.isNumberedCompany &&
-      !this.isSupportedAlteration(this.getConversionType) &&
+      !this.getIsLearBusiness &&
       this.isAlterOnline(this.getConversionType)
     ) return true
 
@@ -586,7 +588,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (
       this.isChangeName &&
       this.isNumberedCompany &&
-      !this.isSupportedChangeName(this.getEntityTypeCd)
+      !this.getIsLearBusiness
     ) return true
 
     // Conditional for Change Name XPRO Flow.

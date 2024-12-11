@@ -38,6 +38,7 @@ export interface NewRequestIF {
   getNameReservationFailed: boolean
   helpMeChooseModalVisible: boolean
   hotjarUserId: string,
+  isLearBusiness: boolean
   isLoadingSubmission: boolean
   isPersonsName: boolean
   issueIndex: number

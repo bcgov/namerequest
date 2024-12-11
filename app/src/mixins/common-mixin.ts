@@ -2,9 +2,17 @@ import { Component, Vue } from 'vue-property-decorator'
 import { EntityTypes, PriorityCode, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 import { GetFeatureFlag } from '@/plugins'
+import { Action, Getter } from 'vuex-class'
+import BusinessServices from '@/services/business-services'
+import { BusinessSearchIF } from '@/interfaces'
+import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export class CommonMixin extends Vue {
+  @Getter getSearchBusiness!: BusinessSearchIF
+
+  @Action setIsLearBusiness!: ActionBindingIF
+
   /** True if Jest is running the code. */
   get isJestRunning (): boolean {
     return (process.env.JEST_WORKER_ID !== undefined)
@@ -238,6 +246,18 @@ export class CommonMixin extends Vue {
       EntityTypes.XSO,
       EntityTypes.XUL
     ].includes(type)
+  }
+
+  /** Set store value of isLearBusiness flag by fetching business from Lear. */
+  async checkBusinessInLear (identifier: string): Promise<void> {
+    if (identifier) {
+      const fetchedBusiness = await BusinessServices.fetchBusiness(identifier)
+      if (fetchedBusiness) {
+        this.setIsLearBusiness(true)
+      } else {
+        this.setIsLearBusiness(false)
+      }
+    }
   }
 
   /** Scroll to given element Id */

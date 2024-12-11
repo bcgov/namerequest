@@ -35,7 +35,6 @@ export class SearchMixin extends Mixins(CommonMixin) {
   @Getter getLocation!: Location
   @Getter getOriginEntityTypeCd!: EntityTypes
   @Getter getRequestActionCd!: NrRequestActionCodes
-  @Getter getSearchBusiness!: BusinessSearchIF
   @Getter getSearchCompanyType!: CompanyTypes
   @Getter getSearchJurisdiction!: any
   @Getter getSearchRequest!: RequestActionsI
