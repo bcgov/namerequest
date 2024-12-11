@@ -247,8 +247,9 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
   isBusinesCheckDone = false
 
   /** Called when component is mounted. */
-  mounted () {
-    this.checkBusiness()
+  async mounted () {
+    // check if business is in Lear and set store value of isLearBusiness flag
+    await this.checkBusinessInLear(this.getNr?.corpNum)
   }
 
   get isConversion (): boolean {
@@ -308,9 +309,9 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
 
   get showOpenExternalIcon (): boolean {
     if (this.showAmalgamateNowButton && !this.isSupportedAmalgamation(this.getNr.entity_type_cd)) return true
-    if (this.showAlterNowButton && this.isBusinesCheckDone && !this.getIsLearBusiness) return true
+    if (this.showAlterNowButton && !this.getIsLearBusiness) return true
     if (this.showBeginContinuationButton && !this.isSupportedContinuationIn(this.getNr.entity_type_cd)) return true
-    if (this.showNameChangeButton && this.isBusinesCheckDone && !this.getIsLearBusiness) return true
+    if (this.showNameChangeButton && !this.getIsLearBusiness) return true
     return false
   }
 
@@ -341,12 +342,6 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
       this.isSupportedIncorporationRegistration(this.getNr.entity_type_cd) &&
       this.isApprovedOrConsentUnRequired
     )
-  }
-
-  /** check if business is in Lear and set store value of isLearBusiness flag */
-  async checkBusiness (): Promise<void> {
-    await this.checkBusinessInLear(this.getNr?.corpNum)
-    this.isBusinesCheckDone = true
   }
 }
 
