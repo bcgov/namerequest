@@ -351,6 +351,7 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
 }
 
 </script>
+
 <style lang="scss" scoped>
 @import '@/assets/styles/theme.scss';
 
