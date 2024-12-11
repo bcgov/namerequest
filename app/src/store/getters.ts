@@ -290,6 +290,10 @@ export const getIsPersonsName = (state: StateIF): boolean => {
   return state.stateModel.newRequestModel.isPersonsName
 }
 
+export const getIsLearBusiness = (state: StateIF): boolean => {
+  return state.stateModel.newRequestModel.isLearBusiness
+}
+
 export const getDoNotAnalyzeEntities = (state: StateIF): EntityTypes[] => {
   return state.stateModel.newRequestModel.doNotAnalyzeEntities
 }

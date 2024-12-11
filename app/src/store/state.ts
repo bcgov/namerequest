@@ -79,6 +79,7 @@ export const stateModel: StateModelIF = {
     getNameReservationFailed: false,
     helpMeChooseModalVisible: false,
     affiliationErrorModalValue: NrAffiliationErrors.NONE, // initially hidden
+    isLearBusiness: false,
     isPersonsName: false,
     issueIndex: 0,
     location: null,
