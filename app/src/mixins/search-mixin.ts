@@ -4,7 +4,7 @@ import { Action, Getter } from 'vuex-class'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 // Interfaces / enums / etc.
-import { BusinessSearchIF, ConversionTypesI, EntityI, RequestActionsI } from '@/interfaces'
+import { ConversionTypesI, EntityI, RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { AccountType, CompanyTypes, CorpTypeCd, EntityTypes, Location, NrRequestActionCodes,
   NrRequestTypeCodes } from '@/enums'
