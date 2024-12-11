@@ -244,6 +244,13 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
   @Getter getNr!: Partial<NameRequestI>
   @Getter getIsLearBusiness!: boolean
 
+  isBusinesCheckDone = false
+
+  /** Called when component is mounted. */
+  mounted () {
+    this.checkBusiness()
+  }
+
   get isConversion (): boolean {
     return (this.getNr.request_action_cd === NrRequestActionCodes.CONVERSION)
   }
@@ -300,12 +307,10 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
   }
 
   get showOpenExternalIcon (): boolean {
-    // check if business is in Lear and set store value of isLearBusiness flag
-    this.checkBusinessInLear(this.getNr?.corpNum)
     if (this.showAmalgamateNowButton && !this.isSupportedAmalgamation(this.getNr.entity_type_cd)) return true
-    if (this.showAlterNowButton && !this.getIsLearBusiness) return true
+    if (this.showAlterNowButton && this.isBusinesCheckDone && !this.getIsLearBusiness) return true
     if (this.showBeginContinuationButton && !this.isSupportedContinuationIn(this.getNr.entity_type_cd)) return true
-    if (this.showNameChangeButton && !this.getIsLearBusiness) return true
+    if (this.showNameChangeButton && this.isBusinesCheckDone && !this.getIsLearBusiness) return true
     return false
   }
 
@@ -337,7 +342,14 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
       this.isApprovedOrConsentUnRequired
     )
   }
+
+  /** check if business is in Lear and set store value of isLearBusiness flag */
+  async checkBusiness (): Promise<void> {
+    await this.checkBusinessInLear(this.getNr?.corpNum)
+    this.isBusinesCheckDone = true
+  }
 }
+
 </script>
 
 <style lang="scss" scoped>
