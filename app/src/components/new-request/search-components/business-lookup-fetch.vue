@@ -119,7 +119,7 @@ export default class BusinessLookupFetch extends Mixins(CommonMixin, SearchMixin
         // set the from business for alteration (conversion)
         this.setOriginEntityTypeCd(this.getSearchBusiness.legalType)
         // check if business is in Lear and set store value of isLearBusiness flag
-        this.checkBusinessInLear(this.getSearchBusiness?.identifier)
+        this.checkBusinessInLear(this.getSearchBusiness.identifier)
       } else {
         // clear all related fields when clearing business search/fetch for alter
         this.setConversionType(null)
