@@ -37,7 +37,7 @@
               <v-text-field
                 id="firstname"
                 :messages="messages['firstName']"
-                :rules="firstMiddleNameRules"
+                :rules="maxCharRules"
                 :value="applicant.firstName"
                 dense
                 filled
@@ -65,7 +65,7 @@
                 id="middlename"
                 :messages="messages['middleName']"
                 :value="applicant.middleName"
-                :rules="firstMiddleNameRules"
+                :rules="maxCharRules"
                 dense
                 filled
                 height="50"
@@ -594,14 +594,11 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
     v => !!v || 'Required field',
     v => (!v || v.length <= 50) || 'Cannot exceed 50 characters'
   ]
-  firstMiddleNameRules = [
+  maxCharRules = [
     v => (!v || v.length <= 50) || 'Cannot exceed 50 characters'
   ]
   requiredRules = [
     v => !!v || 'Required field',
-    v => (v.length <= 50) || 'Cannot exceed 50 characters'
-  ]
-  maxCharRules = [
     v => (v.length <= 50) || 'Cannot exceed 50 characters'
   ]
   showAddressMenu = false
