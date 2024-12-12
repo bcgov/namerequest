@@ -242,6 +242,15 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
   @Prop({ default: false }) readonly disabled!: boolean
 
   @Getter getNr!: Partial<NameRequestI>
+  @Getter getIsLearBusiness!: boolean
+
+  isBusinesCheckDone = false
+
+  /** Called when component is mounted. */
+  async mounted () {
+    // check if business is in Lear and set store value of isLearBusiness flag
+    await this.checkBusinessInLear(this.getNr?.corpNum)
+  }
 
   get isConversion (): boolean {
     return (this.getNr.request_action_cd === NrRequestActionCodes.CONVERSION)
@@ -300,9 +309,9 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
 
   get showOpenExternalIcon (): boolean {
     if (this.showAmalgamateNowButton && !this.isSupportedAmalgamation(this.getNr.entity_type_cd)) return true
-    if (this.showAlterNowButton && !this.isSupportedAlteration(this.getNr.requestTypeCd)) return true
+    if (this.showAlterNowButton && !this.getIsLearBusiness) return true
     if (this.showBeginContinuationButton && !this.isSupportedContinuationIn(this.getNr.entity_type_cd)) return true
-    if (this.showNameChangeButton && !this.isSupportedChangeName(this.getNr.entity_type_cd)) return true
+    if (this.showNameChangeButton && !this.getIsLearBusiness) return true
     return false
   }
 
@@ -335,6 +344,7 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
     )
   }
 }
+
 </script>
 
 <style lang="scss" scoped>
