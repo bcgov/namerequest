@@ -17,11 +17,9 @@ const defaultFlagSet: LDFlagSet = {
   'hardcoded_priority_wait_time': 0, // by default, use actual wait time
   'hardcoded_regular_wait_time': 0, // by default, use actual wait time
   'sentry-enable': false, // by default, no sentry logs
-  'supported-alteration-types': [],
   'supported-amalgamation-entities': [],
   'supported-continuation-in-entities': [],
   'supported-incorporation-registration-entities': [],
-  'supported-name-change-entities': [],
   'supported-restoration-entities': []
 }
 

@@ -131,6 +131,10 @@ export const mutateAffiliationErrorModalValue = (state: StateIF, affiliationErro
   state.stateModel.newRequestModel.affiliationErrorModalValue = affiliationErrorModalValue
 }
 
+export const mutateIsLearBusiness = (state: StateIF, isLearBusiness: boolean) => {
+  state.stateModel.newRequestModel.isLearBusiness = isLearBusiness
+}
+
 export const mutateIsPersonsName = (state: StateIF, isPersonsName: boolean) => {
   state.stateModel.newRequestModel.isPersonsName = isPersonsName
 }

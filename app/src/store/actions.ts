@@ -571,6 +571,10 @@ export const setJurisdictionCd = ({ commit }, jurisdictionCd: string): void => {
   commit('mutateJurisdictionCd', jurisdictionCd)
 }
 
+export const setIsLearBusiness = ({ commit }, isLearBusiness: boolean): void => {
+  commit('mutateIsLearBusiness', isLearBusiness)
+}
+
 export const setIsPersonsName = ({ commit }, isPersonsName: boolean): void => {
   commit('mutateIsPersonsName', isPersonsName)
 }
