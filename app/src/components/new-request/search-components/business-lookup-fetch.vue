@@ -5,15 +5,21 @@
     :md="md"
   >
     <template v-if="!getSearchBusiness">
-      <BusinessLookup
-        v-if="isAuthenticated"
-        :searchStatus="lookupActiveOrHistorical"
-        @business="onBusiness($event)"
-      />
       <BusinessFetch
-        v-else
+        v-if="isRestoration"
         @business="onBusiness($event)"
       />
+      <template v-else>
+        <BusinessLookup
+          v-if="isAuthenticated"
+          :searchStatus="lookupActiveOrHistorical"
+          @business="onBusiness($event)"
+        />
+        <BusinessFetch
+          v-else
+          @business="onBusiness($event)"
+        />
+      </template>
     </template>
     <v-form
       v-else
