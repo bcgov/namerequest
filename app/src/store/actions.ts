@@ -306,10 +306,15 @@ export async function searchBusiness ({ getters }, corpNum: string): Promise<Bus
   try {
     // first try to find business in Entities (Legal API)
     const data = await NamexServices.searchEntities(corpNum)
-    // Check if business is eligible for restoration NR by verifying restorationExpiryDate exists
-    if (getters.isRestoration && !data.restorationExpiryDate) {
-      throw new Error('This business is not eligible for restoration name request')
+    // for restoration requests, verify business eligibility
+    if (getters.isRestoration) {
+      // check if business is eligible for restoration by verifying restorationExpiryDate exists and not expired
+      if (!data.restorationExpiryDate ||
+        getters.getCurrentJsDate.toISOString().slice(0, 10) > data.restorationExpiryDate) {
+        throw new Error('This business is not eligible for restoration name request')
+      }
     }
+
     return {
       identifier: data.identifier,
       legalName: data.legalName,
