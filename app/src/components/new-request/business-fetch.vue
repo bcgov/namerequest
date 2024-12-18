@@ -83,20 +83,22 @@ export default class BusinessFetch extends Vue {
     const valid = this.validate()
     if (!valid) return
 
-    // perform search
-    this.state = States.SEARCHING
-    this.searchField = this.searchField.replace(' ', '').toUpperCase()
-    const result = await this.searchBusiness(this.searchField).catch(() => {})
+    try {
+      // perform search
+      this.state = States.SEARCHING
+      this.searchField = this.searchField.replace(' ', '').toUpperCase()
+      const result = await this.searchBusiness(this.searchField)
 
-    // return result
-    if (result) {
-      this.state = States.SUMMARY
-      return result
+      // return result
+      if (result) {
+        this.state = States.SUMMARY
+        return result
+      }
+    } catch (error) {
+      // show actual error message
+      this.state = States.INITIAL
+      this.errorMessages = [(error as Error).message || 'Business not found']
     }
-
-    // show error
-    this.state = States.INITIAL
-    this.errorMessages = ['Business not found']
   }
 }
 </script>
