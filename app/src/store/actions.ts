@@ -2,6 +2,7 @@ import querystring from 'qs'
 import axios from 'axios'
 import {
   CompanyTypes,
+  EntityStates,
   EntityTypes,
   Location,
   NameCheckAnalysisJurisdiction,
@@ -307,7 +308,7 @@ export async function searchBusiness ({ getters }, corpNum: string): Promise<Bus
     // first try to find business in Entities (Legal API)
     const data = await NamexServices.searchEntities(corpNum)
     // for restoration requests, verify business eligibility
-    if (getters.isRestoration) {
+    if (getters.isRestoration && data.state !== EntityStates.HISTORICAL) {
       // check if business is eligible for restoration by verifying restorationExpiryDate exists and not expired
       if (!data.restorationExpiryDate ||
         getters.getCurrentJsDate.toISOString().slice(0, 10) > data.restorationExpiryDate) {
