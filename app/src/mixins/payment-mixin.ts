@@ -424,6 +424,9 @@ export class PaymentMixin extends Mixins(ActionMixin) {
         if (err.errorResponse.response.data.businessInfo?.businessIdentifier) {
           sessionStorage.setItem('BCREG-nrNum', err.errorResponse.response.data.businessInfo.businessIdentifier)
         }
+        await errorModule.setAppError(
+          { id: 'payment-required-error', error: 'Payment Required' } as ErrorI
+        )
         throw err
       }
       // don't console.error - createPaymentRequest() already did that
