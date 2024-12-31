@@ -110,8 +110,32 @@
         v-else-if="showAlterNowButton"
         class="my-1"
       >
+      <div
+          v-if="!isAllowAlterOnline && !getIsLearBusiness"
+          class="contact-registries mt-30"
+        >
+          <p>To complete this alteration, please contact us at:</p>
+          <p>
+            <v-icon small>
+              mdi-phone
+            </v-icon>&nbsp;Canada and U.S. Toll Free:
+            <a href="tel:+1877-526-1526">1-877-526-1526</a>
+          </p>
+          <p>
+            <v-icon small>
+              mdi-phone
+            </v-icon>&nbsp;Victoria Office:
+            <a href="tel:250-387-7848">250-387-7848</a>
+          </p>
+          <p>
+            <v-icon small>
+              mdi-email
+            </v-icon>&nbsp;Email:
+            <a href="mailto:BCRegistries@gov.bc.ca">BCRegistries@gov.bc.ca</a>
+          </p>
+        </div>
         <div
-          v-if="isAllowAlterOnline"
+          v-else
           class="d-flex justify-center"
         >
           <v-btn
@@ -136,31 +160,6 @@
           >
             <strong>Alter Now</strong>
           </v-btn>
-        </div>
-
-        <div
-          v-else
-          class="contact-registries mt-30"
-        >
-          <p>To complete this alteration, please contact us at:</p>
-          <p>
-            <v-icon small>
-              mdi-phone
-            </v-icon>&nbsp;Canada and U.S. Toll Free:
-            <a href="tel:+1877-526-1526">1-877-526-1526</a>
-          </p>
-          <p>
-            <v-icon small>
-              mdi-phone
-            </v-icon>&nbsp;Victoria Office:
-            <a href="tel:250-387-7848">250-387-7848</a>
-          </p>
-          <p>
-            <v-icon small>
-              mdi-email
-            </v-icon>&nbsp;Email:
-            <a href="mailto:BCRegistries@gov.bc.ca">BCRegistries@gov.bc.ca</a>
-          </p>
         </div>
       </div>
 
