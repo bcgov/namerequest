@@ -237,7 +237,7 @@
           />
         </template>
 
-        <NumberedCompanyBullets v-if="isNumberedCompany && !isAlterOnline(this.getConversionType) && !getIsLearBusiness" />
+        <NumberedCompanyBullets v-if="isNumberedCompany && !isAlterOnline(getConversionType) && !getIsLearBusiness" />
       </template>
 
       <!-- Restoration / Reinstatement flow -->

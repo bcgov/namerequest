@@ -110,7 +110,7 @@
         v-else-if="showAlterNowButton"
         class="my-1"
       >
-      <div
+        <div
           v-if="!isAllowAlterOnline && !getIsLearBusiness"
           class="contact-registries mt-30"
         >
