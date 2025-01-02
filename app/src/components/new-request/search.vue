@@ -237,7 +237,7 @@
           />
         </template>
 
-        <NumberedCompanyBullets v-if="isNumberedCompany" />
+        <NumberedCompanyBullets v-if="isNumberedCompany && !isAlterOnline(getConversionType) && !getIsLearBusiness" />
       </template>
 
       <!-- Restoration / Reinstatement flow -->
@@ -530,7 +530,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (
       this.isConversion &&
       this.isNumberedCompany &&
-      this.isAlterOnline(this.getConversionType) &&
       this.getIsLearBusiness
     ) return true
 
