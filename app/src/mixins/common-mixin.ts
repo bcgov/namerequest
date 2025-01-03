@@ -6,6 +6,7 @@ import { Action, Getter } from 'vuex-class'
 import BusinessServices from '@/services/business-services'
 import { BusinessSearchIF } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import NamexServices from '@/services/namex-services'
 
 @Component({})
 export class CommonMixin extends Vue {
@@ -239,7 +240,7 @@ export class CommonMixin extends Vue {
   /** Set store value of isLearBusiness flag by fetching business from Lear. */
   async checkBusinessInLear (identifier: string): Promise<void> {
     if (identifier) {
-      const fetchedBusiness = await BusinessServices.fetchBusiness(identifier)
+      const fetchedBusiness = await NamexServices.searchEntities(identifier)
       if (fetchedBusiness) {
         this.setIsLearBusiness(true)
       } else {
