@@ -3,7 +3,6 @@ import { EntityTypes, PriorityCode, NrRequestActionCodes, NrRequestTypeCodes } f
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 import { GetFeatureFlag } from '@/plugins'
 import { Action, Getter } from 'vuex-class'
-import BusinessServices from '@/services/business-services'
 import { BusinessSearchIF } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from '@/services/namex-services'
