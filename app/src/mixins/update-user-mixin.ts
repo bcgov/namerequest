@@ -16,7 +16,7 @@ export class UpdateUserMixin extends Vue {
       }
     } catch (err) {
       // just log the error -- no need to halt app
-      console.log('Launch Darkly update error =', err) // eslint-disable-line no-console
+      console.log('Error updating user =', err) // eslint-disable-line no-console
     }
   }
 
