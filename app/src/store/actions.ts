@@ -1292,3 +1292,7 @@ export const setSearchJurisdiction = ({ commit }, val: any): void => {
 export const setSearchRequest = ({ commit }, val: RequestActionsI): void => {
   commit('mutateSearchRequest', val)
 }
+
+export const setBusinessAccountid = ({ commit }, val: any): void => {
+  commit('mutateBusinessAccountId', val)
+}
