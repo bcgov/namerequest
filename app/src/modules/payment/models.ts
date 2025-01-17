@@ -32,7 +32,8 @@ export interface CreatePaymentParams {
   action: string // FUTURE: use type 'NrAction' or 'NrRequestActionCodes' ?
   nrId: number
   filingType: string // FUTURE: use type 'FilingTypes' ?
-  priorityRequest: boolean
+  priorityRequest: boolean,
+  businessAccountId: string
 }
 
 export interface FetchFeesParams {

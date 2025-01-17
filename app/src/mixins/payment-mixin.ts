@@ -351,7 +351,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
   }
 
   async createPayment (params: CreatePaymentParams, onSuccess: (paymentResponse) => void): Promise<boolean> {
-    const { nrId, filingType, priorityRequest, action } = params
+    const { nrId, filingType, priorityRequest, action, businessAccountId } = params
     // Comment this out to use direct pay:
     // const methodOfPayment = 'CC' // We may need to handle more than one type at some point?
 
@@ -370,6 +370,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       // paymentInfo: {
       //   methodOfPayment: methodOfPayment
       // },
+      businessAccountId: businessAccountId,
       filingInfo: {
         filingTypes: [
           {

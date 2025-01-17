@@ -158,7 +158,8 @@ export const stateModel: StateModelIF = {
     userCancelledAnalysis: false,
     waitingAddressSearch: null,
     isLoadingSubmission: false,
-    hotjarUserId: ''
+    hotjarUserId: '',
+    businessAccountId: ''
   },
   staffPayment: {
     option: StaffPaymentOptions.NONE,

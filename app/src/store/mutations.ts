@@ -607,3 +607,7 @@ export const mutateSearchJurisdiction = (state: StateIF, val: any) => {
 export const mutateSearchRequest = (state: StateIF, val: RequestActionsI) => {
   state.stateModel.newRequestModel.search.request = val
 }
+
+export const mutateBusinessAccountId = (state: StateIF, businessAccountId: string) => {
+  state.stateModel.newRequestModel.businessAccountId = businessAccountId
+}

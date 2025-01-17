@@ -187,6 +187,7 @@ export default class ConfirmNrDialog extends Mixins(
   @Getter getName!: string
   @Getter getNameChoices!: NameChoicesIF
   @Getter getPriorityRequest!: boolean
+  @Getter getBusinessAccountId : string
   @Getter isMobile!: boolean
   @Getter isRoleStaff!: boolean
 
@@ -294,7 +295,8 @@ export default class ConfirmNrDialog extends Mixins(
         action: PaymentAction.CREATE,
         nrId: this.getNrId,
         filingType: FilingTypes.NM620,
-        priorityRequest: this.getPriorityRequest
+        priorityRequest: this.getPriorityRequest,
+        businessAccountId: this.getBusinessAccountId
       } as CreatePaymentParams, onSuccess)
     } catch (error) {
       this.isLoadingPayment = false

@@ -81,6 +81,7 @@ export default class Landing extends Vue {
   // Global actions
   @Action loadExistingNameRequest!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
+  @Action setBusinessAccountid!: ActionBindingIF
 
   /** ID parameter passed in on "/nr" route. */
   @Prop(String) readonly id!: string
@@ -88,11 +89,17 @@ export default class Landing extends Vue {
   async mounted () {
     const { id } = this
     const accountId = this.$route.query.accountid?.toString()
+    const businessAccountId = this.$route.params.businessAccountId?.toString()
 
     // if an id and accountid was specified then get and load the subject NR
     if (id && accountId) {
       const nrData = await NamexServices.getNameRequestByToken(true, id, accountId)
       if (nrData) await this.loadExistingNameRequest(nrData)
+    }
+
+    // Store businessAccountId in Vuex store
+    if (businessAccountId) {
+      this.setBusinessAccountid(businessAccountId)
     }
 
     // everything is rendered/loaded - hide spinner

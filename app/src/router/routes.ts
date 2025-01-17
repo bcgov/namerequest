@@ -8,6 +8,12 @@ export const routes = [
     component: Landing
   },
   {
+    path: '/:businessAccountId',
+    name: Routes.BUSINESS_ACCOUNT, // Add a corresponding name in your Routes enum
+    component: Landing,
+    props: true
+  },
+  {
     path: '/manage',
     name: Routes.MANAGE, // "Manage My Name Request" tab
     component: Landing
