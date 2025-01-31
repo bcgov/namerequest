@@ -40,7 +40,7 @@ export const baseItemsConflicts = {
     words: null,
     expandExtraInfo: false,
     expandedInfo1: 'This exact name is currently in use or reserved for use. A name will not be approved if there is ' +
-    'an existing business  or approved name request with the exact same name.',
+      'an existing business  or approved name request with the exact same name.',
     expandedInfo2: null,
     expandedList: [],
     expandLabel: {
@@ -56,12 +56,11 @@ export const baseItemsConflicts = {
     problem: 'This <b>exact name</b> is currently in use or reserved for use by a BC corporation',
     words: null,
     expandExtraInfo: false,
-    expandedInfo1: 'This exact name is is currently in use or reserved for use. You must use (assume) a new name ' +
-    'unless you can obtain consent to use this name. You will need to change ' +
-    'your business name in your home jurisdiction to match the assumed name in BC.',
+    expandedInfo1: 'This exact name is currently in use or reserved for use. You must use (assume) a new name ' +
+      'unless you can obtain consent to use this name.',
     expandedInfo2: 'You will be able to enter up to two Assumed Name ' +
-    'choices as part of the name request submission process. Assumed ' +
-    'names must be reviewed by Registries staff.',
+      'choices as part of the name request submission process. Assumed ' +
+      'names must be reviewed by Registries staff.',
     expandedInfo3: '<b>To proceed, select "Submit this Name for Review".</b>',
     expandedList: [],
     expandLabel: {
@@ -121,18 +120,18 @@ export const baseItemsConflicts = {
     words: null,
     expandExtraInfo: false,
     expandedInfo1: 'No exact matches were found for your name, ' +
-    'but you should review the above list to help determine if ' +
-    'there is a similar business name already in use or reserved in' +
-    ' BC that might prevent your name from being approved.',
+      'but you should review the above list to help determine if ' +
+      'there is a similar business name already in use or reserved in' +
+      ' BC that might prevent your name from being approved.',
     expandedInfo2: 'If an existing or reserved name is too similar to your ' +
-    'name you will be required to use (assume) a new name in BC. ' +
-    'You will be notified as part of the review process if you ' +
-    'need to use an assumed name, or if consent is required to ' +
-    'use your preferred name.',
+      'name you will be required to use (assume) a new name in BC. ' +
+      'You will be notified as part of the review process if you ' +
+      'need to use an assumed name, or if consent is required to ' +
+      'use your preferred name.',
     expandedInfo3: 'You will be able to enter up to two Assumed ' +
-    'Name choices as part of the name request submission process, ' +
-    'and it is recommended that you enter two Assumed Name choices. ' +
-    'Assumed names must be reviewed by Registries staff.',
+      'Name choices as part of the name request submission process, ' +
+      'and it is recommended that you enter two Assumed Name choices. ' +
+      'Assumed names must be reviewed by Registries staff.',
     expandedInfo4: '<b>To proceed, select "Submit this Name for Review".</b>',
     expandedList: [],
     expandLabel: {
