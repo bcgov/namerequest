@@ -85,7 +85,7 @@
     "vuetify-loader": "^1.9.2",
     "vuex-class": "^0.3.2",
     "vuex-module-decorators": "^1.2.0",
-    "webpack": "~5.78.0",
+    "webpack": "5.78",
     "webpack-bundle-analyzer": "^3.9.0"
   },
   "overrides": {
