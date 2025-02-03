@@ -56,9 +56,8 @@ export const baseItemsConflicts = {
     problem: 'This <b>exact name</b> is currently in use or reserved for use by a BC corporation',
     words: null,
     expandExtraInfo: false,
-    expandedInfo1: 'This exact name is is currently in use or reserved for use. You must use (assume) a new name ' +
-    'unless you can obtain consent to use this name. You will need to change ' +
-    'your business name in your home jurisdiction to match the assumed name in BC.',
+    expandedInfo1: 'This exact name is currently in use or reserved for use. You must use (assume) a new name ' +
+    'unless you can obtain consent to use this name.',
     expandedInfo2: 'You will be able to enter up to two Assumed Name ' +
     'choices as part of the name request submission process. Assumed ' +
     'names must be reviewed by Registries staff.',
