@@ -38,6 +38,9 @@ export async function getConfig (): Promise<EnvConfigI> {
   const societiesOnlineHomeUrl: string = process.env.VUE_APP_SOCIETIES_ONLINE_HOME_URL
   sessionStorage.setItem('SOCIETIES_ONLINE_HOME_URL', societiesOnlineHomeUrl)
 
+  const restorationInstructionsUrl: string = process.env.VUE_APP_STEPS_TO_RESTORE_URL
+  sessionStorage.setItem('RESTORATION_INSTRUCTIONS_URL', restorationInstructionsUrl)
+
   // for system alert banner (sbc-common-components)
   const statusApiUrl: string = process.env.VUE_APP_STATUS_API_URL + process.env.VUE_APP_STATUS_API_VERSION
   sessionStorage.setItem('STATUS_API_URL', statusApiUrl)

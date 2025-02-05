@@ -328,6 +328,31 @@
       </v-row>
     </template>
 
+    <!-- "Steps to Restore/Reinstate" button -->
+    <template v-if="showRestorationInstructionsButton">
+      <v-row
+        justify="center"
+        class="mt-6"
+      >
+        <v-col cols="auto">
+          <v-btn
+            id="colin-button"
+            class="px-9"
+            :href="restorationInstructionsLink"
+            target="_blank"
+          >
+            Steps to Restore your Business
+            <v-icon
+              right
+              small
+            >
+              mdi-open-in-new
+            </v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+    </template>
+
     <!-- "Check this Name" button -->
     <template v-if="showCheckNameButton">
       <v-row
@@ -421,9 +446,11 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   @Action setSocietiesModalVisible!: ActionBindingIF
 
   @Getter getIsLearBusiness!: boolean
+  @Getter isRoleStaff!: boolean
 
   // Constant
   readonly colinLink = sessionStorage.getItem('CORPORATE_ONLINE_URL')
+  readonly restorationInstructionsLink = sessionStorage.getItem('RESTORATION_INSTRUCTIONS_URL')
 
   // Local variable
   corpNumValid = true
@@ -548,6 +575,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
     // Conditional for Restoration/Reinstatement Flow.
     if (
+      this.isRoleStaff &&
       this.isRestoration &&
       this.isNumberedCompany &&
       this.isSupportedRestoration(this.getEntityTypeCd)
@@ -596,18 +624,35 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       this.isFederal
     ) return true
 
-    // Conditional for Restoration/Reinstatement Flow.
-    if (
-      this.isRestoration &&
-      this.isNumberedCompany &&
-      !this.isSupportedRestoration(this.getEntityTypeCd)
-    ) return true
-
     // Conditional for Continuation In Flow.
     if (
       this.isContinuationIn &&
       this.isNumberedCompany &&
       !this.isSupportedContinuationIn(this.getEntityTypeCd)
+    ) return true
+
+    return false
+  }
+
+  /** Whether to show "Steps to Reinstore/Reinstate" button (otherwise will show Action Button). */
+  get showRestorationInstructionsButton (): boolean {
+    // Conditional for Restorement when business is in lear
+    if (
+      !this.isRoleStaff &&
+      this.isRestoration &&
+      this.isNumberedCompany &&
+      this.isSupportedRestoration(this.getEntityTypeCd) &&
+      this.getIsLearBusiness
+    ) return true
+
+    // Conditional for Restorement when business is not in lear and not an XPro
+    if (
+      !this.isRoleStaff &&
+      this.isRestoration &&
+      this.isNumberedCompany &&
+      this.isSupportedRestoration(this.getEntityTypeCd) &&
+      !this.getIsLearBusiness &&
+      !this.isXproEntityType(this.getEntityTypeCd)
     ) return true
 
     return false
