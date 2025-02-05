@@ -240,8 +240,9 @@ export class CommonMixin extends Vue {
   async checkBusinessInLear (identifier: string): Promise<void> {
     if (identifier) {
       try {
-        await NamexServices.searchEntities(identifier) // throws 404 if not found
-        this.setIsLearBusiness(true)
+        const business = await NamexServices.searchEntities(identifier)
+        if (business) this.setIsLearBusiness(true)
+        else this.setIsLearBusiness(false)
       } catch (error) {
         this.setIsLearBusiness(false)
       }
