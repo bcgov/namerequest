@@ -239,10 +239,11 @@ export class CommonMixin extends Vue {
   /** Set store value of isLearBusiness flag by fetching business from Lear. */
   async checkBusinessInLear (identifier: string): Promise<void> {
     if (identifier) {
-      const fetchedBusiness = await NamexServices.searchEntities(identifier)
-      if (fetchedBusiness) {
-        this.setIsLearBusiness(true)
-      } else {
+      try {
+        const business = await NamexServices.searchEntities(identifier)
+        if (business) this.setIsLearBusiness(true)
+        else this.setIsLearBusiness(false)
+      } catch (error) {
         this.setIsLearBusiness(false)
       }
     }
