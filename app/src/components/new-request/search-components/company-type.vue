@@ -4,11 +4,12 @@
     :cols="cols"
     :md="md"
   >
-    <header class="h6">
+    <header v-if="!hideCompanyTypeSelection" class="h6">
       Select a company type:
     </header>
 
     <v-radio-group
+      v-if="!hideCompanyTypeSelection"
       class="mt-0 pt-6"
       hide-details
       mandatory
@@ -38,6 +39,21 @@ import { SearchMixin } from '@/mixins'
 export default class CompanyType extends Mixins(SearchMixin) {
   @Prop({ default: '12' }) readonly cols!: string
   @Prop({ default: '6' }) readonly md!: string
+
+  mounted () : void {
+    if (this.hideCompanyTypeSelection) {
+      this.setSearchCompanyType(this.CompanyTypes.NAMED_COMPANY)
+    }
+  }
+
+  get hideCompanyTypeSelection () : boolean {
+    return this.isChangeName && this.isNumberedCompanyName(this.getSearchBusiness?.legalName ?? '')
+  }
+
+  isNumberedCompanyName (name: string) : boolean {
+    const numberedCompanyPattern = /^\d{7} B\.C\. LTD\.$/
+    return numberedCompanyPattern.test(name)
+  }
 }
 </script>
 
