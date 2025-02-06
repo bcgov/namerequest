@@ -338,7 +338,7 @@
           <v-btn
             id="colin-button"
             class="px-9"
-            :href="restorationInstructionsLink"
+            :href="stepsToRestoreLink"
             target="_blank"
           >
             Steps to Restore your Business
@@ -450,7 +450,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
   // Constant
   readonly colinLink = sessionStorage.getItem('CORPORATE_ONLINE_URL')
-  readonly restorationInstructionsLink = sessionStorage.getItem('RESTORATION_INSTRUCTIONS_URL')
+  readonly stepsToRestoreLink = sessionStorage.getItem('STEPS_TO_RESTORE_URL')
 
   // Local variable
   corpNumValid = true
