@@ -329,7 +329,7 @@
     </template>
 
     <!-- "Steps to Restore/Reinstate" button -->
-    <template v-if="showRestorationInstructionsButton">
+    <template v-if="showStepsToRestoreButton">
       <v-row
         justify="center"
         class="mt-6"
@@ -635,7 +635,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   }
 
   /** Whether to show "Steps to Reinstore/Reinstate" button (otherwise will show Action Button). */
-  get showRestorationInstructionsButton (): boolean {
+  get showStepsToRestoreButton (): boolean {
     // Conditional for Restorement when business is in lear
     if (
       !this.isRoleStaff &&
