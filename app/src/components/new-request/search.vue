@@ -577,8 +577,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (
       this.isRoleStaff &&
       this.isRestoration &&
-      this.isNumberedCompany &&
-      this.isSupportedRestoration(this.getEntityTypeCd)
+      this.isNumberedCompany
     ) return true
 
     return false
@@ -641,7 +640,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       !this.isRoleStaff &&
       this.isRestoration &&
       this.isNumberedCompany &&
-      this.isSupportedRestoration(this.getEntityTypeCd) &&
       this.getIsLearBusiness
     ) return true
 
@@ -650,7 +648,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
       !this.isRoleStaff &&
       this.isRestoration &&
       this.isNumberedCompany &&
-      this.isSupportedRestoration(this.getEntityTypeCd) &&
       !this.getIsLearBusiness &&
       !this.isXproEntityType(this.getEntityTypeCd)
     ) return true
