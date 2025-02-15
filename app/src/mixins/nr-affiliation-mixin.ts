@@ -17,6 +17,8 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
   @Getter isAmalgamation!: boolean
   @Getter isContinuationIn!: boolean
   @Getter isNewBusiness!: boolean
+  @Getter getBusinessAccountId: string
+  @Getter isRoleStaff!: boolean
 
   // Global action
   @Action setAffiliationErrorModalValue!: ActionBindingIF
@@ -222,9 +224,17 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
   async actionNumberedEntity (legalType: CorpTypeCd): Promise<any> {
     // show spinner since this is a network call
     this.$root.$emit('showSpinner', true)
-    const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || 0
+    let businessAccountId: number
+
+    if (this.getBusinessAccountId && this.isRoleStaff) {
+      businessAccountId = Number(this.getBusinessAccountId)
+    } else {
+      const storedAccount = sessionStorage.getItem('CURRENT_ACCOUNT')
+      businessAccountId = storedAccount ? +JSON.parse(storedAccount)?.id || 0 : 0
+    }
+
     try {
-      const businessId = await this.createNumberedBusiness(accountId, legalType)
+      const businessId = await this.createNumberedBusiness(businessAccountId, legalType)
       this.goToEntityDashboard(businessId)
       return
     } catch (error) {
