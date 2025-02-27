@@ -72,8 +72,8 @@ importers:
         specifier: ^0.4.4
         version: 0.4.4
       sbc-common-components:
-        specifier: 3.0.17
-        version: 3.0.17(@types/node@20.12.7)(postcss@8.4.38)(sass@1.32.13)(terser@5.30.3)
+        specifier: 3.0.15-c
+        version: 3.0.15-c(@types/node@20.12.7)(postcss@8.4.38)(sass@1.32.13)(terser@5.30.3)
       style-loader:
         specifier: ^1.3.0
         version: 1.3.0(webpack@5.78.0)
@@ -5703,8 +5703,8 @@ packages:
     resolution: {integrity: sha512-5LBh1Tls8c9xgGjw3QrMwETmTMVk0oFgvrFSvWx62llR2hcEInrKNZ2GZCCuuy2lvWrdl5jhbpeqc5hRYKFOcw==}
     engines: {node: '>=10'}
 
-  sbc-common-components@3.0.17:
-    resolution: {integrity: sha512-F8GoRK3AFm4oN6laGnJRAvVs3sdVWa2JSXAwj25YqcR8dSEp9jkUZZZIdGYUEh0XmPBADqB3ai0k9jOlLsYefg==}
+  sbc-common-components@3.0.15-c:
+    resolution: {integrity: sha512-j5IVxzmZXatV3gi83bxYfi/uQU4sSqMg8vZnws+X/jzQeqEXnkYBsg0ky7MmlukTEns4igMv+ml/epNSjv0nfA==}
 
   schema-utils@2.7.0:
     resolution: {integrity: sha512-0ilKFI6QQF5nxDZLFn2dMjvc4hjg/Wkg7rHd3jK6/A4a1Hl9VFdQWvgB1UMGoU94pad1P/8N7fMcEnLnSiju8A==}
@@ -13426,7 +13426,7 @@ snapshots:
     dependencies:
       xmlchars: 2.2.0
 
-  sbc-common-components@3.0.17(@types/node@20.12.7)(postcss@8.4.38)(sass@1.32.13)(terser@5.30.3):
+  sbc-common-components@3.0.15-c(@types/node@20.12.7)(postcss@8.4.38)(sass@1.32.13)(terser@5.30.3):
     dependencies:
       '@mdi/font': 4.9.95
       axios: 0.21.4
