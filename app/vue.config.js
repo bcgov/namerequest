@@ -41,7 +41,8 @@ module.exports = {
   },
   transpileDependencies: [
     'vuetify',
-    'vuex-module-decorators'
+    'vuex-module-decorators',
+    'keycloak-js'
   ],
   publicPath: process.env.VUE_APP_PATH
 }
