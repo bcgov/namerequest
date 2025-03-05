@@ -248,7 +248,7 @@
           :type="'restore'"
           :showDialog="showSocietiesInfo"
         />
-        <CompanyType v-if="getSearchBusiness && isBcRestorable" />
+        <CompanyType v-if="getSearchBusiness && isBcRestorable && isNumberedEntityType" />
         <Jurisdiction
           v-if="isSelectedXproAndRestorable"
           cols="12"
