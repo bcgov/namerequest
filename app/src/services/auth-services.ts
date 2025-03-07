@@ -6,7 +6,9 @@ const axios = AddAxiosInterceptors(Axios.create())
 
 export default class AuthServices {
   /** The Auth API URL. */
-  static authApiUrl = sessionStorage.getItem('AUTH_API_URL')
+  static get authApiUrl (): string {
+    return sessionStorage.getItem('AUTH_API_URL')
+  }
 
   /**
    * Creates an affiliation for the specified account and NR.
