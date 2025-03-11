@@ -26,6 +26,7 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { sanitizeName } from '@/plugins'
 import { DFLT_MIN_LENGTH, DFLT_MAX_LENGTH, MRAS_MIN_LENGTH, MRAS_MAX_LENGTH }
   from '@/components/new-request/constants'
+import { checkInvalidDesignation } from '@/list-data/designations'
 
 @Component({})
 export default class NameInput extends Vue {
@@ -45,6 +46,7 @@ export default class NameInput extends Vue {
   @Getter getName!: string
   @Getter isMrasJurisdiction!: boolean
   @Getter isXproFlow!: boolean
+  @Getter getEntityTypeCd!: string
 
   // Store actions
   @Action setClearErrors!: () => void
@@ -114,6 +116,11 @@ export default class NameInput extends Vue {
 
     if (this.getErrors.includes('max_length')) {
       return ['Please enter a shorter name']
+    }
+
+    const invalidDesignationMsg = checkInvalidDesignation(this.getEntityTypeCd, this.searchValue)
+    if (invalidDesignationMsg) {
+      return [invalidDesignationMsg]
     }
 
     return null
