@@ -398,7 +398,7 @@ import { sanitizeName } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { EntityTypes, Location } from '@/enums'
 import { CommonMixin } from '@/mixins'
-import { Designations } from '@/list-data'
+import { Designations, checkInvalidDesignation } from '@/list-data'
 
 /**
  * This is the component that displays the name choices.
@@ -795,6 +795,15 @@ export default class NamesCapture extends Mixins(CommonMixin) {
     let step2 = name2()
     let step3 = name3()
 
+    // Validate designations for all name choices
+    const validDesignation1 = this.validateDesignation('name1')
+    const validDesignation2 = this.validateDesignation('name2')
+    const validDesignation3 = this.validateDesignation('name3')
+
+    if (!validDesignation1 || !validDesignation2 || !validDesignation3) {
+      return false
+    }
+
     this.$nextTick(function () {
       if (!(step1 && step2 && step3)) {
         this.hideDetails = 'auto'
@@ -948,6 +957,15 @@ export default class NamesCapture extends Mixins(CommonMixin) {
           following phrases: ${this.entityPhraseText}`
       }
     }
+  }
+
+  validateDesignation (choice: string): boolean {
+    const invalidDesignationMsg = checkInvalidDesignation(this.getEntityTypeCd.toString(), this.nameChoices[choice])
+    if (invalidDesignationMsg) {
+      this.messages[choice] = invalidDesignationMsg
+      return false
+    }
+    return true
   }
 
   @Watch('isValid')

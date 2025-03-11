@@ -87,8 +87,5 @@
     "vuex-module-decorators": "^1.2.0",
     "webpack": "~5.78.0",
     "webpack-bundle-analyzer": "^3.9.0"
-  },
-  "overrides": {
-    "webpack": "5.78"
   }
 }

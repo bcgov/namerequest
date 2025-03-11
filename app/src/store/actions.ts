@@ -23,7 +23,7 @@ import { DFLT_MIN_LENGTH, DFLT_MAX_LENGTH, MRAS_MIN_LENGTH, MRAS_MAX_LENGTH }
   from '@/components/new-request/constants'
 
 // List Data
-import { CanJurisdictions, Designations, IntlJurisdictions, RequestActions } from '@/list-data'
+import { CanJurisdictions, Designations, checkInvalidDesignation, IntlJurisdictions, RequestActions } from '@/list-data'
 
 // Interfaces
 import {
@@ -1067,6 +1067,11 @@ export const startAnalyzeName = async ({ commit, getters }) => {
   // check if designation selection is required and present
   if (!getters.isXproFlow && Designations[getters.getEntityTypeCd]?.end) {
     if (!getters.getDesignation) commit('setErrors', 'designation')
+  }
+
+  // Check for designations should not be in the name
+  if (checkInvalidDesignation(getters.getEntityTypeCd, getters.getName)) {
+    commit('setErrors', 'invalid_designation_in_name')
   }
 
   // check if jurisdiction selection is required and present

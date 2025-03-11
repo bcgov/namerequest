@@ -148,3 +148,77 @@ function getAllDesignations () {
 // a string[] containing each designation code used in namex
 // eg. [ 'CR', 'BC', 'CCC', etc... ]
 export const AllDesignationsList = getAllDesignations()
+
+/**
+ * Validate Designation in name
+ */
+const ValidDesignationInFirmName = [
+  'CHURCH',
+  'EGLISE',
+  'CLUB',
+  'CHRISTIAN SCHOOL',
+  'FELLOWSHIP',
+  'PARISH',
+  'WATERSHED',
+  'FOUNDATION',
+  'FONDATION',
+  'GUILD'
+]
+
+function getInvalidFirmDesignations () {
+  const excludeWords = new Set(
+    ValidDesignationInFirmName.flatMap(word => [word, word.replace(/\./g, '')])
+  )
+
+  // Get all designations and ensure both original & "dotless" versions exist
+  const allDesignation = new Set<string>(
+    getAllDesignations().flatMap(word => [word, word.replace(/\./g, '')])
+  )
+
+  // Convert Set to an array to filter it
+  return [...allDesignation].filter(word => !excludeWords.has(word))
+}
+
+const InvalidDesignations = {
+  FR: getInvalidFirmDesignations,
+  DBA: getInvalidFirmDesignations,
+  GP: getInvalidFirmDesignations
+}
+
+/**
+ * Checks if the given name contains any invalid designations at the end.
+ * Returns an error message if an invalid designation is found, otherwise returns null.
+ *
+ * @param entityTypeCd - The entity type code.
+ * @param name - The name to be checked.
+ * @returns An error message if an invalid designation is found, otherwise null.
+ */
+export function checkInvalidDesignation (entityTypeCd: string, name: string): string | null {
+  // Return null if name is empty or if there are no invalid designations for the given entity type
+  if (!name || !InvalidDesignations[entityTypeCd]) {
+    return null
+  }
+
+  // Get the list of invalid designations for the given entity type
+  const invalidDesignationList = InvalidDesignations[entityTypeCd]()
+  if (!invalidDesignationList) {
+    return null
+  }
+
+  // Trim the name to remove any trailing spaces
+  const trimmedName = name.trim()
+
+  // Check if any invalid designation appears at the end of the name
+  const foundWord = invalidDesignationList.find((word: string) => {
+    const regex = new RegExp(`${word.toUpperCase()}$`, 'i')
+    return regex.test(trimmedName.toUpperCase())
+  })
+
+  // Return an error message if an invalid designation is found
+  if (foundWord) {
+    return `The designation "${foundWord}" cannot be used in the name`
+  }
+
+  // Return null if no invalid designation is found
+  return null
+}
