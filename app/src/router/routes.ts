@@ -8,12 +8,6 @@ export const routes = [
     component: Landing
   },
   {
-    path: '/:businessAccountId',
-    name: Routes.BUSINESS_ACCOUNT, // Add a corresponding name in your Routes enum
-    component: Landing,
-    props: true
-  },
-  {
     path: '/manage',
     name: Routes.MANAGE, // "Manage My Name Request" tab
     component: Landing
@@ -36,6 +30,12 @@ export const routes = [
     path: '/signout',
     name: Routes.SIGNOUT,
     component: Signout
+  },
+  {
+    path: '/:businessAccountId',
+    name: Routes.BUSINESS_ACCOUNT, // Add a corresponding name in your Routes enum
+    component: Landing,
+    props: true
   },
   {
     // default/fallback route
