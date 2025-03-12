@@ -182,7 +182,9 @@ function getInvalidFirmDesignations () {
 const InvalidDesignations = {
   FR: getInvalidFirmDesignations,
   DBA: getInvalidFirmDesignations,
-  GP: getInvalidFirmDesignations
+  GP: getInvalidFirmDesignations,
+  LP: getInvalidFirmDesignations,
+  LL: getInvalidFirmDesignations
 }
 
 /**
