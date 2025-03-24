@@ -37,7 +37,8 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
       this.$root.$emit('showSpinner', true)
 
       // NB: fall back is user's default account
-      const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || 0
+      const businessAccount = await this.getBusinessAccount(this.getBusinessAccountId)
+      const accountId = businessAccount?.id
 
       // try to affiliate the NR
       const createAffiliationResponse = await AuthServices.createNrAffiliation(accountId, nr)
@@ -224,17 +225,11 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
   async actionNumberedEntity (legalType: CorpTypeCd): Promise<any> {
     // show spinner since this is a network call
     this.$root.$emit('showSpinner', true)
-    let businessAccountId: number
-
-    if (this.getBusinessAccountId && this.isRoleStaff) {
-      businessAccountId = Number(this.getBusinessAccountId)
-    } else {
-      const storedAccount = sessionStorage.getItem('CURRENT_ACCOUNT')
-      businessAccountId = storedAccount ? +JSON.parse(storedAccount)?.id || 0 : 0
-    }
+    const businessAccount = await this.getBusinessAccount(this.getBusinessAccountId)
+    const accountId = businessAccount?.id
 
     try {
-      const businessId = await this.createNumberedBusiness(businessAccountId, legalType)
+      const businessId = await this.createNumberedBusiness(accountId, legalType)
       this.goToEntityDashboard(businessId)
       return
     } catch (error) {
@@ -296,5 +291,36 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
     const createBusinessResponse = await BusinessServices.createBusiness(businessRequest)
 
     return createBusinessResponse.data?.filing?.business?.identifier as string
+  }
+
+  private async getBusinessAccount (businessAccountId: string): Promise<any> {
+    try {
+      if (this.isRoleStaff) {
+        if (businessAccountId) {
+          const businessAccount = await AuthServices.fetchOrgInfo(Number(businessAccountId))
+          if (businessAccount) return businessAccount
+        }
+      } else {
+        const membership = await this.fetchUserMemberships(businessAccountId)
+        if (membership) return membership
+      }
+
+      // throw error if business account is not found
+      throw Error(`account ID ${businessAccountId} is not associated with the current user`)
+    } catch (error) {
+      console.error('Error fetching business account or memberships:', error)
+    }
+  }
+
+  private async fetchUserMemberships (businessAccountId: string): Promise<any> {
+    if (businessAccountId) {
+      const memberShips = await AuthServices.fetchUserMemberships()
+      const userAccount = memberShips.orgs.find(org => org.id?.toString() === businessAccountId)
+      if (userAccount) return userAccount
+    }
+
+    // If `userAccount` is not found, check `sessionStorage` for default account
+    const storedAccount = sessionStorage.getItem('CURRENT_ACCOUNT')
+    return JSON.parse(storedAccount) || null
   }
 }
