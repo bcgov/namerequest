@@ -1029,7 +1029,7 @@ export const getDraftNameReservation = (state: StateIF): DraftReqI => {
     nameFlag: getIsPersonsName(state),
     hotjarUserId: getHotjarUserId(state),
     submit_count: 0,
-    businessAccountId: getBusinessAccountId(state),
+    businessAccount: getBusinessAccount(state),
     ...getCorpNumForReservation(state) // must be last
   }
   if (getXproRequestTypeCd(state)) {
@@ -1303,6 +1303,6 @@ export const getSearchRequest = (state: StateIF): RequestActionsI => {
   return state.stateModel.newRequestModel.search.request
 }
 
-export const getBusinessAccountId = (state: StateIF): string => {
-  return state.stateModel.newRequestModel.businessAccountId
+export const getBusinessAccount = (state: StateIF): any => {
+  return state.stateModel.newRequestModel.businessAccount
 }
