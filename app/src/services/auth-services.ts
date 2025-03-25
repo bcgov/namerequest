@@ -86,4 +86,24 @@ export default class AuthServices {
         throw new Error('Invalid org info')
       })
   }
+
+  /**
+   * Fetches current user's memberships.
+   * Throws on error.
+   */
+  static async fetchUserMemberships (): Promise<any> {
+    if (sessionStorage.getItem('SESSION_SYNCED') !== 'true') return null
+
+    const token = sessionStorage.getItem('KEYCLOAK_TOKEN')
+    if (!token) return null
+
+    const url = `${this.authApiUrl}/users/orgs`
+    const headers = { Authorization: `Bearer ${token}` }
+
+    return axios.get(url, { headers: headers })
+      .then(response => {
+        if (response?.data) return response.data
+        throw new Error('Invalid user info')
+      })
+  }
 }

@@ -159,7 +159,7 @@ export const stateModel: StateModelIF = {
     waitingAddressSearch: null,
     isLoadingSubmission: false,
     hotjarUserId: '',
-    businessAccountId: ''
+    businessAccount: null
   },
   staffPayment: {
     option: StaffPaymentOptions.NONE,
