@@ -91,7 +91,7 @@ export default class Landing extends Vue {
   async mounted () {
     const { id } = this
     const accountId = this.$route.query.accountid?.toString()
-    const businessAccountId = this.$route.params.businessAccountId?.toString()
+    let businessAccountId = this.$route.params.businessAccountId?.toString()
 
     // if an id and accountid was specified then get and load the subject NR
     if (id && accountId) {
@@ -100,6 +100,7 @@ export default class Landing extends Vue {
     }
 
     // Store businessAccountId in Vuex store
+    businessAccountId = businessAccountId || accountId
     if (businessAccountId) {
       const businessAccount = await this.fetchBusinessAccount(businessAccountId, this.isRoleStaff)
       if (businessAccount) this.setBusinessAccount(businessAccount)
@@ -122,10 +123,7 @@ export default class Landing extends Vue {
         const userAccount = memberShips.orgs.find(org => org.id?.toString() === businessAccountId)
         if (userAccount) return userAccount
       }
-
-      // If `userAccount` is not found, check `sessionStorage` for default account
-      const storedAccount = sessionStorage.getItem('CURRENT_ACCOUNT')
-      return storedAccount ? JSON.parse(storedAccount) : null
+      return null
     } catch (error) {
       console.error('Error fetching business account:', error)
       return null
