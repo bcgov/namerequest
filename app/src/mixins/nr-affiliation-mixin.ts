@@ -17,7 +17,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
   @Getter isAmalgamation!: boolean
   @Getter isContinuationIn!: boolean
   @Getter isNewBusiness!: boolean
-  @Getter getBusinessAccount: any
+  @Getter getBusinessAccountId: string
   @Getter isRoleStaff!: boolean
 
   // Global action
@@ -37,12 +37,7 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
       this.$root.$emit('showSpinner', true)
 
       // NB: fall back is user's default account
-      const businessAccount = this.getBusinessAccount
-      if (!businessAccount) {
-        this.setAffiliationErrorModalValue(NrAffiliationErrors.UNABLE_TO_START_REGISTRATION)
-        throw Error('Unable to get business account')
-      }
-      const accountId = businessAccount?.id
+      const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || 0
 
       // try to affiliate the NR
       const createAffiliationResponse = await AuthServices.createNrAffiliation(accountId, nr)
@@ -229,15 +224,17 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
   async actionNumberedEntity (legalType: CorpTypeCd): Promise<any> {
     // show spinner since this is a network call
     this.$root.$emit('showSpinner', true)
-    const businessAccount = this.getBusinessAccount
-    if (businessAccount === null) {
-      this.$root.$emit('showSpinner', false)
-      throw new Error('Unable to get business account')
+    let businessAccountId: number
+
+    if (this.getBusinessAccountId && this.isRoleStaff) {
+      businessAccountId = Number(this.getBusinessAccountId)
+    } else {
+      const storedAccount = sessionStorage.getItem('CURRENT_ACCOUNT')
+      businessAccountId = storedAccount ? +JSON.parse(storedAccount)?.id || 0 : 0
     }
-    const accountId = businessAccount.id
 
     try {
-      const businessId = await this.createNumberedBusiness(accountId, legalType)
+      const businessId = await this.createNumberedBusiness(businessAccountId, legalType)
       this.goToEntityDashboard(businessId)
       return
     } catch (error) {

@@ -59,7 +59,6 @@ import Tabs from '@/components/tabs.vue'
 
 import NamexServices from '@/services/namex-services'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import AuthServices from '@/services/auth-services'
 
 @Component({
   components: {
@@ -78,12 +77,11 @@ import AuthServices from '@/services/auth-services'
 export default class Landing extends Vue {
   // Global getter
   @Getter getDisplayedComponent!: string
-  @Getter isRoleStaff!: boolean
 
   // Global actions
   @Action loadExistingNameRequest!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
-  @Action setBusinessAccount!: ActionBindingIF
+  @Action setBusinessAccountid!: ActionBindingIF
 
   /** ID parameter passed in on "/nr" route. */
   @Prop(String) readonly id!: string
@@ -91,7 +89,7 @@ export default class Landing extends Vue {
   async mounted () {
     const { id } = this
     const accountId = this.$route.query.accountid?.toString()
-    const businessAccountId = this.$route.params.businessAccountId?.toString()
+    let businessAccountId = this.$route.params.businessAccountId?.toString()
 
     // if an id and accountid was specified then get and load the subject NR
     if (id && accountId) {
@@ -100,36 +98,14 @@ export default class Landing extends Vue {
     }
 
     // Store businessAccountId in Vuex store
+    businessAccountId = businessAccountId || accountId
     if (businessAccountId) {
-      const businessAccount = await this.fetchBusinessAccount(businessAccountId, this.isRoleStaff)
-      if (businessAccount) this.setBusinessAccount(businessAccount)
+      this.setBusinessAccountid(businessAccountId)
     }
 
     // everything is rendered/loaded - hide spinner
     // (spinner was shown in App.vue)
     this.$root.$emit('showSpinner', false)
-  }
-
-  private async fetchBusinessAccount (businessAccountId: string, isRoleStaff: boolean): Promise<any> {
-    try {
-      if (isRoleStaff) {
-        if (businessAccountId) {
-          const businessAccount = await AuthServices.fetchOrgInfo(Number(businessAccountId))
-          if (businessAccount) return businessAccount
-        }
-      } else {
-        const memberShips = await AuthServices.fetchUserMemberships()
-        const userAccount = memberShips.orgs.find(org => org.id?.toString() === businessAccountId)
-        if (userAccount) return userAccount
-      }
-
-      // If `userAccount` is not found, check `sessionStorage` for default account
-      const storedAccount = sessionStorage.getItem('CURRENT_ACCOUNT')
-      return storedAccount ? JSON.parse(storedAccount) : null
-    } catch (error) {
-      console.error('Error fetching business account:', error)
-      return null
-    }
   }
 }
 </script>
