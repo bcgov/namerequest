@@ -1298,6 +1298,6 @@ export const setSearchRequest = ({ commit }, val: RequestActionsI): void => {
   commit('mutateSearchRequest', val)
 }
 
-export const setBusinessAccount = ({ commit }, val: any): void => {
-  commit('mutateBusinessAccount', val)
+export const setBusinessAccountid = ({ commit }, val: any): void => {
+  commit('mutateBusinessAccountId', val)
 }

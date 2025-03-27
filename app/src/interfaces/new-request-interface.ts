@@ -77,5 +77,5 @@ export interface NewRequestIF {
   tabNumber: number
   userCancelledAnalysis: boolean
   waitingAddressSearch: WaitingAddressSearchI
-  businessAccount: any
+  businessAccountId: string
 }
