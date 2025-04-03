@@ -292,9 +292,12 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
     return (this.isAmalgamate && this.isApprovedOrConsentUnRequired)
   }
 
-  /** True if the Begin Continuation button should be shown. */
+  /**
+   * True if the Begin Continuation button should be shown.
+   * Coops (CP) aren't supported for continuation in.
+   */
   get showBeginContinuationButton (): boolean {
-    return (this.isContinuationIn && this.isApprovedOrConsentUnRequired)
+    return (this.isContinuationIn && this.isApprovedOrConsentUnRequired && this.getNr.entity_type_cd !== EntityTypes.CP)
   }
 
   /** True if the Change Name Now button should be shown. */
