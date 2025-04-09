@@ -164,6 +164,33 @@
       </div>
 
       <div
+        v-else-if="showContinuationInCoopsSection"
+        class="contact-registries ma-3"
+      >
+        <p class="font-weight-bold">
+          To complete this Continuation In, please contact us at:
+        </p>
+        <p class="contact-registries-p">
+          <v-icon small>
+            mdi-phone
+          </v-icon>&nbsp;Canada and U.S. Toll Free:
+          <a href="tel:+1877-526-1526">1-877-526-1526</a>
+        </p>
+        <p class="contact-registries-p">
+          <v-icon small>
+            mdi-phone
+          </v-icon>&nbsp;Victoria Office:
+          <a href="tel:250-387-7848">250-387-7848</a>
+        </p>
+        <p>
+          <v-icon small>
+            mdi-email
+          </v-icon>&nbsp;Email:
+          <a href="mailto:BCRegistries@gov.bc.ca">BCRegistries@gov.bc.ca</a>
+        </p>
+      </div>
+
+      <div
         v-else-if="showNameChangeButton"
         class="d-flex justify-center my-1"
       >
@@ -292,12 +319,22 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
     return (this.isAmalgamate && this.isApprovedOrConsentUnRequired)
   }
 
+  /** Checks if conditions for showing continuation options are met. */
+  private isContinuationApplicable (): boolean {
+    return (this.isContinuationIn && this.isApprovedOrConsentUnRequired)
+  }
+
   /**
    * True if the Begin Continuation button should be shown.
    * Coops (CP) aren't supported for continuation in.
    */
   get showBeginContinuationButton (): boolean {
-    return (this.isContinuationIn && this.isApprovedOrConsentUnRequired && this.getNr.entity_type_cd !== EntityTypes.CP)
+    return this.isContinuationApplicable() && this.getNr.entity_type_cd !== EntityTypes.CP
+  }
+
+  /** True if the Continuation In Coops section should be shown. */
+  get showContinuationInCoopsSection (): boolean {
+    return this.isContinuationApplicable() && this.getNr.entity_type_cd === EntityTypes.CP
   }
 
   /** True if the Change Name Now button should be shown. */
@@ -354,8 +391,13 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
 
 .contact-registries {
   font-size: $px-16;
+  color: $gray9;
   .v-icon.v-icon {
     color: $app-dk-blue;
   }
+}
+
+.contact-registries-p {
+  margin-bottom: 0.25rem;
 }
 </style>
