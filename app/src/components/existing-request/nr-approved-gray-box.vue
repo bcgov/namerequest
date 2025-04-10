@@ -121,24 +121,10 @@
           class="contact-registries mt-30"
         >
           <p>To complete this alteration, please contact us at:</p>
-          <p>
-            <v-icon small>
-              mdi-phone
-            </v-icon>&nbsp;Canada and U.S. Toll Free:
-            <a href="tel:+1877-526-1526">1-877-526-1526</a>
-          </p>
-          <p>
-            <v-icon small>
-              mdi-phone
-            </v-icon>&nbsp;Victoria Office:
-            <a href="tel:250-387-7848">250-387-7848</a>
-          </p>
-          <p>
-            <v-icon small>
-              mdi-email
-            </v-icon>&nbsp;Email:
-            <a href="mailto:BCRegistries@gov.bc.ca">BCRegistries@gov.bc.ca</a>
-          </p>
+          <ContactInfo
+            class="mt-2 contact-info-wrapper"
+            direction="col"
+          />
         </div>
         <div
           v-else
@@ -177,24 +163,10 @@
         <p class="font-weight-bold">
           To complete this Continuation In, please contact us at:
         </p>
-        <p class="contact-registries-p">
-          <v-icon small>
-            mdi-phone
-          </v-icon>&nbsp;Canada and U.S. Toll Free:
-          <a href="tel:+1877-526-1526">1-877-526-1526</a>
-        </p>
-        <p class="contact-registries-p">
-          <v-icon small>
-            mdi-phone
-          </v-icon>&nbsp;Victoria Office:
-          <a href="tel:250-387-7848">250-387-7848</a>
-        </p>
-        <p>
-          <v-icon small>
-            mdi-email
-          </v-icon>&nbsp;Email:
-          <a href="mailto:BCRegistries@gov.bc.ca">BCRegistries@gov.bc.ca</a>
-        </p>
+        <ContactInfo
+          class="mt-2 contact-info-wrapper"
+          direction="col"
+        />
       </div>
 
       <!-- Name Change button section -->
@@ -269,8 +241,13 @@ import { Getter } from 'vuex-class'
 import { CommonMixin } from '@/mixins'
 import { NameRequestI } from '@/interfaces'
 import { EntityTypes, NrRequestActionCodes, NrState } from '@/enums'
+import ContactInfo from '@/components/common/contact-info.vue'
 
-@Component({})
+@Component({
+  components: {
+    ContactInfo
+  }
+})
 export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
   @Prop({ default: 'TBD' }) readonly nrNum!: string
   @Prop({ default: 'TBD' }) readonly approvedName!: string
@@ -405,9 +382,24 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
   .v-icon.v-icon {
     color: $app-dk-blue;
   }
-}
 
-.contact-registries-p {
-  margin-bottom: 0.25rem;
+  /**
+   * This styling here is needed because the ContactInfo component is used in multiple places across the app
+   * with different background colors and styling requirements. In this specific context (gray background),
+   * we need to force certain colors to ensure proper visibility, while allowing the component to maintain
+   * its default styling elsewhere in the application. This prevents text/icons from being white.
+   */
+  ::v-deep .contact-info-wrapper {
+    color: $gray9 !important;
+    .contact-icon {
+      color: $app-dk-blue !important;
+    }
+    .contact-key {
+      color: $gray9 !important;
+    }
+    .contact-value {
+      color: $app-blue !important;
+    }
+  }
 }
 </style>
