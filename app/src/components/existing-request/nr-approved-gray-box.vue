@@ -330,7 +330,7 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
   }
 
   /** Checks if conditions for showing continuation options are met. */
-  private isContinuationApplicable (): boolean {
+  get isContinuationApplicable (): boolean {
     return (this.isContinuationIn && this.isApprovedOrConsentUnRequired)
   }
 
@@ -339,12 +339,12 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
    * Coops (CP) aren't supported for continuation in.
    */
   get showBeginContinuationButton (): boolean {
-    return this.isContinuationApplicable() && this.getNr.entity_type_cd !== EntityTypes.CP
+    return this.isContinuationApplicable && this.getNr.entity_type_cd !== EntityTypes.CP
   }
 
   /** True if the Continuation In Coops section should be shown. */
   get showContinuationInCoopsSection (): boolean {
-    return this.isContinuationApplicable() && this.getNr.entity_type_cd === EntityTypes.CP
+    return this.isContinuationApplicable && this.getNr.entity_type_cd === EntityTypes.CP
   }
 
   /** True if the Change Name Now button should be shown. */
