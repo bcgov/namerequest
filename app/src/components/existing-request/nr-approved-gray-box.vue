@@ -4,6 +4,7 @@
     class="bg-light-gray"
   >
     <v-col class="text-body-4 px-5 py-4">
+      <!-- Register Your Business button section -->
       <div
         v-if="showRegisterButton"
         class="d-flex justify-center my-1"
@@ -18,6 +19,7 @@
         </v-btn>
       </div>
 
+      <!-- Incorporate Your Business button section -->
       <div
         v-else-if="showIncorporateButton"
         class="d-flex justify-center my-1"
@@ -32,6 +34,7 @@
         </v-btn>
       </div>
 
+      <!-- Go to Societies Online button section -->
       <div
         v-else-if="showGoToSocietiesButton"
         class="d-flex justify-center my-1"
@@ -50,6 +53,7 @@
         </v-btn>
       </div>
 
+      <!-- Amalgamate Now button section -->
       <div
         v-else-if="showAmalgamateNowButton"
         class="d-flex justify-center my-1"
@@ -78,6 +82,7 @@
         </v-btn>
       </div>
 
+      <!-- Begin Continuation button section -->
       <div
         v-else-if="showBeginContinuationButton"
         class="d-flex justify-center my-1"
@@ -106,6 +111,7 @@
         </v-btn>
       </div>
 
+      <!-- Alter Now button section -->
       <div
         v-else-if="showAlterNowButton"
         class="my-1"
@@ -163,6 +169,7 @@
         </div>
       </div>
 
+      <!-- Continuation In Coops contact information section -->
       <div
         v-else-if="showContinuationInCoopsSection"
         class="contact-registries ma-3"
@@ -190,6 +197,7 @@
         </p>
       </div>
 
+      <!-- Name Change button section -->
       <div
         v-else-if="showNameChangeButton"
         class="d-flex justify-center my-1"
@@ -218,6 +226,7 @@
         </v-btn>
       </div>
 
+      <!-- Default approved message section -->
       <p
         v-else
         class="mt-30"
@@ -227,6 +236,7 @@
         for how to use your Name Request.
       </p>
 
+      <!-- Important note section -->
       <v-row
         no-gutters
         class="important-note mt-30 mb-30"
