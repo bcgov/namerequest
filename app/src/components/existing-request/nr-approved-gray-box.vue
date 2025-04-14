@@ -166,6 +166,7 @@
         <ContactInfo
           class="mt-2 contact-info-wrapper"
           direction="col"
+          :isHelpDesk="false"
         />
       </div>
 
