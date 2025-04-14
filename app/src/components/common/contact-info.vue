@@ -4,7 +4,7 @@
     :class="{ 'flex-column': direction === 'col' }"
   >
     <div
-      v-for="(contact, i) in contacts"
+      v-for="(contact, i) in contactsToShow"
       :key="i"
       class="contact-container"
       :class="{ 'justify-center': direction === 'row' }"
@@ -34,26 +34,51 @@ export default class ContactInfo extends Vue {
   @Prop({ default: 'row' })
   readonly direction: string
 
-  readonly contacts = [
-    {
-      icon: 'mdi-phone',
-      key: 'Canada and U.S. Toll Free:',
-      val: '1-877-370-1033',
-      href: 'tel:+1-877-370-1033'
-    },
-    {
-      icon: 'mdi-phone',
-      key: 'Victoria Office:',
-      val: '250-370-1033',
-      href: 'tel:+1-250-370-1033'
-    },
-    {
-      icon: 'mdi-email',
-      key: 'Email:',
-      val: 'BCRegistries@gov.bc.ca',
-      href: 'mailto:BCRegistries@gov.bc.ca'
-    }
-  ]
+  /** If true, display help desk contact numbers, otherwise display BC Registries staff contact numbers. */
+  @Prop({ default: true })
+  readonly isHelpDesk: boolean
+
+  get contactsToShow () {
+    const phoneContacts = this.isHelpDesk
+      ? [
+        {
+          icon: 'mdi-phone',
+          key: 'Canada and U.S. Toll Free:',
+          val: '1-877-370-1033',
+          href: 'tel:+1-877-370-1033'
+        },
+        {
+          icon: 'mdi-phone',
+          key: 'Victoria Office:',
+          val: '250-370-1033',
+          href: 'tel:+1-250-370-1033'
+        }
+      ]
+      : [
+        {
+          icon: 'mdi-phone',
+          key: 'Canada and U.S. Toll Free:',
+          val: '1-877-526-1526',
+          href: 'tel:+1-877-526-1526'
+        },
+        {
+          icon: 'mdi-phone',
+          key: 'Victoria Office:',
+          val: '250-387-7848',
+          href: 'tel:+1-250-387-7848'
+        }
+      ]
+
+    return [
+      ...phoneContacts,
+      {
+        icon: 'mdi-email',
+        key: 'Email:',
+        val: 'BCRegistries@gov.bc.ca',
+        href: 'mailto:BCRegistries@gov.bc.ca'
+      }
+    ]
+  }
 }
 </script>
 

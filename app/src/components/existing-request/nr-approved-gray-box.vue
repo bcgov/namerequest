@@ -4,6 +4,7 @@
     class="bg-light-gray"
   >
     <v-col class="text-body-4 px-5 py-4">
+      <!-- Register Your Business button section -->
       <div
         v-if="showRegisterButton"
         class="d-flex justify-center my-1"
@@ -18,6 +19,7 @@
         </v-btn>
       </div>
 
+      <!-- Incorporate Your Business button section -->
       <div
         v-else-if="showIncorporateButton"
         class="d-flex justify-center my-1"
@@ -32,6 +34,7 @@
         </v-btn>
       </div>
 
+      <!-- Go to Societies Online button section -->
       <div
         v-else-if="showGoToSocietiesButton"
         class="d-flex justify-center my-1"
@@ -50,6 +53,7 @@
         </v-btn>
       </div>
 
+      <!-- Amalgamate Now button section -->
       <div
         v-else-if="showAmalgamateNowButton"
         class="d-flex justify-center my-1"
@@ -78,6 +82,7 @@
         </v-btn>
       </div>
 
+      <!-- Begin Continuation button section -->
       <div
         v-else-if="showBeginContinuationButton"
         class="d-flex justify-center my-1"
@@ -106,6 +111,7 @@
         </v-btn>
       </div>
 
+      <!-- Alter Now button section -->
       <div
         v-else-if="showAlterNowButton"
         class="my-1"
@@ -115,24 +121,10 @@
           class="contact-registries mt-30"
         >
           <p>To complete this alteration, please contact us at:</p>
-          <p>
-            <v-icon small>
-              mdi-phone
-            </v-icon>&nbsp;Canada and U.S. Toll Free:
-            <a href="tel:+1877-526-1526">1-877-526-1526</a>
-          </p>
-          <p>
-            <v-icon small>
-              mdi-phone
-            </v-icon>&nbsp;Victoria Office:
-            <a href="tel:250-387-7848">250-387-7848</a>
-          </p>
-          <p>
-            <v-icon small>
-              mdi-email
-            </v-icon>&nbsp;Email:
-            <a href="mailto:BCRegistries@gov.bc.ca">BCRegistries@gov.bc.ca</a>
-          </p>
+          <ContactInfo
+            class="mt-2 contact-info-wrapper"
+            direction="col"
+          />
         </div>
         <div
           v-else
@@ -163,6 +155,22 @@
         </div>
       </div>
 
+      <!-- Continuation In Coops contact information section -->
+      <div
+        v-else-if="showContinuationInCoopsSection"
+        class="contact-registries ma-3"
+      >
+        <p class="font-weight-bold">
+          To complete this Continuation In, please contact us at:
+        </p>
+        <ContactInfo
+          class="mt-2 contact-info-wrapper"
+          direction="col"
+          :isHelpDesk="false"
+        />
+      </div>
+
+      <!-- Name Change button section -->
       <div
         v-else-if="showNameChangeButton"
         class="d-flex justify-center my-1"
@@ -191,6 +199,7 @@
         </v-btn>
       </div>
 
+      <!-- Default approved message section -->
       <p
         v-else
         class="mt-30"
@@ -200,6 +209,7 @@
         for how to use your Name Request.
       </p>
 
+      <!-- Important note section -->
       <v-row
         no-gutters
         class="important-note mt-30 mb-30"
@@ -232,8 +242,13 @@ import { Getter } from 'vuex-class'
 import { CommonMixin } from '@/mixins'
 import { NameRequestI } from '@/interfaces'
 import { EntityTypes, NrRequestActionCodes, NrState } from '@/enums'
+import ContactInfo from '@/components/common/contact-info.vue'
 
-@Component({})
+@Component({
+  components: {
+    ContactInfo
+  }
+})
 export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
   @Prop({ default: 'TBD' }) readonly nrNum!: string
   @Prop({ default: 'TBD' }) readonly approvedName!: string
@@ -292,9 +307,22 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
     return (this.isAmalgamate && this.isApprovedOrConsentUnRequired)
   }
 
-  /** True if the Begin Continuation button should be shown. */
-  get showBeginContinuationButton (): boolean {
+  /** Checks if conditions for showing continuation options are met. */
+  get isContinuationApplicable (): boolean {
     return (this.isContinuationIn && this.isApprovedOrConsentUnRequired)
+  }
+
+  /**
+   * True if the Begin Continuation button should be shown.
+   * Coops (CP) aren't supported for continuation in.
+   */
+  get showBeginContinuationButton (): boolean {
+    return this.isContinuationApplicable && this.getNr.entity_type_cd !== EntityTypes.CP
+  }
+
+  /** True if the Continuation In Coops section should be shown. */
+  get showContinuationInCoopsSection (): boolean {
+    return this.isContinuationApplicable && this.getNr.entity_type_cd === EntityTypes.CP
   }
 
   /** True if the Change Name Now button should be shown. */
@@ -351,8 +379,28 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
 
 .contact-registries {
   font-size: $px-16;
+  color: $gray9;
   .v-icon.v-icon {
     color: $app-dk-blue;
+  }
+
+  /**
+   * This styling here is needed because the ContactInfo component is used in multiple places across the app
+   * with different background colors and styling requirements. In this specific context (gray background),
+   * we need to force certain colors to ensure proper visibility, while allowing the component to maintain
+   * its default styling elsewhere in the application. This prevents text/icons from being white.
+   */
+  ::v-deep .contact-info-wrapper {
+    color: $gray9 !important;
+    .contact-icon {
+      color: $app-dk-blue !important;
+    }
+    .contact-key {
+      color: $gray9 !important;
+    }
+    .contact-value {
+      color: $app-blue !important;
+    }
   }
 }
 </style>

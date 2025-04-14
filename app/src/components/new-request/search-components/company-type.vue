@@ -4,7 +4,10 @@
     :cols="cols"
     :md="md"
   >
-    <header v-if="!hideCompanyTypeSelection" class="h6">
+    <header
+      v-if="!hideCompanyTypeSelection"
+      class="h6"
+    >
       Select a company type:
     </header>
 
