@@ -26,7 +26,7 @@
     "@mdi/font": "^4.9.95",
     "@sentry/browser": "^7.110.1",
     "@sentry/integrations": "^7.110.1",
-    "axios": "^0.27.2",
+    "axios": "^0.30.0",
     "babel-plugin-transform-decorators": "^6.24.1",
     "core-js": "^3.37.0",
     "http-status-codes": "^1.4.0",
