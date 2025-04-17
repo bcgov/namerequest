@@ -6,7 +6,7 @@
   >
     <template v-if="isConversion && !isAlterOnline(getConversionType)">
       <div class="contact-registries">
-        <p>To complete this alteration, please contact us at:</p>
+        <p>To complete this alteration, contact us at:</p>
         <p>
           <v-icon small>
             mdi-phone

@@ -120,7 +120,7 @@
           v-if="!isAllowAlterOnline && !getIsLearBusiness"
           class="contact-registries mt-30"
         >
-          <p>To complete this alteration, please contact us at:</p>
+          <p>To complete this alteration, contact us at:</p>
           <ContactInfo
             class="mt-2 contact-info-wrapper"
             direction="col"
@@ -161,7 +161,7 @@
         class="contact-registries ma-3"
       >
         <p class="font-weight-bold">
-          To complete this Continuation In, please contact us at:
+          To complete this Continuation In, contact us at:
         </p>
         <ContactInfo
           class="mt-2 contact-info-wrapper"
