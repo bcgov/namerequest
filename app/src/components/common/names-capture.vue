@@ -764,29 +764,43 @@ export default class NamesCapture extends Mixins(CommonMixin) {
       return false
     }
 
+    // Validate designations for all name choices
+    const validDesignation1 = this.validateDesignation('name1')
+    const validDesignation2 = this.validateDesignation('name2')
+    const validDesignation3 = this.validateDesignation('name3')
+    checkInvalidDesignation(this.getEntityTypeCd.toString(), this.nameChoices['name1'])
+
     if (this.getEditMode) {
       let outcome = true
-      if (designationAtEnd) {
-        if (!name1() || !name2() || !name3()) {
-          outcome = false
-        } else {
-          for (let choice of [1, 2, 3]) {
-            if (nameChoices[`name${choice}`]) {
-              if (!nameChoices[`designation${choice}`]) {
-                if (location === Location.BC || this.isAssumedName) {
-                  messages[`des${choice}`] = 'Please choose a designation'
-                  this.showDesignationErrors[`des${choice}`] = true
-                  outcome = false
-                }
-              } else {
-                this.messages[`des${choice}`] = ''
+
+      if (!name1() || !name2() || !name3() || !validDesignation1 || !validDesignation2 || !validDesignation3) {
+        if (!validDesignation1) {
+          messages.name1 = checkInvalidDesignation(this.getEntityTypeCd.toString(), this.nameChoices['name1'])
+        }
+        if (!validDesignation2) {
+          messages.name2 = checkInvalidDesignation(this.getEntityTypeCd.toString(), this.nameChoices['name2'])
+        }
+        if (!validDesignation3) {
+          messages.name3 = checkInvalidDesignation(this.getEntityTypeCd.toString(), this.nameChoices['name3'])
+        }
+        outcome = false
+      } else {
+        for (let choice of [1, 2, 3]) {
+          if (nameChoices[`name${choice}`]) {
+            if (!nameChoices[`designation${choice}`]) {
+              if (location === Location.BC || this.isAssumedName) {
+                messages[`des${choice}`] = 'Please choose a designation'
+                this.showDesignationErrors[`des${choice}`] = true
+                outcome = false
               }
+            } else {
+              this.messages[`des${choice}`] = ''
             }
           }
         }
-        if (!outcome) {
-          this.hideDetails = 'auto'
-        }
+      }
+      if (!outcome) {
+        this.hideDetails = 'auto'
       }
       return outcome
     }
@@ -794,11 +808,6 @@ export default class NamesCapture extends Mixins(CommonMixin) {
     let step1 = name1()
     let step2 = name2()
     let step3 = name3()
-
-    // Validate designations for all name choices
-    const validDesignation1 = this.validateDesignation('name1')
-    const validDesignation2 = this.validateDesignation('name2')
-    const validDesignation3 = this.validateDesignation('name3')
 
     if (!validDesignation1 || !validDesignation2 || !validDesignation3) {
       return false
