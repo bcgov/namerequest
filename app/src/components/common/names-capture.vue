@@ -783,10 +783,12 @@ export default class NamesCapture extends Mixins(CommonMixin) {
         if (!validDesignation3) {
           messages.name3 = checkInvalidDesignation(this.getEntityTypeCd.toString(), this.nameChoices['name3'])
         }
-        outcome = false
+        if (messages.name1 || messages.name2 || messages.name3) {
+          outcome = false
+        }
       } else {
         for (let choice of [1, 2, 3]) {
-          if (nameChoices[`name${choice}`]) {
+          if (nameChoices[`name${choice}`] && designationAtEnd) {
             if (!nameChoices[`designation${choice}`]) {
               if (location === Location.BC || this.isAssumedName) {
                 messages[`des${choice}`] = 'Please choose a designation'
