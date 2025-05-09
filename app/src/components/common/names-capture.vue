@@ -764,11 +764,14 @@ export default class NamesCapture extends Mixins(CommonMixin) {
       return false
     }
 
+    let step1 = name1()
+    let step2 = name2()
+    let step3 = name3()
+
     // Validate designations for all name choices
     const validDesignation1 = this.validateDesignation('name1')
     const validDesignation2 = this.validateDesignation('name2')
     const validDesignation3 = this.validateDesignation('name3')
-    checkInvalidDesignation(this.getEntityTypeCd.toString(), this.nameChoices['name1'])
 
     if (this.getEditMode) {
       let outcome = true
@@ -806,10 +809,6 @@ export default class NamesCapture extends Mixins(CommonMixin) {
       }
       return outcome
     }
-
-    let step1 = name1()
-    let step2 = name2()
-    let step3 = name3()
 
     if (!validDesignation1 || !validDesignation2 || !validDesignation3) {
       return false
