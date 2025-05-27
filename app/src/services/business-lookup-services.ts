@@ -37,13 +37,24 @@ export default class BusinessLookupServices {
    * @returns a promise to return the search results
    */
   static async search (query: string, status = ''): Promise<BusinessLookupResultIF[]> {
-    const legalType = 'A,BC,BEN,C,CBEN,CC,CCC,CP,CUL,FI,GP,LL,LLC,LP,PA,S,SP,ULC,XCP,XL,XP,XS'
+    const legalTypes = [
+      'A', 'BC', 'BEN', 'C', 'CBEN', 'CC', 'CCC', 'CP', 'CUL', 'FI',
+      'GP', 'LL', 'LLC', 'LP', 'PA', 'S', 'SP', 'ULC', 'XCP', 'XL', 'XP', 'XS'
+    ]
+    const url = this.registriesSearchApiUrl + 'search/businesses'
+    const payload = {
+      start: 0,
+      rows: 20,
+      query: {
+        value: query
+      },
+      categories: {
+        legalType: legalTypes,
+        ...(status ? { status: [status] } : {})
+      }
+    }
 
-    let url = this.registriesSearchApiUrl + 'businesses/search/facets?start=0&rows=20'
-    url += `&categories=legalType:${legalType}${status ? '::status:' + status : ''}`
-    url += `&query=value:${encodeURIComponent(query)}`
-
-    return axios.get(url, {
+    return axios.post(url, payload, {
       headers: {
         'x-apikey': this.registriesSearchApiKey,
         'Account-Id': this.accountId

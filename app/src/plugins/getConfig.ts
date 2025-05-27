@@ -50,7 +50,7 @@ export async function getConfig (): Promise<EnvConfigI> {
   sessionStorage.setItem('AUTH_WEB_URL', authWebUrl)
 
   const registriesSearchApiUrl: string =
-    (process.env.VUE_APP_REGISTRIES_SEARCH_API_URL + process.env.VUE_APP_REGISTRIES_SEARCH_API_VERSION + '/')
+    (process.env.VUE_APP_REGISTRIES_SEARCH_API_URL + process.env.VUE_APP_REGISTRIES_SEARCH_API_VERSION_2 + '/')
   sessionStorage.setItem('REGISTRIES_SEARCH_API_URL', registriesSearchApiUrl)
 
   const businessApiKey: string = process.env.VUE_APP_REGISTRIES_SEARCH_API_KEY
