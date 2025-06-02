@@ -15,6 +15,7 @@ import { RequestActions } from '@/list-data'
 import { NrAction, NrState, NrRequestActionCodes, RollbackActions } from '@/enums'
 import { NameRequestPayment } from '@/modules/payment/models'
 import { appBaseURL } from '../router/router'
+import pkg from '../../package.json'
 
 const ANALYSIS_TIMEOUT_MS = 3 * 60 * 1000 // 3 minutes
 const axiosNamex = Axios.create()
@@ -26,6 +27,7 @@ axiosNamex.interceptors.request.use(
     config.headers.common['BCREG-NRL'] = sessionStorage.getItem('BCREG-NRL')
     config.headers.common['BCREG-User-Phone'] = sessionStorage.getItem('BCREG-phoneNumber')
     config.headers.common['BCREG-User-Email'] = sessionStorage.getItem('BCREG-emailAddress')
+    config.headers.common['App-Name'] = pkg.name
     // eslint-disable-next-line no-console
     // console.log('in interceptor, common headers: ', config?.headers?.common)
     return config
