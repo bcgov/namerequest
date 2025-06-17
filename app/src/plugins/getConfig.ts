@@ -59,9 +59,6 @@ export async function getConfig (): Promise<EnvConfigI> {
   const businessApiKey: string = process.env.VUE_APP_REGISTRIES_SEARCH_API_KEY
   sessionStorage.setItem('BUSINESS_API_KEY', businessApiKey)
 
-  const sentryDsn: string = process.env.VUE_APP_SENTRY_DSN;
-  (<any>window).sentryDsn = sentryDsn
-
   const hotjarId: string = process.env.VUE_APP_HOTJAR_ID;
   (<any>window).hotjarId = hotjarId
 

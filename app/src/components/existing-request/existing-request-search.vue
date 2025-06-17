@@ -246,7 +246,7 @@ export default class ExistingRequestSearch extends Vue {
   mounted () {
     this.$nextTick(() => {
       if (this.$el?.querySelector instanceof Function) {
-        // add classname to button text (for more detail in Sentry breadcrumbs)
+        // add classname to button text (for more detail in breadcrumbs)
         const retrieveNrBtn = this.$el.querySelector('#retrieve-name-btn > span')
         if (retrieveNrBtn) retrieveNrBtn.classList.add('retrieve-nr-btn')
       }

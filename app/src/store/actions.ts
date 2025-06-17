@@ -944,7 +944,7 @@ const getQuickSearch = async (
     }
   } catch (err) {
     const msg = await NamexServices.handleApiError(err, 'Could not get quick search')
-    // send error to sentry and move on to detailed search
+    // send error and move on to detailed search
     // (do not show error to user)
     console.error('getQuickSearch() =', msg) // eslint-disable-line no-console
     // add errors to name check for all quick search checks

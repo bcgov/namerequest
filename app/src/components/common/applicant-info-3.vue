@@ -467,7 +467,7 @@ export default class ApplicantInfo3 extends Vue {
     if (val) {
       this.$nextTick(() => {
         if (this.$el?.querySelector instanceof Function) {
-          // add classname to button text (for more detail in Sentry breadcrumbs)
+          // add classname to button text (for more detail in breadcrumbs)
           const clientReviewBackBtn = this.$el.querySelector('.submit-back-btn > span')
           if (clientReviewBackBtn) clientReviewBackBtn.classList.add('client-review-back-btn')
           const clientReviewConfirmBtn = this.$el.querySelector('.submit-continue-btn > span')

@@ -320,7 +320,7 @@ export default class ConfirmNrDialog extends Mixins(
     if (val) {
       this.$nextTick(() => {
         if (this.$el?.querySelector instanceof Function) {
-          // add classname to button text (for more detail in Sentry breadcrumbs)
+          // add classname to button text (for more detail in breadcrumbs)
           const confirmNrCancelBtn = this.$el.querySelector('#confirm-nr-cancel-btn > span')
           if (confirmNrCancelBtn) confirmNrCancelBtn.classList.add('confirm-nr-cancel-btn')
           const confirmNrContinueBtn = this.$el.querySelector('#confirm-nr-continue-btn > span')

@@ -256,7 +256,7 @@ export default class UpgradeDialog extends Mixins(
     if (val) {
       this.$nextTick(() => {
         if (this.$el?.querySelector instanceof Function) {
-          // add classname to button text (for more detail in Sentry breadcrumbs)
+          // add classname to button text (for more detail in breadcrumbs)
           const upgradeContinueBtn = this.$el.querySelector('#upgrade-continue-btn > span')
           if (upgradeContinueBtn) upgradeContinueBtn.classList.add('upgrade-continue-btn')
           const upgradeSubmitBtn = this.$el.querySelector('#upgrade-submit-btn > span')

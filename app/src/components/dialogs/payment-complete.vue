@@ -169,7 +169,7 @@ export default class PaymentCompleteDialog extends Mixins(
     if (val) {
       this.$nextTick(() => {
         if (this.$el?.querySelector instanceof Function) {
-          // add classname to button text (for more detail in Sentry breadcrumbs)
+          // add classname to button text (for more detail in breadcrumbs)
           const paymentSuccessfulDoneBtn = this.$el.querySelector('#receipt-close-btn > span')
           if (paymentSuccessfulDoneBtn) {
             paymentSuccessfulDoneBtn.classList

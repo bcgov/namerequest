@@ -64,7 +64,7 @@ export default class MainContainer extends Mixins(DisplayedComponentMixin) {
   private mounted () {
     this.$nextTick(() => {
       if (this.$el?.querySelector instanceof Function) {
-        // add classname to button text (for more detail in Sentry breadcrumbs)
+        // add classname to button text (for more detail in breadcrumbs)
         if (this.showExit) {
           const exitBtn = this.$el.querySelector('#back-to-search-btn > span')
           if (exitBtn) exitBtn.classList.add('exit-btn')

@@ -16,7 +16,6 @@ const defaultFlagSet: LDFlagSet = {
   'enable-web-chat': false, // by default, old webchat is disabled
   'hardcoded_priority_wait_time': 0, // by default, use actual wait time
   'hardcoded_regular_wait_time': 0, // by default, use actual wait time
-  'sentry-enable': false, // by default, no sentry logs
   'supported-amalgamation-entities': [],
   'supported-continuation-in-entities': [],
   'supported-incorporation-registration-entities': [],

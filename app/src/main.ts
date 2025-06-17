@@ -3,10 +3,8 @@ import App from './App.vue'
 import Hotjar from 'vue-hotjar'
 import { getVueRouter } from '@/router'
 import { getVuexStore } from '@/store'
-import { getConfig, GetFeatureFlag, getVuetify, InitLdClient, isSigningIn, isSigningOut } from '@/plugins'
+import { getConfig, getVuetify, InitLdClient, isSigningIn, isSigningOut } from '@/plugins'
 import KeycloakService from 'sbc-common-components/src/services/keycloak.services'
-import * as Sentry from '@sentry/browser'
-import * as Integrations from '@sentry/integrations'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import ConfigHelper from 'sbc-common-components/src/util/config-helper'
 
@@ -38,29 +36,6 @@ async function startVue () {
   // FUTURE: remove this config assignment if possible
   // Load Vuex config
   store.state.config = envConfig
-
-  if (GetFeatureFlag('sentry-enable')) {
-    // Initialize Sentry
-    if (window['sentryDsn']) {
-      console.info('Initializing Sentry...') // eslint-disable-line no-console
-      const release = process.env.ABOUT_TEXT.replace(/<br>.*/, '')
-      Sentry.init({
-        dsn: window['sentryDsn'],
-        integrations: [
-          // new Integrations.Vue({ Vue, attachProps: true }), // FUTURE maybe
-          new Integrations.CaptureConsole({ levels: ['error'] })
-        ],
-        ignoreErrors: [
-          // these errors are safe to ignore, ref: https://stackoverflow.com/a/50387233/8679162
-          'ResizeObserver loop limit exceeded',
-          'ResizeObserver loop completed with undelivered notifications',
-          // ignore Launch Darkly errors (partial match)
-          'LD: [error]'
-        ],
-        release
-      })
-    }
-  }
 
   // Initialize Keycloak / sync SSO
   await syncSession()
@@ -116,6 +91,5 @@ async function syncSession () {
 
 // NB: the .then() makes sure linter doesn't pick up on an un-awaited promise
 startVue().then().catch(error => {
-  Sentry.captureException(error)
   console.error('main =', error) // eslint-disable-line no-console
 })

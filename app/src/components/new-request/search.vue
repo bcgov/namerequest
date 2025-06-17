@@ -459,7 +459,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   private mounted () {
     this.$nextTick(() => {
       if (this.$el.querySelector) {
-        // add classname to button text (for more detail in Sentry breadcrumbs)
+        // add classname to button text (for more detail in breadcrumbs)
         const searchNameBtn = this.$el.querySelector('#search-name-btn > span')
         if (searchNameBtn) searchNameBtn.classList.add('search-name-btn')
       }
