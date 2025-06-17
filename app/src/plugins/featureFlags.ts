@@ -19,7 +19,8 @@ const defaultFlagSet: LDFlagSet = {
   'sentry-enable': false, // by default, no sentry logs
   'supported-amalgamation-entities': [],
   'supported-continuation-in-entities': [],
-  'supported-incorporation-registration-entities': []
+  'supported-incorporation-registration-entities': [],
+  'use-business-api-gw-url': false
 }
 
 /**
