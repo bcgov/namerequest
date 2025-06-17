@@ -19,7 +19,7 @@ export default class BusinessServices {
    * Throws an exception on error.
    */
   static async createBusiness (businessRequest: BusinessRequest): Promise<any> {
-    const url = `${BusinessServices.legalApiUrl()}/businesses?draft=true`
+    const url = `${this.legalApiUrl()}/businesses?draft=true`
 
     // Add API gateway-specific headers (in addition to interceptor)
     const extraHeaders = GetFeatureFlag('use-business-api-gw-url') ? {
