@@ -26,6 +26,9 @@ export async function getConfig (): Promise<EnvConfigI> {
   const legalApiUrl: string = process.env.VUE_APP_LEGAL_API_URL + process.env.VUE_APP_LEGAL_API_VERSION_2
   sessionStorage.setItem('LEGAL_API_URL', legalApiUrl)
 
+  const businessApiGwUrl: string = process.env.VUE_APP_BUSINESS_API_GW_URL + process.env.VUE_APP_LEGAL_API_VERSION_2
+  sessionStorage.setItem('BUSINESS_API_GW_URL', businessApiGwUrl)
+
   const authApiUrl: string = process.env.VUE_APP_AUTH_API_URL + process.env.VUE_APP_AUTH_API_VERSION
   sessionStorage.setItem('AUTH_API_URL', authApiUrl)
 
