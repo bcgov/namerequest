@@ -263,7 +263,7 @@ export default class RenewDialog extends Mixins(
     if (val) {
       this.$nextTick(() => {
         if (this.$el?.querySelector instanceof Function) {
-          // add classname to button text (for more detail in Sentry breadcrumbs)
+          // add classname to button text (for more detail in breadcrumbs)
           const renewContinueBtn = this.$el.querySelector('#renew-continue-btn > span')
           if (renewContinueBtn) renewContinueBtn.classList.add('renew-continue-btn')
           const renewSubmitBtn = this.$el.querySelector('#renew-submit-button > span')

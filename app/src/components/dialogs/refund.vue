@@ -216,7 +216,7 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
     if (val) {
       this.$nextTick(() => {
         if (this.$el?.querySelector instanceof Function) {
-          // add classname to button text (for more detail in Sentry breadcrumbs)
+          // add classname to button text (for more detail in breadcrumbs)
           const refundCancelBtn = this.$el.querySelector('#cancel-nr-btn > span')
           if (refundCancelBtn) refundCancelBtn.classList.add('refund-cancel-btn')
           const refundKeepBtn = this.$el.querySelector('#keep-nr-btn > span')

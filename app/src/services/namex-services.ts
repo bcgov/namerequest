@@ -564,7 +564,7 @@ export default class NamexServices {
     try {
       // safety checks
       if (!nrId) {
-        // NB: use console.error to capture issues to Sentry
+        // NB: use console.error to capture issues
         // ultimately this should never happen
         console.error('rollbackNameRequest(), invalid NR id') // eslint-disable-line no-console
         return false

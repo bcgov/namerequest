@@ -331,7 +331,7 @@ export default class ResubmitDialog extends Mixins(
     if (val) {
       this.$nextTick(() => {
         if (this.$el?.querySelector instanceof Function) {
-          // add classname to button text (for more detail in Sentry breadcrumbs)
+          // add classname to button text (for more detail in breadcrumbs)
           const resubmitContinueBtn = this.$el.querySelector('#resubmit-continue-btn > span')
           if (resubmitContinueBtn) resubmitContinueBtn.classList.add('resubmit-continue-btn')
           const resubmitSubmitBtn = this.$el.querySelector('#resubmit-submit-btn > span')

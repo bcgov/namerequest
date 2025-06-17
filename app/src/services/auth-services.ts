@@ -56,7 +56,7 @@ export default class AuthServices {
    */
   static async fetchUserInfo (): Promise<any> {
     // don't fetch user info if session isn't synced (ie, user is not logged in)
-    // to pre-empt a console error and Sentry log
+    // to pre-empt a console error
     if (sessionStorage.getItem('SESSION_SYNCED') !== 'true') return null
 
     // don't fetch user info if there is no KC token (safety check)

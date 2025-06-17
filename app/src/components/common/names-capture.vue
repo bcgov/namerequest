@@ -983,7 +983,7 @@ export default class NamesCapture extends Mixins(CommonMixin) {
     if (val) {
       this.$nextTick(() => {
         if (this.$el?.querySelector instanceof Function) {
-          // add classname to button text (for more detail in Sentry breadcrumbs)
+          // add classname to button text (for more detail in breadcrumbs)
           const choicesContinueBtn = this.$el.querySelector('.submit-continue-btn > span')
           if (choicesContinueBtn) choicesContinueBtn.classList.add('choices-continue-btn')
         }

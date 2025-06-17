@@ -242,7 +242,7 @@ export default class RetryDialog extends Mixins(
     if (val) {
       this.$nextTick(() => {
         if (this.$el?.querySelector instanceof Function) {
-          // add classname to button text (for more detail in Sentry breadcrumbs)
+          // add classname to button text (for more detail in breadcrumbs)
           const retryContinueBtn = this.$el.querySelector('#retry-continue-btn > span')
           if (retryContinueBtn) retryContinueBtn.classList.add('retry-continue-btn')
           const retryNrBtn = this.$el.querySelector('#retry-submit-btn > span')
