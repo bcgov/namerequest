@@ -543,6 +543,7 @@ export const getEntityTypesBC = (state: StateIF): EntityI[] => {
 export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
   let _entityTypesXproData = EntityTypesXproData
   if (isLocationCA(state)) {
+    _entityTypesXproData = _entityTypesXproData.filter(ent => ent.value !== EntityTypes.XUL)
     _entityTypesXproData = _entityTypesXproData.filter(ent => ent.value !== EntityTypes.RLC)
   }
 
