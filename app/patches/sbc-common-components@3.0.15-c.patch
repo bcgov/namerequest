@@ -1,0 +1,16 @@
+diff --git a/src/util/interceptors.ts b/src/util/interceptors.ts
+index 4db4ab9c6bc08453cd7448fb0027f8e3e5963ffc..0ceb22186ca02407914a2049df4c1aba72b87102 100644
+--- a/src/util/interceptors.ts
++++ b/src/util/interceptors.ts
+@@ -5,6 +5,11 @@ import { SessionStorageKeys } from './constants'
+ export function addAxiosInterceptors (axiosInstance: AxiosInstance): AxiosInstance {
+   axiosInstance.interceptors.request.use(config => {
+     const token = ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakToken)
++    const authGatewayApiKey = process.env.VUE_APP_BUSINESS_API_KEY
++
++    if (authGatewayApiKey && config.url.includes(ConfigHelper.getAuthAPIUrl())) {
++      config.headers['x-apikey'] = authGatewayApiKey
++    }
+     if (token) {
+       config.headers.Authorization = `Bearer ${token}`
+     }
