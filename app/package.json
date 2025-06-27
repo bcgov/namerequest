@@ -1,6 +1,6 @@
 {
   "name": "name-request",
-  "version": "5.5.38",
+  "version": "5.5.39",
   "private": true,
   "appName": "Name Request UI",
   "sbcName": "SBC Common Components",
@@ -85,5 +85,10 @@
     "vuex-module-decorators": "^1.2.0",
     "webpack": "~5.78.0",
     "webpack-bundle-analyzer": "^3.9.0"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "sbc-common-components@3.0.15-c": "patches/sbc-common-components@3.0.15-c.patch"
+    }
   }
 }
