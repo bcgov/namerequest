@@ -56,9 +56,6 @@ export async function getConfig (): Promise<EnvConfigI> {
     (process.env.VUE_APP_REGISTRIES_SEARCH_API_URL + process.env.VUE_APP_REGISTRIES_SEARCH_API_VERSION_2 + '/')
   sessionStorage.setItem('REGISTRIES_SEARCH_API_URL', registriesSearchApiUrl)
 
-  const businessApiKey: string = process.env.VUE_APP_REGISTRIES_SEARCH_API_KEY
-  sessionStorage.setItem('BUSINESS_API_KEY', businessApiKey)
-
   const hotjarId: string = process.env.VUE_APP_HOTJAR_ID;
   (<any>window).hotjarId = hotjarId
 

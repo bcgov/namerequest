@@ -6,7 +6,7 @@ index 4db4ab9c6bc08453cd7448fb0027f8e3e5963ffc..0ceb22186ca02407914a2049df4c1aba
  export function addAxiosInterceptors (axiosInstance: AxiosInstance): AxiosInstance {
    axiosInstance.interceptors.request.use(config => {
      const token = ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakToken)
-+    const authGatewayApiKey = process.env.VUE_APP_BUSINESS_API_KEY
++    const authGatewayApiKey = process.env.VUE_APP_AUTH_API_KEY
 +
 +    if (authGatewayApiKey && config.url.includes(ConfigHelper.getAuthAPIUrl())) {
 +      config.headers['x-apikey'] = authGatewayApiKey
