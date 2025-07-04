@@ -254,8 +254,8 @@ export class CommonMixin extends Vue {
     const accountId = JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || 0
     const phone = nr.applicants?.phoneNumber || ''
     const magic_link_route = {
-        [NrRequestActionCodes.NEW_BUSINESS]: 'incorporateNow',
-        [NrRequestActionCodes.AMALGAMATE]: 'amalgamateNow'
+      [NrRequestActionCodes.NEW_BUSINESS]: 'incorporateNow',
+      [NrRequestActionCodes.AMALGAMATE]: 'amalgamateNow'
     }
 
     return `${registryHomeUrl}${magic_link_route[nr.request_action_cd]}

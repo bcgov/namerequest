@@ -340,7 +340,7 @@ import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
-import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished, NrRequestActionCodes }
+import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished }
   from '@/enums'
 import { Sleep, GetFeatureFlag, Navigate } from '@/plugins'
 import NamexServices from '@/services/namex-services'
