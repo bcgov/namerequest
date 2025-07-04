@@ -340,7 +340,7 @@ import NamesGrayBox from './names-gray-box.vue'
 import CheckStatusGrayBox from './check-status-gray-box.vue'
 import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
-import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished }
+import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished, NrRequestActionCodes }
   from '@/enums'
 import { Sleep, GetFeatureFlag, Navigate } from '@/plugins'
 import NamexServices from '@/services/namex-services'
@@ -784,7 +784,8 @@ export default class ExistingRequestDisplay extends Mixins(
   /** Affiliates the current NR if authenticated, or prompts login if unauthenticated. */
   private async affiliateOrLogin (): Promise<any> {
     if (this.isAuthenticated) {
-      await this.createAffiliation(this.nr)
+      // Use the new "magic link routes" in the BRD to perform the affiliations and draft creations.
+      Navigate(this.magicLink(this.nr))
     } else {
       // persist NR in session for affiliation upon authentication via Signin component
       sessionStorage.setItem('NR_DATA', JSON.stringify(this.nr))
