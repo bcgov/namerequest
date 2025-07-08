@@ -282,7 +282,7 @@ export default class App extends Mixins(
         } else if (this.isContinuationIn) {
           this.setContinuationInErrorStatus(true)
         }
-        console.error(error)
+        console.error(error) // eslint-disable-line no-console
       }
     }
 
