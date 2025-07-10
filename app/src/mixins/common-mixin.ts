@@ -268,7 +268,11 @@ export class CommonMixin extends Vue {
         break
     }
 
-    return `${registryHomeUrl}${magic_link_route[nr.request_action_cd]}
-            ?nr=${encodeURIComponent(nr.nrNum)}&phone=${phone}&accountid=${accountId}`
+    return (
+      `${registryHomeUrl}${magic_link_route[nr.request_action_cd]}` +
+      `?nr=${encodeURIComponent(nr.nrNum)}` +
+      `&phone=${encodeURIComponent(phone)}` +
+      `&accountid=${encodeURIComponent(accountId)}`
+    )
   }
 }
