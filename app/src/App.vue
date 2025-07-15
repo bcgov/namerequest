@@ -174,11 +174,12 @@ export default class App extends Mixins(
   @Getter getIncorporateNowErrorStatus!: boolean
   @Getter getNrId!: number
   @Getter isAuthenticated!: boolean
-  @Getter isRoleStaff!: boolean
+  // @Getter isRoleStaff!: boolean
   @Getter isMobile!: boolean
   // @Getter isNewBusiness!: boolean
 
   // Global actions
+  @Action fetchAuthorizedActions!: () => void
   @Action resetAnalyzeName!: ActionBindingIF
   @Action setName!: ActionBindingIF
   @Action setDisplayedComponent!: ActionBindingIF
@@ -304,6 +305,9 @@ export default class App extends Mixins(
         this.staffPaymentErrorDialog = true
       }
     })
+
+    // fetch the user's authorized actions
+    this.fetchAuthorizedActions()
   }
 
   /** Fetches and stores the current JS date. */

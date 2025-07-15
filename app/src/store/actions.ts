@@ -753,18 +753,15 @@ export const setAuthorizedActions = ({ commit }, authorizedActions: AuthorizedAc
   commit('mutateAuthorizedActions', authorizedActions)
 }
 
-export const fetchAuthorizedActions = async ({ commit, getters }): Promise<void> => {
-  // Only fetch if not already loaded
-  if (getters.getAuthorizedActions.length === 0) {
-    try {
-      const response = await BusinessServices.getAuthorizedActions()
-      const authorizedActions = response.data.authorizedPermissions || []
-      commit('mutateAuthorizedActions', authorizedActions)
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error fetching authorized actions:', error)
-      commit('mutateAuthorizedActions', [])
-    }
+export const fetchAuthorizedActions = async ({ commit }): Promise<void> => {
+  try {
+    const response = await BusinessServices.getAuthorizedActions()
+    const authorizedActions = response.data.authorizedPermissions || []
+    commit('mutateAuthorizedActions', authorizedActions)
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching authorized actions:', error)
+    commit('mutateAuthorizedActions', [])
   }
 }
 

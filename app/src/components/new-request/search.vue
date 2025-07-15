@@ -445,7 +445,6 @@ import { Action, Getter } from 'vuex-class'
 })
 export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, SearchMixin) {
   @Action setSocietiesModalVisible!: ActionBindingIF
-  @Action fetchAuthorizedActions!: () => void
 
   @Getter getIsLearBusiness!: boolean
   // @Getter isRoleStaff!: boolean
@@ -466,7 +465,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
         const searchNameBtn = this.$el.querySelector('#search-name-btn > span')
         if (searchNameBtn) searchNameBtn.classList.add('search-name-btn')
       }
-      this.fetchAuthorizedActions()
     })
   }
 
