@@ -761,6 +761,7 @@ export const fetchAuthorizedActions = async ({ commit, getters }): Promise<void>
       const authorizedActions = response.data.authorizedPermissions || []
       commit('mutateAuthorizedActions', authorizedActions)
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error fetching authorized actions:', error)
       commit('mutateAuthorizedActions', [])
     }
