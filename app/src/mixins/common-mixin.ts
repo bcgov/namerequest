@@ -269,7 +269,7 @@ export class CommonMixin extends Vue {
     }
 
     return (
-      `${registryHomeUrl}${magic_link_route[nr.request_action_cd]}` +
+      `${registryHomeUrl}${magic_link_route}` +
       `?nr=${encodeURIComponent(nr.nrNum)}` +
       `&phone=${encodeURIComponent(phone)}` +
       `&accountid=${encodeURIComponent(accountId)}`
