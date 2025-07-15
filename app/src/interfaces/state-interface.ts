@@ -1,10 +1,12 @@
+import { AuthorizedActions } from '@/enums'
 import { NewRequestIF } from '@/interfaces/new-request-interface'
 import { NameCheckModelIF, StaffPaymentIF, RefundParamsIF } from '@/interfaces'
 
 export interface StateModelIF {
   common: {
     currentJsDate: Date,
-    keycloakRoles: Array<string>
+    keycloakRoles: Array<string>,
+    authorizedActions: Array<AuthorizedActions>
   }
   newRequestModel: NewRequestIF
   staffPayment: StaffPaymentIF

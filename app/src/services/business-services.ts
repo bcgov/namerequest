@@ -29,4 +29,20 @@ export default class BusinessServices {
 
     return axios.post(url, businessRequest, { headers: extraHeaders })
   }
+
+  /**
+   * Get authorized actions from business/legal api.
+   * @returns response object
+   */
+  static async getAuthorizedActions (): Promise<any> {
+    const url = `${this.legalApiUrl()}/permissions`
+
+    // Add API gateway-specific headers (in addition to interceptor)
+    const extraHeaders = GetFeatureFlag('use-business-api-gw-url') ? {
+      'Account-Id': JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || '',
+      'X-Apikey': process.env.VUE_APP_BUSINESS_API_KEY || ''
+    } : {}
+
+    return axios.get(url, { headers: extraHeaders })
+  }
 }
