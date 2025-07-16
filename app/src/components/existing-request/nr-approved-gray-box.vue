@@ -75,7 +75,7 @@
           v-else
           class="amalgamate-now-btn mt-30"
           min-width="20rem"
-          :disabled="disabled"
+          :disabled="disabled || !isAmalgamationAllowed"
           @click="$emit('affiliateYourBusiness')"
         >
           <strong>Amalgamate Now</strong>
@@ -102,9 +102,9 @@
         </v-btn>
         <v-btn
           v-else
-          class="amalgamate-now-btn mt-30"
+          class="continue-in-btn mt-30"
           min-width="20rem"
-          :disabled="disabled"
+          :disabled="disabled || !isContinuationInAllowed"
           @click="$emit('affiliateYourBusiness')"
         >
           <strong>Begin Continuation</strong>
@@ -241,7 +241,7 @@ import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
 import { CommonMixin } from '@/mixins'
 import { NameRequestI } from '@/interfaces'
-import { EntityTypes, NrRequestActionCodes, NrState } from '@/enums'
+import { AuthorizedActions, EntityTypes, NrRequestActionCodes, NrState } from '@/enums'
 import ContactInfo from '@/components/common/contact-info.vue'
 
 @Component({
@@ -257,6 +257,7 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
 
   @Getter getNr!: Partial<NameRequestI>
   @Getter getIsLearBusiness!: boolean
+  @Getter getAuthorizedActions!: AuthorizedActions[]
 
   isBusinesCheckDone = false
 
@@ -369,6 +370,16 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
       this.isSupportedIncorporationRegistration(this.getNr.entity_type_cd) &&
       this.isApprovedOrConsentUnRequired
     )
+  }
+
+  /** Check if amalgamation is allowed based on user actions */
+  get isAmalgamationAllowed (): boolean {
+    return this.getAuthorizedActions.includes(AuthorizedActions.AMALGAMATION_FILING)
+  }
+
+  /** Check if continuation in is allowed based on user actions */
+  get isContinuationInAllowed (): boolean {
+    return this.getAuthorizedActions.includes(AuthorizedActions.CONTINUATION_IN_FILING)
   }
 }
 
