@@ -20,8 +20,11 @@ export async function getConfig (): Promise<EnvConfigI> {
   const corporateOnlineUrl: string = process.env.VUE_APP_CORPORATE_ONLINE_URL
   sessionStorage.setItem('CORPORATE_ONLINE_URL', corporateOnlineUrl)
 
-  const dashboardUrl: string = process.env.VUE_APP_DASHBOARD_URL
-  sessionStorage.setItem('DASHBOARD_URL', dashboardUrl)
+  const businessDashUrl: string = process.env.VUE_APP_BUSINESS_DASH_URL
+  sessionStorage.setItem('BUSINESS_DASH_URL', businessDashUrl)
+
+  const businessRegistryUrl: string = process.env.VUE_APP_BUSINESS_REGISTRY_URL
+  sessionStorage.setItem('BUSINESS_REGISTRY_URL', businessRegistryUrl)
 
   const legalApiUrl: string = process.env.VUE_APP_LEGAL_API_URL + process.env.VUE_APP_LEGAL_API_VERSION_2
   sessionStorage.setItem('LEGAL_API_URL', legalApiUrl)

@@ -210,8 +210,8 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
   /** Navigates to entity dashboard (Filings UI). */
   goToEntityDashboard (businessId: string): void {
     if (businessId) {
-      const dashboardUrl = sessionStorage.getItem('DASHBOARD_URL')
-      Navigate(`${dashboardUrl}${businessId}`)
+      const businessDashUrl = sessionStorage.getItem('BUSINESS_DASH_URL')
+      Navigate(`${businessDashUrl}${businessId}`)
     }
   }
 
