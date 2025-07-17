@@ -250,7 +250,7 @@ export class CommonMixin extends Vue {
 
   /** Get a magic link.  */
   magicLink (nr: any): string {
-    const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
+    const dashboardUrl = sessionStorage.getItem('DASHBOARD_URL')
     const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || 0
     const phone = nr.applicants?.phoneNumber || ''
     let magic_link_route = ''
@@ -269,7 +269,7 @@ export class CommonMixin extends Vue {
     }
 
     return (
-      `${registryHomeUrl}${magic_link_route}` +
+      `${dashboardUrl}${magic_link_route}` +
       `?nr=${encodeURIComponent(nr.nrNum)}` +
       `&phone=${encodeURIComponent(phone)}` +
       `&accountid=${encodeURIComponent(accountId)}`
