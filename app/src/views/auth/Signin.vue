@@ -11,7 +11,6 @@
 import { Component, Prop, Mixins } from 'vue-property-decorator'
 import SbcSignin from 'sbc-common-components/src/components/SbcSignin.vue'
 import { LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin } from '@/mixins'
-import { Navigate } from '@/plugins'
 
 /**
  * When the user clicks "Log in", they are are redirected to THIS page, which
@@ -38,15 +37,6 @@ export default class Signin extends Mixins(LoadKeycloakRolesMixin, NrAffiliation
     // now that the user is logged in, load Keycloak roles and update LaunchDarkly
     this.loadKeycloakRoles()
     await this.updateUser()
-
-    // if there is stored NR data to process then affiliate it now
-    const nr = JSON.parse(sessionStorage.getItem('NR_DATA'))
-    if (nr) {
-      // Use the new "magic link routes" in the BRD to perform the affiliations and draft creations.
-      Navigate(this.magicLink(nr))
-      // clear NR data for next time
-      sessionStorage.removeItem('NR_DATA')
-    }
 
     // go to main app page
     await this.$router.push('/')
