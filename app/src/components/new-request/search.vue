@@ -320,6 +320,7 @@
           <v-btn
             id="action-now-button"
             class="px-9"
+            :disabled="(isAmalgamation && !isAmalgamationAllowed) || (isContinuationIn && !isContinuationInAllowed)"
             @click="actionNowClicked()"
           >
             {{ actionNowButtonText }}
@@ -416,7 +417,7 @@ import RequestAction from '@/components/new-request/search-components/request-ac
 import XproFederalBullets from '@/components/new-request/search-components/xpro-federal-bullets.vue'
 import SocietiesInfo from '@/components/dialogs/societies-info-dialog.vue'
 
-import { EntityTypes } from '@/enums'
+import { AuthorizedActions, EntityTypes } from '@/enums'
 import { CommonMixin, NrAffiliationMixin, SearchMixin } from '@/mixins'
 import { Designations, XproMapping } from '@/list-data'
 import { Navigate } from '@/plugins'
@@ -446,7 +447,8 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
   @Action setSocietiesModalVisible!: ActionBindingIF
 
   @Getter getIsLearBusiness!: boolean
-  @Getter isRoleStaff!: boolean
+  // @Getter isRoleStaff!: boolean
+  @Getter getAuthorizedActions!: string[]
 
   // Constant
   readonly colinLink = sessionStorage.getItem('CORPORATE_ONLINE_URL')
@@ -679,6 +681,16 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     if (this.isChangeName) return 'Change Name Now'
     if (this.isNewBusiness) return 'Incorporate Now'
     return null
+  }
+
+  /** Check if amalgamation is allowed based on user actions */
+  get isAmalgamationAllowed (): boolean {
+    return this.getAuthorizedActions.includes(AuthorizedActions.AMALGAMATION_FILING)
+  }
+
+  /** Check if continuation in is allowed based on user actions */
+  get isContinuationInAllowed (): boolean {
+    return this.getAuthorizedActions.includes(AuthorizedActions.CONTINUATION_IN_FILING)
   }
 
   get showCheckNameButton (): boolean {

@@ -1,6 +1,7 @@
 import querystring from 'qs'
 import axios from 'axios'
 import {
+  AuthorizedActions,
   CompanyTypes,
   EntityStates,
   EntityTypes,
@@ -18,6 +19,7 @@ import {
 import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
 import removeAccents from 'remove-accents'
 import { GetFeatureFlag, Sleep, sanitizeName } from '@/plugins'
+import BusinessServices from '@/services/business-services'
 import NamexServices from '@/services/namex-services'
 import { appBaseURL } from '../router/router'
 import { DFLT_MIN_LENGTH, DFLT_MAX_LENGTH, MRAS_MIN_LENGTH, MRAS_MAX_LENGTH }
@@ -745,6 +747,22 @@ export const setRequestExaminationOrProvideConsent = ({ commit }, requestExamOrC
 
 export const setKeycloakRoles = ({ commit }, keycloakRoles: string[]): void => {
   commit('mutateKeycloakRoles', keycloakRoles)
+}
+
+export const setAuthorizedActions = ({ commit }, authorizedActions: AuthorizedActions[]): void => {
+  commit('mutateAuthorizedActions', authorizedActions)
+}
+
+export const fetchAuthorizedActions = async ({ commit }): Promise<void> => {
+  try {
+    const response = await BusinessServices.getAuthorizedActions()
+    const authorizedActions = response.data.authorizedPermissions || []
+    commit('mutateAuthorizedActions', authorizedActions)
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching authorized actions:', error)
+    commit('mutateAuthorizedActions', [])
+  }
 }
 
 export const setStaffPayment = ({ commit }, staffPayment: StaffPaymentIF): void => {

@@ -15,6 +15,7 @@ import {
   WaitingAddressSearchI
 } from '@/interfaces'
 import {
+  AuthorizedActions,
   CompanyTypes,
   EntityTypes,
   Location,
@@ -464,6 +465,10 @@ export const mutateUserCancelledAnalysis = (state: StateIF, userCancelledAnalysi
 
 export const mutateKeycloakRoles = (state: StateIF, keyCloakRoles: Array<string>) => {
   state.stateModel.common.keycloakRoles = keyCloakRoles
+}
+
+export const mutateAuthorizedActions = (state: StateIF, authorizedActions: Array<AuthorizedActions>) => {
+  state.stateModel.common.authorizedActions = authorizedActions
 }
 
 export const mutateStaffPayment = (state: StateIF, staffPayment: StaffPaymentIF) => {

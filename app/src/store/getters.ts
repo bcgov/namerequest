@@ -28,6 +28,7 @@ import {
   SubmissionTypeT
 } from '@/interfaces'
 import {
+  AuthorizedActions,
   CompanyTypes,
   EntityTypes,
   Location,
@@ -543,9 +544,9 @@ export const getEntityTypesBC = (state: StateIF): EntityI[] => {
 export const getEntityTypesXPRO = (state: StateIF): EntityI[] => {
   let _entityTypesXproData = EntityTypesXproData
   if (isLocationCA(state)) {
-    _entityTypesXproData = _entityTypesXproData.filter(ent => ent.value !== EntityTypes.XUL)
     _entityTypesXproData = _entityTypesXproData.filter(ent => ent.value !== EntityTypes.RLC)
   }
+  _entityTypesXproData = _entityTypesXproData.filter(ent => ent.value !== EntityTypes.XUL)
 
   try {
     const generateEntities = (entities) => {
@@ -1142,6 +1143,11 @@ export const getConditionalNameReservation = (state: StateIF): ConditionalReqI =
 /** The user's keycloak roles. */
 export const getKeycloakRoles = (state: StateIF): Array<string> => {
   return state.stateModel.common.keycloakRoles
+}
+
+/** The user's authorized actions. */
+export const getAuthorizedActions = (state: StateIF): Array<AuthorizedActions> => {
+  return state.stateModel.common.authorizedActions
 }
 
 /** Whether the user has "staff" keycloak role. */
