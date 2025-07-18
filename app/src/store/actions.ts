@@ -820,9 +820,10 @@ const getMatchesRestricted = async (
   token: string,
   cleanedName: string
 ): Promise<ParsedRestrictedResponseIF> => {
-  const restrictedResp = await NamexServices.axios.get(`${appBaseURL}/documents:restricted_words?content=${cleanedName}`, {
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
-  }).catch(() => {
+  const restrictedResp = await NamexServices.axios.get(
+    `${appBaseURL}/documents:restricted_words?content=${cleanedName}`,
+    { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
+  ).catch(() => {
     commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_RESTRICTED)
     return null
   })

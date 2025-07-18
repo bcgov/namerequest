@@ -1,6 +1,7 @@
-import AnalyzeResults from '@/components/new-request/analyze-results.vue'
-import testData from './api/get-name-analysis'
-import { createLocalVue, mount } from '@vue/test-utils'
+// import AnalyzeResults from '@/components/new-request/analyze-results.vue'
+// import testData from './api/get-name-analysis'
+import { createLocalVue } from '@vue/test-utils'
+// import { mount } from '@vue/test-utils'
 // import newReqModule from '@/store/new-request-module'
 import Vuetify from 'vuetify'
 
@@ -8,7 +9,7 @@ document['getSelection'] = jest.fn()
 
 const localVue = createLocalVue()
 localVue.use(Vuetify)
-const vuetify = new Vuetify()
+// const vuetify = new Vuetify()
 
 // function setState (data) {
 //   newReqModule.mutateEntityType('CR')
