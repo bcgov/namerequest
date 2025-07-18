@@ -1,9 +1,10 @@
-import { createLocalVue, mount } from '@vue/test-utils'
+import { createLocalVue } from '@vue/test-utils'
+// import { mount } from '@vue/test-utils'
 import Vuetify from 'vuetify'
-import SearchPending from '@/components/existing-request/search-pending.vue'
+// import SearchPending from '@/components/existing-request/search-pending.vue'
 
 const localVue = createLocalVue()
-const vuetify = new Vuetify()
+// const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
