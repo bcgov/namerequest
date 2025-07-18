@@ -256,10 +256,9 @@ export class CommonMixin extends Vue {
     let magic_link_route = ''
     switch (nr.request_action_cd) {
       case NrRequestActionCodes.NEW_BUSINESS:
-        magic_link_route = 'incorporateNow'
-        if ([EntityTypes.SP, EntityTypes.GP].includes(nr.entity_type_cd)) {
-          magic_link_route = 'registerNow'
-        }
+        magic_link_route = [EntityTypes.SP, EntityTypes.GP].includes(nr.entity_type_cd)
+          ? 'registerNow'
+          : 'incorporateNow'
         break
       case NrRequestActionCodes.AMALGAMATE:
         magic_link_route = 'amalgamateNow'
@@ -268,7 +267,7 @@ export class CommonMixin extends Vue {
         magic_link_route = 'continueInNow'
         break
       default:
-        break
+        throw new Error(`No route defined for action code '${nr.request_action_cd}' for the magic link.`)
     }
 
     return (
