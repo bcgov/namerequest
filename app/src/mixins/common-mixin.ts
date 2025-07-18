@@ -257,6 +257,9 @@ export class CommonMixin extends Vue {
     switch (nr.request_action_cd) {
       case NrRequestActionCodes.NEW_BUSINESS:
         magic_link_route = 'incorporateNow'
+        if ([EntityTypes.SP, EntityTypes.GP].includes(nr.entity_type_cd)) {
+          magic_link_route = 'registerNow'
+        }
         break
       case NrRequestActionCodes.AMALGAMATE:
         magic_link_route = 'amalgamateNow'
