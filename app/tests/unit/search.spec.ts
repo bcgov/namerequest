@@ -1,11 +1,12 @@
-import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
+import { createLocalVue } from '@vue/test-utils'
+// import { mount, shallowMount } from '@vue/test-utils'
 // import newReqModule from '@/store/new-request-module'
-import Search from '@/components/new-request/search.vue'
+// import Search from '@/components/new-request/search.vue'
 import Vuetify from 'vuetify'
 
 const localVue = createLocalVue()
 localVue.use(Vuetify)
-const vuetify = new Vuetify()
+// const vuetify = new Vuetify()
 
 describe('Search component', () => {
   it('is an empty test', () => {})

@@ -1,22 +1,23 @@
 import Vuetify from 'vuetify'
-import { Landing } from '@/views'
-import AnalyzeResults from './mocks/analyze-results.vue'
-import { mount, createLocalVue } from '@vue/test-utils'
+// import { Landing } from '@/views'
+// import AnalyzeResults from './mocks/analyze-results.vue'
+import { createLocalVue } from '@vue/test-utils'
+// import { mount } from '@vue/test-utils'
 // import newReqModule from '@/store/new-request-module'
-import LowerContainer from '@/components/lower-info-area/lower-container.vue'
+// import LowerContainer from '@/components/lower-info-area/lower-container.vue'
 
 const localVue = createLocalVue()
-const vuetify = new Vuetify()
+// const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
-const stubs = {
-  AnalyzeCharacters: true,
-  AnalyzeResults,
-  LowerContainer,
-  Stats: true,
-  quillEditor: true
-}
+// const stubs = {
+//   AnalyzeCharacters: true,
+//   AnalyzeResults,
+//   LowerContainer,
+//   Stats: true,
+//   quillEditor: true
+// }
 
 describe('Landing view', () => {
   it('is an empty test', () => {})

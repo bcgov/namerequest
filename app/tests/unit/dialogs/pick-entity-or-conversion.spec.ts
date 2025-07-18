@@ -1,13 +1,15 @@
-import { mount, createLocalVue } from '@vue/test-utils'
+import { createLocalVue } from '@vue/test-utils'
+// import { mount } from '@vue/test-utils'
+
 import Vuetify from 'vuetify'
-import { PickEntityOrConversionDialog } from '@/components/dialogs'
+// import { PickEntityOrConversionDialog } from '@/components/dialogs'
 // import newReqModule from '@/store/new-request-module'
 
 // Prevent the warning "[Vuetify] Unable to locate target [data-app]"
 document.body.setAttribute('data-app', 'true')
 
 const localVue = createLocalVue()
-const vuetify = new Vuetify()
+// const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
