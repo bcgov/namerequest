@@ -1,10 +1,11 @@
-import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
-import NewSearch from '@/components/new-request/search.vue'
+import { createLocalVue } from '@vue/test-utils'
+// import {  mount, shallowMount } from '@vue/test-utils'
+// import NewSearch from '@/components/new-request/search.vue'
 // import newReqModule from '@/store/new-request-module'
 import Vuetify from 'vuetify'
 
 const localVue = createLocalVue()
-const vuetify = new Vuetify()
+// const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 

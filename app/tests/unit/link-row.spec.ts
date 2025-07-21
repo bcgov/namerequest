@@ -1,11 +1,12 @@
-import Vue from 'vue'
-import { createLocalVue, mount } from '@vue/test-utils'
-import LinkRow from '@/components/common/link-row.vue'
+// import Vue from 'vue'
+import { createLocalVue } from '@vue/test-utils'
+// import { mount } from '@vue/test-utils'
+// import LinkRow from '@/components/common/link-row.vue'
 // import newReqModule from '@/store/new-request-module'
 import Vuetify from 'vuetify'
 
 const localVue = createLocalVue()
-const vuetify = new Vuetify()
+// const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 

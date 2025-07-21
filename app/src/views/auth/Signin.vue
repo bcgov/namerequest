@@ -38,14 +38,6 @@ export default class Signin extends Mixins(LoadKeycloakRolesMixin, NrAffiliation
     this.loadKeycloakRoles()
     await this.updateUser()
 
-    // if there is stored NR data to process then affiliate it now
-    const nr = JSON.parse(sessionStorage.getItem('NR_DATA'))
-    if (nr) {
-      await this.createAffiliation(nr)
-      // clear NR data for next time
-      sessionStorage.removeItem('NR_DATA')
-    }
-
     // go to main app page
     await this.$router.push('/')
   }

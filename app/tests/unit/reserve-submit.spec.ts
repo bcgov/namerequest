@@ -1,30 +1,31 @@
-import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
-import { createLocalVue, mount } from '@vue/test-utils'
+// import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
+import { createLocalVue } from '@vue/test-utils'
+// import { mount } from '@vue/test-utils'
 import Vuetify from 'vuetify'
-import sinon from 'sinon'
+// import sinon from 'sinon'
 
 const localVue = createLocalVue()
-const vuetify = new Vuetify()
+// const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
 /* commented out lines and blocks of tests were correct and passing before it was decided not to allow auto
    analyze approvals and conditional approvals */
 
-async function provideWrapper (setup) {
-  const wrapper = mount(ReserveSubmit, {
-    localVue,
-    vuetify,
-    propsData: {
-      setup
-    }
+// async function provideWrapper (setup) {
+//   const wrapper = mount(ReserveSubmit, {
+//     localVue,
+//     vuetify,
+//     propsData: {
+//       setup
+//     }
 
-  })
-  await wrapper.vm.$nextTick()
-  return wrapper
-}
+//   })
+//   await wrapper.vm.$nextTick()
+//   return wrapper
+// }
 
-const sandbox = sinon.createSandbox()
+// const sandbox = sinon.createSandbox()
 
 describe('ReserveSubmit component', () => {
   it('is an empty test', () => {})

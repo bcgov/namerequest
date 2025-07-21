@@ -105,7 +105,7 @@
 // libraries, etc
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { GetFeatureFlag } from '@/plugins'
+import { GetFeatureFlag, Navigate } from '@/plugins'
 import { DateMixin, LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin } from '@/mixins'
 import { Routes } from '@/enums'
 import { BreadcrumbIF } from '@/interfaces'
@@ -262,14 +262,6 @@ export default class App extends Mixins(
     this.loadKeycloakRoles()
     await this.updateUser()
 
-    // if there is stored NR data to process then affiliate it now
-    const nr = JSON.parse(sessionStorage.getItem('NR_DATA'))
-    if (nr) {
-      await this.createAffiliation(nr)
-      // clear NR data for next time
-      sessionStorage.removeItem('NR_DATA')
-    }
-
     // if there is stored legal type and request action cd, try to continue
     const legaltype = sessionStorage.getItem('LEGAL_TYPE')
     const requestActionCd = sessionStorage.getItem('REQUEST_ACTION_CD')
@@ -291,7 +283,7 @@ export default class App extends Mixins(
         } else if (this.isContinuationIn) {
           this.setContinuationInErrorStatus(true)
         }
-        console.error(error)
+        console.error(error) // eslint-disable-line no-console
       }
     }
 
@@ -308,6 +300,17 @@ export default class App extends Mixins(
 
     // fetch the user's authorized actions
     this.fetchAuthorizedActions()
+  }
+
+  mounted (): void {
+    // if there is stored NR data to process then affiliate it now
+    const nr = JSON.parse(sessionStorage.getItem('NR_DATA'))
+    if (nr) {
+      // Use the new "magic link routes" in the BRD to perform the affiliations and draft creations.
+      Navigate(this.magicLink(nr))
+      // clear NR data for next time
+      sessionStorage.removeItem('NR_DATA')
+    }
   }
 
   /** Fetches and stores the current JS date. */

@@ -1,12 +1,13 @@
-import Vue from 'vue'
-import { createLocalVue, mount } from '@vue/test-utils'
+// import Vue from 'vue'
+import { createLocalVue } from '@vue/test-utils'
+// import { mount } from '@vue/test-utils'
 import Vuetify from 'vuetify'
-import NameBuildInfo from '@/components/lower-info-area/name-build-info.vue'
-import { BusinessDesignation, ConsentWords, ExampleName, UnavailableWords, UniqueNames, UnknownWords }
-  from '@/components/lower-info-area/name-build-sub-components'
+// import NameBuildInfo from '@/components/lower-info-area/name-build-info.vue'
+// import { BusinessDesignation, ConsentWords, ExampleName, UnavailableWords, UniqueNames, UnknownWords }
+//   from '@/components/lower-info-area/name-build-sub-components'
 
 const localVue = createLocalVue()
-const vuetify = new Vuetify()
+// const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 

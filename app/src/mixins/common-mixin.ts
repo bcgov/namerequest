@@ -247,4 +247,34 @@ export class CommonMixin extends Vue {
   scrollTo (id: string): void {
     return document.getElementById(id)?.scrollIntoView()
   }
+
+  /** Get a magic link.  */
+  magicLink (nr: any): string {
+    const businessRegistryUrl = sessionStorage.getItem('BUSINESS_REGISTRY_URL')
+    const accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || 0
+    const phone = nr.applicants?.phoneNumber || ''
+    let magic_link_route = ''
+    switch (nr.request_action_cd) {
+      case NrRequestActionCodes.NEW_BUSINESS:
+        magic_link_route = [EntityTypes.SP, EntityTypes.GP].includes(nr.entity_type_cd)
+          ? 'registerNow'
+          : 'incorporateNow'
+        break
+      case NrRequestActionCodes.AMALGAMATE:
+        magic_link_route = 'amalgamateNow'
+        break
+      case NrRequestActionCodes.MOVE:
+        magic_link_route = 'continueInNow'
+        break
+      default:
+        throw new Error(`No route defined for action code '${nr.request_action_cd}' for the magic link.`)
+    }
+
+    return (
+      `${businessRegistryUrl}${magic_link_route}` +
+      `?nr=${encodeURIComponent(nr.nrNum)}` +
+      `&phone=${encodeURIComponent(phone)}` +
+      `&accountid=${encodeURIComponent(accountId)}`
+    )
+  }
 }

@@ -1,11 +1,12 @@
-import ApplicantInfo2 from '@/components/common/applicant-info-2.vue'
-import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
+// import ApplicantInfo2 from '@/components/common/applicant-info-2.vue'
+import { createLocalVue } from '@vue/test-utils'
+// import { shallowMount, mount } from '@vue/test-utils'
 // import module from '@/store/new-request-module'
 import Vuetify from 'vuetify'
-import Vuex from 'vuex'
+// import Vuex from 'vuex'
 
 const localVue = createLocalVue()
-const vuetify = new Vuetify()
+// const vuetify = new Vuetify()
 localVue.use(Vuetify)
 
 describe('ApplicantInfo2 component', () => {

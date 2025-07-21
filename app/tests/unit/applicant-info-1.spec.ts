@@ -1,12 +1,13 @@
-import ApplicantInfo1 from '@/components/common/applicant-info-1.vue'
-import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
+// import ApplicantInfo1 from '@/components/common/applicant-info-1.vue'
+import { createLocalVue } from '@vue/test-utils'
+// import { shallowMount, mount } from '@vue/test-utils'
 import Vuetify from 'vuetify'
 
 // Prevent the warning "[Vuetify] Unable to locate target [data-app]"
 document.body.setAttribute('data-app', 'true')
 
 const localVue = createLocalVue()
-const vuetify = new Vuetify()
+// const vuetify = new Vuetify()
 
 localVue.use(Vuetify)
 
