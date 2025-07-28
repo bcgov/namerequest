@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import { routes } from './routes'
 
 /** Global variable to store the custom base URL. */
-const appBaseURL: string = process.env.VUE_APP_NAMEX_API_URL + process.env.VUE_APP_NAMEX_API_VERSION
+const appBaseURL: string = process.env.VUE_APP_NAMEX_API_GW_URL + process.env.VUE_APP_NAMEX_API_VERSION
 
 /** Configures and returns Vue Router. */
 export function getVueRouter () {

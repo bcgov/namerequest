@@ -28,6 +28,7 @@ axiosNamex.interceptors.request.use(
     config.headers.common['BCREG-User-Phone'] = sessionStorage.getItem('BCREG-phoneNumber')
     config.headers.common['BCREG-User-Email'] = sessionStorage.getItem('BCREG-emailAddress')
     config.headers.common['App-Name'] = pkg.name
+    config.headers.common['X-Apikey'] = process.env.VUE_APP_NAMEX_API_KEY || ''
     // eslint-disable-next-line no-console
     // console.log('in interceptor, common headers: ', config?.headers?.common)
     return config
