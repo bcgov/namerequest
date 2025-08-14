@@ -217,7 +217,7 @@
                 cols="12"
                 class="pt-0 px-0"
               >
-                Monday to Friday, 8:30am - 4:30pm Pacific time
+                Monday to Friday, 7:30am - 5:00pm Pacific time
               </v-col>
             </v-row>
           </v-container>
