@@ -304,7 +304,7 @@ export default class NamexServices {
     }
   }
 
-  static async getNameRequestByToken (handleError: boolean, nrId:string, accountId:string): Promise<NameRequestI> {
+  static async getNameRequestByToken (handleError: boolean, nrId: string, accountId: string): Promise<NameRequestI> {
     try {
       const token = sessionStorage.getItem('KEYCLOAK_TOKEN')
       if (token) {
