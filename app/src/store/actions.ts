@@ -8,7 +8,6 @@ import {
   Location,
   NameCheckAnalysisJurisdiction,
   NameCheckAnalysisType,
-  NameCheckConflictType,
   NameCheckErrorType,
   NrAffiliationErrors,
   NrRequestActionCodes,
@@ -781,38 +780,22 @@ export const setHotjarUserId = ({ commit }, hotjarUserId: string): void => {
   commit('mutateHotjarUserId', hotjarUserId)
 }
 
-/**
- * Name Check actions
- * FUTURE: move these into a factory if converting to composition api
- */
-const getMatchesExact = async (
-  { commit },
-  token: string,
-  cleanedName: string
-): Promise<Array<ConflictListItemI>> => {
-  const exactResp = await NamexServices.axios.get(`${appBaseURL}/exact-match?query=` + cleanedName, {
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
-  }).catch(() => {
-    commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_EXACT)
-    return null
-  })
-  return exactResp?.data ? parseExactNames(exactResp.data) : []
-}
-
 const getMatchesSimilar = async (
   { commit },
   token: string,
-  cleanedName: string,
-  exactNames: Array<ConflictListItemI>
-): Promise<Array<ConflictListItemI>> => {
-  const synonymResp = await NamexServices.axios.get(`${appBaseURL}/requests/synonymbucket/` + cleanedName + '/*', {
+  cleanedName: string
+): Promise<{ names: Array<any>, exactNames: Array<any> }> => {
+  const synonymResp = await NamexServices.axios.get(`${appBaseURL}/requests/possible-conflicts/${cleanedName}`, {
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
   }).catch(() => {
     commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_SIMILAR)
     return null
   })
-  if (synonymResp?.data) synonymResp.data.exactNames = exactNames || []
-  return synonymResp?.data ? parseSynonymNames(synonymResp.data) : []
+
+  return {
+    names: synonymResp.data.names || [],
+    exactNames: synonymResp.data.exactNames || []
+  }
 }
 
 const getMatchesRestricted = async (
@@ -821,7 +804,7 @@ const getMatchesRestricted = async (
   cleanedName: string
 ): Promise<ParsedRestrictedResponseIF> => {
   const restrictedResp = await NamexServices.axios.get(
-    `${appBaseURL}/documents:restricted_words?content=${cleanedName}`,
+    `${appBaseURL}/documents/restricted-words?content=${cleanedName}`,
     { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
   ).catch(() => {
     commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_RESTRICTED)
@@ -941,13 +924,12 @@ const getQuickSearch = async (
       headers: { Authorization: `Basic ${encodedAuth}`, 'content-type': 'application/x-www-form-urlencoded' }
     })
     const token = tokenResp.data.access_token
-    const exactNames = checks.exact ? await getMatchesExact({ commit }, token, cleanedName.exactMatch) : []
-    // pass in exactNames so that we can check for duplicates
-    const synonymNames = (
+    const { names, exactNames } = (
       checks.similar
-        ? await getMatchesSimilar({ commit }, token, cleanedName.synonymMatch, exactNames)
-        : []
+        ? await getMatchesSimilar({ commit }, token, cleanedName.synonymMatch)
+        : { names: [], exactNames: [] }
     )
+
     const parsedRestrictedResp: ParsedRestrictedResponseIF = (
       checks.restricted
         ? await getMatchesRestricted({ commit, getters }, token, cleanedName.restrictedMatch)
@@ -956,7 +938,7 @@ const getQuickSearch = async (
 
     return {
       exactNames: exactNames,
-      synonymNames: synonymNames,
+      synonymNames: names,
       restrictedWords: parsedRestrictedResp.restrictedWords,
       conditionalWords: parsedRestrictedResp.conditionalWords,
       conditionalInstructions: parsedRestrictedResp.conditionalInstructions
@@ -983,15 +965,6 @@ const getQuickSearch = async (
 
 export const nameCheckClearError = ({ commit }, key: NameCheckErrorType): void => {
   commit('mutateNameCheckErrorClear', key)
-}
-
-const parseExactNames = (json: { names: [string] }): Array<ConflictListItemI> => {
-  const nameObjs = json?.names || []
-  const names = []
-  for (let i = 0; i < nameObjs.length; i++) {
-    names.push({ name: `${nameObjs[i]['name']}`, type: NameCheckConflictType.EXACT })
-  }
-  return names
 }
 
 const parseRestrictedWords = ({ getters }, resp: RestrictedResponseIF): ParsedRestrictedResponseIF => {
@@ -1039,28 +1012,6 @@ const parseRestrictedWords = ({ getters }, resp: RestrictedResponseIF): ParsedRe
     }
   }
   return parsedResp
-}
-
-const parseSynonymNames = (
-  json: {
-    names: Array<string>,
-    exactNames: Array<ConflictListItemI>
-  }): Array<ConflictListItemI> => {
-  const duplicateNames = []
-  for (let i = 0; i < json.exactNames.length; i++) {
-    duplicateNames.push(json.exactNames[i].name)
-  }
-  const nameObjs = json.names
-  const names = []
-  for (let i = 0; i < nameObjs.length; i++) {
-    if (nameObjs[i]['name_info']['id']) {
-      const name = nameObjs[i]['name_info']['name']
-      if (!duplicateNames.includes(name)) {
-        names.push({ name: name, type: NameCheckConflictType.SIMILAR })
-      }
-    }
-  }
-  return names
 }
 
 export const setDesignation = ({ commit }, designation: string): void => {
