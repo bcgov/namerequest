@@ -92,10 +92,10 @@ export default class AffiliationErrorDialog extends Vue {
   }
 
   get businessRegistryUrl (): string {
-    const businessesUrl = sessionStorage.getItem('BUSINESSES_URL')
+    const businessesUrl = sessionStorage.getItem('BUSINESS_REGISTRY_URL')
     // NB: fall back is user's default account
     const accountId = JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT')).id || 0
-    return `${businessesUrl}account/${accountId}/business`
+    return `${businessesUrl}account/${accountId}`
   }
 
   protected hideModal (): void {

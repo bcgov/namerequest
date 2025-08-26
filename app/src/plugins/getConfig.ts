@@ -6,16 +6,13 @@ export async function getConfig (): Promise<EnvConfigI> {
   // get config from environment
   const windowLocationOrigin = window.location.origin
 
-  if (!{ appBaseURL } || !windowLocationOrigin) {
+  if (!appBaseURL || !windowLocationOrigin) {
     return Promise.reject(new Error('Missing environment variables'))
   }
   axios.defaults.baseURL = appBaseURL
 
   const paymentPortalUrl: string = process.env.VUE_APP_PAYMENT_PORTAL_URL
   sessionStorage.setItem('PAYMENT_PORTAL_URL', paymentPortalUrl)
-
-  const businessesUrl: string = process.env.VUE_APP_BUSINESSES_URL
-  sessionStorage.setItem('BUSINESSES_URL', businessesUrl)
 
   const corporateOnlineUrl: string = process.env.VUE_APP_CORPORATE_ONLINE_URL
   sessionStorage.setItem('CORPORATE_ONLINE_URL', corporateOnlineUrl)
