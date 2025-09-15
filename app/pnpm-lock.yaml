@@ -56,8 +56,8 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0
       launchdarkly-js-client-sdk:
-        specifier: ^2.24.2
-        version: 2.24.2
+        specifier: ^3.9.0
+        version: 3.9.0
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -4536,8 +4536,14 @@ packages:
   launchdarkly-js-client-sdk@2.24.2:
     resolution: {integrity: sha512-8jrLOia0vfZ4stqQRv9TjAYfRGK2JyWpLIL6PbTl99LqTtJMuYtryFUQp0b8WH1153YN+gVdoqPVI7uwbbzLLQ==}
 
+  launchdarkly-js-client-sdk@3.9.0:
+    resolution: {integrity: sha512-uPL9il6dOZrVQqEcpjDYc2c7HtBTlKpLJb1Q0187i4UokBVZwBXWKjTnNk9hkwaDD5PGD4puoe7POikrR8ACwQ==}
+
   launchdarkly-js-sdk-common@3.8.2:
     resolution: {integrity: sha512-pEqZ3FTKtYrTaPdbPntFJs87svzcezrkoRWY2GEFmyPC33txOqU788x0yby2+haC/saFPNfXpH6bbiJE/GjMSA==}
+
+  launchdarkly-js-sdk-common@5.8.0:
+    resolution: {integrity: sha512-9X70K3kN1fuR6ZnRudkH7etMgFhi3sEU0mnJ+y2nhID+DpfkNDVnYUGnUs8/s4tsSDs7Q7Gpm4qnr3oqOqT9+A==}
 
   leven@3.1.0:
     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
@@ -12301,11 +12307,22 @@ snapshots:
       escape-string-regexp: 4.0.0
       launchdarkly-js-sdk-common: 3.8.2
 
+  launchdarkly-js-client-sdk@3.9.0:
+    dependencies:
+      escape-string-regexp: 4.0.0
+      launchdarkly-js-sdk-common: 5.8.0
+
   launchdarkly-js-sdk-common@3.8.2:
     dependencies:
       base64-js: 1.5.1
       fast-deep-equal: 2.0.1
       uuid: 3.4.0
+
+  launchdarkly-js-sdk-common@5.8.0:
+    dependencies:
+      base64-js: 1.5.1
+      fast-deep-equal: 2.0.1
+      uuid: 8.3.2
 
   leven@3.1.0: {}
 
