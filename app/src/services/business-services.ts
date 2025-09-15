@@ -1,6 +1,5 @@
 import Axios from 'axios'
-import { AddAxiosInterceptors } from '@/plugins'
-import { GetFeatureFlag } from '@/plugins/featureFlags'
+import { AddAxiosInterceptors, GetFeatureFlag } from '@/plugins'
 import { BusinessRequest } from '@/interfaces'
 
 const axios = AddAxiosInterceptors(Axios.create())

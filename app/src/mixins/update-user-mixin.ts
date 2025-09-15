@@ -1,12 +1,15 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { getKeycloakRoles, UpdateLdUser } from '@/plugins'
+import { Getter } from 'vuex-class'
+import { UpdateLdUser } from '@/plugins'
 import AuthServices from '@/services/auth-services'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 @Component({})
 export class UpdateUserMixin extends Vue {
+  @Getter getKeycloakRoles!: string[]
+
   /** Fetches the user and org info and updates LaunchDarkly. */
-  async updateUser (): Promise<any> {
+  async updateLaunchDarkly (): Promise<any> {
     // don't run in Jest tests
     if (process.env.JEST_WORKER_ID) return
 
@@ -14,40 +17,32 @@ export class UpdateUserMixin extends Vue {
       // get user info
       const userInfo = await AuthServices.fetchUserInfo().catch(() => null)
 
-      // get user roles
-      const userRoles = getKeycloakRoles()
-
-      // get organization info
+      // get org info
       const currentAccount = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
       const accountId = currentAccount && JSON.parse(currentAccount)?.id
       const orgInfo = accountId && await AuthServices.fetchOrgInfo(accountId).catch(() => null)
 
-      await this.updateLaunchDarkly(userInfo, userRoles, orgInfo)
+      const userContext = userInfo && {
+        kind: 'user',
+        // since username is unique, use it as the user key
+        key: userInfo.username,
+        // if we can't get contact email then use user email
+        email: userInfo.contacts[0]?.email || userInfo.email,
+        firstName: userInfo?.firstname,
+        lastName: userInfo?.lastname,
+        roles: this.getKeycloakRoles
+      }
+
+      const orgContext = orgInfo && {
+        kind: 'organization',
+        key: orgInfo.id.toString(),
+        name: orgInfo.name
+      }
+
+      return UpdateLdUser(userContext, orgContext)
     } catch (err) {
       // just log the error -- no need to halt app
-      console.log('Error updating user =', err) // eslint-disable-line no-console
+      console.log('Error updating LaunchDarkly =', err) // eslint-disable-line no-console
     }
-  }
-
-  /** Updates Launch Darkly with current user and org contexts. */
-  private async updateLaunchDarkly (userInfo = null, userRoles = null, orgInfo = null): Promise<void> {
-    const userContext = userInfo && {
-      kind: 'user',
-      // since username is unique, use it as the user key
-      key: userInfo.username,
-      // if we can't get contact email then use user email
-      email: userInfo.contacts[0]?.email || userInfo.email,
-      firstName: userInfo?.firstname,
-      lastName: userInfo?.lastname,
-      roles: userRoles || []
-    }
-
-    const orgContext = orgInfo && {
-      kind: 'organization',
-      key: orgInfo.id.toString(),
-      name: orgInfo.name
-    }
-
-    return UpdateLdUser(userContext, orgContext)
   }
 }

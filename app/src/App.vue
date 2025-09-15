@@ -261,7 +261,7 @@ export default class App extends Mixins(
     // try to load Keycloak roles and update LaunchDarkly
     // otherwise this will be done in Signin.vue after login
     this.loadKeycloakRoles()
-    await this.updateUser()
+    await this.updateLaunchDarkly()
 
     // if there is stored legal type and request action cd, try to continue
     const legaltype = sessionStorage.getItem('LEGAL_TYPE')
