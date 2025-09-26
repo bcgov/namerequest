@@ -21,7 +21,6 @@ import removeAccents from 'remove-accents'
 import { GetFeatureFlag, Sleep, sanitizeName } from '@/plugins'
 import BusinessServices from '@/services/business-services'
 import NamexServices from '@/services/namex-services'
-import { appBaseURL } from '../router/router'
 import { DFLT_MIN_LENGTH, DFLT_MAX_LENGTH, MRAS_MIN_LENGTH, MRAS_MAX_LENGTH }
   from '@/components/new-request/constants'
 
@@ -50,6 +49,8 @@ import {
 
 const qs: any = querystring // eslint-disable-line @typescript-eslint/no-unused-vars
 let source: any
+
+const namexApiUrl = sessionStorage.getItem('NAMEX_API_URL')
 
 export const setActiveComponent = ({ commit }, component): void => {
   enum Tabs {
@@ -348,7 +349,7 @@ export async function searchBusiness ({ getters }, corpNum: string): Promise<Bus
 export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
   if (getters.getCorpSearch) {
     try {
-      const url = `${appBaseURL}/mras-profile/${getters.getJurisdictionCd}/${getters.getCorpSearch}`
+      const url = `${namexApiUrl}/mras-profile/${getters.getJurisdictionCd}/${getters.getCorpSearch}`
       const response = await NamexServices.axios.get(url)
       if (response?.status === OK) {
         return response.data
@@ -790,9 +791,10 @@ const getMatchesExact = async (
   token: string,
   cleanedName: string
 ): Promise<Array<ConflictListItemI>> => {
-  const exactResp = await NamexServices.axios.get(`${appBaseURL}/exact-match?query=` + cleanedName, {
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
-  }).catch(() => {
+  const exactResp = await NamexServices.axios.get(
+    `${namexApiUrl}/exact-match?query=` + cleanedName,
+    { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
+  ).catch(() => {
     commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_EXACT)
     return null
   })
@@ -805,9 +807,10 @@ const getMatchesSimilar = async (
   cleanedName: string,
   exactNames: Array<ConflictListItemI>
 ): Promise<Array<ConflictListItemI>> => {
-  const synonymResp = await NamexServices.axios.get(`${appBaseURL}/requests/synonymbucket/` + cleanedName + '/*', {
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
-  }).catch(() => {
+  const synonymResp = await NamexServices.axios.get(
+    `${namexApiUrl}/requests/synonymbucket/` + cleanedName + '/*',
+    { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
+  ).catch(() => {
     commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_SIMILAR)
     return null
   })
@@ -821,7 +824,7 @@ const getMatchesRestricted = async (
   cleanedName: string
 ): Promise<ParsedRestrictedResponseIF> => {
   const restrictedResp = await NamexServices.axios.get(
-    `${appBaseURL}/documents:restricted_words?content=${cleanedName}`,
+    `${namexApiUrl}/documents:restricted_words?content=${cleanedName}`,
     { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
   ).catch(() => {
     commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_RESTRICTED)

@@ -15,7 +15,8 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from '@/services/namex-services'
 import { PaymentRequiredError } from '@/errors'
 import { Navigate } from '@/plugins'
-import { appBaseURL } from '../router/router'
+
+const namexApiUrl = sessionStorage.getItem('NAMEX_API_URL')
 
 @Component({})
 export class PaymentMixin extends Mixins(ActionMixin) {
@@ -585,7 +586,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
 
   // FUTURE: move to NamexServices
   async createPaymentRequest (nrId, action, data: any): Promise<NameRequestPaymentResponse> {
-    const url = `${appBaseURL}/payments/${nrId}/${action}`
+    const url = `${namexApiUrl}/payments/${nrId}/${action}`
     try {
       const response = await NamexServices.axios.post(url, data)
       if (response?.data && [OK, CREATED, ACCEPTED, NO_CONTENT].includes(response?.status)) {
@@ -606,7 +607,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
 
   // FUTURE: move to NamexServices
   async getNameRequestPayment (nrId, paymentId, data: any): Promise<NameRequestPaymentResponse> {
-    const url = `${appBaseURL}/payments/${nrId}/payment/${paymentId}`
+    const url = `${namexApiUrl}/payments/${nrId}/payment/${paymentId}`
     try {
       const response = await NamexServices.axios.get(url, data)
       // FUTURE: check response status and data - make sure error handling is not changed
@@ -620,7 +621,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
 
   // FUTURE: move to NamexServices
   async getNameRequestPayments (nrId, data: any): Promise<NameRequestPaymentResponse[]> {
-    const url = `${appBaseURL}/payments/${nrId}`
+    const url = `${namexApiUrl}/payments/${nrId}`
     try {
       const response = await NamexServices.axios.get(url, data)
       // FUTURE: check response status and data - make sure error handling is not changed
@@ -634,7 +635,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
 
   // FUTURE: move to NamexServices
   async getPaymentFees (data: any): Promise<any> {
-    const url = `${appBaseURL}/payments/fees`
+    const url = `${namexApiUrl}/payments/fees`
     try {
       // FUTURE: check response status and data - make sure error handling is not changed
       const response = await NamexServices.axios.post(url, data)
@@ -649,7 +650,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
   // FUTURE: move to NamexServices
   async generateReceiptRequest (paymentId): Promise<any> {
     const params = { responseType: 'arraybuffer' } as AxiosRequestConfig
-    const url = `${appBaseURL}/payments/${paymentId}/receipt`
+    const url = `${namexApiUrl}/payments/${paymentId}/receipt`
     try {
       const response = await NamexServices.axios.post(url, {}, params)
       // FUTURE: check response status and data - make sure error handling is not changed

@@ -10,13 +10,7 @@ import NamexServices from '@/services/namex-services'
 @Component({})
 export class CommonMixin extends Vue {
   @Getter getSearchBusiness!: BusinessSearchIF
-
   @Action setIsLearBusiness!: ActionBindingIF
-
-  /** True if Jest is running the code. */
-  get isJestRunning (): boolean {
-    return (process.env.JEST_WORKER_ID !== undefined)
-  }
 
   /** Returns the specified string in Title Case. */
   toTitleCase (str: string): string {

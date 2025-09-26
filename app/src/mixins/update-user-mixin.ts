@@ -10,8 +10,8 @@ export class UpdateUserMixin extends Vue {
 
   /** Fetches the user and org info and updates LaunchDarkly. */
   async updateLaunchDarkly (): Promise<any> {
-    // don't run in Jest tests
-    if (process.env.JEST_WORKER_ID) return
+    // don't run when Vitest is running the code
+    if (import.meta.env.VITEST) return
 
     try {
       // get user info
@@ -39,7 +39,9 @@ export class UpdateUserMixin extends Vue {
         name: orgInfo.name
       }
 
-      return UpdateLdUser(userContext, orgContext)
+      if (userContext || orgContext) return UpdateLdUser(userContext, orgContext)
+
+      return null
     } catch (err) {
       // just log the error -- no need to halt app
       console.log('Error updating LaunchDarkly =', err) // eslint-disable-line no-console

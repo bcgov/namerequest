@@ -112,7 +112,6 @@ import { RENEW_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import { FilingTypes } from '@/modules/payment/filing-types'
 import { Jurisdictions, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
-import { getBaseUrl } from '@/components/payment/payment-utils'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { PaymentRequiredError } from '@/errors'
 import { Navigate } from '@/plugins'
@@ -233,7 +232,7 @@ export default class RenewDialog extends Mixins(
       this.savePaymentResponseToSession(PaymentAction.RENEW, paymentResponse)
 
       // See if pay is needed else navigate to Existing NR page
-      const baseUrl = getBaseUrl()
+      const baseUrl = sessionStorage.getItem('BASE_URL')
       const returnUrl = encodeURIComponent(`${baseUrl}/nr/${this.getNrId}/?paymentId=${paymentId}`)
       if (paymentResponse.sbcPayment.isPaymentActionRequired) {
         this.navigateToPaymentPortal(paymentToken, returnUrl)

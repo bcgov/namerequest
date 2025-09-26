@@ -10,38 +10,36 @@
 @font-face {
   font-family: 'BCSans';
   font-style: normal;
-  font-weight: normal;
-  src: url('~@/assets/fonts/BCSans-Regular.woff') format('woff');
+  font-weight: 400;
+  src: url('@/assets/fonts/BCSans-Regular.woff2') format('woff2'), /* Optimized for very modern browsers */
+       url('@/assets/fonts/BCSans-Regular.woff') format('woff'); /* Modern Browsers */
 }
-
 @font-face {
   font-family: 'BCSans';
   font-style: italic;
-  font-weight: normal;
-  src: url('~@/assets/fonts/BCSans-Italic.woff') format('woff');
+  font-weight: 400;
+  src: url('@/assets/fonts/BCSans-Italic.woff2') format('woff2'), /* Optimized for very modern browsers */
+       url('@/assets/fonts/BCSans-Italic.woff') format('woff'); /* Modern Browsers */
 }
-
 @font-face {
   font-family: 'BCSans';
   font-style: normal;
-  font-weight: bold;
-  src: url('~@/assets/fonts/BCSans-Bold.woff') format('woff');
+  font-weight: 700;
+  src: url('@/assets/fonts/BCSans-Bold.woff2') format('woff2'), /* Modern Browsers */
+       url('@/assets/fonts/BCSans-Bold.woff') format('woff'); /* Optimized for very modern browsers */
 }
-
 @font-face {
   font-family: 'BCSans';
   font-style: italic;
-  font-weight: bold;
-  src: url('~@/assets/fonts/BCSans-BoldItalic.woff') format('woff');
+  font-weight: 700;
+  src: url('@/assets/fonts/BCSans-BoldItalic.woff2') format('woff2'), /* Modern Browsers */
+       url('@/assets/fonts/BCSans-BoldItalic.woff') format('woff'); /* Optimized for very modern browsers */
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-/*
- * HTML element styles
- */
 .h6, h6 {
   color: $dk-text;
   font-size: $px-16;
@@ -49,9 +47,6 @@ html {
   font-weight: bold;
 }
 
-/*
- * Global styles
- */
 .approved {
   color: $app-green !important;
 }
@@ -358,6 +353,10 @@ button.reserve-submit-btn {
 
 .hidden {
   display: none !important;
+}
+
+.max-width-100 {
+  max-width: 100%;
 }
 
 /* FUTURE: Move this somewhere better! */
