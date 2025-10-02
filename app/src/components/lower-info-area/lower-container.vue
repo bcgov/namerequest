@@ -40,12 +40,11 @@
               </v-row>
               <v-row justify="center">
                 <v-col cols="auto">
-                  <v-img
+                  <img
                     src="@/assets/images/lc-tm-search-icon.png"
                     height="60"
                     width="60"
-                    contain
-                  />
+                  >
                 </v-col>
               </v-row>
               <v-row justify="end">
@@ -78,12 +77,11 @@
               </v-row>
               <v-row justify="center">
                 <v-col cols="auto">
-                  <v-img
+                  <img
                     src="@/assets/images/domainicon_x1.png"
                     height="60"
                     width="60"
-                    contain
-                  />
+                  >
                 </v-col>
               </v-row>
               <v-row>
@@ -111,12 +109,11 @@
               </v-row>
               <v-row justify="center">
                 <v-col cols="auto">
-                  <v-img
+                  <img
                     src="@/assets/images/socialicon_x1.png"
                     height="60"
                     width="60"
-                    contain
-                  />
+                  >
                 </v-col>
               </v-row>
               <v-row>

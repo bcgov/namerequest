@@ -14,7 +14,10 @@
         class="pb-4"
         :class="{'pr-15' : !isMobile }"
       >
-        <v-img src="@/assets/images/bcnamerequest-laptop_x2.jpg" />
+        <img
+          class="max-width-100"
+          src="@/assets/images/bcnamerequest-laptop_x2.jpg"
+        >
       </v-col>
       <v-col
         cols="12"

@@ -1017,8 +1017,8 @@ export default class NamesCapture extends Mixins(CommonMixin) {
 
 .launch-icon {
   display: inline-block;
-  font-size: $px-14;
-  color: $app-blue;
+  font-size: $px-14 !important;
+  color: $app-blue !important;
 }
 
 ::v-deep .v-messages__message {

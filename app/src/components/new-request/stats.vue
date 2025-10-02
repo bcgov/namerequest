@@ -165,7 +165,7 @@ export default class Stats extends Vue {
 
 .stats-content-outer {
   width: fit-content;
-  background: url('~@/assets/images/stats-circle.png');
+  background: url('@/assets/images/stats-circle.png');
   background-repeat: no-repeat;
   display: flex;
   align-items: center;

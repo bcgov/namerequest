@@ -218,7 +218,7 @@ export default class App extends Mixins(
 
   /** The About text. */
   get aboutText (): string {
-    return process.env.ABOUT_TEXT
+    return import.meta.env.ABOUT_TEXT
   }
 
   /** The route breadcrumbs list. */
@@ -316,8 +316,8 @@ export default class App extends Mixins(
 
   /** Fetches and stores the current JS date. */
   private async updateCurrentJsDate (): Promise<void> {
-    // don't run in Jest tests
-    if (process.env.JEST_WORKER_ID) return
+    // don't run when Vitest is running the code
+    if (import.meta.env.VITEST) return
 
     const jsDate = await this.getServerDate()
     this.setCurrentJsDate(jsDate)

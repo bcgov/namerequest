@@ -111,7 +111,6 @@ import { RETRY_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import { FilingTypes } from '@/modules/payment/filing-types'
 import { Jurisdictions, PaymentStatus } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
-import { getBaseUrl } from '@/components/payment/payment-utils'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { FetchFeesParams } from '@/modules/payment/models'
 
@@ -224,7 +223,7 @@ export default class RetryDialog extends Mixins(
     // Save payment to session
     this.savePendingPaymentToSession(action, this.pendingPayment)
 
-    const baseUrl = getBaseUrl()
+    const baseUrl = sessionStorage.getItem('BASE_URL')
     const returnUrl = encodeURIComponent(`${baseUrl}/nr/${nrId}/?paymentId=${id}`)
     this.navigateToPaymentPortal(token, returnUrl)
   }

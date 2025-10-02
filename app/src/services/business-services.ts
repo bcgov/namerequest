@@ -23,7 +23,7 @@ export default class BusinessServices {
     // Add API gateway-specific headers (in addition to interceptor)
     const extraHeaders = GetFeatureFlag('use-business-api-gw-url') ? {
       'Account-Id': String(businessRequest.filing.header.accountId),
-      'X-Apikey': process.env.VUE_APP_BUSINESS_API_KEY || ''
+      'X-Apikey': import.meta.env.VUE_APP_BUSINESS_API_KEY || ''
     } : {}
 
     return axios.post(url, businessRequest, { headers: extraHeaders })
@@ -39,7 +39,7 @@ export default class BusinessServices {
     // Add API gateway-specific headers (in addition to interceptor)
     const extraHeaders = GetFeatureFlag('use-business-api-gw-url') ? {
       'Account-Id': JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT'))?.id || '',
-      'X-Apikey': process.env.VUE_APP_BUSINESS_API_KEY || ''
+      'X-Apikey': import.meta.env.VUE_APP_BUSINESS_API_KEY || ''
     } : {}
 
     return axios.get(url, { headers: extraHeaders })

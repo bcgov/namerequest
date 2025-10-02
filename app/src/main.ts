@@ -8,10 +8,11 @@ import KeycloakService from 'sbc-common-components/src/services/keycloak.service
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import ConfigHelper from 'sbc-common-components/src/util/config-helper'
 
+// Styles
 // NB: order matters - do not change
 import 'quill/dist/quill.core.css'
+import 'vuetify/dist/vuetify.min.css'
 import '@mdi/font/css/materialdesignicons.min.css'
-
 import '@/assets/styles/base.scss'
 import '@/assets/styles/layout.scss'
 import '@/assets/styles/overrides.scss'
@@ -26,7 +27,7 @@ Vue.config.devtools = true
  */
 async function startVue () {
   // Fetch the configuration
-  const envConfig = await getConfig()
+  const envConfig = getConfig()
   const store = getVuexStore()
 
   // FUTURE: remove this global assignment if possible
