@@ -1,12 +1,13 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { UpdateLdUser } from '@/plugins'
 import AuthServices from '@/services/auth-services'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 @Component({})
 export class UpdateUserMixin extends Vue {
-  @Getter getKeycloakRoles!: string[]
+  @Getter(useStore) getKeycloakRoles!: string[]
 
   /** Fetches the user and org info and updates LaunchDarkly. */
   async updateLaunchDarkly (): Promise<any> {

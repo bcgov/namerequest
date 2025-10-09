@@ -1,7 +1,6 @@
 import axios from 'axios'
-import { EnvConfigI } from '@/interfaces'
 
-export function getConfig (): EnvConfigI {
+export function getConfig (): void {
   // get config from environment
   const windowLocationOrigin = window.location.origin
   const envVueAppPath = import.meta.env.VUE_APP_PATH as string
@@ -111,8 +110,4 @@ export function getConfig (): EnvConfigI {
 
   const keycloakClientId: string = import.meta.env.VUE_APP_KEYCLOAK_CLIENTID;
   (<any>window).keycloakClientId = keycloakClientId
-
-  return {
-    $PAYMENT_PORTAL_URL: paymentPortalUrl
-  } as EnvConfigI
 }

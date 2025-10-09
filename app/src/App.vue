@@ -102,9 +102,9 @@
 </template>
 
 <script lang="ts">
-// libraries, etc
 import { Component, Mixins } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { GetFeatureFlag, Navigate } from '@/plugins'
 import { DateMixin, LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin } from '@/mixins'
 import { Routes } from '@/enums'
@@ -115,21 +115,16 @@ import {
   getRegistryHomeBreadcrumb
 } from '@/resources'
 import axios from 'axios'
-
-// dialogs and other components
 import { Breadcrumb } from '@/components/common'
 import GenesysWebMessage from '@bcrs-shared-components/genesys-web-message/GenesysWebMessage.vue'
 import { WebChat as ChatPopup } from '@bcrs-shared-components/web-chat'
-import {
-  AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
-  MrasSearchInfoDialog, NrNotRequiredDialog, CreateBusinessErrorDialog, ConfirmNrDialog,
-  PaymentCompleteDialog, PickEntityOrConversionDialog, RenewDialog, ReceiptsDialog, RefundDialog,
-  ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
-} from '@/components/dialogs'
+import { AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog,
+  HelpMeChooseDialog, MrasSearchInfoDialog, NrNotRequiredDialog, CreateBusinessErrorDialog,
+  ConfirmNrDialog, PaymentCompleteDialog, PickEntityOrConversionDialog, RenewDialog, ReceiptsDialog,
+  RefundDialog, ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog,
+  ExitIncompletePaymentDialog } from '@/components/dialogs'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
-
-// Interfaces / Enums
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from './services/namex-services'
 import { PAYMENT_REQUIRED } from 'http-status-codes'
@@ -167,26 +162,24 @@ import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 export default class App extends Mixins(
   DateMixin, LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin
 ) {
-  // Global getters
-  @Getter getAmalgamateNowErrorStatus!: boolean
-  @Getter getContinuationInErrorStatus!: boolean
-  @Getter getDisplayedComponent!: string
-  @Getter getIncorporateNowErrorStatus!: boolean
-  @Getter getNrId!: number
-  @Getter isAuthenticated!: boolean
-  // @Getter isRoleStaff!: boolean
-  @Getter isMobile!: boolean
-  // @Getter isNewBusiness!: boolean
+  @Getter(useStore) getAmalgamateNowErrorStatus!: boolean
+  @Getter(useStore) getContinuationInErrorStatus!: boolean
+  @Getter(useStore) getDisplayedComponent!: string
+  @Getter(useStore) getIncorporateNowErrorStatus!: boolean
+  @Getter(useStore) getNrId!: number
+  @Getter(useStore) isAuthenticated!: boolean
+  // @Getter(useStore) isRoleStaff!: boolean
+  @Getter(useStore) isMobile!: boolean
+  // @Getter(useStore) isNewBusiness!: boolean
 
-  // Global actions
-  @Action fetchAuthorizedActions!: () => void
-  @Action resetAnalyzeName!: ActionBindingIF
-  @Action setName!: ActionBindingIF
-  @Action setDisplayedComponent!: ActionBindingIF
-  @Action toggleConfirmNrModal!: ActionBindingIF
-  @Action setCurrentJsDate!: ActionBindingIF
-  @Action setRequestAction!: ActionBindingIF
-  @Action setWindowWidth!: ActionBindingIF
+  @Action(useStore) fetchAuthorizedActions!: () => void
+  @Action(useStore) resetAnalyzeName!: ActionBindingIF
+  @Action(useStore) setName!: ActionBindingIF
+  @Action(useStore) setDisplayedComponent!: ActionBindingIF
+  @Action(useStore) toggleConfirmNrModal!: ActionBindingIF
+  @Action(useStore) setCurrentJsDate!: ActionBindingIF
+  @Action(useStore) setRequestAction!: ActionBindingIF
+  @Action(useStore) setWindowWidth!: ActionBindingIF
 
   readonly axios = axios
   readonly window = window

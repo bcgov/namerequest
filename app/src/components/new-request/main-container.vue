@@ -44,20 +44,19 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { DisplayedComponentMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class MainContainer extends Mixins(DisplayedComponentMixin) {
-  // Global getters
-  @Getter getEditMode!: boolean
-  @Getter getSubmissionTabNumber!: number
-  @Getter isMobile!: boolean
+  @Getter(useStore) getEditMode!: boolean
+  @Getter(useStore) getSubmissionTabNumber!: number
+  @Getter(useStore) isMobile!: boolean
 
-  // Global action
-  @Action setExitModalVisible!: ActionBindingIF
-  @Action setExitIncompletePaymentVisible!: ActionBindingIF
+  @Action(useStore) setExitModalVisible!: ActionBindingIF
+  @Action(useStore) setExitIncompletePaymentVisible!: ActionBindingIF
 
   componentName = ''
 

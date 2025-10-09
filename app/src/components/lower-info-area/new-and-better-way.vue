@@ -49,11 +49,12 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Getter } from 'pinia-class'
+import { useStore } from '@/store'
 
 @Component
 export default class NewAndBetterWay extends Vue {
-  @Getter isMobile!: boolean
+  @Getter(useStore) isMobile!: boolean
 }
 </script>
 

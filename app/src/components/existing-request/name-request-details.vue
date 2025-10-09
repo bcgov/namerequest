@@ -55,7 +55,8 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { NameRequestI } from '@/interfaces'
 import { NrRequestActionCodes } from '@/enums'
 import { CommonMixin } from '@/mixins'
@@ -63,12 +64,11 @@ import { CanJurisdictions, ConversionTypes, IntlJurisdictions } from '@/list-dat
 
 @Component({})
 export default class NameRequestDetails extends Mixins(CommonMixin) {
-  // Store getters
-  @Getter getNr!: Partial<NameRequestI>
-  @Getter getRequestActionCd!: NrRequestActionCodes
-  @Getter isAmalgamation!: boolean
-  @Getter isConversion!: boolean
-  @Getter isNewBusiness!: boolean
+  @Getter(useStore) getNr!: Partial<NameRequestI>
+  @Getter(useStore) getRequestActionCd!: NrRequestActionCodes
+  @Getter(useStore) isAmalgamation!: boolean
+  @Getter(useStore) isConversion!: boolean
+  @Getter(useStore) isNewBusiness!: boolean
 
   /** The request type of this NR. */
   get requestType (): string {

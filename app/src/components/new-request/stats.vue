@@ -95,8 +95,8 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
-
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { StatsI } from '@/interfaces'
 import { GetFeatureFlag } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
@@ -104,12 +104,10 @@ import NamexServices from '@/services/namex-services'
 
 @Component({})
 export default class Stats extends Vue {
-  // Global getter
-  @Getter getStats!: StatsI
-  @Getter isMobile!: boolean
+  @Getter(useStore) getStats!: StatsI
+  @Getter(useStore) isMobile!: boolean
 
-  // Global action
-  @Action setStats!: ActionBindingIF
+  @Action(useStore) setStats!: ActionBindingIF
 
   async created (): Promise<void> {
     if (

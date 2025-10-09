@@ -62,11 +62,10 @@
 
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { CommonMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-
-// Components
 import Search from '@/components/new-request/search.vue'
 import ExistingRequestSearch from './existing-request/existing-request-search.vue'
 import LinkRow from '@/components/common/link-row.vue'
@@ -79,12 +78,10 @@ import LinkRow from '@/components/common/link-row.vue'
   }
 })
 export default class Tabs extends Mixins(CommonMixin) {
-  // Global getter
-  @Getter getTabNumber!: number
-  @Getter isMobile!: boolean
+  @Getter(useStore) getTabNumber!: number
+  @Getter(useStore) isMobile!: boolean
 
-  // Global action
-  @Action setTabNumber!: ActionBindingIF
+  @Action(useStore) setTabNumber!: ActionBindingIF
 
   get tabNumber () {
     return this.getTabNumber

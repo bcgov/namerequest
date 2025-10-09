@@ -29,23 +29,22 @@
 
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { SubmissionTypeT } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { NrState } from '@/enums'
 
 @Component({})
 export default class ApplicantInfoNav extends Vue {
-  // Global getters
-  @Getter getEditMode!: boolean
-  @Getter getIsLoadingSubmission!: boolean
-  @Getter getNrState!: string
-  @Getter getSubmissionTabNumber!: number
-  @Getter getSubmissionType!: SubmissionTypeT
-  @Getter isMobile!: boolean
+  @Getter(useStore) getEditMode!: boolean
+  @Getter(useStore) getIsLoadingSubmission!: boolean
+  @Getter(useStore) getNrState!: string
+  @Getter(useStore) getSubmissionTabNumber!: number
+  @Getter(useStore) getSubmissionType!: SubmissionTypeT
+  @Getter(useStore) isMobile!: boolean
 
-  // Global actions
-  @Action setSubmissionTabNumber!: ActionBindingIF
+  @Action(useStore) setSubmissionTabNumber!: ActionBindingIF
 
   get backText () {
     if (this.getEditMode) {

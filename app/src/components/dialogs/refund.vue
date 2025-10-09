@@ -114,11 +114,10 @@
 
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
-
+import { Action, Getter } from 'pinia-class'
+import { useStore, usePaymentStore } from '@/store'
 import RefundSummary from '@/components/payment/refund-summary.vue'
 import ContactInfo from '@/components/common/contact-info.vue'
-import { REFUND_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import { NrAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
@@ -131,13 +130,12 @@ import NamexServices from '@/services/namex-services'
   }
 })
 export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMixin) {
-  // Global getters
-  @Getter getNrId!: number
+  @Getter(useStore) getNrId!: number
+  @Getter(usePaymentStore) refundModalIsVisible!: boolean
 
-  // Global actions
-  @Action loadExistingNameRequest!: ActionBindingIF
-  @Action setDisplayedComponent!: ActionBindingIF
-  @Action toggleRefundModal!: ActionBindingIF
+  @Action(useStore) loadExistingNameRequest!: ActionBindingIF
+  @Action(useStore) setDisplayedComponent!: ActionBindingIF
+  @Action(useStore) toggleRefundModal!: ActionBindingIF
 
   /** Used to display a fetch error, if any. */
   protected fetchError = ''
@@ -157,7 +155,7 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
 
   /** Whether this modal should be shown (per store property). */
   get showConfirmModal (): boolean {
-    return this.$store.getters[REFUND_MODAL_IS_VISIBLE]
+    return this.refundModalIsVisible
   }
 
   /** Clears store property to hide this modal. */

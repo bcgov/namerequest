@@ -77,12 +77,12 @@ import { BusinessLookupResultIF, BusinessSearchIF } from '@/interfaces'
 import BusinessLookupServices from '@/services/business-lookup-services'
 import { EntityStates, EntityTypes, SearchStates as States } from '@/enums'
 
-/*
- * See PPR's BusinessSearchAutocomplete.vue for a Composition API example.
- */
+//
+// See PPR's BusinessSearchAutocomplete.vue for a Composition API example.
+//
 @Component({})
 export default class BusinessLookup extends Vue {
-  // Status of businesses to search for prop
+  /** Status of businesses to search for prop. */
   @Prop({ default: EntityStates.ACTIVE }) readonly searchStatus!: string
 
   // enum for template

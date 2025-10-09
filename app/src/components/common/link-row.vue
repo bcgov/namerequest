@@ -55,19 +55,18 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { CommonMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class LinkRow extends Mixins(CommonMixin) {
-  // Global action
-  @Action setNrRequiredModalVisible!: ActionBindingIF
+  @Action(useStore) setNrRequiredModalVisible!: ActionBindingIF
 
-  // Global getter
-  @Getter isMobile!: boolean
+  @Getter(useStore) isMobile!: boolean
 
-  /** Entity Selector Tool */
+  /** The Entity Selector Tool URL. */
   get entitySelectorUrl (): string {
     return sessionStorage.getItem('ENTITY_SELECTOR_URL')
   }

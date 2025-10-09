@@ -221,7 +221,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import ReserveSubmit from '@/components/new-request/submit-request/reserve-submit.vue'
 import { AnalysisJSONI, OptionI } from '@/interfaces'
 import { replaceWord } from '@/plugins'
@@ -254,18 +255,16 @@ export default class GreyBox extends Vue {
   @Prop(String)
   readonly originalName: string
 
-  // Global getters
-  @Getter getAnalysisJSON!: AnalysisJSONI
-  @Getter getDesignationIssueTypes!: string[]
-  @Getter getEntityTypeCd!: EntityTypes
-  @Getter getName!: string
-  @Getter getRequestExaminationOrProvideConsent!: boolean
+  @Getter(useStore) getAnalysisJSON!: AnalysisJSONI
+  @Getter(useStore) getDesignationIssueTypes!: string[]
+  @Getter(useStore) getEntityTypeCd!: EntityTypes
+  @Getter(useStore) getName!: string
+  @Getter(useStore) getRequestExaminationOrProvideConsent!: boolean
 
-  // Global actions
-  @Action cancelAnalyzeName!: ActionBindingIF
-  @Action setName!: ActionBindingIF
-  @Action setRequestExaminationOrProvideConsent!: ActionBindingIF
-  @Action setShowActualInput!: ActionBindingIF
+  @Action(useStore) cancelAnalyzeName!: ActionBindingIF
+  @Action(useStore) setName!: ActionBindingIF
+  @Action(useStore) setRequestExaminationOrProvideConsent!: ActionBindingIF
+  @Action(useStore) setShowActualInput!: ActionBindingIF
 
   clickedDesignation = ''
   originalNameBase = ''

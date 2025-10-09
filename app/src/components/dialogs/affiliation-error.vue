@@ -67,7 +67,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { NrAffiliationErrors } from '@/enums'
 import ContactInfo from '@/components/common/contact-info.vue'
@@ -76,8 +77,8 @@ import ContactInfo from '@/components/common/contact-info.vue'
   components: { ContactInfo }
 })
 export default class AffiliationErrorDialog extends Vue {
-  @Getter getAffiliationErrorModalValue!: number
-  @Action setAffiliationErrorModalValue!: ActionBindingIF
+  @Getter(useStore) getAffiliationErrorModalValue!: number
+  @Action(useStore) setAffiliationErrorModalValue!: ActionBindingIF
 
   get isShowModal (): boolean {
     return (this.getAffiliationErrorModalValue !== NrAffiliationErrors.NONE)

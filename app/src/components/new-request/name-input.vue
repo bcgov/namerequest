@@ -21,7 +21,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch, Emit } from 'vue-property-decorator'
-import { Getter, Action } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { sanitizeName } from '@/plugins'
 import { DFLT_MIN_LENGTH, DFLT_MAX_LENGTH, MRAS_MIN_LENGTH, MRAS_MAX_LENGTH }
@@ -39,21 +40,19 @@ export default class NameInput extends Vue {
   /** Hint to show (eg, on name check page). */
   @Prop({ default: null }) readonly hint!: string
 
-  // Store getters
-  @Getter getCorpSearch!: string
-  @Getter getErrors!: string[]
-  @Getter getHasNoCorpNum!: boolean
-  @Getter getName!: string
-  @Getter isMrasJurisdiction!: boolean
-  @Getter isXproFlow!: boolean
-  @Getter getEntityTypeCd!: string
+  @Getter(useStore) getCorpSearch!: string
+  @Getter(useStore) getErrors!: string[]
+  @Getter(useStore) getHasNoCorpNum!: boolean
+  @Getter(useStore) getName!: string
+  @Getter(useStore) isMrasJurisdiction!: boolean
+  @Getter(useStore) isXproFlow!: boolean
+  @Getter(useStore) getEntityTypeCd!: string
 
-  // Store actions
-  @Action setClearErrors!: () => void
-  @Action setCorpSearch!: ActionBindingIF
-  @Action setName!: ActionBindingIF
-  @Action setMrasSearchInfoModalVisible!: ActionBindingIF
-  @Action startAnalyzeName!: ActionBindingIF
+  @Action(useStore) setClearErrors!: () => void
+  @Action(useStore) setCorpSearch!: ActionBindingIF
+  @Action(useStore) setName!: ActionBindingIF
+  @Action(useStore) setMrasSearchInfoModalVisible!: ActionBindingIF
+  @Action(useStore) startAnalyzeName!: ActionBindingIF
 
   readonly defaultRules = [
     v => (!v || v.length >= DFLT_MIN_LENGTH) || `Must be at least ${DFLT_MIN_LENGTH} characters`,

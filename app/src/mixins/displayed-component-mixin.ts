@@ -1,22 +1,21 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from '@/services/namex-services'
 import { NrState } from '@/enums'
 
 @Component({})
 export class DisplayedComponentMixin extends Vue {
-  // Global getter
-  @Getter getDisplayedComponent!: string
-  @Getter getNrId!: number
-  @Getter getNrState!: NrState
+  @Getter(useStore) getDisplayedComponent!: string
+  @Getter(useStore) getNrId!: number
+  @Getter(useStore) getNrState!: NrState
 
-  // Global actions
-  @Action cancelAnalyzeName!: ActionBindingIF
-  @Action cancelEditExistingRequest!: ActionBindingIF
-  @Action setDisplayedComponent!: ActionBindingIF
-  @Action setSubmissionTabComponent!: ActionBindingIF
-  @Action setEditMode!: ActionBindingIF
+  @Action(useStore) cancelAnalyzeName!: ActionBindingIF
+  @Action(useStore) cancelEditExistingRequest!: ActionBindingIF
+  @Action(useStore) setDisplayedComponent!: ActionBindingIF
+  @Action(useStore) setSubmissionTabComponent!: ActionBindingIF
+  @Action(useStore) setEditMode!: ActionBindingIF
 
   componentName = ''
 

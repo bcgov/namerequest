@@ -27,7 +27,6 @@ import MainContainer from '@/components/new-request/main-container.vue'
   components: { MainContainer }
 })
 export default class QuickSearchNames extends Vue {
-  // Global getter
   @Prop() readonly namesList!: Array<{ name: string, type: string }>
 }
 

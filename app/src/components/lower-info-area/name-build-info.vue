@@ -92,9 +92,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
-
-// Components
+import { Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { BusinessDesignation, ConsentWords, ExampleName, UnavailableWords, UniqueNames, UnknownWords }
   from '@/components/lower-info-area/name-build-sub-components'
 
@@ -109,8 +108,7 @@ import { BusinessDesignation, ConsentWords, ExampleName, UnavailableWords, Uniqu
   }
 })
 export default class NameBuildInfo extends Vue {
-  // Global getter
-  @Getter isMobile!: boolean
+  @Getter(useStore) isMobile!: boolean
 
   private itemIndex = 0
   readonly items = [

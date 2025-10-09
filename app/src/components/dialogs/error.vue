@@ -64,29 +64,34 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import ErrorModule from '@/modules/error'
-import * as ErrorTypes from '@/modules/error/store/types'
+import { Action, Getter } from 'pinia-class'
+import { useErrorStore } from '@/store'
 import ContactInfo from '@/components/common/contact-info.vue'
+import { ErrorI } from '@/interfaces'
 
 @Component({
   components: { ContactInfo }
 })
 export default class ErrorDialog extends Vue {
+  @Getter(useErrorStore) hasErrors!: boolean
+  @Getter(useErrorStore) getErrors!: () => ErrorI[]
+  @Action(useErrorStore) clearAppErrors!: () => void
+
   get showModal () {
-    return ErrorModule[ErrorTypes.HAS_ERRORS]
+    return this.hasErrors // *** TODO: test this
   }
 
-  async hideModal () {
-    await ErrorModule.clearAppErrors()
+  hideModal () {
+    this.clearAppErrors()
   }
 
   get isExists () {
-    const errors = ErrorModule[ErrorTypes.GET_ERRORS]
+    const errors = this.getErrors
     return errors[0] && errors[0].id === 'entry-already-exists'
   }
 
   get isEditLockError () {
-    const errors = ErrorModule[ErrorTypes.GET_ERRORS]
+    const errors = this.getErrors
     return errors[0] && errors[0].id === 'edit-lock-error'
   }
 }

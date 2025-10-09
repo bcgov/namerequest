@@ -334,7 +334,8 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import NameCheckIssuesDialog from '@/components/dialogs/name-check-issues.vue'
 import MainContainer from '@/components/new-request/main-container.vue'
 import NameCheckConflicts from '@/components/new-request/name-check/name-check-conflicts.vue'
@@ -358,38 +359,38 @@ import { Designations } from '@/list-data'
   }
 })
 export default class NameCheck extends Vue {
-  @Getter getConflictsConditional!: Array<string>
-  @Getter getConflictsConditionalInstructions!: Array<ConditionalInstructionI>
-  @Getter getConflictsExact!: Array<string>
-  @Getter getConflictsRestricted!: Array<string>
-  @Getter getConflictsSimilar!: Array<string>
-  @Getter getDesignation!: string
-  @Getter getDesignationsCheckUse!: Array<string>
-  @Getter getDesignationsMismatched!: Array<string>
-  @Getter getDesignationsMisplaced!: Array<string>
-  @Getter getEntityTextFromValue!: string
-  @Getter getEntityTypeCd!: EntityTypes
-  @Getter getErrors!: string[]
-  @Getter getFullName!: string
-  @Getter getLocationText!: string
-  @Getter getNameCheckErrors!: NameCheckErrorI
-  @Getter getNumbersCheckUse!: Array<string>
-  @Getter getSpecialCharacters!: Array<string>
-  @Getter isAnalyzeConflictsPending!: boolean
-  @Getter isAnalyzeDesignationPending!: boolean
-  @Getter isAnalyzeStructurePending!: boolean
-  @Getter isMissingDescriptive!: boolean
-  @Getter isMissingDesignation!: boolean
-  @Getter isMissingDistinctive!: boolean
-  @Getter isMobile!: boolean
-  @Getter isXproFlow!: boolean
+  @Getter(useStore) getConflictsConditional!: Array<string>
+  @Getter(useStore) getConflictsConditionalInstructions!: Array<ConditionalInstructionI>
+  @Getter(useStore) getConflictsExact!: Array<string>
+  @Getter(useStore) getConflictsRestricted!: Array<string>
+  @Getter(useStore) getConflictsSimilar!: Array<string>
+  @Getter(useStore) getDesignation!: string
+  @Getter(useStore) getDesignationsCheckUse!: Array<string>
+  @Getter(useStore) getDesignationsMismatched!: Array<string>
+  @Getter(useStore) getDesignationsMisplaced!: Array<string>
+  @Getter(useStore) getEntityTextFromValue!: string
+  @Getter(useStore) getEntityTypeCd!: EntityTypes
+  @Getter(useStore) getErrors!: string[]
+  @Getter(useStore) getFullName!: string
+  @Getter(useStore) getLocationText!: string
+  @Getter(useStore) getNameCheckErrors!: NameCheckErrorI
+  @Getter(useStore) getNumbersCheckUse!: Array<string>
+  @Getter(useStore) getSpecialCharacters!: Array<string>
+  @Getter(useStore) isAnalyzeConflictsPending!: boolean
+  @Getter(useStore) isAnalyzeDesignationPending!: boolean
+  @Getter(useStore) isAnalyzeStructurePending!: boolean
+  @Getter(useStore) isMissingDescriptive!: boolean
+  @Getter(useStore) isMissingDesignation!: boolean
+  @Getter(useStore) isMissingDistinctive!: boolean
+  @Getter(useStore) isMobile!: boolean
+  @Getter(useStore) isXproFlow!: boolean
 
-  @Action getNameAnalysis!: ActionBindingIF
-  @Action nameCheckClearError!: ActionBindingIF
-  @Action setActiveComponent!: ActionBindingIF
-  @Action setDesignation!: ActionBindingIF
-  @Action startAnalyzeName!: ActionBindingIF
-  @Action startQuickSearch!: ActionBindingIF
+  @Action(useStore) getNameAnalysis!: ActionBindingIF
+  @Action(useStore) nameCheckClearError!: ActionBindingIF
+  @Action(useStore) setActiveComponent!: ActionBindingIF
+  @Action(useStore) setDesignation!: ActionBindingIF
+  @Action(useStore) startAnalyzeName!: ActionBindingIF
+  @Action(useStore) startQuickSearch!: ActionBindingIF
 
   config = {
     modules: {

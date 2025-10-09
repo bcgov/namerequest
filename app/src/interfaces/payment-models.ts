@@ -1,6 +1,5 @@
-import { ErrorI } from '@/modules/error/store/actions'
-import { FilingTypes } from '@/modules/payment/filing-types'
-import { Jurisdictions } from '@/enums'
+import { FilingTypes, Jurisdictions } from '@/enums'
+import { ErrorI } from '@/interfaces'
 
 export interface NameRequestPaymentResponse {
   id: number
