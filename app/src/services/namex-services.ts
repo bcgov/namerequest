@@ -42,7 +42,6 @@ setActivePinia(createPinia())
 
 export default class NamexServices {
   static axios = axiosNamex
-  static errorStore = useErrorStore() // *** TODO: test this
 
   static async addRequestActionComment (
     requestActionCd: NrRequestActionCodes,
@@ -90,7 +89,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not add request action comment')
       console.error('addRequestActionComment() =', msg) // eslint-disable-line no-console
-      this.errorStore.setAppError({ id: 'add-request-action-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'add-request-action-error', error: msg } as ErrorI)
       return null
     }
   }
@@ -124,7 +123,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not cancel payment')
       console.error('cancelPayment() =', msg) // eslint-disable-line no-console
-      this.errorStore.setAppError({ id: 'cancel-payment-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'cancel-payment-error', error: msg } as ErrorI)
       return null
     }
   }
@@ -178,7 +177,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not checkin name request')
       console.error('checkinNameRequest() =', msg) // eslint-disable-line no-console
-      this.errorStore.setAppError({ id: 'checkin-name-requests-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'checkin-name-requests-error', error: msg } as ErrorI)
       return false
     }
   }
@@ -221,7 +220,7 @@ export default class NamexServices {
         // or is in a state other than 'DRAFT'
         error_id = 'edit-lock-error'
       }
-      this.errorStore.setAppError({ id: error_id, error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: error_id, error: msg } as ErrorI)
       return false
     }
   }
@@ -257,7 +256,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not complete payment')
       console.error('completePayment() =', msg) // eslint-disable-line no-console
-      this.errorStore.setAppError({ id: 'complete-payment-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'complete-payment-error', error: msg } as ErrorI)
       return null
     }
   }
@@ -291,7 +290,7 @@ export default class NamexServices {
     } catch (error) {
       console.error('downloadOutputs() =', error) // eslint-disable-line no-console
 
-      this.errorStore.setAppError(
+      useErrorStore().setAppError(
         { id: 'download-pdf-error', error: 'Could not download PDF' } as ErrorI
       )
     }
@@ -332,7 +331,7 @@ export default class NamexServices {
       if (handleError) {
         const msg = await this.handleApiError(err, 'Could not get name request')
         console.error('getNameRequest() =', msg) // eslint-disable-line no-console
-        this.errorStore.setAppError({ id: 'get-name-request-error', error: msg } as ErrorI)
+        useErrorStore().setAppError({ id: 'get-name-request-error', error: msg } as ErrorI)
       }
       return null
     }
@@ -355,7 +354,7 @@ export default class NamexServices {
       if (handleError) {
         const msg = await this.handleApiError(err, 'Could not get name request')
         console.error('getNameRequest() =', msg) // eslint-disable-line no-console
-        this.errorStore.setAppError({ id: 'get-name-request-error', error: msg } as ErrorI)
+        useErrorStore().setAppError({ id: 'get-name-request-error', error: msg } as ErrorI)
       }
       return null
     }
@@ -388,7 +387,7 @@ export default class NamexServices {
       if (handleError) {
         const msg = await this.handleApiError(err, 'Could not find Name Requests.')
         console.error('searchNameRequests() =', msg) // eslint-disable-line no-console
-        this.errorStore.setAppError({ id: 'search-name-request-error', error: msg } as ErrorI)
+        useErrorStore().setAppError({ id: 'search-name-request-error', error: msg } as ErrorI)
       }
       return null
     }
@@ -464,7 +463,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not patch name requests')
       console.error('patchNameRequests() =', msg) // eslint-disable-line no-console
-      this.errorStore.setAppError({ id: 'patch-name-requests-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'patch-name-requests-error', error: msg } as ErrorI)
       return null
     }
   }
@@ -493,7 +492,7 @@ export default class NamexServices {
         // cannot be cancelled if the NR is not DRAFT state
         error_id = 'edit-lock-error'
       }
-      this.errorStore.setAppError({ id: error_id, error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: error_id, error: msg } as ErrorI)
       return null
     }
   }
@@ -540,7 +539,7 @@ export default class NamexServices {
       ) {
         error_id = 'entry-already-exists'
       }
-      this.errorStore.setAppError({ id: error_id, error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: error_id, error: msg } as ErrorI)
       return null
     }
   }
@@ -569,7 +568,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not put name reservation')
       console.error('putNameReservation() =', msg) // eslint-disable-line no-console
-      this.errorStore.setAppError({ id: 'put-name-reservation-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'put-name-reservation-error', error: msg } as ErrorI)
       return null
     }
   }
@@ -601,7 +600,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not rollback name request')
       console.error('rollbackNameRequest() =', msg) // eslint-disable-line no-console
-      this.errorStore.setAppError({ id: 'rollback-name-request-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'rollback-name-request-error', error: msg } as ErrorI)
       return false
     }
   }

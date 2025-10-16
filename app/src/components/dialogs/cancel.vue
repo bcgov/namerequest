@@ -66,7 +66,7 @@ export default class CancelDialog extends Mixins(PaymentMixin) {
 
   @Action(useStore) setDisplayedComponent!: ActionBindingIF
   @Action(useStore) setNameRequest!: ActionBindingIF
-  @Action(useStore) toggleCancelModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleCancelModal!: ActionBindingIF
 
   /** Used to show loading state on button. */
   loading = false

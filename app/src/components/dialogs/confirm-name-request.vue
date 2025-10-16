@@ -189,7 +189,7 @@ export default class ConfirmNrDialog extends Mixins(
   @Getter(useStore) isRoleStaff!: boolean
   @Getter(usePaymentStore) confirmNrModalIsVisible!: boolean
 
-  @Action(useStore) toggleConfirmNrModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleConfirmNrModal!: ActionBindingIF
 
   /** Whether staff payment is valid. */
   private isStaffPaymentValid = false

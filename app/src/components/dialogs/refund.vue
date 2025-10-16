@@ -135,7 +135,7 @@ export default class RefundDialog extends Mixins(PaymentMixin, PaymentSessionMix
 
   @Action(useStore) loadExistingNameRequest!: ActionBindingIF
   @Action(useStore) setDisplayedComponent!: ActionBindingIF
-  @Action(useStore) toggleRefundModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleRefundModal!: ActionBindingIF
 
   /** Used to display a fetch error, if any. */
   protected fetchError = ''

@@ -124,7 +124,7 @@ export const usePaymentStore = defineStore('payment', {
     },
 
     getPaymentDate (): any {
-      // should this return payment_completion_date instead?
+      // FUTURE: should this return payment_completion_date instead?
       return this.payment.payment_status_code
     },
 

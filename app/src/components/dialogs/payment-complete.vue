@@ -78,7 +78,7 @@ export default class PaymentCompleteDialog extends Mixins(
 
   @Action(useStore) loadExistingNameRequest!: ActionBindingIF
   @Action(useStore) setEditMode!: ActionBindingIF
-  @Action(useStore) toggleReceiptModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleReceiptModal!: ActionBindingIF
 
   /** Used to show loading state on button. */
   loading = false

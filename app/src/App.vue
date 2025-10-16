@@ -104,7 +104,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'pinia-class'
-import { useStore } from '@/store'
+import { usePaymentStore, useStore } from '@/store'
 import { GetFeatureFlag, Navigate } from '@/plugins'
 import { DateMixin, LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin } from '@/mixins'
 import { Routes } from '@/enums'
@@ -176,7 +176,7 @@ export default class App extends Mixins(
   @Action(useStore) resetAnalyzeName!: ActionBindingIF
   @Action(useStore) setName!: ActionBindingIF
   @Action(useStore) setDisplayedComponent!: ActionBindingIF
-  @Action(useStore) toggleConfirmNrModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleConfirmNrModal!: ActionBindingIF
   @Action(useStore) setCurrentJsDate!: ActionBindingIF
   @Action(useStore) setRequestAction!: ActionBindingIF
   @Action(useStore) setWindowWidth!: ActionBindingIF

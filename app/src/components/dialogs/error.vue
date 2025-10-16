@@ -78,11 +78,11 @@ export default class ErrorDialog extends Vue {
   @Action(useErrorStore) clearAppErrors!: () => void
 
   get showModal () {
-    return this.hasErrors // *** TODO: test this
+    return this.hasErrors
   }
 
-  hideModal () {
-    this.clearAppErrors()
+  async hideModal () {
+    await this.clearAppErrors()
   }
 
   get isExists () {

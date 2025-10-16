@@ -142,7 +142,7 @@ export default class RenewDialog extends Mixins(
   @Getter(useStore) getPriorityRequest!: boolean
   @Getter(usePaymentStore) renewModalIsVisible!: boolean
 
-  @Action(useStore) toggleRenewModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleRenewModal!: ActionBindingIF
   @Action(useStore) setPriorityRequest!: ActionBindingIF
 
   /** Whether staff payment is valid. */

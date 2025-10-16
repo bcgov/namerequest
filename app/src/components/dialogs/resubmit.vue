@@ -173,7 +173,7 @@ export default class ResubmitDialog extends Mixins(
   @Getter(useStore) isMobile!: boolean
   @Getter(usePaymentStore) resubmitModalIsVisible!: boolean
 
-  @Action(useStore) toggleResubmitModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleResubmitModal!: ActionBindingIF
   @Action(useStore) resubmit!: ActionBindingIF
   @Action(useStore) setPriorityRequest!: ActionBindingIF
   @Action(useStore) loadExistingNameRequest!: ActionBindingIF

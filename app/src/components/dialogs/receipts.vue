@@ -53,7 +53,7 @@ export default class ReceiptsDialog extends Mixins(PaymentMixin, PaymentSessionM
   @Getter(useStore) getNrId!: number
   @Getter(usePaymentStore) paymentHistoryModalIsVisible!: boolean
 
-  @Action(useStore) togglePaymentHistoryModal!: ActionBindingIF
+  @Action(usePaymentStore) togglePaymentHistoryModal!: ActionBindingIF
 
   /** Used to display a fetch error, if any. */
   protected fetchError = ''

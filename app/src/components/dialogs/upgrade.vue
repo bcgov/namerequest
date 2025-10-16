@@ -140,7 +140,7 @@ export default class UpgradeDialog extends Mixins(
   @Getter(useStore) isRoleStaff!: boolean
   @Getter(usePaymentStore) upgradeModalIsVisible!: boolean
 
-  @Action(useStore) toggleUpgradeModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleUpgradeModal!: ActionBindingIF
 
   /** Whether staff payment is valid. */
   private isStaffPaymentValid = false

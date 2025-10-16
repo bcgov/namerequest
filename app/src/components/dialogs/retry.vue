@@ -139,7 +139,7 @@ export default class RetryDialog extends Mixins(
   @Getter(useStore) isRoleStaff!: boolean
   @Getter(usePaymentStore) retryModalIsVisible!: boolean
 
-  @Action(useStore) toggleRetryModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleRetryModal!: ActionBindingIF
 
   /** Whether staff payment is valid. */
   private isStaffPaymentValid = false

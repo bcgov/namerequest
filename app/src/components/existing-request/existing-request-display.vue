@@ -334,7 +334,7 @@
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'pinia-class'
-import { useStore } from '@/store'
+import { usePaymentStore, useStore } from '@/store'
 import MainContainer from '@/components/new-request/main-container.vue'
 import { NrAffiliationMixin, CommonMixin, DateMixin, PaymentMixin } from '@/mixins'
 import NamesGrayBox from './names-gray-box.vue'
@@ -374,13 +374,13 @@ export default class ExistingRequestDisplay extends Mixins(
   @Action(useStore) setDisplayedComponent!: ActionBindingIF
   @Action(useStore) setConditionsModalVisible!: ActionBindingIF
   @Action(useStore) setNrResponse!: ActionBindingIF
-  @Action(useStore) toggleUpgradeModal!: ActionBindingIF
-  @Action(useStore) toggleResubmitModal!: ActionBindingIF
-  @Action(useStore) toggleRetryModal!: ActionBindingIF
-  @Action(useStore) toggleRenewModal!: ActionBindingIF
-  @Action(useStore) togglePaymentHistoryModal!: ActionBindingIF
-  @Action(useStore) toggleRefundModal!: ActionBindingIF
-  @Action(useStore) toggleCancelModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleUpgradeModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleResubmitModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleRetryModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleRenewModal!: ActionBindingIF
+  @Action(usePaymentStore) togglePaymentHistoryModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleRefundModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleCancelModal!: ActionBindingIF
 
   // enums used in the template
   NameState = NameState
