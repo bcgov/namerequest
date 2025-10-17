@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import Vuetify from 'vuetify'
 import {
   AnalysisJSONI,
   ApplicantI,
@@ -63,7 +62,7 @@ import {
 export const isMobile = (state: StateIF): boolean => {
   // fall back to base window width if no window size changes have occurred
   const width = (state.windowWidth || window.innerWidth)
-  const vuetifySm = new Vuetify().framework.breakpoint.thresholds.sm
+  const vuetifySm = Vue.prototype.$vuetify.framework.breakpoint.thresholds.sm
   return (width < vuetifySm)
 }
 

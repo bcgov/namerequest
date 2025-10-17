@@ -25,8 +25,9 @@ const router = getVueRouter()
 const store = getVuexStore()
 const pinia = getPiniaStore()
 
-// attach global Vuex store to Vue instance
+// attach global Vuex store and Vuetify instance to Vue instance
 Vue.prototype.$store = store
+Vue.prototype.$vuetify = vuetify
 
 /**
  * Our app start code, which is a function so that:
