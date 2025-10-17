@@ -570,7 +570,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   @Getter(useStore) getLocation!: Location
   @Getter(useStore) getNr!: Partial<NameRequestI>
   @Getter(useStore) getNrData!: any
-  @Getter(useStore) getNrState!: string
+  @Getter(useStore) getNrState!: NrState
   @Getter(useStore) getSubmissionTabNumber!: number
   @Getter(useStore) getKeycloakRoles!: string[]
   @Getter(useStore) isMobile!: boolean
@@ -697,7 +697,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
     return (!this.getEditMode || this.getNrState === NrState.DRAFT)
   }
 
-  get state () {
+  get state (): NrState {
     if (this.getNr && this.getNrState) {
       return this.getNrState
     }

@@ -293,7 +293,7 @@ export default class ApplicantInfo2 extends Vue {
   @Getter(useStore) getApplicant!: ApplicantI
   @Getter(useStore) getEditMode!: boolean
   @Getter(useStore) getNrData!: any
-  @Getter(useStore) getNrState!: string
+  @Getter(useStore) getNrState!: NrState
   @Getter(useStore) getPriorityRequest!: boolean
   @Getter(useStore) getShowPriorityRequest!: boolean
   @Getter(useStore) isMobile!: boolean

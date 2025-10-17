@@ -39,7 +39,7 @@ import { NrState } from '@/enums'
 export default class ApplicantInfoNav extends Vue {
   @Getter(useStore) getEditMode!: boolean
   @Getter(useStore) getIsLoadingSubmission!: boolean
-  @Getter(useStore) getNrState!: string
+  @Getter(useStore) getNrState!: NrState
   @Getter(useStore) getSubmissionTabNumber!: number
   @Getter(useStore) getSubmissionType!: SubmissionTypeT
   @Getter(useStore) isMobile!: boolean

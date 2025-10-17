@@ -71,7 +71,6 @@ export default class PaymentCompleteDialog extends Mixins(
   PaymentSessionMixin
 ) {
   @Getter(useStore) getName!: string
-  @Getter(useStore) getNrId!: number
   @Getter(useStore) getNrNum!: string
   @Getter(useStore) getNameChoices!: NameChoicesIF
   @Getter(usePaymentStore) paymentCompleteModalIsVisible!: boolean

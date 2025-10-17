@@ -104,7 +104,7 @@ export const getNrData = (state: StateIF): any => {
   return state.newRequestModel.nrData
 }
 
-export const getNrId = (state: StateIF): string => {
+export const getNrId = (state: StateIF): number => {
   return state.newRequestModel.nr.id
 }
 

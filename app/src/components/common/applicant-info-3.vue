@@ -367,7 +367,7 @@ export default class ApplicantInfo3 extends Vue {
   @Getter(useStore) getEditMode!: boolean
   @Getter(useStore) getFolioNumber!: string
   @Getter(useStore) getNrData!: any
-  @Getter(useStore) getNrState!: string
+  @Getter(useStore) getNrState!: NrState
   @Getter(useStore) getPriorityRequest!: boolean
   @Getter(useStore) getShowPriorityRequest!: boolean
   @Getter(useStore) isRoleStaff!: boolean

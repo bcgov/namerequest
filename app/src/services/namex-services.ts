@@ -150,7 +150,7 @@ export default class NamexServices {
     return this.axios.get(url).then(response => response.data)
   }
 
-  static async checkinNameRequest (nrId: number | string, nrState: NrState): Promise<boolean> {
+  static async checkinNameRequest (nrId: number, nrState: NrState): Promise<boolean> {
     try {
       // Approved or Rejected or Consumed Name Requests are not checked out due to limited data that is editable.
       // Return out of checkIn because the NR was never checked out.
@@ -440,9 +440,7 @@ export default class NamexServices {
     throw new Error(`Invalid response = ${response}`)
   }
 
-  static async patchNameRequests (
-    nrId: number | string, requestActionCd: NrRequestActionCodes, nr: NameRequestI
-  ): Promise<any> {
+  static async patchNameRequests (nrId: number, requestActionCd: NrRequestActionCodes, nr: NameRequestI): Promise<any> {
     try {
       // const nr = getters.getEditNameReservation
       const requestData: any = nr && await this.addRequestActionComment(requestActionCd, nr)
@@ -545,9 +543,7 @@ export default class NamexServices {
   }
 
   static async putNameReservation (
-    nrId: number | string,
-    requestActionCd: NrRequestActionCodes,
-    data: NameRequestI
+    nrId: number, requestActionCd: NrRequestActionCodes, data: NameRequestI
   ): Promise<NameRequestI> {
     try {
       const requestData: any = data && await this.addRequestActionComment(requestActionCd, data)
