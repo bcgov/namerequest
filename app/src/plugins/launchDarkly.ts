@@ -66,7 +66,9 @@ export async function InitLdClient (): Promise<void> {
 export async function UpdateLdUser (user: LDContext, org: LDContext): Promise<void> {
   if (ldClient) {
     try {
-      await ldClient.identify({ kind: 'multi', user, org })
+      if (user && org) await ldClient.identify({ kind: 'multi', user, org })
+      else if (user) await ldClient.identify(user)
+      else if (org) await ldClient.identify(org)
     } catch {
       // do nothing -- LD logs its own errors
     }

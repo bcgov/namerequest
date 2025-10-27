@@ -40,9 +40,7 @@ export class UpdateUserMixin extends Vue {
         name: orgInfo.name
       }
 
-      if (userContext || orgContext) return UpdateLdUser(userContext, orgContext)
-
-      return null
+      return UpdateLdUser(userContext, orgContext)
     } catch (err) {
       // just log the error -- no need to halt app
       console.log('Error updating LaunchDarkly =', err) // eslint-disable-line no-console
