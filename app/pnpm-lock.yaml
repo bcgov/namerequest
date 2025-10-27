@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   sbc-common-components@3.0.15-c:
-    hash: 72b42f4950eb3521620faa668e06fd2cc7cb02af011625f2ecba78c4d6c3c01a
+    hash: ic3kkhec77kqvmbcac22ctyitm
     path: patches/sbc-common-components@3.0.15-c.patch
 
 importers:
@@ -75,7 +75,7 @@ importers:
         version: 0.4.4
       sbc-common-components:
         specifier: 3.0.15-c
-        version: 3.0.15-c(patch_hash=72b42f4950eb3521620faa668e06fd2cc7cb02af011625f2ecba78c4d6c3c01a)(@types/node@20.19.18)(postcss@8.5.6)(sass@1.32.13)
+        version: 3.0.15-c(patch_hash=ic3kkhec77kqvmbcac22ctyitm)(@types/node@20.19.18)(postcss@8.5.6)(sass@1.32.13)
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
@@ -6763,7 +6763,7 @@ snapshots:
     dependencies:
       xmlchars: 2.2.0
 
-  sbc-common-components@3.0.15-c(patch_hash=72b42f4950eb3521620faa668e06fd2cc7cb02af011625f2ecba78c4d6c3c01a)(@types/node@20.19.18)(postcss@8.5.6)(sass@1.32.13):
+  sbc-common-components@3.0.15-c(patch_hash=ic3kkhec77kqvmbcac22ctyitm)(@types/node@20.19.18)(postcss@8.5.6)(sass@1.32.13):
     dependencies:
       '@mdi/font': 4.9.95
       axios: 0.21.4
