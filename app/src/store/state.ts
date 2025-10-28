@@ -1,4 +1,4 @@
-import { NameRequestI, StateModelIF } from '@/interfaces'
+import { NameRequestI, StateIF } from '@/interfaces'
 import {
   EntityTypes,
   Location,
@@ -7,7 +7,7 @@ import {
   StaffPaymentOptions
 } from '@/enums'
 
-export const stateModel: StateModelIF = {
+export const state: StateIF = {
   common: {
     currentJsDate: null,
     keycloakRoles: [],
@@ -170,8 +170,6 @@ export const stateModel: StateModelIF = {
     folioNumber: '',
     isPriority: false // not used in this UI
   },
-  errorModel: {},
-  paymentModel: {},
   nameCheckModel: {
     analyzeConflictsPending: false,
     analyzeDesignationPending: false,

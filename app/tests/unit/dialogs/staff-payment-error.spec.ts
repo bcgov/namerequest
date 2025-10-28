@@ -3,7 +3,7 @@ import Vuetify from 'vuetify'
 import { shallowMount, mount } from '@vue/test-utils'
 import StaffPaymentErrorDialog from '@/components/dialogs/staff-payment-error.vue'
 
-const vuetify = new Vuetify({})
+const vuetify = new Vuetify()
 
 // Prevent the warning "[Vuetify] Unable to locate target [data-app]"
 document.body.setAttribute('data-app', 'true')

@@ -87,7 +87,8 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import RequestDetails from '@/components/common/request-details.vue'
 import { ApplicantI, NameChoicesIF } from '@/interfaces'
-import { Getter } from 'vuex-class'
+import { Getter } from 'pinia-class'
+import { useStore } from '@/store'
 
 @Component({
   components: {
@@ -105,7 +106,7 @@ export default class PaymentConfirm extends Vue {
   }
   @Prop(String) readonly name!: string
 
-  @Getter getNameChoices!: NameChoicesIF
+  @Getter(useStore) getNameChoices!: NameChoicesIF
 
   fetchError = ''
 }

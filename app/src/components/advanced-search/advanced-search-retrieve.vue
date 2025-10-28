@@ -59,11 +59,10 @@
 
 <script lang='ts'>
 import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import AdvancedSearchDates from '@/components/advanced-search/advanced-search-dates.vue'
-
-// Interfaces
 import { FormType, NameRequestI } from '@/interfaces'
-import { Action, Getter } from 'vuex-class'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from '@/services/namex-services'
 
@@ -84,13 +83,11 @@ export default class AdvancedSearchRetrieve extends Vue {
   /** Advanced Search tab state. */
   @Prop() readonly advSearchTabState: boolean
 
-  // Global getter
-  @Getter getNr!: Partial<NameRequestI>
+  @Getter(useStore) getNr!: Partial<NameRequestI>
 
-  // Global setters
-  @Action setExistingRequestSearch!: ActionBindingIF
-  @Action setNameRequest!: ActionBindingIF
-  @Action setDisplayedComponent!: ActionBindingIF
+  @Action(useStore) setExistingRequestSearch!: ActionBindingIF
+  @Action(useStore) setNameRequest!: ActionBindingIF
+  @Action(useStore) setDisplayedComponent!: ActionBindingIF
 
   // Local properties
   private isValid = false

@@ -60,6 +60,8 @@ export default defineConfig(() => {
       }
     },
     optimizeDeps: {
+      // Needs to be in here so there aren't two instances of sbc-common-components created.
+      exclude: ['@vue/composition-api', 'sbc-common-components'],
       esbuildOptions: {
         // Fix Module has been externalized for browser compatibility warning.
         plugins: [

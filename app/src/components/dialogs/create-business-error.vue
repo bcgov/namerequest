@@ -44,7 +44,8 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Emit } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Getter } from 'pinia-class'
+import { useStore } from '@/store'
 
 @Component({})
 export default class CreateBusinessErrorDialog extends Vue {
@@ -54,11 +55,11 @@ export default class CreateBusinessErrorDialog extends Vue {
   /** Prop to provide attachment selector. */
   @Prop() readonly attach: string
 
-  @Getter getAmalgamateNowErrorStatus!: boolean
-  @Getter getContinuationInErrorStatus!: boolean
-  @Getter getIncorporateNowErrorStatus!: boolean
+  @Getter(useStore) getAmalgamateNowErrorStatus!: boolean
+  @Getter(useStore) getContinuationInErrorStatus!: boolean
+  @Getter(useStore) getIncorporateNowErrorStatus!: boolean
 
-  // The title depending on the action that was done.
+  /** The title depending on the action that was done. */
   get title (): string {
     if (this.getAmalgamateNowErrorStatus) return 'Unable to Amalgamate Now'
     if (this.getContinuationInErrorStatus) return 'Unable to Begin Continuation'
@@ -66,7 +67,7 @@ export default class CreateBusinessErrorDialog extends Vue {
     return ''
   }
 
-  // The dialog text depending on the action that was done.
+  /** The dialog text depending on the action that was done. */
   get dialogText (): string {
     if (this.getAmalgamateNowErrorStatus) return 'Unable to amalgamate now. Please cancel or try again.'
     if (this.getContinuationInErrorStatus) return 'Unable to begin continuation. Please cancel or try again.'
@@ -78,7 +79,7 @@ export default class CreateBusinessErrorDialog extends Vue {
   @Emit('tryAgain')
   tryAgain () { }
 
-  /** Close button clicked. Refresh the page. */
+  /** Close button clicked. Reload the app. */
   @Emit() close () {
     window.location.reload()
   }

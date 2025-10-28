@@ -26,15 +26,16 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import MainContainer from '@/components/new-request/main-container.vue'
-import { Action } from 'vuex-class'
+import { Action } from 'pinia-class'
+import { useStore } from '@/store'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({
   components: { MainContainer }
 })
 export default class Timeout extends Vue {
-  @Action resetAnalyzeName!: ActionBindingIF
-  @Action setActiveComponent!: ActionBindingIF
+  @Action(useStore) resetAnalyzeName!: ActionBindingIF
+  @Action(useStore) setActiveComponent!: ActionBindingIF
 
   async restart () {
     await this.resetAnalyzeName(null)

@@ -192,7 +192,7 @@ export interface NameRequestI {
 export interface NewRequestNameSearchI {
   analysis_type: NameCheckAnalysisType
   jurisdiction: NameCheckAnalysisJurisdiction
-  entity_type_cd: string
+  entity_type_cd: string | EntityTypes
   location: Location
   name: string
   request_action_cd: NrRequestActionCodes

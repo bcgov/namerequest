@@ -43,14 +43,15 @@
 
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { DisplayedComponentMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class ExitIncompletePaymentDialog extends DisplayedComponentMixin {
-  @Getter getExitIncompletePaymentVisible!: boolean
-  @Action setExitIncompletePaymentVisible!: ActionBindingIF
+  @Getter(useStore) getExitIncompletePaymentVisible!: boolean
+  @Action(useStore) setExitIncompletePaymentVisible!: ActionBindingIF
 
   get showModal () {
     return this.getExitIncompletePaymentVisible

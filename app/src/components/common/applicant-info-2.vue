@@ -276,7 +276,8 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { ApplicantI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
@@ -289,21 +290,19 @@ import { GetFeatureFlag } from '@/plugins'
   }
 })
 export default class ApplicantInfo2 extends Vue {
-  // Global getters
-  @Getter getApplicant!: ApplicantI
-  @Getter getEditMode!: boolean
-  @Getter getNrData!: any
-  @Getter getNrState!: string
-  @Getter getPriorityRequest!: boolean
-  @Getter getShowPriorityRequest!: boolean
-  @Getter isMobile!: boolean
+  @Getter(useStore) getApplicant!: ApplicantI
+  @Getter(useStore) getEditMode!: boolean
+  @Getter(useStore) getNrData!: any
+  @Getter(useStore) getNrState!: NrState
+  @Getter(useStore) getPriorityRequest!: boolean
+  @Getter(useStore) getShowPriorityRequest!: boolean
+  @Getter(useStore) isMobile!: boolean
 
-  // Global actions
-  @Action setApplicantDetails: ActionBindingIF
-  @Action setIsLoadingSubmission!: ActionBindingIF
-  @Action setNRData!: ActionBindingIF
-  @Action setPriorityRequest!: ActionBindingIF
-  @Action submit!: ActionBindingIF
+  @Action(useStore) setApplicantDetails: ActionBindingIF
+  @Action(useStore) setIsLoadingSubmission!: ActionBindingIF
+  @Action(useStore) setNRData!: ActionBindingIF
+  @Action(useStore) setPriorityRequest!: ActionBindingIF
+  @Action(useStore) submit!: ActionBindingIF
 
   additionalInfoRules = [
     v => (!v || v.length <= 120) || 'Cannot exceed 120 characters'

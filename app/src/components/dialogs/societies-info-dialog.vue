@@ -47,18 +47,21 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class SocietiesInfo extends Vue {
   @Prop({ required: true }) readonly type: string
-  @Getter getSocietiesModalVisible!: boolean
-  @Action setSocietiesModalVisible!: ActionBindingIF
+
+  @Getter(useStore) getSocietiesModalVisible!: boolean
+  @Action(useStore) setSocietiesModalVisible!: ActionBindingIF
 
   get showModal () {
     return this.getSocietiesModalVisible
   }
+
   set showModal (value: boolean) {
     this.setSocietiesModalVisible(value)
   }

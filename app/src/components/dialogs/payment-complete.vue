@@ -51,13 +51,13 @@
 
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore, usePaymentStore } from '@/store'
 import PaymentConfirm from '@/components/payment/payment-confirm.vue'
 import { NrState } from '@/enums'
 import { CommonMixin, PaymentMixin, PaymentSessionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { NameChoicesIF } from '@/interfaces'
-import { PAYMENT_COMPLETE_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import NamexServices from '@/services/namex-services'
 
 @Component({
@@ -70,16 +70,14 @@ export default class PaymentCompleteDialog extends Mixins(
   PaymentMixin,
   PaymentSessionMixin
 ) {
-  // Global getters
-  @Getter getName!: string
-  @Getter getNrId!: number
-  @Getter getNrNum!: string
-  @Getter getNameChoices!: NameChoicesIF
+  @Getter(useStore) getName!: string
+  @Getter(useStore) getNrNum!: string
+  @Getter(useStore) getNameChoices!: NameChoicesIF
+  @Getter(usePaymentStore) paymentCompleteModalIsVisible!: boolean
 
-  // Global actions
-  @Action loadExistingNameRequest!: ActionBindingIF
-  @Action setEditMode!: ActionBindingIF
-  @Action toggleReceiptModal!: ActionBindingIF
+  @Action(useStore) loadExistingNameRequest!: ActionBindingIF
+  @Action(useStore) setEditMode!: ActionBindingIF
+  @Action(usePaymentStore) toggleReceiptModal!: ActionBindingIF
 
   /** Used to show loading state on button. */
   loading = false
@@ -88,7 +86,7 @@ export default class PaymentCompleteDialog extends Mixins(
 
   /** Whether this modal should be shown (per store property). */
   get showModal (): boolean {
-    return this.$store.getters[PAYMENT_COMPLETE_MODAL_IS_VISIBLE]
+    return this.paymentCompleteModalIsVisible
   }
 
   async mounted () {

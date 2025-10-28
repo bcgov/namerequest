@@ -38,16 +38,16 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { NameState } from '@/enums'
 
 @Component({})
 export default class NamesGrayBox extends Vue {
-  // Global getter
-  @Getter isMobile!: boolean
+  // enum for template
+  readonly NameState = NameState
 
-  // enum used in the template
-  NameState = NameState
+  @Getter(useStore) isMobile!: boolean
 
   @Prop({ default: () => [] })
   readonly names: any[]

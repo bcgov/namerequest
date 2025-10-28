@@ -48,8 +48,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
-
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import MainContainer from '@/components/new-request/main-container.vue'
 import EntityCannotBeAutoAnalyzed from '@/components/new-request/submit-request/entity-cannot-be-auto-analyzed.vue'
 import NamesCapture from '@/components/common/names-capture.vue'
@@ -73,13 +73,11 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
   }
 })
 export default class ExistingRequestEdit extends Vue {
-  // Global getters
-  @Getter getActingOnOwnBehalf!: boolean
-  @Getter getNrNum!: string
-  @Getter getSubmissionTabNumber!: number
+  @Getter(useStore) getActingOnOwnBehalf!: boolean
+  @Getter(useStore) getNrNum!: string
+  @Getter(useStore) getSubmissionTabNumber!: number
 
-  // Global Action
-  @Action setSubmissionTabNumber!: ActionBindingIF
+  @Action(useStore) setSubmissionTabNumber!: ActionBindingIF
 
   get submissionTabNumber (): number {
     return this.getSubmissionTabNumber

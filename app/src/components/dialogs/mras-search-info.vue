@@ -47,7 +47,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NameInput from '@/components/new-request/name-input.vue'
 import { BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
@@ -56,20 +57,18 @@ import { BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
   components: { NameInput }
 })
 export default class MrasSearchInfoDialog extends Vue {
-  // Global getters
-  @Getter getCorpSearch!: string
-  @Getter getErrors!: string[]
-  @Getter getHasNoCorpNum!: boolean
-  @Getter getJurisdictionText!: string
-  @Getter getMrasSearchResultCode!: number
-  @Getter getName!: string
-  @Getter getMrasSearchInfoModalVisible!: boolean
+  @Getter(useStore) getCorpSearch!: string
+  @Getter(useStore) getErrors!: string[]
+  @Getter(useStore) getHasNoCorpNum!: boolean
+  @Getter(useStore) getJurisdictionText!: string
+  @Getter(useStore) getMrasSearchResultCode!: number
+  @Getter(useStore) getName!: string
+  @Getter(useStore) getMrasSearchInfoModalVisible!: boolean
 
-  // Global actions
-  @Action setMrasSearchInfoModalVisible!: ActionBindingIF
-  @Action setName!: ActionBindingIF
-  @Action setNoCorpNum!: ActionBindingIF
-  @Action startAnalyzeName!: ActionBindingIF
+  @Action(useStore) setMrasSearchInfoModalVisible!: ActionBindingIF
+  @Action(useStore) setName!: ActionBindingIF
+  @Action(useStore) setNoCorpNum!: ActionBindingIF
+  @Action(useStore) startAnalyzeName!: ActionBindingIF
 
   private resultConfig: any = {
     [BAD_REQUEST]: {

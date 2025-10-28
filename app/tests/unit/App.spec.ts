@@ -12,11 +12,8 @@ import {
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 // import mockRouter from './MockRouter'
-import { getVuexStore } from '@/store/'
 
-const vuetify = new Vuetify({})
-
-const store = getVuexStore()
+const vuetify = new Vuetify()
 
 const KEYCLOAK_TOKEN = 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJUbWdtZUk0MnVsdUZ0N3' +
   'FQbmUtcTEzdDUwa0JDbjF3bHF6dHN0UGdUM1dFIn0.eyJqdGkiOiIzZDQ3YjgwYy01MTAzLTRjMTYtOGNhZC0yMjU4NDMwZGYwZTciLCJle' +
@@ -52,7 +49,7 @@ describe('App component', () => {
     // create a Local Vue and install router on it
     const localVue = createLocalVue()
     localVue.use(VueRouter)
-    wrapper = shallowMount(App, { localVue, store, vuetify, stubs: { Affix: true } })
+    wrapper = shallowMount(App, { localVue, vuetify, stubs: { Affix: true } })
     await Vue.nextTick()
   })
 

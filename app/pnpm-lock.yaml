@@ -58,6 +58,12 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      pinia:
+        specifier: ^2.0.35
+        version: 2.3.1(typescript@4.5.5)(vue@2.7.16)
+      pinia-class:
+        specifier: ^0.0.3
+        version: 0.0.3(pinia@2.3.1(typescript@4.5.5)(vue@2.7.16))(vue-class-component@7.2.6(vue@2.7.16))
       qs:
         specifier: ^6.12.1
         version: 6.14.0
@@ -101,6 +107,9 @@ importers:
       '@esbuild-plugins/node-modules-polyfill':
         specifier: 0.2.2
         version: 0.2.2(esbuild@0.18.20)
+      '@pinia/testing':
+        specifier: ^0.0.16
+        version: 0.0.16(pinia@2.3.1(typescript@4.5.5)(vue@2.7.16))(vue@2.7.16)
       '@types/lodash':
         specifier: ^4.17.7
         version: 4.17.20
@@ -566,6 +575,11 @@ packages:
   '@one-ini/wasm@0.1.1':
     resolution: {integrity: sha512-XuySG1E38YScSJoMlqovLru4KTUNSjgVTIjyh7qMX6aNN5HY5Ct5LhRJdxO79JtTzKfzV/bnWpz+zquYrISsvw==}
 
+  '@pinia/testing@0.0.16':
+    resolution: {integrity: sha512-oa5kO82hzWekqMq1HTnS/b+ZM+ZKEcEApuuCTelvKK79jTxg7P026Qw8/2RbVn5eUGAvRWQu4ubObrshVqCRjQ==}
+    peerDependencies:
+      pinia: '>=2.0.34'
+
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
@@ -732,6 +746,9 @@ packages:
 
   '@vue/compiler-sfc@2.7.16':
     resolution: {integrity: sha512-KWhJ9k5nXuNtygPU7+t1rX6baZeqOYLEforUPjgNDBnLicfHCoi48H87Q8XyLZOrNNsmhuwKqtpDQWjEFe6Ekg==}
+
+  '@vue/devtools-api@6.6.4':
+    resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
 
   '@vue/eslint-config-standard@4.0.0':
     resolution: {integrity: sha512-bQghq1cw1BuMRHNhr3tRpAJx1tpGy0QtajQX873kLtA9YVuOIoXR7nAWnTN09bBHnSUh2N288vMsqPi2fI4Hzg==}
@@ -2615,6 +2632,21 @@ packages:
     resolution: {integrity: sha512-C3FsVNH1udSEX48gGX1xfvwTWfsYWj5U+8/uK15BGzIGrKoUpghX8hWZwa/OFnakBiiVNmBvemTJR5mcy7iPcg==}
     engines: {node: '>=4'}
 
+  pinia-class@0.0.3:
+    resolution: {integrity: sha512-7l1ZB6c50v5aDaSZRauK1CVaUL0ZrOC2Z1xwX03AZCGKnV+EzZmmQ3fm19LgaXhD9oGExb6eezJ8hZDu86s8vw==}
+    peerDependencies:
+      pinia: ^2.0.0
+      vue-class-component: ^7.0.0
+
+  pinia@2.3.1:
+    resolution: {integrity: sha512-khUlZSwt9xXCaTbbxFYBKDc/bWAGWJjOgvxETwkTN7KRm66EeT1ZdZj6i2ceh9sP2Pzqsbc704r2yngBrxBVug==}
+    peerDependencies:
+      typescript: '>=4.4.4'
+      vue: ^2.7.0 || ^3.5.11
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   pkg-types@1.3.1:
     resolution: {integrity: sha512-/Jm5M4RvtBFVkKWRu2BLUTNP8/M2a+UwuAX+ae4770q1qVGtfjG+WTCupoZixokjmHiry8uI+dlY8KXYV5HVVQ==}
 
@@ -3434,6 +3466,17 @@ packages:
   vue-debounce-decorator@1.0.1:
     resolution: {integrity: sha512-2XUI5deMvWDK810Py3b002rpgGdBBUI1Qvggl1rfFo1kDBEo49FDYFYo1yBuwK+Bs7p3XqF++z0K37RuGjgmIQ==}
 
+  vue-demi@0.14.10:
+    resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
+    engines: {node: '>=12'}
+    hasBin: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
   vue-eslint-parser@7.11.0:
     resolution: {integrity: sha512-qh3VhDLeh773wjgNTl7ss0VejY9bMMa0GoDG2fQVyDzRFdiU3L7fw74tWZDHNQXdZqxO3EveQroa9ct39D2nqg==}
     engines: {node: '>=8.10'}
@@ -4063,6 +4106,14 @@ snapshots:
 
   '@one-ini/wasm@0.1.1': {}
 
+  '@pinia/testing@0.0.16(pinia@2.3.1(typescript@4.5.5)(vue@2.7.16))(vue@2.7.16)':
+    dependencies:
+      pinia: 2.3.1(typescript@4.5.5)(vue@2.7.16)
+      vue-demi: 0.14.10(vue@2.7.16)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
@@ -4266,6 +4317,8 @@ snapshots:
       source-map: 0.6.1
     optionalDependencies:
       prettier: 2.8.8
+
+  '@vue/devtools-api@6.6.4': {}
 
   '@vue/eslint-config-standard@4.0.0(@typescript-eslint/parser@5.62.0(eslint@7.32.0)(typescript@4.5.5))(eslint@7.32.0)':
     dependencies:
@@ -6400,6 +6453,21 @@ snapshots:
 
   pify@3.0.0: {}
 
+  pinia-class@0.0.3(pinia@2.3.1(typescript@4.5.5)(vue@2.7.16))(vue-class-component@7.2.6(vue@2.7.16)):
+    dependencies:
+      pinia: 2.3.1(typescript@4.5.5)(vue@2.7.16)
+      vue-class-component: 7.2.6(vue@2.7.16)
+
+  pinia@2.3.1(typescript@4.5.5)(vue@2.7.16):
+    dependencies:
+      '@vue/devtools-api': 6.6.4
+      vue: 2.7.16
+      vue-demi: 0.14.10(vue@2.7.16)
+    optionalDependencies:
+      typescript: 4.5.5
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+
   pkg-types@1.3.1:
     dependencies:
       confbox: 0.1.8
@@ -7313,6 +7381,10 @@ snapshots:
   vue-debounce-decorator@1.0.1:
     dependencies:
       vue-class-component: 6.3.2
+
+  vue-demi@0.14.10(vue@2.7.16):
+    dependencies:
+      vue: 2.7.16
 
   vue-eslint-parser@7.11.0(eslint@7.32.0):
     dependencies:

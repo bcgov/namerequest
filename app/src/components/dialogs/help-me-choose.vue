@@ -25,14 +25,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class HelpMeChooseDialog extends Vue {
-  @Getter getHelpMeChooseModalVisible!: boolean
-
-  @Action setHelpMeChooseModalVisible!: ActionBindingIF
+  @Getter(useStore) getHelpMeChooseModalVisible!: boolean
+  @Action(useStore) setHelpMeChooseModalVisible!: ActionBindingIF
 
   get showModal () {
     return this.getHelpMeChooseModalVisible

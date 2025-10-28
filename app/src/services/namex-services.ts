@@ -1,23 +1,24 @@
 import Axios, { AxiosError } from 'axios'
 import { ACCEPTED, CREATED, NO_CONTENT, OK } from 'http-status-codes'
-
-import errorModule from '@/modules/error'
-import { ErrorI } from '@/modules/error/store/actions'
+import { useErrorStore } from '@/store'
 import {
   AdvancedSearchI,
   AdvancedSearchResultsI,
   AnalysisJSONI,
+  ErrorI,
   NameRequestI,
+  NameRequestPayment,
   NewRequestNameSearchI,
   StatsI
 } from '@/interfaces'
 import { RequestActions } from '@/list-data'
 import { NrAction, NrState, NrRequestActionCodes, RollbackActions } from '@/enums'
-import { NameRequestPayment } from '@/modules/payment/models'
 import pkg from '../../package.json'
+import { createPinia, setActivePinia } from 'pinia'
 
 const ANALYSIS_TIMEOUT_MS = 3 * 60 * 1000 // 3 minutes
 const axiosNamex = Axios.create()
+
 // Set the request headers for all NameX API requests: nr-number, phone, email
 // nr-number, phone, email sessionStorage items are set in mutations
 axiosNamex.interceptors.request.use(
@@ -36,6 +37,8 @@ axiosNamex.interceptors.request.use(
 )
 
 const namexApiUrl = sessionStorage.getItem('NAMEX_API_URL')
+
+setActivePinia(createPinia())
 
 export default class NamexServices {
   static axios = axiosNamex
@@ -86,7 +89,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not add request action comment')
       console.error('addRequestActionComment() =', msg) // eslint-disable-line no-console
-      await errorModule.setAppError({ id: 'add-request-action-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'add-request-action-error', error: msg } as ErrorI)
       return null
     }
   }
@@ -120,7 +123,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not cancel payment')
       console.error('cancelPayment() =', msg) // eslint-disable-line no-console
-      await errorModule.setAppError({ id: 'cancel-payment-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'cancel-payment-error', error: msg } as ErrorI)
       return null
     }
   }
@@ -174,7 +177,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not checkin name request')
       console.error('checkinNameRequest() =', msg) // eslint-disable-line no-console
-      await errorModule.setAppError({ id: 'checkin-name-requests-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'checkin-name-requests-error', error: msg } as ErrorI)
       return false
     }
   }
@@ -217,7 +220,7 @@ export default class NamexServices {
         // or is in a state other than 'DRAFT'
         error_id = 'edit-lock-error'
       }
-      await errorModule.setAppError({ id: error_id, error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: error_id, error: msg } as ErrorI)
       return false
     }
   }
@@ -253,7 +256,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not complete payment')
       console.error('completePayment() =', msg) // eslint-disable-line no-console
-      await errorModule.setAppError({ id: 'complete-payment-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'complete-payment-error', error: msg } as ErrorI)
       return null
     }
   }
@@ -287,7 +290,7 @@ export default class NamexServices {
     } catch (error) {
       console.error('downloadOutputs() =', error) // eslint-disable-line no-console
 
-      await errorModule.setAppError(
+      useErrorStore().setAppError(
         { id: 'download-pdf-error', error: 'Could not download PDF' } as ErrorI
       )
     }
@@ -328,7 +331,7 @@ export default class NamexServices {
       if (handleError) {
         const msg = await this.handleApiError(err, 'Could not get name request')
         console.error('getNameRequest() =', msg) // eslint-disable-line no-console
-        await errorModule.setAppError({ id: 'get-name-request-error', error: msg } as ErrorI)
+        useErrorStore().setAppError({ id: 'get-name-request-error', error: msg } as ErrorI)
       }
       return null
     }
@@ -351,7 +354,7 @@ export default class NamexServices {
       if (handleError) {
         const msg = await this.handleApiError(err, 'Could not get name request')
         console.error('getNameRequest() =', msg) // eslint-disable-line no-console
-        await errorModule.setAppError({ id: 'get-name-request-error', error: msg } as ErrorI)
+        useErrorStore().setAppError({ id: 'get-name-request-error', error: msg } as ErrorI)
       }
       return null
     }
@@ -384,7 +387,7 @@ export default class NamexServices {
       if (handleError) {
         const msg = await this.handleApiError(err, 'Could not find Name Requests.')
         console.error('searchNameRequests() =', msg) // eslint-disable-line no-console
-        await errorModule.setAppError({ id: 'search-name-request-error', error: msg } as ErrorI)
+        useErrorStore().setAppError({ id: 'search-name-request-error', error: msg } as ErrorI)
       }
       return null
     }
@@ -458,7 +461,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not patch name requests')
       console.error('patchNameRequests() =', msg) // eslint-disable-line no-console
-      await errorModule.setAppError({ id: 'patch-name-requests-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'patch-name-requests-error', error: msg } as ErrorI)
       return null
     }
   }
@@ -487,7 +490,7 @@ export default class NamexServices {
         // cannot be cancelled if the NR is not DRAFT state
         error_id = 'edit-lock-error'
       }
-      await errorModule.setAppError({ id: error_id, error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: error_id, error: msg } as ErrorI)
       return null
     }
   }
@@ -534,15 +537,13 @@ export default class NamexServices {
       ) {
         error_id = 'entry-already-exists'
       }
-      await errorModule.setAppError({ id: error_id, error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: error_id, error: msg } as ErrorI)
       return null
     }
   }
 
   static async putNameReservation (
-    nrId: number,
-    requestActionCd: NrRequestActionCodes,
-    data: NameRequestI
+    nrId: number, requestActionCd: NrRequestActionCodes, data: NameRequestI
   ): Promise<NameRequestI> {
     try {
       const requestData: any = data && await this.addRequestActionComment(requestActionCd, data)
@@ -563,7 +564,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not put name reservation')
       console.error('putNameReservation() =', msg) // eslint-disable-line no-console
-      await errorModule.setAppError({ id: 'put-name-reservation-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'put-name-reservation-error', error: msg } as ErrorI)
       return null
     }
   }
@@ -595,7 +596,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not rollback name request')
       console.error('rollbackNameRequest() =', msg) // eslint-disable-line no-console
-      await errorModule.setAppError({ id: 'rollback-name-request-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'rollback-name-request-error', error: msg } as ErrorI)
       return false
     }
   }

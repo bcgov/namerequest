@@ -152,10 +152,9 @@
 <script lang='ts'>
 import { Component, Emit, Prop, Watch, Vue } from 'vue-property-decorator'
 import NamexServices from '@/services/namex-services'
-import { Getter } from 'vuex-class'
+import { Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { AdvancedSearchForm, AdvancedSearchRetrieve, AdvancedSearchTable } from '@/components/advanced-search'
-
-// Interfaces & Enums
 import { AdvancedSearchI } from '@/interfaces/models'
 import { AdvancedSearchTabs } from '@/enums'
 
@@ -167,7 +166,7 @@ import { AdvancedSearchTabs } from '@/enums'
   }
 })
 export default class AdvancedSearch extends Vue {
-  // Declarations for template
+  // enum for template
   readonly AdvancedSearchTabs = AdvancedSearchTabs
 
   /** Prop to display the dialog. */
@@ -176,8 +175,7 @@ export default class AdvancedSearch extends Vue {
   /** Prop to provide attachment selector. */
   @Prop() readonly attach: string
 
-  // Global getter
-  @Getter isMobile!: boolean
+  @Getter(useStore) isMobile!: boolean
 
   // Local Properties
   private advSearchTab = 0

@@ -46,7 +46,8 @@
 
 <script lang='ts'>
 import { Component, Emit, Mixins, Prop, Watch } from 'vue-property-decorator'
-import { Action } from 'vuex-class'
+import { Action } from 'pinia-class'
+import { useStore } from '@/store'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { DateMixin } from '@/mixins'
 import { NameRequestI } from '@/interfaces'
@@ -59,10 +60,8 @@ export default class AdvancedSearchTable extends Mixins(DateMixin) {
   @Prop({ default: false })
   readonly isApplicantNameSearch
 
-  // Global setter
-  @Action setExistingRequestSearch!: ActionBindingIF
+  @Action(useStore) setExistingRequestSearch!: ActionBindingIF
 
-  // Local Properties
   private headers: Array<any> = []
 
   /** Filter the headers we want to show. */

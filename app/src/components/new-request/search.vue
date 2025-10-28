@@ -422,7 +422,8 @@ import { CommonMixin, NrAffiliationMixin, SearchMixin } from '@/mixins'
 import { Designations, XproMapping } from '@/list-data'
 import { Navigate } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 
 /**
  * This is the component that displays the new NR menus and flows.
@@ -444,11 +445,11 @@ import { Action, Getter } from 'vuex-class'
   }
 })
 export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, SearchMixin) {
-  @Action setSocietiesModalVisible!: ActionBindingIF
+  @Action(useStore) setSocietiesModalVisible!: ActionBindingIF
 
-  @Getter getIsLearBusiness!: boolean
-  // @Getter isRoleStaff!: boolean
-  @Getter getAuthorizedActions!: string[]
+  @Getter(useStore) getIsLearBusiness!: boolean
+  // @Getter(useStore) isRoleStaff!: boolean
+  @Getter(useStore) getAuthorizedActions!: string[]
 
   // Constant
   readonly colinLink = sessionStorage.getItem('CORPORATE_ONLINE_URL')

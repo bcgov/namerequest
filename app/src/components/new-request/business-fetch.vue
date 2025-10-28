@@ -27,22 +27,22 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { Component, Emit } from 'vue-property-decorator'
-import { Action } from 'vuex-class'
+import { Component, Emit, Vue } from 'vue-property-decorator'
+import { Action } from 'pinia-class'
+import { useStore } from '@/store'
 import { BusinessSearchIF } from '@/interfaces'
 import { SearchStates as States } from '@/enums'
 
-/*
- * See PPR's BusinessSearchAutocomplete.vue for a Composition API example.
- */
+//
+// See PPR's BusinessSearchAutocomplete.vue for a Composition API example.
+//
 @Component({})
 export default class BusinessFetch extends Vue {
-  // Enum for template
+  // enum for template
   readonly States = States
 
   // Store action
-  @Action searchBusiness!: (corpNum: string) => Promise<BusinessSearchIF>
+  @Action(useStore) searchBusiness!: (corpNum: string) => Promise<BusinessSearchIF>
 
   readonly hint = 'Enter the incorporation or registration number (e.g. BC1234567)'
 

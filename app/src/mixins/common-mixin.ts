@@ -2,15 +2,16 @@ import { Component, Vue } from 'vue-property-decorator'
 import { EntityTypes, PriorityCode, NrRequestActionCodes, NrRequestTypeCodes } from '@/enums'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 import { GetFeatureFlag } from '@/plugins'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { BusinessSearchIF } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from '@/services/namex-services'
 
 @Component({})
 export class CommonMixin extends Vue {
-  @Getter getSearchBusiness!: BusinessSearchIF
-  @Action setIsLearBusiness!: ActionBindingIF
+  @Getter(useStore) getSearchBusiness!: BusinessSearchIF
+  @Action(useStore) setIsLearBusiness!: ActionBindingIF
 
   /** Returns the specified string in Title Case. */
   toTitleCase (str: string): string {
