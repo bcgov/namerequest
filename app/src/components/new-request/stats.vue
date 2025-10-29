@@ -123,20 +123,26 @@ export default class Stats extends Vue {
     return (this.getStats?.auto_approved_count ?? '-')
   }
 
-  /** The regular wait time, in days. */
+  /**
+   * The regular wait time, in days.
+   * @returns value from FF if FF is >= 0, otherwise the value from the API
+   */
   get regularWaitTime (): string | number {
-    const regularWaitTime = GetFeatureFlag('hardcoded_regular_wait_time')
-    if (regularWaitTime > 0) {
+    const regularWaitTime = GetFeatureFlag('hardcoded_regular_wait_time') as number
+    if (regularWaitTime >= 0) {
       return regularWaitTime
     } else {
       return (this.getStats?.regular_wait_time ?? '-')
     }
   }
 
-  /** The priority wait time, in hours. */
+  /**
+   * The priority wait time, in hours.
+   * @returns value from FF if FF is >= 0, otherwise the value from the API
+   */
   get priorityWaitTime (): string | number {
-    const priorityWaitTime = GetFeatureFlag('hardcoded_priority_wait_time')
-    if (priorityWaitTime > 0) {
+    const priorityWaitTime = GetFeatureFlag('hardcoded_priority_wait_time') as number
+    if (priorityWaitTime >= 0) {
       return priorityWaitTime
     } else {
       return (this.getStats?.priority_wait_time ?? '-')
