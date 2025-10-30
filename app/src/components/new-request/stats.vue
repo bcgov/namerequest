@@ -22,7 +22,7 @@
           nudge-left="45"
           content-class="bottom-tooltip wait-time-tooltip"
           transition="fade-transition"
-          :disabled="isMobile"
+          :disabled="isMobile || !showPriorityText"
         >
           <template #activator="{ on }">
             <div
@@ -46,7 +46,8 @@
           </template>
           <span>
             If you need your name reviewed as quickly as possible, Priority requests
-            are available for a fee ($100.00).
+            are available for a fee ($100.00). Priority name requests are usually
+            reviewed within 1 to 2 business days.
           </span>
         </v-tooltip>
       </v-col>
@@ -60,7 +61,7 @@
           nudge-left="45"
           content-class="bottom-tooltip new-submission-wait-time-tooltip"
           transition="fade-transition"
-          :disabled="isMobile"
+          :disabled="isMobile || !showRegularText"
         >
           <template #activator="{ on }">
             <div
@@ -126,22 +127,50 @@ export default class Stats extends Vue {
 
   /** The regular wait time, in days. */
   get regularWaitTime (): string | number {
-    const regularWaitTime = GetFeatureFlag('hardcoded_regular_wait_time')
-    if (regularWaitTime > 0) {
-      return regularWaitTime
-    } else {
-      return (this.getStats?.regular_wait_time ?? '-')
+    const flagRaw = GetFeatureFlag('hardcoded_regular_wait_time')
+    const flagVal = Number(flagRaw)
+
+    if (Number.isFinite(flagVal)) {
+      if (flagVal > 0) return flagVal
+      if (flagVal === 0) return '-'
     }
+
+    const statVal = this.getStats?.regular_wait_time
+    const statNum = Number(statVal)
+    if (Number.isFinite(statNum) && statNum > 0) {
+      return statNum
+    }
+
+    return '-'
   }
 
-  /** The priority wait time, in hours. */
+  /** The priority wait time, in days. */
   get priorityWaitTime (): string | number {
-    const priorityWaitTime = GetFeatureFlag('hardcoded_priority_wait_time')
-    if (priorityWaitTime > 0) {
-      return priorityWaitTime
-    } else {
-      return (this.getStats?.priority_wait_time ?? '-')
+    const flagRaw = GetFeatureFlag('hardcoded_priority_wait_time')
+    const flagVal = Number(flagRaw)
+
+    if (Number.isFinite(flagVal)) {
+      if (flagVal > 0) return flagVal
+      if (flagVal === 0) return '-'
     }
+
+    const statVal = this.getStats?.priority_wait_time
+    const statNum = Number(statVal)
+    if (Number.isFinite(statNum) && statNum > 0) {
+      return statNum
+    }
+
+    return '-'
+  }
+
+  get showRegularText (): boolean {
+    const val = Number(this.regularWaitTime)
+    return Number.isFinite(val) && val > 0
+  }
+
+  get showPriorityText (): boolean {
+    const val = Number(this.priorityWaitTime)
+    return Number.isFinite(val) && val > 0
   }
 }
 </script>
