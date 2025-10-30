@@ -22,7 +22,7 @@
           nudge-left="45"
           content-class="bottom-tooltip wait-time-tooltip"
           transition="fade-transition"
-          :disabled="isMobile || !showPriorityText"
+          :disabled="isMobile || !showPriorityTooltip"
         >
           <template #activator="{ on }">
             <div
@@ -61,7 +61,7 @@
           nudge-left="45"
           content-class="bottom-tooltip new-submission-wait-time-tooltip"
           transition="fade-transition"
-          :disabled="isMobile || !showRegularText"
+          :disabled="isMobile || !showRegularTooltip"
         >
           <template #activator="{ on }">
             <div
@@ -113,8 +113,8 @@ export default class Stats extends Vue {
 
   async created (): Promise<void> {
     if (
-      GetFeatureFlag('hardcoded_regular_wait_time') === 0 ||
-      GetFeatureFlag('hardcoded_priority_wait_time') === 0
+      GetFeatureFlag('hardcoded_regular_wait_time') < 0 ||
+      GetFeatureFlag('hardcoded_priority_wait_time') < 0
     ) {
       const stats = await NamexServices.fetchStats()
       if (stats) this.setStats(stats)
@@ -163,12 +163,12 @@ export default class Stats extends Vue {
     return '-'
   }
 
-  get showRegularText (): boolean {
+  get showRegularTooltip (): boolean {
     const val = Number(this.regularWaitTime)
     return Number.isFinite(val) && val > 0
   }
 
-  get showPriorityText (): boolean {
+  get showPriorityTooltip (): boolean {
     const val = Number(this.priorityWaitTime)
     return Number.isFinite(val) && val > 0
   }
