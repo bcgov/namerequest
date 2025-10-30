@@ -35,7 +35,7 @@
                   {{ priorityWaitTime }}
                 </div>
                 <div class="stats-unit">
-                  Hours
+                  Days
                 </div>
               </div>
               <div class="stats-content-inner-2">
@@ -46,8 +46,7 @@
           </template>
           <span>
             If you need your name reviewed as quickly as possible, Priority requests
-            are available for a fee ($100.00). Priority name requests are usually
-            reviewed within 1 to 2 business days.
+            are available for a fee ($100.00).
           </span>
         </v-tooltip>
       </v-col>
