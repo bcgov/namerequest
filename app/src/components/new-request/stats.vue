@@ -111,7 +111,7 @@ export default class Stats extends Vue {
 
   async created (): Promise<void> {
     if (
-    /* 
+    /*
      * Feature-flag semantics for hardcoded_*_wait_time:
      * - flag > 0 : use the flag value (explicit positive wait time).
      * - flag === 0 OR FF disabled: fall back to backend stats.
