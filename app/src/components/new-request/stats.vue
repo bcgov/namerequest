@@ -109,23 +109,14 @@ export default class Stats extends Vue {
 
   @Action(useStore) setStats!: ActionBindingIF
 
-  /**
-   * Normalize a wait time value to a finite number.
-   *
-   * Semantics:
-   * - waitTime > 0: explicit positive wait time returned. Otherwise, means disabled.
-   */
-  normalizeWaitTime (waitingTime: any): number {
-    const num = Number(waitingTime)
-    if (Number.isFinite(num)) {
-      return num
-    }
-    return 0
-  }
-
   async created (): Promise<void> {
     if (
-      // FF returns 0 either it sets to 0 or the FF is disabled
+    /* 
+     * Feature-flag semantics for hardcoded_*_wait_time:
+     * - flag > 0 : use the flag value (explicit positive wait time).
+     * - flag === 0 OR FF disabled: fall back to backend stats.
+     * - flag < 0 : flag indicates the wait time is disabled.
+     */
       GetFeatureFlag('hardcoded_regular_wait_time') === 0 ||
       GetFeatureFlag('hardcoded_priority_wait_time') === 0
     ) {
@@ -152,9 +143,8 @@ export default class Stats extends Vue {
 
     // when flag is 0 or invalid, fall back to stats value
     const statVal = this.getStats?.regular_wait_time
-    const statNum = this.normalizeWaitTime(statVal)
-    if (statNum > 0) {
-      return statNum
+    if (statVal > 0) {
+      return statVal
     }
 
     return '-'
@@ -168,9 +158,8 @@ export default class Stats extends Vue {
     if (flagVal < 0) return '-'
 
     const statVal = this.getStats?.priority_wait_time
-    const statNum = this.normalizeWaitTime(statVal)
-    if (statNum > 0) {
-      return statNum
+    if (statVal > 0) {
+      return statVal
     }
 
     return '-'
