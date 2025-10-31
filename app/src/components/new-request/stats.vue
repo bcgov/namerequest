@@ -113,11 +113,7 @@ export default class Stats extends Vue {
    * Normalize a wait time value to a finite number.
    *
    * Semantics:
-   * - waitTime === 0: if from FF, the flag indicates "use API value" (caller should fall back to stats).
-   * - waitTime < 0: if from FF, the wait time is explicitly disabled (caller should display '-').
-   * - waitTime > 0: explicit positive wait time returned.
-   *
-   * The function returns 0 when the input is not a finite number; callers treat 0 as "disabled"
+   * - waitTime > 0: explicit positive wait time returned. Otherwise, means disabled.
    */
   normalizeWaitTime (waitingTime: any): number {
     const num = Number(waitingTime)
@@ -130,8 +126,8 @@ export default class Stats extends Vue {
   async created (): Promise<void> {
     if (
       // FF returns 0 either it sets to 0 or the FF is disabled
-      this.normalizeWaitTime(GetFeatureFlag('hardcoded_regular_wait_time')) === 0 ||
-      this.normalizeWaitTime(GetFeatureFlag('hardcoded_priority_wait_time')) === 0
+      GetFeatureFlag('hardcoded_regular_wait_time') === 0 ||
+      GetFeatureFlag('hardcoded_priority_wait_time') === 0
     ) {
       try {
        const stats = await NamexServices.fetchStats()
@@ -149,8 +145,7 @@ export default class Stats extends Vue {
 
   /** The regular wait time, in days. */
   get regularWaitTime (): string | number {
-    const flagRaw = GetFeatureFlag('hardcoded_regular_wait_time')
-    const flagVal = this.normalizeWaitTime(flagRaw)
+    const flagVal = GetFeatureFlag('hardcoded_regular_wait_time')
 
     if (flagVal > 0) return flagVal
     if (flagVal < 0) return '-'
@@ -167,8 +162,7 @@ export default class Stats extends Vue {
 
   /** The priority wait time, in days. */
   get priorityWaitTime (): string | number {
-    const flagRaw = GetFeatureFlag('hardcoded_priority_wait_time')
-    const flagVal = this.normalizeWaitTime(flagRaw)
+    const flagVal = GetFeatureFlag('hardcoded_priority_wait_time')
 
     if (flagVal > 0) return flagVal
     if (flagVal < 0) return '-'
