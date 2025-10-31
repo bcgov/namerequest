@@ -141,7 +141,6 @@ export default class Stats extends Vue {
     if (flagVal > 0) return flagVal
     if (flagVal < 0) return '-'
 
-    // when flag is 0 or invalid, fall back to stats value
     const statVal = this.getStats?.regular_wait_time
     if (statVal > 0) {
       return statVal
