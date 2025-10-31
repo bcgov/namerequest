@@ -130,7 +130,7 @@ export default class Stats extends Vue {
       GetFeatureFlag('hardcoded_priority_wait_time') === 0
     ) {
       try {
-       const stats = await NamexServices.fetchStats()
+        const stats = await NamexServices.fetchStats()
         console.info('[stats] fetched stats', stats)
         if (stats) this.setStats(stats)
       } catch (error) {
