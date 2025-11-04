@@ -22,7 +22,7 @@
           nudge-left="45"
           content-class="bottom-tooltip wait-time-tooltip"
           transition="fade-transition"
-          :disabled="isMobile"
+          :disabled="isMobile || !showPriorityTooltip"
         >
           <template #activator="{ on }">
             <div
@@ -35,7 +35,7 @@
                   {{ priorityWaitTime }}
                 </div>
                 <div class="stats-unit">
-                  Hours
+                  Days
                 </div>
               </div>
               <div class="stats-content-inner-2">
@@ -61,7 +61,7 @@
           nudge-left="45"
           content-class="bottom-tooltip new-submission-wait-time-tooltip"
           transition="fade-transition"
-          :disabled="isMobile"
+          :disabled="isMobile || !showRegularTooltip"
         >
           <template #activator="{ on }">
             <div
@@ -111,11 +111,22 @@ export default class Stats extends Vue {
 
   async created (): Promise<void> {
     if (
+    /*
+     * Feature-flag semantics for hardcoded_*_wait_time:
+     * - flag > 0 : use the flag value (explicit positive wait time).
+     * - flag === 0 OR FF disabled: fall back to backend stats.
+     * - flag < 0 : flag indicates the wait time is disabled.
+     */
       GetFeatureFlag('hardcoded_regular_wait_time') === 0 ||
       GetFeatureFlag('hardcoded_priority_wait_time') === 0
     ) {
-      const stats = await NamexServices.fetchStats()
-      if (stats) this.setStats(stats)
+      try {
+        const stats = await NamexServices.fetchStats()
+        console.info('[stats] fetched stats', stats)
+        if (stats) this.setStats(stats)
+      } catch (error) {
+        console.error('Error fetching stats:', error)
+      }
     }
   }
 
@@ -125,22 +136,42 @@ export default class Stats extends Vue {
 
   /** The regular wait time, in days. */
   get regularWaitTime (): string | number {
-    const regularWaitTime = GetFeatureFlag('hardcoded_regular_wait_time')
-    if (regularWaitTime > 0) {
-      return regularWaitTime
-    } else {
-      return (this.getStats?.regular_wait_time ?? '-')
+    const flagVal = GetFeatureFlag('hardcoded_regular_wait_time')
+
+    if (flagVal > 0) return flagVal
+    if (flagVal < 0) return '-'
+
+    const statVal = this.getStats?.regular_wait_time
+    if (statVal > 0) {
+      return statVal
     }
+
+    return '-'
   }
 
-  /** The priority wait time, in hours. */
+  /** The priority wait time, in days. */
   get priorityWaitTime (): string | number {
-    const priorityWaitTime = GetFeatureFlag('hardcoded_priority_wait_time')
-    if (priorityWaitTime > 0) {
-      return priorityWaitTime
-    } else {
-      return (this.getStats?.priority_wait_time ?? '-')
+    const flagVal = GetFeatureFlag('hardcoded_priority_wait_time')
+
+    if (flagVal > 0) return flagVal
+    if (flagVal < 0) return '-'
+
+    const statVal = this.getStats?.priority_wait_time
+    if (statVal > 0) {
+      return statVal
     }
+
+    return '-'
+  }
+
+  get showRegularTooltip (): boolean {
+    const val = Number(this.regularWaitTime)
+    return Number.isFinite(val) && val > 0
+  }
+
+  get showPriorityTooltip (): boolean {
+    const val = Number(this.priorityWaitTime)
+    return Number.isFinite(val) && val > 0
   }
 }
 </script>
