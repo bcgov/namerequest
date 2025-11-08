@@ -11,6 +11,7 @@ import { StaffPaymentIF, RefundParamsIF, NameRequestI, ErrorI, CreatePaymentPara
 import NamexServices from '@/services/namex-services'
 import { PaymentRequiredError } from '@/errors'
 import { Navigate } from '@/plugins'
+import { setFolioNumber } from '@/store/actions'
 
 const namexApiUrl = sessionStorage.getItem('NAMEX_API_URL')
 
@@ -22,6 +23,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
   @Action(usePaymentStore) setPaymentReceipt!: (receipt: any) => void
   @Action(usePaymentStore) setPaymentRequest!: (req: any) => void
   @Action(usePaymentStore) setSbcPayment!: (payment: any) => void
+  @Action(useStore) setFolioNumber!: (folioNumber: string) => void
   @Action(useStore) setRefundParams!: (refundParams: RefundParamsIF) => void
   @Action(useErrorStore) setAppError!: (err: ErrorI) => void
 
@@ -468,12 +470,14 @@ export class PaymentMixin extends Mixins(ActionMixin) {
         case StaffPaymentOptions.NO_FEE:
           headers['waiveFees'] = true
           break
-
-        case StaffPaymentOptions.NONE: // It is not a StaffPayment
-          headers['folioNumber'] = this.getFolioNumber
-          break
+        //
+        // case StaffPaymentOptions.NONE: // It is not a StaffPayment
+        //   headers['folioNumber'] = this.getFolioNumber
+        //   break
       }
     }
+
+    headers['folioNumber'] = this.getFolioNumber
 
     const keycloakToken = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
     if (keycloakToken) {
@@ -582,6 +586,10 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       if (!paymentsResponse) throw new Error('Got error from getNameRequestPayments()')
 
       this.setPayments(paymentsResponse)
+      // set folio number if it exists in the first payment record
+      if(paymentsResponse[0]?.sbcPayment?.folioNumber) {
+        this.setFolioNumber(paymentsResponse[0]?.sbcPayment?.folioNumber)
+      }
       return true
     } catch (err) {
       // don't console.error - getNameRequestPayments() already did that
