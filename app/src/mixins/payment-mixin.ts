@@ -470,14 +470,14 @@ export class PaymentMixin extends Mixins(ActionMixin) {
         case StaffPaymentOptions.NO_FEE:
           headers['waiveFees'] = true
           break
-        //
-        // case StaffPaymentOptions.NONE: // It is not a StaffPayment
-        //   headers['folioNumber'] = this.getFolioNumber
-        //   break
+
+        case StaffPaymentOptions.NONE: // It is not a StaffPayment
+          headers['folioNumber'] = this.getFolioNumber
+          break
       }
     }
 
-    headers['folioNumber'] = this.getFolioNumber
+    // headers['folioNumber'] = this.getFolioNumber
 
     const keycloakToken = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
     if (keycloakToken) {
