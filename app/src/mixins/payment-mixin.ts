@@ -4,7 +4,7 @@ import { useErrorStore, usePaymentStore, useStore } from '@/store'
 import { AxiosRequestConfig } from 'axios'
 import { ACCEPTED, CREATED, NO_CONTENT, OK, PAYMENT_REQUIRED } from 'http-status-codes'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
-import { PaymentStatus, StaffPaymentOptions, NrState, PaymentMethod, SbcPaymentStatus } from '@/enums'
+import { PaymentStatus, StaffPaymentOptions, NrState, PaymentMethod, SbcPaymentStatus, PaymentAction } from '@/enums'
 import { ActionMixin } from '@/mixins'
 import { StaffPaymentIF, RefundParamsIF, NameRequestI, ErrorI, CreatePaymentParams, FetchFeesParams,
   NameRequestPaymentResponse } from '@/interfaces'
@@ -477,8 +477,6 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       }
     }
 
-    // headers['folioNumber'] = this.getFolioNumber
-
     const keycloakToken = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
     if (keycloakToken) {
       headers['Authorization'] = `Bearer ${keycloakToken}`
@@ -586,10 +584,17 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       if (!paymentsResponse) throw new Error('Got error from getNameRequestPayments()')
 
       this.setPayments(paymentsResponse)
-      // set folio number if it exists in the first payment record
-      if(paymentsResponse[0]?.sbcPayment?.folioNumber) {
-        this.setFolioNumber(paymentsResponse[0]?.sbcPayment?.folioNumber)
+
+      // find the first payment in the returned array that has action = CREATE and has sbcPayment.folioNumber set
+      const paymentWithFolio = paymentsResponse?.find(
+        payment =>
+          payment?.action === PaymentAction.CREATE &&
+          payment?.sbcPayment?.folioNumber
+      )
+      if (paymentWithFolio?.sbcPayment?.folioNumber) {
+        this.setFolioNumber(paymentWithFolio.sbcPayment.folioNumber)
       }
+
       return true
     } catch (err) {
       // don't console.error - getNameRequestPayments() already did that
