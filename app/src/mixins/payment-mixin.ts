@@ -11,7 +11,6 @@ import { StaffPaymentIF, RefundParamsIF, NameRequestI, ErrorI, CreatePaymentPara
 import NamexServices from '@/services/namex-services'
 import { PaymentRequiredError } from '@/errors'
 import { Navigate } from '@/plugins'
-import { setFolioNumber } from '@/store/actions'
 
 const namexApiUrl = sessionStorage.getItem('NAMEX_API_URL')
 
