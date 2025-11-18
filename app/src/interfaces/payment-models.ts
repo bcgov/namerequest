@@ -1,7 +1,8 @@
-import { FilingTypes, Jurisdictions } from '@/enums'
+import { FilingTypes, Jurisdictions, PaymentAction } from '@/enums'
 import { ErrorI } from '@/interfaces'
 
 export interface NameRequestPaymentResponse {
+  action: PaymentAction
   id: number
   nrId: string
   nrNum: string
