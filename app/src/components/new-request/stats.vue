@@ -45,9 +45,7 @@
             </div>
           </template>
           <span>
-            If you need your name reviewed as quickly as possible, Priority requests
-            are available for a fee ($100.00). Priority name requests are usually
-            reviewed within 1 to 2 business days.
+            {{ priorityToolTipText }}
           </span>
         </v-tooltip>
       </v-col>
@@ -172,6 +170,19 @@ export default class Stats extends Vue {
   get showPriorityTooltip (): boolean {
     const val = Number(this.priorityWaitTime)
     return Number.isFinite(val) && val > 0
+  }
+
+  get priorityToolTipText (): string {
+    const priorityToolTipText = GetFeatureFlag('priority-wait-time-tooltip-text')
+    if (priorityToolTipText) {
+      return priorityToolTipText
+    }
+    // Return default text when no priority tooltip text is available from the feature flag
+    return `
+      If you need your name reviewed as quickly as possible, 
+      Priority requests are available for a fee ($100.00). 
+      Priority name requests are usually reviewed within 1 to 2 business days.
+    `.trim()
   }
 }
 </script>
