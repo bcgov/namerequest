@@ -32,7 +32,7 @@
             >
               <div class="stats-content-inner-1 pa-1 text-center">
                 <div class="stats-value h3-lt">
-                  {{ priorityWaitTime }}
+                  {{ getPriorityWaitTime }}
                 </div>
                 <div class="stats-unit">
                   Days
@@ -45,7 +45,9 @@
             </div>
           </template>
           <span>
-            {{ priorityToolTipText }}
+            If you need your name reviewed as quickly as possible,
+            Priority requests are available for a fee ($100.00).
+            Priority name requests are usually reviewed within {{ getPriorityWaitTime }} business days.
           </span>
         </v-tooltip>
       </v-col>
@@ -69,7 +71,7 @@
             >
               <div class="stats-content-inner-1 pa-1 text-center">
                 <div class="stats-value h3-lt">
-                  {{ regularWaitTime }}
+                  {{ getRegularWaitTime }}
                 </div>
                 <div class="stats-unit">
                   Days
@@ -104,6 +106,8 @@ import NamexServices from '@/services/namex-services'
 export default class Stats extends Vue {
   @Getter(useStore) getStats!: StatsI
   @Getter(useStore) isMobile!: boolean
+  @Getter(useStore) getRegularWaitTime!: string | number
+  @Getter(useStore) getPriorityWaitTime!: string | number
 
   @Action(useStore) setStats!: ActionBindingIF
 
@@ -132,57 +136,14 @@ export default class Stats extends Vue {
     return (this.getStats?.auto_approved_count ?? '-')
   }
 
-  /** The regular wait time, in days. */
-  get regularWaitTime (): string | number {
-    const flagVal = GetFeatureFlag('hardcoded_regular_wait_time')
-
-    if (flagVal > 0) return flagVal
-    if (flagVal < 0) return '-'
-
-    const statVal = this.getStats?.regular_wait_time
-    if (statVal > 0) {
-      return statVal
-    }
-
-    return '-'
-  }
-
-  /** The priority wait time, in days. */
-  get priorityWaitTime (): string | number {
-    const flagVal = GetFeatureFlag('hardcoded_priority_wait_time')
-
-    if (flagVal > 0) return flagVal
-    if (flagVal < 0) return '-'
-
-    const statVal = this.getStats?.priority_wait_time
-    if (statVal > 0) {
-      return statVal
-    }
-
-    return '-'
-  }
-
   get showRegularTooltip (): boolean {
-    const val = Number(this.regularWaitTime)
+    const val = Number(this.getRegularWaitTime)
     return Number.isFinite(val) && val > 0
   }
 
   get showPriorityTooltip (): boolean {
-    const val = Number(this.priorityWaitTime)
+    const val = Number(this.getPriorityWaitTime)
     return Number.isFinite(val) && val > 0
-  }
-
-  get priorityToolTipText (): string {
-    const priorityToolTipText = GetFeatureFlag('priority-wait-time-tooltip-text')
-    if (priorityToolTipText) {
-      return priorityToolTipText
-    }
-    // Return default text when no priority tooltip text is available from the feature flag
-    return `
-      If you need your name reviewed as quickly as possible, 
-      Priority requests are available for a fee ($100.00). 
-      Priority name requests are usually reviewed within 1 to 2 business days.
-    `.trim()
   }
 }
 </script>

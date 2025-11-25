@@ -70,7 +70,7 @@
                 class="mb-8"
               >
                 If you need your name reviewed as quickly as possible, upgrade to a Priority
-                request. Priority name requests are usually reviewed within 1 to 2 business days.
+                request. Priority name requests are usually reviewed within {{ getPriorityWaitTime }} business days.
               </p>
 
               <FeeSummary
@@ -127,6 +127,8 @@ export default class UpgradeDialog extends Mixins(
   PaymentSessionMixin,
   DisplayedComponentMixin
 ) {
+  @Getter(useStore) getPriorityWaitTime!: string | number
+
   // the tab indices
   // NB: these are reversed to reverse the built-in slide transition
   readonly TAB_STAFF_PAYMENT = 0
