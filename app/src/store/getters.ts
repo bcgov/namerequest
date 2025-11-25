@@ -58,6 +58,7 @@ import {
   RequestActions,
   XproMapping
 } from '@/list-data'
+import { GetFeatureFlag } from '@/plugins/launchDarkly'
 
 export const isMobile = (state: StateIF): boolean => {
   // fall back to base window width if no window size changes have occurred
@@ -1317,4 +1318,24 @@ export const getSearchRequest = (state: StateIF): RequestActionsI => {
 
 export const getBusinessAccountId = (state: StateIF): string => {
   return state.newRequestModel.businessAccountId
+}
+
+export const getPriorityWaitTime = (state: StateIF): string | number => {
+  const flagVal = GetFeatureFlag('hardcoded_priority_wait_time')
+  if (flagVal > 0) return flagVal
+  if (flagVal < 0) return '-'
+
+  const statVal = getStats(state)?.priority_wait_time
+  if (statVal > 0) return statVal
+  return '-'
+}
+
+export const getRegularWaitTime = (state: StateIF): string | number => {
+  const flagVal = GetFeatureFlag('hardcoded_regular_wait_time')
+  if (flagVal > 0) return flagVal
+  if (flagVal < 0) return '-'
+
+  const statVal = getStats(state)?.regular_wait_time
+  if (statVal > 0) return statVal
+  return '-'
 }
