@@ -145,7 +145,6 @@ export default class Stats extends Vue {
     const val = Number(this.getPriorityWaitTime)
     return Number.isFinite(val) && val > 0
   }
-
 }
 </script>
 
