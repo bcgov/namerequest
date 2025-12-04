@@ -66,7 +66,7 @@ export default class NameInput extends Vue {
     this.nameInputComponent = this.$refs['nameInputRef']
   }
 
-  get getRules(): any[] {
+  get getRules (): any[] {
     if (this.searchValue) {
       if (this.isMrasSearch) {
         return this.mrasRules
