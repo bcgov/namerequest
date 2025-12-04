@@ -133,7 +133,12 @@ export default class NameInput extends Vue {
     }
 
     if (this.getErrors.includes('max_length')) {
-      return [`Cannot exceed ${MRAS_MAX_LENGTH} characters`]
+      let maxCharacters = DFLT_MAX_LENGTH
+      if (this.isXproFlow) {
+        maxCharacters = MRAS_MAX_LENGTH
+      }
+
+      return [`Cannot exceed ${maxCharacters} characters`]
     }
 
     const invalidDesignationMsg = checkInvalidDesignation(this.getEntityTypeCd, this.searchValue)
