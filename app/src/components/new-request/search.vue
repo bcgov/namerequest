@@ -426,7 +426,7 @@ import { Action, Getter } from 'pinia-class'
 import { useStore } from '@/store'
 import { MRAS_MIN_LENGTH, MRAS_MAX_LENGTH }
   from '@/components/new-request/constants'
-import { getName } from '@/store/getters'
+
 /**
  * This is the component that displays the new NR menus and flows.
  */
