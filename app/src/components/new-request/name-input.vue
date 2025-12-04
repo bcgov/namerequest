@@ -74,8 +74,8 @@ export default class NameInput extends Vue {
       if (this.isXproFlow) {
         return this.xproRules
       }
-      return this.defaultRules
     }
+    return this.defaultRules
   }
 
   /** The array of validation rules for the MRAS corp num. */
