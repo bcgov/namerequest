@@ -16,6 +16,7 @@ const defaultFlagSet: LDFlagSet = {
   'enable-web-chat': false, // by default, old webchat is disabled
   'hardcoded_priority_wait_time': 0, // by default, use actual wait time
   'hardcoded_regular_wait_time': 0, // by default, use actual wait time
+  'priority-wait-time-tooltip-text': '', // by default, display default tooltip text
   'supported-amalgamation-entities': [],
   'supported-continuation-in-entities': [],
   'supported-incorporation-registration-entities': [],

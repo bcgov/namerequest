@@ -35,6 +35,7 @@
         <div class="mt-1 mb-1 text-center">
           <v-btn
             class="search-btn"
+            :disabled="isDisabled"
             @click="isNameSearch ? handleSubmit() : clearAndClose()"
           >
             {{ name ? 'Search' : 'Close' }}
@@ -50,6 +51,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { Action, Getter } from 'pinia-class'
 import { useStore } from '@/store'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { MRAS_MIN_LENGTH, MRAS_MAX_LENGTH } from '@/components/new-request/constants'
 import NameInput from '@/components/new-request/name-input.vue'
 import { BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
 
@@ -64,6 +66,7 @@ export default class MrasSearchInfoDialog extends Vue {
   @Getter(useStore) getMrasSearchResultCode!: number
   @Getter(useStore) getName!: string
   @Getter(useStore) getMrasSearchInfoModalVisible!: boolean
+  @Getter(useStore) isXproFlow!: boolean
 
   @Action(useStore) setMrasSearchInfoModalVisible!: ActionBindingIF
   @Action(useStore) setName!: ActionBindingIF
@@ -123,6 +126,11 @@ export default class MrasSearchInfoDialog extends Vue {
 
   get errors (): string[] {
     return this.getErrors
+  }
+
+  get isDisabled (): boolean {
+    return !!this.name && this.isXproFlow &&
+      (!this.name || this.name.length < MRAS_MIN_LENGTH || this.name.length > MRAS_MAX_LENGTH)
   }
 
   async handleSubmit (): Promise<void> {

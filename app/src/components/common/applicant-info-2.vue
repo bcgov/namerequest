@@ -259,7 +259,7 @@
               </div>
             </template>
             <span v-if="enablePriorityCheckbox">
-              Priority name requests are typically reviewed within 1-2 business days.
+              Priority name requests are typically reviewed within {{ getPriorityWaitTime }} business days.
             </span>
             <span v-else>
               Due to the on-going labour dispute between the government and its employees,
@@ -295,6 +295,7 @@ export default class ApplicantInfo2 extends Vue {
   @Getter(useStore) getNrData!: any
   @Getter(useStore) getNrState!: NrState
   @Getter(useStore) getPriorityRequest!: boolean
+  @Getter(useStore) getPriorityWaitTime!: string | number
   @Getter(useStore) getShowPriorityRequest!: boolean
   @Getter(useStore) isMobile!: boolean
 

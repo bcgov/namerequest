@@ -6,7 +6,7 @@
     :error-messages="message"
     autocomplete="chrome-off"
     :filled="!isReadOnly"
-    :rules="(searchValue && isMrasSearch) ? mrasRules : defaultRules"
+    :rules="getRules"
     :label="label"
     :class="{ 'read-only-mode': isReadOnly }"
     :disabled="isReadOnly"
@@ -66,10 +66,29 @@ export default class NameInput extends Vue {
     this.nameInputComponent = this.$refs['nameInputRef']
   }
 
+  get getRules (): any[] {
+    if (this.searchValue) {
+      if (this.isMrasSearch) {
+        return this.mrasRules
+      }
+      if (this.isXproFlow) {
+        return this.xproRules
+      }
+    }
+    return this.defaultRules
+  }
+
   /** The array of validation rules for the MRAS corp num. */
   get mrasRules (): any[] {
     return [
       v => (/^[0-9a-zA-Z-]+$/.test(v) || 'A corporate number is required'),
+      v => (!v || v.length >= MRAS_MIN_LENGTH) || `Must be at least ${MRAS_MIN_LENGTH} characters`,
+      v => (!v || v.length <= MRAS_MAX_LENGTH) || `Cannot exceed ${MRAS_MAX_LENGTH} characters`
+    ]
+  }
+
+  get xproRules (): any[] {
+    return [
       v => (!v || v.length >= MRAS_MIN_LENGTH) || `Must be at least ${MRAS_MIN_LENGTH} characters`,
       v => (!v || v.length <= MRAS_MAX_LENGTH) || `Cannot exceed ${MRAS_MAX_LENGTH} characters`
     ]
@@ -114,7 +133,12 @@ export default class NameInput extends Vue {
     }
 
     if (this.getErrors.includes('max_length')) {
-      return ['Please enter a shorter name']
+      let maxCharacters = DFLT_MAX_LENGTH
+      if (this.isXproFlow) {
+        maxCharacters = MRAS_MAX_LENGTH
+      }
+
+      return [`Cannot exceed ${maxCharacters} characters`]
     }
 
     const invalidDesignationMsg = checkInvalidDesignation(this.getEntityTypeCd, this.searchValue)
