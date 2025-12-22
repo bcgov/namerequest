@@ -5,7 +5,7 @@ import { createLocalVue } from '@vue/test-utils'
 // import newReqModule from '@/store/new-request-module'
 import Vuetify from 'vuetify'
 
-document['getSelection'] = jest.fn()
+document['getSelection'] = vi.fn()
 
 const localVue = createLocalVue()
 localVue.use(Vuetify)

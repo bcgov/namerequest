@@ -14,7 +14,10 @@
         class="pb-4"
         :class="{'pr-15' : !isMobile }"
       >
-        <v-img src="@/assets/images/bcnamerequest-laptop_x2.jpg" />
+        <img
+          class="max-width-100"
+          src="@/assets/images/bcnamerequest-laptop_x2.jpg"
+        >
       </v-col>
       <v-col
         cols="12"
@@ -46,11 +49,12 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Getter } from 'pinia-class'
+import { useStore } from '@/store'
 
 @Component
 export default class NewAndBetterWay extends Vue {
-  @Getter isMobile!: boolean
+  @Getter(useStore) isMobile!: boolean
 }
 </script>
 

@@ -9,7 +9,7 @@ localVue.use(Vuetify)
 // const vuetify = new Vuetify()
 
 describe('Search component', () => {
-  it('is an empty test', () => {})
+  it('is an empty test to pre-empt test error', () => {})
   // let wrapper: any
 
   // beforeEach(async (done) => {
@@ -43,6 +43,7 @@ describe('Search component', () => {
 })
 
 describe('Select Company Type block', () => {
+  it('is an empty test to pre-empt test error', () => {})
   // let wrapperFactory: any
 
   // beforeEach(() => {

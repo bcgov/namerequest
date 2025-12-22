@@ -41,20 +41,23 @@
 
 <script lang="ts">
 import { Component } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { DisplayedComponentMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class ExitDialog extends DisplayedComponentMixin {
-  @Getter getExitModalVisible!: boolean
-  @Action setExitModalVisible!: ActionBindingIF
+  @Getter(useStore) getExitModalVisible!: boolean
+  @Action(useStore) setExitModalVisible!: ActionBindingIF
 
   get showModal () {
     return this.getExitModalVisible
   }
+
   set showModal (value: boolean) {
   }
+
   hideModal () {
     this.setExitModalVisible(false)
   }

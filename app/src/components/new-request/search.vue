@@ -365,7 +365,7 @@
             id="search-name-btn"
             class="px-9"
             :class="{ 'mobile-btn' : isMobile }"
-            :disabled="!corpNumValid"
+            :disabled="isSearchBtnDisabled"
             @click="handleSubmit(true)"
           >
             <v-icon
@@ -422,7 +422,10 @@ import { CommonMixin, NrAffiliationMixin, SearchMixin } from '@/mixins'
 import { Designations, XproMapping } from '@/list-data'
 import { Navigate } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
+import { MRAS_MIN_LENGTH, MRAS_MAX_LENGTH }
+  from '@/components/new-request/constants'
 
 /**
  * This is the component that displays the new NR menus and flows.
@@ -444,11 +447,12 @@ import { Action, Getter } from 'vuex-class'
   }
 })
 export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, SearchMixin) {
-  @Action setSocietiesModalVisible!: ActionBindingIF
+  @Action(useStore) setSocietiesModalVisible!: ActionBindingIF
 
-  @Getter getIsLearBusiness!: boolean
-  // @Getter isRoleStaff!: boolean
-  @Getter getAuthorizedActions!: string[]
+  @Getter(useStore) getIsLearBusiness!: boolean
+  // @Getter(useStore) isRoleStaff!: boolean
+  @Getter(useStore) getAuthorizedActions!: string[]
+  @Getter(useStore) getName!: string
 
   // Constant
   readonly colinLink = sessionStorage.getItem('CORPORATE_ONLINE_URL')
@@ -753,6 +757,15 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     }
 
     return false
+  }
+
+  get isValidXproName (): boolean {
+    const name = this.getName
+    return name.length >= MRAS_MIN_LENGTH && name.length <= MRAS_MAX_LENGTH
+  }
+
+  get isSearchBtnDisabled (): boolean {
+    return (this.getHasNoCorpNum && !this.isValidXproName) || (!this.getHasNoCorpNum && !this.corpNumValid)
   }
 
   /**

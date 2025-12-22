@@ -16,7 +16,8 @@
 
 <script lang="ts">
 import { Component, Emit, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 
 // Components
 import { StaffPayment as StaffPaymentShared } from '@bcrs-shared-components/staff-payment'
@@ -32,11 +33,8 @@ import { StaffPaymentOptions } from '@/enums'
   }
 })
 export default class StaffPayment extends Vue {
-  /** Get staff payment from store. */
-  @Getter getStaffPayment!: StaffPaymentIF
-
-  /** Set staff payment in store. */
-  @Action setStaffPayment!: ActionBindingIF
+  @Getter(useStore) getStaffPayment!: StaffPaymentIF
+  @Action(useStore) setStaffPayment!: ActionBindingIF
 
   /** Whether to validate the data. */
   validate = false

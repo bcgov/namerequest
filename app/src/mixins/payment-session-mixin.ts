@@ -1,5 +1,5 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { NameRequestPaymentResponse } from '@/modules/payment/models'
+import { NameRequestPaymentResponse } from '@/interfaces'
 import { PaymentAction } from '@/enums'
 
 @Component({})

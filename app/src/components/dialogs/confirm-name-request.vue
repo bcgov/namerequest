@@ -144,17 +144,15 @@
 
 <script lang='ts'>
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore, usePaymentStore } from '@/store'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import RequestDetails from '@/components/common/request-details.vue'
 import StaffPayment from '@/components/payment/staff-payment.vue'
-import { CreatePaymentParams, FetchFeesParams } from '@/modules/payment/models'
-import { CONFIRM_NR_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
-import { FilingTypes } from '@/modules/payment/filing-types'
+import { FilingTypes } from '@/enums/filing-types'
 import { Jurisdictions, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
-import { getBaseUrl } from '@/components/payment/payment-utils'
-import { NameChoicesIF } from '@/interfaces'
+import { NameChoicesIF, CreatePaymentParams, FetchFeesParams } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { PaymentRequiredError } from '@/errors'
 import { Navigate } from '@/plugins'
@@ -183,16 +181,15 @@ export default class ConfirmNrDialog extends Mixins(
 
   @Prop({ default: async () => {} }) readonly onCancel: () => void
 
-  // Global getters
-  @Getter getName!: string
-  @Getter getNameChoices!: NameChoicesIF
-  @Getter getPriorityRequest!: boolean
-  @Getter getBusinessAccount : any
-  @Getter isMobile!: boolean
-  @Getter isRoleStaff!: boolean
+  @Getter(useStore) getName!: string
+  @Getter(useStore) getNameChoices!: NameChoicesIF
+  @Getter(useStore) getPriorityRequest!: boolean
+  @Getter(useStore) getBusinessAccount : any
+  @Getter(useStore) isMobile!: boolean
+  @Getter(useStore) isRoleStaff!: boolean
+  @Getter(usePaymentStore) confirmNrModalIsVisible!: boolean
 
-  // Global actions
-  @Action toggleConfirmNrModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleConfirmNrModal!: ActionBindingIF
 
   /** Whether staff payment is valid. */
   private isStaffPaymentValid = false
@@ -213,7 +210,7 @@ export default class ConfirmNrDialog extends Mixins(
 
   /** Whether this modal should be shown (per store property). */
   private get showModal (): boolean {
-    return this.$store.getters[CONFIRM_NR_MODAL_IS_VISIBLE]
+    return this.confirmNrModalIsVisible
   }
 
   /** Clears store property to hide this modal. */
@@ -281,7 +278,8 @@ export default class ConfirmNrDialog extends Mixins(
       this.savePaymentResponseToSession(PaymentAction.CREATE, paymentResponse)
 
       // See if pay is needed else navigate to Existing NR page
-      const baseUrl = getBaseUrl()
+      const baseUrl = sessionStorage.getItem('BASE_URL')
+
       const returnUrl = encodeURIComponent(`${baseUrl}/nr/${this.getNrId}/?paymentId=${paymentId}`)
       if (paymentResponse.sbcPayment.isPaymentActionRequired) {
         this.navigateToPaymentPortal(paymentToken, returnUrl)

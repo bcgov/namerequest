@@ -22,7 +22,7 @@
           nudge-left="45"
           content-class="bottom-tooltip wait-time-tooltip"
           transition="fade-transition"
-          :disabled="isMobile"
+          :disabled="isMobile || !showPriorityTooltip"
         >
           <template #activator="{ on }">
             <div
@@ -32,10 +32,10 @@
             >
               <div class="stats-content-inner-1 pa-1 text-center">
                 <div class="stats-value h3-lt">
-                  {{ priorityWaitTime }}
+                  {{ getPriorityWaitTime }}
                 </div>
                 <div class="stats-unit">
-                  Hours
+                  Days
                 </div>
               </div>
               <div class="stats-content-inner-2">
@@ -45,9 +45,9 @@
             </div>
           </template>
           <span>
-            If you need your name reviewed as quickly as possible, Priority requests
-            are available for a fee ($100.00). Priority name requests are usually
-            reviewed within 1 to 2 business days.
+            If you need your name reviewed as quickly as possible,
+            Priority requests are available for a fee ($100.00).
+            Priority name requests are usually reviewed within {{ getPriorityWaitTime }} business days.
           </span>
         </v-tooltip>
       </v-col>
@@ -61,7 +61,7 @@
           nudge-left="45"
           content-class="bottom-tooltip new-submission-wait-time-tooltip"
           transition="fade-transition"
-          :disabled="isMobile"
+          :disabled="isMobile || !showRegularTooltip"
         >
           <template #activator="{ on }">
             <div
@@ -71,7 +71,7 @@
             >
               <div class="stats-content-inner-1 pa-1 text-center">
                 <div class="stats-value h3-lt">
-                  {{ regularWaitTime }}
+                  {{ getRegularWaitTime }}
                 </div>
                 <div class="stats-unit">
                   Days
@@ -95,8 +95,8 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
-
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { StatsI } from '@/interfaces'
 import { GetFeatureFlag } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
@@ -104,20 +104,31 @@ import NamexServices from '@/services/namex-services'
 
 @Component({})
 export default class Stats extends Vue {
-  // Global getter
-  @Getter getStats!: StatsI
-  @Getter isMobile!: boolean
+  @Getter(useStore) getStats!: StatsI
+  @Getter(useStore) isMobile!: boolean
+  @Getter(useStore) getRegularWaitTime!: string | number
+  @Getter(useStore) getPriorityWaitTime!: string | number
 
-  // Global action
-  @Action setStats!: ActionBindingIF
+  @Action(useStore) setStats!: ActionBindingIF
 
   async created (): Promise<void> {
     if (
+    /*
+     * Feature-flag semantics for hardcoded_*_wait_time:
+     * - flag > 0 : use the flag value (explicit positive wait time).
+     * - flag === 0 OR FF disabled: fall back to backend stats.
+     * - flag < 0 : flag indicates the wait time is disabled.
+     */
       GetFeatureFlag('hardcoded_regular_wait_time') === 0 ||
       GetFeatureFlag('hardcoded_priority_wait_time') === 0
     ) {
-      const stats = await NamexServices.fetchStats()
-      if (stats) this.setStats(stats)
+      try {
+        const stats = await NamexServices.fetchStats()
+        console.info('[stats] fetched stats', stats)
+        if (stats) this.setStats(stats)
+      } catch (error) {
+        console.error('Error fetching stats:', error)
+      }
     }
   }
 
@@ -125,24 +136,14 @@ export default class Stats extends Vue {
     return (this.getStats?.auto_approved_count ?? '-')
   }
 
-  /** The regular wait time, in days. */
-  get regularWaitTime (): string | number {
-    const regularWaitTime = GetFeatureFlag('hardcoded_regular_wait_time')
-    if (regularWaitTime > 0) {
-      return regularWaitTime
-    } else {
-      return (this.getStats?.regular_wait_time ?? '-')
-    }
+  get showRegularTooltip (): boolean {
+    const val = Number(this.getRegularWaitTime)
+    return Number.isFinite(val) && val > 0
   }
 
-  /** The priority wait time, in hours. */
-  get priorityWaitTime (): string | number {
-    const priorityWaitTime = GetFeatureFlag('hardcoded_priority_wait_time')
-    if (priorityWaitTime > 0) {
-      return priorityWaitTime
-    } else {
-      return (this.getStats?.priority_wait_time ?? '-')
-    }
+  get showPriorityTooltip (): boolean {
+    const val = Number(this.getPriorityWaitTime)
+    return Number.isFinite(val) && val > 0
   }
 }
 </script>
@@ -165,7 +166,7 @@ export default class Stats extends Vue {
 
 .stats-content-outer {
   width: fit-content;
-  background: url('~@/assets/images/stats-circle.png');
+  background: url('@/assets/images/stats-circle.png');
   background-repeat: no-repeat;
   display: flex;
   align-items: center;

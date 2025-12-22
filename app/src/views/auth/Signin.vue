@@ -27,7 +27,7 @@ export default class Signin extends Mixins(LoadKeycloakRolesMixin, NrAffiliation
 
   /** The URL to redirect to if signin failed: the NR URL. */
   get redirectUrlLoginFail (): string {
-    return `${window.location.origin}${process.env.VUE_APP_PATH}`
+    return `${window.location.origin}${import.meta.env.VUE_APP_PATH}`
   }
 
   /** Called after successful signin. */
@@ -36,7 +36,7 @@ export default class Signin extends Mixins(LoadKeycloakRolesMixin, NrAffiliation
 
     // now that the user is logged in, load Keycloak roles and update LaunchDarkly
     this.loadKeycloakRoles()
-    await this.updateUser()
+    await this.updateLaunchDarkly()
 
     // go to main app page
     await this.$router.push('/')

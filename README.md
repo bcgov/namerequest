@@ -4,13 +4,13 @@
 
 ## Project setup
 ```
-npm install -g pnpm
+npm install -g pnpm@9
 pnpm install
 ```
 
 ### Compiles and hot-reloads for development
 ```
-pnpm run serve
+pnpm run dev
 ```
 
 ### Compiles and minifies for production

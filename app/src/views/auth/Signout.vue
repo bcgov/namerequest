@@ -16,7 +16,7 @@ import SbcSignout from 'sbc-common-components/src/components/SbcSignout.vue'
 export default class Signout extends Vue {
   /** The URL to redirect to when the signout process completes: the NR URL. */
   get redirectUrl (): string {
-    return `${window.location.origin}${process.env.VUE_APP_PATH}`
+    return `${window.location.origin}${import.meta.env.VUE_APP_PATH}`
   }
 }
 </script>

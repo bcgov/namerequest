@@ -51,24 +51,22 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
-
+import { Action, Getter } from 'pinia-class'
+import { useStore, usePaymentStore } from '@/store'
 import { PaymentMixin } from '@/mixins'
 import { Sleep } from '@/plugins'
-
 import { NrAction } from '@/enums'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { CANCEL_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import NamexServices from '@/services/namex-services'
 
 @Component({})
 export default class CancelDialog extends Mixins(PaymentMixin) {
-  // Global Getters
-  @Getter getNrId!: number
+  @Getter(useStore) getNrId!: number
+  @Getter(usePaymentStore) cancelModalIsVisible!: boolean
 
-  @Action setDisplayedComponent!: ActionBindingIF
-  @Action setNameRequest!: ActionBindingIF
-  @Action toggleCancelModal!: ActionBindingIF
+  @Action(useStore) setDisplayedComponent!: ActionBindingIF
+  @Action(useStore) setNameRequest!: ActionBindingIF
+  @Action(usePaymentStore) toggleCancelModal!: ActionBindingIF
 
   /** Used to show loading state on button. */
   loading = false
@@ -79,7 +77,7 @@ export default class CancelDialog extends Mixins(PaymentMixin) {
   // }
 
   get isVisible (): boolean {
-    return this.$store.getters[CANCEL_MODAL_IS_VISIBLE]
+    return this.cancelModalIsVisible
   }
 
   async showModal (): Promise<void> {

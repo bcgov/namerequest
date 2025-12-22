@@ -27,89 +27,89 @@ import {
 } from '@/enums'
 
 export const clearErrors = (state: StateIF) => {
-  state.stateModel.newRequestModel.errors = []
+  state.newRequestModel.errors = []
 }
 
 export const mutateActingOnOwnBehalf = (state: StateIF, actingOnOwnBehalf: boolean) => {
-  state.stateModel.newRequestModel.actingOnOwnBehalf = actingOnOwnBehalf
+  state.newRequestModel.actingOnOwnBehalf = actingOnOwnBehalf
 }
 
 export const mutateAddressSuggestions = (state: StateIF, addressSuggestions: any[]) => {
   if (!addressSuggestions) {
-    state.stateModel.newRequestModel.addressSuggestions = null
+    state.newRequestModel.addressSuggestions = null
   } else {
-    state.stateModel.newRequestModel.addressSuggestions = Object.assign([], addressSuggestions)
+    state.newRequestModel.addressSuggestions = Object.assign([], addressSuggestions)
   }
 }
 
 export const mutateAnalysisJSON = (state: StateIF, analysisJSON: AnalysisJSONI) => {
-  state.stateModel.newRequestModel.analysisJSON = analysisJSON
+  state.newRequestModel.analysisJSON = analysisJSON
 }
 
 export const mutateApplicant = (state: StateIF, appKV: any) => {
   if (Array.isArray(appKV)) {
     for (const element of appKV) {
-      state.stateModel.newRequestModel.applicant[element.name] = element.value
+      state.newRequestModel.applicant[element.name] = element.value
     }
   }
   if (appKV.key === 'postalCd') {
     appKV.value = appKV.value.toUpperCase()
   }
-  state.stateModel.newRequestModel.applicant[appKV.key] = appKV.value
-  // sessionStorage.setItem('BCREG-emailAddress', state.stateModel.newRequestModel.applicant?.emailAddress)
-  // sessionStorage.setItem('BCREG-phoneNumber', state.stateModel.newRequestModel.applicant?.phoneNumber)
+  state.newRequestModel.applicant[appKV.key] = appKV.value
+  // sessionStorage.setItem('BCREG-emailAddress', state.newRequestModel.applicant?.emailAddress)
+  // sessionStorage.setItem('BCREG-phoneNumber', state.newRequestModel.applicant?.phoneNumber)
 }
 
 export const mutateConflictId = (state: StateIF, conflictId: string) => {
-  state.stateModel.newRequestModel.conflictId = conflictId
+  state.newRequestModel.conflictId = conflictId
 }
 
 export const mutateConversionType = (state: StateIF, conversionType: NrRequestTypeCodes) => {
-  state.stateModel.newRequestModel.conversionType = conversionType
+  state.newRequestModel.conversionType = conversionType
 }
 
 export const mutateConversionTypeAddToSelect = (state: StateIF, conversionTypeAddToSelect: ConversionTypesI) => {
-  state.stateModel.newRequestModel.conversionTypeAddToSelect = conversionTypeAddToSelect
+  state.newRequestModel.conversionTypeAddToSelect = conversionTypeAddToSelect
 }
 
 export const mutateCorpNum = (state: StateIF, corpNum: string) => {
-  state.stateModel.newRequestModel.corpNum = corpNum
+  state.newRequestModel.corpNum = corpNum
 }
 
 export const mutateCorpSearch = (state: StateIF, corpNum: string) => {
-  state.stateModel.newRequestModel.corpSearch = corpNum
+  state.newRequestModel.corpSearch = corpNum
 }
 
 export const mutateDisplayedComponent = (state: StateIF, componentName: string) => {
-  state.stateModel.newRequestModel.displayedComponent = componentName
+  state.newRequestModel.displayedComponent = componentName
 }
 
 export const mutateEditMode = (state: StateIF, editMode: boolean) => {
-  state.stateModel.newRequestModel.editMode = editMode
+  state.newRequestModel.editMode = editMode
 }
 
 export const mutateEntityType = (state: StateIF, entity_type_cd: EntityTypes) => {
-  state.stateModel.newRequestModel.entity_type_cd = entity_type_cd
+  state.newRequestModel.entity_type_cd = entity_type_cd
 }
 
 export const mutateOriginEntityType = (state: StateIF, origin_entity_type_cd: EntityTypes) => {
-  state.stateModel.newRequestModel.origin_entity_type_cd = origin_entity_type_cd
+  state.newRequestModel.origin_entity_type_cd = origin_entity_type_cd
 }
 
 export const mutateEntityTypeAddToSelect = (state: StateIF, entityTypeAddToSelect: SelectOptionsI) => {
-  state.stateModel.newRequestModel.entityTypeAddToSelect = entityTypeAddToSelect
+  state.newRequestModel.entityTypeAddToSelect = entityTypeAddToSelect
 }
 
 export const resetEntityTypeAddToSelect = (state: StateIF) => {
-  state.stateModel.newRequestModel.entityTypeAddToSelect = null
+  state.newRequestModel.entityTypeAddToSelect = null
 }
 
 export const mutateExistingRequestSearch = (state: StateIF, { key, value }) => {
-  state.stateModel.newRequestModel.existingRequestSearch[key] = value
+  state.newRequestModel.existingRequestSearch[key] = value
 }
 
 export const mutateExistingRequestSearchToInitialState = (state: StateIF) => {
-  state.stateModel.newRequestModel.existingRequestSearch = {
+  state.newRequestModel.existingRequestSearch = {
     emailAddress: '',
     nrNum: '',
     phoneNumber: ''
@@ -117,99 +117,99 @@ export const mutateExistingRequestSearchToInitialState = (state: StateIF) => {
 }
 
 export const mutateExtendedRequestType = (state: StateIF, extendedRequestType: SelectOptionsI) => {
-  state.stateModel.newRequestModel.extendedRequestType = extendedRequestType
+  state.newRequestModel.extendedRequestType = extendedRequestType
 }
 
 export const mutateGetNameReservationFailed = (state: StateIF, getNameReservationFailed: boolean) => {
-  state.stateModel.newRequestModel.getNameReservationFailed = getNameReservationFailed
+  state.newRequestModel.getNameReservationFailed = getNameReservationFailed
 }
 
 export const mutateHelpMeChooseModalVisible = (state: StateIF, helpMeChooseModalVisible: boolean) => {
-  state.stateModel.newRequestModel.helpMeChooseModalVisible = helpMeChooseModalVisible
+  state.newRequestModel.helpMeChooseModalVisible = helpMeChooseModalVisible
 }
 
 export const mutateAffiliationErrorModalValue = (state: StateIF, affiliationErrorModalValue: NrAffiliationErrors) => {
-  state.stateModel.newRequestModel.affiliationErrorModalValue = affiliationErrorModalValue
+  state.newRequestModel.affiliationErrorModalValue = affiliationErrorModalValue
 }
 
 export const mutateIsLearBusiness = (state: StateIF, isLearBusiness: boolean) => {
-  state.stateModel.newRequestModel.isLearBusiness = isLearBusiness
+  state.newRequestModel.isLearBusiness = isLearBusiness
 }
 
 export const mutateIsPersonsName = (state: StateIF, isPersonsName: boolean) => {
-  state.stateModel.newRequestModel.isPersonsName = isPersonsName
+  state.newRequestModel.isPersonsName = isPersonsName
 }
 
 export const mutateLocation = (state: StateIF, location: Location) => {
   // don't reset location if it hasn't changed
-  if (location === state.stateModel.newRequestModel.location) {
+  if (location === state.newRequestModel.location) {
     return
   }
 
   // reset entity type on location changes (options depend on location)
   // except amalgamation since entity type was set before location
-  if (state.stateModel.newRequestModel.request_action_cd !== NrRequestActionCodes.AMALGAMATE) {
-    state.stateModel.newRequestModel.entity_type_cd = null
+  if (state.newRequestModel.request_action_cd !== NrRequestActionCodes.AMALGAMATE) {
+    state.newRequestModel.entity_type_cd = null
   }
 
   if (
-    state.stateModel.newRequestModel.location === Location.CA ||
-    state.stateModel.newRequestModel.location === Location.IN
+    state.newRequestModel.location === Location.CA ||
+    state.newRequestModel.location === Location.IN
   ) {
     if (location === Location.CA || location === Location.IN) {
-      state.stateModel.newRequestModel.location = location
+      state.newRequestModel.location = location
       return
     }
   }
 
   // reset recently-used entry on location changes
   // except amalgamation since recently-used entry was set before location
-  if (state.stateModel.newRequestModel.request_action_cd !== NrRequestActionCodes.AMALGAMATE) {
-    state.stateModel.newRequestModel.entityTypeAddToSelect = null
+  if (state.newRequestModel.request_action_cd !== NrRequestActionCodes.AMALGAMATE) {
+    state.newRequestModel.entityTypeAddToSelect = null
   }
 
   // finally, set location
-  state.stateModel.newRequestModel.location = location
+  state.newRequestModel.location = location
 }
 
 export const mutateMrasSearchResult = (state: StateIF, mrasSearchResultCode: number) => {
-  state.stateModel.newRequestModel.mrasSearchResultCode = mrasSearchResultCode
+  state.newRequestModel.mrasSearchResultCode = mrasSearchResultCode
 }
 
 export const mutateMrasSearchInfoModalVisible = (state: StateIF, mrasSearchInfoModalVisible: boolean) => {
-  state.stateModel.newRequestModel.mrasSearchInfoModalVisible = mrasSearchInfoModalVisible
+  state.newRequestModel.mrasSearchInfoModalVisible = mrasSearchInfoModalVisible
 }
 
 export const mutateJurisdictionCd = (state: StateIF, request_jurisdiction_cd: string) => {
-  state.stateModel.newRequestModel.request_jurisdiction_cd = request_jurisdiction_cd
+  state.newRequestModel.request_jurisdiction_cd = request_jurisdiction_cd
 }
 
 export const mutateCurrentJsDate = (state: StateIF, date: Date) => {
-  state.stateModel.common.currentJsDate = date
+  state.common.currentJsDate = date
 }
 
 export const mutateName = (state: StateIF, name: string) => {
-  state.stateModel.newRequestModel.name = name
+  state.newRequestModel.name = name
 }
 
 export const mutateNameOriginal = (state: StateIF, nameOriginal: string) => {
-  state.stateModel.newRequestModel.nameOriginal = nameOriginal
+  state.newRequestModel.nameOriginal = nameOriginal
 }
 
 export const mutateNoCorpNum = (state: StateIF, noCorpNum: boolean) => {
-  state.stateModel.newRequestModel.noCorpNum = noCorpNum
+  state.newRequestModel.noCorpNum = noCorpNum
 }
 
 export const mutateNROriginal = (state: StateIF, nrOriginal: NameRequestI) => {
-  state.stateModel.newRequestModel.nrOriginal = nrOriginal
+  state.newRequestModel.nrOriginal = nrOriginal
 }
 
 export const mutateNameChoices = (state: StateIF, choiceObj: any) => {
-  state.stateModel.newRequestModel.nameChoices[choiceObj.key] = choiceObj.value
+  state.newRequestModel.nameChoices[choiceObj.key] = choiceObj.value
 }
 
 export const mutateNameChoicesToInitialState = (state: StateIF) => {
-  state.stateModel.newRequestModel.nameChoices = {
+  state.newRequestModel.nameChoices = {
     name1: '',
     designation1: '',
     name2: '',
@@ -220,22 +220,22 @@ export const mutateNameChoicesToInitialState = (state: StateIF) => {
 }
 
 export const mutateNameIsEnglish = (state: StateIF, nameIsEnglish: boolean) => {
-  state.stateModel.newRequestModel.nameIsEnglish = nameIsEnglish
+  state.newRequestModel.nameIsEnglish = nameIsEnglish
 }
 
 export const mutateIsLoadingSubmission = (state: StateIF, isLoadingSubmission: boolean) => {
-  state.stateModel.newRequestModel.isLoadingSubmission = isLoadingSubmission
+  state.newRequestModel.isLoadingSubmission = isLoadingSubmission
 }
 
 export const mutateNameRequest = (state: StateIF, nr: NameRequestI) => {
   // store NR data
-  state.stateModel.newRequestModel.nr = nr
+  state.newRequestModel.nr = nr
 
   // store Priority Code
   mutatePriorityRequest(state, (nr?.priorityCd === PriorityCode.YES))
 
   // FUTURE: have 1 mutation for nr / applicant info and put these there
-  const nrNum = state.stateModel.newRequestModel.nr?.nrNum
+  const nrNum = state.newRequestModel.nr?.nrNum
   if (nrNum?.includes('NR L')) {
     sessionStorage.setItem('BCREG-NRL', nrNum)
     sessionStorage.setItem('BCREG-nrNum', null)
@@ -247,12 +247,12 @@ export const mutateNameRequest = (state: StateIF, nr: NameRequestI) => {
 
 export const mutateNameRequestByKey = (state: StateIF, kv: any) => {
   Vue.set(
-    state.stateModel.newRequestModel.nr,
+    state.newRequestModel.nr,
     kv.key,
     kv.value
   )
   // FUTURE: have 1 mutation for nr / applicant info and put these there
-  const nrNum = state.stateModel.newRequestModel.nr?.nrNum
+  const nrNum = state.newRequestModel.nr?.nrNum
   if (nrNum?.includes('NR L')) {
     sessionStorage.setItem('BCREG-NRL', nrNum)
     sessionStorage.setItem('BCREG-nrNum', null)
@@ -263,44 +263,44 @@ export const mutateNameRequestByKey = (state: StateIF, kv: any) => {
 }
 
 export const mutateNRData = (state: StateIF, { key, value }) => {
-  state.stateModel.newRequestModel.nrData[key] = value
+  state.newRequestModel.nrData[key] = value
 }
 
 export const mutateXproJurisdiction = (state: StateIF, val: string) => {
-  state.stateModel.newRequestModel.nrData.xproJurisdiction = val
+  state.newRequestModel.nrData.xproJurisdiction = val
 }
 
 export const mutateHomeJurisNum = (state: StateIF, val: string) => {
-  state.stateModel.newRequestModel.nrData.homeJurisNum = val
+  state.newRequestModel.nrData.homeJurisNum = val
 }
 
 export const mutateNrRequiredModalVisible = (state: StateIF, nrRequiredModalVisible: boolean) => {
-  state.stateModel.newRequestModel.nrRequiredModalVisible = nrRequiredModalVisible
+  state.newRequestModel.nrRequiredModalVisible = nrRequiredModalVisible
 }
 
 export const mutatePickEntityModalVisible = (state: StateIF, pickEntityModalVisible: boolean) => {
-  state.stateModel.newRequestModel.pickEntityModalVisible = pickEntityModalVisible
+  state.newRequestModel.pickEntityModalVisible = pickEntityModalVisible
 }
 
 export const mutatePriorityRequest = (state: StateIF, priorityRequest: boolean) => {
-  state.stateModel.newRequestModel.priorityRequest = priorityRequest
+  state.newRequestModel.priorityRequest = priorityRequest
 }
 
 export const mutateRequestAction = (state: StateIF, requestCd: NrRequestActionCodes) => {
-  state.stateModel.newRequestModel.conversionType = null
-  state.stateModel.newRequestModel.request_action_cd = requestCd
+  state.newRequestModel.conversionType = null
+  state.newRequestModel.request_action_cd = requestCd
 }
 
 export const mutateRequestExaminationOrProvideConsent = (state: StateIF, { index, type, value }) => {
-  state.stateModel.newRequestModel.requestExaminationOrProvideConsent[index][type] = value
+  state.newRequestModel.requestExaminationOrProvideConsent[index][type] = value
 }
 
 export const mutateShowActualInput = (state: StateIF, showActualInput: boolean) => {
-  state.stateModel.newRequestModel.showActualInput = showActualInput
+  state.newRequestModel.showActualInput = showActualInput
 }
 
 export const mutateStats = (state: StateIF, stats: StatsI) => {
-  state.stateModel.newRequestModel.stats = stats
+  state.newRequestModel.stats = stats
 }
 
 export const mutateSubmissionTabComponent = (state: StateIF, component: string) => {
@@ -311,69 +311,69 @@ export const mutateSubmissionTabComponent = (state: StateIF, component: string) 
     ApplicantInfo2
   }
   const tab = parseInt(Components[component])
-  state.stateModel.newRequestModel.submissionTabNumber = tab
+  state.newRequestModel.submissionTabNumber = tab
 }
 
 export const mutateSubmissionTabNumber = (state: StateIF, submissionTabNumber: number) => {
-  state.stateModel.newRequestModel.submissionTabNumber = submissionTabNumber
+  state.newRequestModel.submissionTabNumber = submissionTabNumber
 }
 
 export const mutateSubmissionType = (state: StateIF, submissionType: SubmissionTypeT) => {
-  state.stateModel.newRequestModel.submissionType = submissionType
+  state.newRequestModel.submissionType = submissionType
 }
 
 export const mutateTabNumber = (state: StateIF, tabNumber: number) => {
-  state.stateModel.newRequestModel.tabNumber = tabNumber
+  state.newRequestModel.tabNumber = tabNumber
 }
 
 export const mutateWaitingAddressSearch = (state: StateIF, appKV: WaitingAddressSearchI) => {
-  state.stateModel.newRequestModel.waitingAddressSearch = appKV
+  state.newRequestModel.waitingAddressSearch = appKV
 }
 
 export const populateApplicantData = (state: StateIF) => {
-  for (const key in state.stateModel.newRequestModel.nr.applicants) {
+  for (const key in state.newRequestModel.nr.applicants) {
     Vue.set(
-      state.stateModel.newRequestModel.applicant,
+      state.newRequestModel.applicant,
       key,
-      state.stateModel.newRequestModel.nr.applicants[key]
+      state.newRequestModel.nr.applicants[key]
     )
   }
   // FUTURE: have 1 mutation for nr / applicant info and put these there
-  sessionStorage.setItem('BCREG-emailAddress', state.stateModel.newRequestModel.applicant?.emailAddress)
-  sessionStorage.setItem('BCREG-phoneNumber', state.stateModel.newRequestModel.applicant?.phoneNumber)
+  sessionStorage.setItem('BCREG-emailAddress', state.newRequestModel.applicant?.emailAddress)
+  sessionStorage.setItem('BCREG-phoneNumber', state.newRequestModel.applicant?.phoneNumber)
 }
 
 export const populateNrData = (state: StateIF) => {
-  for (const key in state.stateModel.newRequestModel.nrData) {
-    if (state.stateModel.newRequestModel.nr[key]) {
+  for (const key in state.newRequestModel.nrData) {
+    if (state.newRequestModel.nr[key]) {
       Vue.set(
-        state.stateModel.newRequestModel.nrData,
+        state.newRequestModel.nrData,
         key,
-        state.stateModel.newRequestModel.nr[key]
+        state.newRequestModel.nr[key]
       )
     }
   }
-  state.stateModel.newRequestModel.entity_type_cd = state.stateModel.newRequestModel.nr.entity_type_cd
+  state.newRequestModel.entity_type_cd = state.newRequestModel.nr.entity_type_cd
 }
 
 export const resetEditFormValues = (state: StateIF) => {
-  state.stateModel.newRequestModel.nr = state.stateModel.newRequestModel.nrOriginal
+  state.newRequestModel.nr = state.newRequestModel.nrOriginal
 }
 
 export const resetApplicantDetails = (state: StateIF) => {
-  for (const key in state.stateModel.newRequestModel.applicant) {
+  for (const key in state.newRequestModel.applicant) {
     if (key === 'countryTypeCd') {
-      state.stateModel.newRequestModel.applicant[key] = Location.CA
+      state.newRequestModel.applicant[key] = Location.CA
       continue
     }
-    state.stateModel.newRequestModel.applicant[key] = ''
+    state.newRequestModel.applicant[key] = ''
   }
 }
 
 export const resetNrData = (state: StateIF) => {
-  for (const key in state.stateModel.newRequestModel.nrData) {
+  for (const key in state.newRequestModel.nrData) {
     Vue.set(
-      state.stateModel.newRequestModel.nrData,
+      state.newRequestModel.nrData,
       key,
       ''
     )
@@ -383,17 +383,17 @@ export const resetNrData = (state: StateIF) => {
 export const resetRequestExaminationOrProvideConsent = (state: StateIF) => {
   for (const n of [0, 1, 2]) {
     for (const type of ['send_to_examiner', 'obtain_consent', 'conflict_self_consent']) {
-      state.stateModel.newRequestModel.requestExaminationOrProvideConsent[n][type] = false
+      state.newRequestModel.requestExaminationOrProvideConsent[n][type] = false
     }
   }
 }
 
 export const setErrors = (state: StateIF, errors: string) => {
-  if (Array.isArray(state.stateModel.newRequestModel.errors) && state.stateModel.newRequestModel.errors.length > 0) {
-    state.stateModel.newRequestModel.errors = state.stateModel.newRequestModel.errors.concat(errors)
+  if (Array.isArray(state.newRequestModel.errors) && state.newRequestModel.errors.length > 0) {
+    state.newRequestModel.errors = state.newRequestModel.errors.concat(errors)
     return
   }
-  state.stateModel.newRequestModel.errors = [errors]
+  state.newRequestModel.errors = [errors]
 }
 
 export const setNrResponse = (state: StateIF, nr: NameRequestI) => {
@@ -402,11 +402,11 @@ export const setNrResponse = (state: StateIF, nr: NameRequestI) => {
     mutateNameRequest(state, nr)
 
     // set Applicants
-    const applicants = state.stateModel.newRequestModel.nr?.applicants || []
+    const applicants = state.newRequestModel.nr?.applicants || []
     if (applicants instanceof Array) {
-      state.stateModel.newRequestModel.applicant = { ...applicants[0] }
+      state.newRequestModel.applicant = { ...applicants[0] }
     } else if (applicants) {
-      state.stateModel.newRequestModel.applicant = { ...applicants }
+      state.newRequestModel.applicant = { ...applicants }
     } else {
       // applicants is null/undefined
     }
@@ -420,19 +420,19 @@ export const setNrResponse = (state: StateIF, nr: NameRequestI) => {
 
 export const updateReservationNames = (state: StateIF, nrNames: [] = []) => {
   nrNames.forEach(({ choice = 1, name = '', designation = '' }) => {
-    state.stateModel.newRequestModel.nameChoices[`name${choice}`] = name
-    state.stateModel.newRequestModel.nameChoices[`designation${choice}`] = designation
+    state.newRequestModel.nameChoices[`name${choice}`] = name
+    state.newRequestModel.nameChoices[`designation${choice}`] = designation
   })
 }
 
 export const mutateAssumedNameOriginal = (state: StateIF) => {
-  state.stateModel.newRequestModel.assumedNameOriginal = state.stateModel.newRequestModel.name
+  state.newRequestModel.assumedNameOriginal = state.newRequestModel.name
 }
 
 export const resetNameChoices = (state: StateIF) => {
-  for (const key in state.stateModel.newRequestModel.nameChoices) {
+  for (const key in state.newRequestModel.nameChoices) {
     Vue.set(
-      state.stateModel.newRequestModel.nameChoices,
+      state.newRequestModel.nameChoices,
       key,
       ''
     )
@@ -440,179 +440,179 @@ export const resetNameChoices = (state: StateIF) => {
 }
 
 export const mutateConditionsModalVisible = (state: StateIF, conditionsModalVisible: boolean) => {
-  state.stateModel.newRequestModel.conditionsModalVisible = conditionsModalVisible
+  state.newRequestModel.conditionsModalVisible = conditionsModalVisible
 }
 
 export const mutateSocietiesModalVisible = (state: StateIF, societiesModalVisible: boolean) => {
-  state.stateModel.newRequestModel.societiesModalVisible = societiesModalVisible
+  state.newRequestModel.societiesModalVisible = societiesModalVisible
 }
 
 export const mutateExitModalVisible = (state: StateIF, exitModalVisible: boolean) => {
-  state.stateModel.newRequestModel.exitModalVisible = exitModalVisible
+  state.newRequestModel.exitModalVisible = exitModalVisible
 }
 
 export const mutateExitIncompletePaymentVisible = (state: StateIF, exitIncompletePaymentVisible: boolean) => {
-  state.stateModel.newRequestModel.exitIncompletePaymentVisible = exitIncompletePaymentVisible
+  state.newRequestModel.exitIncompletePaymentVisible = exitIncompletePaymentVisible
 }
 
 export const clearAssumedNameOriginal = (state: StateIF) => {
-  state.stateModel.newRequestModel.assumedNameOriginal = ''
+  state.newRequestModel.assumedNameOriginal = ''
 }
 
 export const mutateUserCancelledAnalysis = (state: StateIF, userCancelledAnalysis: boolean) => {
-  state.stateModel.newRequestModel.userCancelledAnalysis = userCancelledAnalysis
+  state.newRequestModel.userCancelledAnalysis = userCancelledAnalysis
 }
 
 export const mutateKeycloakRoles = (state: StateIF, keyCloakRoles: Array<string>) => {
-  state.stateModel.common.keycloakRoles = keyCloakRoles
+  state.common.keycloakRoles = keyCloakRoles
 }
 
 export const mutateAuthorizedActions = (state: StateIF, authorizedActions: Array<AuthorizedActions>) => {
-  state.stateModel.common.authorizedActions = authorizedActions
+  state.common.authorizedActions = authorizedActions
 }
 
 export const mutateStaffPayment = (state: StateIF, staffPayment: StaffPaymentIF) => {
-  state.stateModel.staffPayment = staffPayment
+  state.staffPayment = staffPayment
 }
 
 /** Mutations for Name Check */
 
 export const mutateAnalyzeDesignationPending = (state: StateIF, pending: boolean) => {
-  state.stateModel.nameCheckModel.analyzeDesignationPending = pending
+  state.nameCheckModel.analyzeDesignationPending = pending
 }
 
 export const mutateAnalyzeStructurePending = (state: StateIF, pending: boolean) => {
-  state.stateModel.nameCheckModel.analyzeStructurePending = pending
+  state.nameCheckModel.analyzeStructurePending = pending
 }
 
 export const mutateAnalyzeConflictsPending = (state: StateIF, pending: boolean) => {
-  state.stateModel.nameCheckModel.analyzeConflictsPending = pending
+  state.nameCheckModel.analyzeConflictsPending = pending
 }
 
 export const mutateConflictsConditional = (state: StateIF, value: Array<string>) => {
-  state.stateModel.nameCheckModel.conflictsConditional = value
+  state.nameCheckModel.conflictsConditional = value
 }
 
 export const mutateConflictsConditionalInstructions = (state: StateIF, value: Array<ConditionalInstructionI>) => {
-  state.stateModel.nameCheckModel.conflictsConditionalInstructions = value
+  state.nameCheckModel.conflictsConditionalInstructions = value
 }
 
 export const mutateConflictsExact = (state: StateIF, value: Array<string>) => {
-  state.stateModel.nameCheckModel.conflictsExact = value
+  state.nameCheckModel.conflictsExact = value
 }
 
 export const mutateConflictsRestricted = (state: StateIF, value: Array<string>) => {
-  state.stateModel.nameCheckModel.conflictsRestricted = value
+  state.nameCheckModel.conflictsRestricted = value
 }
 
 export const mutateConflictsSimilar = (state: StateIF, value: Array<string>) => {
-  state.stateModel.nameCheckModel.conflictsSimilar = value
+  state.nameCheckModel.conflictsSimilar = value
 }
 
 export const mutateDesignation = (state: StateIF, value: string) => {
-  state.stateModel.nameCheckModel.designation = value
+  state.nameCheckModel.designation = value
 }
 
 export const mutateDesignationsCheckUse = (state: StateIF, value: Array<string>) => {
-  state.stateModel.nameCheckModel.designationsCheckUse = value
+  state.nameCheckModel.designationsCheckUse = value
 }
 
 export const mutateDesignationsMismatched = (state: StateIF, value: Array<string>) => {
-  state.stateModel.nameCheckModel.designationsMismatched = value
+  state.nameCheckModel.designationsMismatched = value
 }
 
 export const mutateDesignationsMisplaced = (state: StateIF, value: Array<string>) => {
-  state.stateModel.nameCheckModel.designationsMisplaced = value
+  state.nameCheckModel.designationsMisplaced = value
 }
 
 export const mutateDoNameCheck = (state: StateIF, doNameCheck: boolean) => {
-  state.stateModel.nameCheckModel.doNameCheck = doNameCheck
+  state.nameCheckModel.doNameCheck = doNameCheck
 }
 
 export const mutateFullName = (state: StateIF, value: string) => {
-  state.stateModel.nameCheckModel.fullName = value
+  state.nameCheckModel.fullName = value
 }
 
 export const mutateMissingDescriptive = (state: StateIF, value: boolean) => {
-  state.stateModel.nameCheckModel.missingDescriptive = value
+  state.nameCheckModel.missingDescriptive = value
 }
 
 export const mutateMissingDesignation = (state: StateIF, value: boolean) => {
-  state.stateModel.nameCheckModel.missingDesignation = value
+  state.nameCheckModel.missingDesignation = value
 }
 
 export const mutateMissingDistinctive = (state: StateIF, value: boolean) => {
-  state.stateModel.nameCheckModel.missingDistinctive = value
+  state.nameCheckModel.missingDistinctive = value
 }
 
 export const mutateNameAnalysisTimedOut = (state: StateIF, nameAnalysisTimedOut: boolean) => {
-  state.stateModel.newRequestModel.nameAnalysisTimedOut = nameAnalysisTimedOut
+  state.newRequestModel.nameAnalysisTimedOut = nameAnalysisTimedOut
 }
 
 export const mutateNumbersCheckUse = (state: StateIF, value: Array<string>) => {
-  state.stateModel.nameCheckModel.numbersCheckUse = value
+  state.nameCheckModel.numbersCheckUse = value
 }
 
 export const mutateQuickSearchNames = (state: StateIF, quickSearchNames: any[]) => {
-  state.stateModel.newRequestModel.quickSearchNames = quickSearchNames
+  state.newRequestModel.quickSearchNames = quickSearchNames
 }
 
 export const mutateSpecialCharacters = (state: StateIF, value: Array<string>) => {
-  state.stateModel.nameCheckModel.specialCharacters = value
+  state.nameCheckModel.specialCharacters = value
 }
 
 export const mutateNameCheckErrorAdd = (state: StateIF, key: string) => {
-  state.stateModel.nameCheckModel.errors[key] = true
+  state.nameCheckModel.errors[key] = true
 }
 
 export const mutateNameCheckErrorClear = (state: StateIF, key: NameCheckErrorType) => {
-  state.stateModel.nameCheckModel.errors[key] = false
+  state.nameCheckModel.errors[key] = false
 }
 
 export const mutateFolioNumber = (state: StateIF, folioNumber: string) => {
-  state.stateModel.newRequestModel.folioNumber = folioNumber
+  state.newRequestModel.folioNumber = folioNumber
 }
 
 export const mutateRefundParams = (state: StateIF, refundParams: RefundParamsIF) => {
-  state.stateModel.refundParams = refundParams
+  state.refundParams = refundParams
 }
 
 export const mutateWindowWidth = (state: StateIF, width: number) => {
-  state.stateModel.windowWidth = width
+  state.windowWidth = width
 }
 
 export const mutateHotjarUserId = (state: StateIF, hotjarUserId: string) => {
-  state.stateModel.newRequestModel.hotjarUserId = hotjarUserId
+  state.newRequestModel.hotjarUserId = hotjarUserId
 }
 
 export const mutateIncorporateNowErrorStatus = (state: StateIF, errorIncorporateNow: boolean) => {
-  state.stateModel.newRequestModel.errorIncorporateNow = errorIncorporateNow
+  state.newRequestModel.errorIncorporateNow = errorIncorporateNow
 }
 
 export const mutateAmalgamateNowErrorStatus = (state: StateIF, errorAmalgamateNow: boolean) => {
-  state.stateModel.newRequestModel.errorAmalgamateNow = errorAmalgamateNow
+  state.newRequestModel.errorAmalgamateNow = errorAmalgamateNow
 }
 
 export const mutateContinuationInErrorStatus = (state: StateIF, errorContinuationIn: boolean) => {
-  state.stateModel.newRequestModel.errorContinuationIn = errorContinuationIn
+  state.newRequestModel.errorContinuationIn = errorContinuationIn
 }
 
 export const mutateSearchBusiness = (state: StateIF, val: BusinessSearchIF) => {
-  state.stateModel.newRequestModel.search.business = val
+  state.newRequestModel.search.business = val
 }
 
 export const mutateSearchCompanyType = (state: StateIF, val: CompanyTypes) => {
-  state.stateModel.newRequestModel.search.companyType = val
+  state.newRequestModel.search.companyType = val
 }
 
 export const mutateSearchJurisdiction = (state: StateIF, val: any) => {
-  state.stateModel.newRequestModel.search.jurisdiction = val
+  state.newRequestModel.search.jurisdiction = val
 }
 
 export const mutateSearchRequest = (state: StateIF, val: RequestActionsI) => {
-  state.stateModel.newRequestModel.search.request = val
+  state.newRequestModel.search.request = val
 }
 
 export const mutateBusinessAccountId = (state: StateIF, businessAccountId: string) => {
-  state.stateModel.newRequestModel.businessAccountId = businessAccountId
+  state.newRequestModel.businessAccountId = businessAccountId
 }

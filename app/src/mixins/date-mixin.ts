@@ -1,5 +1,6 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { isDate } from 'lodash'
 
 /**
@@ -10,8 +11,7 @@ import { isDate } from 'lodash'
 export class DateMixin extends Vue {
   readonly MS_IN_A_DAY = (1000 * 60 * 60 * 24)
 
-  // Global getter
-  @Getter getCurrentJsDate!: Date
+  @Getter(useStore) getCurrentJsDate!: Date
 
   /**
    * Fetches and returns the web server's current date (in UTC).
@@ -20,7 +20,7 @@ export class DateMixin extends Vue {
    * @returns a promise to return a Date object
    */
   async getServerDate (): Promise<Date> {
-    const input = `${window.location.origin}${process.env.VUE_APP_PATH}/`
+    const input = `${window.location.origin}${import.meta.env.VUE_APP_PATH}/`
     const init: RequestInit = { cache: 'no-store', method: 'HEAD' }
 
     try {

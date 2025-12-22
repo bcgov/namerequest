@@ -47,13 +47,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class NrNotRequiredDialog extends Vue {
-  @Getter getNrRequiredModalVisible!: boolean
-  @Action setNrRequiredModalVisible!: ActionBindingIF
+  @Getter(useStore) getNrRequiredModalVisible!: boolean
+  @Action(useStore) setNrRequiredModalVisible!: ActionBindingIF
 
   readonly colinLink = sessionStorage.getItem('CORPORATE_ONLINE_URL')
   readonly businessRegistryLink = 'https://www.bcregistry.ca/business'

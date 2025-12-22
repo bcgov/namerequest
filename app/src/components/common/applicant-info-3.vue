@@ -331,7 +331,7 @@
               </div>
             </template>
             <span v-if="enablePriorityCheckbox">
-              Priority name requests are typically reviewed within 1-2 business days.
+              Priority name requests are typically reviewed within {{ getPriorityWaitTime }} business days.
             </span>
             <span v-else>
               Due to the on-going labour dispute between the government and its employees,
@@ -348,7 +348,8 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { FolioNumberInput } from '@bcrs-shared-components/folio-number-input'
 import { ApplicantI } from '@/interfaces'
@@ -362,25 +363,24 @@ import { GetFeatureFlag } from '@/plugins'
   }
 })
 export default class ApplicantInfo3 extends Vue {
-  // Global getters
-  @Getter getApplicant!: ApplicantI
-  @Getter getEditMode!: boolean
-  @Getter getFolioNumber!: string
-  @Getter getNrData!: any
-  @Getter getNrState!: string
-  @Getter getPriorityRequest!: boolean
-  @Getter getShowPriorityRequest!: boolean
-  @Getter isRoleStaff!: boolean
-  @Getter isMobile!: boolean
+  @Getter(useStore) getApplicant!: ApplicantI
+  @Getter(useStore) getEditMode!: boolean
+  @Getter(useStore) getFolioNumber!: string
+  @Getter(useStore) getNrData!: any
+  @Getter(useStore) getNrState!: NrState
+  @Getter(useStore) getPriorityRequest!: boolean
+  @Getter(useStore) getPriorityWaitTime!: string | number
+  @Getter(useStore) getShowPriorityRequest!: boolean
+  @Getter(useStore) isRoleStaff!: boolean
+  @Getter(useStore) isMobile!: boolean
 
-  // Global actions
-  @Action setApplicantDetails!: ActionBindingIF
-  @Action setFolioNumber!: ActionBindingIF
-  @Action setHotjarUserId!: ActionBindingIF
-  @Action setIsLoadingSubmission!: ActionBindingIF
-  @Action setNRData!: ActionBindingIF
-  @Action setPriorityRequest!: ActionBindingIF
-  @Action submit!: ActionBindingIF
+  @Action(useStore) setApplicantDetails!: ActionBindingIF
+  @Action(useStore) setFolioNumber!: ActionBindingIF
+  @Action(useStore) setHotjarUserId!: ActionBindingIF
+  @Action(useStore) setIsLoadingSubmission!: ActionBindingIF
+  @Action(useStore) setNRData!: ActionBindingIF
+  @Action(useStore) setPriorityRequest!: ActionBindingIF
+  @Action(useStore) submit!: ActionBindingIF
 
   additionalInfoRules = [
     v => (!v || v.length <= 120) || 'Cannot exceed 120 characters'

@@ -17,7 +17,7 @@ describe('Date Mixin', () => {
   })
 
   // FUTURE: this works locally but not in GHA; fix later
-  xit('returns correct values for createUtcDate()', () => {
+  it.skip('returns correct values for createUtcDate()', () => {
     expect(vm.createUtcDate(2021, 0, 1, 0, 0).toISOString()).toBe('2021-01-01T08:00:00.000Z')
     expect(vm.createUtcDate(2021, 6, 1, 0, 0).toISOString()).toBe('2021-07-01T07:00:00.000Z')
   })
@@ -98,7 +98,7 @@ describe('Date Mixin', () => {
   })
 
   // FUTURE: this works locally but not in GHA; fix later
-  xit('returns correct values for daysFromToday()', () => {
+  it.skip('returns correct values for daysFromToday()', () => {
     expect(vm.daysFromToday(null)).toBeNaN()
     expect(vm.dateToPacificDateTime(new Date('not a date'))).toBeNaN()
     expect(vm.daysFromToday(new Date('2021-01-19'))).toBe(-1) // yesterday

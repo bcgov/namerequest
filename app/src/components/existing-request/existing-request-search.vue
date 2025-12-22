@@ -76,12 +76,11 @@
               cols="1"
               class="max-width"
             >
-              <v-img
+              <img
                 src="@/assets/images/number1.svg"
-                contain
                 width="34"
                 height="34"
-              />
+              >
             </v-col>
             <v-col class="max-height">
               <v-text-field
@@ -110,12 +109,11 @@
               cols="1"
               class="max-width"
             >
-              <v-img
+              <img
                 src="@/assets/images/number2.svg"
-                contain
                 width="34"
                 height="34"
-              />
+              >
             </v-col>
             <v-col class="max-height">
               <v-text-field
@@ -207,7 +205,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import AdvancedSearch from '@/components/dialogs/advanced-search.vue'
 import SearchHelpContent from '@/components/existing-request/search-help-content.vue'
 import { FormType, NameRequestI, ExistingRequestSearchI } from '@/interfaces'
@@ -225,16 +224,14 @@ export default class ExistingRequestSearch extends Vue {
     existingNrForm: FormType
   }
 
-  // Global getters
-  @Getter isAuthenticated!: boolean
-  @Getter getNr!: Partial<NameRequestI>
-  @Getter getExistingRequestSearch!: ExistingRequestSearchI
-  @Getter isMobile!: boolean
+  @Getter(useStore) isAuthenticated!: boolean
+  @Getter(useStore) getNr!: Partial<NameRequestI>
+  @Getter(useStore) getExistingRequestSearch!: ExistingRequestSearchI
+  @Getter(useStore) isMobile!: boolean
 
-  // Global actions
-  @Action findNameRequest!: ActionBindingIF
-  @Action setExistingRequestSearch!: ActionBindingIF
-  @Action setNameRequest!: ActionBindingIF
+  @Action(useStore) findNameRequest!: ActionBindingIF
+  @Action(useStore) setExistingRequestSearch!: ActionBindingIF
+  @Action(useStore) setNameRequest!: ActionBindingIF
 
   errorMessage = ''
   isValid = false

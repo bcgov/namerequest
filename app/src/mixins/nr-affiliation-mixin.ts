@@ -1,5 +1,6 @@
 import { Component, Mixins } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import AuthServices from '@/services/auth-services'
 import BusinessServices from '@/services/business-services'
 import { BusinessRequest, NameRequestI } from '@/interfaces'
@@ -14,17 +15,16 @@ import { AmalgamationTypes, CorrectNameOptions, FilingTypes, NrRequestActionCode
 
 @Component({})
 export class NrAffiliationMixin extends Mixins(CommonMixin) {
-  @Getter isAmalgamation!: boolean
-  @Getter isContinuationIn!: boolean
-  @Getter isNewBusiness!: boolean
-  @Getter getBusinessAccountId: string
-  @Getter isRoleStaff!: boolean
+  @Getter(useStore) isAmalgamation!: boolean
+  @Getter(useStore) isContinuationIn!: boolean
+  @Getter(useStore) isNewBusiness!: boolean
+  @Getter(useStore) getBusinessAccountId: string
+  @Getter(useStore) isRoleStaff!: boolean
 
-  // Global action
-  @Action setAffiliationErrorModalValue!: ActionBindingIF
-  @Action setAmalgamateNowErrorStatus!: ActionBindingIF
-  @Action setContinuationInErrorStatus!: ActionBindingIF
-  @Action setIncorporateNowErrorStatus!: ActionBindingIF
+  @Action(useStore) setAffiliationErrorModalValue!: ActionBindingIF
+  @Action(useStore) setAmalgamateNowErrorStatus!: ActionBindingIF
+  @Action(useStore) setContinuationInErrorStatus!: ActionBindingIF
+  @Action(useStore) setIncorporateNowErrorStatus!: ActionBindingIF
 
   /**
    * Affiliates a NR to the current account, creates a temporary business, and then navigates

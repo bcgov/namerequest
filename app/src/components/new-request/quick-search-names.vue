@@ -13,17 +13,16 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import MainContainer from '@/components/new-request/main-container.vue'
 
 @Component({
   components: { MainContainer }
 })
 export default class QuickSearchNames extends Vue {
-  // Global getter
-  @Getter getQuickSearchNames!: any[]
+  @Getter(useStore) getQuickSearchNames!: any[]
 }
-
 </script>
 
 <style scoped lang="scss">

@@ -134,15 +134,14 @@
 
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore, usePaymentStore } from '@/store'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import StaffPayment from '@/components/payment/staff-payment.vue'
-import { CreatePaymentParams, FetchFeesParams } from '@/modules/payment/models'
-import { RESUBMIT_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
-import { FilingTypes } from '@/modules/payment/filing-types'
+import { CreatePaymentParams, FetchFeesParams } from '@/interfaces'
+import { FilingTypes } from '@/enums/filing-types'
 import { Jurisdictions, NrAction, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
-import { getBaseUrl } from '@/components/payment/payment-utils'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from '@/services/namex-services'
 import { PaymentRequiredError } from '@/errors'
@@ -169,16 +168,15 @@ export default class ResubmitDialog extends Mixins(
     staffPaymentComponent: StaffPayment
   }
 
-  // Global getters
-  @Getter isRoleStaff!: boolean
-  @Getter getNrNum!: string
-  @Getter isMobile!: boolean
+  @Getter(useStore) isRoleStaff!: boolean
+  @Getter(useStore) getNrNum!: string
+  @Getter(useStore) isMobile!: boolean
+  @Getter(usePaymentStore) resubmitModalIsVisible!: boolean
 
-  // Global action
-  @Action toggleResubmitModal!: ActionBindingIF
-  @Action resubmit!: ActionBindingIF
-  @Action setPriorityRequest!: ActionBindingIF
-  @Action loadExistingNameRequest!: ActionBindingIF
+  @Action(usePaymentStore) toggleResubmitModal!: ActionBindingIF
+  @Action(useStore) resubmit!: ActionBindingIF
+  @Action(useStore) setPriorityRequest!: ActionBindingIF
+  @Action(useStore) loadExistingNameRequest!: ActionBindingIF
 
   /** Whether staff payment is valid. */
   private isStaffPaymentValid = false
@@ -205,7 +203,7 @@ export default class ResubmitDialog extends Mixins(
 
   /** Whether this modal should be shown (per store property). */
   get showModal (): boolean {
-    return this.$store.getters[RESUBMIT_MODAL_IS_VISIBLE]
+    return this.resubmitModalIsVisible
   }
 
   /** Clears store property to hide this modal. */
@@ -287,7 +285,7 @@ export default class ResubmitDialog extends Mixins(
       this.savePaymentResponseToSession(PaymentAction.RESUBMIT, paymentResponse)
 
       // See if pay is needed else navigate to Existing NR page
-      const baseUrl = getBaseUrl()
+      const baseUrl = sessionStorage.getItem('BASE_URL')
       const returnUrl = encodeURIComponent(`${baseUrl}/nr/${this.getNrId}/?paymentId=${paymentId}`)
       if (paymentResponse.sbcPayment.isPaymentActionRequired) {
         this.navigateToPaymentPortal(paymentToken, returnUrl)

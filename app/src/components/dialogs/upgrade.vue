@@ -70,7 +70,7 @@
                 class="mb-8"
               >
                 If you need your name reviewed as quickly as possible, upgrade to a Priority
-                request. Priority name requests are usually reviewed within 1 to 2 business days.
+                request. Priority name requests are usually reviewed within {{ getPriorityWaitTime }} business days.
               </p>
 
               <FeeSummary
@@ -104,15 +104,14 @@
 
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore, usePaymentStore } from '@/store'
 import FeeSummary from '@/components/payment/fee-summary.vue'
 import StaffPayment from '@/components/payment/staff-payment.vue'
-import { CreatePaymentParams, FetchFeesParams } from '@/modules/payment/models'
-import { UPGRADE_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
-import { FilingTypes } from '@/modules/payment/filing-types'
+import { CreatePaymentParams, FetchFeesParams } from '@/interfaces'
+import { FilingTypes } from '@/enums/filing-types'
 import { Jurisdictions, PaymentAction } from '@/enums'
 import { PaymentMixin, PaymentSessionMixin, DisplayedComponentMixin } from '@/mixins'
-import { getBaseUrl } from '@/components/payment/payment-utils'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { PaymentRequiredError } from '@/errors'
 import { Navigate } from '@/plugins'
@@ -128,6 +127,8 @@ export default class UpgradeDialog extends Mixins(
   PaymentSessionMixin,
   DisplayedComponentMixin
 ) {
+  @Getter(useStore) getPriorityWaitTime!: string | number
+
   // the tab indices
   // NB: these are reversed to reverse the built-in slide transition
   readonly TAB_STAFF_PAYMENT = 0
@@ -138,11 +139,10 @@ export default class UpgradeDialog extends Mixins(
     staffPaymentComponent: StaffPayment
   }
 
-  // Global getters
-  @Getter isRoleStaff!: boolean
+  @Getter(useStore) isRoleStaff!: boolean
+  @Getter(usePaymentStore) upgradeModalIsVisible!: boolean
 
-  // Global action
-  @Action toggleUpgradeModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleUpgradeModal!: ActionBindingIF
 
   /** Whether staff payment is valid. */
   private isStaffPaymentValid = false
@@ -158,7 +158,7 @@ export default class UpgradeDialog extends Mixins(
 
   /** Whether this modal should be shown (per store property). */
   private get showModal (): boolean {
-    return this.$store.getters[UPGRADE_MODAL_IS_VISIBLE]
+    return this.upgradeModalIsVisible
   }
 
   /** Clears store property to hide this modal. */
@@ -226,7 +226,7 @@ export default class UpgradeDialog extends Mixins(
       this.savePaymentResponseToSession(PaymentAction.UPGRADE, paymentResponse)
 
       // See if pay is needed else navigate to Existing NR page
-      const baseUrl = getBaseUrl()
+      const baseUrl = sessionStorage.getItem('BASE_URL')
       const returnUrl = encodeURIComponent(`${baseUrl}/nr/${this.getNrId}/?paymentId=${paymentId}`)
       if (paymentResponse.sbcPayment.isPaymentActionRequired) {
         this.navigateToPaymentPortal(paymentToken, returnUrl)
