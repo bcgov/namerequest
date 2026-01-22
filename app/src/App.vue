@@ -102,9 +102,9 @@
 </template>
 
 <script lang="ts">
-// libraries, etc
 import { Component, Mixins } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { usePaymentStore, useStore } from '@/store'
 import { GetFeatureFlag, Navigate } from '@/plugins'
 import { DateMixin, LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin } from '@/mixins'
 import { Routes } from '@/enums'
@@ -115,21 +115,16 @@ import {
   getRegistryHomeBreadcrumb
 } from '@/resources'
 import axios from 'axios'
-
-// dialogs and other components
 import { Breadcrumb } from '@/components/common'
 import GenesysWebMessage from '@bcrs-shared-components/genesys-web-message/GenesysWebMessage.vue'
 import { WebChat as ChatPopup } from '@bcrs-shared-components/web-chat'
-import {
-  AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog, HelpMeChooseDialog,
-  MrasSearchInfoDialog, NrNotRequiredDialog, CreateBusinessErrorDialog, ConfirmNrDialog,
-  PaymentCompleteDialog, PickEntityOrConversionDialog, RenewDialog, ReceiptsDialog, RefundDialog,
-  ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog, ExitIncompletePaymentDialog
-} from '@/components/dialogs'
+import { AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog,
+  HelpMeChooseDialog, MrasSearchInfoDialog, NrNotRequiredDialog, CreateBusinessErrorDialog,
+  ConfirmNrDialog, PaymentCompleteDialog, PickEntityOrConversionDialog, RenewDialog, ReceiptsDialog,
+  RefundDialog, ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog,
+  ExitIncompletePaymentDialog } from '@/components/dialogs'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
-
-// Interfaces / Enums
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from './services/namex-services'
 import { PAYMENT_REQUIRED } from 'http-status-codes'
@@ -167,26 +162,24 @@ import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 export default class App extends Mixins(
   DateMixin, LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin
 ) {
-  // Global getters
-  @Getter getAmalgamateNowErrorStatus!: boolean
-  @Getter getContinuationInErrorStatus!: boolean
-  @Getter getDisplayedComponent!: string
-  @Getter getIncorporateNowErrorStatus!: boolean
-  @Getter getNrId!: number
-  @Getter isAuthenticated!: boolean
-  // @Getter isRoleStaff!: boolean
-  @Getter isMobile!: boolean
-  // @Getter isNewBusiness!: boolean
+  @Getter(useStore) getAmalgamateNowErrorStatus!: boolean
+  @Getter(useStore) getContinuationInErrorStatus!: boolean
+  @Getter(useStore) getDisplayedComponent!: string
+  @Getter(useStore) getIncorporateNowErrorStatus!: boolean
+  @Getter(useStore) getNrId!: number
+  @Getter(useStore) isAuthenticated!: boolean
+  // @Getter(useStore) isRoleStaff!: boolean
+  @Getter(useStore) isMobile!: boolean
+  // @Getter(useStore) isNewBusiness!: boolean
 
-  // Global actions
-  @Action fetchAuthorizedActions!: () => void
-  @Action resetAnalyzeName!: ActionBindingIF
-  @Action setName!: ActionBindingIF
-  @Action setDisplayedComponent!: ActionBindingIF
-  @Action toggleConfirmNrModal!: ActionBindingIF
-  @Action setCurrentJsDate!: ActionBindingIF
-  @Action setRequestAction!: ActionBindingIF
-  @Action setWindowWidth!: ActionBindingIF
+  @Action(useStore) fetchAuthorizedActions!: () => void
+  @Action(useStore) resetAnalyzeName!: ActionBindingIF
+  @Action(useStore) setName!: ActionBindingIF
+  @Action(useStore) setDisplayedComponent!: ActionBindingIF
+  @Action(usePaymentStore) toggleConfirmNrModal!: ActionBindingIF
+  @Action(useStore) setCurrentJsDate!: ActionBindingIF
+  @Action(useStore) setRequestAction!: ActionBindingIF
+  @Action(useStore) setWindowWidth!: ActionBindingIF
 
   readonly axios = axios
   readonly window = window
@@ -218,7 +211,7 @@ export default class App extends Mixins(
 
   /** The About text. */
   get aboutText (): string {
-    return process.env.ABOUT_TEXT
+    return import.meta.env.ABOUT_TEXT
   }
 
   /** The route breadcrumbs list. */
@@ -258,9 +251,10 @@ export default class App extends Mixins(
     await this.updateCurrentJsDate()
     this.updateCurrentJsDateId = window.setInterval(this.updateCurrentJsDate, 60000)
 
-    // in case user is already logged in, load Keycloak roles and update LaunchDarkly
+    // try to load Keycloak roles and update LaunchDarkly
+    // otherwise this will be done in Signin.vue after login
     this.loadKeycloakRoles()
-    await this.updateUser()
+    await this.updateLaunchDarkly()
 
     // if there is stored legal type and request action cd, try to continue
     const legaltype = sessionStorage.getItem('LEGAL_TYPE')
@@ -315,8 +309,8 @@ export default class App extends Mixins(
 
   /** Fetches and stores the current JS date. */
   private async updateCurrentJsDate (): Promise<void> {
-    // don't run in Jest tests
-    if (process.env.JEST_WORKER_ID) return
+    // don't run when Vitest is running the code
+    if (import.meta.env.VITEST) return
 
     const jsDate = await this.getServerDate()
     this.setCurrentJsDate(jsDate)

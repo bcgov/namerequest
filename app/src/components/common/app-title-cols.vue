@@ -25,7 +25,8 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import Stats from '@/components/new-request/stats.vue'
 
 @Component({
@@ -34,7 +35,7 @@ import Stats from '@/components/new-request/stats.vue'
   }
 })
 export default class AppTitleCols extends Vue {
-  @Getter isMobile!: boolean
+  @Getter(useStore) isMobile!: boolean
 }
 </script>
 

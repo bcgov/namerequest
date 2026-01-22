@@ -1,4 +1,7 @@
-import querystring from 'qs'
+import { usePaymentStore } from './payment-store'
+import { state } from './state'
+import * as Getters from './getters'
+import * as Mutations from './mutations'
 import axios from 'axios'
 import {
   AuthorizedActions,
@@ -20,11 +23,10 @@ import removeAccents from 'remove-accents'
 import { GetFeatureFlag, Sleep, sanitizeName } from '@/plugins'
 import BusinessServices from '@/services/business-services'
 import NamexServices from '@/services/namex-services'
-import { appBaseURL } from '../router/router'
-import { DFLT_MIN_LENGTH, DFLT_MAX_LENGTH, MRAS_MIN_LENGTH, MRAS_MAX_LENGTH }
-  from '@/components/new-request/constants'
+import { DFLT_MIN_LENGTH, DFLT_MAX_LENGTH, MRAS_MIN_LENGTH, MRAS_MAX_LENGTH } from '@/components/new-request/constants'
 
 // List Data
+// NB: can't use `this.$xxx` because we don't have `this` (ie, Vue)
 import { CanJurisdictions, Designations, checkInvalidDesignation, IntlJurisdictions, RequestActions } from '@/list-data'
 
 // Interfaces
@@ -47,17 +49,16 @@ import {
   SubmissionTypeT
 } from '@/interfaces'
 
-const qs: any = querystring // eslint-disable-line @typescript-eslint/no-unused-vars
-let source: any
+const namexApiUrl = sessionStorage.getItem('NAMEX_API_URL')
 
-export const setActiveComponent = ({ commit }, component): void => {
+export const setActiveComponent = (component: string): void => {
   enum Tabs {
     NewSearch,
     ExistingRequestSearch
   }
   if (typeof Tabs[component] === 'number') {
-    commit('mutateTabNumber', Tabs[component])
-    commit('mutateDisplayedComponent', 'Tabs')
+    Mutations.mutateTabNumber(state, Tabs[component])
+    Mutations.mutateDisplayedComponent(state, 'Tabs')
     return
   }
 
@@ -71,12 +72,12 @@ export const setActiveComponent = ({ commit }, component): void => {
     Timeout
   }
   if (typeof SubmissionTabs[component] === 'number') {
-    commit('mutateSubmissionTabNumber', SubmissionTabs[component])
-    commit('mutateDisplayedComponent', 'SubmissionTabs')
+    Mutations.mutateSubmissionTabNumber(state, SubmissionTabs[component])
+    Mutations.mutateDisplayedComponent(state, 'SubmissionTabs')
     return
   }
 
-  commit('mutateDisplayedComponent', component)
+  Mutations.mutateDisplayedComponent(state, component)
 }
 
 /**
@@ -84,11 +85,11 @@ export const setActiveComponent = ({ commit }, component): void => {
  * @param action the action to confirm
  * @returns True if confirmed, otherwise False
  */
-export const confirmAction = async ({ commit }, action: string): Promise<boolean> => {
+export const confirmAction = async (action: string): Promise<boolean> => {
   try {
     const nrData = await NamexServices.getNameRequest(true)
     if (!nrData) throw new Error('Got error from getNameRequest()')
-    commit('setNrResponse', nrData)
+    Mutations.setNrResponse(state, nrData)
     return Boolean(nrData.actions.includes(action))
   } catch (err) {
     // don't generate errors - getNameRequest() already did that
@@ -96,39 +97,35 @@ export const confirmAction = async ({ commit }, action: string): Promise<boolean
   }
 }
 
-export const findNameRequest = async ({ commit, getters }): Promise<void> => {
+export const findNameRequest = async (): Promise<void> => {
   try {
-    resetAnalyzeName({ commit, getters })
-    commit('mutateDisplayedComponent', 'SearchPending')
+    resetAnalyzeName()
+    Mutations.mutateDisplayedComponent(state, 'SearchPending')
 
     const request = await NamexServices.getNameRequest(false)
     if (!request) {
-      commit('mutateNameRequest',
-        {
-          text: 'No records were found that match the information you entered.<br>' +
-            'Please verify the NR Number and the phone / email and try again.',
-          failed: true
-        }
-      )
+      Mutations.mutateNameRequest(state, {
+        text: 'No records were found that match the information you entered.<br>' +
+          'Please verify the NR Number and the phone / email and try again.',
+        failed: true
+      })
 
       // go back to calling page
-      commit('mutateDisplayedComponent', 'Tabs')
+      Mutations.mutateDisplayedComponent(state, 'Tabs')
 
       return
     }
-    commit('mutateNameRequest', request)
-    commit('mutateDisplayedComponent', 'ExistingRequestDisplay')
+    Mutations.mutateNameRequest(state, request)
+    Mutations.mutateDisplayedComponent(state, 'ExistingRequestDisplay')
   } catch (err) {
     const msg = await NamexServices.handleApiError(err, 'Could not find name request')
     console.error('findNameRequest()', msg) // eslint-disable-line no-console
-    commit('mutateNameRequest',
-      {
-        text: 'A network error occurred. Please check your network connection and try again.',
-        failed: true
-      }
-    )
+    Mutations.mutateNameRequest(state, {
+      text: 'A network error occurred. Please check your network connection and try again.',
+      failed: true
+    })
     // go back to calling page
-    commit('mutateDisplayedComponent', 'Tabs')
+    Mutations.mutateDisplayedComponent(state, 'Tabs')
   }
 }
 
@@ -137,108 +134,104 @@ export const findNameRequest = async ({ commit, getters }): Promise<void> => {
  * NB: To fetch the NR from the API, use getNameRequest().
  * @param nrData the NR data object
  */
-export const loadExistingNameRequest = async ({ commit }, nrData: any): Promise<void> => {
+export const loadExistingNameRequest = async (nrData: any): Promise<void> => {
   if (!nrData) {
-    commit('mutateNameRequest', {
+    Mutations.mutateNameRequest(state, {
       text: 'No records were found that match the information you entered.<br>' +
         'Please verify the NR Number and the phone / email and try again.',
       failed: true
     })
-    commit('mutateDisplayedComponent', 'Tabs')
+    Mutations.mutateDisplayedComponent(state, 'Tabs')
   } else {
     const { names } = nrData
-    commit('resetApplicantDetails')
-    commit('setNrResponse', nrData)
-    commit('updateReservationNames', names)
+    Mutations.resetApplicantDetails(state)
+    Mutations.setNrResponse(state, nrData)
+    Mutations.updateReservationNames(names)
     // FUTURE: instead of "mutating the component", route to "/existing/:id"
-    commit('mutateDisplayedComponent', 'ExistingRequestDisplay')
+    Mutations.mutateDisplayedComponent(state, 'ExistingRequestDisplay')
   }
 }
 
-export const setStats = async ({ commit }, stats: StatsI): Promise<void> => {
-  commit('mutateStats', stats)
+export const setStats = (stats: StatsI): void => {
+  Mutations.mutateStats(state, stats)
 }
 
-export const userClickedStopAnalysis = ({ commit }): void => {
-  commit('mutateUserCancelledAnalysis', true)
-  commit('mutateSubmissionType', 'examination')
+export const userClickedStopAnalysis = (): void => {
+  Mutations.mutateUserCancelledAnalysis(state, true)
+  Mutations.mutateSubmissionType(state, 'examination')
 }
 
-export const resetAnalyzeName = ({ commit, getters }): void => {
-  commit('clearAssumedNameOriginal')
-  if (!getters.getUserCancelledAnalysis) {
-    commit('mutateAnalysisJSON', null)
+export const resetAnalyzeName = (): void => {
+  Mutations.clearAssumedNameOriginal(state)
+  if (!Getters.getUserCancelledAnalysis(state)) {
+    Mutations.mutateAnalysisJSON(state, null)
   }
-  commit('mutateEditMode', false)
-  commit('mutateSubmissionType', 'normal')
-  commit('mutateShowActualInput', false)
-  commit('resetApplicantDetails')
-  commit('resetNrData')
-  commit('resetRequestExaminationOrProvideConsent')
-  commit('resetNameChoices')
-  commit('mutateNameRequest', {})
-  commit('mutateNameAnalysisTimedOut', false)
-  commit('mutateAnalyzeDesignationPending', false)
-  commit('mutateAnalyzeStructurePending', false)
-  commit('mutateAnalyzeConflictsPending', false)
-  commit('mutateConflictsConditional', [])
-  commit('mutateConflictsExact', [])
-  commit('mutateConflictsRestricted', [])
-  commit('mutateConflictsSimilar', [])
-  commit('mutateDesignationsCheckUse', [])
-  commit('mutateDesignationsMismatched', [])
-  commit('mutateDesignationsMisplaced', [])
-  commit('mutateMissingDescriptive', false)
-  commit('mutateMissingDesignation', false)
-  commit('mutateMissingDistinctive', false)
-  commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_DESIGNATION)
-  commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_EXACT)
-  commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_RESTRICTED)
-  commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_SIMILAR)
-  commit('mutateNameCheckErrorClear', NameCheckErrorType.ERROR_STRUCTURE)
-  commit('mutateNumbersCheckUse', [])
-  commit('mutateSpecialCharacters', [])
+  Mutations.mutateEditMode(state, false)
+  Mutations.mutateSubmissionType(state, 'normal')
+  Mutations.mutateShowActualInput(state, false)
+  Mutations.resetApplicantDetails(state)
+  Mutations.resetNrData(state)
+  Mutations.resetRequestExaminationOrProvideConsent(state)
+  Mutations.resetNameChoices(state)
+  Mutations.mutateNameRequest(state, {})
+  Mutations.mutateNameAnalysisTimedOut(state, false)
+  Mutations.mutateAnalyzeDesignationPending(state, false)
+  Mutations.mutateAnalyzeStructurePending(state, false)
+  Mutations.mutateAnalyzeConflictsPending(state, false)
+  Mutations.mutateConflictsConditional(state, [])
+  Mutations.mutateConflictsExact(state, [])
+  Mutations.mutateConflictsRestricted(state, [])
+  Mutations.mutateConflictsSimilar(state, [])
+  Mutations.mutateDesignationsCheckUse(state, [])
+  Mutations.mutateDesignationsMismatched(state, [])
+  Mutations.mutateDesignationsMisplaced(state, [])
+  Mutations.mutateMissingDescriptive(state, false)
+  Mutations.mutateMissingDesignation(state, false)
+  Mutations.mutateMissingDistinctive(state, false)
+  Mutations.mutateNameCheckErrorClear(state, NameCheckErrorType.ERROR_DESIGNATION)
+  Mutations.mutateNameCheckErrorClear(state, NameCheckErrorType.ERROR_EXACT)
+  Mutations.mutateNameCheckErrorClear(state, NameCheckErrorType.ERROR_RESTRICTED)
+  Mutations.mutateNameCheckErrorClear(state, NameCheckErrorType.ERROR_SIMILAR)
+  Mutations.mutateNameCheckErrorClear(state, NameCheckErrorType.ERROR_STRUCTURE)
+  Mutations.mutateNumbersCheckUse(state, [])
+  Mutations.mutateSpecialCharacters(state, [])
 }
 
-export const cancelAnalyzeName = ({ commit, getters }, destination: string): void => {
-  commit('mutateAnalyzeDesignationPending', false)
-  commit('mutateAnalyzeStructurePending', false)
-  commit('mutateAnalyzeConflictsPending', false)
-  if (source && source.cancel) {
-    source.cancel()
-    source = null
-  }
+export const cancelAnalyzeName = (destination: string): void => {
+  Mutations.mutateAnalyzeDesignationPending(state, false)
+  Mutations.mutateAnalyzeStructurePending(state, false)
+  Mutations.mutateAnalyzeConflictsPending(state, false)
   if (destination === 'Tabs') {
-    commit('mutateName', getters.getOriginalName)
-    commit('mutateUserCancelledAnalysis', false)
+    Mutations.mutateName(state, Getters.getOriginalName(state))
+    Mutations.mutateUserCancelledAnalysis(state, false)
   }
-  setActiveComponent({ commit }, destination)
+  setActiveComponent(destination)
   if (destination !== 'NamesCapture') {
-    resetAnalyzeName({ commit, getters })
+    resetAnalyzeName()
   }
 }
 
-export const cancelEditExistingRequest = ({ commit }): void => {
-  commit('mutateDisplayedComponent', 'ExistingRequestDisplay')
-  commit('resetApplicantDetails')
-  commit('mutateNameChoicesToInitialState')
-  commit('resetApplicantDetails', '')
-  commit('resetNrData')
-  commit('mutateEditMode', false)
+export const cancelEditExistingRequest = (): void => {
+  Mutations.mutateDisplayedComponent(state, 'ExistingRequestDisplay')
+  Mutations.resetApplicantDetails(state)
+  Mutations.mutateNameChoicesToInitialState(state)
+  Mutations.resetApplicantDetails(state)
+  Mutations.resetNrData(state)
+  Mutations.mutateEditMode(state, false)
 }
 
 // called to commit data into "newRequestModel" object
-const commitExistingData = ({ commit, getters }): void => {
-  commit('populateApplicantData')
-  commit('populateNrData')
-  if (['clientFirstName', 'clientLastName', 'contact'].some(field => !!getters.getNr.applicants[field])) {
-    commit('mutateActingOnOwnBehalf', false)
+export const commitExistingData = (): void => {
+  Mutations.populateApplicantData(state)
+  Mutations.populateNrData(state)
+  if (['clientFirstName', 'clientLastName', 'contact'].some(field => !!Getters.getNr(state).applicants[field])) {
+    Mutations.mutateActingOnOwnBehalf(state, false)
   }
-  const { entity_type_cd } = getters.getNr
-  if (getters.getEntityTypesBC.some(type => type.value === entity_type_cd)) {
-    commit('mutateLocation', Location.BC)
-  } else if (getters.getNr.xproJurisdiction) {
-    const { xproJurisdiction } = getters.getNr
+  const { entity_type_cd } = Getters.getNr(state)
+  if (Getters.getEntityTypesBC(state).some(type => type.value === entity_type_cd)) {
+    Mutations.mutateLocation(state, Location.BC)
+  } else if (Getters.getNr(state).xproJurisdiction) {
+    const { xproJurisdiction } = Getters.getNr(state)
     let location: Location
     for (const key of ['value', 'text']) {
       if (CanJurisdictions.some(j => j[key].toUpperCase() === xproJurisdiction.toUpperCase())) {
@@ -250,52 +243,54 @@ const commitExistingData = ({ commit, getters }): void => {
         break
       }
     }
-    commit('mutateLocation', location)
+    Mutations.mutateLocation(state, location)
   }
-  commit('mutateEntityType', entity_type_cd)
-  if (!getters.getEntityTypeOptions.some(option => option.value === entity_type_cd)) {
-    const obj = getters.getEntityTypesBC.find(entity => entity.value === entity_type_cd)
-      ? getters.getEntityTypesBC.find(entity => entity.value === entity_type_cd)
-      : getters.getEntityTypesXPRO.find(entity => entity.value === entity_type_cd)
-    commit('mutateEntityTypeAddToSelect', obj)
+  state.newRequestModel.entity_type_cd = entity_type_cd
+
+  if (!Getters.getEntityTypeOptions(state).some(option => option.value === entity_type_cd)) {
+    const obj = Getters.getEntityTypesBC(state).find(entity => entity.value === entity_type_cd)
+      ? Getters.getEntityTypesBC(state).find(entity => entity.value === entity_type_cd)
+      : Getters.getEntityTypesXPRO(state).find(entity => entity.value === entity_type_cd)
+    Mutations.mutateEntityTypeAddToSelect(state, obj)
   }
-  const { requestTypeCd } = getters.getNr
-  let { request_action_cd } = getters.getNr
+  const { requestTypeCd } = Getters.getNr(state)
+  let { request_action_cd } = Getters.getNr(state)
   if (
-    [XproNameType.AS, XproNameType.AL, XproNameType.XASO, XproNameType.XCASO, XproNameType.UA].includes(requestTypeCd)
+    [XproNameType.AS, XproNameType.AL, XproNameType.XASO, XproNameType.XCASO, XproNameType.UA]
+      .includes(requestTypeCd)
   ) {
     request_action_cd = NrRequestActionCodes.ASSUMED
   }
-  commit('mutateRequestAction', request_action_cd)
+  Mutations.mutateRequestAction(state, request_action_cd)
   if (request_action_cd !== NrRequestActionCodes.NEW_BUSINESS) {
     const reqObj = RequestActions.find(type => type.value === request_action_cd)
-    commit('mutateExtendedRequestType', reqObj)
+    Mutations.mutateExtendedRequestType(state, reqObj as SelectOptionsI)
   }
-  if (getters.getNr.corpNum) {
-    commit('mutateCorpNum', getters.getNr.corpNum)
+  if (Getters.getNr(state).corpNum) {
+    Mutations.mutateCorpNum(state, Getters.getNr(state).corpNum)
   }
 }
 
-export const editExistingRequest = ({ commit, getters }): void => {
-  commit('mutateEditMode', true)
-  commitExistingData({ commit, getters })
-  if (getters.getNrState === NrState.DRAFT) {
-    commit('mutateSubmissionTabComponent', 'NamesCapture')
+export const editExistingRequest = (): void => {
+  Mutations.mutateEditMode(state, true)
+  commitExistingData()
+  if (Getters.getNrState(state) === NrState.DRAFT) {
+    Mutations.mutateSubmissionTabComponent(state, 'NamesCapture')
   } else {
-    commit('mutateSubmissionTabComponent', 'ApplicantInfo1')
+    Mutations.mutateSubmissionTabComponent(state, 'ApplicantInfo1')
   }
-  commit('mutateDisplayedComponent', 'ExistingRequestEdit')
+  Mutations.mutateDisplayedComponent(state, 'ExistingRequestEdit')
 }
 
-export const setApplicantDetails = ({ commit }, appKV): void => {
-  commit('mutateApplicant', appKV)
+export const setApplicantDetails = (appKV: any): void => {
+  Mutations.mutateApplicant(state, appKV)
   if (!appKV || !appKV.value || appKV.key !== 'addrLine1') {
-    commit('mutateAddressSuggestions', null)
+    Mutations.mutateAddressSuggestions(state, null)
   }
 }
 
-export const setAddressSuggestions = ({ commit }, addressSuggestions: any[]): void => {
-  commit('mutateAddressSuggestions', addressSuggestions)
+export const setAddressSuggestions = (addressSuggestions: any[]): void => {
+  Mutations.mutateAddressSuggestions(state, addressSuggestions)
 }
 
 /**
@@ -304,16 +299,15 @@ export const setAddressSuggestions = ({ commit }, addressSuggestions: any[]): vo
  * @returns a resolved promise on success or a rejected promise on failure
  */
 // FUTURE: not an action - move it to another module?
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function searchBusiness ({ getters }, corpNum: string): Promise<BusinessSearchIF> {
+export async function searchBusiness (corpNum: string): Promise<BusinessSearchIF> {
   try {
     // first try to find business in Entities (Legal API)
     const data = await NamexServices.searchEntities(corpNum)
     // for restoration requests, verify business eligibility
-    if (getters.isRestoration && data.state !== EntityStates.HISTORICAL) {
+    if (Getters.isRestoration(state) && data.state !== EntityStates.HISTORICAL) {
       // check if business is eligible for restoration by verifying restorationExpiryDate exists and not expired
       if (!data.restorationExpiryDate ||
-        getters.getCurrentJsDate.toISOString().slice(0, 10) > data.restorationExpiryDate) {
+        Getters.getCurrentJsDate(state).toISOString().slice(0, 10) > data.restorationExpiryDate) {
         throw new Error('This business is not eligible for restoration name request')
       }
     }
@@ -344,10 +338,12 @@ export async function searchBusiness ({ getters }, corpNum: string): Promise<Bus
   }
 }
 
-export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
-  if (getters.getCorpSearch) {
+export const fetchMRASProfile = async (): Promise<any> => {
+  if (Getters.getCorpSearch(state)) {
     try {
-      const url = `${appBaseURL}/mras-profile/${getters.getJurisdictionCd}/${getters.getCorpSearch}`
+      const jurisdictionCd = Getters.getJurisdictionCd(state)
+      const corpSearch = Getters.getCorpSearch(state)
+      const url = `${namexApiUrl}/mras-profile/${jurisdictionCd}/${corpSearch}`
       const response = await NamexServices.axios.get(url)
       if (response?.status === OK) {
         return response.data
@@ -362,72 +358,74 @@ export const fetchMRASProfile = async ({ commit, getters }): Promise<any> => {
         const msg = await NamexServices.handleApiError(err, 'Could not fetch mras profile')
         console.error('fetchMRASProfile() =', msg) // eslint-disable-line no-console
       }
-      commit('mutateName', '')
-      commit('mutateMrasSearchResult', status)
-      commit('mutateMrasSearchInfoModalVisible', true)
+      Mutations.mutateName(state, '')
+      Mutations.mutateMrasSearchResult(state, status)
+      Mutations.mutateMrasSearchInfoModalVisible(state, true)
     }
   }
   return null
 }
 
 // FUTURE: not an action - move it to another module?
-export const getNrStateData = ({ getters }): any => {
-  let nrState = getters.getNrState
-  if (getters.getAssumedName) nrState = NrState.ASSUMED
+export const getNrStateData = (): any => {
+  let nrState = Getters.getNrState(state)
+  if (Getters.getAssumedName(state)) nrState = NrState.ASSUMED
   let data: any
   switch (nrState) {
     case NrState.DRAFT:
-      data = getters.getDraftNameReservation
+      data = Getters.getDraftNameReservation(state)
       break
     case NrState.COND_RESERVED:
-      data = getters.conditionalNameReservation
+      data = Getters.getConditionalNameReservation(state)
       break
     case NrState.RESERVED:
-      data = getters.reservedNameReservation
+      data = Getters.getReservedNameReservation(state)
       break
     case NrState.ASSUMED:
-      data = getters.editNameReservation
+      data = Getters.getEditNameReservation(state)
       break
     case NrState.PENDING_PAYMENT:
       // The user clicked Review and Confirm, which POSTed the draft NR.
       // Then they closed the modal (eg, so they could fix something),
       // and now they clicked Review and Confirm again.
       // Treat this like a new NR, but keep the same state.
-      data = getters.getDraftNameReservation
+      data = Getters.getDraftNameReservation(state)
       data['stateCd'] = NrState.PENDING_PAYMENT
       break
   }
 
-  if (getters.getShowCorpNum && getters.getCorpNum) {
-    data['corpNum'] = getters.getCorpNum
+  if (Getters.getShowCorpNum(state) && Getters.getCorpNum(state)) {
+    data['corpNum'] = Getters.getCorpNum(state)
   }
   return data
 }
 
 // FUTURE: not an action - move it to another module?
-export const getNrTypeData = ({ getters }, type: NrType): any => {
-  if (getters.getAssumedName) type = NrType.ASSUMED
+export const getNrTypeData = (type: NrType): any => {
+  if (Getters.getAssumedName(state)) type = NrType.ASSUMED
   switch (type) {
     case NrType.ASSUMED:
     case NrType.DRAFT:
-      return getters.getDraftNameReservation
+      return Getters.getDraftNameReservation(state)
     case NrType.CONDITIONAL:
-      return getters.getConditionalNameReservation
+      return Getters.getConditionalNameReservation(state)
     case NrType.RESERVED:
-      return getters.getReservedNameReservation
+      return Getters.getReservedNameReservation(state)
   }
   return undefined // should never happen
 }
 
 /** Submits an edited NR or a new name submission. */
-export const submit = async ({ commit, getters, dispatch }): Promise<any> => {
-  if (getters.getEditMode) {
+export const submit = async (): Promise<any> => {
+  if (Getters.getEditMode(state)) {
     // FUTURE: Refactor the way these async requests are used to provide conditional booleans
-    const data = await NamexServices.patchNameRequests(getters.getNrId, getters.getRequestActionCd,
-      getters.getEditNameReservation)
+    const data = await NamexServices.patchNameRequests(Getters.getNrId(state), Getters.getRequestActionCd(state),
+      Getters.getEditNameReservation(state))
     if (data) {
-      // FUTURE: change this flow to use the patch response instead of getting the request again and remove code below
-      // FUTURE: cases where applicants can be a list or object -> make this consistent (api) + update UI accordingly
+      // FUTURE: change this flow to use the patch response instead of getting the request again
+      //         and remove code below
+      // FUTURE: cases where applicants can be a list or object -> make this consistent (api) +
+      //         update UI accordingly
       // need to set phone/email in case they changed in the patch
       if (data.applicants instanceof Array && data.applicants.length > 0) {
         sessionStorage.setItem('BCREG-emailAddress', data.applicants[0].emailAddress)
@@ -436,56 +434,58 @@ export const submit = async ({ commit, getters, dispatch }): Promise<any> => {
         sessionStorage.setItem('BCREG-emailAddress', data.applicants?.emailAddress)
         sessionStorage.setItem('BCREG-phoneNumber', data.applicants?.phoneNumber)
       }
-      commit('mutateNameRequest', data)
+      Mutations.mutateNameRequest(state, data)
       // FUTURE: remove checkin/checkout process (api should handle it whenever a put/patch is attempted)
-      const checkin = await NamexServices.checkinNameRequest(getters.getNrId, getters.getNrState)
+      const checkin = await NamexServices.checkinNameRequest(Getters.getNrId(state), Getters.getNrState(state))
       if (checkin) {
         // cancel edit mode
-        commit('mutateEditMode', false)
+        Mutations.mutateEditMode(state, false)
 
         // show success page briefly
-        commit('mutateDisplayedComponent', 'Success')
+        Mutations.mutateDisplayedComponent(state, 'Success')
         await Sleep(1000)
 
         // reload NR and show existing NR component
         const nrData = await NamexServices.getNameRequest(true)
-        if (nrData) loadExistingNameRequest({ commit }, nrData)
+        if (nrData) loadExistingNameRequest(nrData)
       }
     }
   } else {
     let request
-    if (!getters.getNrId) {
-      const data = getNrTypeData({ getters }, NrType.DRAFT)
-      request = await NamexServices.postNameRequest(getters.getRequestActionCd, data)
-      if (request) commit('setNrResponse', request)
+    if (!Getters.getNrId(state)) {
+      const data = getNrTypeData(NrType.DRAFT)
+      request = await NamexServices.postNameRequest(Getters.getRequestActionCd(state), data)
+      if (request) Mutations.setNrResponse(state, request)
     } else {
-      const data = getNrStateData({ getters })
-      if (!getters.isEditMode && [NrState.COND_RESERVED, NrState.RESERVED].includes(getters.getNrState)) {
+      const data = getNrStateData()
+      if (
+        !Getters.getEditMode(state) && [NrState.COND_RESERVED, NrState.RESERVED].includes(Getters.getNrState(state))
+      ) {
         request = await NamexServices.getNameRequest(true)
         if (request?.stateCd === NrState.CANCELLED) {
-          setActiveComponent({ commit }, 'Timeout')
+          setActiveComponent('Timeout')
           return
         }
       }
-      request = await NamexServices.putNameReservation(getters.getNrId, getters.getRequestActionCd, data)
-      if (request) commit('setNrResponse', request)
+      request = await NamexServices.putNameReservation(Getters.getNrId(state), Getters.getRequestActionCd(state), data)
+      if (request) Mutations.setNrResponse(state, request)
     }
-    if (request) await dispatch('toggleConfirmNrModal', true)
+    if (request) usePaymentStore().toggleConfirmNrModal(true)
   }
 }
 
 /**
  * Re-submits an expired NR (without changing the current NR data).
  */
-export const resubmit = async ({ commit, getters }): Promise<boolean> => {
+export const resubmit = async (): Promise<boolean> => {
   // safety check
-  if (getters.getEditMode) {
+  if (Getters.getEditMode(state)) {
     console.error('resubmit() - should not be edit mode') // eslint-disable-line no-console
     return false
   }
 
   // get current NR data
-  const nrData = getters.getNr
+  const nrData = Getters.getNr(state)
 
   // safety check
   if (!nrData) {
@@ -494,10 +494,10 @@ export const resubmit = async ({ commit, getters }): Promise<boolean> => {
   }
 
   // commit the original NR's data
-  commitExistingData({ commit, getters })
+  commitExistingData()
 
   // build the request data
-  const nrTypeData = getNrTypeData({ getters }, NrType.DRAFT)
+  const nrTypeData = getNrTypeData(NrType.DRAFT)
 
   // add resubmit NR number (for internal use only - API ignores it)
   nrTypeData['resubmitNrNum'] = nrData['nrNum']
@@ -522,9 +522,9 @@ export const resubmit = async ({ commit, getters }): Promise<boolean> => {
   }
 
   // post new NR
-  const request = await NamexServices.postNameRequest(getters.getRequestActionCd, nrTypeData)
+  const request = await NamexServices.postNameRequest(Getters.getRequestActionCd(state), nrTypeData)
   if (request) {
-    commit('setNrResponse', request)
+    Mutations.setNrResponse(state, request)
     return true
   }
 
@@ -543,254 +543,280 @@ function getNameDesignation (name: any): string {
   return words[len - 1]
 }
 
-export const setCurrentJsDate = ({ commit }, date: Date): void => {
-  commit('mutateCurrentJsDate', date)
+export const setCurrentJsDate = (date: Date): void => {
+  Mutations.mutateCurrentJsDate(state, date)
 }
 
-export const setName = ({ commit }, name: string): void => {
-  commit('mutateName', name)
+export const setName = (name: string): void => {
+  Mutations.mutateName(state, name)
 }
 
-export const setLocation = ({ commit }, location: Location): void => {
-  commit('mutateLocation', location)
+export const setLocation = (location: Location): void => {
+  Mutations.mutateLocation(state, location)
 }
 
-export const setDisplayedComponent = ({ commit }, component: string): void => {
-  commit('mutateDisplayedComponent', component)
+export const setDisplayedComponent = (component: string): void => {
+  Mutations.mutateDisplayedComponent(state, component)
 }
 
-export const setTabNumber = ({ commit }, tabNumber: number): void => {
-  commit('mutateTabNumber', tabNumber)
+export const setTabNumber = (tabNumber: number): void => {
+  state.newRequestModel.tabNumber = tabNumber
 }
 
-export const setCorpSearch = ({ commit }, corpSearch: string): void => {
-  commit('mutateCorpSearch', corpSearch)
+export const setCorpSearch = (corpSearch: string): void => {
+  state.newRequestModel.corpSearch = corpSearch
 }
 
-export const setEntityTypeCd = ({ commit }, entityTypeCd: EntityTypes): void => {
-  commit('mutateEntityType', entityTypeCd)
+export const setEntityTypeCd = (entityTypeCd: EntityTypes): void => {
+  state.newRequestModel.entity_type_cd = entityTypeCd
 }
 
-export const setOriginEntityTypeCd = ({ commit }, originEntityTypeCd: EntityTypes): void => {
-  commit('mutateOriginEntityType', originEntityTypeCd)
+export const setOriginEntityTypeCd = (originEntityTypeCd: EntityTypes): void => {
+  Mutations.mutateOriginEntityType(state, originEntityTypeCd)
 }
 
-export const setConversionType = ({ commit }, conversionType: string): void => {
-  commit('mutateConversionType', conversionType)
+export const setConversionType = (conversionType: any): void => {
+  Mutations.mutateConversionType(state, conversionType)
 }
 
-export const setJurisdictionCd = ({ commit }, jurisdictionCd: string): void => {
-  commit('mutateJurisdictionCd', jurisdictionCd)
+export const setJurisdictionCd = (jurisdictionCd: string): void => {
+  Mutations.mutateJurisdictionCd(state, jurisdictionCd)
 }
 
-export const setIsLearBusiness = ({ commit }, isLearBusiness: boolean): void => {
-  commit('mutateIsLearBusiness', isLearBusiness)
+export const setIsLearBusiness = (isLearBusiness: boolean): void => {
+  Mutations.mutateIsLearBusiness(state, isLearBusiness)
 }
 
-export const setIsPersonsName = ({ commit }, isPersonsName: boolean): void => {
-  commit('mutateIsPersonsName', isPersonsName)
+export const setIsPersonsName = (isPersonsName: boolean): void => {
+  Mutations.mutateIsPersonsName(state, isPersonsName)
 }
 
-export const setNameIsEnglish = ({ commit }, isEnglishName: boolean): void => {
-  commit('mutateNameIsEnglish', isEnglishName)
+export const setNameIsEnglish = (isEnglishName: boolean): void => {
+  Mutations.mutateNameIsEnglish(state, isEnglishName)
 }
 
-export const setNoCorpNum = ({ commit }, noCorpNum: boolean): void => {
-  commit('mutateNoCorpNum', noCorpNum)
+export const setNoCorpNum = (noCorpNum: boolean): void => {
+  Mutations.mutateNoCorpNum(state, noCorpNum)
 }
 
-export const setExtendedRequestType = ({ commit }, extendedRequestType: SelectOptionsI): void => {
-  commit('mutateExtendedRequestType', extendedRequestType)
+export const setExtendedRequestType = (extendedRequestType: SelectOptionsI): void => {
+  Mutations.mutateExtendedRequestType(state, extendedRequestType)
 }
 
-export const setRequestAction = ({ commit }, requestAction: NrRequestActionCodes): void => {
-  commit('mutateRequestAction', requestAction)
+export const setRequestAction = (requestAction: NrRequestActionCodes): void => {
+  Mutations.mutateRequestAction(state, requestAction)
 }
 
-export const setConversionTypeAddToSelect = ({ commit }, conversionType: ConversionTypesI): void => {
-  commit('mutateConversionTypeAddToSelect', conversionType)
+export const setConversionTypeAddToSelect = (conversionType: ConversionTypesI): void => {
+  Mutations.mutateConversionTypeAddToSelect(state, conversionType)
 }
 
-export const setEntityTypeAddToSelect = ({ commit }, entityType: SelectOptionsI): void => {
-  commit('mutateEntityTypeAddToSelect', entityType)
+export const setEntityTypeAddToSelect = (entityType: SelectOptionsI): void => {
+  Mutations.mutateEntityTypeAddToSelect(state, entityType)
 }
 
-export const setClearErrors = ({ commit }): void => {
-  commit('clearErrors')
+export const setClearErrors = (): void => {
+  Mutations.clearErrors(state)
 }
 
-export const setUserCancelledAnalysis = ({ commit }, cancelledAnalysis: boolean): void => {
-  commit('mutateUserCancelledAnalysis', cancelledAnalysis)
+export const setUserCancelledAnalysis = (cancelledAnalysis: boolean): void => {
+  Mutations.mutateUserCancelledAnalysis(state, cancelledAnalysis)
 }
 
-export const setNameRequest = ({ commit }, nameRequest: NameRequestI): void => {
-  commit('mutateNameRequest', nameRequest)
+export const setNameRequest = (nameRequest: NameRequestI): void => {
+  Mutations.mutateNameRequest(state, nameRequest)
 }
 
-export const setExistingRequestSearch = (
-  { commit, getters },
-  existingRequest: { key: string, value: string }
-): void => {
+export const setExistingRequestSearch = (existingRequest: { key: string, value: string }): void => {
   const prefix = 'BCREG-'
   // if nr changes set session email/phone to whatever is in store (prevents previous values from interfering)
   if (existingRequest.value.includes('NR')) {
-    sessionStorage.setItem(prefix + 'emailAddress', getters.getExistingRequestSearch.emailAddress)
-    sessionStorage.setItem(prefix + 'phoneNumber', getters.getExistingRequestSearch.phoneNumber)
+    sessionStorage.setItem(prefix + 'emailAddress', Getters.getExistingRequestSearch(state).emailAddress)
+    sessionStorage.setItem(prefix + 'phoneNumber', Getters.getExistingRequestSearch(state).phoneNumber)
   }
   if (existingRequest.value.includes('NR L')) {
     sessionStorage.setItem(prefix + 'nrl', existingRequest.value)
   } else {
     sessionStorage.setItem(prefix + existingRequest.key, existingRequest.value)
   }
-  commit('mutateExistingRequestSearch', existingRequest)
+  Mutations.mutateExistingRequestSearch(state, existingRequest)
 }
 
-export const setNrResponse = ({ commit }, request: NameRequestI): void => {
-  commit('setNrResponse', request)
+export const setNrResponse = (request: NameRequestI): void => {
+  Mutations.setNrResponse(state, request)
 }
 
-export const setSubmissionTabNumber = ({ commit }, tabNumber: number): void => {
-  commit('mutateSubmissionTabNumber', tabNumber)
+export const setSubmissionTabNumber = (tabNumber: number): void => {
+  Mutations.mutateSubmissionTabNumber(state, tabNumber)
 }
 
-export const setSubmissionType = ({ commit }, submissionType: SubmissionTypeT): void => {
-  commit('mutateSubmissionType', submissionType)
+export const setSubmissionType = (submissionType: SubmissionTypeT): void => {
+  Mutations.mutateSubmissionType(state, submissionType)
 }
 
-export const setCorpNum = ({ commit }, corpNum: string): void => {
-  commit('mutateCorpNum', corpNum)
+export const setCorpNum = (corpNum: string): void => {
+  Mutations.mutateCorpNum(state, corpNum)
 }
 
-export const setActingOnOwnBehalf = ({ commit }, isActingOnOwn: boolean): void => {
-  commit('mutateActingOnOwnBehalf', isActingOnOwn)
+export const setActingOnOwnBehalf = (isActingOnOwn: boolean): void => {
+  Mutations.mutateActingOnOwnBehalf(state, isActingOnOwn)
 }
 
-export const setNRData = ({ commit }, nrData: any): void => {
-  commit('mutateNRData', nrData)
+export const setNRData = (nrData: any): void => {
+  const { key, value } = nrData
+  state.newRequestModel.nrData[key] = value
 }
 
-export const setEditMode = ({ commit }, editMode: boolean): void => {
-  commit('mutateEditMode', editMode)
+export const setEditMode = (editMode: boolean): void => {
+  Mutations.mutateEditMode(state, editMode)
 }
 
-export const setAssumedNameOriginal = ({ commit }): void => {
-  commit('mutateAssumedNameOriginal')
+export const setAssumedNameOriginal = (): void => {
+  Mutations.mutateAssumedNameOriginal(state)
 }
 
-export const setNameChoicesToInitialState = ({ commit }): void => {
-  commit('mutateNameChoicesToInitialState')
+export const setNameChoicesToInitialState = (): void => {
+  Mutations.mutateNameChoicesToInitialState(state)
 }
 
-export const setNameChoices = ({ commit }, choiceObj: any): void => {
-  commit('mutateNameChoices', choiceObj)
+export const setNameChoices = (choiceObj: any): void => {
+  Mutations.mutateNameChoices(state, choiceObj)
 }
 
-export const setPriorityRequest = ({ commit }, isPriorityRequest: boolean): void => {
-  commit('mutatePriorityRequest', isPriorityRequest)
+export const setPriorityRequest = (isPriorityRequest: boolean): void => {
+  Mutations.mutatePriorityRequest(state, isPriorityRequest)
 }
 
-export const setIsLoadingSubmission = ({ commit }, isLoading: boolean): void => {
-  commit('mutateIsLoadingSubmission', isLoading)
+export const setIsLoadingSubmission = (isLoading: boolean): void => {
+  Mutations.mutateIsLoadingSubmission(state, isLoading)
 }
 
-export const setShowActualInput = ({ commit }, showInput: boolean): void => {
-  commit('mutateShowActualInput', showInput)
+export const setShowActualInput = (showInput: boolean): void => {
+  Mutations.mutateShowActualInput(state, showInput)
 }
 
 //
 // Dialog Actions
 //
-export const setPickEntityModalVisible = ({ commit }, isVisible: boolean): void => {
-  commit('mutatePickEntityModalVisible', isVisible)
+export const setPickEntityModalVisible = (isVisible: boolean): void => {
+  Mutations.mutatePickEntityModalVisible(state, isVisible)
 }
 
-export const setMrasSearchInfoModalVisible = ({ commit }, isVisible: boolean): void => {
-  commit('mutateMrasSearchInfoModalVisible', isVisible)
+export const setMrasSearchInfoModalVisible = (isVisible: boolean): void => {
+  Mutations.mutateMrasSearchInfoModalVisible(state, isVisible)
 }
 
-export const setExitModalVisible = ({ commit }, isVisible: boolean): void => {
-  commit('mutateExitModalVisible', isVisible)
+export const setExitModalVisible = (isVisible: boolean): void => {
+  Mutations.mutateExitModalVisible(state, isVisible)
 }
 
-export const setExitIncompletePaymentVisible = ({ commit }, isVisible: boolean): void => {
-  commit('mutateExitIncompletePaymentVisible', isVisible)
+export const setExitIncompletePaymentVisible = (isVisible: boolean): void => {
+  Mutations.mutateExitIncompletePaymentVisible(state, isVisible)
 }
 
-export const setSubmissionTabComponent = ({ commit }, isVisible: boolean): void => {
-  commit('mutateSubmissionTabComponent', isVisible)
+export const setSubmissionTabComponent = (component: string): void => {
+  Mutations.mutateSubmissionTabComponent(state, component)
 }
 
-export const setConditionsModalVisible = ({ commit }, isVisible: boolean): void => {
-  commit('mutateConditionsModalVisible', isVisible)
+export const setConditionsModalVisible = (isVisible: boolean): void => {
+  Mutations.mutateConditionsModalVisible(state, isVisible)
 }
 
-export const setAffiliationErrorModalValue = ({ commit }, modalValue: NrAffiliationErrors): void => {
-  commit('mutateAffiliationErrorModalValue', modalValue)
+export const setAffiliationErrorModalValue = (modalValue: NrAffiliationErrors): void => {
+  Mutations.mutateAffiliationErrorModalValue(state, modalValue)
 }
 
-export const setHelpMeChooseModalVisible = ({ commit }, isVisible: boolean): void => {
-  commit('mutateHelpMeChooseModalVisible', isVisible)
+export const setHelpMeChooseModalVisible = (isVisible: boolean): void => {
+  Mutations.mutateHelpMeChooseModalVisible(state, isVisible)
 }
 
-export const setNrRequiredModalVisible = ({ commit }, isVisible: boolean): void => {
-  commit('mutateNrRequiredModalVisible', isVisible)
+export const setNrRequiredModalVisible = (isVisible: boolean): void => {
+  Mutations.mutateNrRequiredModalVisible(state, isVisible)
 }
 
-export const setSocietiesModalVisible = ({ commit }, isVisible: boolean): void => {
-  commit('mutateSocietiesModalVisible', isVisible)
+export const setSocietiesModalVisible = (isVisible: boolean): void => {
+  Mutations.mutateSocietiesModalVisible(state, isVisible)
 }
 
-export const setRequestExaminationOrProvideConsent = ({ commit }, requestExamOrConsent: any): void => {
-  commit('mutateRequestExaminationOrProvideConsent', requestExamOrConsent)
+export const setRequestExaminationOrProvideConsent = (requestExamOrConsent: any): void => {
+  Mutations.mutateRequestExaminationOrProvideConsent(state, requestExamOrConsent)
 }
 
-export const setKeycloakRoles = ({ commit }, keycloakRoles: string[]): void => {
-  commit('mutateKeycloakRoles', keycloakRoles)
+export const setKeycloakRoles = (keycloakRoles: string[]): void => {
+  Mutations.mutateKeycloakRoles(state, keycloakRoles)
 }
 
-export const setAuthorizedActions = ({ commit }, authorizedActions: AuthorizedActions[]): void => {
-  commit('mutateAuthorizedActions', authorizedActions)
+export const setAuthorizedActions = (authorizedActions: AuthorizedActions[]): void => {
+  Mutations.mutateAuthorizedActions(state, authorizedActions)
 }
 
-export const fetchAuthorizedActions = async ({ commit }): Promise<void> => {
+export const fetchAuthorizedActions = async (): Promise<void> => {
   try {
     const response = await BusinessServices.getAuthorizedActions()
     const authorizedActions = response.data.authorizedPermissions || []
-    commit('mutateAuthorizedActions', authorizedActions)
+    Mutations.mutateAuthorizedActions(state, authorizedActions)
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error fetching authorized actions:', error)
-    commit('mutateAuthorizedActions', [])
+    Mutations.mutateAuthorizedActions(state, [])
   }
 }
 
-export const setStaffPayment = ({ commit }, staffPayment: StaffPaymentIF): void => {
-  commit('mutateStaffPayment', staffPayment)
+export const setStaffPayment = (staffPayment: StaffPaymentIF): void => {
+  Mutations.mutateStaffPayment(state, staffPayment)
 }
 
-export const setFolioNumber = ({ commit }, folioNumber: string): void => {
-  commit('mutateFolioNumber', folioNumber)
+export const setFolioNumber = (folioNumber: string): void => {
+  Mutations.mutateFolioNumber(state, folioNumber)
 }
 
-export const setWindowWidth = ({ commit }, width: number): void => {
-  commit('mutateWindowWidth', width)
+export const setWindowWidth = (width: number): void => {
+  Mutations.mutateWindowWidth(state, width)
 }
 
-export const setHotjarUserId = ({ commit }, hotjarUserId: string): void => {
-  commit('mutateHotjarUserId', hotjarUserId)
+export const setHotjarUserId = (hotjarUserId: string): void => {
+  Mutations.mutateHotjarUserId(state, hotjarUserId)
+}
+
+export const getMatchesExact = async (token: string, cleanedName: string): Promise<Array<ConflictListItemI>> => {
+  const exactResp = await NamexServices.axios.get(
+    `${namexApiUrl}/exact-match?query=` + cleanedName,
+    { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
+  ).catch(() => {
+    Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_EXACT)
+    return null
+  })
+  return exactResp?.data ? parseExactNames(exactResp.data) : []
+}
+
+
+// todo: look into differences #31690
+export const getMatchesSimilar_main_branch = async (
+  token: string, cleanedName: string, exactNames: Array<ConflictListItemI>
+): Promise<Array<ConflictListItemI>> => {
+  const synonymResp = await NamexServices.axios.get(
+    `${namexApiUrl}/requests/synonymbucket/` + cleanedName + '/*',
+    { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
+  ).catch(() => {
+    Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_SIMILAR)
+    return null
+  })
+  if (synonymResp?.data) synonymResp.data.exactNames = exactNames || []
+  return synonymResp?.data ? parseSynonymNames(synonymResp.data) : []
 }
 
 const getMatchesSimilar = async (
-  { commit },
   token: string,
   cleanedName: string
 ): Promise<{ names: Array<any>, exactNames: Array<any> }> => {
-  const synonymResp = await NamexServices.axios.get(`${appBaseURL}/requests/possible-conflicts/${cleanedName}`, {
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
-  }).catch(() => {
-    commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_SIMILAR)
-    return null
-  })
+  const synonymResp = await NamexServices.axios.get(
+    `${namexApiUrl}/requests/possible-conflicts/${cleanedName}`,
+    {
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+    }).catch(() => {
+      Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_SIMILAR)
+      return null
+    })
 
   return {
     names: synonymResp.data.names || [],
@@ -798,117 +824,110 @@ const getMatchesSimilar = async (
   }
 }
 
-const getMatchesRestricted = async (
-  { commit, getters },
-  token: string,
-  cleanedName: string
+export const getMatchesRestricted = async (
+  token: string, cleanedName: string
 ): Promise<ParsedRestrictedResponseIF> => {
   const restrictedResp = await NamexServices.axios.get(
-    `${appBaseURL}/documents/restricted-words?content=${cleanedName}`,
+    `${namexApiUrl}/documents/restricted-words?content=${cleanedName}`,
     { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
   ).catch(() => {
-    commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_RESTRICTED)
+    Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_RESTRICTED)
     return null
   })
   return restrictedResp?.data
-    ? parseRestrictedWords({ getters }, restrictedResp.data)
+    ? parseRestrictedWords(restrictedResp.data)
     : { conditionalInstructions: [], conditionalWords: [], restrictedWords: [] }
 }
 
-export const getNameAnalysis = async (
-  { commit, getters },
-  options: { xpro: boolean, designationOnly: boolean }
-) => {
-  const name = getters.getFullName
+export const getNameAnalysis = async (options: { xpro: boolean, designationOnly: boolean }) => {
+  const name = Getters.getFullName(state)
   try {
-    if (options.designationOnly) commit('mutateAnalyzeDesignationPending', true)
-    else commit('mutateAnalyzeStructurePending', true)
-    commit('resetRequestExaminationOrProvideConsent')
+    if (options.designationOnly) Mutations.mutateAnalyzeDesignationPending(state, true)
+    else Mutations.mutateAnalyzeStructurePending(state, true)
+    Mutations.resetRequestExaminationOrProvideConsent(state)
     const params: NewRequestNameSearchI = {
       name: name,
-      location: getters.getLocation,
-      entity_type_cd: getters.getEntityTypeCd,
-      request_action_cd: getters.getRequestActionCd,
+      location: Getters.getLocation(state),
+      entity_type_cd: Getters.getEntityTypeCd(state),
+      request_action_cd: Getters.getRequestActionCd(state),
       jurisdiction: options.xpro ? NameCheckAnalysisJurisdiction.XPRO : NameCheckAnalysisJurisdiction.BC,
       analysis_type: options.designationOnly ? NameCheckAnalysisType.DESIGNATION : NameCheckAnalysisType.STRUCTURE
     }
     const analysis = await NamexServices.nameAnalysis(params)
     // verify the user did not start a new search on a different name
-    if (name === getters.getFullName) {
+    if (name === Getters.getFullName(state)) {
       const json = analysis
-      commit('mutateAnalysisJSON', json)
+      Mutations.mutateAnalysisJSON(state, json)
       if (Array.isArray(json.issues) && json.issues.length > 0) {
         for (let i = 0; i < json.issues.length; i++) {
           switch (json.issues[i].issue_type) {
             case 'add_descriptive':
-              commit('mutateMissingDescriptive', true)
+              Mutations.mutateMissingDescriptive(state, true)
               continue
             case 'add_distinctive':
-              commit('mutateMissingDistinctive', true)
+              Mutations.mutateMissingDistinctive(state, true)
               continue
             case 'designation_non_existent':
-              commit('mutateMissingDesignation', true)
+              Mutations.mutateMissingDesignation(state, true)
               continue
             case 'designation_mismatch':
               if (Array.isArray(json.issues[i].name_actions) && json.issues[i].name_actions.length > 0) {
                 let items = json.issues[i].name_actions.map(item => { return item.word })
                 items = [...new Set(items)]
-                commit('mutateDesignationsMismatched', items)
+                Mutations.mutateDesignationsMismatched(state, items)
               }
               continue
             case 'designation_misplaced':
               if (Array.isArray(json.issues[i].name_actions) && json.issues[i].name_actions.length > 0) {
                 let items = json.issues[i].name_actions.map(item => { return item.word })
                 items = [...new Set(items)]
-                commit('mutateDesignationsMisplaced', items)
+                Mutations.mutateDesignationsMisplaced(state, items)
               }
               continue
             case 'end_designation_more_than_once':
               if (Array.isArray(json.issues[i].name_actions) && json.issues[i].name_actions.length > 0) {
                 let items = json.issues[i].name_actions.map(item => { return item.word })
                 items = [...new Set(items)]
-                commit('mutateDesignationsMisplaced', items)
+                Mutations.mutateDesignationsMisplaced(state, items)
               }
               continue
             case 'incorrect_year':
               if (Array.isArray(json.issues[i].name_actions) && json.issues[i].name_actions.length > 0) {
                 let items = json.issues[i].name_actions.map(item => { return item.word })
                 items = [...new Set(items)]
-                commit('mutateNumbersCheckUse', items)
+                Mutations.mutateNumbersCheckUse(state, items)
               }
               continue
             default:
               if (Array.isArray(json.issues[i].name_actions) && json.issues[i].name_actions.length > 0) {
                 let items = json.issues[i].name_actions.map(item => { return item.word })
                 items = [...new Set(items)]
-                commit('mutateDesignationsCheckUse', items)
+                Mutations.mutateDesignationsCheckUse(state, items)
               }
           }
         }
       }
-      if (options.designationOnly) commit('mutateAnalyzeDesignationPending', false)
-      else commit('mutateAnalyzeStructurePending', false)
+      if (options.designationOnly) Mutations.mutateAnalyzeDesignationPending(state, false)
+      else Mutations.mutateAnalyzeStructurePending(state, false)
     }
   } catch (err) {
     // verify the user did not start a new search on a different name
-    if (name === getters.getFullName) {
+    if (name === Getters.getFullName(state)) {
       const msg = await NamexServices.handleApiError(err, 'Could not get name analysis')
       console.error('getNameAnalysis() =', msg) // eslint-disable-line no-console
       if (options.designationOnly) {
-        commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_DESIGNATION)
-        commit('mutateAnalyzeDesignationPending', false)
+        Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_DESIGNATION)
+        Mutations.mutateAnalyzeDesignationPending(state, false)
       } else {
-        commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_STRUCTURE)
-        commit('mutateAnalyzeStructurePending', false)
+        Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_STRUCTURE)
+        Mutations.mutateAnalyzeStructurePending(state, false)
       }
     }
   }
 }
 
-const getQuickSearch = async (
-  { commit, getters },
-  cleanedName: CleanedNameIF,
-  checks: QuickSearchParamsI
+export const getQuickSearch = async (
+  cleanedName: CleanedNameIF, checks: QuickSearchParamsI
 ): Promise<QuickSearchParsedRespI> => {
   try {
     const quickSearchPublicId = window['quickSearchPublicId']
@@ -926,13 +945,13 @@ const getQuickSearch = async (
     const token = tokenResp.data.access_token
     const { names, exactNames } = (
       checks.similar
-        ? await getMatchesSimilar({ commit }, token, cleanedName.synonymMatch)
+        ? await getMatchesSimilar(token, cleanedName.synonymMatch)
         : { names: [], exactNames: [] }
     )
 
     const parsedRestrictedResp: ParsedRestrictedResponseIF = (
       checks.restricted
-        ? await getMatchesRestricted({ commit, getters }, token, cleanedName.restrictedMatch)
+        ? await getMatchesRestricted(token, cleanedName.restrictedMatch)
         : { restrictedWords: [], conditionalWords: [], conditionalInstructions: [] }
     )
 
@@ -949,9 +968,9 @@ const getQuickSearch = async (
     // (do not show error to user)
     console.error('getQuickSearch() =', msg) // eslint-disable-line no-console
     // add errors to name check for all quick search checks
-    if (checks.exact) commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_EXACT)
-    if (checks.similar) commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_SIMILAR)
-    if (checks.restricted) commit('mutateNameCheckErrorAdd', NameCheckErrorType.ERROR_RESTRICTED)
+    if (checks.exact) Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_EXACT)
+    if (checks.similar) Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_SIMILAR)
+    if (checks.restricted) Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_RESTRICTED)
 
     return {
       exactNames: [],
@@ -963,11 +982,20 @@ const getQuickSearch = async (
   }
 }
 
-export const nameCheckClearError = ({ commit }, key: NameCheckErrorType): void => {
-  commit('mutateNameCheckErrorClear', key)
+export const nameCheckClearError = (key: NameCheckErrorType): void => {
+  Mutations.mutateNameCheckErrorClear(state, key)
 }
 
-const parseRestrictedWords = ({ getters }, resp: RestrictedResponseIF): ParsedRestrictedResponseIF => {
+export const parseExactNames = (json: { names: [string] }): Array<ConflictListItemI> => {
+  const nameObjs = json?.names || []
+  const names = []
+  for (let i = 0; i < nameObjs.length; i++) {
+    names.push({ name: `${nameObjs[i]['name']}`, type: NameCheckConflictType.EXACT })
+  }
+  return names
+}
+
+export const parseRestrictedWords = (resp: RestrictedResponseIF): ParsedRestrictedResponseIF => {
   const phrases = resp.restricted_words_conditions
   const parsedResp: ParsedRestrictedResponseIF = {
     conditionalInstructions: [],
@@ -980,7 +1008,7 @@ const parseRestrictedWords = ({ getters }, resp: RestrictedResponseIF): ParsedRe
     const phrase = phrases[i].word_info.phrase.toUpperCase()
 
     // rules for ignoring restricted/conditional phrases
-    const entityCd = getters.getEntityTypeCd
+    const entityCd = Getters.getEntityTypeCd(state)
     if (entityCd === EntityTypes.CR && Designations[EntityTypes.CC].words.includes(phrase)) continue
     if (Designations[entityCd].words.includes(phrase)) continue
 
@@ -1014,76 +1042,97 @@ const parseRestrictedWords = ({ getters }, resp: RestrictedResponseIF): ParsedRe
   return parsedResp
 }
 
-export const setDesignation = ({ commit }, designation: string): void => {
-  commit('mutateDesignation', designation)
+// todo: verify is used #31690
+export const parseSynonymNames = (
+  json: { names: Array<string>, exactNames: Array<ConflictListItemI>}
+): Array<ConflictListItemI> => {
+  const duplicateNames = []
+  for (let i = 0; i < json.exactNames.length; i++) {
+    duplicateNames.push(json.exactNames[i].name)
+  }
+  const nameObjs = json.names
+  const names = []
+  for (let i = 0; i < nameObjs.length; i++) {
+    if (nameObjs[i]['name_info']['id']) {
+      const name = nameObjs[i]['name_info']['name']
+      if (!duplicateNames.includes(name)) {
+        names.push({ name: name, type: NameCheckConflictType.SIMILAR })
+      }
+    }
+  }
+  return names
 }
 
-export const setDoNameCheck = ({ commit }, check: boolean): void => {
-  commit('mutateDoNameCheck', check)
+export const setDesignation = (designation: string): void => {
+  Mutations.mutateDesignation(state, designation)
 }
 
-export const startEditName = ({ commit, getters }) => {
-  if (!getters.getEntityTypeCd) commit('setErrors', 'entity_type_cd')
+export const setDoNameCheck = (check: boolean): void => {
+  Mutations.mutateDoNameCheck(state, check)
 }
 
-export const startAnalyzeName = async ({ commit, getters }) => {
-  resetAnalyzeName({ commit, getters })
-  setUserCancelledAnalysis({ commit }, false)
+export const startEditName = () => {
+  if (!Getters.getEntityTypeCd(state)) Mutations.setErrors(state, 'entity_type_cd')
+}
+
+export const startAnalyzeName = async () => {
+  resetAnalyzeName()
+  setUserCancelledAnalysis(false)
 
   // check basic state values
-  if (!getters.getRequestActionCd) commit('setErrors', 'request_action_cd')
-  if (!getters.getLocation) commit('setErrors', 'location')
-  if (!getters.getEntityTypeCd) commit('setErrors', 'entity_type_cd')
+  if (!Getters.getRequestActionCd(state)) Mutations.setErrors(state, 'request_action_cd')
+  if (!Getters.getLocation(state)) Mutations.setErrors(state, 'location')
+  if (!Getters.getEntityTypeCd(state)) Mutations.setErrors(state, 'entity_type_cd')
 
   // check if designation selection is required and present
-  if (!getters.isXproFlow && Designations[getters.getEntityTypeCd]?.end) {
-    if (!getters.getDesignation) commit('setErrors', 'designation')
+  if (!Getters.isXproFlow(state) && Designations[Getters.getEntityTypeCd(state)]?.end) {
+    if (!Getters.getDesignation(state)) Mutations.setErrors(state, 'designation')
   }
 
   // Check for designations should not be in the name
-  if (checkInvalidDesignation(getters.getEntityTypeCd, getters.getName)) {
-    commit('setErrors', 'invalid_designation_in_name')
+  if (checkInvalidDesignation(Getters.getEntityTypeCd(state), Getters.getName(state))) {
+    Mutations.setErrors(state, 'invalid_designation_in_name')
   }
 
   // check if jurisdiction selection is required and present
   if (
-    [Location.CA, Location.IN].includes(getters.getLocation) &&
-    ![NrRequestActionCodes.MOVE].includes(getters.getRequestActionCd) &&
-    !getters.getJurisdictionCd
+    [Location.CA, Location.IN].includes(Getters.getLocation(state)) &&
+    ![NrRequestActionCodes.MOVE].includes(Getters.getRequestActionCd(state)) &&
+    !Getters.getJurisdictionCd(state)
   ) {
-    commit('setErrors', 'jurisdiction')
+    Mutations.setErrors(state, 'jurisdiction')
     return
   }
 
-  if (!getters.getCorpSearch) {
-    if (!getters.getName) {
-      commit('setErrors', 'name')
+  if (!Getters.getCorpSearch(state)) {
+    if (!Getters.getName(state)) {
+      Mutations.setErrors(state, 'name')
       return
     }
 
-    const min = getters.isXproFlow ? MRAS_MIN_LENGTH : DFLT_MIN_LENGTH
-    const max = getters.isXproFlow ? MRAS_MAX_LENGTH : DFLT_MAX_LENGTH
+    const min = Getters.isXproFlow(state) ? MRAS_MIN_LENGTH : DFLT_MIN_LENGTH
+    const max = Getters.isXproFlow(state) ? MRAS_MAX_LENGTH : DFLT_MAX_LENGTH
 
-    if (getters.getName.length < min) {
-      commit('setErrors', 'min_length')
+    if (Getters.getName(state).length < min) {
+      Mutations.setErrors(state, 'min_length')
       return
     }
-    if (getters.getName.length > max) {
-      commit('setErrors', 'max_length')
+    if (Getters.getName(state).length > max) {
+      Mutations.setErrors(state, 'max_length')
       return
     }
   }
 
-  if (getters.getErrors.length > 0) {
+  if (Getters.getErrors(state).length > 0) {
     return
   }
 
   // prep name for analysis
-  let name = removeAccents(getters.getName)
+  let name = removeAccents(Getters.getName(state))
   name = name.toUpperCase()
 
   // auto fix LTD/INC/CORP designations without a period unless xpro
-  if (!getters.isXproFlow) {
+  if (!Getters.isXproFlow(state)) {
     name = name.replace(/^LTD$/g, 'LTD.')
       .replace(/^LTD\s/g, 'LTD. ')
       .replace(/\sLTD\s/g, ' LTD. ')
@@ -1097,97 +1146,93 @@ export const startAnalyzeName = async ({ commit, getters }) => {
       .replace(/\sCORP\s/g, ' CORP. ')
       .replace(/\sCORP$/g, ' CORP.')
   }
-  commit('mutateName', name)
-  const designation = getters.getDesignation
-  commit('mutateFullName', `${name} ${designation}`)
-  commit('mutateNameOriginal', name) // Set original name for reset baseline
+  Mutations.mutateName(state, name)
+  const designation = Getters.getDesignation(state)
+  Mutations.mutateFullName(state, `${name} ${designation}`)
+  Mutations.mutateNameOriginal(state, name) // Set original name for reset baseline
 
   // xpro get name call
-  if (getters.isXproFlow) {
-    commit('mutateXproJurisdiction', getters.getJurisdictionText)
+  if (Getters.isXproFlow(state)) {
+    Mutations.mutateXproJurisdiction(state, Getters.getJurisdictionText(state))
     // set home juris num only if we have a corp num
     // (don't set if we entered a corp name instead)
-    if (!getters.getHasNoCorpNum) {
-      commit('mutateHomeJurisNum', getters.getCorpSearch)
+    if (!Getters.getHasNoCorpNum(state)) {
+      Mutations.mutateHomeJurisNum(state, Getters.getCorpSearch(state))
     }
     // only make MRAS call for MRAS jurisdictions and if we have a corp num
-    if (getters.isMrasJurisdiction && !getters.getHasNoCorpNum) {
-      const profile = await fetchMRASProfile({ commit, getters })
+    if (Getters.isMrasJurisdiction(state) && !Getters.getHasNoCorpNum(state)) {
+      const profile = await fetchMRASProfile()
       if (profile) {
         const hasMultipleNames = profile?.LegalEntity?.names && profile?.LegalEntity?.names.constructor === Array
         name = hasMultipleNames
           ? sanitizeName(profile?.LegalEntity?.names[0]?.legalName)
           : sanitizeName(profile?.LegalEntity?.names?.legalName)
-        commit('mutateName', name)
+        Mutations.mutateName(state, name)
       } else {
-        commit('mutateNoCorpNum', true)
+        Mutations.mutateNoCorpNum(state, true)
         return
       }
     }
   }
 
   // name check
-  if (getters.getDoNameCheck) {
-    commit('mutateAnalyzeDesignationPending', true)
-    commit('mutateAnalyzeStructurePending', true)
-    commit('mutateAnalyzeConflictsPending', true)
-    commit('mutateDisplayedComponent', 'NameCheck')
+  if (Getters.getDoNameCheck(state)) {
+    Mutations.mutateAnalyzeDesignationPending(state, true)
+    Mutations.mutateAnalyzeStructurePending(state, true)
+    Mutations.mutateAnalyzeConflictsPending(state, true)
+    Mutations.mutateDisplayedComponent(state, 'NameCheck')
     // similar name check / conditional + restricted word check
-    startQuickSearch({ commit, getters }, { exact: true, similar: true, restricted: true })
+    startQuickSearch({ exact: true, similar: true, restricted: true })
     // we don't do a structure name check for xpro names
-    if (getters.isXproFlow) {
-      commit('mutateAnalyzeDesignationPending', false)
-      commit('mutateAnalyzeStructurePending', false)
+    if (Getters.isXproFlow(state)) {
+      Mutations.mutateAnalyzeDesignationPending(state, false)
+      Mutations.mutateAnalyzeStructurePending(state, false)
     } else {
       // designation check
-      getNameAnalysis(
-        { commit, getters },
-        { xpro: false, designationOnly: true })
+      getNameAnalysis({ xpro: false, designationOnly: true })
       // descriptive/distinctive check - if disabled in LD then ignore
       if (GetFeatureFlag('disable-analysis')) {
-        commit('mutateAnalyzeStructurePending', false)
+        Mutations.mutateAnalyzeStructurePending(state, false)
       } else {
-        getNameAnalysis(
-          { commit, getters },
-          { xpro: false, designationOnly: false })
+        getNameAnalysis({ xpro: false, designationOnly: false })
       }
       // special chars
       const specialChars = name.match(/[~`$%_{}|\\<>]/g)
-      if (specialChars) commit('mutateSpecialCharacters', specialChars)
-      else commit('mutateSpecialCharacters', [])
+      if (specialChars) Mutations.mutateSpecialCharacters(state, specialChars)
+      else Mutations.mutateSpecialCharacters(state, [])
       // extra designation rules that aren't in the backend for coops/cccs
-      const entity_type_cd = getters.getEntityTypeCd
+      const entity_type_cd = Getters.getEntityTypeCd(state)
       if ([EntityTypes.CP, EntityTypes.XCP, EntityTypes.CC].includes(entity_type_cd)) {
         let entityPhraseChoices = []
         const basePhrases = Designations[entity_type_cd].words
-        // these are the inner phrases for the CCC and CP types.  Filtering out CR designations from CPs has no effect
-        // and CCC designations are a mix of CR-type ending designations and CCC specific inner phrases so filter out
-        // the CR designations for the purposes of this getter
+        // These are the inner phrases for the CCC and CP types. Filtering out CR designations from CPs
+        // has no effect and CCC designations are a mix of CR-type ending designations and CCC specific
+        // inner phrases so filter out // the CR designations for the purposes of this getter.
         entityPhraseChoices = basePhrases.filter(phrase => !Designations[EntityTypes.CR].words.includes(phrase))
         if (entityPhraseChoices.some(phrase => name.startsWith(phrase))) {
           const phrase = name.split(' ')[0].replace('COMMUNITY', 'COMMUNITY CONTRIBUTION COMPANY')
-          commit('mutateDesignationsCheckUse', [phrase])
+          Mutations.mutateDesignationsCheckUse(state, [phrase])
         } else if (entityPhraseChoices.every(phrase => {
           phrase = phrase.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&')
           return (name.search(new RegExp('(\\s)' + phrase + '(\\s|$)')) === -1)
         })) {
-          commit('mutateMissingDesignation', true)
+          Mutations.mutateMissingDesignation(state, true)
         }
       }
     }
   } else {
     // skip name check
-    commit('mutateAnalyzeDesignationPending', false)
-    commit('mutateAnalyzeStructurePending', false)
-    commit('mutateAnalyzeConflictsPending', false)
-    setActiveComponent({ commit }, 'NamesCapture')
+    Mutations.mutateAnalyzeDesignationPending(state, false)
+    Mutations.mutateAnalyzeStructurePending(state, false)
+    Mutations.mutateAnalyzeConflictsPending(state, false)
+    setActiveComponent('NamesCapture')
   }
 }
 
-export const startQuickSearch = async ({ commit, getters }, checks: QuickSearchParamsI) => {
-  commit('mutateAnalyzeConflictsPending', true)
-  if (getters.getFullName) {
-    const name = getters.getFullName
+export const startQuickSearch = async (checks: QuickSearchParamsI) => {
+  Mutations.mutateAnalyzeConflictsPending(state, true)
+  if (Getters.getFullName(state)) {
+    const name = Getters.getFullName(state)
     // eslint-disable-next-line no-useless-escape
     let exactMatchName = name.replace(' \/', '\/')
       .replace(/(^|\s+)(\$+(\s|$)+)+/g, '$1DOLLAR$3')
@@ -1219,56 +1264,56 @@ export const startQuickSearch = async ({ commit, getters }, checks: QuickSearchP
     const cleanedName = {
       'exactMatch': exactMatchName,
       'synonymMatch': synonymsName,
-      'restrictedMatch': getters.getName
+      'restrictedMatch': Getters.getName(state)
     }
-    const resp = await getQuickSearch({ commit, getters }, cleanedName, checks)
+    const resp = await getQuickSearch(cleanedName, checks)
     // make sure a new search on a different name has not started
-    if (getters.getFullName === name) {
-      if (checks.exact) commit('mutateConflictsExact', resp.exactNames)
-      if (checks.similar) commit('mutateConflictsSimilar', resp.synonymNames)
+    if (Getters.getFullName(state) === name) {
+      if (checks.exact) Mutations.mutateConflictsExact(state, resp.exactNames as unknown as string[])
+      if (checks.similar) Mutations.mutateConflictsSimilar(state, resp.synonymNames as unknown as string[])
       if (checks.restricted) {
-        commit('mutateConflictsRestricted', resp.restrictedWords)
-        commit('mutateConflictsConditional', resp.conditionalWords)
-        commit('mutateConflictsConditionalInstructions', resp.conditionalInstructions)
+        Mutations.mutateConflictsRestricted(state, resp.restrictedWords)
+        Mutations.mutateConflictsConditional(state, resp.conditionalWords)
+        Mutations.mutateConflictsConditionalInstructions(state, resp.conditionalInstructions)
       }
 
-      commit('mutateAnalyzeConflictsPending', false)
+      Mutations.mutateAnalyzeConflictsPending(state, false)
     }
   }
 }
 
-export const setRefundParams = ({ commit }, refundParams: RefundParamsIF): void => {
-  commit('mutateRefundParams', refundParams)
+export const setRefundParams = (refundParams: RefundParamsIF): void => {
+  Mutations.mutateRefundParams(state, refundParams)
 }
 
-export const setIncorporateNowErrorStatus = ({ commit }, errorIncorporateNow: boolean): void => {
-  commit('mutateIncorporateNowErrorStatus', errorIncorporateNow)
+export const setIncorporateNowErrorStatus = (errorIncorporateNow: boolean): void => {
+  Mutations.mutateIncorporateNowErrorStatus(state, errorIncorporateNow)
 }
 
-export const setAmalgamateNowErrorStatus = ({ commit }, errorAmalgamateNow: boolean): void => {
-  commit('mutateAmalgamateNowErrorStatus', errorAmalgamateNow)
+export const setAmalgamateNowErrorStatus = (errorAmalgamateNow: boolean): void => {
+  Mutations.mutateAmalgamateNowErrorStatus(state, errorAmalgamateNow)
 }
 
-export const setContinuationInErrorStatus = ({ commit }, errorContinuationIn: boolean): void => {
-  commit('mutateContinuationInErrorStatus', errorContinuationIn)
+export const setContinuationInErrorStatus = (errorContinuationIn: boolean): void => {
+  Mutations.mutateContinuationInErrorStatus(state, errorContinuationIn)
 }
 
-export const setSearchBusiness = ({ commit }, val: BusinessSearchIF): void => {
-  commit('mutateSearchBusiness', val)
+export const setSearchBusiness = (val: BusinessSearchIF): void => {
+  Mutations.mutateSearchBusiness(state, val)
 }
 
-export const setSearchCompanyType = ({ commit }, val: CompanyTypes): void => {
-  commit('mutateSearchCompanyType', val)
+export const setSearchCompanyType = (val: CompanyTypes): void => {
+  Mutations.mutateSearchCompanyType(state, val)
 }
 
-export const setSearchJurisdiction = ({ commit }, val: any): void => {
-  commit('mutateSearchJurisdiction', val)
+export const setSearchJurisdiction = (val: any): void => {
+  Mutations.mutateSearchJurisdiction(state, val)
 }
 
-export const setSearchRequest = ({ commit }, val: RequestActionsI): void => {
-  commit('mutateSearchRequest', val)
+export const setSearchRequest = (val: RequestActionsI): void => {
+  Mutations.mutateSearchRequest(state, val)
 }
 
-export const setBusinessAccountid = ({ commit }, val: any): void => {
-  commit('mutateBusinessAccountId', val)
+export const setBusinessAccountid = (val: any): void => {
+  Mutations.mutateBusinessAccountId(state, val)
 }

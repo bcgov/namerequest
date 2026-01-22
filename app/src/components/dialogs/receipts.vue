@@ -38,10 +38,9 @@
 
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
-
+import { Action, Getter } from 'pinia-class'
+import { useStore, usePaymentStore } from '@/store'
 import PaymentSummary from '@/components/payment/payment-summary.vue'
-import { PAYMENT_HISTORY_MODAL_IS_VISIBLE } from '@/modules/payment/store/types'
 import { PaymentMixin, PaymentSessionMixin } from '@/mixins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
@@ -51,10 +50,10 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
   }
 })
 export default class ReceiptsDialog extends Mixins(PaymentMixin, PaymentSessionMixin) {
-  // Global getters
-  @Getter getNrId!: number
+  @Getter(useStore) getNrId!: number
+  @Getter(usePaymentStore) paymentHistoryModalIsVisible!: boolean
 
-  @Action togglePaymentHistoryModal!: ActionBindingIF
+  @Action(usePaymentStore) togglePaymentHistoryModal!: ActionBindingIF
 
   /** Used to display a fetch error, if any. */
   protected fetchError = ''
@@ -64,7 +63,7 @@ export default class ReceiptsDialog extends Mixins(PaymentMixin, PaymentSessionM
 
   /** Whether this modal should be shown (per store property). */
   private get showModal (): boolean {
-    return this.$store.getters[PAYMENT_HISTORY_MODAL_IS_VISIBLE]
+    return this.paymentHistoryModalIsVisible
   }
 
   /** Clears store property to hide this modal. */

@@ -333,7 +333,8 @@
 
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { usePaymentStore, useStore } from '@/store'
 import MainContainer from '@/components/new-request/main-container.vue'
 import { NrAffiliationMixin, CommonMixin, DateMixin, PaymentMixin } from '@/mixins'
 import NamesGrayBox from './names-gray-box.vue'
@@ -363,24 +364,23 @@ export default class ExistingRequestDisplay extends Mixins(
   DateMixin,
   PaymentMixin
 ) {
-  // Global getters
-  @Getter getDisplayedComponent!: string
-  @Getter isAuthenticated!: boolean
-  @Getter getNrId!: number
-  @Getter getNrState!: NrState
-  @Getter isMobile!: boolean
-  // Global actions
-  @Action editExistingRequest!: ActionBindingIF
-  @Action setDisplayedComponent!: ActionBindingIF
-  @Action setConditionsModalVisible!: ActionBindingIF
-  @Action setNrResponse!: ActionBindingIF
-  @Action toggleUpgradeModal!: ActionBindingIF
-  @Action toggleResubmitModal!: ActionBindingIF
-  @Action toggleRetryModal!: ActionBindingIF
-  @Action toggleRenewModal!: ActionBindingIF
-  @Action togglePaymentHistoryModal!: ActionBindingIF
-  @Action toggleRefundModal!: ActionBindingIF
-  @Action toggleCancelModal!: ActionBindingIF
+  @Getter(useStore) getDisplayedComponent!: string
+  @Getter(useStore) isAuthenticated!: boolean
+  @Getter(useStore) getNrId!: number
+  @Getter(useStore) getNrState!: NrState
+  @Getter(useStore) isMobile!: boolean
+
+  @Action(useStore) editExistingRequest!: ActionBindingIF
+  @Action(useStore) setDisplayedComponent!: ActionBindingIF
+  @Action(useStore) setConditionsModalVisible!: ActionBindingIF
+  @Action(useStore) setNrResponse!: ActionBindingIF
+  @Action(usePaymentStore) toggleUpgradeModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleResubmitModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleRetryModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleRenewModal!: ActionBindingIF
+  @Action(usePaymentStore) togglePaymentHistoryModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleRefundModal!: ActionBindingIF
+  @Action(usePaymentStore) toggleCancelModal!: ActionBindingIF
 
   // enums used in the template
   NameState = NameState

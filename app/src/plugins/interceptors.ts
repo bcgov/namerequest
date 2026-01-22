@@ -5,7 +5,7 @@ import pkg from '../../package.json'
 
 export function AddAxiosInterceptors (axiosInstance: AxiosInstance): AxiosInstance {
   axiosInstance.interceptors.request.use(config => {
-    const authGatewayApiKey = process.env.VUE_APP_AUTH_API_KEY
+    const authGatewayApiKey = import.meta.env.VUE_APP_AUTH_API_KEY
     if (authGatewayApiKey && config.url.includes(ConfigHelper.getAuthAPIUrl())) {
       config.headers['x-apikey'] = authGatewayApiKey
     }

@@ -1,87 +1,95 @@
 import { Component, Mixins } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useErrorStore, usePaymentStore, useStore } from '@/store'
 import { AxiosRequestConfig } from 'axios'
 import { ACCEPTED, CREATED, NO_CONTENT, OK, PAYMENT_REQUIRED } from 'http-status-codes'
-
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
-import { PaymentStatus, StaffPaymentOptions, NrState, PaymentMethod, SbcPaymentStatus } from '@/enums'
+import { PaymentStatus, StaffPaymentOptions, NrState, PaymentMethod, SbcPaymentStatus, PaymentAction } from '@/enums'
 import { ActionMixin } from '@/mixins'
-import * as paymentTypes from '@/modules/payment/store/types'
-import { CreatePaymentParams, FetchFeesParams, NameRequestPaymentResponse } from '@/modules/payment/models'
-import errorModule from '@/modules/error'
-import { ErrorI } from '@/modules/error/store/actions'
-import { StaffPaymentIF, RefundParamsIF, NameRequestI } from '@/interfaces'
-import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { StaffPaymentIF, RefundParamsIF, NameRequestI, ErrorI, CreatePaymentParams, FetchFeesParams,
+  NameRequestPaymentResponse } from '@/interfaces'
 import NamexServices from '@/services/namex-services'
 import { PaymentRequiredError } from '@/errors'
 import { Navigate } from '@/plugins'
-import { appBaseURL } from '../router/router'
+
+const namexApiUrl = sessionStorage.getItem('NAMEX_API_URL')
 
 @Component({})
 export class PaymentMixin extends Mixins(ActionMixin) {
-  // Global actions
-  @Action setPayment!: ActionBindingIF
-  @Action setPayments!: ActionBindingIF
-  @Action setPaymentFees!: ActionBindingIF
-  @Action setPaymentReceipt!: ActionBindingIF
-  @Action setPaymentRequest!: ActionBindingIF
-  @Action setSbcPayment!: ActionBindingIF
-  @Action setRefundParams!: ActionBindingIF
+  @Action(usePaymentStore) setPayment!: (payment: any) => void
+  @Action(usePaymentStore) setPayments!: (payments: any[]) => void
+  @Action(usePaymentStore) setPaymentFees!: (fees: any) => void
+  @Action(usePaymentStore) setPaymentReceipt!: (receipt: any) => void
+  @Action(usePaymentStore) setPaymentRequest!: (req: any) => void
+  @Action(usePaymentStore) setSbcPayment!: (payment: any) => void
+  @Action(useStore) setFolioNumber!: (folioNumber: string) => void
+  @Action(useStore) setRefundParams!: (refundParams: RefundParamsIF) => void
+  @Action(useErrorStore) setAppError!: (err: ErrorI) => void
 
-  // Global getter
-  @Getter getCurrentJsDate!: Date
-  @Getter getStaffPayment!: StaffPaymentIF
-  @Getter getFolioNumber!: string
-  @Getter getNr!: Partial<NameRequestI>
-  @Getter getRefundParams!: RefundParamsIF
+  @Getter(useStore) getCurrentJsDate!: Date
+  @Getter(useStore) getStaffPayment!: StaffPaymentIF
+  @Getter(useStore) getFolioNumber!: string
+  @Getter(useStore) getNr!: Partial<NameRequestI>
+  @Getter(useStore) getRefundParams!: RefundParamsIF
+  @Getter(usePaymentStore) getSbcPayment!: any
+  @Getter(usePaymentStore) getSbcPaymentStatus!: any
+  @Getter(usePaymentStore) getPayment!: any
+  @Getter(usePaymentStore) getPaymentId!: number
+  @Getter(usePaymentStore) getPaymentToken!: any
+  @Getter(usePaymentStore) getPaymentStatus!: PaymentStatus
+  @Getter(usePaymentStore) getPaymentDate!: any
+  @Getter(usePaymentStore) getPaymentRequest!: any
+  @Getter(usePaymentStore) getPaymentReceipt!: any
+  @Getter(usePaymentStore) getPaymentFees!: any
+  @Getter(usePaymentStore) getPayments!: any
 
   get sbcPayment () {
-    return this.$store.getters[paymentTypes.GET_SBC_PAYMENT]
+    return this.getSbcPayment
   }
 
   get sbcPaymentStatus () {
-    return this.$store.getters[paymentTypes.GET_SBC_PAYMENT_STATUS]
+    return this.getSbcPaymentStatus
   }
 
   get payment () {
-    return this.$store.getters[paymentTypes.GET_PAYMENT]
+    return this.getPayment
   }
 
   get paymentId () {
-    return this.$store.getters[paymentTypes.GET_PAYMENT_ID]
+    return this.getPaymentId
   }
 
   get paymentToken () {
-    return this.$store.getters[paymentTypes.GET_PAYMENT_TOKEN]
+    return this.getPaymentToken
   }
 
   get paymentStatus (): PaymentStatus {
-    return this.$store.getters[paymentTypes.GET_PAYMENT_STATUS]
+    return this.getPaymentStatus
   }
 
   get paymentDate () {
-    return this.$store.getters[paymentTypes.GET_PAYMENT_DATE]
+    return this.getPaymentDate
   }
 
   get paymentRequest () {
-    return this.$store.getters[paymentTypes.GET_PAYMENT_REQUEST]
+    return this.getPaymentRequest
   }
 
   get paymentReceipt () {
-    return this.$store.getters[paymentTypes.GET_PAYMENT_RECEIPT]
+    return this.getPaymentReceipt
   }
 
   get paymentFees (): any[] {
-    const fees = this.$store.getters[paymentTypes.GET_PAYMENT_FEES]
+    const fees = this.getPaymentFees
     return [fees]
   }
 
   get payments () {
-    return this.$store.getters[paymentTypes.GET_PAYMENTS]
+    return this.getPayments
   }
 
   get paymentSummaries () {
-    const payments = this.$store.getters[paymentTypes.GET_PAYMENTS]
+    const payments = this.getPayments
     const summaries = payments?.map(payment => {
       const { id, sbcPayment } = payment
       let receipt
@@ -160,12 +168,12 @@ export class PaymentMixin extends Mixins(ActionMixin) {
         headers: this.buildHeaders(false)
       }
 
-      const response = await this.getPaymentFees(data)
-      await this.setPaymentFees(response)
+      const response = await this._getPaymentFees(data)
+      this.setPaymentFees(response)
       return true
     } catch (err) {
-      // don't console.error - getPaymentFees() already did that
-      await errorModule.setAppError(
+      // don't console.error - _getPaymentFees() already did that
+      this.setAppError(
         { id: 'fetch-fees-error', error: 'Could not fetch fees' } as ErrorI
       )
       return false
@@ -396,9 +404,9 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { payment, sbcPayment = { receipts: [] } } = paymentResponse
 
-      await this.setPayment(payment)
-      // await paymentModule.setPaymentReceipt(sbcPayment.receipts[0]) // FUTURE: verify that new code === old code
-      await this.setPaymentRequest(data)
+      this.setPayment(payment)
+      // this.setPaymentReceipt(sbcPayment.receipts[0]) // FUTURE: verify that new code === old code
+      this.setPaymentRequest(data)
 
       // delete previous incomplete payments after the new payment record created
       const allPayments = await this.getNameRequestPayments(nrId, {})
@@ -425,13 +433,13 @@ export class PaymentMixin extends Mixins(ActionMixin) {
         if (err.errorResponse.response.data.businessInfo?.businessIdentifier) {
           sessionStorage.setItem('BCREG-nrNum', err.errorResponse.response.data.businessInfo.businessIdentifier)
         }
-        await errorModule.setAppError(
+        this.setAppError(
           { id: 'payment-required-error', error: 'Payment Required' } as ErrorI
         )
         throw err
       }
       // don't console.error - createPaymentRequest() already did that
-      await errorModule.setAppError(
+      this.setAppError(
         { id: 'create-payment-error', error: 'Could not create payment' } as ErrorI
       )
       throw err
@@ -511,7 +519,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       link.click()
     } catch (err) {
       // don't console.error - generateReceiptRequest() already did that
-      await errorModule.setAppError(
+      this.setAppError(
         { id: 'download-receipt-pdf-error', error: 'Could not download receipt PDF' } as ErrorI
       )
     }
@@ -544,18 +552,20 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       // but this is called by many different pathways will need to fix in the future.
       const { payment, sbcPayment = { receipts: [], status_code: '' } } = paymentResponse
 
-      await this.setPayment(payment)
-      await this.setSbcPayment(sbcPayment)
-      if (sbcPayment &&
+      this.setPayment(payment)
+      this.setSbcPayment(sbcPayment)
+      if (
+        sbcPayment &&
         sbcPayment.receipts instanceof Array &&
-        sbcPayment.receipts.length > 0) {
+        sbcPayment.receipts.length > 0
+      ) {
         const receipt = sbcPayment.receipts[0]
-        await this.setPaymentReceipt(receipt)
+        this.setPaymentReceipt(receipt)
       }
       return true
     } catch (err) {
       // don't console.error - getNameRequestPayment() already did that
-      await errorModule.setAppError(
+      this.setAppError(
         { id: 'fetch-nr-payment-error', error: 'Could not fetch NR payment' }
       )
       return false
@@ -572,11 +582,22 @@ export class PaymentMixin extends Mixins(ActionMixin) {
       const paymentsResponse = await this.getNameRequestPayments(nrId, {})
       if (!paymentsResponse) throw new Error('Got error from getNameRequestPayments()')
 
-      await this.setPayments(paymentsResponse)
+      this.setPayments(paymentsResponse)
+
+      // find the first payment in the returned array that has action = CREATE and has sbcPayment.folioNumber set
+      const paymentWithFolio = paymentsResponse?.find(
+        payment =>
+          payment?.action === PaymentAction.CREATE &&
+          payment?.sbcPayment?.folioNumber
+      )
+      if (paymentWithFolio?.sbcPayment?.folioNumber) {
+        this.setFolioNumber(paymentWithFolio.sbcPayment.folioNumber)
+      }
+
       return true
     } catch (err) {
       // don't console.error - getNameRequestPayments() already did that
-      await errorModule.setAppError(
+      this.setAppError(
         { id: 'fetch-nr-payments-error', error: 'Could not fetch NR payments' }
       )
       return false
@@ -585,7 +606,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
 
   // FUTURE: move to NamexServices
   async createPaymentRequest (nrId, action, data: any): Promise<NameRequestPaymentResponse> {
-    const url = `${appBaseURL}/payments/${nrId}/${action}`
+    const url = `${namexApiUrl}/payments/${nrId}/${action}`
     try {
       const response = await NamexServices.axios.post(url, data)
       if (response?.data && [OK, CREATED, ACCEPTED, NO_CONTENT].includes(response?.status)) {
@@ -606,7 +627,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
 
   // FUTURE: move to NamexServices
   async getNameRequestPayment (nrId, paymentId, data: any): Promise<NameRequestPaymentResponse> {
-    const url = `${appBaseURL}/payments/${nrId}/payment/${paymentId}`
+    const url = `${namexApiUrl}/payments/${nrId}/payment/${paymentId}`
     try {
       const response = await NamexServices.axios.get(url, data)
       // FUTURE: check response status and data - make sure error handling is not changed
@@ -620,7 +641,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
 
   // FUTURE: move to NamexServices
   async getNameRequestPayments (nrId, data: any): Promise<NameRequestPaymentResponse[]> {
-    const url = `${appBaseURL}/payments/${nrId}`
+    const url = `${namexApiUrl}/payments/${nrId}`
     try {
       const response = await NamexServices.axios.get(url, data)
       // FUTURE: check response status and data - make sure error handling is not changed
@@ -633,15 +654,15 @@ export class PaymentMixin extends Mixins(ActionMixin) {
   }
 
   // FUTURE: move to NamexServices
-  async getPaymentFees (data: any): Promise<any> {
-    const url = `${appBaseURL}/payments/fees`
+  async _getPaymentFees (data: any): Promise<any> {
+    const url = `${namexApiUrl}/payments/fees`
     try {
       // FUTURE: check response status and data - make sure error handling is not changed
       const response = await NamexServices.axios.post(url, data)
       return response.data
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not get payment fees')
-      console.error('getPaymentFees() =', msg) // eslint-disable-line no-console
+      console.error('_getPaymentFees() =', msg) // eslint-disable-line no-console
       throw new Error(msg)
     }
   }
@@ -649,7 +670,7 @@ export class PaymentMixin extends Mixins(ActionMixin) {
   // FUTURE: move to NamexServices
   async generateReceiptRequest (paymentId): Promise<any> {
     const params = { responseType: 'arraybuffer' } as AxiosRequestConfig
-    const url = `${appBaseURL}/payments/${paymentId}/receipt`
+    const url = `${namexApiUrl}/payments/${paymentId}/receipt`
     try {
       const response = await NamexServices.axios.post(url, {}, params)
       // FUTURE: check response status and data - make sure error handling is not changed

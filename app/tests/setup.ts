@@ -1,9 +1,13 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify'
-import Vuex from 'vuex'
 
 Vue.use(Vuetify)
-Vue.use(Vuex)
 
 Vue.config.devtools = false
 Vue.config.productionTip = false
+
+// mock global Vuex store and attach to Vue instance
+Vue.prototype.$store = {
+  getters: {},
+  state: {}
+}

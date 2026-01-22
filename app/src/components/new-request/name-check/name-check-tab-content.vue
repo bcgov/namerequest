@@ -47,11 +47,12 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Getter } from 'pinia-class'
+import { useStore } from '@/store'
 
 @Component({})
 export default class NameCheckTabContent extends Vue {
-  @Getter isXproFlow!: boolean
+  @Getter(useStore) isXproFlow!: boolean
 
   @Prop({ default: true }) readonly loading!: boolean
   @Prop() readonly subtitle!: string

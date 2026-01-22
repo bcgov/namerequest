@@ -541,7 +541,8 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, Mixins } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import { Location, NrState } from '@/enums'
@@ -562,26 +563,24 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
   readonly Location = Location
   readonly UsaStateCodes = UsaStateCodes
 
-  // Global getters
-  @Getter getActingOnOwnBehalf!: boolean
-  @Getter getAddressSuggestions!: any[]
-  @Getter getDisplayedComponent!: string
-  @Getter getEditMode!: boolean
-  @Getter getLocation!: Location
-  @Getter getNr!: Partial<NameRequestI>
-  @Getter getNrData!: any
-  @Getter getNrState!: string
-  @Getter getSubmissionTabNumber!: number
-  @Getter getKeycloakRoles!: string[]
-  @Getter isMobile!: boolean
-  @Getter isRoleStaff!: boolean
+  @Getter(useStore) getActingOnOwnBehalf!: boolean
+  @Getter(useStore) getAddressSuggestions!: any[]
+  @Getter(useStore) getDisplayedComponent!: string
+  @Getter(useStore) getEditMode!: boolean
+  @Getter(useStore) getLocation!: Location
+  @Getter(useStore) getNr!: Partial<NameRequestI>
+  @Getter(useStore) getNrData!: any
+  @Getter(useStore) getNrState!: NrState
+  @Getter(useStore) getSubmissionTabNumber!: number
+  @Getter(useStore) getKeycloakRoles!: string[]
+  @Getter(useStore) isMobile!: boolean
+  @Getter(useStore) isRoleStaff!: boolean
 
-  // Global actions
-  @Action setActingOnOwnBehalf!: ActionBindingIF
-  @Action setCorpNum!: ActionBindingIF
-  @Action setNRData!: ActionBindingIF
-  @Action setSubmissionTabNumber!: ActionBindingIF
-  @Action setFolioNumber!: ActionBindingIF
+  @Action(useStore) setActingOnOwnBehalf!: ActionBindingIF
+  @Action(useStore) setCorpNum!: ActionBindingIF
+  @Action(useStore) setNRData!: ActionBindingIF
+  @Action(useStore) setSubmissionTabNumber!: ActionBindingIF
+  @Action(useStore) setFolioNumber!: ActionBindingIF
 
   highlightedSuggestion: string = null
   isValid = false
@@ -698,7 +697,7 @@ export default class ApplicantInfo1 extends Mixins(ActionMixin) {
     return (!this.getEditMode || this.getNrState === NrState.DRAFT)
   }
 
-  get state () {
+  get state (): NrState {
     if (this.getNr && this.getNrState) {
       return this.getNrState
     }

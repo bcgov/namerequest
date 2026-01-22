@@ -24,7 +24,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import MainContainer from '@/components/new-request/main-container.vue'
 import { NrState } from '@/enums'
 import { NameRequestI } from '@/interfaces'
@@ -34,11 +35,9 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
   components: { MainContainer }
 })
 export default class InvalidActionMessage extends Vue {
-  // Global getter
-  @Getter getNr!: Partial<NameRequestI>
+  @Getter(useStore) getNr!: Partial<NameRequestI>
 
-  // Global action
-  @Action setActiveComponent!: ActionBindingIF
+  @Action(useStore) setActiveComponent!: ActionBindingIF
 
   get stateCd (): string {
     return (this.getNr?.stateCd || '')

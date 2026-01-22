@@ -86,9 +86,9 @@
 </template>
 
 <script lang="ts">
-// external
 import { Component, Vue, Prop, Emit } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { DialogOptionsI } from '@/interfaces'
 
 @Component({})
@@ -97,8 +97,7 @@ export default class NameCheckIssuesDialog extends Vue {
   @Prop() readonly display: boolean
   @Prop() readonly options: DialogOptionsI
 
-  // Global getter
-  @Getter isMobile!: boolean
+  @Getter(useStore) isMobile!: boolean
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   @Emit() proceed (val: boolean) { }

@@ -53,8 +53,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
-
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import MainContainer from '../main-container.vue'
 import EntityCannotBeAutoAnalyzed from './entity-cannot-be-auto-analyzed.vue'
 import NamesCapture from '../../common/names-capture.vue'
@@ -81,13 +81,11 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
   }
 })
 export default class SubmissionTabs extends Vue {
-  // Global getters
-  @Getter getActingOnOwnBehalf!: boolean
-  @Getter getEditMode!: boolean
-  @Getter getSubmissionTabNumber!: number
+  @Getter(useStore) getActingOnOwnBehalf!: boolean
+  @Getter(useStore) getEditMode!: boolean
+  @Getter(useStore) getSubmissionTabNumber!: number
 
-  // Global actions
-  @Action setSubmissionTabNumber!: ActionBindingIF
+  @Action(useStore) setSubmissionTabNumber!: ActionBindingIF
 
   private mounted (): void {
     let link = document.createElement('link')

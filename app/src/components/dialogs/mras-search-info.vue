@@ -35,6 +35,7 @@
         <div class="mt-1 mb-1 text-center">
           <v-btn
             class="search-btn"
+            :disabled="isDisabled"
             @click="isNameSearch ? handleSubmit() : clearAndClose()"
           >
             {{ name ? 'Search' : 'Close' }}
@@ -47,8 +48,10 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
+import { MRAS_MIN_LENGTH, MRAS_MAX_LENGTH } from '@/components/new-request/constants'
 import NameInput from '@/components/new-request/name-input.vue'
 import { BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
 
@@ -56,20 +59,19 @@ import { BAD_REQUEST, NOT_FOUND, SERVICE_UNAVAILABLE } from 'http-status-codes'
   components: { NameInput }
 })
 export default class MrasSearchInfoDialog extends Vue {
-  // Global getters
-  @Getter getCorpSearch!: string
-  @Getter getErrors!: string[]
-  @Getter getHasNoCorpNum!: boolean
-  @Getter getJurisdictionText!: string
-  @Getter getMrasSearchResultCode!: number
-  @Getter getName!: string
-  @Getter getMrasSearchInfoModalVisible!: boolean
+  @Getter(useStore) getCorpSearch!: string
+  @Getter(useStore) getErrors!: string[]
+  @Getter(useStore) getHasNoCorpNum!: boolean
+  @Getter(useStore) getJurisdictionText!: string
+  @Getter(useStore) getMrasSearchResultCode!: number
+  @Getter(useStore) getName!: string
+  @Getter(useStore) getMrasSearchInfoModalVisible!: boolean
+  @Getter(useStore) isXproFlow!: boolean
 
-  // Global actions
-  @Action setMrasSearchInfoModalVisible!: ActionBindingIF
-  @Action setName!: ActionBindingIF
-  @Action setNoCorpNum!: ActionBindingIF
-  @Action startAnalyzeName!: ActionBindingIF
+  @Action(useStore) setMrasSearchInfoModalVisible!: ActionBindingIF
+  @Action(useStore) setName!: ActionBindingIF
+  @Action(useStore) setNoCorpNum!: ActionBindingIF
+  @Action(useStore) startAnalyzeName!: ActionBindingIF
 
   private resultConfig: any = {
     [BAD_REQUEST]: {
@@ -124,6 +126,11 @@ export default class MrasSearchInfoDialog extends Vue {
 
   get errors (): string[] {
     return this.getErrors
+  }
+
+  get isDisabled (): boolean {
+    return !!this.name && this.isXproFlow &&
+      (!this.name || this.name.length < MRAS_MIN_LENGTH || this.name.length > MRAS_MAX_LENGTH)
   }
 
   async handleSubmit (): Promise<void> {

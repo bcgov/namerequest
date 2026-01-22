@@ -209,7 +209,8 @@
 
 <script lang="ts">
 import { Component, Watch } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { ConversionTypesI, EntityI, SelectOptionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { EntityTypes, Location } from '@/enums'
@@ -221,27 +222,24 @@ export default class PickEntityOrConversionDialog extends CommonMixin {
   // enum for template
   readonly ConversionTypes = ConversionTypes
 
-  // Global getters
-  @Getter getConversionTypeOptions!: ConversionTypesI[]
-  @Getter getEntityBlurbs!: Array<EntityI | ConversionTypesI>
-  @Getter getEntityTypeOptions!: Array<EntityI>
-  @Getter getEntityTypesBC!: Array<EntityI>
-  @Getter getEntityTypesXPRO!: Array<EntityI>
-  @Getter getLocation!: Location
-  @Getter getLocationText!: string
-  @Getter getPickEntityModalVisible!: boolean
-  @Getter isAmalgamation!: boolean
-  @Getter isConversion!: boolean
-  @Getter isMobile!: boolean
+  @Getter(useStore) getConversionTypeOptions!: ConversionTypesI[]
+  @Getter(useStore) getEntityBlurbs!: Array<EntityI | ConversionTypesI>
+  @Getter(useStore) getEntityTypeOptions!: Array<EntityI>
+  @Getter(useStore) getEntityTypesBC!: Array<EntityI>
+  @Getter(useStore) getEntityTypesXPRO!: Array<EntityI>
+  @Getter(useStore) getLocation!: Location
+  @Getter(useStore) getLocationText!: string
+  @Getter(useStore) getPickEntityModalVisible!: boolean
+  @Getter(useStore) isAmalgamation!: boolean
+  @Getter(useStore) isConversion!: boolean
+  @Getter(useStore) isMobile!: boolean
 
-  // Global actions
-  @Action setConversionType!: ActionBindingIF
-  @Action setConversionTypeAddToSelect!: ActionBindingIF
-  @Action setEntityTypeCd!: ActionBindingIF
-  @Action setEntityTypeAddToSelect!: ActionBindingIF
-  @Action setPickEntityModalVisible!: ActionBindingIF
+  @Action(useStore) setConversionType!: ActionBindingIF
+  @Action(useStore) setConversionTypeAddToSelect!: ActionBindingIF
+  @Action(useStore) setEntityTypeCd!: ActionBindingIF
+  @Action(useStore) setEntityTypeAddToSelect!: ActionBindingIF
+  @Action(useStore) setPickEntityModalVisible!: ActionBindingIF
 
-  // Local variable
   showSocietiesInfo = false
 
   closeIconClicked () {

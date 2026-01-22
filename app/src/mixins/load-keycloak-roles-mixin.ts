@@ -1,11 +1,12 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { getKeycloakRoles } from '@/plugins'
-import { Action } from 'vuex-class'
+import { Action } from 'pinia-class'
+import { useStore } from '@/store'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export class LoadKeycloakRolesMixin extends Vue {
-  @Action setKeycloakRoles!: ActionBindingIF
+  @Action(useStore) setKeycloakRoles!: ActionBindingIF
 
   /** Gets and stores Keycloak roles. */
   loadKeycloakRoles (): void {

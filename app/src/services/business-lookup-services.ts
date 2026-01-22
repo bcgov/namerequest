@@ -15,7 +15,7 @@ export default class BusinessLookupServices {
 
   /** The Business API Key */
   static get registriesSearchApiKey (): string {
-    return process.env.VUE_APP_REGISTRIES_SEARCH_API_KEY
+    return import.meta.env.VUE_APP_REGISTRIES_SEARCH_API_KEY
   }
 
   /** The Account ID, from session storage. */

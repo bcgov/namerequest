@@ -42,12 +42,10 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
-
-// Components
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { AppTitleCols } from '@/components/common'
 import LowerContainer from '@/components/lower-info-area/lower-container.vue'
-
 import ExistingRequestDisplay from '@/components/existing-request/existing-request-display.vue'
 import ExistingRequestEdit from '@/components/existing-request/existing-request-edit.vue'
 import NameCheck from '@/components/new-request/name-check/name-check.vue'
@@ -56,7 +54,6 @@ import Stats from '@/components/new-request/stats.vue'
 import SubmissionTabs from '@/components/new-request/submit-request/submission-tabs.vue'
 import Success from '@/components/common/success.vue'
 import Tabs from '@/components/tabs.vue'
-
 import NamexServices from '@/services/namex-services'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
@@ -75,13 +72,11 @@ import { ActionBindingIF } from '@/interfaces/store-interfaces'
   }
 })
 export default class Landing extends Vue {
-  // Global getter
-  @Getter getDisplayedComponent!: string
+  @Getter(useStore) getDisplayedComponent!: string
 
-  // Global actions
-  @Action loadExistingNameRequest!: ActionBindingIF
-  @Action setDisplayedComponent!: ActionBindingIF
-  @Action setBusinessAccountid!: ActionBindingIF
+  @Action(useStore) loadExistingNameRequest!: ActionBindingIF
+  @Action(useStore) setDisplayedComponent!: ActionBindingIF
+  @Action(useStore) setBusinessAccountid!: ActionBindingIF
 
   /** ID parameter passed in on "/nr" route. */
   @Prop(String) readonly id!: string
@@ -116,7 +111,7 @@ export default class Landing extends Vue {
 }
 
 #upper-row {
-  background: url('~@/assets/images/analyze-name-bg.jpg') no-repeat bottom;
+  background: url('@/assets/images/analyze-name-bg.jpg') no-repeat bottom;
   background-size: cover;
   color: white;
   min-height: 700px;

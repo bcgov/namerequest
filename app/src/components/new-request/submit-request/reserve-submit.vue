@@ -22,7 +22,8 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { ConditionalReqI, DraftReqI, IssueI, NameRequestI, ReservedReqI } from '@/interfaces'
 import NamexServices from '@/services/namex-services'
@@ -30,25 +31,23 @@ import { Location, NrRequestActionCodes, NrType } from '@/enums'
 
 @Component({})
 export default class ReserveSubmit extends Vue {
-  // Global getters
-  @Getter getAssumedName!: string
-  @Getter getConditionalNameReservation!: ConditionalReqI
-  @Getter getCurrentIssue!: IssueI
-  @Getter getDraftNameReservation!: DraftReqI
-  @Getter getLocation!: Location
-  @Getter getReservedNameReservation!: ReservedReqI
-  @Getter getRequestActionCd!: NrRequestActionCodes
-  @Getter getShowActualInput!: boolean
-  @Getter isMobile!: boolean
+  @Getter(useStore) getAssumedName!: string
+  @Getter(useStore) getConditionalNameReservation!: ConditionalReqI
+  @Getter(useStore) getCurrentIssue!: IssueI
+  @Getter(useStore) getDraftNameReservation!: DraftReqI
+  @Getter(useStore) getLocation!: Location
+  @Getter(useStore) getReservedNameReservation!: ReservedReqI
+  @Getter(useStore) getRequestActionCd!: NrRequestActionCodes
+  @Getter(useStore) getShowActualInput!: boolean
+  @Getter(useStore) isMobile!: boolean
 
-  // Global actions
-  @Action cancelAnalyzeName!: ActionBindingIF
-  @Action userClickedStopAnalysis!: ActionBindingIF
-  @Action setAssumedNameOriginal!: ActionBindingIF
-  @Action setDisplayedComponent!: ActionBindingIF
-  @Action setNrResponse!: ActionBindingIF
-  @Action setSubmissionType!: ActionBindingIF
-  @Action setSubmissionTabComponent!: ActionBindingIF
+  @Action(useStore) cancelAnalyzeName!: ActionBindingIF
+  @Action(useStore) userClickedStopAnalysis!: ActionBindingIF
+  @Action(useStore) setAssumedNameOriginal!: ActionBindingIF
+  @Action(useStore) setDisplayedComponent!: ActionBindingIF
+  @Action(useStore) setNrResponse!: ActionBindingIF
+  @Action(useStore) setSubmissionType!: ActionBindingIF
+  @Action(useStore) setSubmissionTabComponent!: ActionBindingIF
 
   @Prop(String) readonly setup!: string
 

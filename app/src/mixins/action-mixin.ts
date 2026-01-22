@@ -1,9 +1,10 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import axios, { AxiosError } from 'axios'
 import querystring from 'qs'
 import { Debounce } from 'vue-debounce-decorator'
-import canadaPostAPIKey from '@/store/config'
+import canadaPostAPIKey from '@/config'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { ApplicantI } from '@/interfaces'
 
@@ -11,12 +12,10 @@ import { ApplicantI } from '@/interfaces'
 export class ActionMixin extends Vue {
   qs: any = querystring
 
-  // Global getter
-  @Getter getApplicant!: ApplicantI
+  @Getter(useStore) getApplicant!: ApplicantI
 
-  // Global action
-  @Action setApplicantDetails!: ActionBindingIF
-  @Action setAddressSuggestions!: ActionBindingIF
+  @Action(useStore) setApplicantDetails!: ActionBindingIF
+  @Action(useStore) setAddressSuggestions!: ActionBindingIF
 
   private isAxiosError (err: AxiosError | Error): boolean {
     return (err as AxiosError).isAxiosError !== undefined

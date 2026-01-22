@@ -23,9 +23,9 @@ export function getRegistryHomeBreadcrumb (): BreadcrumbIF {
 }
 
 export function getStaffDashboardBreadcrumb (): BreadcrumbIF {
-  const businessUrl = sessionStorage.getItem('BUSINESSES_URL')
+  const businessUrl = sessionStorage.getItem('AUTH_WEB_URL')
   return {
     text: 'Staff Dashboard',
-    href: `${businessUrl}staff/${getParams()}`
+    href: `${businessUrl}staff/dashboard/active${getParams()}`
   }
 }

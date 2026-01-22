@@ -354,8 +354,8 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
-
+import { Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import QuickSearchNames from '@/components/new-request/name-check/quick-search-names.vue'
 import { NameCheckItemIF } from '@/interfaces/name-check-interfaces'
 import { NameCheckErrorType, NameCheckItemType } from '@/enums'
@@ -366,8 +366,7 @@ import { NameCheckErrorType, NameCheckItemType } from '@/enums'
 export default class NameCheckConflicts extends Vue {
   @Prop() readonly items!: Array<NameCheckItemIF>
 
-  // Global getter
-  @Getter isMobile!: boolean
+  @Getter(useStore) isMobile!: boolean
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   @Emit() clearError (value: string) {}

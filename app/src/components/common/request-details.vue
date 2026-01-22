@@ -85,7 +85,8 @@
 <script lang="ts">
 import { ApplicantI, NameChoicesIF } from '@/interfaces'
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { Location } from '@/enums'
 
 @Component({})
@@ -99,9 +100,9 @@ export default class RequestDetails extends Vue {
   @Prop(Object)
   readonly nameChoices: NameChoicesIF
 
-  @Getter getNameChoices!: NameChoicesIF
-  @Getter getFolioNumber!: string
-  @Getter getEditMode!: boolean
+  @Getter(useStore) getNameChoices!: NameChoicesIF
+  @Getter(useStore) getFolioNumber!: string
+  @Getter(useStore) getEditMode!: boolean
 
   get applicantName (): string {
     const applicant = this.applicant

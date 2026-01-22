@@ -390,7 +390,8 @@
 
 <script lang="ts">
 import { Component, Mixins, Watch } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import ApplicantInfoNav from '@/components/common/applicant-info-nav.vue'
 import NameRequestDetails from '@/components/existing-request/name-request-details.vue'
 import { NameChoicesIF, NameRequestI } from '@/interfaces'
@@ -411,30 +412,28 @@ import { Designations, checkInvalidDesignation } from '@/list-data'
   }
 })
 export default class NamesCapture extends Mixins(CommonMixin) {
-  // For template
+  // enum for template
   readonly Location = Location
 
-  // Global getters
-  @Getter getDisplayedComponent!: string
-  @Getter getDesignation!: string
-  @Getter getEditMode!: boolean
-  @Getter getEntityTypeCd!: EntityTypes
-  @Getter getLocation!: Location
-  @Getter getName!: string
-  @Getter getNameChoices!: NameChoicesIF
-  @Getter getNr!: Partial<NameRequestI>
-  @Getter getSubmissionTabNumber!: number
-  @Getter isAssumedName!: boolean
-  @Getter isMobile!: boolean
+  @Getter(useStore) getDisplayedComponent!: string
+  @Getter(useStore) getDesignation!: string
+  @Getter(useStore) getEditMode!: boolean
+  @Getter(useStore) getEntityTypeCd!: EntityTypes
+  @Getter(useStore) getLocation!: Location
+  @Getter(useStore) getName!: string
+  @Getter(useStore) getNameChoices!: NameChoicesIF
+  @Getter(useStore) getNr!: Partial<NameRequestI>
+  @Getter(useStore) getSubmissionTabNumber!: number
+  @Getter(useStore) isAssumedName!: boolean
+  @Getter(useStore) isMobile!: boolean
 
-  // Global actions
-  @Action setDisplayedComponent!: ActionBindingIF
-  @Action setNameChoices!: ActionBindingIF
-  @Action setNameChoicesToInitialState!: ActionBindingIF
-  @Action setRequestAction!: ActionBindingIF
-  @Action setSubmissionTabComponent!: ActionBindingIF
-  @Action setSubmissionType!: ActionBindingIF
-  @Action startEditName!: ActionBindingIF
+  @Action(useStore) setDisplayedComponent!: ActionBindingIF
+  @Action(useStore) setNameChoices!: ActionBindingIF
+  @Action(useStore) setNameChoicesToInitialState!: ActionBindingIF
+  @Action(useStore) setRequestAction!: ActionBindingIF
+  @Action(useStore) setSubmissionTabComponent!: ActionBindingIF
+  @Action(useStore) setSubmissionType!: ActionBindingIF
+  @Action(useStore) startEditName!: ActionBindingIF
 
   readonly buildNameURL = 'https://www2.gov.bc.ca/gov/content?id=4A6A55FAD204494D9AF0B53BDC13A24F'
 
@@ -1017,8 +1016,8 @@ export default class NamesCapture extends Mixins(CommonMixin) {
 
 .launch-icon {
   display: inline-block;
-  font-size: $px-14;
-  color: $app-blue;
+  font-size: $px-14 !important;
+  color: $app-blue !important;
 }
 
 ::v-deep .v-messages__message {

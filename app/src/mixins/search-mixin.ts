@@ -1,9 +1,7 @@
-// External imports
 import { Component, Mixins, Watch } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
-
-// Interfaces / enums / etc.
 import { ConversionTypesI, EntityI, RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { AccountType, CompanyTypes, CorpTypeCd, EntityTypes, Location, NrRequestActionCodes,
@@ -16,65 +14,63 @@ import { CommonMixin } from './common-mixin'
  */
 @Component({})
 export class SearchMixin extends Mixins(CommonMixin) {
-  // Enums for template
+  // enums for template
   readonly CompanyTypes = CompanyTypes
   readonly EntityTypes = EntityTypes
   readonly NrRequestActionCodes = NrRequestActionCodes
   readonly RequestActions = RequestActions
 
-  // Store getters
-  @Getter getConversionType!: NrRequestTypeCodes
-  @Getter getConversionTypeOptions!: ConversionTypesI[]
-  @Getter getDesignation!: string
-  @Getter getDisplayedComponent!: string
-  @Getter getEntityBlurbs!: Array<EntityI | ConversionTypesI>
-  @Getter getEntityTypeCd!: EntityTypes
-  @Getter getEntityTypeOptions!: Array<EntityI>
-  @Getter getErrors!: string[]
-  @Getter getHasNoCorpNum!: boolean
-  @Getter getLocation!: Location
-  @Getter getOriginEntityTypeCd!: EntityTypes
-  @Getter getRequestActionCd!: NrRequestActionCodes
-  @Getter getSearchCompanyType!: CompanyTypes
-  @Getter getSearchJurisdiction!: any
-  @Getter getSearchRequest!: RequestActionsI
-  @Getter isAmalgamation!: boolean
-  @Getter isAssumed!: boolean
-  @Getter isAuthenticated!: boolean
-  @Getter isChangeName!: boolean
-  @Getter isContinuationIn!: boolean
-  @Getter isConversion!: boolean
-  @Getter isFederal!: boolean
-  @Getter isLocationCA!: boolean
-  @Getter isLocationIN!: boolean
-  @Getter isMobile!: boolean
-  @Getter isMrasJurisdiction!: boolean
-  @Getter isNewBusiness!: boolean
-  @Getter isNumberedEntityType!: boolean
-  @Getter isRestoration!: boolean
-  @Getter isXproFlow!: boolean
+  @Getter(useStore) getConversionType!: NrRequestTypeCodes
+  @Getter(useStore) getConversionTypeOptions!: ConversionTypesI[]
+  @Getter(useStore) getDesignation!: string
+  @Getter(useStore) getDisplayedComponent!: string
+  @Getter(useStore) getEntityBlurbs!: Array<EntityI | ConversionTypesI>
+  @Getter(useStore) getEntityTypeCd!: EntityTypes
+  @Getter(useStore) getEntityTypeOptions!: Array<EntityI>
+  @Getter(useStore) getErrors!: string[]
+  @Getter(useStore) getHasNoCorpNum!: boolean
+  @Getter(useStore) getLocation!: Location
+  @Getter(useStore) getOriginEntityTypeCd!: EntityTypes
+  @Getter(useStore) getRequestActionCd!: NrRequestActionCodes
+  @Getter(useStore) getSearchCompanyType!: CompanyTypes
+  @Getter(useStore) getSearchJurisdiction!: any
+  @Getter(useStore) getSearchRequest!: RequestActionsI
+  @Getter(useStore) isAmalgamation!: boolean
+  @Getter(useStore) isAssumed!: boolean
+  @Getter(useStore) isAuthenticated!: boolean
+  @Getter(useStore) isChangeName!: boolean
+  @Getter(useStore) isContinuationIn!: boolean
+  @Getter(useStore) isConversion!: boolean
+  @Getter(useStore) isFederal!: boolean
+  @Getter(useStore) isLocationCA!: boolean
+  @Getter(useStore) isLocationIN!: boolean
+  @Getter(useStore) isMobile!: boolean
+  @Getter(useStore) isMrasJurisdiction!: boolean
+  @Getter(useStore) isNewBusiness!: boolean
+  @Getter(useStore) isNumberedEntityType!: boolean
+  @Getter(useStore) isRestoration!: boolean
+  @Getter(useStore) isXproFlow!: boolean
 
-  // Store actions
-  @Action setClearErrors!: () => void
-  @Action setConversionType!: ActionBindingIF
-  @Action setCorpNum!: ActionBindingIF
-  @Action setCorpSearch!: ActionBindingIF
-  @Action setDesignation!: ActionBindingIF
-  @Action setDoNameCheck!: ActionBindingIF
-  @Action setEntityTypeCd!: ActionBindingIF
-  @Action setExtendedRequestType!: ActionBindingIF
-  @Action setJurisdictionCd!: ActionBindingIF
-  @Action setLocation!: ActionBindingIF
-  @Action setName!: ActionBindingIF
-  @Action setNoCorpNum!: ActionBindingIF
-  @Action setOriginEntityTypeCd!: ActionBindingIF
-  @Action setPickEntityModalVisible!: ActionBindingIF
-  @Action setRequestAction!: ActionBindingIF
-  @Action setSearchBusiness!: ActionBindingIF
-  @Action setSearchCompanyType!: ActionBindingIF
-  @Action setSearchJurisdiction!: ActionBindingIF
-  @Action setSearchRequest!: ActionBindingIF
-  @Action startAnalyzeName!: ActionBindingIF
+  @Action(useStore) setClearErrors!: () => void
+  @Action(useStore) setConversionType!: ActionBindingIF
+  @Action(useStore) setCorpNum!: ActionBindingIF
+  @Action(useStore) setCorpSearch!: ActionBindingIF
+  @Action(useStore) setDesignation!: ActionBindingIF
+  @Action(useStore) setDoNameCheck!: ActionBindingIF
+  @Action(useStore) setEntityTypeCd!: ActionBindingIF
+  @Action(useStore) setExtendedRequestType!: ActionBindingIF
+  @Action(useStore) setJurisdictionCd!: ActionBindingIF
+  @Action(useStore) setLocation!: ActionBindingIF
+  @Action(useStore) setName!: ActionBindingIF
+  @Action(useStore) setNoCorpNum!: ActionBindingIF
+  @Action(useStore) setOriginEntityTypeCd!: ActionBindingIF
+  @Action(useStore) setPickEntityModalVisible!: ActionBindingIF
+  @Action(useStore) setRequestAction!: ActionBindingIF
+  @Action(useStore) setSearchBusiness!: ActionBindingIF
+  @Action(useStore) setSearchCompanyType!: ActionBindingIF
+  @Action(useStore) setSearchJurisdiction!: ActionBindingIF
+  @Action(useStore) setSearchRequest!: ActionBindingIF
+  @Action(useStore) startAnalyzeName!: ActionBindingIF
 
   get isScreenLg () {
     return this.$vuetify.breakpoint.lgAndUp

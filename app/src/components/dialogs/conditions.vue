@@ -31,15 +31,16 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { NameState } from '@/enums'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 
 @Component({})
 export default class ConditionsDialog extends Vue {
-  @Getter getConditionsModalVisible!: boolean
-  @Getter getNrNames!: any
-  @Action setConditionsModalVisible!: ActionBindingIF
+  @Getter(useStore) getConditionsModalVisible!: boolean
+  @Getter(useStore) getNrNames!: any
+  @Action(useStore) setConditionsModalVisible!: ActionBindingIF
 
   get nameObject () {
     const name = (this.getNrNames || []).find(name => name.state === NameState.CONDITIONAL && name.decision_text)

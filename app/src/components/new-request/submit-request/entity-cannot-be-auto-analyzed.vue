@@ -75,7 +75,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Action, Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { RequestActionsI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NameInput from '@/components/new-request/name-input.vue'
@@ -87,23 +88,21 @@ import { EntityTypes, NrRequestActionCodes } from '@/enums'
 export default class EntityCannotBeAutoAnalyzed extends Vue {
   englishOnlyName = ''
 
-  // Global getters
-  @Getter getNameAnalysisTimeout!: boolean
-  @Getter getDoNotAnalyzeEntities!: EntityTypes[]
-  @Getter getEntityTextFromValue!: string
-  @Getter getEntityTypeCd!: EntityTypes
-  @Getter getIsPersonsName!: boolean
-  @Getter getName!: string
-  @Getter isNameEnglish!: boolean
-  @Getter isNameSlashed!: boolean
-  @Getter getRequestActionCd!: NrRequestActionCodes
-  @Getter getRequestTypeOptions!: RequestActionsI[]
+  @Getter(useStore) getNameAnalysisTimeout!: boolean
+  @Getter(useStore) getDoNotAnalyzeEntities!: EntityTypes[]
+  @Getter(useStore) getEntityTextFromValue!: string
+  @Getter(useStore) getEntityTypeCd!: EntityTypes
+  @Getter(useStore) getIsPersonsName!: boolean
+  @Getter(useStore) getName!: string
+  @Getter(useStore) isNameEnglish!: boolean
+  @Getter(useStore) isNameSlashed!: boolean
+  @Getter(useStore) getRequestActionCd!: NrRequestActionCodes
+  @Getter(useStore) getRequestTypeOptions!: RequestActionsI[]
 
-  // Global actions
-  @Action cancelAnalyzeName!: ActionBindingIF
-  @Action startAnalyzeName!: ActionBindingIF
-  @Action setName!: ActionBindingIF
-  @Action setSubmissionTabComponent!: ActionBindingIF
+  @Action(useStore) cancelAnalyzeName!: ActionBindingIF
+  @Action(useStore) startAnalyzeName!: ActionBindingIF
+  @Action(useStore) setName!: ActionBindingIF
+  @Action(useStore) setSubmissionTabComponent!: ActionBindingIF
 
   mounted () {
     if (this.isNameSlashed) {

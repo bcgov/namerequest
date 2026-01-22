@@ -1,24 +1,24 @@
 import Axios, { AxiosError } from 'axios'
 import { ACCEPTED, CREATED, NO_CONTENT, OK } from 'http-status-codes'
-
-import errorModule from '@/modules/error'
-import { ErrorI } from '@/modules/error/store/actions'
+import { useErrorStore } from '@/store'
 import {
   AdvancedSearchI,
   AdvancedSearchResultsI,
   AnalysisJSONI,
+  ErrorI,
   NameRequestI,
+  NameRequestPayment,
   NewRequestNameSearchI,
   StatsI
 } from '@/interfaces'
 import { RequestActions } from '@/list-data'
 import { NrAction, NrState, NrRequestActionCodes, RollbackActions } from '@/enums'
-import { NameRequestPayment } from '@/modules/payment/models'
-import { appBaseURL } from '../router/router'
 import pkg from '../../package.json'
+import { createPinia, setActivePinia } from 'pinia'
 
 const ANALYSIS_TIMEOUT_MS = 3 * 60 * 1000 // 3 minutes
 const axiosNamex = Axios.create()
+
 // Set the request headers for all NameX API requests: nr-number, phone, email
 // nr-number, phone, email sessionStorage items are set in mutations
 axiosNamex.interceptors.request.use(
@@ -28,17 +28,17 @@ axiosNamex.interceptors.request.use(
     config.headers.common['BCREG-User-Phone'] = sessionStorage.getItem('BCREG-phoneNumber')
     config.headers.common['BCREG-User-Email'] = sessionStorage.getItem('BCREG-emailAddress')
     config.headers.common['App-Name'] = pkg.name
-    config.headers.common['X-Apikey'] = process.env.VUE_APP_NAMEX_API_KEY || ''
-    // eslint-disable-next-line no-console
-    // console.log('in interceptor, common headers: ', config?.headers?.common)
+    config.headers.common['X-Apikey'] = import.meta.env.VUE_APP_NAMEX_API_KEY || ''
     return config
   },
   error => {
-    // eslint-disable-next-line no-console
-    // console.log('in interceptor, error: ', error)
     Promise.reject(error)
   }
 )
+
+const namexApiUrl = sessionStorage.getItem('NAMEX_API_URL')
+
+setActivePinia(createPinia())
 
 export default class NamexServices {
   static axios = axiosNamex
@@ -89,7 +89,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not add request action comment')
       console.error('addRequestActionComment() =', msg) // eslint-disable-line no-console
-      await errorModule.setAppError({ id: 'add-request-action-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'add-request-action-error', error: msg } as ErrorI)
       return null
     }
   }
@@ -101,9 +101,10 @@ export default class NamexServices {
 
     try {
       // eslint-disable-next-line no-console
-      console.log('delete ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
-        sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
-      const response = await this.axios.delete(`${appBaseURL}/payments/${nrId}/payment/${paymentId}`, {
+      // console.log('delete ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+      //   sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
+
+      const response = await this.axios.delete(`${namexApiUrl}/payments/${nrId}/payment/${paymentId}`, {
         headers: { 'Content-Type': 'application/json' }
       })
 
@@ -122,7 +123,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not cancel payment')
       console.error('cancelPayment() =', msg) // eslint-disable-line no-console
-      await errorModule.setAppError({ id: 'cancel-payment-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'cancel-payment-error', error: msg } as ErrorI)
       return null
     }
   }
@@ -133,7 +134,7 @@ export default class NamexServices {
    * Throws an exception on error.
    */
   static async searchEntities (corpNum: string): Promise<any> {
-    const url = `${appBaseURL}/businesses/${corpNum}`
+    const url = `${namexApiUrl}/businesses/${corpNum}`
     return this.axios.get(url).then(response => response.data?.business)
   }
 
@@ -145,7 +146,7 @@ export default class NamexServices {
   static async searchColin (corpNum: string): Promise<any> {
     // remove BC prefix as COLIN only supports base number with no prefix for BC's
     const cleanedCorpNum = corpNum.replace(/^BC+/i, '')
-    const url = `${appBaseURL}/colin/${cleanedCorpNum}`
+    const url = `${namexApiUrl}/colin/${cleanedCorpNum}`
     return this.axios.get(url).then(response => response.data)
   }
 
@@ -160,9 +161,10 @@ export default class NamexServices {
 
       if (checkedOutBy) {
         // eslint-disable-next-line no-console
-        console.log('checkin ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
-          sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
-        await this.axios.patch(`${appBaseURL}/namerequests/${nrId}/checkin`, {
+        // console.log('checkin ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+        //   sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
+
+        await this.axios.patch(`${namexApiUrl}/namerequests/${nrId}/checkin`, {
           checkedOutBy: checkedOutBy,
           checkedOutDt: checkedOutDt
         }, {
@@ -175,7 +177,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not checkin name request')
       console.error('checkinNameRequest() =', msg) // eslint-disable-line no-console
-      await errorModule.setAppError({ id: 'checkin-name-requests-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'checkin-name-requests-error', error: msg } as ErrorI)
       return false
     }
   }
@@ -188,16 +190,17 @@ export default class NamexServices {
       let response: any
       if (checkedOutBy) {
         // eslint-disable-next-line no-console
-        console.log('checkout ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
-          sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
-        response = await this.axios.patch(`${appBaseURL}/namerequests/${nrId}/checkout`, {
+        // console.log('checkout ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+        //   sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
+
+        response = await this.axios.patch(`${namexApiUrl}/namerequests/${nrId}/checkout`, {
           checkedOutBy: checkedOutBy,
           checkedOutDt: checkedOutDt
         }, {
           headers: { 'Content-Type': 'application/json' }
         })
       } else {
-        response = await this.axios.patch(`${appBaseURL}/namerequests/${nrId}/checkout`, {}, {
+        response = await this.axios.patch(`${namexApiUrl}/namerequests/${nrId}/checkout`, {}, {
           headers: { 'Content-Type': 'application/json' }
         })
       }
@@ -217,7 +220,7 @@ export default class NamexServices {
         // or is in a state other than 'DRAFT'
         error_id = 'edit-lock-error'
       }
-      await errorModule.setAppError({ id: error_id, error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: error_id, error: msg } as ErrorI)
       return false
     }
   }
@@ -229,10 +232,11 @@ export default class NamexServices {
 
     try {
       // eslint-disable-next-line no-console
-      console.log('completePayment ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
-        sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
+      // console.log('completePayment ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+      //   sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
+
       const response = await this.axios.patch(
-        `${appBaseURL}/payments/${nrId}/payment/${paymentId}/${action}`,
+        `${namexApiUrl}/payments/${nrId}/payment/${paymentId}/${action}`,
         {},
         { headers: { 'Content-Type': 'application/json' } }
       )
@@ -252,14 +256,14 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not complete payment')
       console.error('completePayment() =', msg) // eslint-disable-line no-console
-      await errorModule.setAppError({ id: 'complete-payment-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'complete-payment-error', error: msg } as ErrorI)
       return null
     }
   }
 
   static async downloadOutputs (nrId: number): Promise<void> {
     try {
-      const url = `${appBaseURL}/namerequests/${nrId}/result`
+      const url = `${namexApiUrl}/namerequests/${nrId}/result`
       const headers = { 'Accept': 'application/pdf' }
 
       // Request PDF for specified id
@@ -286,7 +290,7 @@ export default class NamexServices {
     } catch (error) {
       console.error('downloadOutputs() =', error) // eslint-disable-line no-console
 
-      await errorModule.setAppError(
+      useErrorStore().setAppError(
         { id: 'download-pdf-error', error: 'Could not download PDF' } as ErrorI
       )
     }
@@ -294,7 +298,7 @@ export default class NamexServices {
 
   static async fetchStats (): Promise<StatsI> {
     try {
-      const response = await this.axios.get(`${appBaseURL}/statistics`)
+      const response = await this.axios.get(`${namexApiUrl}/statistics`)
       if (response?.status === OK && response?.data) return response.data
       throw new Error(`Invalid response = ${response}`)
     } catch (err) {
@@ -314,7 +318,7 @@ export default class NamexServices {
         }
 
         // call namerequest get endpoint to retrieve NR detail, also verify affiliation
-        const response = await this.axios.get(`${appBaseURL}/namerequests/${nrId}?org_id=${accountId}`, {
+        const response = await this.axios.get(`${namexApiUrl}/namerequests/${nrId}?org_id=${accountId}`, {
           headers
         })
         if (response?.status === OK && response?.data) return response.data
@@ -327,7 +331,7 @@ export default class NamexServices {
       if (handleError) {
         const msg = await this.handleApiError(err, 'Could not get name request')
         console.error('getNameRequest() =', msg) // eslint-disable-line no-console
-        await errorModule.setAppError({ id: 'get-name-request-error', error: msg } as ErrorI)
+        useErrorStore().setAppError({ id: 'get-name-request-error', error: msg } as ErrorI)
       }
       return null
     }
@@ -338,9 +342,10 @@ export default class NamexServices {
       const { CancelToken } = Axios
       const source = CancelToken.source()
       // eslint-disable-next-line no-console
-      console.log('get ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
-        sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
-      const response = await this.axios.get(`${appBaseURL}/namerequests`, {
+      // console.log('get ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+      //   sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
+
+      const response = await this.axios.get(`${namexApiUrl}/namerequests`, {
         cancelToken: source.token
       })
       if (response?.status === OK && response?.data) return response.data
@@ -349,7 +354,7 @@ export default class NamexServices {
       if (handleError) {
         const msg = await this.handleApiError(err, 'Could not get name request')
         console.error('getNameRequest() =', msg) // eslint-disable-line no-console
-        await errorModule.setAppError({ id: 'get-name-request-error', error: msg } as ErrorI)
+        useErrorStore().setAppError({ id: 'get-name-request-error', error: msg } as ErrorI)
       }
       return null
     }
@@ -371,7 +376,7 @@ export default class NamexServices {
       // Is 0 when we only want the NR count.
       const rowCount = isCountCheck ? 0 : 1000
 
-      const response = await this.axios.get(`${appBaseURL}/requests?rows=${rowCount}`, {
+      const response = await this.axios.get(`${namexApiUrl}/requests?rows=${rowCount}`, {
         params,
         headers
       })
@@ -382,7 +387,7 @@ export default class NamexServices {
       if (handleError) {
         const msg = await this.handleApiError(err, 'Could not find Name Requests.')
         console.error('searchNameRequests() =', msg) // eslint-disable-line no-console
-        await errorModule.setAppError({ id: 'search-name-request-error', error: msg } as ErrorI)
+        useErrorStore().setAppError({ id: 'search-name-request-error', error: msg } as ErrorI)
       }
       return null
     }
@@ -425,7 +430,7 @@ export default class NamexServices {
   static async nameAnalysis (params: NewRequestNameSearchI): Promise<AnalysisJSONI> {
     const { CancelToken } = Axios
     const source = CancelToken.source()
-    const response = await this.axios.get(`${appBaseURL}/name-analysis`, {
+    const response = await this.axios.get(`${namexApiUrl}/name-analysis`, {
       params,
       cancelToken: source.token,
       timeout: ANALYSIS_TIMEOUT_MS
@@ -439,11 +444,13 @@ export default class NamexServices {
     try {
       // const nr = getters.getEditNameReservation
       const requestData: any = nr && await this.addRequestActionComment(requestActionCd, nr)
+
       // eslint-disable-next-line no-console
-      console.log('patch ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
-        sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
+      // console.log('patch ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+      //   sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
+
       const response: any = requestData &&
-        await this.axios.patch(`${appBaseURL}/namerequests/${nrId}/edit`, requestData, {
+        await this.axios.patch(`${namexApiUrl}/namerequests/${nrId}/edit`, requestData, {
           headers: { 'Content-Type': 'application/json' }
         })
 
@@ -454,7 +461,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not patch name requests')
       console.error('patchNameRequests() =', msg) // eslint-disable-line no-console
-      await errorModule.setAppError({ id: 'patch-name-requests-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'patch-name-requests-error', error: msg } as ErrorI)
       return null
     }
   }
@@ -462,9 +469,10 @@ export default class NamexServices {
   static async patchNameRequestsByAction (nrId: number, nrAction: NrAction): Promise<any> {
     try {
       // eslint-disable-next-line no-console
-      console.log('patch by action ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
-        sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
-      const response: any = await this.axios.patch(`${appBaseURL}/namerequests/${nrId}/${nrAction}`, {}, {
+      // console.log('patch by action ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+      //   sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
+
+      const response: any = await this.axios.patch(`${namexApiUrl}/namerequests/${nrId}/${nrAction}`, {}, {
         headers: { 'Content-Type': 'application/json' }
       })
 
@@ -482,7 +490,7 @@ export default class NamexServices {
         // cannot be cancelled if the NR is not DRAFT state
         error_id = 'edit-lock-error'
       }
-      await errorModule.setAppError({ id: error_id, error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: error_id, error: msg } as ErrorI)
       return null
     }
   }
@@ -504,10 +512,10 @@ export default class NamexServices {
       if (!requestData) throw new Error('postNameRequest() - invalid request data') // safety check
 
       // eslint-disable-next-line no-console
-      console.log('post ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
-        sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
+      // console.log('post ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+      //   sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
 
-      const response = await this.axios.post(`${appBaseURL}/namerequests`, requestData, {
+      const response = await this.axios.post(`${namexApiUrl}/namerequests`, requestData, {
         headers: { 'Content-Type': 'application/json' }
       })
       if (response?.data && [OK, CREATED, ACCEPTED, NO_CONTENT].includes(response?.status)) {
@@ -529,23 +537,23 @@ export default class NamexServices {
       ) {
         error_id = 'entry-already-exists'
       }
-      await errorModule.setAppError({ id: error_id, error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: error_id, error: msg } as ErrorI)
       return null
     }
   }
 
   static async putNameReservation (
-    nrId: number,
-    requestActionCd: NrRequestActionCodes,
-    data: NameRequestI
+    nrId: number, requestActionCd: NrRequestActionCodes, data: NameRequestI
   ): Promise<NameRequestI> {
     try {
       const requestData: any = data && await this.addRequestActionComment(requestActionCd, data)
+
       // eslint-disable-next-line no-console
-      console.log('put ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
-        sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
+      // console.log('put ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+      //   sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
+
       const response: any = requestData && await this.axios.put(
-        `${appBaseURL}/namerequests/${nrId}`,
+        `${namexApiUrl}/namerequests/${nrId}`,
         requestData,
         { headers: { 'Content-Type': 'application/json' } }
       )
@@ -556,7 +564,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not put name reservation')
       console.error('putNameReservation() =', msg) // eslint-disable-line no-console
-      await errorModule.setAppError({ id: 'put-name-reservation-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'put-name-reservation-error', error: msg } as ErrorI)
       return null
     }
   }
@@ -570,11 +578,13 @@ export default class NamexServices {
         console.error('rollbackNameRequest(), invalid NR id') // eslint-disable-line no-console
         return false
       }
+
       // eslint-disable-next-line no-console
-      console.log('rollback ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
-        sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
+      // console.log('rollback ', sessionStorage.getItem('BCREG-nrNum'), sessionStorage.getItem('BCREG-NRL'),
+      //   sessionStorage.getItem('BCREG-phoneNumber'), sessionStorage.getItem('BCREG-emailAddress'))
+
       const response = await this.axios.patch(
-        `${appBaseURL}/namerequests/${nrId}/rollback/${RollbackActions.CANCEL}`,
+        `${namexApiUrl}/namerequests/${nrId}/rollback/${RollbackActions.CANCEL}`,
         {},
         { headers: { 'Content-Type': 'application/json' } }
       )
@@ -586,7 +596,7 @@ export default class NamexServices {
     } catch (err) {
       const msg = await this.handleApiError(err, 'Could not rollback name request')
       console.error('rollbackNameRequest() =', msg) // eslint-disable-line no-console
-      await errorModule.setAppError({ id: 'rollback-name-request-error', error: msg } as ErrorI)
+      useErrorStore().setAppError({ id: 'rollback-name-request-error', error: msg } as ErrorI)
       return false
     }
   }

@@ -1,11 +1,11 @@
-import { initialize, LDClient, LDFlagSet, LDOptions, LDUser } from 'launchdarkly-js-client-sdk'
+import { initialize, LDClient, LDContext, LDFlagSet, LDOptions } from 'launchdarkly-js-client-sdk'
 
 // get rid of "element implicitly has an 'any' type..."
 declare const window: any
 
 /**
  * Default flag values when LD is not available.
- * Uses "namerequest" project (per LD client id in config).
+ * Uses "namerequest" project (per LD client id in env config).
  */
 const defaultFlagSet: LDFlagSet = {
   'banner-text': '', // by default, there is no banner text
@@ -16,6 +16,7 @@ const defaultFlagSet: LDFlagSet = {
   'enable-web-chat': false, // by default, old webchat is disabled
   'hardcoded_priority_wait_time': 0, // by default, use actual wait time
   'hardcoded_regular_wait_time': 0, // by default, use actual wait time
+  'priority-wait-time-tooltip-text': '', // by default, display default tooltip text
   'supported-amalgamation-entities': [],
   'supported-continuation-in-entities': [],
   'supported-incorporation-registration-entities': [],
@@ -34,10 +35,9 @@ export async function InitLdClient (): Promise<void> {
   const envKey: string = window['ldClientId']
 
   if (envKey) {
-    const user: LDUser = {
-      // since we have no user data yet, use a shared key temporarily
-      key: 'anonymous'
-    }
+    // since we have no user or org data yet, start with an anonymous user context
+    const context: LDContext = { kind: 'user', key: 'anonymous', anonymous: true }
+
     const options: LDOptions = {
       // fetch flags using REPORT request (to see user data as JSON)
       useReport: true,
@@ -47,35 +47,31 @@ export async function InitLdClient (): Promise<void> {
       streaming: true
     }
 
-    ldClient = initialize(envKey, user, options)
+    ldClient = initialize(envKey, context, options)
 
     try {
       await ldClient.waitForInitialization()
     } catch {
       // shut down client -- `variation()` will return undefined values
       await ldClient.close()
-      // NB: LD logs its own errors
+      // do nothing -- LD logs its own errors
     }
   }
 }
 
 /**
- * An async method that updates the Launch Darkly user properties.
- * @param key a unique string identifying a user
- * @param email the user's email address
- * @param firstName the user's first name
- * @param lastName the user's last name
- * @param custom optional object of additional attributes associated with the user
+ * An async method that updates the Launch Darkly user and org properties.
+ * @param user an optional user context object
+ * @param org an optional organization context object
  */
-export async function UpdateLdUser (
-  key: string, email: string, firstName: string, lastName: string, custom: any = null
-): Promise<void> {
+export async function UpdateLdUser (user: LDContext, org: LDContext): Promise<void> {
   if (ldClient) {
-    const user: LDUser = { key, email, firstName, lastName, custom }
     try {
-      await ldClient.identify(user)
+      if (user && org) await ldClient.identify({ kind: 'multi', user, org })
+      else if (user) await ldClient.identify(user)
+      else if (org) await ldClient.identify(org)
     } catch {
-      // NB: LD logs its own errors
+      // do nothing -- LD logs its own errors
     }
   }
 }

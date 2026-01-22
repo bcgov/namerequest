@@ -2,22 +2,32 @@ import Vue from 'vue'
 import App from './App.vue'
 import Hotjar from 'vue-hotjar'
 import { getVueRouter } from '@/router'
-import { getVuexStore } from '@/store'
-import { getConfig, getVuetify, InitLdClient, isSigningIn, isSigningOut } from '@/plugins'
+import { getConfig, getVuetify, InitLdClient, isSigningIn, isSigningOut, getPiniaStore, getVuexStore }
+  from '@/plugins'
 import KeycloakService from 'sbc-common-components/src/services/keycloak.services'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import ConfigHelper from 'sbc-common-components/src/util/config-helper'
 
+// Styles
 // NB: order matters - do not change
 import 'quill/dist/quill.core.css'
+import 'vuetify/dist/vuetify.min.css'
 import '@mdi/font/css/materialdesignicons.min.css'
-
 import '@/assets/styles/base.scss'
 import '@/assets/styles/layout.scss'
 import '@/assets/styles/overrides.scss'
 
 Vue.config.productionTip = true
 Vue.config.devtools = true
+
+const vuetify = getVuetify()
+const router = getVueRouter()
+const store = getVuexStore()
+const pinia = getPiniaStore()
+
+// attach global Vuex store and Vuetify instance to Vue instance
+Vue.prototype.$store = store
+Vue.prototype.$vuetify = vuetify
 
 /**
  * Our app start code, which is a function so that:
@@ -26,16 +36,10 @@ Vue.config.devtools = true
  */
 async function startVue () {
   // Fetch the configuration
-  const envConfig = await getConfig()
-  const store = getVuexStore()
+  getConfig()
 
   // FUTURE: remove this global assignment if possible
-  // Load environment config
-  Vue.prototype.$PAYMENT_PORTAL_URL = envConfig.$PAYMENT_PORTAL_URL
-
-  // FUTURE: remove this config assignment if possible
-  // Load Vuex config
-  store.state.config = envConfig
+  Vue.prototype.$PAYMENT_PORTAL_URL = import.meta.env.VUE_APP_PAYMENT_PORTAL_URL as string
 
   // Initialize Keycloak / sync SSO
   await syncSession()
@@ -55,9 +59,10 @@ async function startVue () {
   // Start Vue application
   console.info('Starting app...') // eslint-disable-line no-console
   new Vue({
-    vuetify: getVuetify(),
-    router: getVueRouter(),
+    vuetify,
+    router,
     store,
+    pinia,
     render: h => h(App)
   }).$mount('#app')
 }

@@ -238,7 +238,8 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Getter } from 'pinia-class'
+import { useStore } from '@/store'
 import { CommonMixin } from '@/mixins'
 import { NameRequestI } from '@/interfaces'
 import { AuthorizedActions, EntityTypes, NrRequestActionCodes, NrState } from '@/enums'
@@ -255,9 +256,9 @@ export default class NrApprovedGrayBox extends Mixins(CommonMixin) {
   @Prop({ default: 'TBD' }) readonly emailAddress!: string
   @Prop({ default: false }) readonly disabled!: boolean
 
-  @Getter getNr!: Partial<NameRequestI>
-  @Getter getIsLearBusiness!: boolean
-  @Getter getAuthorizedActions!: AuthorizedActions[]
+  @Getter(useStore) getNr!: Partial<NameRequestI>
+  @Getter(useStore) getIsLearBusiness!: boolean
+  @Getter(useStore) getAuthorizedActions!: AuthorizedActions[]
 
   isBusinesCheckDone = false
 

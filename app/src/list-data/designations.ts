@@ -1,3 +1,4 @@
+import { EntityTypes } from '@/enums'
 import { DesignationI } from '@/interfaces'
 
 const CorporateDesignations: DesignationI = {
@@ -195,7 +196,7 @@ const InvalidDesignations = {
  * @param name - The name to be checked.
  * @returns An error message if an invalid designation is found, otherwise null.
  */
-export function checkInvalidDesignation (entityTypeCd: string, name: string): string | null {
+export function checkInvalidDesignation (entityTypeCd: string | EntityTypes, name: string): string | null {
   // Return null if name is empty or if there are no invalid designations for the given entity type
   if (!name || !InvalidDesignations[entityTypeCd]) {
     return null
