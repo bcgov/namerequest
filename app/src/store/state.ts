@@ -159,7 +159,6 @@ export const state: StateIF = {
     userCancelledAnalysis: false,
     waitingAddressSearch: null,
     isLoadingSubmission: false,
-    hotjarUserId: '',
     businessAccountId: ''
   },
   staffPayment: {
