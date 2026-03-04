@@ -581,10 +581,6 @@ export const mutateWindowWidth = (state: StateIF, width: number) => {
   state.windowWidth = width
 }
 
-export const mutateHotjarUserId = (state: StateIF, hotjarUserId: string) => {
-  state.newRequestModel.hotjarUserId = hotjarUserId
-}
-
 export const mutateIncorporateNowErrorStatus = (state: StateIF, errorIncorporateNow: boolean) => {
   state.newRequestModel.errorIncorporateNow = errorIncorporateNow
 }

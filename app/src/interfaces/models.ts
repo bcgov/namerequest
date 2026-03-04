@@ -58,7 +58,7 @@ export interface RequestNameI {
 
 export interface ConditionalReqI {
   additionalInfo: string
-  applicants: [ ApplicantI ]
+  applicants: [ApplicantI]
   corpNum?: string
   english: boolean
   entity_type_cd: string
@@ -75,7 +75,6 @@ export interface ConditionalReqI {
   submit_count: number
   tradeMark: string
   xproJurisdiction?: string
-  hotjarUserId?: string
 }
 
 export interface ConsentConflictI {
@@ -98,7 +97,7 @@ export interface ConversionTypesI {
 
 export interface DraftReqI {
   additionalInfo?: string
-  applicants: [ ApplicantI ]
+  applicants: [ApplicantI]
   corpNum?: string
   english: boolean
   entity_type_cd: string
@@ -115,7 +114,6 @@ export interface DraftReqI {
   tradeMark?: string
   xproJurisdiction?: string
   request_type_cd?: string
-  hotjarUserId?: string
   conversion_type_cd?: string
 }
 
@@ -163,8 +161,8 @@ export interface IssueI {
   name_actions?: [
     {
       index: number
-      message ?: string
-      position ?: 'start' | 'end'
+      message?: string
+      position?: 'start' | 'end'
       type: 'brackets' | 'highlight' | 'spelling' | 'strike'
       word: string
     }
@@ -237,7 +235,7 @@ export interface RequestActionsI {
 export interface ReservedReqI {
   id?: number
   additionalInfo: string
-  applicants: [ ApplicantI ]
+  applicants: [ApplicantI]
   corpNum?: string
   english: boolean
   entity_type_cd: string
@@ -252,7 +250,6 @@ export interface ReservedReqI {
   submit_count: number
   tradeMark: string
   xproJurisdiction?: string
-  hotjarUserId?: string
 }
 
 export interface SearchDataI {

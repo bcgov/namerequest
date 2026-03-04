@@ -376,7 +376,6 @@ export default class ApplicantInfo3 extends Vue {
 
   @Action(useStore) setApplicantDetails!: ActionBindingIF
   @Action(useStore) setFolioNumber!: ActionBindingIF
-  @Action(useStore) setHotjarUserId!: ActionBindingIF
   @Action(useStore) setIsLoadingSubmission!: ActionBindingIF
   @Action(useStore) setNRData!: ActionBindingIF
   @Action(useStore) setPriorityRequest!: ActionBindingIF
@@ -412,7 +411,6 @@ export default class ApplicantInfo3 extends Vue {
   isValid = false
   loading = false
   messages = {}
-  $hj: any
 
   /** Whether priority checkbox should be enabled. */
   get enablePriorityCheckbox (): boolean {
@@ -478,14 +476,6 @@ export default class ApplicantInfo3 extends Vue {
   }
 
   async nextAction () {
-    if (this.$hj) {
-      // Listen for changes to the hotjar user id and store it
-      try {
-        this.setHotjarUserId(this.$hj.globals.get('userId').split('-').shift())
-      } catch (error) {
-        // ignore the error
-      }
-    }
     this.setIsLoadingSubmission(true)
     this.validate()
     if (this.isValid) await this.submit(null)

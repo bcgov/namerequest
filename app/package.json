@@ -1,6 +1,6 @@
 {
   "name": "name-request",
-  "version": "5.8.9",
+  "version": "5.8.10",
   "private": true,
   "appName": "Name Request UI",
   "sbcName": "SBC Common Components",
@@ -40,7 +40,6 @@
     "tslib": "^2.8.1",
     "vue": "2.7.16",
     "vue-contenteditable": "^1.0.2",
-    "vue-hotjar": "^1.4.0",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.6.5",
     "vuetify": "^2.7.2",

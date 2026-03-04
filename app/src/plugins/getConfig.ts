@@ -66,9 +66,6 @@ export function getConfig (): void {
     (import.meta.env.VUE_APP_REGISTRIES_SEARCH_API_URL + import.meta.env.VUE_APP_REGISTRIES_SEARCH_API_VERSION_2 + '/')
   sessionStorage.setItem('REGISTRIES_SEARCH_API_URL', registriesSearchApiUrl)
 
-  const hotjarId: string = import.meta.env.VUE_APP_HOTJAR_ID;
-  (<any>window).hotjarId = hotjarId
-
   const ldClientId: string = import.meta.env.VUE_APP_NAMEREQUEST_LD_CLIENT_ID;
   (<any>window).ldClientId = ldClientId
 
