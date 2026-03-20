@@ -200,7 +200,7 @@
                         v-bind="attrs"
                         class="dotted-underline app-blue font-weight-regular cursor-default"
                         v-on="on"
-                      >{{ reviewDate }}</span>
+                      >{{getRegularWaitTime}}</span>
                     </template>
                     This is an estimate only, actual review date may vary. Staff are
                     currently reviewing Name Requests submitted on {{ queueDate }}.
@@ -369,6 +369,7 @@ export default class ExistingRequestDisplay extends Mixins(
   @Getter(useStore) getNrId!: number
   @Getter(useStore) getNrState!: NrState
   @Getter(useStore) isMobile!: boolean
+  @Getter(useStore) getRegularWaitTime!: string | number
 
   @Action(useStore) editExistingRequest!: ActionBindingIF
   @Action(useStore) setDisplayedComponent!: ActionBindingIF
