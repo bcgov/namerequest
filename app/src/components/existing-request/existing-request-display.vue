@@ -100,7 +100,7 @@
                   class="submitted-date"
                 >
                   <span>Submitted Date:</span>
-                  &nbsp;{{ submittedDate }}
+                  &nbsp;{{ getRegularWaitTime }}
                 </v-col>
 
                 <v-col
@@ -368,6 +368,7 @@ export default class ExistingRequestDisplay extends Mixins(
   @Getter(useStore) isAuthenticated!: boolean
   @Getter(useStore) getNrId!: number
   @Getter(useStore) getNrState!: NrState
+  @Getter(useStore) getRegularWaitTime!: string | number
   @Getter(useStore) isMobile!: boolean
 
   @Action(useStore) editExistingRequest!: ActionBindingIF
