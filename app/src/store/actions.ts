@@ -790,7 +790,6 @@ export const getMatchesExact = async (token: string, cleanedName: string): Promi
   return exactResp?.data ? parseExactNames(exactResp.data) : []
 }
 
-
 // todo: look into differences #31690
 export const getMatchesSimilar_main_branch = async (
   token: string, cleanedName: string, exactNames: Array<ConflictListItemI>
@@ -815,9 +814,9 @@ const getMatchesSimilar = async (
     {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
     }).catch(() => {
-      Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_SIMILAR)
-      return null
-    })
+    Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_SIMILAR)
+    return null
+  })
 
   return {
     names: synonymResp.data.names || [],
