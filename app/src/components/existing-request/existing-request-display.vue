@@ -100,7 +100,7 @@
                   class="submitted-date"
                 >
                   <span>Submitted Date:</span>
-                  &nbsp;{{ getRegularWaitTime }}
+                  &nbsp;{{ submittedDate }}
                 </v-col>
 
                 <v-col
@@ -200,7 +200,7 @@
                         v-bind="attrs"
                         class="dotted-underline app-blue font-weight-regular cursor-default"
                         v-on="on"
-                      >{{ reviewDate }}</span>
+                      >{{ getRegularWaitTime }}</span>
                     </template>
                     This is an estimate only, actual review date may vary. Staff are
                     currently reviewing Name Requests submitted on {{ queueDate }}.
