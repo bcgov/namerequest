@@ -1,5 +1,7 @@
-import { AnalysisJSONI, ApplicantI, ConversionTypesI, ExistingRequestSearchI, NameRequestI, RequestActionsI,
-  RequestNameI, SelectOptionsI, StatsI, SubmissionTypeT, WaitingAddressSearchI } from '@/interfaces/models'
+import {
+  AnalysisJSONI, ApplicantI, ConversionTypesI, ExistingRequestSearchI, NameRequestI, RequestActionsI,
+  RequestNameI, SelectOptionsI, StatsI, SubmissionTypeT, WaitingAddressSearchI
+} from '@/interfaces/models'
 import { BusinessSearchIF, NameChoicesIF, NrDataIF, RequestOrConsentIF } from '@/interfaces'
 import { CompanyTypes, EntityTypes, Location, NrAffiliationErrors, NrRequestActionCodes, NrRequestTypeCodes }
   from '@/enums'
@@ -37,7 +39,6 @@ export interface NewRequestIF {
   folioNumber?: string
   getNameReservationFailed: boolean
   helpMeChooseModalVisible: boolean
-  hotjarUserId: string,
   isLearBusiness: boolean
   isLoadingSubmission: boolean
   isPersonsName: boolean

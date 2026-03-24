@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import App from './App.vue'
-import Hotjar from 'vue-hotjar'
 import { getVueRouter } from '@/router'
 import { getConfig, getVuetify, InitLdClient, isSigningIn, isSigningOut, getPiniaStore, getVuexStore }
   from '@/plugins'
@@ -43,12 +42,6 @@ async function startVue () {
 
   // Initialize Keycloak / sync SSO
   await syncSession()
-
-  // Initialize Hotjar
-  if (window['hotjarId']) {
-    console.info('Initializing Hotjar...') // eslint-disable-line no-console
-    Vue.use(Hotjar, { id: window['hotjarId'], isProduction: true })
-  }
 
   // Initialize Launch Darkly
   if (window['ldClientId']) {
