@@ -203,7 +203,7 @@
                       >{{ getRegularWaitTime }}</span>
                     </template>
                     This is an estimate only, actual review date may vary. Staff are
-                    currently reviewing Name Requests submitted on {{ queueDate }}.
+                    currently reviewing Name Requests submitted on {{ getRegularWaitTime }}.
                   </v-tooltip>
                 </v-col>
 
@@ -457,34 +457,6 @@ export default class ExistingRequestDisplay extends Mixins(
       ret = this.dateToPacificDateTime(date)
     }
     return ret || ''
-  }
-
-  get reviewDate (): string {
-    if (this.nr.waiting_time) {
-      // get current wait days
-      const waitDays: number = this.nr.waiting_time
-      // get number of days since the NR was submitted
-      const daysSince = -this.daysFromToday(new Date(this.nr.submittedDate))
-      // subtract the current wait days from the amount that we have already been waiting
-      let remainingDays = waitDays - daysSince
-      // safety check
-      if (!isNaN(remainingDays)) {
-        // add the diff to today's date
-        let date = new Date(this.getCurrentJsDate)
-        date.setDate(this.getCurrentJsDate.getDate() + remainingDays)
-        return this.dateToPacificDate(date) + ` (${this.nr.waiting_time} days)`
-      }
-    }
-    return 'Unknown'
-  }
-
-  get queueDate (): string {
-    let ret: string
-    if (this.nr.oldest_draft) {
-      const date = new Date(this.nr.oldest_draft)
-      ret = this.dateToPacificDate(date)
-    }
-    return ret || 'Unknown'
   }
 
   get submittedDate (): string {
