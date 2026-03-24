@@ -11,6 +11,7 @@ import {
   Location,
   NameCheckAnalysisJurisdiction,
   NameCheckAnalysisType,
+  NameCheckConflictType,
   NameCheckErrorType,
   NrAffiliationErrors,
   NrRequestActionCodes,
@@ -774,10 +775,10 @@ export const setWindowWidth = (width: number): void => {
   Mutations.mutateWindowWidth(state, width)
 }
 
-export const setHotjarUserId = (hotjarUserId: string): void => {
-  Mutations.mutateHotjarUserId(state, hotjarUserId)
-}
-
+/**
+ * Name Check actions
+ * FUTURE: move these into a factory if converting to composition api
+ */
 export const getMatchesExact = async (token: string, cleanedName: string): Promise<Array<ConflictListItemI>> => {
   const exactResp = await NamexServices.axios.get(
     `${namexApiUrl}/exact-match?query=` + cleanedName,
@@ -788,7 +789,6 @@ export const getMatchesExact = async (token: string, cleanedName: string): Promi
   })
   return exactResp?.data ? parseExactNames(exactResp.data) : []
 }
-
 
 // todo: look into differences #31690
 export const getMatchesSimilar_main_branch = async (
@@ -814,9 +814,9 @@ const getMatchesSimilar = async (
     {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
     }).catch(() => {
-      Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_SIMILAR)
-      return null
-    })
+    Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_SIMILAR)
+    return null
+  })
 
   return {
     names: synonymResp.data.names || [],
@@ -1044,7 +1044,7 @@ export const parseRestrictedWords = (resp: RestrictedResponseIF): ParsedRestrict
 
 // todo: verify is used #31690
 export const parseSynonymNames = (
-  json: { names: Array<string>, exactNames: Array<ConflictListItemI>}
+  json: { names: Array<string>, exactNames: Array<ConflictListItemI> }
 ): Array<ConflictListItemI> => {
   const duplicateNames = []
   for (let i = 0; i < json.exactNames.length; i++) {

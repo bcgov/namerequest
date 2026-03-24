@@ -46,12 +46,24 @@
       <!-- Alert banner -->
       <v-alert
         v-if="bannerText"
+        id="alert-banner"
+        class="pa-0 ma-0"
         tile
-        dense
-        type="warning"
-        class="mb-0 text-center colour-dk-text"
-        v-html="bannerText"
-      />
+      >
+        <div class="container d-flex align-center py-3">
+          <v-icon
+            class="colour-dk-text"
+            size="28px"
+          >
+            mdi-information
+          </v-icon>
+
+          <div
+            class="colour-dk-text dark-gray-links font-size-14 pl-2"
+            v-html="bannerText"
+          />
+        </div>
+      </v-alert>
 
       <!-- Breadcrumb -->
       <Breadcrumb
@@ -391,6 +403,19 @@ export default class App extends Mixins(
   }
 }
 
+#alert-banner {
+  background-color: $BCgovGold5;
+  border-color: $BCgovGold5;
+
+  .container {
+    max-width: 1360px; // should match auth-web, etc
+  }
+
+  .dark-gray-links a {
+    color: $gray9 !important;
+  }
+}
+
 .namerequest-sbc-breadcrumb {
   .v-btn {
     width: 28px;
@@ -422,12 +447,4 @@ export default class App extends Mixins(
     padding-left: 1rem;
   }
 }
-
-#main-column .v-alert__wrapper {
-  color: $dk-text;
-  i {
-    color: $dk-text;
-  }
-}
-
 </style>
