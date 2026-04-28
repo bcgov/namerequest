@@ -1332,3 +1332,30 @@ export const getRegularWaitTime = (state: StateIF): string | number => {
   if (statVal > 0) return statVal
   return '-'
 }
+
+function formatDate(statVal: number): string {
+  const today = new Date();
+  const result = new Date(today);
+
+  result.setDate(today.getDate() + statVal);
+  const formatted = result.toLocaleDateString('en-CA', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+  if (statVal > 1) {
+    return formatted + " (" + statVal + " days)"
+  } else {
+    return formatted + " (" + statVal + " day)"
+  }
+}
+
+export const getRegularEstimateReviewDate = (state: StateIF): string => {
+  const flagVal = GetFeatureFlag('hardcoded_regular_wait_time')
+  if (flagVal > 0) return formatDate(flagVal)
+  if (flagVal < 0) return '-'
+
+  const statVal = getStats(state)?.regular_wait_time
+  if (statVal > 0) return formatDate(statVal)
+  return '-'
+}

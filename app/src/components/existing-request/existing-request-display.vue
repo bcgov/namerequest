@@ -200,10 +200,10 @@
                         v-bind="attrs"
                         class="dotted-underline app-blue font-weight-regular cursor-default"
                         v-on="on"
-                      >{{ getRegularWaitTime }}</span>
+                      >{{ getRegularEstimateReviewDate }}</span>
                     </template>
                     This is an estimate only, actual review date may vary. Staff are
-                    currently reviewing Name Requests submitted on {{ getRegularWaitTime }}.
+                    currently reviewing Name Requests submitted on {{ getRegularEstimateReviewDate.split(" (")[0] }}.
                   </v-tooltip>
                 </v-col>
 
@@ -369,6 +369,7 @@ export default class ExistingRequestDisplay extends Mixins(
   @Getter(useStore) getNrId!: number
   @Getter(useStore) getNrState!: NrState
   @Getter(useStore) getRegularWaitTime!: string | number
+  @Getter(useStore) getRegularEstimateReviewDate!: string
   @Getter(useStore) isMobile!: boolean
 
   @Action(useStore) editExistingRequest!: ActionBindingIF
