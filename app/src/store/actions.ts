@@ -954,6 +954,7 @@ export const getQuickSearch = async (
         ? await getMatchesSimilar(token, cleanedName.synonymMatch, exactNames)
         : []
     )
+
     const parsedRestrictedResp: ParsedRestrictedResponseIF = (
       checks.restricted
         ? await getMatchesRestricted(token, cleanedName.restrictedMatch)
@@ -1047,6 +1048,7 @@ export const parseRestrictedWords = (resp: RestrictedResponseIF): ParsedRestrict
   return parsedResp
 }
 
+// todo: verify is used #31690
 export const parseSynonymNames = (
   json: { names: Array<string>, exactNames: Array<ConflictListItemI> }
 ): Array<ConflictListItemI> => {
