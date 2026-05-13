@@ -50,6 +50,7 @@ import {
 } from '@/interfaces'
 
 const namexApiUrl = sessionStorage.getItem('NAMEX_API_URL')
+const namexSolrApiUrl = sessionStorage.getItem('NAMEX_SOLR_API_URL')
 
 export const setActiveComponent = (component: string): void => {
   enum Tabs {
@@ -779,28 +780,52 @@ export const setWindowWidth = (width: number): void => {
  * FUTURE: move these into a factory if converting to composition api
  */
 export const getMatchesExact = async (token: string, cleanedName: string): Promise<Array<ConflictListItemI>> => {
-  const exactResp = await NamexServices.axios.get(
-    `${namexApiUrl}/exact-match?query=` + cleanedName,
+  // const exactResp = await NamexServices.axios.get(
+  //   `${namexApiUrl}/exact-match?query=` + cleanedName,
+  //   { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
+  // ).catch(() => {
+  //   Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_EXACT)
+  //   return null
+  // })
+  // return exactResp?.data ? parseExactNames(exactResp.data) : []
+  const resp = await NamexServices.axios.post(
+    `${namexSolrApiUrl}/v1/search/possible-conflict-names`,
+    { query: { value: cleanedName } },
     { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
   ).catch(() => {
     Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_EXACT)
     return null
   })
-  return exactResp?.data ? parseExactNames(exactResp.data) : []
+  const results = resp?.data?.searchResults?.results || []
+  return parseExactNames({ names: results.filter((r: any) => r.highlighting?.exact?.length > 0) })
 }
 
 export const getMatchesSimilar = async (
   token: string, cleanedName: string, exactNames: Array<ConflictListItemI>
 ): Promise<Array<ConflictListItemI>> => {
-  const synonymResp = await NamexServices.axios.get(
-    `${namexApiUrl}/requests/synonymbucket/` + cleanedName + '/*',
+  // const synonymResp = await NamexServices.axios.get(
+  //   `${namexApiUrl}/requests/synonymbucket/` + cleanedName + '/*',
+  //   { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
+  // ).catch(() => {
+  //   Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_SIMILAR)
+  //   return null
+  // })
+  // if (synonymResp?.data) synonymResp.data.exactNames = exactNames || []
+  // return synonymResp?.data ? parseSynonymNames(synonymResp.data) : []
+  const resp = await NamexServices.axios.post(
+    `${namexSolrApiUrl}/v1/search/possible-conflict-names`,
+    { query: { value: cleanedName } },
     { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
   ).catch(() => {
     Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_SIMILAR)
     return null
   })
-  if (synonymResp?.data) synonymResp.data.exactNames = exactNames || []
-  return synonymResp?.data ? parseSynonymNames(synonymResp.data) : []
+  const results = resp?.data?.searchResults?.results || []
+  const wrapped = {
+    names: results.map((r: any) => ({ name_info: { id: r.id, name: r.name } })),
+    exactNames: exactNames || []
+  }
+  return parseSynonymNames(wrapped)
 }
 
 export const getMatchesRestricted = async (

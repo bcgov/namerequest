@@ -31,7 +31,8 @@ export function getConfig (): void {
 
   const namexApiURL: string = import.meta.env.VUE_APP_NAMEX_API_GW_URL + import.meta.env.VUE_APP_NAMEX_API_VERSION
   sessionStorage.setItem('NAMEX_API_URL', namexApiURL)
-
+  const namexSolrApiUrl: string = import.meta.env.VUE_APP_NAMEX_SOLR_API_URL
+  sessionStorage.setItem('NAMEX_SOLR_API_URL', namexSolrApiUrl)
   const legalApiUrl: string = import.meta.env.VUE_APP_LEGAL_API_URL + import.meta.env.VUE_APP_LEGAL_API_VERSION_2
   sessionStorage.setItem('LEGAL_API_URL', legalApiUrl)
 
