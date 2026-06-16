@@ -30,7 +30,6 @@ import { DFLT_MIN_LENGTH, DFLT_MAX_LENGTH, MRAS_MIN_LENGTH, MRAS_MAX_LENGTH } fr
 // NB: can't use `this.$xxx` because we don't have `this` (ie, Vue)
 import { CanJurisdictions, Designations, checkInvalidDesignation, IntlJurisdictions, RequestActions } from '@/list-data'
 
-// Interfaces
 import {
   BusinessSearchIF,
   CleanedNameIF,

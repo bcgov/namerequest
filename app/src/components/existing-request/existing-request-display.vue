@@ -200,10 +200,9 @@
                         v-bind="attrs"
                         class="dotted-underline app-blue font-weight-regular cursor-default"
                         v-on="on"
-                      >{{ getRegularWaitTime }}</span>
+                      >{{ getRegularEstimateReviewDate }}</span>
                     </template>
-                    This is an estimate only, actual review date may vary. Staff are
-                    currently reviewing Name Requests submitted on {{ getRegularWaitTime }}.
+                    This is an estimate only, actual review date may vary.
                   </v-tooltip>
                 </v-col>
 
@@ -212,7 +211,7 @@
                   cols="12"
                   class="font-italic priority-requests-blurb"
                 >
-                  Priority Requests are usually reviewed within 1 to 2 business days
+                  Priority Requests are usually reviewed within {{ getPriorityWaitTime }} business days.
                 </v-col>
 
                 <v-col
@@ -369,6 +368,8 @@ export default class ExistingRequestDisplay extends Mixins(
   @Getter(useStore) getNrId!: number
   @Getter(useStore) getNrState!: NrState
   @Getter(useStore) getRegularWaitTime!: string | number
+  @Getter(useStore) getPriorityWaitTime!: string | number
+  @Getter(useStore) getRegularEstimateReviewDate!: string
   @Getter(useStore) isMobile!: boolean
 
   @Action(useStore) editExistingRequest!: ActionBindingIF
