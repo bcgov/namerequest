@@ -633,7 +633,10 @@ export const setExistingRequestSearch = (existingRequest: { key: string, value: 
   // if nr changes set session email/phone to whatever is in store (prevents previous values from interfering)
   if (existingRequest.value.includes('NR')) {
     sessionStorage.setItem(prefix + 'emailAddress', Getters.getExistingRequestSearch(state).emailAddress)
-    sessionStorage.setItem(prefix + 'phoneNumber', Getters.getExistingRequestSearch(state).phoneNumber)
+    const phoneNumber = Getters.getExistingRequestSearch(state).phoneNumber || ''
+    const visibleDigits = phoneNumber.slice(-4)
+    const maskedPhoneNumber = visibleDigits ? `***-***-${visibleDigits}` : ''
+    sessionStorage.setItem(prefix + 'phoneNumber', maskedPhoneNumber)
   }
   if (existingRequest.value.includes('NR L')) {
     sessionStorage.setItem(prefix + 'nrl', existingRequest.value)
