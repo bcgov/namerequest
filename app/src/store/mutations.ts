@@ -340,7 +340,8 @@ export const populateApplicantData = (state: StateIF) => {
   }
   // FUTURE: have 1 mutation for nr / applicant info and put these there
   sessionStorage.setItem('BCREG-emailAddress', state.newRequestModel.applicant?.emailAddress)
-  sessionStorage.setItem('BCREG-phoneNumber', state.newRequestModel.applicant?.phoneNumber)
+  // Do not persist phone number in browser storage (sensitive PII).
+  sessionStorage.removeItem('BCREG-phoneNumber')
 }
 
 export const populateNrData = (state: StateIF) => {
