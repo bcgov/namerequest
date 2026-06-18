@@ -1333,20 +1333,20 @@ export const getRegularWaitTime = (state: StateIF): string | number => {
   return '-'
 }
 
-function formatDate(statVal: number): string {
-  const today = new Date();
-  const result = new Date(today);
+function formatDate (statVal: number): string {
+  const today = new Date()
+  const result = new Date(today)
 
-  result.setDate(today.getDate() + statVal);
+  result.setDate(today.getDate() + statVal)
   const formatted = result.toLocaleDateString('en-CA', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
-  });
+  })
   if (statVal > 1) {
-    return formatted + " (" + statVal + " days)"
+    return formatted + ' (' + statVal + ' days)'
   } else {
-    return formatted + " (" + statVal + " day)"
+    return formatted + ' (' + statVal + ' day)'
   }
 }
 

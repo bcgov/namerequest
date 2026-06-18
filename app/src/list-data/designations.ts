@@ -213,7 +213,7 @@ export function checkInvalidDesignation (entityTypeCd: string | EntityTypes, nam
 
   // Check if any invalid designation appears at the end of the name
   const foundWord = invalidDesignationList.find((word: string) => {
-    const escapedWord = word.replace(/\./g, '\\.')
+    const escapedWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     const regex = new RegExp(`\\b${escapedWord.toUpperCase()}$`, 'i')
     return regex.test(trimmedName.toUpperCase())
   })

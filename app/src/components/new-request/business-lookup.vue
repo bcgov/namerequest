@@ -5,13 +5,13 @@
     id="business-lookup"
   >
     <v-autocomplete
+      v-model:search-input="searchField"
       filled
       no-filter
       :hide-no-data="state != States.NO_RESULTS"
       :items="searchResults"
       :loading="state === States.SEARCHING"
       :name="Math.random()"
-      :search-input.sync="searchField"
       append-icon="mdi-magnify"
       autocomplete="chrome-off"
       autofocus

@@ -632,7 +632,8 @@ export const setExistingRequestSearch = (existingRequest: { key: string, value: 
   // if nr changes set session email/phone to whatever is in store (prevents previous values from interfering)
   if (existingRequest.value.includes('NR')) {
     sessionStorage.setItem(prefix + 'emailAddress', Getters.getExistingRequestSearch(state).emailAddress)
-    sessionStorage.setItem(prefix + 'phoneNumber', Getters.getExistingRequestSearch(state).phoneNumber)
+    // Do not persist phone data (even masked) in clear text.
+    sessionStorage.removeItem(prefix + 'phoneNumber')
   }
   if (existingRequest.value.includes('NR L')) {
     sessionStorage.setItem(prefix + 'nrl', existingRequest.value)
@@ -789,7 +790,8 @@ export const getMatchesExact = async (token: string, cleanedName: string): Promi
   return exactResp?.data ? parseExactNames(exactResp.data) : []
 }
 
-export const getMatchesSimilar = async (
+// todo: look into differences #31690
+export const getMatchesSimilar_main_branch = async (
   token: string, cleanedName: string, exactNames: Array<ConflictListItemI>
 ): Promise<Array<ConflictListItemI>> => {
   const synonymResp = await NamexServices.axios.get(
@@ -803,11 +805,30 @@ export const getMatchesSimilar = async (
   return synonymResp?.data ? parseSynonymNames(synonymResp.data) : []
 }
 
+const getMatchesSimilar = async (
+  token: string,
+  cleanedName: string
+): Promise<{ names: Array<any>, exactNames: Array<any> }> => {
+  const synonymResp = await NamexServices.axios.get(
+    `${namexApiUrl}/requests/possible-conflicts/${cleanedName}`,
+    {
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+    }).catch(() => {
+    Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_SIMILAR)
+    return null
+  })
+
+  return {
+    names: synonymResp.data.names || [],
+    exactNames: synonymResp.data.exactNames || []
+  }
+}
+
 export const getMatchesRestricted = async (
   token: string, cleanedName: string
 ): Promise<ParsedRestrictedResponseIF> => {
   const restrictedResp = await NamexServices.axios.get(
-    `${namexApiUrl}/documents:restricted_words?content=${cleanedName}`,
+    `${namexApiUrl}/documents/restricted-words?content=${cleanedName}`,
     { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
   ).catch(() => {
     Mutations.mutateNameCheckErrorAdd(state, NameCheckErrorType.ERROR_RESTRICTED)
@@ -922,13 +943,12 @@ export const getQuickSearch = async (
       headers: { Authorization: `Basic ${encodedAuth}`, 'content-type': 'application/x-www-form-urlencoded' }
     })
     const token = tokenResp.data.access_token
-    const exactNames = checks.exact ? await getMatchesExact(token, cleanedName.exactMatch) : []
-    // pass in exactNames so that we can check for duplicates
-    const synonymNames = (
+    const { names, exactNames } = (
       checks.similar
-        ? await getMatchesSimilar(token, cleanedName.synonymMatch, exactNames)
-        : []
+        ? await getMatchesSimilar(token, cleanedName.synonymMatch)
+        : { names: [], exactNames: [] }
     )
+
     const parsedRestrictedResp: ParsedRestrictedResponseIF = (
       checks.restricted
         ? await getMatchesRestricted(token, cleanedName.restrictedMatch)
@@ -937,7 +957,7 @@ export const getQuickSearch = async (
 
     return {
       exactNames: exactNames,
-      synonymNames: synonymNames,
+      synonymNames: names,
       restrictedWords: parsedRestrictedResp.restrictedWords,
       conditionalWords: parsedRestrictedResp.conditionalWords,
       conditionalInstructions: parsedRestrictedResp.conditionalInstructions
@@ -1022,6 +1042,7 @@ export const parseRestrictedWords = (resp: RestrictedResponseIF): ParsedRestrict
   return parsedResp
 }
 
+// todo: verify is used #31690
 export const parseSynonymNames = (
   json: { names: Array<string>, exactNames: Array<ConflictListItemI> }
 ): Array<ConflictListItemI> => {
