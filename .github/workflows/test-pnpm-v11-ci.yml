@@ -1,0 +1,27 @@
+[TEST] pnpm v11 upgrade
+
+on:
+  push:
+    branches: ["test/pnpm-v11-upgrade"]
+  workflow_dispatch:
+
+_: &anchor # TEMP test only - delete after validation
+
+  pull_request:
+    branches: [main]
+    types: [assigned, synchronize]
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ./
+
+jobs:
+  namerequest-ci:
+    uses: bcgov/bcregistry-sre/.github/workflows/frontend-ci.yaml@feat/upgrade-pnpm-v11
+    with:
+      pnpm_version: 'latest-11'
+      app_name: "namerequest"
+      working_directory: "./app"
+      codecov_flag: ""
