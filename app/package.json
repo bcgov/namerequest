@@ -87,5 +87,6 @@
     "onlyBuiltDependencies": [
       "vue-demi"
     ]
-  }
+  },
+  "packageManager": "pnpm@11.9.0"
 }
