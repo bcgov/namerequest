@@ -79,5 +79,10 @@
     "vue-test-utils-helpers": "git+https://github.com/bcgov/vue-test-utils-helpers.git",
     "vuex-class": "^0.3.2",
     "vuex-module-decorators": "^1.2.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "vue-demi"
+    ]
   }
 }
