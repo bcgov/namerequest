@@ -23,6 +23,7 @@
       :label="lookupLabel"
       @input="onItemSelected($event)"
       @keydown.enter.native.prevent
+      @click:append="onMagnifyClick"
     >
       <template #append>
         <v-progress-circular
@@ -150,6 +151,15 @@ export default class BusinessLookup extends Vue {
       legalName: input.name,
       legalType: (input.legalType as unknown as EntityTypes),
       state: input.status
+    }
+  }
+
+  /** Handle magnifying glass click - immediate search if minimum characters entered. */
+  async onMagnifyClick (): Promise<void> {
+    if (this.searchField && this.searchField.length > 2) {
+      this.state = States.SEARCHING
+      this.searchResults = await BusinessLookupServices.search(this.searchField, this.searchStatus).catch(() => [])
+      this.state = (this.searchResults.length > 0) ? States.SHOW_RESULTS : States.NO_RESULTS
     }
   }
 }
