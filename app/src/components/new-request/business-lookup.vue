@@ -5,14 +5,14 @@
     id="business-lookup"
   >
     <v-autocomplete
-      v-model:search-input="searchField"
+      :search-input.sync="searchField"
       filled
       no-filter
       :hide-no-data="state != States.NO_RESULTS"
       :items="searchResults"
       :loading="state === States.SEARCHING"
       :name="Math.random()"
-      append-icon="mdi-magnify"
+      :error-messages="errorMessages"
       autocomplete="chrome-off"
       autofocus
       hint="Search by name, incorporation or registration number of an existing business"
@@ -32,6 +32,13 @@
           :size="24"
           :width="2"
         />
+        <div
+          v-else
+          class="magnify-icon-wrapper"
+          @click="onMagnifyClick"
+        >
+          <v-icon>mdi-magnify</v-icon>
+        </div>
       </template>
 
       <template #no-data>
@@ -88,6 +95,11 @@ export default class BusinessLookup extends Vue {
   // enum for template
   readonly States = States
 
+  mounted (): void {
+    console.log('✨ BusinessLookup component mounted')
+    console.log('🔎 Initial state:', { state: this.state, searchField: this.searchField })
+  }
+
   /** V-model for search field. */
   searchField = ''
 
@@ -100,6 +112,9 @@ export default class BusinessLookup extends Vue {
   /** Business Lookup labels and warnings. */
   lookupLabel = ''
   lookupNoActiveText = ''
+
+  /** Error messages for validation. */
+  errorMessages = [] as Array<string>
 
   /** Called when searchField property has changed. */
   @Watch('searchField')
@@ -123,15 +138,38 @@ export default class BusinessLookup extends Vue {
   }
 
   private onSearchInputDebounced = debounce(async (that: this) => {
-    // safety check
-    if (that.searchField && that.searchField.length > 2) {
-      that.state = States.SEARCHING
-      that.searchResults = await BusinessLookupServices.search(that.searchField, that.searchStatus).catch(() => [])
+    // Support two search modes:
+    // 1. Business number (BC1234567 format) - full format required
+    // 2. Company name - minimum 3 characters
+    const validBusinessNumberPattern = /^[A-Za-z]{1,3}\d{7}$/
+    const trimmedInput = that.searchField?.trim() || ''
+    const minNameSearchLength = 3
 
-      // display appropriate section
+    if (!trimmedInput) {
+      // Empty - reset
+      that.errorMessages = []
+      that.searchResults = []
+      that.state = States.INITIAL
+    } else if (validBusinessNumberPattern.test(trimmedInput)) {
+      // Mode 1: Valid business number format - search
+      console.log('✅ Searching by business number...')
+      that.errorMessages = []
+      that.state = States.SEARCHING
+      const upperInput = trimmedInput.toUpperCase()
+      that.searchResults = await BusinessLookupServices.search(upperInput, that.searchStatus).catch(() => [])
+      that.state = (that.searchResults.length > 0) ? States.SHOW_RESULTS : States.NO_RESULTS
+    } else if (trimmedInput.length >= minNameSearchLength) {
+      // Mode 2: Company name search (minimum 3 characters)
+      console.log('✅ Searching by company name...')
+      that.errorMessages = []
+      that.state = States.SEARCHING
+      const upperInput = trimmedInput.toUpperCase()
+      that.searchResults = await BusinessLookupServices.search(upperInput, that.searchStatus).catch(() => [])
       that.state = (that.searchResults.length > 0) ? States.SHOW_RESULTS : States.NO_RESULTS
     } else {
-      // reset variables
+      // Invalid - too short for name search, not valid business number
+      console.log('⚠️ Invalid format for incorporation or registration number')
+      that.errorMessages = ['Invalid format for incorporation or registration number']
       that.searchResults = []
       that.state = States.INITIAL
     }
@@ -152,6 +190,54 @@ export default class BusinessLookup extends Vue {
       state: input.status
     }
   }
+
+  /** Handle magnifying glass click - search by business number or company name. */
+  async onMagnifyClick (): Promise<void> {
+    // Support two search modes:
+    // 1. Business number (BC1234567 format) - full format required
+    // 2. Company name - minimum 3 characters
+    const validBusinessNumberPattern = /^[A-Za-z]{1,3}\d{7}$/
+    const trimmedInput = this.searchField?.trim() || ''
+    const minNameSearchLength = 3
+
+    console.log('🔍 Magnify click fired!', { searchField: trimmedInput })
+
+    if (!trimmedInput) {
+      console.log('⚠️ Empty search field')
+      this.errorMessages = ['Enter a search term']
+      this.searchResults = []
+      this.state = States.INITIAL
+    } else if (validBusinessNumberPattern.test(trimmedInput)) {
+      // Mode 1: Business number search
+      console.log('✅ Searching by business number...')
+      this.errorMessages = []
+      this.state = States.SEARCHING
+      const upperInput = trimmedInput.toUpperCase()
+      this.searchResults = await BusinessLookupServices.search(upperInput, this.searchStatus).catch((err) => {
+        console.error('❌ Search error:', err)
+        return []
+      })
+      console.log('📊 Results:', this.searchResults.length)
+      this.state = (this.searchResults.length > 0) ? States.SHOW_RESULTS : States.NO_RESULTS
+    } else if (trimmedInput.length >= minNameSearchLength) {
+      // Mode 2: Company name search
+      console.log('✅ Searching by company name...')
+      this.errorMessages = []
+      this.state = States.SEARCHING
+      const upperInput = trimmedInput.toUpperCase()
+      this.searchResults = await BusinessLookupServices.search(upperInput, this.searchStatus).catch((err) => {
+        console.error('❌ Search error:', err)
+        return []
+      })
+      console.log('📊 Results:', this.searchResults.length)
+      this.state = (this.searchResults.length > 0) ? States.SHOW_RESULTS : States.NO_RESULTS
+    } else {
+      console.log('⚠️ Invalid format for incorporation or registration number')
+      this.errorMessages = ['Invalid format for incorporation or registration number']
+      this.searchResults = []
+      this.state = States.INITIAL
+    }
+  }
 }
 </script>
 
@@ -160,6 +246,19 @@ export default class BusinessLookup extends Vue {
 
 .font-size-12 {
   font-size: $px-12;
+}
+
+.magnify-icon-wrapper {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  user-select: none;
+
+  &:hover {
+    opacity: 0.7;
+  }
 }
 
 p {
