@@ -278,6 +278,10 @@ export const mutateNrRequiredModalVisible = (state: StateIF, nrRequiredModalVisi
   state.newRequestModel.nrRequiredModalVisible = nrRequiredModalVisible
 }
 
+export const mutateNumberedCompanyHelpModalVisible = (state: StateIF, numberedCompanyHelpModalVisible: boolean) => {
+  state.newRequestModel.numberedCompanyHelpModalVisible = numberedCompanyHelpModalVisible
+}
+
 export const mutatePickEntityModalVisible = (state: StateIF, pickEntityModalVisible: boolean) => {
   state.newRequestModel.pickEntityModalVisible = pickEntityModalVisible
 }

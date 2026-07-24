@@ -9,6 +9,7 @@ export { default as ExitIncompletePaymentDialog } from './exit-incomplete-paymen
 export { default as HelpMeChooseDialog } from './help-me-choose.vue'
 export { default as MrasSearchInfoDialog } from './mras-search-info.vue'
 export { default as NrNotRequiredDialog } from './nr-not-required.vue'
+export { default as NumberedCompanyHelpDialog } from './numbered-company-help.vue'
 export { default as PaymentCompleteDialog } from './payment-complete.vue'
 export { default as PickEntityOrConversionDialog } from './pick-entity-or-conversion.vue'
 export { default as ReceiptsDialog } from './receipts.vue'

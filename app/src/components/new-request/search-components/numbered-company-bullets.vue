@@ -29,7 +29,20 @@
     </template>
 
     <template v-else-if="!isXproFlow">
-      <ul class="bullet-points">
+      <ul
+        v-if="isNumberedCompanyLauncherEnabled()"
+        class="bullet-points"
+      >
+        <li>
+          Your business name will be the Incorporation Number assigned by the Registry.
+          (It is not possible to request a specific number)
+        </li>
+        <li>You can change your business name at a later date.</li>
+      </ul>
+      <ul
+        v-else
+        class="bullet-points"
+      >
         <li>Your business name will be the Incorporation Number assigned by the Registry.</li>
         <li>You can change your business name at a later date.</li>
         <li>It is not possible to request a specific Incorporation Number.</li>

@@ -735,6 +735,10 @@ export const setNrRequiredModalVisible = (isVisible: boolean): void => {
   Mutations.mutateNrRequiredModalVisible(state, isVisible)
 }
 
+export const setNumberedCompanyHelpModalVisible = (isVisible: boolean): void => {
+  Mutations.mutateNumberedCompanyHelpModalVisible(state, isVisible)
+}
+
 export const setSocietiesModalVisible = (isVisible: boolean): void => {
   Mutations.mutateSocietiesModalVisible(state, isVisible)
 }

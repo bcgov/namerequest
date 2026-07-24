@@ -853,6 +853,10 @@ export const getNrRequiredModalVisible = (state: StateIF): boolean => {
   return state.newRequestModel.nrRequiredModalVisible
 }
 
+export const getNumberedCompanyHelpModalVisible = (state: StateIF): boolean => {
+  return state.newRequestModel.numberedCompanyHelpModalVisible
+}
+
 export const getNameAnalysisTimeout = (state: StateIF): boolean => {
   return state.newRequestModel.nameAnalysisTimedOut
 }

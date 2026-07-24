@@ -11,6 +11,7 @@ const defaultFlagSet: LDFlagSet = {
   'banner-text': '', // by default, there is no banner text
   'disable-analysis': true, // by default, analysis is disabled
   'enable-genesys-web-message': false, // by default, genesys web message is disabled
+  'enable-numbered-company-launcher': false, // by default, numbered company launcher is disabled
   'enable-priority-checkbox': false, // by default, priority is disabled
   'enable-society': false, // by default society is disabled
   'enable-web-chat': false, // by default, old webchat is disabled
