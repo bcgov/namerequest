@@ -9,14 +9,14 @@
   "sbcName": "SBC Common Components",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build-check": "vite build",
+    "build": "vue-demi-fix && vite build",
+    "build-check": "vue-demi-fix && vite build",
     "preview": "vite preview --port 8080",
     "lint": "eslint . --ext js,ts,vue --no-fix",
-    "test": "vitest run",
-    "test:unit": "vitest run",
+    "test": "vue-demi-fix && vitest run",
+    "test:unit": "vue-demi-fix && vitest run",
     "test:watch": "vitest watch",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vue-demi-fix && vitest run --coverage"
   },
   "dependencies": {
     "@babel/compat-data": "^7.24.4",
