@@ -212,6 +212,22 @@ describe('Numbered Company Launcher', () => {
     wrapper.destroy()
   })
 
+  it('does not show the launcher for a benefit company', () => {
+    mockFlags.value['enable-numbered-company-launcher'] = true
+    mockFlags.value['supported-incorporation-registration-entities'] = [EntityTypes.BC]
+    // NB: EntityTypes.BC is the namex code for Benefit Company
+    store.setEntityTypeCd(EntityTypes.BC)
+    const wrapper = wrapperFactory()
+
+    expect(wrapper.find('#incorporate-colin-btn').exists()).toBe(false)
+    expect(wrapper.find('#incorporate-registry-btn').exists()).toBe(false)
+    expect(wrapper.find('#help-me-choose-launcher-btn').exists()).toBe(false)
+    // a supported benefit company still shows the Action Now button
+    expect(wrapper.find('#action-now-button').exists()).toBe(true)
+
+    wrapper.destroy()
+  })
+
   it('does not show the launcher in a non-new-business flow', () => {
     mockFlags.value['enable-numbered-company-launcher'] = true
     store.setRequestAction(NrRequestActionCodes.AMALGAMATE)

@@ -595,13 +595,15 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     )
   }
 
-  /** Whether to show the two-button numbered company launcher (new BC business flow only). */
+  /** Whether to show the two-button numbered company launcher (new BC business flow only, not BEN). */
   get showNumberedCompanyLauncher (): boolean {
     return (
       this.isNumberedCompanyLauncherEnabled() &&
       this.isNewBcBusiness &&
       this.isNumberedCompany &&
-      this.isNumberedEntityType
+      this.isNumberedEntityType &&
+      // NB: EntityTypes.BC is the namex code for Benefit Company
+      this.getEntityTypeCd !== EntityTypes.BC
     )
   }
 
