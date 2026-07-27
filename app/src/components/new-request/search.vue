@@ -471,7 +471,6 @@ import SocietiesInfo from '@/components/dialogs/societies-info-dialog.vue'
 import { AuthorizedActions, EntityTypes } from '@/enums'
 import { CommonMixin, NrAffiliationMixin, SearchMixin } from '@/mixins'
 import { Designations, XproMapping } from '@/list-data'
-import { Navigate } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { Action, Getter } from 'pinia-class'
 import { useStore } from '@/store'
@@ -830,30 +829,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
   get isSearchBtnDisabled (): boolean {
     return (this.getHasNoCorpNum && !this.isValidXproName) || (!this.getHasNoCorpNum && !this.corpNumValid)
-  }
-
-  /**
-   * If user is authenticated, create draft business and redirect to Dashboard.
-   * If restoration/reinstatement selected, go to business dashboard.
-   * If user is not authenticated, redirect to login screen then redirect back.
-   */
-  async actionNowClicked () {
-    const legalType = this.entityTypeToCorpType(this.getEntityTypeCd)
-    if (this.isAuthenticated) {
-      if (this.isConversion || this.isRestoration || this.isChangeName) {
-        this.goToEntityDashboard(this.getSearchBusiness.identifier)
-      } else {
-        await this.actionNumberedEntity(legalType)
-      }
-    } else {
-      // persist legal type and request type of the action in session upon authentication via Signin component
-      sessionStorage.setItem('LEGAL_TYPE', legalType)
-      sessionStorage.setItem('REQUEST_ACTION_CD', this.getRequestActionCd)
-      // navigate to BC Registry login page with return parameter
-      const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
-      const nameRequestUrl = `${window.location.origin}`
-      Navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
-    }
   }
 
   async handleSubmit (doNameCheck = true) {
