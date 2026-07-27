@@ -16,5 +16,4 @@ jobs:
     with:
       app_name: "namerequest"
       working_directory: "./app"
-      pnpm_version: 10.0.0
       codecov_flag: ""
