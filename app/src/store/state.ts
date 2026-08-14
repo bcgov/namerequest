@@ -112,6 +112,7 @@ export const state: StateIF = {
     nrOriginal: {} as NameRequestI,
     nrRequestNameMap: [],
     nrRequiredModalVisible: false,
+    numberedCompanyHelpModalVisible: false,
     origin_entity_type_cd: null,
     pickEntityModalVisible: false,
     priorityRequest: false,

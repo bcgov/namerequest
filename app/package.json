@@ -1,6 +1,6 @@
 {
   "name": "name-request",
-  "version": "5.10.0",
+  "version": "5.10.1",
   "private": true,
   "engines": {
     "node": ">=24"
@@ -9,14 +9,14 @@
   "sbcName": "SBC Common Components",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build-check": "vite build",
+    "build": "vue-demi-fix && vite build",
+    "build-check": "vue-demi-fix && vite build",
     "preview": "vite preview --port 8080",
     "lint": "eslint . --ext js,ts,vue --no-fix",
-    "test": "vitest run",
-    "test:unit": "vitest run",
+    "test": "vue-demi-fix && vitest run",
+    "test:unit": "vue-demi-fix && vitest run",
     "test:watch": "vitest watch",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vue-demi-fix && vitest run --coverage"
   },
   "dependencies": {
     "@babel/compat-data": "^7.24.4",
@@ -75,6 +75,7 @@
     "vitest": "0.33.0",
     "volar-service-vetur": "^0.0.62",
     "vue-debounce-decorator": "^1.0.1",
+    "vue-demi": "^0.14.10",
     "vue-property-decorator": "^9.1.2",
     "vue-test-utils-helpers": "git+https://github.com/bcgov/vue-test-utils-helpers.git",
     "vuex-class": "^0.3.2",

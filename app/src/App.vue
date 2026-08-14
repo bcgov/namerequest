@@ -95,6 +95,7 @@
     />
     <MrasSearchInfoDialog />
     <NrNotRequiredDialog />
+    <NumberedCompanyHelpDialog />
     <PaymentCompleteDialog />
     <PickEntityOrConversionDialog />
     <RenewDialog />
@@ -131,7 +132,7 @@ import { Breadcrumb } from '@/components/common'
 import GenesysWebMessage from '@bcrs-shared-components/genesys-web-message/GenesysWebMessage.vue'
 import { WebChat as ChatPopup } from '@bcrs-shared-components/web-chat'
 import { AffiliationErrorDialog, CancelDialog, ConditionsDialog, ErrorDialog, ExitDialog,
-  HelpMeChooseDialog, MrasSearchInfoDialog, NrNotRequiredDialog, CreateBusinessErrorDialog,
+  HelpMeChooseDialog, MrasSearchInfoDialog, NrNotRequiredDialog, NumberedCompanyHelpDialog, CreateBusinessErrorDialog,
   ConfirmNrDialog, PaymentCompleteDialog, PickEntityOrConversionDialog, RenewDialog, ReceiptsDialog,
   RefundDialog, ResubmitDialog, RetryDialog, StaffPaymentErrorDialog, UpgradeDialog,
   ExitIncompletePaymentDialog } from '@/components/dialogs'
@@ -158,6 +159,7 @@ import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
     HelpMeChooseDialog,
     MrasSearchInfoDialog,
     NrNotRequiredDialog,
+    NumberedCompanyHelpDialog,
     PaymentCompleteDialog,
     PickEntityOrConversionDialog,
     ReceiptsDialog,

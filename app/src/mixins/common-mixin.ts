@@ -185,6 +185,11 @@ export class CommonMixin extends Vue {
     return GetFeatureFlag('enable-society')
   }
 
+  /** Returns true if the numbered company launcher (Corporate Online vs Business Registry) is enabled. */
+  isNumberedCompanyLauncherEnabled (): boolean {
+    return !!GetFeatureFlag('enable-numbered-company-launcher')
+  }
+
   /** Returns true if the specified NR is for a firm (SP/GP). */
   isFirm (nr: any): boolean {
     return [

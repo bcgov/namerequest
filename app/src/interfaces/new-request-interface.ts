@@ -57,6 +57,7 @@ export interface NewRequestIF {
   nrOriginal: Partial<NameRequestI>
   nrRequestNameMap: RequestNameMapI[]
   nrRequiredModalVisible: boolean
+  numberedCompanyHelpModalVisible: boolean
   origin_entity_type_cd: EntityTypes
   pickEntityModalVisible: boolean
   priorityRequest: boolean

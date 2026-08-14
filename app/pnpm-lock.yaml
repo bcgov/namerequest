@@ -176,6 +176,9 @@ importers:
       vue-debounce-decorator:
         specifier: ^1.0.1
         version: 1.0.1
+      vue-demi:
+        specifier: ^0.14.10
+        version: 0.14.10(vue@2.7.16)
       vue-property-decorator:
         specifier: ^9.1.2
         version: 9.1.2(vue-class-component@7.2.6(vue@2.7.16))(vue@2.7.16)

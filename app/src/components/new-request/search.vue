@@ -310,6 +310,57 @@
       </v-row>
     </template>
 
+    <!-- Numbered Company Launcher (feature flagged) -->
+    <template v-if="showNumberedCompanyLauncher">
+      <v-row class="mt-6">
+        <v-col
+          cols="6"
+          class="d-flex justify-end"
+        >
+          <v-btn
+            id="incorporate-colin-btn"
+            class="px-9 button-blue"
+            :href="colinLink"
+            target="_blank"
+          >
+            Incorporate using Corporate Online
+            <v-icon
+              right
+              small
+            >
+              mdi-open-in-new
+            </v-icon>
+          </v-btn>
+        </v-col>
+        <v-col
+          cols="6"
+          class="d-flex justify-start"
+        >
+          <v-btn
+            id="incorporate-registry-btn"
+            class="px-9"
+            :disabled="!isSupportedIncorporationRegistration(getEntityTypeCd)"
+            @click="actionNowClicked()"
+          >
+            Incorporate using the New BC Business Registry
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row justify="center">
+        <v-col cols="auto">
+          <v-btn
+            id="help-me-choose-launcher-btn"
+            class="pa-0 button-text title-bold-16"
+            text
+            :ripple="false"
+            @click="setNumberedCompanyHelpModalVisible(true)"
+          >
+            <span>Help me Choose</span>
+          </v-btn>
+        </v-col>
+      </v-row>
+    </template>
+
     <!-- "Action Now" button -->
     <template v-if="showActionNowButton">
       <v-row
@@ -420,7 +471,6 @@ import SocietiesInfo from '@/components/dialogs/societies-info-dialog.vue'
 import { AuthorizedActions, EntityTypes } from '@/enums'
 import { CommonMixin, NrAffiliationMixin, SearchMixin } from '@/mixins'
 import { Designations, XproMapping } from '@/list-data'
-import { Navigate } from '@/plugins'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { Action, Getter } from 'pinia-class'
 import { useStore } from '@/store'
@@ -447,6 +497,7 @@ import { MRAS_MIN_LENGTH, MRAS_MAX_LENGTH }
   }
 })
 export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, SearchMixin) {
+  @Action(useStore) setNumberedCompanyHelpModalVisible!: ActionBindingIF
   @Action(useStore) setSocietiesModalVisible!: ActionBindingIF
 
   @Getter(useStore) getIsLearBusiness!: boolean
@@ -544,6 +595,18 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     )
   }
 
+  /** Whether to show the two-button numbered company launcher (new BC business flow only, not BEN). */
+  get showNumberedCompanyLauncher (): boolean {
+    return (
+      this.isNumberedCompanyLauncherEnabled() &&
+      this.isNewBcBusiness &&
+      this.isNumberedCompany &&
+      this.isNumberedEntityType &&
+      // NB: EntityTypes.BC is the namex code for Benefit Company
+      this.getEntityTypeCd !== EntityTypes.BC
+    )
+  }
+
   get showActionNowButton (): boolean {
     // Conditional for Continuation In Flow.
     if (
@@ -569,6 +632,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     // Conditional for "New BC-based business" Flow.
     // If we're in Start a new BC based and the entity is supported, show incorporate now button.
     if (this.isNewBcBusiness && this.isNumberedCompany && this.isNumberedEntityType) {
+      if (this.showNumberedCompanyLauncher) return false
       const isIncorporateEntity = this.isSupportedIncorporationRegistration(this.getEntityTypeCd)
       return isIncorporateEntity
     }
@@ -610,6 +674,7 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     // Conditional for "New BC-based business" Flow.
     // If we're in Start a new BC based and the entity is not supported, show go to Colin button.
     if (this.isNewBcBusiness && this.isNumberedCompany && this.isNumberedEntityType) {
+      if (this.showNumberedCompanyLauncher) return false
       return !this.showActionNowButton
     }
 
@@ -768,30 +833,6 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
     return (this.getHasNoCorpNum && !this.isValidXproName) || (!this.getHasNoCorpNum && !this.corpNumValid)
   }
 
-  /**
-   * If user is authenticated, create draft business and redirect to Dashboard.
-   * If restoration/reinstatement selected, go to business dashboard.
-   * If user is not authenticated, redirect to login screen then redirect back.
-   */
-  async actionNowClicked () {
-    const legalType = this.entityTypeToCorpType(this.getEntityTypeCd)
-    if (this.isAuthenticated) {
-      if (this.isConversion || this.isRestoration || this.isChangeName) {
-        this.goToEntityDashboard(this.getSearchBusiness.identifier)
-      } else {
-        await this.actionNumberedEntity(legalType)
-      }
-    } else {
-      // persist legal type and request type of the action in session upon authentication via Signin component
-      sessionStorage.setItem('LEGAL_TYPE', legalType)
-      sessionStorage.setItem('REQUEST_ACTION_CD', this.getRequestActionCd)
-      // navigate to BC Registry login page with return parameter
-      const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
-      const nameRequestUrl = `${window.location.origin}`
-      Navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
-    }
-  }
-
   async handleSubmit (doNameCheck = true) {
     this.setDoNameCheck(doNameCheck)
     if (this.isXproFlow) this.$root.$emit('showSpinner', true)
@@ -833,10 +874,28 @@ export default class Search extends Mixins(CommonMixin, NrAffiliationMixin, Sear
 
 #colin-button,
 #action-now-button,
+#incorporate-colin-btn,
+#incorporate-registry-btn,
 #search-name-btn {
   font-size: $px-14 !important;
   font-weight: bold;
   min-height: 45px;
+}
+
+#help-me-choose-launcher-btn {
+  font-size: $px-14 !important;
+  box-shadow: none !important;
+  height: 1.5rem !important;
+  min-height: 0;
+
+  span {
+    text-decoration: underline;
+  }
+}
+
+#help-me-choose-launcher-btn:before {
+  box-shadow: none !important;
+  background-color: transparent !important;
 }
 
 #goto-corporate-btn {

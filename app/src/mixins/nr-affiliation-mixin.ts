@@ -7,7 +7,7 @@ import { BusinessRequest, NameRequestI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import { Navigate } from '@/plugins'
 import { CommonMixin } from '@/mixins'
-import { NrAffiliationErrors } from '@/enums'
+import { EntityTypes, NrAffiliationErrors } from '@/enums'
 import { CREATED, BAD_REQUEST } from 'http-status-codes'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 import { AmalgamationTypes, CorrectNameOptions, FilingTypes, NrRequestActionCodes }
@@ -19,6 +19,12 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
   @Getter(useStore) isContinuationIn!: boolean
   @Getter(useStore) isNewBusiness!: boolean
   @Getter(useStore) getBusinessAccountId: string
+  @Getter(useStore) getEntityTypeCd!: EntityTypes
+  @Getter(useStore) getRequestActionCd!: NrRequestActionCodes
+  @Getter(useStore) isAuthenticated!: boolean
+  @Getter(useStore) isChangeName!: boolean
+  @Getter(useStore) isConversion!: boolean
+  @Getter(useStore) isRestoration!: boolean
   @Getter(useStore) isRoleStaff!: boolean
 
   @Action(useStore) setAffiliationErrorModalValue!: ActionBindingIF
@@ -212,6 +218,30 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
     if (businessId) {
       const businessDashUrl = sessionStorage.getItem('BUSINESS_DASH_URL')
       Navigate(`${businessDashUrl}${businessId}`)
+    }
+  }
+
+  /**
+   * If user is authenticated, create draft business and redirect to Dashboard.
+   * If restoration/reinstatement selected, go to business dashboard.
+   * If user is not authenticated, redirect to login screen then redirect back.
+   */
+  async actionNowClicked (): Promise<void> {
+    const legalType = this.entityTypeToCorpType(this.getEntityTypeCd)
+    if (this.isAuthenticated) {
+      if (this.isConversion || this.isRestoration || this.isChangeName) {
+        this.goToEntityDashboard(this.getSearchBusiness.identifier)
+      } else {
+        await this.actionNumberedEntity(legalType)
+      }
+    } else {
+      // persist legal type and request type of the action in session upon authentication via Signin component
+      sessionStorage.setItem('LEGAL_TYPE', legalType)
+      sessionStorage.setItem('REQUEST_ACTION_CD', this.getRequestActionCd)
+      // navigate to BC Registry login page with return parameter
+      const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
+      const nameRequestUrl = `${window.location.origin}`
+      Navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
     }
   }
 
