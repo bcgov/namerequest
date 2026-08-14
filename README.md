@@ -4,7 +4,8 @@
 
 ## Project setup
 ```
-npm install -g pnpm@9
+corepack enable
+corepack prepare pnpm@11.9.0 --activate
 pnpm install
 ```
 
