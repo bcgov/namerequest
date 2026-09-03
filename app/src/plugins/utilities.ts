@@ -109,6 +109,17 @@ export function containsLongAndShortDesignation (name: string, word: string): bo
   return false
 }
 
+/**
+ * Builds the URL of the Business Home (new Registry Home) login page.
+ * If a valid idp is specified, that login is triggered immediately instead of
+ * showing the login options.
+ */
+export function getBusinessHomeLoginUrl (returnUrl: string = window.location.href, idp?: string): string {
+  const businessHomeUrl = sessionStorage.getItem('BUSINESS_HOME_URL')
+  const idpParam = ['bcsc', 'bceid', 'idir'].includes(idp) ? `&idp=${idp}` : ''
+  return `${businessHomeUrl}en-CA/auth/login?return=${encodeURIComponent(encodeURIComponent(returnUrl))}${idpParam}`
+}
+
 export function isSigningIn (): boolean {
   const path = window.location.pathname
   return path.includes('/signin') || path.includes('/signin-redirect') || path.includes('/signin-redirect-full')

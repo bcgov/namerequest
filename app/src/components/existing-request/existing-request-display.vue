@@ -342,7 +342,7 @@ import NrApprovedGrayBox from './nr-approved-gray-box.vue'
 import NrNotApprovedGrayBox from './nr-not-approved-gray-box.vue'
 import { NameState, NrAction, NrState, PaymentStatus, SbcPaymentStatus, PaymentAction, Furnished }
   from '@/enums'
-import { Sleep, GetFeatureFlag, Navigate } from '@/plugins'
+import { Sleep, GetFeatureFlag, getBusinessHomeLoginUrl, Navigate } from '@/plugins'
 import NamexServices from '@/services/namex-services'
 import ContactInfo from '@/components/common/contact-info.vue'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
@@ -761,12 +761,10 @@ export default class ExistingRequestDisplay extends Mixins(
       // Use the new "magic link routes" in the BRD to perform the affiliations and draft creations.
       Navigate(this.magicLink(this.nr))
     } else {
-      // persist NR in session for affiliation upon authentication via Signin component
+      // persist NR in session for affiliation in App.vue after authentication
       sessionStorage.setItem('NR_DATA', JSON.stringify(this.nr))
-      // navigate to BC Registry login page with return parameter
-      const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
-      const nameRequestUrl = `${window.location.origin}`
-      Navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
+      // navigate to Business Home login page, returning to the current page after login
+      Navigate(getBusinessHomeLoginUrl())
     }
   }
 

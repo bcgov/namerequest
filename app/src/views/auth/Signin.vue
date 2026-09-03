@@ -1,45 +1,28 @@
 <template>
-  <SbcSignin
-    :idpHint="idpHint"
-    :redirectUrlLoginFail="redirectUrlLoginFail"
-    :inAuth="false"
-    @sync-user-profile-ready="onReady()"
-  />
+  <!-- this page immediately redirects to the Business Home login page -->
+  <div />
 </template>
 
 <script lang="ts">
-import { Component, Prop, Mixins } from 'vue-property-decorator'
-import SbcSignin from 'sbc-common-components/src/components/SbcSignin.vue'
-import { LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin } from '@/mixins'
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import { getBusinessHomeLoginUrl, Navigate } from '@/plugins'
 
 /**
- * When the user clicks "Log in", they are are redirected to THIS page, which
- * renders the SbcSignin component that actually performs the signin process.
- * Note that the current state is NOT saved and restored - the user will lose
- * their current session data if they sign in mid-session.
+ * When the user clicks "Log in":
+ * - they are redirected to THIS page
+ * - this forwards them to the Business Home login page, which triggers the chosen
+ *   login method immediately (or offers all login options if the method is unknown)
+ * - after login/account selection and/or creation, Business Home redirects back to the main app page
+ * - then the Keycloak information is picked up on app init (see syncSession() in main.ts)
+ *   and roles / LaunchDarkly are loaded (see App.vue created()).
  */
-@Component({
-  components: { SbcSignin }
-})
-export default class Signin extends Mixins(LoadKeycloakRolesMixin, NrAffiliationMixin, UpdateUserMixin) {
+@Component({})
+export default class Signin extends Vue {
   /** The login method, which is passed in the signin route by the SBC Header. */
   @Prop({ default: 'bcsc' }) readonly idpHint!: string
 
-  /** The URL to redirect to if signin failed: the NR URL. */
-  get redirectUrlLoginFail (): string {
-    return `${window.location.origin}${import.meta.env.VUE_APP_PATH}`
-  }
-
-  /** Called after successful signin. */
-  async onReady () {
-    console.info('Keycloak session is ready') // eslint-disable-line no-console
-
-    // now that the user is logged in, load Keycloak roles and update LaunchDarkly
-    this.loadKeycloakRoles()
-    await this.updateLaunchDarkly()
-
-    // go to main app page
-    await this.$router.push('/')
+  created (): void {
+    Navigate(getBusinessHomeLoginUrl(`${window.location.origin}${import.meta.env.VUE_APP_PATH}`, this.idpHint))
   }
 }
 </script>
