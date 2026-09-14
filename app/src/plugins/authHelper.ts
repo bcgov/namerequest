@@ -22,6 +22,15 @@ function parseToken (token: string): any {
   }
 }
 
+/** Gets Keycloak GUID (the "sub" claim) from JWT. */
+export function getKeycloakGuid (): string {
+  const jwt = getJWT()
+  if (jwt.sub) {
+    return jwt.sub
+  }
+  throw new Error('Error getting Keycloak GUID')
+}
+
 /** Gets Keycloak roles from JWT. */
 export function getKeycloakRoles (): Array<string> {
   const jwt = getJWT()

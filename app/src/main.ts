@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import App from './App.vue'
 import { getVueRouter } from '@/router'
-import { getConfig, getVuetify, InitLdClient, isSigningIn, isSigningOut, getPiniaStore, getVuexStore }
-  from '@/plugins'
+import { getConfig, getKeycloakGuid, getVuetify, InitLdClient, isSigningIn, isSigningOut, getPiniaStore,
+  getVuexStore } from '@/plugins'
+import AuthServices from '@/services/auth-services'
 import KeycloakService from 'sbc-common-components/src/services/keycloak.services'
 import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 import ConfigHelper from 'sbc-common-components/src/util/config-helper'
@@ -42,6 +43,9 @@ async function startVue () {
 
   // Initialize Keycloak / sync SSO
   await syncSession()
+
+  // Seed the current account before the app mounts
+  await syncCurrentAccount()
 
   // Initialize Launch Darkly
   if (window['ldClientId']) {
@@ -85,6 +89,35 @@ async function syncSession () {
       }
     })
   }
+}
+
+/**
+ * Seeds the current account in session storage before the app mounts, so that code
+ * which reads CURRENT_ACCOUNT on startup (eg, the NR replay logic in App.vue) doesn't
+ * race SbcHeader's asynchronous account sync. Honours the "accountid" query param
+ * appended to the return URL by the Business Home login page.
+ */
+async function syncCurrentAccount (): Promise<void> {
+  const token = ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakToken)
+  if (!token) return
+
+  const urlAccountId = new URLSearchParams(window.location.search).get('accountid')
+  const storedAccountId = JSON.parse(
+    ConfigHelper.getFromSession(SessionStorageKeys.CurrentAccount) || '{}'
+  )?.id
+  // nothing to do if an account is already stored and the URL doesn't specify a different one
+  if (storedAccountId && (!urlAccountId || String(storedAccountId) === urlAccountId)) return
+
+  await AuthServices.fetchUserSettings(getKeycloakGuid()).then(settings => {
+    const accounts = settings?.filter(setting => setting.type === 'ACCOUNT') || []
+    const account = accounts.find(acct => String(acct.id) === urlAccountId) || accounts[0]
+    if (account) {
+      ConfigHelper.addToSession(SessionStorageKeys.CurrentAccount, JSON.stringify(account))
+    }
+  }).catch(error => {
+    // don't block app startup - SbcHeader will sync the account when it mounts
+    console.error('syncCurrentAccount =', error) // eslint-disable-line no-console
+  })
 }
 
 // NB: the .then() makes sure linter doesn't pick up on an un-awaited promise

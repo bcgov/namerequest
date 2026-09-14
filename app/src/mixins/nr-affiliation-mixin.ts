@@ -5,7 +5,7 @@ import AuthServices from '@/services/auth-services'
 import BusinessServices from '@/services/business-services'
 import { BusinessRequest, NameRequestI } from '@/interfaces'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
-import { Navigate } from '@/plugins'
+import { getBusinessHomeLoginUrl, Navigate } from '@/plugins'
 import { CommonMixin } from '@/mixins'
 import { EntityTypes, NrAffiliationErrors } from '@/enums'
 import { CREATED, BAD_REQUEST } from 'http-status-codes'
@@ -235,13 +235,11 @@ export class NrAffiliationMixin extends Mixins(CommonMixin) {
         await this.actionNumberedEntity(legalType)
       }
     } else {
-      // persist legal type and request type of the action in session upon authentication via Signin component
+      // persist legal type and request type of the action in session, replayed in App.vue after authentication
       sessionStorage.setItem('LEGAL_TYPE', legalType)
       sessionStorage.setItem('REQUEST_ACTION_CD', this.getRequestActionCd)
-      // navigate to BC Registry login page with return parameter
-      const registryHomeUrl = sessionStorage.getItem('REGISTRY_HOME_URL')
-      const nameRequestUrl = `${window.location.origin}`
-      Navigate(`${registryHomeUrl}login?return=${nameRequestUrl}`)
+      // navigate to Business Home login page, returning to the current page after login
+      Navigate(getBusinessHomeLoginUrl())
     }
   }
 

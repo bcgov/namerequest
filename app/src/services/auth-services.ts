@@ -74,6 +74,19 @@ export default class AuthServices {
   }
 
   /**
+   * Fetches current user's settings (including their accounts).
+   */
+  static async fetchUserSettings (keycloakGuid: string): Promise<any[]> {
+    const url = `${this.authApiUrl}/users/${keycloakGuid}/settings`
+
+    return axios.get(url)
+      .then(response => {
+        if (response?.data) return response.data
+        throw new Error('Invalid user settings')
+      })
+  }
+
+  /**
    * Fetches specified org's info.
    * Throws on error.
    */

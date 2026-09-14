@@ -32,7 +32,7 @@ const store = useStore()
 describe('NumberedCompanyHelpDialog', () => {
   beforeEach(() => {
     sessionStorage.setItem('CORPORATE_ONLINE_URL', 'https://corporate-online-url/')
-    sessionStorage.setItem('REGISTRY_HOME_URL', 'https://registry-home-url/')
+    sessionStorage.setItem('BUSINESS_HOME_URL', 'https://business-home-url/')
     mockFlags.value = {
       'supported-incorporation-registration-entities': [EntityTypes.CR]
     }
@@ -119,8 +119,9 @@ describe('NumberedCompanyHelpDialog', () => {
     await wrapper.find('#help-business-registry-btn').trigger('click')
 
     expect(store.getNumberedCompanyHelpModalVisible).toBe(false)
-    // unauthenticated user is redirected to login with a return parameter
-    expect(mockNavigate).toHaveBeenCalledWith(`https://registry-home-url/login?return=${window.location.origin}`)
+    // unauthenticated user is redirected to login with a double-encoded return parameter
+    const returnParam = encodeURIComponent(encodeURIComponent(window.location.href))
+    expect(mockNavigate).toHaveBeenCalledWith(`https://business-home-url/en-CA/auth/login?return=${returnParam}`)
 
     wrapper.destroy()
   })

@@ -26,6 +26,9 @@ export function getConfig (): void {
   const businessDashUrl: string = import.meta.env.VUE_APP_BUSINESS_DASH_URL
   sessionStorage.setItem('BUSINESS_DASH_URL', businessDashUrl)
 
+  const businessHomeUrl: string = import.meta.env.VUE_APP_BUSINESS_HOME_URL
+  sessionStorage.setItem('BUSINESS_HOME_URL', businessHomeUrl)
+
   const businessRegistryUrl: string = import.meta.env.VUE_APP_BUSINESS_REGISTRY_URL
   sessionStorage.setItem('BUSINESS_REGISTRY_URL', businessRegistryUrl)
 
