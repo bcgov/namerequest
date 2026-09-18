@@ -48,7 +48,6 @@
                 <ul>
                   <li>combine or merge your business with another business (Amalgamation)</li>
                   <li>reactivate a business (Restoration)</li>
-                  <li>move your business out of B.C. (Continuation-out)</li>
                 </ul>
                 <p class="font-weight-bold">
                   Note: all businesses in Corporate Online will be moved to the new BC Business Registry soon
@@ -108,6 +107,7 @@
                   <li>change your business address when you move</li>
                   <li>change directors names or addresses</li>
                   <li>change basic business information (Alteration)</li>
+                  <li>move your business out of B.C. (Continuation-out)</li>
                 </ul>
                 <v-btn
                   id="help-business-registry-btn"
