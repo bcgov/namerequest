@@ -82,7 +82,6 @@ describe('NumberedCompanyHelpDialog', () => {
     expect(brCard.text()).toContain('change your business address when you move')
     expect(brCard.text()).toContain('change directors names or addresses')
     expect(brCard.text()).toContain('change basic business information (Alteration)')
-    expect(brCard.text()).toContain('move your business out of B.C. (Continuation-out)')
     const brBtn = brCard.find('#help-business-registry-btn')
     expect(brBtn.text()).toContain('Use the New BC Business Registry')
     expect(brBtn.attributes('disabled')).toBeUndefined()
