@@ -51,7 +51,7 @@
                 <v-col class="text-center copy-small">
                   See if your name may be in use outside of BC,
                   <a
-                    href="https://www.ic.gc.ca/app/opic-cipo/trdmrks/srch/home?lang=eng"
+                    href="https://ised-isde.canada.ca/cipo/trademark-search/srch"
                     target="_blank"
                   >
                     search for Canadian trademarked names.
