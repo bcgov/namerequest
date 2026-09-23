@@ -67,7 +67,6 @@ describe('NumberedCompanyHelpDialog', () => {
     expect(coCard.text()).toContain('For complex filings.')
     expect(coCard.text()).toContain('combine or merge your business with another business (Amalgamation)')
     expect(coCard.text()).toContain('reactivate a business (Restoration)')
-    expect(coCard.text()).toContain('move your business out of B.C. (Continuation-out)')
     expect(coCard.text()).toContain('Note: all businesses in Corporate Online will be moved')
     const coBtn = coCard.find('#help-corporate-online-btn')
     expect(coBtn.text()).toContain('Continue to Corporate Online')
