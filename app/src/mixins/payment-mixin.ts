@@ -10,7 +10,7 @@ import { StaffPaymentIF, RefundParamsIF, NameRequestI, ErrorI, CreatePaymentPara
   NameRequestPaymentResponse } from '@/interfaces'
 import NamexServices from '@/services/namex-services'
 import { PaymentRequiredError } from '@/errors'
-import { Navigate } from '@/plugins'
+import { isLoggedInWithoutRegistriesAccount, Navigate } from '@/plugins'
 
 const namexApiUrl = sessionStorage.getItem('NAMEX_API_URL')
 
@@ -477,7 +477,9 @@ export class PaymentMixin extends Mixins(ActionMixin) {
     }
 
     const keycloakToken = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
-    if (keycloakToken) {
+    // A BCSC or BCeID login with no Registries account pays by credit card as a guest.
+    // Sending the token without Account-Id is what makes that payment fail.
+    if (keycloakToken && !isLoggedInWithoutRegistriesAccount()) {
       headers['Authorization'] = `Bearer ${keycloakToken}`
       headers['Content-Type'] = 'application/json'
     }
