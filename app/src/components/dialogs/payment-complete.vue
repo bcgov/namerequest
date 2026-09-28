@@ -193,7 +193,7 @@ export default class PaymentCompleteDialog extends Mixins(
 
   /**
    * Sends the user to Business Home account creation.
-   * Phone and email stay out of this flag. On return, the name request is loaded
+   * On return, the name request is loaded
    * again with the guest lookup the app already uses.
    */
   completeAccountRegistration (): void {
