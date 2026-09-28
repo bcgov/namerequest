@@ -191,15 +191,13 @@ export default class PaymentCompleteDialog extends Mixins(
     this.showCompleteAccount = false
   }
 
-  /** Sends the user to Business Home account creation and affiliates the NR when they return. */
+  /**
+   * Sends the user to Business Home account creation.
+   * Phone and email stay out of this flag. On return, the name request is loaded
+   * again with the guest lookup the app already uses.
+   */
   completeAccountRegistration (): void {
-    sessionStorage.setItem('PENDING_NR_AFFILIATION', JSON.stringify({
-      nrNum: this.getNrNum,
-      applicants: {
-        phoneNumber: this.getApplicant?.phoneNumber || '',
-        emailAddress: this.getApplicant?.emailAddress || ''
-      }
-    }))
+    sessionStorage.setItem('PENDING_NR_AFFILIATION', 'true')
     Navigate(getBusinessHomeLoginUrl(window.location.href))
   }
 
