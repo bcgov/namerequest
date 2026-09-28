@@ -326,12 +326,11 @@ export default class App extends Mixins(
 
   /**
    * After a guest payment, the user may leave to create a Registries account.
-   * When they return with an account, attach the submitted NR to it.
+   * When they return with an account, load the name request and attach it.
    * newBusiness stays false so it doesn't start incorporation.
    */
   private async affiliateNrAfterAccountCreation (): Promise<void> {
-    const raw = sessionStorage.getItem('PENDING_NR_AFFILIATION')
-    if (!raw) return
+    if (sessionStorage.getItem('PENDING_NR_AFFILIATION') !== 'true') return
 
     let accountId = 0
     try {
@@ -341,18 +340,12 @@ export default class App extends Mixins(
     }
     if (!accountId) return
 
-    let nr
-    try {
-      nr = JSON.parse(raw)
-    } catch (error) {
-      sessionStorage.removeItem('PENDING_NR_AFFILIATION')
-      console.error('affiliateNrAfterAccountCreation =', error) // eslint-disable-line no-console
-      return
-    }
-
     sessionStorage.removeItem('PENDING_NR_AFFILIATION')
     try {
-      await AuthServices.createNrAffiliation(accountId, nr, false)
+      const nr = await NamexServices.getNameRequest(false)
+      if (!nr?.nrNum) return
+      const applicants = Array.isArray(nr.applicants) ? nr.applicants[0] : nr.applicants
+      await AuthServices.createNrAffiliation(accountId, { nrNum: nr.nrNum, applicants }, false)
     } catch (error) {
       console.error('affiliateNrAfterAccountCreation =', error) // eslint-disable-line no-console
     }
