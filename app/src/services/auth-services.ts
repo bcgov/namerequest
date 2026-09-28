@@ -14,8 +14,9 @@ export default class AuthServices {
    * Creates an affiliation for the specified account and NR.
    * Returns response on error.
    */
-  static async createNrAffiliation (accountId: number, nr: any): Promise<any> {
-    const url = `${this.authApiUrl}/orgs/${accountId}/affiliations?newBusiness=true`
+  static async createNrAffiliation (accountId: number, nr: any, newBusiness = true): Promise<any> {
+    const newBusinessParam = newBusiness ? '?newBusiness=true' : ''
+    const url = `${this.authApiUrl}/orgs/${accountId}/affiliations${newBusinessParam}`
     const requestBody: CreateNRAffiliationRequestBody = {
       businessIdentifier: nr.nrNum,
       phone: nr.applicants?.phoneNumber || '',
