@@ -40,3 +40,18 @@ export function getKeycloakRoles (): Array<string> {
   }
   throw new Error('Error getting Keycloak roles')
 }
+
+/**
+ * True when a BC Services Card or BCeID session exists and auth-api has no Registries account.
+ * Staff are excluded: they pay without a public Registries account.
+ */
+export function isLoggedInWithoutRegistriesAccount (): boolean {
+  const token = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
+  if (!token) return false
+  if (sessionStorage.getItem(SessionStorageKeys.CurrentAccount)) return false
+  try {
+    return !getKeycloakRoles().includes('staff')
+  } catch {
+    return true
+  }
+}

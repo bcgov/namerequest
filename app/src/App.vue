@@ -140,6 +140,7 @@ import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 import { ActionBindingIF } from '@/interfaces/store-interfaces'
 import NamexServices from './services/namex-services'
+import AuthServices from '@/services/auth-services'
 import { PAYMENT_REQUIRED } from 'http-status-codes'
 import { CorpTypeCd } from '@bcrs-shared-components/corp-type-module'
 
@@ -318,6 +319,42 @@ export default class App extends Mixins(
       Navigate(this.magicLink(nr))
       // clear NR data for next time
       sessionStorage.removeItem('NR_DATA')
+    }
+
+    this.affiliateNrAfterAccountCreation()
+  }
+
+  /**
+   * After a guest payment, the user may leave to create a Registries account.
+   * When they return with an account, attach the submitted NR to it.
+   * newBusiness stays false so it doesn't start incorporation.
+   */
+  private async affiliateNrAfterAccountCreation (): Promise<void> {
+    const raw = sessionStorage.getItem('PENDING_NR_AFFILIATION')
+    if (!raw) return
+
+    let accountId = 0
+    try {
+      accountId = +JSON.parse(sessionStorage.getItem('CURRENT_ACCOUNT') || '{}')?.id || 0
+    } catch {
+      accountId = 0
+    }
+    if (!accountId) return
+
+    let nr
+    try {
+      nr = JSON.parse(raw)
+    } catch (error) {
+      sessionStorage.removeItem('PENDING_NR_AFFILIATION')
+      console.error('affiliateNrAfterAccountCreation =', error) // eslint-disable-line no-console
+      return
+    }
+
+    sessionStorage.removeItem('PENDING_NR_AFFILIATION')
+    try {
+      await AuthServices.createNrAffiliation(accountId, nr, false)
+    } catch (error) {
+      console.error('affiliateNrAfterAccountCreation =', error) // eslint-disable-line no-console
     }
   }
 
