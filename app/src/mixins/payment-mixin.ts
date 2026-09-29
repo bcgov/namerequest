@@ -486,8 +486,12 @@ export class PaymentMixin extends Mixins(ActionMixin) {
 
     const currentAccount = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
     if (currentAccount) {
-      const parsedAccountInfo = JSON.parse(currentAccount)
-      headers['Account-Id'] = parsedAccountInfo.id
+      try {
+        const accountId = JSON.parse(currentAccount)?.id
+        if (accountId) headers['Account-Id'] = accountId
+      } catch {
+        // Header stores "" or "undefined" when the login has no Registries account.
+      }
     }
 
     return headers
