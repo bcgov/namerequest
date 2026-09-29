@@ -1350,11 +1350,7 @@ function formatDate (statVal: number, submittedDate: Date): string {
     month: 'long',
     day: 'numeric'
   })
-  if (statVal > 1) {
-    return formatted + ' (' + statVal + ' days)'
-  } else {
-    return formatted + ' (' + statVal + ' day)'
-  }
+  return formatted
 }
 
 export const getRegularEstimateReviewDate = (state: StateIF): string => {
