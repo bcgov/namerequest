@@ -1,6 +1,6 @@
 {
   "name": "name-request",
-  "version": "5.10.6",
+  "version": "5.10.7",
   "private": true,
   "engines": {
     "node": ">=24"
