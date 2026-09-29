@@ -116,6 +116,10 @@ export const getNrState = (state: StateIF): NrState => {
   return state.newRequestModel.nr.state
 }
 
+export const getNrSubmittedDate = (state: StateIF): Date => {
+  return state.newRequestModel.nr.submittedDate
+}
+
 export const getLocation = (state: StateIF): Location => {
   return state.newRequestModel.location
 }
@@ -1337,11 +1341,10 @@ export const getRegularWaitTime = (state: StateIF): string | number => {
   return '-'
 }
 
-function formatDate (statVal: number): string {
-  const today = new Date()
-  const result = new Date(today)
+function formatDate (statVal: number, submittedDate: Date): string {
+  const result = new Date(submittedDate)
 
-  result.setDate(today.getDate() + statVal)
+  result.setDate(result.getDate() + statVal)
   const formatted = result.toLocaleDateString('en-CA', {
     year: 'numeric',
     month: 'long',
@@ -1356,10 +1359,10 @@ function formatDate (statVal: number): string {
 
 export const getRegularEstimateReviewDate = (state: StateIF): string => {
   const flagVal = GetFeatureFlag('hardcoded_regular_wait_time')
-  if (flagVal > 0) return formatDate(flagVal)
+  if (flagVal > 0) return formatDate(flagVal, getNrSubmittedDate(state))
   if (flagVal < 0) return '-'
 
   const statVal = getStats(state)?.regular_wait_time
-  if (statVal > 0) return formatDate(statVal)
+  if (statVal > 0) return formatDate(statVal, getNrSubmittedDate(state))
   return '-'
 }
