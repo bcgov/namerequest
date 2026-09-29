@@ -42,13 +42,29 @@ export function getKeycloakRoles (): Array<string> {
 }
 
 /**
+ * True when session storage holds a Registries account id.
+ * The header writes CURRENT_ACCOUNT as "" when auth-api returns no account.
+ * That value is not an account.
+ */
+function hasRegistriesAccount (): boolean {
+  const raw = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
+  if (!raw || raw === 'undefined' || raw === 'null') return false
+  try {
+    const account = JSON.parse(raw)
+    return !!(account && typeof account === 'object' && account.id)
+  } catch {
+    return false
+  }
+}
+
+/**
  * True when a BC Services Card or BCeID session exists and auth-api has no Registries account.
  * Staff are excluded: they pay without a public Registries account.
  */
 export function isLoggedInWithoutRegistriesAccount (): boolean {
   const token = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
   if (!token) return false
-  if (sessionStorage.getItem(SessionStorageKeys.CurrentAccount)) return false
+  if (hasRegistriesAccount()) return false
   try {
     return !getKeycloakRoles().includes('staff')
   } catch {

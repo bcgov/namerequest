@@ -33,4 +33,16 @@ describe('isLoggedInWithoutRegistriesAccount', () => {
     sessionStorage.setItem(SessionStorageKeys.KeyCloakToken, tokenWithRoles(['public']))
     expect(isLoggedInWithoutRegistriesAccount()).toBe(true)
   })
+
+  it('is true when the header stored an empty account', () => {
+    sessionStorage.setItem(SessionStorageKeys.KeyCloakToken, tokenWithRoles(['public']))
+    sessionStorage.setItem(SessionStorageKeys.CurrentAccount, JSON.stringify(''))
+    expect(isLoggedInWithoutRegistriesAccount()).toBe(true)
+  })
+
+  it('is true when the stored account has no id', () => {
+    sessionStorage.setItem(SessionStorageKeys.KeyCloakToken, tokenWithRoles(['public']))
+    sessionStorage.setItem(SessionStorageKeys.CurrentAccount, JSON.stringify({}))
+    expect(isLoggedInWithoutRegistriesAccount()).toBe(true)
+  })
 })
