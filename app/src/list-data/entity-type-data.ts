@@ -275,7 +275,7 @@ export const EntityTypesBcData: EntityI[] = [
     cat: 'Other',
     blurbs: [
       'Church Parish',
-      'Call BC Registries and Online Services at 1-877-526-162 for more information',
+      'Call BC Registries and Online Services at 1-877-526-1526 for more information',
       'Has name protection in BC'
     ]
   }
