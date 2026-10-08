@@ -94,7 +94,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Getter } from 'pinia-class'
 import { useStore } from '@/store'
-import { BusinessDesignation, ConsentWords, ExampleName, UnavailableWords, UniqueNames, UnknownWords }
+import { BusinessDesignation, ConsentWords, ExampleName, UnavailableWords, UniqueNames}
   from '@/components/lower-info-area/name-build-sub-components'
 
 @Component({
@@ -103,8 +103,7 @@ import { BusinessDesignation, ConsentWords, ExampleName, UnavailableWords, Uniqu
     ConsentWords,
     ExampleName,
     UnavailableWords,
-    UniqueNames,
-    UnknownWords
+    UniqueNames
   }
 })
 export default class NameBuildInfo extends Vue {
@@ -119,10 +118,6 @@ export default class NameBuildInfo extends Vue {
     {
       title: 'Check for unavailable words',
       component: UnavailableWords
-    },
-    {
-      title: 'Check for words that have not been used before',
-      component: UnknownWords
     },
     {
       title: 'Check for words that require consent',
