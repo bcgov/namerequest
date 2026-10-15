@@ -94,7 +94,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Getter } from 'pinia-class'
 import { useStore } from '@/store'
-import { BusinessDesignation, ConsentWords, ExampleName, UnavailableWords, UniqueNames}
+import { BusinessDesignation, ConsentWords, ExampleName, UnavailableWords, UniqueNames }
   from '@/components/lower-info-area/name-build-sub-components'
 
 @Component({
