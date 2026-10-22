@@ -12,6 +12,10 @@ defaults:
 
 jobs:
   namerequest-ci:
+    permissions:
+      contents: read
+      pull-requests: write
+
     uses: bcgov/bcregistry-sre/.github/workflows/frontend-ci.yaml@main
     with:
       app_name: "namerequest"
