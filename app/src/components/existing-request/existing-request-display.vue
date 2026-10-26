@@ -183,30 +183,6 @@
                 </v-col>
 
                 <v-col
-                  v-if="showEstimatedDateNotPriority"
-                  cols="12"
-                  class="estimated-review-date"
-                >
-                  <span>Estimated Review Date:</span>
-                  &nbsp;
-                  <v-tooltip
-                    right
-                    transition="fade-transition"
-                    content-class="tooltip"
-                    :disabled="isMobile"
-                  >
-                    <template #activator="{ on, attrs }">
-                      <span
-                        v-bind="attrs"
-                        class="dotted-underline app-blue font-weight-regular cursor-default"
-                        v-on="on"
-                      >{{ getRegularEstimateReviewDate }}</span>
-                    </template>
-                    This is an estimate only, actual review date may vary.
-                  </v-tooltip>
-                </v-col>
-
-                <v-col
                   v-if="showEstimatedDatePriority"
                   cols="12"
                   class="font-italic priority-requests-blurb"
@@ -300,6 +276,19 @@
             </v-col>
           </v-row>
 
+          <div
+            v-if="showCheckStatusGrayBox"
+            id="estimated-review-times"
+            class="estimated-review-times mt-5"
+          >
+            For estimated review times, please visit
+            <a
+              id="names-home-link"
+              class="link-std"
+              :href="namesHomeUrl"
+            >{{ namesHomeUrl }}</a>.
+          </div>
+
           <CheckStatusGrayBox
             v-if="showCheckStatusGrayBox"
             class="mt-5"
@@ -369,7 +358,6 @@ export default class ExistingRequestDisplay extends Mixins(
   @Getter(useStore) getNrState!: NrState
   @Getter(useStore) getRegularWaitTime!: string | number
   @Getter(useStore) getPriorityWaitTime!: string | number
-  @Getter(useStore) getRegularEstimateReviewDate!: string
   @Getter(useStore) isMobile!: boolean
 
   @Action(useStore) editExistingRequest!: ActionBindingIF
@@ -516,9 +504,8 @@ export default class ExistingRequestDisplay extends Mixins(
     )
   }
 
-  /** True if the non priority estimated date should be shown. */
-  get showEstimatedDateNotPriority (): boolean {
-    return !this.isPriorityReq(this.nr) && (this.nr.state === NrState.DRAFT)
+  get namesHomeUrl (): string {
+    return sessionStorage.getItem('BASE_URL') || window.location.origin
   }
 
   /** True if priority estimated date text should be shown. */
@@ -913,5 +900,14 @@ export default class ExistingRequestDisplay extends Mixins(
 
 button.theme--light.v-btn--disabled {
   color: $disabled-action !important;
+}
+
+.estimated-review-times {
+  color: $text;
+  font-size: $px-16;
+
+  a {
+    font-size: $px-16;
+  }
 }
 </style>
