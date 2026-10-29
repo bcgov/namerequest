@@ -16,10 +16,11 @@ describe('Date Mixin', () => {
     await Vue.nextTick()
   })
 
-  // FUTURE: this works locally but not in GHA; fix later
-  it.skip('returns correct values for createUtcDate()', () => {
+  it('returns correct values for createUtcDate()', () => {
     expect(vm.createUtcDate(2021, 0, 1, 0, 0).toISOString()).toBe('2021-01-01T08:00:00.000Z')
     expect(vm.createUtcDate(2021, 6, 1, 0, 0).toISOString()).toBe('2021-07-01T07:00:00.000Z')
+    expect(vm.createUtcDate(2026, 0, 15, 0, 0).toISOString()).toBe('2026-01-15T08:00:00.000Z')
+    expect(vm.createUtcDate(2026, 10, 2, 0, 0).toISOString()).toBe('2026-11-02T07:00:00.000Z')
   })
 
   it('returns correct values for dateToYyyyMmDd()', () => {
@@ -30,6 +31,9 @@ describe('Date Mixin', () => {
     expect(vm.dateToYyyyMmDd(new Date('2021-01-01 08:00:00 GMT'))).toBe('2021-01-01') // Standard Time
     expect(vm.dateToYyyyMmDd(new Date('2021-07-01 06:00:00 GMT'))).toBe('2021-06-30') // Daylight Time
     expect(vm.dateToYyyyMmDd(new Date('2021-07-01 07:00:00 GMT'))).toBe('2021-07-01') // Daylight Time
+    expect(vm.dateToYyyyMmDd(new Date('2026-11-02T00:30:00Z'))).toBe('2026-11-01')
+    expect(vm.dateToYyyyMmDd(new Date('2026-01-16T00:30:00Z'))).toBe('2026-01-15')
+    expect(vm.dateToYyyyMmDd(new Date('2026-11-15T06:59:00Z'))).toBe('2026-11-14')
     // verify that Pacific is correctly converted to Pacific
     expect(vm.dateToYyyyMmDd(new Date('2021-01-01 00:00:00 PST'))).toBe('2021-01-01')
     expect(vm.dateToYyyyMmDd(new Date('2021-01-01 23:59:59 PST'))).toBe('2021-01-01')

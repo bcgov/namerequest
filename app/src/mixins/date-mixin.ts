@@ -2,6 +2,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { Getter } from 'pinia-class'
 import { useStore } from '@/store'
 import { isDate } from 'lodash'
+import { dateToYyyyMmDd as formatVancouverDate, vancouverWallTimeToUtc } from '@/utils/vancouver-date'
 
 /**
  * Mixin that provides some useful date utilities.
@@ -43,15 +44,7 @@ export class DateMixin extends Vue {
    * @example "2021, 6, 1, 0, 0" -> "2021-07-01T07:00:00.000Z"
    */
   createUtcDate (year: number, month: number, day: number, hours = 0, minutes = 0): Date {
-    // use date from server to create a new date in Pacific timezone
-    // (this sets the correct tz offset in the new date)
-    const date = new Date(this.getCurrentJsDate.toLocaleString('en-US', { timeZone: 'America/Vancouver' }))
-
-    // update all date and time fields
-    date.setFullYear(year, month, day)
-    date.setHours(hours, minutes, 0, 0) // zero out seconds and milliseconds
-
-    return date
+    return vancouverWallTimeToUtc(year, month, day, hours, minutes)
   }
 
   /**
@@ -147,22 +140,7 @@ export class DateMixin extends Vue {
    * @example "2021-01-01 23:59:59 PST" -> "2021-01-01"
    */
   dateToYyyyMmDd (date: Date): string {
-    // safety check
-    if (!isDate(date) || isNaN(date.getTime())) return null
-
-    // NB: some versions of Node have only en-US locale
-    // so use that and convert results accordingly
-    const dateStr = date.toLocaleDateString('en-US', {
-      timeZone: 'America/Vancouver',
-      month: 'numeric', // 12
-      day: 'numeric', // 31
-      year: 'numeric' // 2020
-    })
-
-    // convert mm/dd/yyyy to yyyy-mm-dd
-    // and make sure month and day are 2 digits (eg, 03)
-    const [ mm, dd, yyyy ] = dateStr.split('/')
-    return `${yyyy}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}`
+    return formatVancouverDate(date)
   }
 
   /**

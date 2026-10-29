@@ -22,6 +22,7 @@ import {
 import { BAD_REQUEST, NOT_FOUND, OK, SERVICE_UNAVAILABLE } from 'http-status-codes'
 import removeAccents from 'remove-accents'
 import { GetFeatureFlag, Sleep, sanitizeName } from '@/plugins'
+import { dateToYyyyMmDd } from '@/utils/vancouver-date'
 import BusinessServices from '@/services/business-services'
 import NamexServices from '@/services/namex-services'
 import { DFLT_MIN_LENGTH, DFLT_MAX_LENGTH, MRAS_MIN_LENGTH, MRAS_MAX_LENGTH } from '@/components/new-request/constants'
@@ -307,7 +308,7 @@ export async function searchBusiness (corpNum: string): Promise<BusinessSearchIF
     if (Getters.isRestoration(state) && data.state !== EntityStates.HISTORICAL) {
       // check if business is eligible for restoration by verifying restorationExpiryDate exists and not expired
       if (!data.restorationExpiryDate ||
-        Getters.getCurrentJsDate(state).toISOString().slice(0, 10) > data.restorationExpiryDate) {
+        dateToYyyyMmDd(Getters.getCurrentJsDate(state)) > data.restorationExpiryDate) {
         throw new Error('This business is not eligible for restoration name request')
       }
     }
